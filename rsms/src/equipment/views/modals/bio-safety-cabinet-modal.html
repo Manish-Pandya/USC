@@ -5,6 +5,7 @@
 
     <div class="modal-body">
         <div class="control-group">
+            {{pis.length}}
             <label class="control-label">Principal Investigator(s)</label>
             <div class="controls" style="display:block">
                 <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="modalData.BioSafetyCabinetCopy.SelectedInspection.PrincipalInvestigators.push($item)" class="span3" style="margin-left:0">

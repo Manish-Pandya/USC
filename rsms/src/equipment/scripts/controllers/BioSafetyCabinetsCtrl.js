@@ -15,12 +15,16 @@ angular.module('EquipmentModule')
       var getAll = function () {
           $scope.cabinets = [];
           $scope.campuses = [];
-          return $q.all([DataStoreManager.getAll("EquipmentInspection", [], true), DataStoreManager.getAll("BioSafetyCabinet", $scope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false)])
+          var test = [];
+          return $q.all([DataStoreManager.getAll("EquipmentInspection", [], true), DataStoreManager.getAll("PrincipalInvestigator", test, true), DataStoreManager.getAll("BioSafetyCabinet", $scope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false)])
             .then(
                 function (whateverGotReturned) {
                     console.log($scope.cabinets);
-                    console.log(DataStoreManager._actualModel);
+                    test.forEach(function (p) {
+                        console.log(p.Rooms)
+                    })
                     getYears();
+                    return true;
                 }
             )
             .catch(
@@ -29,48 +33,6 @@ angular.module('EquipmentModule')
                 }
             )
       },
-        getAllBioSafetyCabinets = function () {
-            return af.getAllBioSafetyCabinets().then(
-                        function () {
-                            $scope.cabinets = dataStoreManager.get("BioSafetyCabinet");
-                            if (!$scope.cabinets) $scope.cabinets = [];
-                            getYears();
-                            return $scope.cabinets;
-                        }
-                    );
-
-        },
-        getAllPis = function () {
-            return af.getAllPrincipalInvestigators().then(
-                        function () {
-                            $scope.pis = dataStoreManager.get("PrincipalInvestigator"); return $scope.pis;
-                        }
-                    );
-        },
-        getAllCampuses = function () {
-            return af.getAllCampuses().then(
-                        function () {
-                            $scope.campuses = dataStoreManager.get("Campus");
-                            return $scope.campuses;
-                        }
-                    );
-        },
-        getAllRooms = function () {
-            return af.getAllRooms().then(
-                        function () {
-                            $scope.rooms = dataStoreManager.get("Room");
-                            return $scope.rooms;
-                        }
-                    );
-        },
-        getAllBuildings = function () {
-            return af.getAllBuildings().then(
-                        function () {
-                            $scope.buildings = dataStoreManager.get("Building");
-                            return $scope.buildings;
-                        }
-                    );
-        },
         getYears = function () {
             var currentYearString = $rootScope.currentYearString = new Date().getFullYear().toString();
             var inspections = [];
@@ -108,11 +70,16 @@ angular.module('EquipmentModule')
                 $scope.$apply();
             })
 
-
         }
 
       //init load
-      $scope.loading = $rootScope.getCurrentRoles.then(getAll);
+      $scope.loading = $rootScope.getCurrentRoles().then(getAll);
+      /*$scope.loading = new Promise((resolve, reject) => {
+          setTimeout(() => {
+              $scope.$apply();
+              resolve(true);
+          }, 100);
+      });*/
 
       $scope.deactivate = function (cabinet) {
           var copy = dataStoreManager.createCopy(cabinet);
@@ -212,12 +179,13 @@ angular.module('EquipmentModule')
       });
 
   })
-  .controller('BioSafetyCabinetsModalCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
+  .controller('BioSafetyCabinetsModalCtrl', function ($scope, $q,applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
       var af = $scope.af = applicationControllerFactory;
       $scope.constants = Constants;
 
       $scope.modalData = af.getModalData();
-      $scope.PIs = dataStoreManager.get("PrincipalInvestigator");
+      $scope.PIs = [];
+      $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator",$scope.PIs,true)]);
 
 
       if ($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections) {

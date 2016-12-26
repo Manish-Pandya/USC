@@ -215,9 +215,10 @@ angular
          return function (pis) {
              if(!pis)return;
              var allRooms = [];
-             console.log(pis);
              pis.forEach(function (pi) {
                  if (!pi.Rooms) return;
+                 console.log(pi);
+
                  pi.Rooms.forEach(function (r) {
                      if (!allRooms[r.Key_id]) {
                          allRooms[r.Key_id] = [];
@@ -226,9 +227,9 @@ angular
                      allRooms[r.Key_id].push(r);
                  })
              })
-
+             console.log(allRooms);
+             if (!allRooms) return;
              return allRooms.reduce(function (i) {
-                 console.log(i);
                  return i.length == pis.length;
              })
         }

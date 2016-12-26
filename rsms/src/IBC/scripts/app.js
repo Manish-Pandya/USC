@@ -46,7 +46,7 @@ angular
             if (!DataStoreManager.CurrentRoles) {
                 return XHR.GET("getCurrentRoles").then((roles) => { DataStoreManager.CurrentRoles = roles; })
             } else {
-                return new Promise(resolve, reject).then(() => { return resolve(DataStoreManager.CurrentRoles) })
+                return new Promise(function (resolve, reject) { }).then(() => { return resolve(DataStoreManager.CurrentRoles) })
             }
         }
 

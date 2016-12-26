@@ -8,7 +8,7 @@
  * Primary Controller of the EquipmentModule
  */
 angular.module('EquipmentModule')
-  .controller('MainCtrl', function ($scope, $rootScope, applicationControllerFactory, $state, $modal) {
+  .controller('MainCtrl', function ($scope, $rootScope, applicationControllerFactory, $state, $modal,$q) {
       console.log("MainCtrl running");
 
       //do we have access to action functions?
@@ -21,9 +21,20 @@ angular.module('EquipmentModule')
       // method to async fetch current roles
       $rootScope.getCurrentRoles = function () {
           if (!DataStoreManager.CurrentRoles) {
-              return XHR.GET("getCurrentRoles").then((roles) => { DataStoreManager.CurrentRoles = roles; })
+              return $q.all(
+                  [XHR.GET("getCurrentRoles").then((roles) => {
+                      DataStoreManager.CurrentRoles = roles;
+                      return roles;
+                  })]
+              )
           } else {
-              return new Promise(resolve, reject).then(() => { return resolve(DataStoreManager.CurrentRoles) })
+              return $q.all(
+                  [new Promise(function (resolve, reject) {
+                      resolve(DataStoreManager.CurrentRoles);
+                  }).then(() => {
+                      return DataStoreManager.CurrentRoles;
+                  })]
+              )
           }
       }
 

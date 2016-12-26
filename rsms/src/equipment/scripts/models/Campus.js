@@ -8,7 +8,7 @@ var equipment;
     var Campus = (function (_super) {
         __extends(Campus, _super);
         function Campus() {
-            _super.call(this);
+            return _super.call(this) || this;
         }
         Campus.prototype.onFulfill = function () {
             _super.prototype.onFulfill.call(this);
@@ -16,13 +16,13 @@ var equipment;
         };
         Campus.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
-                //var allowedRoles = [Constants.ROLE.NAME.ADMIN]
-                _super.prototype.hasGetAllPermission.call(this, true);
+                var allowedRoles = [Constants.ROLE.NAME.ADMIN];
+                _super.prototype.hasGetAllPermission.call(this, _.intersection(DataStoreManager.CurrentRoles, allowedRoles).length > 0);
             }
             return this._hasGetAllPermission;
         };
-        Campus.urlMapping = new UrlMapping("getAllCampuses", "getCampusById&id=", "");
         return Campus;
     }(FluxCompositerBase));
+    Campus.urlMapping = new UrlMapping("getAllCampuses", "getCampusById&id=", "");
     equipment.Campus = Campus;
 })(equipment || (equipment = {}));

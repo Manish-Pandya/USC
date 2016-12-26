@@ -8,7 +8,7 @@ var equipment;
     var Building = (function (_super) {
         __extends(Building, _super);
         function Building() {
-            _super.call(this);
+            return _super.call(this) || this;
         }
         Building.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
@@ -17,8 +17,8 @@ var equipment;
             }
             return this._hasGetAllPermission;
         };
-        Building.urlMapping = new UrlMapping("getAllBuildings", "getBuildingById&id=", "saveBuilding");
         return Building;
     }(FluxCompositerBase));
+    Building.urlMapping = new UrlMapping("getAllBuildings", "getBuildingById&id=", "saveBuilding");
     equipment.Building = Building;
 })(equipment || (equipment = {}));

@@ -8,22 +8,21 @@ var equipment;
     var PrincipalInvestigator = (function (_super) {
         __extends(PrincipalInvestigator, _super);
         function PrincipalInvestigator() {
-            _super.call(this);
+            return _super.call(this) || this;
         }
         PrincipalInvestigator.prototype.onFulfill = function () {
             _super.prototype.onFulfill.call(this);
-            this.getChildUrl(PrincipalInvestigator.RoomMap);
         };
         PrincipalInvestigator.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
-                //var allowedRoles = [Constants.ROLE.NAME.ADMIN];
-                _super.prototype.hasGetAllPermission.call(this, true);
+                var allowedRoles = [Constants.ROLE.NAME.ADMIN];
+                _super.prototype.hasGetAllPermission.call(this, _.intersection(DataStoreManager.CurrentRoles, allowedRoles).length > 0);
             }
             return this._hasGetAllPermission;
         };
-        PrincipalInvestigator.urlMapping = new UrlMapping("getAllPIs", "getPIById&id=", "savePI");
-        PrincipalInvestigator.RoomMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Room", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=rooms&id={{UID}}", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=PrincipalInvestigator&class2=Room");
         return PrincipalInvestigator;
     }(FluxCompositerBase));
+    PrincipalInvestigator.urlMapping = new UrlMapping("getAllPIs", "getPIById&id=", "savePI");
+    PrincipalInvestigator.RoomMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Room", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=rooms&id={{UID}}", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=PrincipalInvestigator&class2=Room");
     equipment.PrincipalInvestigator = PrincipalInvestigator;
 })(equipment || (equipment = {}));

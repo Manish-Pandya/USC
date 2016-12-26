@@ -132,6 +132,11 @@ class Equipment_ActionManager extends ActionManager {
     	}
     }
 
+	public function getAllAutoclaves(){
+        $autoClavesDao = $this->getDao(new Autoclave());
+    	return $autoClavesDao->getAll();
+    }
+
     public function getBuidlingsWithoutRooms(){
     	return $this->getAllBuildings(null, true, true);
     }

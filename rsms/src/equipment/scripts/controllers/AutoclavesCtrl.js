@@ -30,20 +30,20 @@ angular.module('EquipmentModule')
         function getAllAutoclaves() {
             $scope.autoclaves = [];
             $q.all([DataStoreManager.getAll("Autoclave", $scope.autoclaves, false)])
-            .then(
-                function (whateverGotReturned) {
-                    console.log($scope.autoclaves);
-                    console.log(DataStoreManager._actualModel);
-                }
-            )
-            .catch(
-                function (reason) {
-                    console.log("bad Promise.all:", reason);
-                }
-            )
+                .then(
+                    function (whateverGotReturned) {
+                        console.log($scope.autoclaves);
+                        console.log(DataStoreManager._actualModel);
+                    }
+                )
+                .catch(
+                    function (reason) {
+                        console.log("bad Promise.all:", reason);
+                    }
+                )
         }
         
-        $rootScope.getCurrentRoles().then(getAllInspections()).then(getAllAutoclaves());
+        $rootScope.getCurrentRoles().then(getAllInspections).then(getAllAutoclaves);
 
         $scope.deactivate = function(autoclave) {
             var copy = dataStoreManager.createCopy(autoclave);
