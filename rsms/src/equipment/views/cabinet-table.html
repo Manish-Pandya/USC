@@ -1,4 +1,4 @@
-﻿<div class="full bio-safety-cabinets-container" style="padding:5px;"  ng-show="cabinets.length && completeCabinets.length || selectedBuilding">
+﻿<div class="full bio-safety-cabinets-container" style="padding:5px;" ng-show="cabinets.length && completeCabinets.length || selectedBuilding || filter.pi || filter.status">
     <h2 ng-if="!uncertified">{{selectedCertificationDate || 'All'}} Certification Records -- {{campus.Name}}</h2>
     <h2 ng-if="uncertified">Uncertified Cabinets</h2>
 
@@ -43,7 +43,7 @@
         </tr>
 
         <!-- the following filter grabs cabinet inspections that have a Certification_date, stripping those with no Certification_date set: matchEquipmentDate:'':'Certification_date' -->
-        <tr ng-repeat="cabinet in completeCabinets = (cabinets | pi:filter.pi | status:filter.status | matchEquipmentBuilding:selectedBuilding | matchEquipmentBuilding:selectedBuilding | cabinetYear:selectedCertificationDate:uncertified | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive}) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
+        <tr ng-repeat="cabinet in completeCabinets = (cabinets | pi:filter.pi | status:filter.status | matchEquipmentBuilding:selectedBuilding | cabinetYear:selectedCertificationDate:uncertified | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive}) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
             <td>
                 <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet, inspections[0], true)" class="btn btn-primary btn-mini left"><i class="icon-pencil"></i></button>
                 <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit, 'btn-success':!cabinet.Is_active}" ng-click="deactivate(cabinet)" class="btn btn-danger btn-mini left"><i class="icon-remove" ng-class="{'icon-checkmark':!cabinet.Is_active}"></i></button>
@@ -75,7 +75,7 @@
                         {{inspection.Due_date | dateToISO}}
                     </li>
                     <li>
-                        {{inspection.PrincipalInvestigator.User.Name}}
+                        <span ng-repeat="pi in inspection.PrincipalInvestigators">{{pi.User.Name}}<br ng-if="!$last"></span>
                     </li>
                     <li>
                         <span class="bold" ng-class="{'red': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.OVERDUE,
@@ -83,15 +83,33 @@
                                                  'green': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.PASS }">{{inspection.Status}}</span>
                     </li>
                     <li>
-                        <a style="margin-top:-7px" ng-if="inspection.Report_path" href="../biosafety-committees/protocol-documents/{{inspection.Report_path}}" target="_blank" class="btn btn-success left report-button">Report</a>
-                        <input type="file" name="file" id="file" class="inputfile inputfile-1" file-upload click-target="inspection" />
-                        <label for="file" class="file-label btn" ng-class="{'glued':inspection.Report_path}">
-                            <strong><i class="icon-upload-4"></i></strong>
-                        </label>
+                        <div ng-if="inspection.Status == inspection.Status == 'FAIL' || inspection.Status == 'PASS'">
+                            <div class="btn-group dropup">
+                                <a ng-if="inspection.Report_path" class="btn btn-success" href="../biosafety-committees/protocol-documents/{{inspection.Report_path}}" target="_blank">Report</a>
+                                <a ng-if="!inspection.Report_path" class="btn btn-success disabled">Report</a>
+
+                                <a class="btn dropdown-toggle upload-container" click-target="inspection" url-fragment="uploadReportCertDocument">
+                                    <span class="icon-upload-4"></span>
+                                    <input type="file" name="file" id="file" class="inputfile inputfile-1"/>
+                                </a>
+                            </div>
+
+                            <div class="btn-group dropup">
+                                <a ng-if="inspection.Quote_path" class="btn btn-info" href="../biosafety-committees/protocol-documents/{{inspection.Quote_path}}" target="_blank">Quote</a>
+                                <a ng-if="!inspection.Quote_path" class="btn btn-info disabled">Quote</a>
+
+                                <a class="btn dropdown-toggle upload-container" click-target="inspection" url-fragment="uploadReportQuoteDocument">
+                                    <span class="icon-upload-4"></span>
+                                    <input type="file" name="file" id="file" class="inputfile inputfile-1" />
+                                </a>
+                            </div>
+                        </div>
+
                     </li>
                     <li>
                         {{inspection.Comment}}
                     </li>
+                   
                 </ul>
             </td>
 
