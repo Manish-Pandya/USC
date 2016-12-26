@@ -250,31 +250,6 @@ angular
                 //TODO:  this is too aggressive and seems to strip parent objects where it should strip children
                 //removes entire SelectedInspection property when it should only remove actual circularity from within that property
                 var secondCopy = JSON.parse(XHR.stringifyCircularFix(copy));
-                var pis = [];
-                copy.SelectedInspection.PrincipalInvestigators.forEach(function (p) {
-                    pis.push( JSON.parse(XHR.stringifyCircularFix(p)) );
-                })
-                var inspectionCopy = JSON.parse(XHR.stringifyCircularFix(copy.SelectedInspection));
-                
-                inspectionCopy.PrincipalInvestigators = pis;
-                var secondCopy = {
-                    Certification_date: copy.Certification_date,
-                    Class: "BioSafetyCabinet",
-                    Frequency: copy.Frequency,
-                    Is_active: copy.Is_active,
-                    Make: copy.Make,
-                    Model: copy.Model,
-                    SelectedInspection: inspectionCopy,
-                    Room_id: copy.Room_id,
-                    RoomId: copy.RoomId,
-                    Equipment_id: copy.Equipment_id,
-                    Report_path: copy.Report_path,
-                    Serial_number: copy.Serial_number,
-                    Type: copy.Type,
-                    Comments: copy.Comments,
-                    Key_id:copy.Key_id || null
-                }
-
                 console.log(secondCopy);
                 return this.save(secondCopy)
                     .then(

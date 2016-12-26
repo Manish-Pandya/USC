@@ -82,15 +82,28 @@ abstract class XHR {
      * @param replacer
      * @param space
      */
+
+     /** intentionally broken JSON 
+    var childObj = {}
+    var parentObj = {
+        test: childObj;
+    };
+    childObj.childTest = parentObj;
+    **/
     private static stringifyCircularFix(obj: any, replacer?: (key: string, value: any) => any, space?: string | number): string {
+        var parentObj: any = obj;
         var cache: any[] = [];
+        // Note this should always be 'function' instead of fat-arrow, as we need 'this' to mutate on recursion
         var json = JSON.stringify(obj, function (key, value) {
             if (typeof value === 'object' && value !== null) {
-                if (cache.indexOf(value) !== -1) {
-                    return; // circular reference found, discard key
+                if (parentObj != this) {
+                    if (cache.indexOf(value) !== -1) {
+                        return; // circular reference found, discard key
+                    }
+                    cache.push(value); // store value in our collection
                 }
-                cache.push(value); // store value in our collection
             }
+            parentObj = this;
             return replacer ? replacer(key, value) : value;
         }, space);
         cache = null;
