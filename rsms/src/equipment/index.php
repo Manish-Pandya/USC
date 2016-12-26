@@ -27,12 +27,13 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/metro-ui-light.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/icomoon.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/datepicker.css"/>
-<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/jqtree.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/font-awesome.min.css"/>
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/ng-mobile-menu.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/angular-busy.css">
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css" />
+
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/equipment-styles.css">
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/temp-file-upload.css">
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css"/>
@@ -90,7 +91,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <!--script type="text/javascript" src="./scripts/directives/someDirective.js"></script-->
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/scrolltable.js"></script>
 <script type="text/javascript" src="scripts/directives/side-nav.js"></script>
-
+<script src="../js/uploadContainer.js"></script>
 <!-- filters -->
 <script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></script>
 <script type="text/javascript" src="../client-side-framework/filters/splitAtPeriod.js"></script>
@@ -126,6 +127,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="./scripts/models/Room.js"></script>
 <script src="scripts/models/PrincipalInvestigator.js"></script>
 <script src="scripts/models/EquipmentInspection.js"></script>
+<script src="scripts/models/Campus.js"></script>
 
 </head>
 <body>

@@ -23,7 +23,8 @@ class Equipment_ActionMappingFactory extends ActionMappingFactory {
 				"saveBioSafetyCabinet" 			=> new ActionMapping("saveBioSafetyCabinet", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"getAllBuildings" 				=> new ActionMapping("getBuidlingsWithoutRooms", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"getAllRooms"	 				=> new ActionMapping("getRoomsWithoutComposing", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
-                "uploadReportCertDocument"      => new ActionMapping("uploadReportCertDocument", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] )
+                "uploadReportCertDocument"      => new ActionMapping("uploadReportCertDocument", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+                "uploadReportQuoteDocument"      => new ActionMapping("uploadReportQuoteDocument", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 		);
 	}
 }

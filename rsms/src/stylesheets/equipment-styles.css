@@ -299,41 +299,41 @@ button.btn:not(.btn-large) {
     margin-bottom: 0;
     width: 100%;
     margin-left:0;
-    display:table;
+    display:block;
+
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li,.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li{
-    display:block;
-    /* background: pink; */
-    float:left;
-    padding: 30px 5px 46px;
-    height: 0;
+    padding: 10px 5px;
     border-right: 1px solid #DDDDDD;
     border-bottom: 1px solid #DDDDDD !important;
     box-sizing:border-box;
     display:table-cell;
     vertical-align: middle;
 }
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul:last-child li{
-    border-bottom:none !important;
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li,.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li{
 }
 
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li{
-    height: 62px;
-    padding-top: 5px;
+    min-height: 62px;
     font-weight:bold;
-    padding-bottom: 0 !Important;
     border-bottom: none !important;
+    font-size: 17px;
+
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr td{
     vertical-align:middle;
+    min-height:400px;
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr th{
     font-size: 16px;
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li{
- font-size: 17px;
+    display:table-cell;
+    height:auto;
+     vertical-align:middle;
 }
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul{
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul {
+    display:table
     /* border-bottom:1px solid #DDDDDD; */
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul:last-child li{
@@ -376,6 +376,7 @@ button.btn:not(.btn-large) {
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr th, bio-safety-cabinets table:not(.quickdate-calendar) tr td table:not(.quickdate-calendar) tr td {
     padding:5px;
 }
+
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li input, select{
     margin-top:2px
 }

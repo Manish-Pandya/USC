@@ -23,7 +23,8 @@ angular
     'convenienceMethodWithRoleBasedModule',
     'rootApplicationController',
     'SideNav',
-    'ngQuickDate'
+    'ngQuickDate',
+    'uploadContainer'
     //'ngMockE2E'
   ])
   .config(function ($stateProvider, $urlRouterProvider, $qProvider, $provide, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {

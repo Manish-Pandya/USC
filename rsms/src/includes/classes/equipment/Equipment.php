@@ -101,6 +101,9 @@ abstract class Equipment extends GenericCrud{
 	}
 	public function setEquipmentInspections($inspections){ $this->equipmentInspections = $inspections; }
 
+    /**
+     * @return EquipmentInspection $inspection;
+     **/
     public function conditionallyCreateEquipmentInspection($selectedInspection = null){
         $l = Logger::getLogger('conditionallyCreateEquipmentInspection?');
         //We only create a new inspection for Cabinets that have not yet been saved
@@ -116,7 +119,6 @@ abstract class Equipment extends GenericCrud{
                 }
 			}
             $this->principaInvestigatorId = $inspection->getPrincipal_investigator_id();
-            $l->fatal($inspection);
             $inspectionDao = new GenericDao($inspection);
 
 			if($this->getCertification_date() != null && $inspection->getStatus() == "PASS") {

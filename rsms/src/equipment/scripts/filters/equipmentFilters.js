@@ -163,7 +163,7 @@ angular
             return cabs.filter(function (c) {
                 return c.EquipmentInspections && c.EquipmentInspections.length && c.EquipmentInspections.some(function (i) {
                     console.log(i, string);
-                    return i.PrincipalInvestigator.User.Name.toLowerCase().indexOf(string.toLowerCase()) > -1;
+                    return i.PrincipalInvestigators.some(function(i){return i.User.Name.toLowerCase().indexOf(string.toLowerCase()) > -1});
                 })
             })
         }
@@ -210,5 +210,28 @@ angular
                 return uncertified ? !i.Certification_date : (i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1);
             });
         }
+    })
+     .filter("getSharedRooms", function () {
+         return function (pis) {
+             if(!pis)return;
+             var allRooms = [];
+             console.log(pis);
+             pis.forEach(function (pi) {
+                 if (!pi.Rooms) return;
+                 pi.Rooms.forEach(function (r) {
+                     if (!allRooms[r.Key_id]) {
+                         allRooms[r.Key_id] = [];
+                     }
+                     r.Bulding_name = r.Building_name || r.Building.Room.Name;
+                     allRooms[r.Key_id].push(r);
+                 })
+             })
+
+             return allRooms.reduce(function (i) {
+                 console.log(i);
+                 return i.length == pis.length;
+             })
+        }
+     
     })
 

@@ -19,6 +19,8 @@ class EquipmentInspection extends GenericCrud{
 
         "due_date"     		    		=> "timestamp",
         "report_path"		        	=> "text",
+        "quote_path"		        	=> "text",
+
         "equipment_id"                  => "integer",
         "equipment_class"               => "text",
         "comment"                       => "text",
@@ -42,17 +44,21 @@ class EquipmentInspection extends GenericCrud{
 
 		// Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getRoom");
+		$entityMaps[] = new EntityMap("eager","getRoom");
         $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
 		$this->setEntityMaps($entityMaps);
 	}
 
     private $room_id;
+    private $room;
+
     private $principal_investigator_id;
+    private $principalInvestigators;
     private $certification_date;
     private $fail_date;
     private $due_date;
     private $report_path;
+    private $quote_path;
     private $equipment_id;
     private $equipment_class;
     private $comment;
@@ -69,11 +75,29 @@ class EquipmentInspection extends GenericCrud{
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 
+    public static $PIS_RELATIONSHIP = array(
+        "className"	=>	"PrincipalInvestigator",
+        "tableName"	=>	"principal_investigator_equipment_inspection",
+        "keyName"	=>	"principal_investigator_id",
+        "foreignKeyName"	=>	"inspection_id"
+    );
+
     public function getRoom_id(){
 		return $this->room_id;
 	}
 	public function setRoom_id($room_id){
 		$this->room_id = $room_id;
+	}
+
+    public function getRoom(){
+		if($this->room == null && $this->room_id != null) {
+			$roomDao = new GenericDAO(new Room());
+			$this->room = $roomDao->getById($this->room_id);
+		}
+		return $this->room;
+	}
+	public function setRoom($room){
+		$this->room = $room;
 	}
 
 	public function getPrincipal_investigator_id(){
@@ -111,6 +135,13 @@ class EquipmentInspection extends GenericCrud{
 	}
 	public function setReport_path($report_path){
 		$this->report_path = $report_path;
+	}
+
+    public function getQuote_path(){
+		return $this->quote_path;
+	}
+	public function setQuote_path($qp){
+		$this->quote_path = $qp;
 	}
 
 	public function getEquipment_id(){
@@ -168,5 +199,14 @@ class EquipmentInspection extends GenericCrud{
 	public function setFrequency($frequency){
 		$this->frequency = $frequency;
 	}
+
+    public function getPrincipalInvestigators(){
+		if($this->principalInvestigators == null) {
+			$thisDAO = new GenericDAO($this);
+			$this->principalInvestigators = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PIS_RELATIONSHIP), NULL, TRUE, TRUE);
+		}
+		return $this->principalInvestigators;
+	}
+	public function setPrincipalInvestigators($principalInvestigators){ $this->principalInvestigators = $principalInvestigators; }
 
 }
