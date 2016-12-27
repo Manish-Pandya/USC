@@ -9,7 +9,6 @@
  */
 angular.module('EquipmentModule')
   .controller('MainCtrl', function ($scope, $rootScope, applicationControllerFactory, $state, $modal,$q) {
-      console.log("MainCtrl running");
 
       //do we have access to action functions?
       var af = $scope.af = applicationControllerFactory;

@@ -220,15 +220,16 @@ angular
                  console.log(pi);
 
                  pi.Rooms.forEach(function (r) {
-                     if (!allRooms[r.Key_id]) {
-                         allRooms[r.Key_id] = [];
+                     var index = parseInt(r.Key_id);
+                     if (!allRooms[index]) {
+                         allRooms[index] = [];
                      }
                      r.Bulding_name = r.Building_name || r.Building.Room.Name;
-                     allRooms[r.Key_id].push(r);
+                     allRooms[index].push(r);
                  })
              })
-             console.log(allRooms);
-             if (!allRooms) return;
+             //console.log(allRooms);
+             if (!allRooms || !allRooms.length) return;
              return allRooms.reduce(function (i) {
                  return i.length == pis.length;
              })

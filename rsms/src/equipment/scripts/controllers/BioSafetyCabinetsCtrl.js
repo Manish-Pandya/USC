@@ -15,14 +15,9 @@ angular.module('EquipmentModule')
       var getAll = function () {
           $scope.cabinets = [];
           $scope.campuses = [];
-          var test = [];
-          return $q.all([DataStoreManager.getAll("EquipmentInspection", [], true), DataStoreManager.getAll("PrincipalInvestigator", test, true), DataStoreManager.getAll("BioSafetyCabinet", $scope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false)])
+          return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $scope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false)])
             .then(
                 function (whateverGotReturned) {
-                    console.log($scope.cabinets);
-                    test.forEach(function (p) {
-                        console.log(p.Rooms)
-                    })
                     getYears();
                     return true;
                 }
@@ -41,7 +36,6 @@ angular.module('EquipmentModule')
             $rootScope.selectedDueDate = "";
 
             DataStoreManager.getAll("EquipmentInspection", [], false).then(function (inspections) {
-                console.log(inspections);
                 var i = inspections.length;
                 while (i--) {
                     if (inspections[i].Equipment_class == Constants.BIOSAFETY_CABINET.EQUIPMENT_CLASS) {
@@ -69,17 +63,12 @@ angular.module('EquipmentModule')
                 console.log($rootScope.selectedCertificationDate);
                 $scope.$apply();
             })
-
+            console.log($scope.cabinets);
+            console.log(DataStoreManager._actualModel);
         }
 
       //init load
       $scope.loading = $rootScope.getCurrentRoles().then(getAll);
-      /*$scope.loading = new Promise((resolve, reject) => {
-          setTimeout(() => {
-              $scope.$apply();
-              resolve(true);
-          }, 100);
-      });*/
 
       $scope.deactivate = function (cabinet) {
           var copy = dataStoreManager.createCopy(cabinet);
