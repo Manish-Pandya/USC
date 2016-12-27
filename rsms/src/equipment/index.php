@@ -44,7 +44,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <!-- included javascript libraries-->
 <script src="../js/lib/jQuery.3.1.1/Content/Scripts/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-ui.js"></script>
-<script src="../js/lib/lodash.4.17.0/content/Scripts/lodash.min.js"></script>
+<script src="../js/lib/lodash.4.17.3/content/Scripts/lodash.min.js"></script>
 <script src="../js/lib/promise.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/constants.js"></script>
     <script src="../js/lib/moment.js"></script>
