@@ -98,16 +98,18 @@ var DataStoreManager = (function () {
                                             allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
                                         }
                                         else {
-                                            allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
-                                            if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-                                                var manyTypeToManyGerundType = d[0].TypeName + "To" + compMap.ChildType;
-                                                if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
-                                                    DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
-                                                    DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
-                                                        .then(function (gerundReturns) {
-                                                        DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
-                                                    });
-                                                }
+                                            allComps.push(DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")));
+                                        }
+                                        if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
+                                            var manyTypeToManyGerundType = d[0].TypeName + "To" + compMap.ChildType;
+                                            if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
+                                                DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
+                                                console.log(manyTypeToManyGerundType, "gerund getting baked...");
+                                                DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
+                                                    .then(function (gerundReturns) {
+                                                    DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
+                                                });
+                                                allComps.push(DataStoreManager._actualModel[manyTypeToManyGerundType].promise);
                                             }
                                         }
                                     }
@@ -137,7 +139,6 @@ var DataStoreManager = (function () {
                     else {
                         // Dig this neat way to use viewModelParent as a reference instead of a value!
                         Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
-                        console.log(type + ":", _.cloneDeep(d), d);
                         return viewModelParent;
                     }
                 })
@@ -185,7 +186,7 @@ var DataStoreManager = (function () {
                         if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE && DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                             // if compMaps == true or if it's an array with an approved compMap...
                             if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
-                                allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
+                                allComps.push(DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")));
                                 if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
                                     var manyTypeToManyGerundType = d[0].TypeName + "To" + compMap.ChildType;
                                     if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {

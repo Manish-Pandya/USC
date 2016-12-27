@@ -13,6 +13,7 @@ var equipment;
         EquipmentInspection.prototype.onFulfill = function () {
             _super.prototype.onFulfill.call(this);
             this.getChildUrl(EquipmentInspection.RoomMap);
+            this.getChildUrl(EquipmentInspection.PIMap);
         };
         EquipmentInspection.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
@@ -25,6 +26,6 @@ var equipment;
     }(FluxCompositerBase));
     EquipmentInspection.urlMapping = new UrlMapping("getAllEquipmentInspections", "getEquipmentInspectionById&id=", "saveEquipmentInspection");
     EquipmentInspection.RoomMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "Room", "getRoomById&id=", "Room", "Room_id");
-    EquipmentInspection.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=principalInvestigators&id={{UID}}", "PrincipalInvestigator", "Inspection_id", "Principal_investigator_id", "PrincipalInvestigatorEquipmentInspection", "getRelationships&class1=EquipmentInspection&class2=PrincipalInvestigator");
+    EquipmentInspection.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=principalInvestigators&id={{UID}}", "PrincipalInvestigators", "Inspection_id", "Principal_investigator_id", "PrincipalInvestigatorEquipmentInspection", "getRelationships&class1=EquipmentInspection&class2=PrincipalInvestigator");
     equipment.EquipmentInspection = EquipmentInspection;
 })(equipment || (equipment = {}));

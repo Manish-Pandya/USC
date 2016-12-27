@@ -12,6 +12,7 @@ var equipment;
         }
         PrincipalInvestigator.prototype.onFulfill = function () {
             _super.prototype.onFulfill.call(this);
+            this.getChildUrl(PrincipalInvestigator.RoomMap);
         };
         PrincipalInvestigator.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
