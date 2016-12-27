@@ -1010,7 +1010,17 @@ class Rad_ActionManager extends ActionManager {
                     $bagDao = $this->getDao(new WasteBag());
                     $bag = $bagDao->getById($bagArray['Key_id']);
                     $bag->setPickup_id($pickup->getKey_id());
-                    $bagDao->save($bag);
+                    $bag = $bagDao->save($bag);
+
+                    if($decodedObject->getStatus() == "AT RSO" || $decodedObject->getStatus() == "PICKED UP"){
+                        $container = $bag->getContainer();
+                        $currentBags = $container->getCurrentWasteBags();
+                        $currentBag = $currentBags[0];
+                        //replace the waste bag in the container, but only if it was still in there, and therefore the one we picked up
+                        if($currentBag->getKey_id() == $bag->getKey_id()){
+                            $this->changeWasteBag($bag);
+                        }
+                    }
                 }
 
                 foreach($svCollections as $collectionArray){
@@ -1112,10 +1122,10 @@ class Rad_ActionManager extends ActionManager {
             return $decodedObject;
         }
     }
-    function changeWasteBag() {
+    function changeWasteBag($bag = null) {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-        $decodedObject = $this->convertInputJson();
-        $LOG->debug($decodedObject);
+        $decodedObject = $bag != null ? $bag : $this->convertInputJson();
+        $LOG->fatal($decodedObject);
         if( $decodedObject === NULL ) {
             return new ActionError('Error converting input stream to WasteBag', 202);
         }
@@ -1147,7 +1157,15 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new SolidsContainer());
-            $decodedObject = $dao->save($decodedObject);
+            $container = $decodedObject = $dao->save($decodedObject);
+            //add a bag to the container if it doesn't have any
+            if($container->getCurrentWasteBags() == null){
+                $bag = new WasteBag();
+                $bag->setContainer_id($container->getKey_id());
+                $bag->setDate_added(date('Y-m-d H:i:s'));
+                $bag = $this->saveWasteBag($bag);
+            }
+
             return $decodedObject;
         }
     }
