@@ -104,7 +104,7 @@ class Equipment_ActionManager extends ActionManager {
                 }
 
                 foreach($pisToAdd as $pi){
-                    $dao->addRelatedItems($pi["Key_id"],$inspection->getKey_id(),DataRelationship::fromArray(EquipmentInspection::$PIS_RELATIONSHIP));
+                    $dao->addRelatedItems($pi["Key_id"],$insp->getKey_id(),DataRelationship::fromArray(EquipmentInspection::$PIS_RELATIONSHIP));
                 }
             }
 

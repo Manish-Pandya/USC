@@ -1,7 +1,7 @@
 ﻿namespace equipment {
     export class BioSafetyCabinet extends FluxCompositerBase {
 
-        static urlMapping: UrlMapping = new UrlMapping("getAllBioSafetyCabinets", "getBiosafetyCabinetById&id=", "saveBiosafetyCabinet");
+        static urlMapping: UrlMapping = new UrlMapping("getAllBioSafetyCabinets", "getBioSafetyCabinetById&id=", "saveBioSafetyCabinet");
 
         EquipmentInspections: EquipmentInspection[];
         static EquipmentInspectionMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "EquipmentInspection", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=EquipmentInspections&id={{UID}}", "EquipmentInspections", "Equipment_id");

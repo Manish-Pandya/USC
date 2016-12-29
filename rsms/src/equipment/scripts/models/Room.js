@@ -7,6 +7,8 @@ var equipment;
 (function (equipment) {
     var Room = (function (_super) {
         __extends(Room, _super);
+        //PrincipalInvestigators: PrincipalInvestigator[];
+        //static PIMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getAllPIs", "PrincipalInvestigators", "Room_id", "Principal_investigator_id", "RoomPrincipalInvestigator", "getRelationships&class1=Room&class2=PrincipalInvestigator");
         function Room() {
             return _super.call(this) || this;
         }
@@ -20,6 +22,5 @@ var equipment;
         return Room;
     }(FluxCompositerBase));
     Room.urlMapping = new UrlMapping("getAllRooms", "getRoomById&id=", "saveRoom");
-    Room.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getAllPIs", "PrincipalInvestigators", "Room_id", "Principal_investigator_id", "RoomPrincipalInvestigator", "getRelationships&class1=Room&class2=PrincipalInvestigator");
     equipment.Room = Room;
 })(equipment || (equipment = {}));

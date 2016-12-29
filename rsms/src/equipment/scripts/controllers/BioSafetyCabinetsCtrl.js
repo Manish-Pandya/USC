@@ -18,6 +18,7 @@ angular.module('EquipmentModule')
           return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $scope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false)])
             .then(
                 function (whateverGotReturned) {
+                    console.log(DataStoreManager._actualModel);
                     getYears();
                     return true;
                 }
@@ -92,7 +93,6 @@ angular.module('EquipmentModule')
               inspection.Equipment_id = object.Key_id || null;
           }
 
-          if (object.PrincipalInvestigator) object.PrincipalInvestigator.loadRooms();
           modalData[object.Class] = object;
           modalData.inspection = inspection;
           console.log(inspection);
@@ -213,7 +213,6 @@ angular.module('EquipmentModule')
               if ($scope.modalData.BioSafetyCabinetCopy.SelectedInspection.PrincipalInvestigators) {
                   $scope.modalData.BioSafetyCabinetCopy.SelectedInspection.PrincipalInvestigators.forEach(function (pi) {
                       console.log(pi);
-                      pi.loadRooms();
                   })
               }
           }
