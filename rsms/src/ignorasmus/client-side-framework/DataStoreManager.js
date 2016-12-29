@@ -100,22 +100,22 @@ var DataStoreManager = (function () {
                                         else {
                                             allComps.push(DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")));
                                         }
-                                        if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-                                            var manyTypeToManyGerundType = d[0].TypeName + "To" + compMap.ChildType;
-                                            if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
-                                                DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
-                                                console.log(manyTypeToManyGerundType, "gerund getting baked...");
-                                                DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
-                                                    .then(function (gerundReturns) {
-                                                    DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
-                                                });
-                                                allComps.push(DataStoreManager._actualModel[manyTypeToManyGerundType].promise);
-                                            }
-                                        }
                                     }
                                     else {
                                         console.log(type + " fetching local " + compMap.ChildType);
                                         allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
+                                    }
+                                    if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
+                                        var manyTypeToManyGerundType = d[0].TypeName + "To" + compMap.ChildType;
+                                        if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
+                                            DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
+                                            console.log(manyTypeToManyGerundType, "gerund getting baked...");
+                                            DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
+                                                .then(function (gerundReturns) {
+                                                DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
+                                            });
+                                            allComps.push(DataStoreManager._actualModel[manyTypeToManyGerundType].promise);
+                                        }
                                     }
                                 }
                             }
@@ -239,7 +239,6 @@ var DataStoreManager = (function () {
      * @param viewModel
      */
     DataStoreManager.save = function (viewModel) {
-        //TODO: create copy without circular JSON, then post it.
         return XHR.POST(viewModel.thisClass["urlMapping"].urlSave, viewModel)
             .then(function (d) {
             return DataStoreManager.commitToActualModel(d);

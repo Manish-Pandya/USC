@@ -76,21 +76,29 @@ var XHR = (function () {
    **/
     XHR.stringifyCircularFix = function (obj, replacer, space) {
         var parentObj = obj;
+        var lastKey;
         var cache = [];
         // Note this should always be 'function' instead of fat-arrow, as we need 'this' to mutate on recursion
         var json = JSON.stringify(obj, function (key, value) {
-            if (typeof value === 'object' && value !== null) {
-                if (parentObj != this) {
-                    if (cache.indexOf(value) !== -1) {
+            if (typeof value === 'object' && value && this != parentObj) {
+                if (cache.indexOf(value) != -1 && cache.indexOf(parentObj) != 1) {
+                    try {
+                        JSON.stringify(value);
+                    }
+                    catch (error) {
+                        console.log("..." + lastKey + "." + key, "circular reference found and removed");
                         return; // circular reference found, discard key
                     }
-                    cache.push(value); // store value in our collection
                 }
+                cache.push(value); // store value in our collection
             }
             parentObj = this;
+            lastKey = key;
             return replacer ? replacer(key, value) : value;
         }, space);
         cache = null;
+        console.log(obj);
+        console.log(JSON.parse(json));
         return json;
     };
     ;

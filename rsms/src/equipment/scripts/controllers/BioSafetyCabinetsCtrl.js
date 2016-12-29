@@ -103,7 +103,7 @@ angular.module('EquipmentModule')
           });
 
           modalInstance.result.then(function () {
-              getAllBioSafetyCabinets();
+              getAll();
           });
       }
 
