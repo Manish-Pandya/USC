@@ -851,16 +851,27 @@ class GenericDAO {
     }
 
 	/*
-	 * @param RelationshipMapping relationship
+	 * @param RelationMapping relationship
 	 */
 
-	function getRelationships( $relationship ){
+	function getRelationships( RelationMapping $relationship ){
 		$this->LOG->debug("about to get relationships from $tableName");
 
 		global $db;
-		$parentColumn = $relationship->getParentColumn();
-		$childColumn  = $relationship->getChildColumn();
-		$stmt = $db->prepare("SELECT $parentColumn as parentId, $childColumn as childId FROM " . $relationship->getTableName());
+
+		//sometimes, in many to many relationships, we are asking for what we usually think of as the child objects to get their collection of parents
+		//in those cases, we reverse the relationships
+		if($relationship->getIsReversed()){
+			$parentColumn = $relationship->getChildColumn();
+			$childColumn  = $relationship->getParentColumn();
+		}else{
+			$parentColumn = $relationship->getParentColumn();
+			$childColumn  = $relationship->getChildColumn();
+		}
+		$stmt = "SELECT $parentColumn as parentId, $childColumn as childId FROM " . $relationship->getTableName();
+		$this->LOG->fatal($relationship);
+		$this->LOG->fatal($stmt);
+		$stmt = $db->prepare($stmt);
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {

@@ -88,6 +88,7 @@ abstract class DataStoreManager {
      * @param viewModelParent
      * @param compMaps
      */
+     //TODO:  Switch of allCompMaps when we hit circular structure in get alls, for instance, a PI can get its Rooms which can get its PIs, but we should stop there.
     static getAll(type: string, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase[] | Promise<any> {
         if (!PermissionMap.getPermission(type).getAll) {
             throw new Error("You don't have permission to call getAll for " + type);
@@ -235,7 +236,6 @@ abstract class DataStoreManager {
                         viewModelParent.test = d.viewModelWatcher;
                         viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
                         //DataStoreManager._actualModel[type].Data = d;
-                        console.log("yup");
                         return this.promisifyData(d);
                     }
                 })
@@ -254,7 +254,7 @@ abstract class DataStoreManager {
      *
      * @param viewModel
      */
-    static save(viewModel: FluxCompositerBase): void | Promise<FluxCompositerBase> {
+    static save(viewModel: FluxCompositerBase): Promise<FluxCompositerBase> {
         return XHR.POST(viewModel.thisClass["urlMapping"].urlSave, viewModel)
             .then((d) => {
                 return DataStoreManager.commitToActualModel(d);

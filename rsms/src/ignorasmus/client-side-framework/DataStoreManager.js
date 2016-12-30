@@ -68,6 +68,7 @@ var DataStoreManager = (function () {
      * @param viewModelParent
      * @param compMaps
      */
+    //TODO:  Switch of allCompMaps when we hit circular structure in get alls, for instance, a PI can get its Rooms which can get its PIs, but we should stop there.
     DataStoreManager.getAll = function (type, viewModelParent, compMaps) {
         if (compMaps === void 0) { compMaps = null; }
         if (!PermissionMap.getPermission(type).getAll) {
@@ -219,7 +220,6 @@ var DataStoreManager = (function () {
                     viewModelParent.test = d.viewModelWatcher;
                     viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
                     //DataStoreManager._actualModel[type].Data = d;
-                    console.log("yup");
                     return _this.promisifyData(d);
                 }
             })

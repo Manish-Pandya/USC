@@ -217,7 +217,7 @@ angular
              var allRooms = [];
              pis.forEach(function (pi) {
                  if (!pi.Rooms) return;
-                 console.log(pi);
+                 //console.log(pi);
 
                  pi.Rooms.forEach(function (r) {
                      var index = parseInt(r.Key_id);

@@ -97,7 +97,6 @@ var XHR = (function () {
             return replacer ? replacer(key, value) : value;
         }, space);
         cache = null;
-        console.log(obj);
         console.log(JSON.parse(json));
         return json;
     };

@@ -50,6 +50,10 @@ angular
     af.setSelectedView = function (view) {
         $rootScope.selectedView = view;
     };
+    af.save = function (viewModel) {
+        $rootScope.error = null;
+        return $rootScope.saving = DataStoreManager.save(viewModel);
+    };
     /********************************************************************
     **
     **      MODALS
@@ -96,20 +100,8 @@ angular
     af.getAllAutoclaves = function () {
         return dataSwitchFactory.getAllObjects('Autoclave');
     };
-    af.saveAutoclave = function (copy, autoclave) {
-        af.clearError();
-        console.log(copy);
-        return this.save(copy)
-            .then(function (returnedAutoclave) {
-            returnedAutoclave = modelInflatorFactory.instateAllObjectsFromJson(returnedAutoclave);
-            if (autoclave) {
-                angular.extend(autoclave, copy);
-            }
-            else {
-                dataStoreManager.addOnSave(returnedAutoclave);
-                dataStoreManager.store(returnedAutoclave);
-            }
-        }, af.setError('The Autoclave could not be saved'));
+    af.saveAutoclave = function (autoclave) {
+        return af.save(autoclave);
     };
     /********************************************************************
     **
@@ -135,45 +127,8 @@ angular
     af.getAllEquipmentInspections = function () {
         return dataSwitchFactory.getAllObjects('EquipmentInspection', true);
     };
-    af.saveEquipmentInspection = function (copy, equipmentInspection) {
-        af.clearError();
-        //flatten to avoid circular JSON structure
-        var secondCopy = {
-            Certification_date: copy.viewDate,
-            Due_date: copy.Due_date,
-            Class: "EquipmentInspection",
-            Comment: copy.Comment,
-            Status: copy.Status,
-            Frequency: copy.Frequency,
-            Is_active: copy.Is_active,
-            Principal_investigator_id: copy.Principal_investigator_id,
-            PrincipalInvestigatorId: copy.PrincipalInvestigatorId,
-            Room_id: copy.Room_id,
-            RoomId: copy.RoomId,
-            Equipment_id: copy.Equipment_id,
-            Equipment_class: copy.Equipment_class,
-            Report_path: copy.Report_path
-        };
-        if (copy.Key_id) {
-            secondCopy.Key_id = copy.Key_id;
-        }
-        console.log(secondCopy);
-        return this.save(secondCopy)
-            .then(function (returnedEquipmentInspections) {
-            returnedEquipmentInspections = modelInflatorFactory.instateAllObjectsFromJson(returnedEquipmentInspections);
-            if (equipmentInspection.Key_id) {
-                console.log(returnedEquipmentInspections);
-                angular.extend(dataStoreManager.getById("EquipmentInspection", equipmentInspection.Key_id), returnedEquipmentInspections[0]);
-            }
-            else {
-                console.log(returnedEquipmentInspections);
-                dataStoreManager.addOnSave(returnedEquipmentInspections);
-                dataStoreManager.store(returnedEquipmentInspections);
-            }
-            var cabinet = dataStoreManager.getById("BioSafetyCabinet", equipmentInspection.Equipment_id);
-            if (returnedEquipmentInspections[1])
-                cabinet.EquipmentInspections.push(returnedEquipmentInspections[1]);
-        }, af.setError('The EquipmentInspection could not be saved'));
+    af.saveEquipmentInspection = function (equipmentInspection) {
+        return af.save(equipmentInspection);
     };
     /********************************************************************
     **
@@ -212,43 +167,8 @@ angular
         return dataSwitchFactory.getAllObjects('PrincipalInvestigator');
     };
     af.saveBioSafetyCabinet = function (bioSafetyCabinet) {
-        return DataStoreManager.save(bioSafetyCabinet);
+        return af.save(bioSafetyCabinet);
     };
-    /*af.saveBioSafetyCabinet = function(copy, bioSafetyCabinet) {
-        af.clearError();
-        
-        //flatten to avoid circular JSON structure
-
-        //TODO:  this is too aggressive and seems to strip parent objects where it should strip children
-        //removes entire SelectedInspection property when it should only remove actual circularity from within that property
-        var secondCopy = JSON.parse(XHR.stringifyCircularFix(copy));
-        console.log(secondCopy);
-        return this.save(secondCopy)
-            .then(
-                function (returnedBioSafetyCabinet) {
-                    if (bioSafetyCabinet.Key_id) {
-                        var cab = dataStoreManager.getById("BioSafetyCabinet",bioSafetyCabinet.Key_id)
-                        angular.extend(cab, returnedBioSafetyCabinet);
-                        cab.loadEquipmentInspections();
-                    } else {
-                        console.log(returnedBioSafetyCabinet);
-                        for (var x = 0; x < returnedBioSafetyCabinet.EquipmentInspections.length; x++) {
-                            var newInspection = returnedBioSafetyCabinet.EquipmentInspections[x];
-                            console.log(newInspection);
-                            newInspection = modelInflatorFactory.instateAllObjectsFromJson(newInspection);
-                            store.store(newInspection);
-                            newInspection.loadRoom();
-                            newInspection.loadPrincipalInvestigator();
-                        }
-                        returnedBioSafetyCabinet = modelInflatorFactory.instateAllObjectsFromJson(returnedBioSafetyCabinet);
-                        store.store(returnedBioSafetyCabinet);
-                        console.log(returnedBioSafetyCabinet);
-                        return returnedBioSafetyCabinet;
-                    }
-                },
-                af.setError('The BioSafetyCabinet could not be saved')
-            )
-    }*/
     /********************************************************************
     **
     **		USER MANAGEMENT

@@ -94,13 +94,10 @@ class Equipment_ActionManager extends ActionManager {
 
             $inspection = $decodedObject->conditionallyCreateEquipmentInspection($insp);
 
-            //TODO:  if we have an inspection, make sure we add relevant PIS
             //if the inspection already exists, remove its PIs first, then add the relevant ones
-
             if($decodedObject->getSelectedInspection() != null){
-
                 foreach ($inspection->getPrincipalInvestigators() as $pi){
-                    $dao->removeRelatedItems($pi->getKey_id(),$insp->getKey_id(),DataRelationship::fromArray(EquipmentInspection::$PIS_RELATIONSHIP));
+                    $dao->removeRelatedItems($pi->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(EquipmentInspection::$PIS_RELATIONSHIP));
                 }
 
                 foreach($pisToAdd as $pi){

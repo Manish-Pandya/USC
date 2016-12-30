@@ -18,7 +18,6 @@ angular.module('EquipmentModule')
           return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $scope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false)])
             .then(
                 function (whateverGotReturned) {
-                    console.log(DataStoreManager._actualModel);
                     getYears();
                     return true;
                 }
@@ -257,11 +256,10 @@ angular.module('EquipmentModule')
           }
       });
 
-      $scope.save = function (copy, original) {
+      $scope.save = function (copy) {
           console.log(copy);
-          if (!original) original = null;
           copy.Certification_date = convenienceMethods.setMysqlTime(copy.Certification_date);
-          af.saveBioSafetyCabinet(copy, original)
+          af.saveBioSafetyCabinet(copy)
                   .then(function () { $scope.close() })
       }
 
