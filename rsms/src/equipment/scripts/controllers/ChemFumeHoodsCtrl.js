@@ -8,15 +8,33 @@
  * Controller of the EquipmentModule Chemical Fume Hoods view
  */
 angular.module('EquipmentModule')
-  .controller('ChemFumeHoodsCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
+  .controller('ChemFumeHoodsCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods, $q) {
       var af = $scope.af = applicationControllerFactory;
 
-        $scope.hoods = [];
+      $scope.hoods = [];
+      function getAll() {
+          $scope.inspections = [];
+          $scope.hoods = [];
+          $q.all([DataStoreManager.getAll("EquipmentInspection", $scope.inspections, false), DataStoreManager.getAll("ChemFumeHood", $scope.hoods, false)])
+          .then(
+              function (whateverGotReturned) {
+                  console.log($scope.inspections);
+                  console.log($scope.hoods);
+              }
+          )
+          .catch(
+              function (reason) {
+                  console.log("bad Promise.all:", reason);
+              }
+          )
+      }
+
+      $rootScope.getCurrentRoles().then(getAll);
     
         $scope.deactivate = function(hood) {
-            var copy = dataStoreManager.createCopy(hood);
+            var copy = _.cloneDeep(hood); // TODO: Do we really need a clone? This should just be the viewModel, right?
             copy.Retirement_date = new Date();
-            af.saveChemFumeHood(hood.pi, copy, hood);
+            af.saveChemFumeHood(copy);
         }
     
         $scope.openModal = function(object) {

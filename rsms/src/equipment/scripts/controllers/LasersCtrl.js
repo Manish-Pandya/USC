@@ -8,15 +8,32 @@
  * Controller of the EquipmentModule Lasers view
  */
 angular.module('EquipmentModule')
-  .controller('LasersCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
+  .controller('LasersCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods, $q) {
       var af = $scope.af = applicationControllerFactory;
 
-        $scope.lasers = [];
+      function getAll() {
+          $scope.inspections = [];
+          $scope.lasers = [];
+          $q.all([DataStoreManager.getAll("EquipmentInspection", $scope.inspections, false), DataStoreManager.getAll("Laser", $scope.lasers, false)])
+          .then(
+              function (whateverGotReturned) {
+                  console.log($scope.inspections);
+                  console.log($scope.lasers);
+              }
+          )
+          .catch(
+              function (reason) {
+                  console.log("bad Promise.all:", reason);
+              }
+          )
+      }
+
+      $rootScope.getCurrentRoles().then(getAll);
     
         $scope.deactivate = function(laser) {
-            var copy = dataStoreManager.createCopy(laser);
+            var copy = _.cloneDeep(laser); // TODO: Do we really need a clone? This should just be the viewModel, right?
             copy.Retirement_date = new Date();
-            af.saveLaser(laser.pi, copy, laser);
+            af.saveLaser(copy);
         }
     
         $scope.openModal = function(object) {

@@ -64,17 +64,16 @@ angular.module('EquipmentModule')
                 $scope.$apply();
             })
             console.log($scope.cabinets);
-            console.log(DataStoreManager._actualModel);
         }
 
       //init load
       $scope.loading = $rootScope.getCurrentRoles().then(getAll);
 
       $scope.deactivate = function (cabinet) {
-          var copy = dataStoreManager.createCopy(cabinet);
+          var copy = _.cloneDeep(cabinet); // TODO: Do we really need a clone? This should just be the viewModel, right?
           copy.Retirement_date = convenienceMethods.getUnixDate(new Date());
           copy.Is_active = !copy.Is_active;
-          $scope.Saving = af.saveBioSafetyCabinet(copy, cabinet);
+          $scope.Saving = af.saveBioSafetyCabinet(copy);
       }
 
       $scope.openModal = function (object, inspection, isCabinet) {
@@ -118,17 +117,16 @@ angular.module('EquipmentModule')
           return false;
       }
 
-      $scope.save = function (copy, original) {
-          if (!original) original = null;
+      $scope.save = function (copy) {
           copy.Certification_date = convenienceMethods.setMysqlTime($scope.certDate);
-          af.saveBioSafetyCabinet(copy, original)
+          af.saveBioSafetyCabinet(copy)
                   .then(function () { $scope.close() })
       }
 
       $scope.certify = function (original) {
-          var copy = dataStoreManager.createCopy(original);
+          var copy = _.cloneDeep(original); // TODO: Do we really need a clone? This should just be the viewModel, right?
           copy.Certification_date = convenienceMethods.setMysqlTime(copy.viewDate);
-          $scope.Saving = af.saveEquipmentInspection(copy, original)
+          $scope.Saving = af.saveEquipmentInspection(copy);
       }
 
       $scope.$on('fileUpload', function (event, data) {
@@ -271,7 +269,7 @@ angular.module('EquipmentModule')
           copy.Certification_date = convenienceMethods.setMysqlTime(copy.viewDate);
           copy.Fail_date = convenienceMethods.setMysqlTime(copy.viewFailDate);
 
-          af.saveEquipmentInspection(copy, original)
+          af.saveEquipmentInspection(copy)
                   .then(function () { $scope.close() })
       }
 

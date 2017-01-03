@@ -134,6 +134,21 @@ class Equipment_ActionManager extends ActionManager {
     	return $autoClavesDao->getAll();
     }
 
+	public function getAllChemFumeHoods(){
+        $hoodsDao = $this->getDao(new ChemFumeHood());
+    	return $hoodsDao->getAll();
+    }
+
+	public function getAllLasers(){
+        $lasersDao = $this->getDao(new Laser());
+    	return $lasersDao->getAll();
+    }
+
+	public function getAllXRays(){
+        $xraysDao = $this->getDao(new XRay());
+    	return $xraysDao->getAll();
+    }
+
     public function getBuidlingsWithoutRooms(){
     	return $this->getAllBuildings(null, true, true);
     }

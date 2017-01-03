@@ -19,6 +19,6 @@ var equipment;
         };
         return Laser;
     }(FluxCompositerBase));
-    Laser.urlMapping = new UrlMapping("getAllLaserss", "getLaserById&id=", "saveLaser");
+    Laser.urlMapping = new UrlMapping("getAllLasers", "getLaserById&id=", "saveLaser");
     equipment.Laser = Laser;
 })(equipment || (equipment = {}));

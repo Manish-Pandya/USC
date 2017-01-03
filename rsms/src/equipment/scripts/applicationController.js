@@ -80,53 +80,34 @@ angular
     **
     **      AUTOCLAVE            **
     ********************************************************************/
-    af.getAutuclaveById = function (key_id) {
-        var urlSegment = 'getAutuclaveById&id=' + key_id;
-        if (store.checkCollection('Autuclave', key_id)) {
-            var autoclave = store.getById('Autuclave', key_id)
-                .then(function (autoclave) {
-                return autoclave;
-            });
-        }
-        else {
-            var autoclave = genericAPIFactory.read(urlSegment)
-                .then(function (returnedPromise) {
-                // store autoclave in cache here?
-                return modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
-            });
-        }
-        return autoclave;
-    };
-    af.getAllAutoclaves = function () {
-        return dataSwitchFactory.getAllObjects('Autoclave');
-    };
     af.saveAutoclave = function (autoclave) {
         return af.save(autoclave);
     };
     /********************************************************************
     **
+    **      X-Ray            **
+    ********************************************************************/
+    af.saveXRay = function (xray) {
+        return af.save(xray);
+    };
+    /********************************************************************
+    **
+    **      Laser            **
+    ********************************************************************/
+    af.saveLaser = function (laser) {
+        return af.save(laser);
+    };
+    /********************************************************************
+    **
+    **      ChemFumeHood            **
+    ********************************************************************/
+    af.saveChemFumeHood = function (hood) {
+        return af.save(hood);
+    };
+    /********************************************************************
+    **
     **      EquipmentInspection            **
     ********************************************************************/
-    af.getEquipmentInspectionById = function (key_id) {
-        var urlSegment = 'getEquipmentInspectionById&id=' + key_id;
-        if (store.checkCollection('EquipmentInspection', key_id)) {
-            var equipmentInspection = store.getById('EquipmentInspection', key_id)
-                .then(function (equipmentInspection) {
-                return equipmentInspection;
-            });
-        }
-        else {
-            var equipmentInspection = genericAPIFactory.read(urlSegment)
-                .then(function (returnedPromise) {
-                // store bioSafetyCabinet in cache here?
-                return modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
-            });
-        }
-        return equipmentInspection;
-    };
-    af.getAllEquipmentInspections = function () {
-        return dataSwitchFactory.getAllObjects('EquipmentInspection', true);
-    };
     af.saveEquipmentInspection = function (equipmentInspection) {
         return af.save(equipmentInspection);
     };
@@ -134,38 +115,6 @@ angular
     **
     **      BioSafetyCabinet            **
     ********************************************************************/
-    af.getBioSafetyCabinetById = function (key_id) {
-        var urlSegment = 'getBioSafetyCabinetById&id=' + key_id;
-        if (store.checkCollection('BioSafetyCabinet', key_id)) {
-            var bioSafetyCabinet = store.getById('BioSafetyCabinet', key_id)
-                .then(function (bioSafetyCabinet) {
-                return bioSafetyCabinet;
-            });
-        }
-        else {
-            var bioSafetyCabinet = genericAPIFactory.read(urlSegment)
-                .then(function (returnedPromise) {
-                // store bioSafetyCabinet in cache here?
-                return modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
-            });
-        }
-        return bioSafetyCabinet;
-    };
-    af.getAllBioSafetyCabinets = function () {
-        return dataSwitchFactory.getAllObjects('BioSafetyCabinet');
-    };
-    af.getAllRooms = function () {
-        return dataSwitchFactory.getAllObjects('Room');
-    };
-    af.getAllBuildings = function () {
-        return dataSwitchFactory.getAllObjects('Building');
-    };
-    af.getAllCampuses = function () {
-        return dataSwitchFactory.getAllObjects('Campus');
-    };
-    af.getAllPrincipalInvestigators = function () {
-        return dataSwitchFactory.getAllObjects('PrincipalInvestigator');
-    };
     af.saveBioSafetyCabinet = function (bioSafetyCabinet) {
         return af.save(bioSafetyCabinet);
     };
@@ -174,25 +123,6 @@ angular
     **		USER MANAGEMENT
     **
     ********************************************************************/
-    af.getUserById = function (key_id) {
-        var urlSegment = 'getUserById&id=' + key_id;
-        if (store.checkCollection('User', key_id)) {
-            var user = store.getById('User', key_id)
-                .then(function (user) {
-                return user;
-            });
-        }
-        else {
-            var user = genericAPIFactory.read(urlSegment)
-                .then(function (returnedPromise) {
-                return modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
-            });
-        }
-        return user;
-    };
-    af.getAllUsers = function () {
-        return dataSwitchFactory.getAllObjects('User');
-    };
     af.getUsersViewModel = function () {
         var model = [];
         var userPromise = $q.defer();
@@ -261,9 +191,6 @@ angular
     };
     af.setError = function (errorString) {
         $rootScope.error = errorString + ' please check your internet connection and try again';
-    };
-    af.clearError = function () {
-        $rootScope.error = null;
     };
     //use this method to loop through a collection of child objects returned from the server and update the cached copies of them
     af.updateChildren = function (obj, childProp) {

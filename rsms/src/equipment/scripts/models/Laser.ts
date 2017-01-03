@@ -1,7 +1,7 @@
 namespace equipment {
     export class Laser extends FluxCompositerBase {
 
-        static urlMapping: UrlMapping = new UrlMapping("getAllLaserss", "getLaserById&id=", "saveLaser");
+        static urlMapping: UrlMapping = new UrlMapping("getAllLasers", "getLaserById&id=", "saveLaser");
 
         constructor() {
             super();

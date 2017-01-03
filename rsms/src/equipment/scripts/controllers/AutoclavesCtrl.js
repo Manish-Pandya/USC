@@ -11,13 +11,14 @@ angular.module('EquipmentModule')
   .controller('AutoclavesCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods, $q) {
       var af = $scope.af = applicationControllerFactory;
     
-      function getAllInspections() {
-          $scope.inspections = [];
-          $q.all([DataStoreManager.getAll("EquipmentInspection", $scope.inspections, false)])
+      function getAll() {
+            $scope.inspections = [];
+            $scope.autoclaves = [];
+            $q.all([DataStoreManager.getAll("EquipmentInspection", $scope.inspections, false), DataStoreManager.getAll("Autoclave", $scope.autoclaves, false)])
             .then(
                 function (whateverGotReturned) {
                     console.log($scope.inspections);
-                    console.log(DataStoreManager._actualModel);
+                    console.log($scope.autoclaves);
                 }
             )
             .catch(
@@ -27,28 +28,12 @@ angular.module('EquipmentModule')
             )
         }
 
-        function getAllAutoclaves() {
-            $scope.autoclaves = [];
-            $q.all([DataStoreManager.getAll("Autoclave", $scope.autoclaves, false)])
-                .then(
-                    function (whateverGotReturned) {
-                        console.log($scope.autoclaves);
-                        console.log(DataStoreManager._actualModel);
-                    }
-                )
-                .catch(
-                    function (reason) {
-                        console.log("bad Promise.all:", reason);
-                    }
-                )
-        }
-        
-        $rootScope.getCurrentRoles().then(getAllInspections).then(getAllAutoclaves);
+        $rootScope.getCurrentRoles().then(getAll);
 
         $scope.deactivate = function(autoclave) {
-            var copy = dataStoreManager.createCopy(autoclave);
+            var copy = _.cloneDeep(autoclave); // TODO: Do we really need a clone? This should just be the viewModel, right?
             copy.Retirement_date = new Date();
-            af.saveAutoclave(autoclave.pi, copy, autoclave);
+            af.saveAutoclave(copy);
         }
     
         $scope.openModal = function(object) {
@@ -71,8 +56,8 @@ angular.module('EquipmentModule')
 
 		$scope.modalData = af.getModalData();
         console.log($scope.modalData);
-        $scope.save = function(copy, autoclave) {
-            af.saveAutoclave(copy, autoclave)
+        $scope.save = function(copy) {
+            af.saveAutoclave(copy)
                 .then($scope.close);
         }
 
