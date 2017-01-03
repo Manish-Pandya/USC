@@ -9,7 +9,6 @@
  */
 angular.module('EquipmentModule')
   .controller('MainCtrl', function ($scope, $rootScope, applicationControllerFactory, $state, $q) {
-
       //do we have access to action functions?
       var af = $scope.af = applicationControllerFactory;
       $scope.$state = $state;

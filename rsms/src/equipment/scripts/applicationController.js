@@ -3,9 +3,7 @@ angular
     .module('EquipmentModule')
     .factory('applicationControllerFactory', function applicationControllerFactory(rootApplicationControllerFactory, modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal, convenienceMethods) {
     var af = rootApplicationControllerFactory;
-    var store = dataStoreManager;
     $rootScope.af = this; //give us access to this factory in all views. Because that's cool.
-    store.$q = $q;
     af.getViewMap = function (current) {
         var viewMap = [
             {
@@ -119,53 +117,6 @@ angular
     };
     /********************************************************************
     **
-    **		USER MANAGEMENT
-    **
-    ********************************************************************/
-    af.getUsersViewModel = function () {
-        var model = [];
-        var userPromise = $q.defer();
-        var piPromise = $q.defer();
-        var roomsPromise = $q.defer();
-        var campusesPromise = $q.defer();
-        var relationsPromise = $q.defer();
-        var all = $q.all([userPromise.promise, relationsPromise.promise, piPromise.promise, roomsPromise.promise, campusesPromise.promise]);
-        this.getAllUsers()
-            .then(function (users) {
-            userPromise.resolve(users);
-        });
-        this.getAllPIRoomRelations()
-            .then(function (relations) {
-            relationsPromise.resolve(relationsPromise);
-        });
-        this.getAllPIs()
-            .then(function (pis) {
-            piPromise.resolve(pis);
-        });
-        this.getAllRooms()
-            .then(function (rooms) {
-            roomsPromise.resolve(rooms);
-        });
-        this.getAllCampuses()
-            .then(function (campuses) {
-            campusesPromise.resolve(campuses);
-        });
-        // TODO: Make specific to Equipment module, if this is even needed.
-        return all.then(function (model) {
-            var inflatedModel = {};
-            store.store(modelInflatorFactory.instateAllObjectsFromJson(store.get('User')));
-            store.store(modelInflatorFactory.instateAllObjectsFromJson(store.get('PrincipalInvestigator')));
-            store.store(modelInflatorFactory.instateAllObjectsFromJson(store.get('PrincipalInvestigatorRoomRelation')));
-            store.store(modelInflatorFactory.instateAllObjectsFromJson(store.get('Room')));
-            inflatedModel.users = modelInflatorFactory.callAccessors('Users');
-            inflatedModel.pis = modelInflatorFactory.callAccessors('PrincipalInvestigators');
-            inflatedModel.relations = modelInflatorFactory.callAccessors('PrincipalInvestigatorRoomRelations');
-            inflatedModel.rooms = modelInflatorFactory.callAccessors('Rooms');
-            return inflatedModel;
-        });
-    };
-    /********************************************************************
-    **
     **      HANDY FUNCTIONS
     **
     ********************************************************************/
@@ -190,23 +141,6 @@ angular
     };
     af.setError = function (errorString) {
         $rootScope.error = errorString + ' please check your internet connection and try again';
-    };
-    //use this method to loop through a collection of child objects returned from the server and update the cached copies of them
-    af.updateChildren = function (obj, childProp) {
-        var i = obj[childProp].length;
-        while (i--) {
-            //to do angular.extend the right local obj from the servers copy
-            if (dataStoreManager.getById(obj[childProp][i].Class, obj[childProp][i].Key_id)) {
-                var cachedObj = dataStoreManager.getById(obj[childProp][i].Class, obj[childProp][i].Key_id);
-                for (var prop in cachedObj) {
-                    console.log(obj[childProp][i][prop]);
-                    console.log(obj[childProp][i][prop]);
-                    if (obj[childProp][i][prop])
-                        obj[childProp][i][prop] = obj[childProp][i][prop];
-                    obj[childProp][i] = cachedObj[prop];
-                }
-            }
-        }
     };
     return af;
 });

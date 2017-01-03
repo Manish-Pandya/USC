@@ -31,9 +31,8 @@ angular.module('EquipmentModule')
         $scope.loading = $rootScope.getCurrentRoles().then(getAll);
 
         $scope.deactivate = function(autoclave) {
-            var copy = _.cloneDeep(autoclave); // TODO: Do we really need a clone? This should just be the viewModel, right?
-            copy.Retirement_date = new Date();
-            af.saveAutoclave(copy);
+            autoclave.Retirement_date = new Date();
+            af.saveAutoclave(autoclave);
         }
     
         $scope.openModal = function(object) {

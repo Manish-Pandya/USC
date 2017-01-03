@@ -70,10 +70,9 @@ angular.module('EquipmentModule')
       $scope.loading = $rootScope.getCurrentRoles().then(getAll);
 
       $scope.deactivate = function (cabinet) {
-          var copy = _.cloneDeep(cabinet); // TODO: Do we really need a clone? This should just be the viewModel, right?
-          copy.Retirement_date = convenienceMethods.getUnixDate(new Date());
-          copy.Is_active = !copy.Is_active;
-          $scope.Saving = af.saveBioSafetyCabinet(copy);
+          cabinet.Retirement_date = convenienceMethods.getUnixDate(new Date());
+          cabinet.Is_active = !cabinet.Is_active;
+          $scope.saving = af.saveBioSafetyCabinet(cabinet);
       }
 
       $scope.openModal = function (object, inspection, isCabinet) {
@@ -124,9 +123,8 @@ angular.module('EquipmentModule')
       }
 
       $scope.certify = function (original) {
-          var copy = _.cloneDeep(original); // TODO: Do we really need a clone? This should just be the viewModel, right?
-          copy.Certification_date = convenienceMethods.setMysqlTime(copy.viewDate);
-          $scope.Saving = af.saveEquipmentInspection(copy);
+          original.Certification_date = convenienceMethods.setMysqlTime(original.viewDate);
+          $scope.saving = af.saveEquipmentInspection(original);
       }
 
       $scope.$on('fileUpload', function (event, data) {

@@ -31,9 +31,8 @@ angular.module('EquipmentModule')
       $scope.loading = $rootScope.getCurrentRoles().then(getAll);
     
         $scope.deactivate = function(xray) {
-            var copy = _.cloneDeep(xray); // TODO: Do we really need a clone? This should just be the viewModel, right?
-            copy.Retirement_date = new Date();
-            af.saveXRay(copy);
+            xray.Retirement_date = new Date();
+            af.saveXRay(xray);
         }
     
         $scope.openModal = function(object) {
