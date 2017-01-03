@@ -144,10 +144,7 @@ angular.module('EquipmentModule')
           xhr.open('POST', url, true);
           xhr.send(formData);
           xhr.onreadystatechange = function () {
-              if (xhr.readyState !== XMLHttpRequest.DONE) {
-                  return;
-              }
-              if (xhr.status !== 200) {
+              if (xhr.readyState !== XMLHttpRequest.DONE || xhr.status !== 200) {
                   return;
               }
               if (xhr.status == 200) {
@@ -171,12 +168,10 @@ angular.module('EquipmentModule')
 
       $scope.modalData = af.getModalData();
       $scope.PIs = [];
-      $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator",$scope.PIs,true)]);
+      $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $scope.PIs, true)]);
 
 
       if ($scope.modalData.BioSafetyCabinetCopy.EquipmentInspections) {
-
-
           if ($scope.modalData.inspection.Room) {
               $scope.modalData.BioSafetyCabinetCopy.Room = $scope.modalData.inspection.Room;
           }
@@ -262,7 +257,6 @@ angular.module('EquipmentModule')
       }
 
       $scope.certify = function (copy, original) {
-
           $scope.message = null;
 
           if (!original) original = null;
@@ -285,9 +279,7 @@ angular.module('EquipmentModule')
           })[0];
           console.log(thing);
           if (thing) return thing.Comment || $scope.modalData.BioSafetyCabinetCopy.Comment || "";
-
       }
 
       console.log($scope.modalData);
-
   });

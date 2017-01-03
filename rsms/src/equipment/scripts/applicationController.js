@@ -4,8 +4,7 @@ angular
     .factory('applicationControllerFactory', function applicationControllerFactory(rootApplicationControllerFactory, modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal, convenienceMethods) {
     var af = rootApplicationControllerFactory;
     var store = dataStoreManager;
-    //give us access to this factory in all views.  Because that's cool.
-    $rootScope.af = this;
+    $rootScope.af = this; //give us access to this factory in all views. Because that's cool.
     store.$q = $q;
     af.getViewMap = function (current) {
         var viewMap = [
