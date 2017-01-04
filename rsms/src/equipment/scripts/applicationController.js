@@ -53,70 +53,6 @@ angular
     };
     /********************************************************************
     **
-    **      MODALS
-    **
-    ********************************************************************/
-    af.fireModal = function (templateName, object) {
-        if (object)
-            af.setModalData(object);
-        var modalInstance = $modal.open({
-            templateUrl: templateName + '.html',
-            controller: 'GenericModalCtrl'
-        });
-    };
-    af.setModalData = function (thing) {
-        dataStoreManager.setModalData(thing);
-    };
-    af.getModalData = function () {
-        return dataStoreManager.getModalData();
-    };
-    af.deleteModalData = function () {
-        dataStore.modalData = [];
-    };
-    /********************************************************************
-    **
-    **      AUTOCLAVE            **
-    ********************************************************************/
-    af.saveAutoclave = function (autoclave) {
-        return af.save(autoclave);
-    };
-    /********************************************************************
-    **
-    **      X-Ray            **
-    ********************************************************************/
-    af.saveXRay = function (xray) {
-        return af.save(xray);
-    };
-    /********************************************************************
-    **
-    **      Laser            **
-    ********************************************************************/
-    af.saveLaser = function (laser) {
-        return af.save(laser);
-    };
-    /********************************************************************
-    **
-    **      ChemFumeHood            **
-    ********************************************************************/
-    af.saveChemFumeHood = function (hood) {
-        return af.save(hood);
-    };
-    /********************************************************************
-    **
-    **      EquipmentInspection            **
-    ********************************************************************/
-    af.saveEquipmentInspection = function (equipmentInspection) {
-        return af.save(equipmentInspection);
-    };
-    /********************************************************************
-    **
-    **      BioSafetyCabinet            **
-    ********************************************************************/
-    af.saveBioSafetyCabinet = function (bioSafetyCabinet) {
-        return af.save(bioSafetyCabinet);
-    };
-    /********************************************************************
-    **
     **      HANDY FUNCTIONS
     **
     ********************************************************************/
@@ -138,9 +74,6 @@ angular
         console.log(new Date().getTime());
         console.log(seconds < new Date().getTime());
         return seconds < new Date().getTime();
-    };
-    af.setError = function (errorString) {
-        $rootScope.error = errorString + ' please check your internet connection and try again';
     };
     return af;
 });

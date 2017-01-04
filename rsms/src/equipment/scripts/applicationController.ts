@@ -57,85 +57,6 @@ angular
                 $rootScope.error = null;
                 return $rootScope.saving = DataStoreManager.save(viewModel);
             }
-
-            /********************************************************************
-            **
-            **      MODALS
-            **
-            ********************************************************************/
-            af.fireModal = function(templateName, object) {
-                if (object) af.setModalData(object);
-                var modalInstance = $modal.open({
-                  templateUrl: templateName+'.html',
-                  controller: 'GenericModalCtrl'
-                });
-            }
-            
-            af.setModalData = function(thing) {
-                dataStoreManager.setModalData(thing);
-            }
-
-            af.getModalData = function() {
-                return dataStoreManager.getModalData();
-            }
-
-            af.deleteModalData = function() {
-                dataStore.modalData = [];
-            }
-            
-            /********************************************************************
-            **
-            **      AUTOCLAVE            **
-            ********************************************************************/
-
-            af.saveAutoclave = function (autoclave: equipment.Autoclave): Promise<FluxCompositerBase> {
-                return af.save(autoclave);
-            }
-
-            /********************************************************************
-            **
-            **      X-Ray            **
-            ********************************************************************/
-
-            af.saveXRay = function (xray: equipment.XRay): Promise<FluxCompositerBase> {
-                return af.save(xray);
-            }
-
-            /********************************************************************
-            **
-            **      Laser            **
-            ********************************************************************/
-
-            af.saveLaser = function (laser: equipment.Laser): Promise<FluxCompositerBase> {
-                return af.save(laser);
-            }
-
-            /********************************************************************
-            **
-            **      ChemFumeHood            **
-            ********************************************************************/
-
-            af.saveChemFumeHood = function (hood: equipment.ChemFumeHood): Promise<FluxCompositerBase> {
-                return af.save(hood);
-            }
-            
-            /********************************************************************
-            **
-            **      EquipmentInspection            **
-            ********************************************************************/
-
-            af.saveEquipmentInspection = function (equipmentInspection: equipment.EquipmentInspection): Promise<FluxCompositerBase> {
-                return af.save(equipmentInspection);
-            }
-            
-            /********************************************************************
-            **
-            **      BioSafetyCabinet            **
-            ********************************************************************/
-            
-            af.saveBioSafetyCabinet = function (bioSafetyCabinet: equipment.BioSafetyCabinet): Promise<FluxCompositerBase> {
-                return af.save(bioSafetyCabinet);
-            }
             
             /********************************************************************
             **
@@ -162,10 +83,6 @@ angular
                 console.log(new Date().getTime())
                 console.log(seconds < new Date().getTime())
                 return seconds < new Date().getTime();
-            }
-
-            af.setError = function(errorString) {
-                $rootScope.error = errorString + ' please check your internet connection and try again';
             }
 
             return af;

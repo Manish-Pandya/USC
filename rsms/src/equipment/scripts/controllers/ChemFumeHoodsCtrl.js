@@ -31,19 +31,19 @@ angular.module('EquipmentModule')
 
       $scope.loading = $rootScope.getCurrentRoles().then(getAll);
     
-        $scope.deactivate = function(hood) {
+      $scope.deactivate = function (chemFumeHood) {
             hood.Retirement_date = new Date();
-            af.saveChemFumeHood(hood);
-        }
+            af.save(chemFumeHood);
+      }
     
-        $scope.openModal = function(object) {
+      $scope.openModal = function(object) {
             var modalData = {};
             if (!object) {
                 object = new window.ChemFumeHood();
                 object.Class = "ChemFumeHood";
             }
             modalData[object.Class] = object;
-            af.setModalData(modalData);
+            DataStoreManager.ModalData = modalData;
             var modalInstance = $modal.open({
                 templateUrl: 'views/modals/chem-fume-hood-modal.html',
                 controller: 'ChemFumeHoodModalCtrl'
@@ -54,17 +54,16 @@ angular.module('EquipmentModule')
   .controller('ChemFumeHoodModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
 		var af = $scope.af = actionFunctionsFactory;
 
-		$scope.modalData = af.getModalData();
+		$scope.modalData = DataStoreManager.ModalData;
         console.log($scope.modalData);
-        $scope.save = function(copy, chemFumeHood) {
-            af.saveAutoclave(copy, chemFumeHood)
+        $scope.save = function (chemFumeHood) {
+            af.save(chemFumeHood)
                 .then($scope.close);
         }
 
 		$scope.close = function(){
             $modalInstance.dismiss();
-            dataStore.ChemFumeHood.push($scope.modalData.ChemFumeHoodCopy);
-            af.deleteModalData();
+            DataStoreManager.ModalData = null;
 		}
 
 	});

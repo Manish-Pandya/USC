@@ -32,7 +32,7 @@ angular.module('EquipmentModule')
     
         $scope.deactivate = function(xray) {
             xray.Retirement_date = new Date();
-            af.saveXRay(xray);
+            af.save(xray);
         }
     
         $scope.openModal = function(object) {
@@ -42,7 +42,7 @@ angular.module('EquipmentModule')
                 object.Class = "XRay";
             }
             modalData[object.Class] = object;
-            af.setModalData(modalData);
+            DataStoreManager.ModalData = modalData;
             var modalInstance = $modal.open({
                 templateUrl: 'views/modals/xray-modal.html',
                 controller: 'XRayModalCtrl'
@@ -53,17 +53,16 @@ angular.module('EquipmentModule')
   .controller('XRayModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
 		var af = $scope.af = actionFunctionsFactory;
 
-		$scope.modalData = af.getModalData();
+		$scope.modalData = DataStoreManager.ModalData;
         console.log($scope.modalData);
-        $scope.save = function(copy, xray) {
-            af.saveAutoclave(copy, xray)
+        $scope.save = function(xray) {
+            af.save(xray)
                 .then($scope.close);
         }
 
 		$scope.close = function(){
             $modalInstance.dismiss();
-            dataStore.XRay.push($scope.modalData.XRayCopy);
-            af.deleteModalData();
+            DataStoreManager.ModalData = null;
 		}
 
 	});

@@ -32,17 +32,17 @@ angular.module('EquipmentModule')
 
         $scope.deactivate = function(autoclave) {
             autoclave.Retirement_date = new Date();
-            af.saveAutoclave(autoclave);
+            af.save(autoclave);
         }
     
         $scope.openModal = function(object) {
             var modalData = {};
             if (!object) {
-                object = new window.Autoclave();
+                object = new Autoclave();
                 object.Class = "Autoclave";
             }
             modalData[object.Class] = object;
-            af.setModalData(modalData);
+            DataStoreManager.ModalData = modalData;
             var modalInstance = $modal.open({
                 templateUrl: 'views/modals/autoclave-modal.html',
                 controller: 'AutoclaveModalCtrl'
@@ -53,17 +53,16 @@ angular.module('EquipmentModule')
   .controller('AutoclaveModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
 		var af = $scope.af = actionFunctionsFactory;
 
-		$scope.modalData = af.getModalData();
+		$scope.modalData = DataStoreManager.ModalData;
         console.log($scope.modalData);
         $scope.save = function(copy) {
-            af.saveAutoclave(copy)
+            af.save(copy)
                 .then($scope.close);
         }
 
 		$scope.close = function(){
             $modalInstance.dismiss();
-            dataStore.Autoclave.push($scope.modalData.AutoclaveCopy);
-            af.deleteModalData();
+            DataStoreManager.ModalData = null;
 		}
 
 	});

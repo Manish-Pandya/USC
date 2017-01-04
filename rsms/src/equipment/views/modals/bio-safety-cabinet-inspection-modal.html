@@ -6,34 +6,34 @@
     <div class="control-group">
         <label class="control-label">Pass/Fail</label>
         <label class="checkbox inline">
-            <input type="checkbox" ng-model="modalData.inspectionCopy.Status" ng-true-value="{{constants.BIOSAFETY_CABINET.STATUS.PASS}}"/>
+            <input type="checkbox" ng-model="modalData.inspection.Status" ng-true-value="{{constants.BIOSAFETY_CABINET.STATUS.PASS}}"/>
             <span class="metro-checkbox">{{constants.BIOSAFETY_CABINET.STATUS.PASS}}</span>
         </label>
         <label class="checkbox inline">
-            <input type="checkbox" ng-model="modalData.inspectionCopy.Status"  ng-true-value="{{constants.BIOSAFETY_CABINET.STATUS.FAIL}}"/>
+            <input type="checkbox" ng-model="modalData.inspection.Status"  ng-true-value="{{constants.BIOSAFETY_CABINET.STATUS.FAIL}}"/>
             <span class="metro-checkbox">{{constants.BIOSAFETY_CABINET.STATUS.FAIL}}</span>
         </label>
     </div>
-    <div class="control-group" ng-init="modalData.inspectionCopy.viewDate = modalData.inspectionCopy.Certification_date ? modalData.inspectionCopy.Certification_date : today()" ng-if="modalData.inspectionCopy.Status == constants.BIOSAFETY_CABINET.STATUS.PASS">
+    <div class="control-group" ng-init="modalData.inspection.viewDate = modalData.inspection.Certification_date ? modalData.inspection.Certification_date : today()" ng-if="modalData.inspection.Status == constants.BIOSAFETY_CABINET.STATUS.PASS">
         <label class="control-label">Certification Date</label>
-        <datepicker2 ng-model='modalData.inspectionCopy.viewDate' disable-timepicker='true'></datepicker2>
+        <datepicker2 ng-model='modalData.inspection.viewDate' disable-timepicker='true'></datepicker2>
     </div>
-    <div class="control-group" ng-init="modalData.inspectionCopy.viewFailDate = modalData.inspectionCopy.Fail_date ? modalData.inspectionCopy.Fail_date : today()" ng-if="modalData.inspectionCopy.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL">
+    <div class="control-group" ng-init="modalData.inspection.viewFailDate = modalData.inspection.Fail_date ? modalData.inspection.Fail_date : today()" ng-if="modalData.inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL">
         <label class="control-label">Certification Failed Date</label>
-        <datepicker2 iconStyle="true" ng-model='modalData.inspectionCopy.viewFailDate' disable-timepicker='true'></datepicker2>
+        <datepicker2 iconStyle="true" ng-model='modalData.inspection.viewFailDate' disable-timepicker='true'></datepicker2>
     </div>
 
-    <div class="control-group" ng-init="modalData.inspectionCopy.Comment = getMostRecentComment()">
+    <div class="control-group" ng-init="modalData.inspection.Comment = getMostRecentComment()">
         <label class="control-label">Comments</label>
         <div class="controls">
-            <textarea ng-model="modalData.inspectionCopy.Comment" placehold="Label"></textarea>
+            <textarea ng-model="modalData.inspection.Comment" placehold="Label"></textarea>
         </div>
     </div>
     
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-large left" ng-class="{'btn-danger':modalData.inspectionCopy.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL,'btn-success':modalData.inspectionCopy.Status != constants.BIOSAFETY_CABINET.STATUS.FAIL}" ng-click="certify(modalData.inspectionCopy,modalData.inspection)"><i class="icon-checkmark"></i>Save</button>
+    <button class="btn btn-large left" ng-class="{'btn-danger':modalData.inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL,'btn-success':modalData.inspection.Status != constants.BIOSAFETY_CABINET.STATUS.FAIL}" ng-click="certify(modalData.inspection)"><i class="icon-checkmark"></i>Save</button>
     <a class="btn btn-large left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
     <br /><span class="red bold" style="margin: 5px 91px;font-size: 15px;display: inline-block;">{{message}}</span>
 </div>

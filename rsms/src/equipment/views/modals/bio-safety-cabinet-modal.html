@@ -1,6 +1,6 @@
-<form class="form" ng-submit="save(modalData.BioSafetyCabinetCopy, modalData.BioSafetyCabinet)">
+<form class="form" ng-submit="save(modalData.BioSafetyCabinet)">
     <div class="modal-header" style="padding:0;">
-        <h2 style="padding:5px; background:#428642; color:white"><span ng-if="!modalData.BioSafetyCabinetCopy.Key_id">Create</span><span ng-if="modalData.BioSafetyCabinetCopy.Key_id">Edit</span> Biosafety Cabinet</h2>
+        <h2 style="padding:5px; background:#428642; color:white"><span ng-if="!modalData.BioSafetyCabinet.Key_id">Create</span><span ng-if="modalData.BioSafetyCabinet.Key_id">Edit</span> Biosafety Cabinet</h2>
     </div>
 
     <div class="modal-body">
@@ -8,7 +8,7 @@
             {{pis.length}}
             <label class="control-label">Principal Investigator(s)</label>
             <div class="controls" style="display:block">
-                <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="modalData.BioSafetyCabinetCopy.SelectedInspection.PrincipalInvestigators.push($item)" class="span3" style="margin-left:0">
+                <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push($item)" class="span3" style="margin-left:0">
                     <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
                     <ui-select-choices repeat="pi in PIs | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
                         <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
@@ -16,18 +16,18 @@
                 </ui-select>                
             </div>
             <ul>
-                <li ng-repeat="pi in modalData.BioSafetyCabinetCopy.SelectedInspection.PrincipalInvestigators" style="padding: 3px 0; font-size: 15px;"><i style="margin-right:5px" class="red icon-cancel-2" ng-click="modalData.BioSafetyCabinetCopy.SelectedInspection.PrincipalInvestigators.splice($index,1)"></i>{{pi.User.Name}}</li>
+                <li ng-repeat="pi in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators" style="padding: 3px 0; font-size: 15px;"><i style="margin-right:5px" class="red icon-cancel-2" ng-click="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.splice($index,1)"></i>{{pi.User.Name}}</li>
             </ul>
         </div>
 
         
 
         <!-- to do -- concat pis rooms to list of rooms they share-->
-        <span ng-if="modalData.BioSafetyCabinetCopy.PrincipalInvestigator.Rooms" ng-init="modalData.BioSafetyCabinetCopy.PrincipalInvestigator.loadBuildings()" />
+        <span ng-if="modalData.BioSafetyCabinet.PrincipalInvestigator.Rooms" ng-init="modalData.BioSafetyCabinet.PrincipalInvestigator.loadBuildings()" />
         <div class="control-group">
             <label class="control-label">Room</label>
             <div class="controls">
-                <select class="span1" ng-model="modalData.BioSafetyCabinetCopy.Room" ng-change="onSelectRoom()" ng-options="room as (room.Name + room.Building_name) for room in modalData.BioSafetyCabinetCopy.SelectedInspection.PrincipalInvestigators | getSharedRooms">
+                <select class="span1" ng-model="modalData.BioSafetyCabinet.Room" ng-change="onSelectRoom()" ng-options="room as (room.Name + room.Building_name) for room in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators | getSharedRooms">
                     <option value="">--Select Room--</option>
                 </select>
             </div>
@@ -37,7 +37,7 @@
         <div class="control-group">
             <label class="control-label">Type</label>
             <div class="controls">
-                <select ng-model="modalData.BioSafetyCabinetCopy.Type" ng-options="type as type for (key,type) in Constants.BIOSAFETY_CABINET.TYPE">
+                <select ng-model="modalData.BioSafetyCabinet.Type" ng-options="type as type for (key,type) in Constants.BIOSAFETY_CABINET.TYPE">
                     <option value="">--Select Cabinet Type--</option>
                 </select>
             </div>
@@ -45,31 +45,31 @@
         <div class="control-group">
             <label class="control-label">SERIAL #</label>
             <div class="controls">
-                <input ng-model="modalData.BioSafetyCabinetCopy.Serial_number" placehold="Label" />
+                <input ng-model="modalData.BioSafetyCabinet.Serial_number" placehold="Label" />
             </div>
         </div>
         <div class="control-group">
             <label class="control-label">Make</label>
             <div class="controls">
-                <input ng-model="modalData.BioSafetyCabinetCopy.Make" placehold="Label" />
+                <input ng-model="modalData.BioSafetyCabinet.Make" placehold="Label" />
             </div>
         </div>
         <div class="control-group">
             <label class="control-label">Model</label>
             <div class="controls">
-                <input ng-model="modalData.BioSafetyCabinetCopy.Model" placehold="Label" />
+                <input ng-model="modalData.BioSafetyCabinet.Model" placehold="Label" />
             </div>
         </div>
         <div class="control-group">
             <label class="control-label">Certification Frequency</label>
-            <select ng-model="modalData.BioSafetyCabinetCopy.Frequency" ng-options="frequency as frequency for (key,frequency) in Constants.BIOSAFETY_CABINET.FREQUENCY">
+            <select ng-model="modalData.BioSafetyCabinet.Frequency" ng-options="frequency as frequency for (key,frequency) in Constants.BIOSAFETY_CABINET.FREQUENCY">
                 <option value="">--Select--</option>
             </select>
         </div>
     </div>
 
     <div class="modal-footer">
-        <button ng-disabled="!modalData.BioSafetyCabinetCopy.Room" class="btn btn-large btn-success left"><i class="icon-checkmark"></i>Save</button>
+        <button ng-disabled="!modalData.BioSafetyCabinet.Room" class="btn btn-large btn-success left"><i class="icon-checkmark"></i>Save</button>
         <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
     </div>
 </form>

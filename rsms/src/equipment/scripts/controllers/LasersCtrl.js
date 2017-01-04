@@ -32,7 +32,7 @@ angular.module('EquipmentModule')
     
         $scope.deactivate = function(laser) {
             laser.Retirement_date = new Date();
-            af.saveLaser(laser);
+            af.save(laser);
         }
     
         $scope.openModal = function(object) {
@@ -42,7 +42,7 @@ angular.module('EquipmentModule')
                 object.Class = "Laser";
             }
             modalData[object.Class] = object;
-            af.setModalData(modalData);
+            DataStoreManager.ModalData = modalData;
             var modalInstance = $modal.open({
                 templateUrl: 'views/modals/laser-modal.html',
                 controller: 'LaserModalCtrl'
@@ -53,17 +53,16 @@ angular.module('EquipmentModule')
   .controller('LaserModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
 		var af = $scope.af = actionFunctionsFactory;
 
-		$scope.modalData = af.getModalData();
+		$scope.modalData = DataStoreManager.ModalData;
         console.log($scope.modalData);
-        $scope.save = function(copy, laser) {
-            af.saveAutoclave(copy, laser)
+        $scope.save = function(laser) {
+            af.save(laser)
                 .then($scope.close);
         }
 
 		$scope.close = function(){
             $modalInstance.dismiss();
-            dataStore.Laser.push($scope.modalData.LaserCopy);
-            af.deleteModalData();
+            DataStoreManager.ModalData = null;
 		}
 
 	});
