@@ -50,6 +50,16 @@ var DataStoreManager = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(DataStoreManager, "ModalData", {
+        get: function () {
+            return this._modalData;
+        },
+        set: function (value) {
+            this._modalData = _.cloneDeep(value);
+        },
+        enumerable: true,
+        configurable: true
+    });
     //----------------------------------------------------------------------
     //
     //  Constructor
@@ -241,6 +251,13 @@ var DataStoreManager = (function () {
     DataStoreManager.save = function (viewModel) {
         return XHR.POST(viewModel.thisClass["urlMapping"].urlSave, viewModel)
             .then(function (d) {
+            if (Array.isArray(d)) {
+                d.forEach(function (value, index, array) {
+                    d[index] = DataStoreManager.commitToActualModel(value);
+                });
+                console.log(d);
+                return d;
+            }
             return DataStoreManager.commitToActualModel(d);
         });
     };
@@ -269,13 +286,13 @@ var DataStoreManager = (function () {
      */
     DataStoreManager.commitToActualModel = function (viewModelParent) {
         var vmParent = InstanceFactory.convertToClasses(viewModelParent);
-        var actualModelInstance = this.getActualModelEquivalent(vmParent);
-        if (!actualModelInstance) {
+        var actualModelEquivalent = this.getActualModelEquivalent(vmParent);
+        if (!actualModelEquivalent) {
             DataStoreManager._actualModel[vmParent.TypeName].Data.push(_.cloneDeep(vmParent));
-            actualModelInstance = this.getActualModelEquivalent(vmParent);
+            actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         }
-        vmParent = InstanceFactory.copyProperties(actualModelInstance, vmParent);
-        InstanceFactory.copyProperties(actualModelInstance.viewModelWatcher, vmParent);
+        vmParent = InstanceFactory.copyProperties(actualModelEquivalent, vmParent);
+        InstanceFactory.copyProperties(actualModelEquivalent.viewModelWatcher, vmParent);
         return vmParent.viewModelWatcher;
     };
     /**

@@ -67,6 +67,14 @@ abstract class DataStoreManager {
         this._actualModel = InstanceFactory.convertToClasses(value);
     }
 
+    private static _modalData: any;
+    static get ModalData(): any {
+        return this._modalData;
+    }
+    static set ModalData(value: any) {
+        this._modalData = _.cloneDeep(value);
+    }
+
     //----------------------------------------------------------------------
     //
     //  Constructor
@@ -254,9 +262,16 @@ abstract class DataStoreManager {
      *
      * @param viewModel
      */
-    static save(viewModel: FluxCompositerBase): Promise<FluxCompositerBase> {
+    static save(viewModel: FluxCompositerBase): Promise<FluxCompositerBase> | Promise<FluxCompositerBase>[] {
         return XHR.POST(viewModel.thisClass["urlMapping"].urlSave, viewModel)
             .then((d) => {
+                if (Array.isArray(d)) {
+                    d.forEach((value: any, index: number, array: any[]) => {
+                        d[index] = DataStoreManager.commitToActualModel(value);
+                    });
+                    console.log(d);
+                    return d;
+                }
                 return DataStoreManager.commitToActualModel(d);
             });
     }
@@ -286,13 +301,13 @@ abstract class DataStoreManager {
      */
     static commitToActualModel(viewModelParent: any): FluxCompositerBase {
         var vmParent: FluxCompositerBase = InstanceFactory.convertToClasses(viewModelParent);
-        var actualModelInstance: FluxCompositerBase = this.getActualModelEquivalent(vmParent);
-        if (!actualModelInstance) {
+        var actualModelEquivalent: FluxCompositerBase = this.getActualModelEquivalent(vmParent);
+        if (!actualModelEquivalent) {
             DataStoreManager._actualModel[vmParent.TypeName].Data.push(_.cloneDeep(vmParent));
-            actualModelInstance = this.getActualModelEquivalent(vmParent);
+            actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         }
-        vmParent = InstanceFactory.copyProperties(actualModelInstance, vmParent);
-        InstanceFactory.copyProperties(actualModelInstance.viewModelWatcher, vmParent);
+        vmParent = InstanceFactory.copyProperties(actualModelEquivalent, vmParent);
+        InstanceFactory.copyProperties(actualModelEquivalent.viewModelWatcher, vmParent);
 
         return vmParent.viewModelWatcher;
     }
