@@ -4,7 +4,7 @@
 </label>
 <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">
     {{child.Hazard_name}}
-    <span ng-if="child.Stored_only" class="stored">(Stored Only)</span>
+    <span ng-if="child.Stored_only || evaluateStoreOnly(child)" class="stored">(Stored Only)</span>
     <span ng-if="child.BelongsToOtherPI && !child.IsPresent" class="stored">(Other Lab's Hazard)</span>
 </span>
             <!--</h4>-->           
@@ -29,11 +29,11 @@
         <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms)">
             <a ng-click="openMultiplePIHazardsModal(child, room)" ng-if="room.HasMultiplePis" ng-class="{'red':room.OtherLab && !room.ContainsHazard}">
                 {{ room.Room_name }}
-                <span ng-if="!room.ContainsHazard"> (Other Lab's Hazard)</span>
+                <span><i class="icon-users" title="{{child.Hazard_name}} is used by more than one lab in room {{room.Room_name}}"></i></span>
             </a>
             <span ng-if="room.ContainsHazard && !room.HasMultiplePis">
                 {{ room.Room_name }}
-                <span ng-if="room.Status == 'STORED_ONLY'"> ({{Constants.HAZARD_PI_ROOM.STATUS.STORED_ONLY}})</span>
+                <span ng-if="room.Status == 'STORED_ONLY'"><i class="icon-box" title="{{child.Hazard_name}} is stored by this lab in room {{room.Room_name}}"></i></span>
             </span>
             <span style="margin-right: -2px;margin-left: -4px;" ng-if="!$last">, </span>
         </span>
@@ -41,5 +41,5 @@
 </ul>
 
 <ul>
-    <li ng-class="{'yellowed': child.Stored_only || child.storedOnly}" ng-repeat="child in child.ActiveSubHazards | orderBy: 'Order_index'" ng-if="child.IsPresent" id="id-{{child.Hazard_id}}" class="hazardLi"><span data-ng-include="'views/sub-hazard.html'"></span></li>
+    <li ng-class="{'yellowed': child.Stored_only || child.storedOnly}" ng-repeat="child in child.ActiveSubHazards | orderBy: 'Order_index'" ng-if="child.IsPresent || child.BelongsToOtherPI || child.Stored_only" id="id-{{child.Hazard_id}}" class="hazardLi"><span data-ng-include="'views/sub-hazard.html'"></span></li>
 </ul>

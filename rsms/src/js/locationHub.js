@@ -67,6 +67,10 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
                     if( item.Class == 'Room' && !item.Purpose || item.Purpose.toLowerCase().indexOf(search.purpose.toLowerCase()) < 0 )  item.matched = false;
                 }
 
+                if (search.alias) {
+                    if (item.Class == 'Building' && !item.Alias || item.Alias.toLowerCase().indexOf(search.alias.toLowerCase()) < 0) item.matched = false;
+                }
+
                 if( search.campus ) {
                     if( item.Class != "Building" && (!item.Building || !item.Building.Campus) ){
                         item.matched = false;
@@ -488,14 +492,15 @@ var buildingsCtrl = function ($scope, $rootScope, $modal, locationHubFactory, ro
             console.log(building);
             building.IsDirty = true;
             if(!$rootScope.copy.Is_active)$rootScope.copy.Is_active = true;
-            if(building.Campus)$rootScope.copy.Campus_id = building.Campus.Key_id;
             locationHubFactory.saveBuilding($rootScope.copy)
                 .then(
-                    function( returned ){
+                    function (returned) {
+                        console.log(returned);
                         building.IsDirty = false;
                         building.edit = false;
                         building.isNew = true;
-                        angular.extend(building, returned)
+                        angular.extend(building, returned);
+                        building.Campus = returned.Campus;
                     },
                     function(error){
                         building.IsDirty = false;

@@ -15,7 +15,6 @@ PIWipeTest.prototype = {
     },
 
     loadPIWipes: function () {
-        console.log(this.PIWipes);
         dataLoader.loadOneToManyRelationship(this, "PIWipes", this.PIWIpesRelationship);
     }
 }

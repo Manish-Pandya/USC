@@ -8,15 +8,31 @@
  * Controller of the EquipmentModule X-Ray Machines view
  */
 angular.module('EquipmentModule')
-  .controller('X-RayCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-  		var af = $scope.af = actionFunctionsFactory;
+  .controller('X-RayCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods, $q) {
+      var af = $scope.af = applicationControllerFactory;
 
-        $scope.xrays = [];
+      function getAll() {
+            $scope.inspections = [];
+            $scope.xrays = [];
+            $q.all([DataStoreManager.getAll("EquipmentInspection", $scope.inspections, false), DataStoreManager.getAll("XRay", $scope.xrays, false)])
+            .then(
+                function (whateverGotReturned) {
+                    console.log($scope.inspections);
+                    console.log($scope.xrays);
+                }
+            )
+            .catch(
+                function (reason) {
+                    console.log("bad Promise.all:", reason);
+                }
+            )
+        }
+
+      $scope.loading = $rootScope.getCurrentRoles().then(getAll);
     
         $scope.deactivate = function(xray) {
-            var copy = dataStoreManager.createCopy(xray);
-            copy.Retirement_date = new Date();
-            af.saveXRay(xray.pi, copy, xray);
+            xray.Retirement_date = new Date();
+            af.save(xray);
         }
     
         $scope.openModal = function(object) {
@@ -26,7 +42,7 @@ angular.module('EquipmentModule')
                 object.Class = "XRay";
             }
             modalData[object.Class] = object;
-            af.setModalData(modalData);
+            DataStoreManager.ModalData = modalData;
             var modalInstance = $modal.open({
                 templateUrl: 'views/modals/xray-modal.html',
                 controller: 'XRayModalCtrl'
@@ -37,17 +53,16 @@ angular.module('EquipmentModule')
   .controller('XRayModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
 		var af = $scope.af = actionFunctionsFactory;
 
-		$scope.modalData = af.getModalData();
+		$scope.modalData = DataStoreManager.ModalData;
         console.log($scope.modalData);
-        $scope.save = function(copy, xray) {
-            af.saveAutoclave(copy, xray)
+        $scope.save = function(xray) {
+            af.save(xray)
                 .then($scope.close);
         }
 
 		$scope.close = function(){
             $modalInstance.dismiss();
-            dataStore.XRay.push($scope.modalData.XRayCopy);
-            af.deleteModalData();
+            DataStoreManager.ModalData = null;
 		}
 
 	});

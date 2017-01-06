@@ -399,21 +399,23 @@ class GenericDAO {
 	 *
 	 * @param string $startDate mysql timestamp formatted date representing beginning of the period
 	 * @param string $enddate mysql timestamp formatted date representing end of the period
-	 * @param bool $hasRsNumber true if we are looking for parcels with an Rs_number (those that count as orders), false if those without one (parcels that count as transfer)
+	 * @param bool $hasTransferDate true if we are looking for parcels with an transfer_in_date (those that count as transfer), false if those without one (parcels that count as orders), or null for all parcels
 	 * @return int $sum
 	 */
-	public function getTransferAmounts( $startDate, $endDate, $hasRsNumber ){
+	public function getTransferAmounts( $startDate, $endDate, $hasTransferDate = null ){
         $l = Logger::getLogger("transfer amounts");
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel`
 				where `authorization_id` = ?
 				AND `arrival_date` BETWEEN ? AND ?";
 
-		if($hasRsNumber == true){
-			$sql .= " AND rs_number IS NOT NULL";
-		}else{
-			$sql .= " AND rs_number IS NULL";
-		}
+        if($hasTransferDate != null){
+            if($hasTransferDate == true){
+                $sql .= " AND transfer_in_date IS NOT NULL";
+            }elseif($hasTransferDate === false){
+                $sql .= " AND transfer_in_date IS NULL";
+            }
+        }
 
 		// Get the db connection
 		global $db;
@@ -734,7 +736,75 @@ class GenericDAO {
 		return $result;
 	}
 
-	function getInspectionsByYear($year){
+	public function getInspectionSchedule($year = NULL){
+        $LOG = Logger::getLogger( 'Action:' . __function__ );
+
+        // read the Year value from the request.
+        $year = $this->getValueFromRequest('year', $year);
+
+        // If the year is null, choose the current year.
+        if ($year == null){
+            $year = $this->getCurrentYear();
+        }
+        // Call the database
+		$LOG->fatal('getting schedule for ' . $year);
+        $dao = $this->getDao(new Inspection());
+        $inspectionSchedules = $dao->getNeededInspectionsByYear($year);
+
+        $roomMaps = array();
+        $roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+        $roomMaps[] = new EntityMap("lazy","getHazards");
+        $roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+        $roomMaps[] = new EntityMap("lazy","getHas_hazards");
+        $roomMaps[] = new EntityMap("lazy","getBuilding");
+        $roomMaps[] = new EntityMap("lazy","getSolidsContainers");
+        $roomMaps[] = new EntityMap("lazy","getHazardTypesArePresent");
+
+        foreach ($inspectionSchedules as &$is){
+            if ($is->getInspection_id() !== null){
+                $inspection = $dao->getById($is->getInspection_id());
+
+                $entityMaps = array();
+                $entityMaps[] = new EntityMap("eager","getInspectors");
+                $entityMaps[] = new EntityMap("lazy","getRooms");
+                $entityMaps[] = new EntityMap("lazy","getResponses");
+                $entityMaps[] = new EntityMap("lazy","getDeficiency_selections");
+                $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+                $entityMaps[] = new EntityMap("lazy","getChecklists");
+                $entityMaps[] = new EntityMap("eager","getStatus");
+
+                $inspection->setEntityMaps($entityMaps);
+
+                $filteredRooms = array();
+                $rooms = $inspection->getRooms();
+                foreach( $rooms as $room ){
+                	if( $room->getBuilding_id() == $is->getBuilding_key_id() ){
+                        $room->setEntityMaps($roomMaps);
+                		array_push($filteredRooms, $room);
+                	}
+                }
+                $is->setInspection_rooms($filteredRooms);
+                // $LOG->fatal($is);
+                //return $is;
+            }
+
+            $piDao = $this->getDao(new PrincipalInvestigator());
+            $pi = $piDao->getById($is->getPi_key_id());
+            $rooms = $pi->getRooms();
+            $pi_bldg_rooms = array();
+            foreach ($rooms as $room){
+                $room->setEntityMaps($roomMaps);
+
+                if ($room->getBuilding_id() == $is->getBuilding_key_id()){
+                    $pi_bldg_rooms[] = $room;
+                }
+            }
+            $is->setBuilding_rooms($pi_bldg_rooms);
+        }
+        return $inspectionSchedules;
+    }
+
+    function getNeededInspectionsByYear($year){
 		//$this->LOG->trace("$this->logprefix Looking up inspections for $year");
 
 		// Get the db connection
@@ -758,17 +828,50 @@ class GenericDAO {
 		return $result;
 	}
 
+    function getInspectionsByYear($year){
+        //`inspection` where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)
+        global $db;
+
+		//Prepare to query all from the table
+		//$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name, pi_name');
+        $sql = "select * from inspection where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)";
+        $stmt = $db->prepare($sql);
+		$stmt->bindParam(1,$year,PDO::PARAM_STR);
+
+		// Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "Inspection");
+			// ... otherwise, die and echo the db error
+		} else {
+			$error = $stmt->errorInfo();
+			die($error[2]);
+		}
+
+		return $result;
+    }
+
 	/*
-	 * @param RelationshipMapping relationship
+	 * @param RelationMapping relationship
 	 */
 
-	function getRelationships( $relationship ){
+	function getRelationships( RelationMapping $relationship ){
 		$this->LOG->debug("about to get relationships from $tableName");
 
 		global $db;
-		$parentColumn = $relationship->getParentColumn();
-		$childColumn  = $relationship->getChildColumn();
-		$stmt = $db->prepare("SELECT $parentColumn as parentId, $childColumn as childId FROM " . $relationship->getTableName());
+
+		//sometimes, in many to many relationships, we are asking for what we usually think of as the child objects to get their collection of parents
+		//in those cases, we reverse the relationships
+		if($relationship->getIsReversed()){
+			$parentColumn = $relationship->getChildColumn();
+			$childColumn  = $relationship->getParentColumn();
+		}else{
+			$parentColumn = $relationship->getParentColumn();
+			$childColumn  = $relationship->getChildColumn();
+		}
+		$stmt = "SELECT $parentColumn as parentId, $childColumn as childId FROM " . $relationship->getTableName();
+		$this->LOG->fatal($relationship);
+		$this->LOG->fatal($stmt);
+		$stmt = $db->prepare($stmt);
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
@@ -934,13 +1037,13 @@ class GenericDAO {
 
 		//get this pi's rooms
 		if($roomId == null){
-			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, b.name as building_name from room a
+			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, COALESCE(NULLIF(b.alias, ''), b.name) as building_name from room a
 								 LEFT JOIN building b on a.building_id = b.key_id
 								 where a.key_id in (select room_id from principal_investigator_room where principal_investigator_id = :id)";
 			$stmt = $db->prepare($roomsQueryString);
 			$stmt->bindParam(':id', $pIId, PDO::PARAM_INT);
 		}else{
-			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, b.name as building_name from room a
+			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, COALESCE(NULLIF(b.alias, ''), b.name) as building_name from room a
 								 LEFT JOIN building b on a.building_id = b.key_id
 								 where a.key_id = :roomId";
 			$stmt = $db->prepare($roomsQueryString);

@@ -265,6 +265,9 @@ i.solids-containers {
 .card.pickups h2 > i:first-child, .card.pickups h3 > i:first-child {
     margin: 1px 19px 0 5px !important;
 }
+.card.pickup-collection h3 > i:first-child {
+    margin: 1px 19px 0 -3px !important;
+}
 .left-nav ul li a.pickups {
     background: rgba(91, 183, 91, .64);
 }
@@ -313,15 +316,69 @@ i.solids-containers {
 .transfers i{
     color: rgb(26, 109, 168);
 }
+.transfers >h1 > i {
+    margin-right: 5px;
+    font-size: 35px;
+    width: auto;
+    line-height: 43px;
+}
 .card.transfers{
     padding:5px;
 }
-.card.transfers h1 i:first-child,
-.card.transfers h2 i:first-child,
-.card.transfers h3 i:first-child {
+.transfers .card h1 i:first-child,
+.transfers .card h2 i:first-child,
+.transfers .card h3 i:first-child {
     color: rgb(26, 109, 168);
     margin: 3px 5px 0 0;
 }
+
+.left-nav ul li a.auth-report {
+    background: rgba(78, 26, 168, 0.63);
+}
+.left-nav ul li a.auth-report:hover {
+    background: rgba(78, 26, 168, 1);
+}
+.left-nav ul li a.auth-report i {
+    margin: 0px 13px 0 4px;
+}
+.auth-report i{
+    color: rgba(78, 26, 168, 1)
+}
+.auth-report >h1 > i {
+    margin-right: 5px;
+    font-size: 35px;
+    width: auto;
+    line-height: 43px;
+}
+.auth-report.transfers{
+    padding:5px;
+}
+.auth-report .card h1 i:first-child,
+.auth-report .card h2 i:first-child,
+.auth-report .card h3 i:first-child {
+    color: rgb(26, 109, 168);
+    margin: 3px 5px 0 0;
+}
+.authReports div.fake-table{
+
+}
+.authReports div.fake-table > div.table-row > div, .authReports div.fake-table > div > h3{
+    padding:4px !important;
+}
+.authReports div.fake-table > div.table-row > div:nth-of-type(1){
+   width:13%;
+}
+.authReports div.fake-table > div.table-row > div:nth-of-type(2){
+   width:25%;
+}
+.authReports div.fake-table > div.table-row > div:nth-of-type(3){
+   width:34%;
+}
+.authReports div.fake-table > div.table-row > div:nth-of-type(4){
+   width:10%;
+}
+
+
 .right-column {
     margin-left: 210px;
     padding-bottom: 200px;
@@ -813,4 +870,32 @@ div.fake-table .table-row > div div.pickup-comments .btn i {
 }
 .wipes-modal{
     min-height: 500px !important;
+}
+.inventory-due-message{
+    margin:0 auto; left:0 ;right:0; position:fixed;top:0;height:50px;z-index:99999;
+    box-shadow:0 0 10px black;
+}
+.inventory-due-message h3{
+    margin:0 auto; text-align:center; width:100%;margin-top:10px; font-size:25px
+}
+.inventory-due-message a{
+    margin:-5px 0 0 8px;
+}
+.centerIcons.move-down{
+    margin-top:100px !important;
+}
+
+
+/* line 819, ../sass/style.scss */
+.auths ul {
+  margin-left: 0;
+  list-style: none;
+}
+/* line 822, ../sass/style.scss */
+.auths ul li{
+    font-weight:bold;
+}
+.auths ul li:last-child {
+  padding: 5px 0;
+  border-bottom: none;
 }

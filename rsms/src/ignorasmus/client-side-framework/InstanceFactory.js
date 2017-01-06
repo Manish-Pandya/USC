@@ -78,7 +78,6 @@ var InstanceFactory = (function (_super) {
             return new this._nameSpace[className]();
         }
         else {
-            console.log("No such class as " + className);
         }
     };
     /**

@@ -1,7 +1,7 @@
 <div class="modal-header footer-present" style="padding:0;">
     <h2 style="padding:5px;" class="redBg">{{pi.User.Name}}'s Inspection Comments</h2>
 </div>
-<div class="modal-body">
+<div class="modal-body inspection-notes">
     <h2 class="alert alert-danger" ng-if="error">{{error}}</h2>
     <h3 ng-if="!pi.editNote && pi.Inspection_notes"><span ng-bind-html="pi.Inspection_notes | sanitize"></span></h3>
     <textarea ng-if="pi.editNote || !pi.Inspection_notes" ui-tinymce="tinymceOptions" ng-show="pi.editNote || !pi.Inspection_notes" ng-model="piCopy.Inspection_notes" style="width:100%;" rows="5" placeholder="Enter inspection comments"></textarea>

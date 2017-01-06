@@ -50,6 +50,16 @@ var DataStoreManager = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(DataStoreManager, "ModalData", {
+        get: function () {
+            return this._modalData;
+        },
+        set: function (value) {
+            this._modalData = _.cloneDeep(value);
+        },
+        enumerable: true,
+        configurable: true
+    });
     //----------------------------------------------------------------------
     //
     //  Constructor
@@ -68,6 +78,7 @@ var DataStoreManager = (function () {
      * @param viewModelParent
      * @param compMaps
      */
+    //TODO:  Switch of allCompMaps when we hit circular structure in get alls, for instance, a PI can get its Rooms which can get its PIs, but we should stop there.
     DataStoreManager.getAll = function (type, viewModelParent, compMaps) {
         if (compMaps === void 0) { compMaps = null; }
         if (!PermissionMap.getPermission(type).getAll) {
@@ -98,22 +109,24 @@ var DataStoreManager = (function () {
                                             allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
                                         }
                                         else {
-                                            allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
-                                            if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-                                                var manyTypeToManyGerundType = d[0].TypeName + "To" + compMap.ChildType;
-                                                if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
-                                                    DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
-                                                    DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
-                                                        .then(function (gerundReturns) {
-                                                        DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
-                                                    });
-                                                }
-                                            }
+                                            allComps.push(DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")));
                                         }
                                     }
                                     else {
                                         console.log(type + " fetching local " + compMap.ChildType);
                                         allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
+                                    }
+                                    if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
+                                        var manyTypeToManyGerundType = d[0].TypeName + "To" + compMap.ChildType;
+                                        if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
+                                            DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
+                                            console.log(manyTypeToManyGerundType, "gerund getting baked...");
+                                            DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
+                                                .then(function (gerundReturns) {
+                                                DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
+                                            });
+                                            allComps.push(DataStoreManager._actualModel[manyTypeToManyGerundType].promise);
+                                        }
                                     }
                                 }
                             }
@@ -184,7 +197,7 @@ var DataStoreManager = (function () {
                         if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE && DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                             // if compMaps == true or if it's an array with an approved compMap...
                             if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
-                                allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
+                                allComps.push(DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")));
                                 if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
                                     var manyTypeToManyGerundType = d[0].TypeName + "To" + compMap.ChildType;
                                     if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
@@ -217,7 +230,6 @@ var DataStoreManager = (function () {
                     viewModelParent.test = d.viewModelWatcher;
                     viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
                     //DataStoreManager._actualModel[type].Data = d;
-                    console.log("yup");
                     return _this.promisifyData(d);
                 }
             })
@@ -237,9 +249,15 @@ var DataStoreManager = (function () {
      * @param viewModel
      */
     DataStoreManager.save = function (viewModel) {
-        //TODO: create copy without circular JSON, then post it.
         return XHR.POST(viewModel.thisClass["urlMapping"].urlSave, viewModel)
             .then(function (d) {
+            if (Array.isArray(d)) {
+                d.forEach(function (value, index, array) {
+                    d[index] = DataStoreManager.commitToActualModel(value);
+                });
+                console.log(d);
+                return d;
+            }
             return DataStoreManager.commitToActualModel(d);
         });
     };
@@ -268,13 +286,13 @@ var DataStoreManager = (function () {
      */
     DataStoreManager.commitToActualModel = function (viewModelParent) {
         var vmParent = InstanceFactory.convertToClasses(viewModelParent);
-        var actualModelInstance = this.getActualModelEquivalent(vmParent);
-        if (!actualModelInstance) {
+        var actualModelEquivalent = this.getActualModelEquivalent(vmParent);
+        if (!actualModelEquivalent) {
             DataStoreManager._actualModel[vmParent.TypeName].Data.push(_.cloneDeep(vmParent));
-            actualModelInstance = this.getActualModelEquivalent(vmParent);
+            actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         }
-        vmParent = InstanceFactory.copyProperties(actualModelInstance, vmParent);
-        InstanceFactory.copyProperties(actualModelInstance.viewModelWatcher, vmParent);
+        vmParent = InstanceFactory.copyProperties(actualModelEquivalent, vmParent);
+        InstanceFactory.copyProperties(actualModelEquivalent.viewModelWatcher, vmParent);
         return vmParent.viewModelWatcher;
     };
     /**

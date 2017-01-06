@@ -142,7 +142,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
             //use jsonp method of the angularjs $http object to request data from service layer
             $http.jsonp(url)
                 .success(function (data) {
-                    console.log(data);
                     deferred.resolve(data);
                 })
                 .error(function (data, status, headers, config) {
@@ -428,6 +427,11 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
     return methods;
 })
 .filter('dateToISO', function (convenienceMethods) {
+    return function (input, object, propertyName, setToString) {
+        return convenienceMethods.dateToIso(input, object, propertyName, setToString);
+    };
+})
+.filter('dateToIso', function (convenienceMethods) {
     return function (input, object, propertyName, setToString) {
         return convenienceMethods.dateToIso(input, object, propertyName, setToString);
     };

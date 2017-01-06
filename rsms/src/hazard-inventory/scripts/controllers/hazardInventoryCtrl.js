@@ -42,10 +42,9 @@ angular.module('HazardInventory')
                             hazard.loadSubHazards();
                             $scope.hazard = hazard;
                             var hazards = dataStoreManager.get("HazardDto");
-                            var i = hazards.length;
-                            while (i--) {
-                                if (hazards[i].HasChildren) hazards[i].loadSubHazards();
-                            }
+                            hazards.forEach(function (h) {
+                                if (h.HasChildren) h.loadSubHazards();
+                            })
                         },
                         function () {
                             $scope.error = 'Couldn\'t find the right hazards.'
@@ -236,6 +235,22 @@ angular.module('HazardInventory')
             return false;
         }
 
+        $scope.evaluateStoreOnly = function (h) {
+            var parent = dataStoreManager.getById("HazardDto", h.Parent_hazard_id);
+            /*
+                hazard is stored only if all of its rooms 
+                OR its parents room either don't contain the hazard or have a stored only status
+                AND it is present in at least one room
+             */
+
+            if (h.IsPresent && (parent.InspectionRooms.every(function (r) { return r.Status == Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY || !r.ContainsHazard })
+                ||
+                h.InspectionRooms.every(function (r) { return r.Status == Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY || !r.ContainsHazard }))) {
+                return h.Stored_only = true;
+            }
+            return false;
+        }
+
     })
     .controller('HazardInventoryModalCtrl', function ($scope, $rootScope, $q, $http, applicationControllerFactory, $modalInstance, $modal, convenienceMethods, roleBasedFactory) {
         $scope.constants = Constants;
@@ -311,6 +326,16 @@ angular.module('HazardInventory')
             
         }
 
+        $scope.checkRad = function (pi, id) {
+            $scope.needsConfirmation = false;
+            if (GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.RADIATION_INSPECTOR) > -1) {
+                af.initialiseInspection(pi, id, false, true);
+            } else {
+                $scope.needsConfirmation = true;
+            }      
+
+        }
+
         var checkInspectors = function (inspection, currentUser) {
             if (!currentUser.Inspector_id) return false;
             var is = false;
@@ -340,6 +365,10 @@ angular.module('HazardInventory')
             $modalInstance.dismiss();
         }
 
+        $scope.sortRooms = function (rooms) {
+            _.sortBy(rooms, ["Building_name", "Room_name"]);
+            return rooms;
+        }
    
 
 

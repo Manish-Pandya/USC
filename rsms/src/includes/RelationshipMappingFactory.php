@@ -21,8 +21,8 @@ class RelationshipMappingFactory {
 			new RelationMapping("User"				   , "Role"				        , "user_role"								, "user_id"                   , "role_id"             ),
 			new RelationMapping("PIAuthorization"	   , "Room"				        , "pi_authorization_room"		            , "pi_authorization_id"       , "room_id"             ),
 			new RelationMapping("PIAuthorization"	   , "Department"		        , "pi_authorization_department"  	  		, "pi_authorization_id"       , "department_id"       ),
-		    new RelationMapping("IBCProtocol"	       , "PrincipalInvestigator"	, "protocol_pi"  	  		                , "protocol_id"               , "principal_investigator_id"  )
-
+		    new RelationMapping("IBCProtocol"	       , "PrincipalInvestigator"	, "protocol_pi"  	  		                , "protocol_id"               , "principal_investigator_id"  ),
+			new RelationMapping("EquipmentInspection"  , "PrincipalInvestigator"	, "principal_investigator_equipment_inspection"      , "inspection_id"               , "principal_investigator_id"  )
        );
 	}
 

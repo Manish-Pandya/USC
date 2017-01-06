@@ -27,12 +27,13 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/metro-ui-light.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/icomoon.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/datepicker.css"/>
-<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/jqtree.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/font-awesome.min.css"/>
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/ng-mobile-menu.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/angular-busy.css">
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css" />
+
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/equipment-styles.css">
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/temp-file-upload.css">
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css"/>
@@ -41,17 +42,17 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
 -->
 <!-- included javascript libraries-->
-<script type='text/javascript' src='<?php echo WEB_ROOT?>js/lib/jquery-1.9.1.js'></script>
+<script src="../js/lib/jQuery.3.1.1/Content/Scripts/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-ui.js"></script>
-
+<script src="../js/lib/lodash.4.17.3/content/Scripts/lodash.min.js"></script>
+<script src="../js/lib/promise.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/constants.js"></script>
-
+    <script src="../js/lib/moment.js"></script>
 <script src="<?php echo WEB_ROOT?>js/lib/jquery.mjs.nestedSortable.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/scrollDisabler.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.js"></script>
 <script src="<?php echo WEB_ROOT?>js/lib/angular-route.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ui-bootstrap-custom-tpls-0.4.0.js"></script>
-<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-1.10.0.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-ui-1.10.3.custom.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ng-mobile-menu.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/convenienceMethodsModule.js"></script>
@@ -85,14 +86,12 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="./scripts/controllers/ChemFumeHoodsCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/LasersCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/X-RayCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/TestCtrl.js"></script>
-
 
 <!-- directives -->
 <!--script type="text/javascript" src="./scripts/directives/someDirective.js"></script-->
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/scrolltable.js"></script>
 <script type="text/javascript" src="scripts/directives/side-nav.js"></script>
-
+<script src="../js/uploadContainer.js"></script>
 <!-- filters -->
 <script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></script>
 <script type="text/javascript" src="../client-side-framework/filters/splitAtPeriod.js"></script>
@@ -111,7 +110,12 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="../client-side-framework/dataStore/dataStoreManager.js"></script>
 <script src="../client-side-framework/dataStore/dataSwitch.js"></script>
 <script src="../client-side-framework/dataStore/dataLoader.js"></script>
-
+<!-- new framework -->
+<script src="../ignorasmus/client-side-framework/DataStoreManager.js"></script>
+<script src="../ignorasmus/client-side-framework/InstanceFactory.js"></script>
+<script src="../ignorasmus/client-side-framework/UrlMapping.js"></script>
+<script src="../ignorasmus/client-side-framework/XHR.js"></script>
+<script src="../ignorasmus/client-side-framework/models/FluxCompositerBase.js"></script>
 
 <!-- models -->
 <script src="./scripts/models/Autoclave.js"></script>
@@ -123,6 +127,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="./scripts/models/Room.js"></script>
 <script src="scripts/models/PrincipalInvestigator.js"></script>
 <script src="scripts/models/EquipmentInspection.js"></script>
+<script src="scripts/models/Campus.js"></script>
 
 </head>
 <body>

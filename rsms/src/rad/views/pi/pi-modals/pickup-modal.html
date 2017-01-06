@@ -2,7 +2,7 @@
     <h2 ng-show="!addRoom" style="padding:5px;"><span ng-if="!modalData.Authorization">Request</span><span ng-if="modalData.Authorization">Edit</span> a Waste Pickup</h2>
 </div>
 <div class="modal-body pickups-modal">
-  <h3>Pickup Contents:</h3>
+    <h3>Pickup Contents:</h3>
     <div ng-if="modalData.pickup.Waste_bags">
         <h4>Waste Bags:</h4>
         <ul>
@@ -14,7 +14,7 @@
                     Bag currently in {{bag.Container_name}}<br>
                 </span>
                 Contains:  <span ng-if="bag.Contents.length" ng-repeat="isotope in bag.Contents">{{isotope.Curie_level}} of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>
-                <span ng-if="!bag.Contents.length">(empty bag)</span>
+                <span ng-if="!bag.Contents.length">(No Activity)</span>
             </li>
         </ul>
     </div>
@@ -23,7 +23,7 @@
         <h4>Scintillation Vial Contents:</h4>
         <ul>
             <li ng-repeat="collection in modalData.pickup.Scint_vial_collections">
-                <span ng-repeat="isotope in collection.Contents">{{isotope.Curie_level}} of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>
+                <span ng-if="!collection.Contents">No activity</span><span ng-repeat="isotope in collection.Contents">{{isotope.Curie_level}} of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>
             </li>
             <li>
                 Trays: {{modalData.pickup.Scint_vial_trays}}
@@ -31,7 +31,7 @@
 
         </ul>
     </div>
-    
+
     <div ng-if="modalData.pickup.Carboy_use_cycles">
         <h4>Carboys:</h4>
         <ul>

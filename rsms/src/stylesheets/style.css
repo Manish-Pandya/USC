@@ -770,6 +770,7 @@ tr.notedit, tr.notedit td {
 /* line 462, ../sass/style.scss */
 .modal-content .form-horizontal .control-label {
   width: 137px;
+  margin-right: 5px;
 }
 /* line 465, ../sass/style.scss */
 .modal-content .form-horizontal .controls {
@@ -2086,6 +2087,24 @@ detailsReportHeaderTable tr td {
   font-weight: bold;
   margin-bottom:5px;
 }
+td.report-question-detail{
+  vertical-align: baseline !Important;
+  padding: 8px !Important;
+}
+.report-question-detail > div{
+  display:inline-block;
+  box-sizing:border-box;
+}
+.report-question-detail > div:first-child{
+  color: #FF5722;
+  float: left;
+  /* margin-top: -710px; */
+  width:3%;
+  text-align:center;
+}
+.report-question-detail > div:last-child{
+  width: 97%;
+}
 
 /****************************************************************
 *****           HAZARD ASSESSMENT   ****************************
@@ -2139,6 +2158,14 @@ detailsReportHeaderTable tr td {
   margin:2px 3px 0 3px;
   font-size: 17px;
   cursor: pointer;
+}
+ul.hazInvSubRooms li span i {
+    margin: -2px 1px 0 -1px;
+    font-size: 13px;
+    cursor: auto;
+}
+ul.hazInvSubRooms li span i.icon-users {
+    cursor: pointer;
 }
 /* line 1388, ../sass/style.scss */
 .hazardList i.icon-plus-2, .hazardList ul i.icon-plus-2 {
@@ -4133,4 +4160,43 @@ table.quickdate-calendar td:hover {
 .question-hub h2.row ul li{
   line-height: normal;
   margin-bottom:8px;
+}
+
+/** overrides for lists created in tinymce **/
+.inspection-notes ul{
+  list-style-type:disc;
+  list-style: darkorange;
+}
+.inspection-notes ul li{
+  text-align: left;
+  margin-left:44px;
+  padding-left: 3px;
+  text-indent: 0px;
+}
+.inspection-notes ol, .sanitized ol { 
+   list-style-type: decimal; 
+   list-style-position: inside; 
+}
+.sanitized ul li{
+  text-align: left;
+  margin-left:18px;
+  padding-left: 3px;
+  text-indent: 0px;
+}
+.inspection-notes ol li, .inspection-notes ul li, .sanitized ul li, .sanitized ol li{
+  font-weight:500 !important;
+  font-size:16px !Important;
+}
+.icon-style{
+  
+}
+.flex-table{
+  flex:1 auto;
+}
+.flex-table > div{
+  width:100%
+  display:flex;
+  flex-grow: 1;
+  color:#333;
+  display: flex;
 }

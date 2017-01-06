@@ -101,23 +101,74 @@ abstract class Equipment extends GenericCrud{
 	}
 	public function setEquipmentInspections($inspections){ $this->equipmentInspections = $inspections; }
 
-    public function conditionallyCreateEquipmentInspection(){
+    /**
+     * @return EquipmentInspection $inspection;
+     **/
+    public function conditionallyCreateEquipmentInspection($selectedInspection = null){
         $l = Logger::getLogger('conditionallyCreateEquipmentInspection?');
         //We only create a new inspection for Cabinets that have not yet been saved
         if ($this->frequency != null) {
-			if ($this->getEquipmentInspections() == null) {
-				$inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id(), $this->getCertification_date());
-                if($this->getDue_date == null)$inspection->setStatus("PASS");
-			} else {
-				$inspection = $this->grabMostRecentInspection();
+			if ($this->getEquipmentInspections() == null && $selectedInspection == null) {
+				$inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id(), $this->getCertification_date());			} else {
+                if($selectedInspection == null){
+                    $l->fatal("selected was null");
+                    $inspection = $this->grabMostRecentInspection();
+                }else{
+                    $l->fatal("selected was not null");
+                    $inspection  = $selectedInspection;
+                }
 			}
-			if($this->getPrincipalInvestigatorId() != null) $inspection->setPrincipal_investigator_id($this->getPrincipalInvestigatorId());
+            $this->principaInvestigatorId = $inspection->getPrincipal_investigator_id();
+            $inspectionDao = new GenericDao($inspection);
+
+			if($this->getCertification_date() != null && $inspection->getStatus() == "PASS") {
+                $inspection->setCertification_date($this->getCertification_date());
+                //if we're certifying a cabient, add the certification for next year as well
+
+                //does the next cert already exist?
+                foreach($this->equipmentInspections as $i){
+                    if($i->getCertification_date() == null && $i->getDue_date() > $inspection->getDue_date()){
+                        $nextInspection = $i;
+                        break;
+                    }
+                }
+
+                if(!isset($nextInspection)){
+                    $nextInspection = new EquipmentInspection();
+                }
+                $parts = explode("-", $this->getCertification_date());
+
+                //a cabinet must be certified either once every year, or once every other year
+                if($this->frequency == "Annually"){
+                    $parts[0] = $parts[0]+1;
+                    $l->fatal("DUE DATE OUGHT TO BE:");
+                    $l->fatal($parts);
+                    $nextInspection->setDue_date(implode("-", $parts));
+
+                }else{
+                    $newCertDate = new DateTime('America/New_York');
+                    $newCertDate->setTimeStamp(strtotime($this->getCertification_date()));
+                    $newCertDate->modify(('+6 months'));
+                    $nextInspection->setDue_date($newCertDate);
+                }
+
+                if($inspection->getPrincipal_investigator_id() != null) $nextInspection->setPrincipal_investigator_id($inspection->getPrincipal_investigator_id());
+                if($inspection->getRoom_id() != null) $nextInspection->setRoom_id($inspection->getRoom_id());
+                if($inspection->getEquipment_class() != null) $nextInspection->setEquipment_class($inspection->getEquipment_class());
+                if($inspection->getEquipment_id() != null) $nextInspection->setEquipment_id($inspection->getEquipment_id());
+                if($inspection->getFrequency() != null) $nextInspection->setFrequency($inspection->getFrequency());
+
+                $nextInspection = $inspectionDao->save($nextInspection);
+            }
+
+            if($this->getPrincipalInvestigatorId() != null) $inspection->setPrincipal_investigator_id($this->getPrincipalInvestigatorId());
 			if($this->getRoomId() != null) $inspection->setRoom_id($this->getRoomId());
-			if($this->getCertification_date() != null) $inspection->setCertification_date($this->getCertification_date());
-			$inspectionDao = new GenericDao($inspection);
+
 			$inspection = $inspectionDao->save($inspection);
-			return $inspection;
-			//$this->equipmentInspections = array( $inspection );
+            //null out the inspections for this equipment to force relaod
+			$this->equipmentInspections = array();
+            return $inspection;
+
         } else {
 			$l->fatal("We should never get here, as frequency should never be null.");
             return null;

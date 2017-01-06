@@ -68,11 +68,12 @@ angular
 
             }
 
-            af.save = function( object, saveChildren )
+            af.save = function( object, saveChildren, seg )
             {
                     if(!saveChildren)saveChildren = false;
+                    if (!seg) seg = false;
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
-                    return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, false, saveChildren )
+                    return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, seg, saveChildren )
                         .then(
                             function( returnedData){
                                 return returnedData.data;
@@ -146,6 +147,11 @@ angular
                     {
                         Name:'radmin.orders',
                         Label: 'Radiation Administration -- Packages',
+                        Dashboard: true
+                    },
+                    {
+                        Name: 'radmin.auth-report',
+                        Label: 'Radiation Administration -- Auth Report',
                         Dashboard: true
                     },
                     {
@@ -964,6 +970,7 @@ angular
                 return dataSwitchFactory.getAllObjects('WasteType');
             }
 
+
             /********************************************************************
             **
             **      RAD PI
@@ -977,12 +984,12 @@ angular
                         .then( function( returnedPromise) {
                             var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data, null, true );
                             //pi.loadRooms();
-                            for(var prop in tempPI){
-                                store.store(tempPI[prop]);
-                                if(prop == "Pi_authorization"){
-                                    store.store(tempPI[prop].Authorizations);
-                                }
-                            }
+                            tempPi.Pi_authorization.forEach(function (pia) {
+                                store.store(pia);
+                                pia.Authorizations.forEach(function (a) {
+                                    store.store(a);
+                                })
+                            })
 
                             pi.Rooms = tempPI.Rooms;
                             pi.Departments = tempPI.Departments;
@@ -1008,9 +1015,9 @@ angular
                         var pi = returned.data;
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.User ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Pi_authorization ));
-                        if(pi.Pi_authorization.Authorizations){
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Pi_authorization.Authorizations ));
-                        }
+                        pi.Pi_authorization.forEach(function (pia) {
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(pia.Authorizations));
+                        });
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.ScintVialCollections ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders ));
@@ -1527,12 +1534,13 @@ angular
                 af.clearError();
                 return this.save( bag, false, "changeWasteBag" )
                     .then(
-                        function(returnedBag){
+                        function (returnedBag) {
+                            console.log(returnedBag);
                             returnedBag = modelInflatorFactory.instateAllObjectsFromJson( returnedBag );
                             container.CurrentWasteBags.push(returnedBag);
                             bag.Date_removed = returnedBag.Date_added;
                         },
-                        af.setError('The Waste Bage could not be added to the Receptical.')
+                        af.setError('The Wast Bage could not be removed from the Receptical.')
                     )
             }
 
@@ -1998,7 +2006,7 @@ angular
                         function(returnedIWT){
                             returnedIWT = modelInflatorFactory.instateAllObjectsFromJson( returnedIWT );
                             if(test){
-                                angular.extend(wipe, copy)
+                                angular.extend(inspection.Inspection_wipe_tests[0], copy);
                             }else{
                                 returnedIWT = modelInflatorFactory.instateAllObjectsFromJson( returnedIWT );
                                 if(!inspection.Inspection_wipe_tests)inspection.Inspection_wipe_tests = [];
@@ -2019,6 +2027,7 @@ angular
                                 dataStoreManager.store(returnedIWT);
                                 return returnedIWT;
                             }
+                            inspection.Inspection_wipe_tests[0].edit = false;
                         },
                         af.setError('The Wipe Test could not be saved')
                     )
@@ -2108,6 +2117,7 @@ angular
                                     store.store(amount);
                                 }
                             });
+                            console.log(dataStore);
                             return mw;
                         },
                         af.setError('The Miscellaneous Waste could not be saved.')
@@ -2174,7 +2184,6 @@ angular
             }
 
             af.savePIWipes = function (test) {
-                console.log(test.PIWipes);
                 af.clearError();
                 return $rootScope.SavingSmears = genericAPIFactory.save(test, 'savePIWipes')
                     .then(
@@ -2185,6 +2194,7 @@ angular
                             }
                             dataStoreManager.store(returnedWipes);
                             test.loadPIWipes();
+                            test.adding = false;
                         }
                        // af.setError('The Wipe Test could not be saved')
                     )
@@ -2469,6 +2479,10 @@ angular
                         },
                         af.setError('The Quarterly Inventory could not be saved')
                     )
+            }
+
+            af.getAllPIAuthorizations = function(){
+                return dataSwitchFactory.getAllObjects('PIAuthorization');
             }
 
             af.getRadModels = function(){

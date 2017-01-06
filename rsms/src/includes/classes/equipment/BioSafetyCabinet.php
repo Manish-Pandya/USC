@@ -30,6 +30,8 @@ class BioSafetyCabinet extends Equipment {
 		"created_user_id"	    => "integer"
 	);
 
+    private $selectedInspection;
+
 	public function __construct(){
         parent::__construct();
 	}
@@ -44,5 +46,12 @@ class BioSafetyCabinet extends Equipment {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 
+    public function getSelectedInspection(){
+		return $this->selectedInspection;
+	}
+
+	public function setSelectedInspection($selectedInspection){
+		$this->selectedInspection = $selectedInspection;
+	}
 }
 ?>

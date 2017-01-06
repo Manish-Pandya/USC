@@ -39,14 +39,24 @@ angular
               controller: "IBCEmailCtrl"
           })
     })
-    .controller('AppCtrl', function ($rootScope) {
-
+    .controller('AppCtrl', function ($rootScope, $q) {
         // method to async fetch current roles
         $rootScope.getCurrentRoles = function () {
             if (!DataStoreManager.CurrentRoles) {
-                return XHR.GET("getCurrentRoles").then((roles) => { DataStoreManager.CurrentRoles = roles; })
+                return $q.all(
+                    [XHR.GET("getCurrentRoles").then((roles) => {
+                        DataStoreManager.CurrentRoles = roles;
+                        return roles;
+                    })]
+                )
             } else {
-                return new Promise(resolve, reject).then(() => { return resolve(DataStoreManager.CurrentRoles) })
+                return $q.all(
+                    [new Promise(function (resolve, reject) {
+                        resolve(DataStoreManager.CurrentRoles);
+                    }).then(() => {
+                        return DataStoreManager.CurrentRoles;
+                    })]
+                )
             }
         }
 

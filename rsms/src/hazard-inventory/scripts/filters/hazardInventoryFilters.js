@@ -22,8 +22,6 @@ angular
                     matches.unshift(phrs[i]);
                 }
             }
-
-
             return matches;
         }
     })
@@ -69,15 +67,9 @@ angular
         return function (rooms) {
             if (!rooms) return;
             var l = rooms.length;
-            var relevantRooms = [];
-            for (var i = 0; i < l; i++) {
-                var room = rooms[i];
-                if (room.ContainsHazard || room.OtherLab) relevantRooms.push(room);
-                //console.log(room.Hazard_id)
-                if (room.Hazard_id == "10013" && room.OtherLab) {
-                    console.log(room.OtherLab, room);
-                }
-            }
+            var relevantRooms = rooms.filter(function (room) {
+                return room.ContainsHazard || room.OtherLab
+            })
             return relevantRooms;
         }
     })

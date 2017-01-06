@@ -1,11 +1,11 @@
-<td vertical-align="middle">
-    <div class="span1">
-        <i ng-if="question.Responses.Answer == 'yes'" class="span3 icon-checkmark" style="color:#0c0;"></i>
-        <i ng-if="question.Responses.Answer == 'no'"  class="span3 icon-cancel-2" style="color:#900;"></i>
-        <span ng-if="question.Responses.Answer == 'n/a'" class="span3 bold">N/A</span>
+<td vertical-align="middle" class="report-question-detail">
+    <div>
+        <i ng-if="question.Responses.Answer == 'yes'" class="icon-checkmark" style="color:#0c0;"></i>
+        <i ng-if="question.Responses.Answer == 'no'" class="icon-cancel-2" style="color:#900;"></i>
+        <span ng-if="question.Responses.Answer == 'n/a'" class="bold">N/A</span>
     </div>
-    <div class="span11">
-    <span once-text="question.Text" class="questionText"></span>
+    <div>
+        <span once-text="question.Text" class="questionText"></span>
         <ul>
             <li ng-repeat="def in question.Responses.DeficiencySelections">
                 <span style="color:#cc0000;">Deficiency:</span>
@@ -46,7 +46,7 @@
 
         <ul>
             <li ng-repeat="note in question.Responses.SupplementalObservations | activeOnly">
-                <span style="color:#781096;" >Note:</span><span style="margin-left:10px;" once-text="note.Text"></span>
+                <span style="color:#781096;">Note:</span><span style="margin-left:10px;" once-text="note.Text"></span>
             </li>
         </ul>
 

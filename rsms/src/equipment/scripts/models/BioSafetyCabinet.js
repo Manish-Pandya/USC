@@ -1,26 +1,29 @@
-'use strict';
-/* Auto-generated stub file for the BioSafetyCabinet class. */
-
-//constructor
-var BioSafetyCabinet = function() {};
-BioSafetyCabinet.prototype = {
-    
-    EquipmentInspectionRelationship: {
-        className:    'EquipmentInspection',
-        keyReference:  'Equipment_id',
-        methodString:  '',
-        paramValue: 'Key_id',
-        paramName: 'id'
-    },
-    
-    eagerAccessors: [        
-        {method:"loadEquipmentInspections", boolean:"Key_id"}
-    ],
-    loadEquipmentInspections: function () {
-        dataLoader.loadOneToManyRelationship( this, 'EquipmentInspections', this.EquipmentInspectionRelationship, [{Equipment_class:"BioSafetyCabinet"}]);
-    }
-
-}
-
-// inherit from GenericModel
-extend(BioSafetyCabinet, GenericModel);
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var equipment;
+(function (equipment) {
+    var BioSafetyCabinet = (function (_super) {
+        __extends(BioSafetyCabinet, _super);
+        function BioSafetyCabinet() {
+            return _super.call(this) || this;
+        }
+        BioSafetyCabinet.prototype.onFulfill = function () {
+            _super.prototype.onFulfill.call(this);
+            this.getChildUrl(BioSafetyCabinet.EquipmentInspectionMap);
+        };
+        BioSafetyCabinet.prototype.hasGetAllPermission = function () {
+            if (this._hasGetAllPermission == null) {
+                var allowedRoles = [Constants.ROLE.NAME.ADMIN];
+                _super.prototype.hasGetAllPermission.call(this, _.intersection(DataStoreManager.CurrentRoles, allowedRoles).length > 0);
+            }
+            return this._hasGetAllPermission;
+        };
+        return BioSafetyCabinet;
+    }(FluxCompositerBase));
+    BioSafetyCabinet.urlMapping = new UrlMapping("getAllBioSafetyCabinets", "getBioSafetyCabinetById&id=", "saveBioSafetyCabinet");
+    BioSafetyCabinet.EquipmentInspectionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "EquipmentInspection", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=EquipmentInspections&id={{UID}}", "EquipmentInspections", "Equipment_id");
+    equipment.BioSafetyCabinet = BioSafetyCabinet;
+})(equipment || (equipment = {}));

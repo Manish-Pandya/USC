@@ -1123,18 +1123,15 @@ class Rad_ActionManager extends ActionManager {
             return $decodedObject;
         }
         else {
-            $dao = $this->getDao(new WasteBag());
-            $bag = $decodedObject;
-            $container = $bag->getContainer();
-
+            $dao = $this->getDao($decodedObject);
+            $decodedObject->setDate_removed(date('Y-m-d H:i:s'));
             //get the bags for the container and find the one we need to remove
-            $bags = $container->getCurrentWasteBags();
-            foreach($bags as $oldBag){
-                $oldBag->setDate_removed(date('Y-m-d H:i:s'));
-                $dao->save($oldBag);
-            }
+            $bag = $dao->save($decodedObject);
+            $container = $bag->getContainer();
+            $LOG->fatal($bag);
             $newBag = new WasteBag();
             $newBag->setDate_added(date('Y-m-d H:i:s'));
+            $newBag->setIs_active(true);
             $newBag->setContainer_id($container->getKey_id());
             return $dao->save($newBag);
         }
@@ -2036,18 +2033,21 @@ class Rad_ActionManager extends ActionManager {
         $LOG = Logger::getLogger("calculon");
         //get the total ordered since the previous inventory
         $ordersDao = $this->getDao($amount);
+
         //if there wasn't a previous inventory, the amount's starting_amount will be null, and we need to query for it
         if($amount->getStarting_amount() == NULL){
-            $amount->setStarting_amount(0);
+            $amount->setStarting_amount($ordersDao->getTransferAmounts('0000-00-00 00:00:00', $startDate));
         }
+
+
         //get parcels for this QuarterlyIsotopsAmount's authorization that have an RS ID for the given dates
-        $amount->setTotal_ordered($ordersDao->getTransferAmounts($startDate, $endDate, true));
+        $amount->setTotal_ordered($ordersDao->getTransferAmounts($startDate, $endDate, false));
 
         //get the total transfered in since the previous inventory
         $transferInDao = $this->getDao($amount);
 
         //get parcels for this QuarterlyIsotopsAmount's authorization that DON'T have an RSID for the given dates
-        $amount->setTransfer_in($transferInDao->getTransferAmounts($startDate, $endDate, false));
+        $amount->setTransfer_in($transferInDao->getTransferAmounts($startDate, $endDate, true));
 
 
         //get the total transfered out since the previous inventory
@@ -2270,6 +2270,7 @@ class Rad_ActionManager extends ActionManager {
     public function savePIAuthorization(){
     	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
     	$decodedObject = $this->convertInputJson();
+
     	if( $decodedObject === NULL ) {
     		return new ActionError('Error converting input stream to PIAuthorization', 202);
     	}
@@ -2296,15 +2297,12 @@ class Rad_ActionManager extends ActionManager {
 
     		$dao = $this->getDao(new PIAuthorization());
 
-			$needsSaveAmendment =  $decodedObject->getKey_id() != NULL ? false : true;
-
-            $previouslyDeactivated = false;
             if($decodedObject->getKey_id() != null){
                 $piAuth = $this->getPIAuthorizationById($decodedObject->getKey_id());
-                $previouslyDeactivated = $piAuth->getTermination_date() != NULL;
             }
-    		$piAuth = $dao->save($decodedObject);
 
+            $id = $decodedObject->getKey_id();
+    		$piAuth = $dao->save($decodedObject);
     		// add the relevant rooms and departments to the db
     		foreach($rooms as $room){
     			$dao->addRelatedItems($room["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$ROOMS_RELATIONSHIP));
@@ -2314,10 +2312,11 @@ class Rad_ActionManager extends ActionManager {
     			$dao->addRelatedItems($dept["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$DEPARTMENTS_RELATIONSHIP));
     		}
 
-			$authDao = new GenericDAO(new Authorization());
 
 			//New PIAuthorizations may be amendments of old ones, in which case we save relationships for child Authorizations, if any
 			if($decodedObject->getAuthorizations() != NULL){
+                $authDao = new GenericDAO(new Authorization());
+
 				foreach($decodedObject->getAuthorizations() as $auth){
 					$newAuth = new Authorization();
 					$newAuth->setPi_authorization_id($piAuth->getKey_id());
@@ -2326,12 +2325,18 @@ class Rad_ActionManager extends ActionManager {
 					$newAuth->setApproval_date($auth["Approval_date"]);
                     $newAuth->setForm($auth["Form"]);
 					$newAuth->setIs_active($decodedObject->getTermination_date == null);
-					$newAuth->setKey_id($auth["Key_id"]);
-					$authDao->save($newAuth);
+                    //if the PiAuthorization has a key_id, we know we are editing one that already exists.
+                    //In that case, we should save it's old authorizations, rather than creating new ones, so we set the key_id for each of them
+                    if($id != null){
+                        $newAuth->setKey_id($auth["Key_id"]);
+                        $newAuth->setDate_created($auth["Date_created"]);
+                    }
+					$newAuth = $authDao->save($newAuth);
                 }
             }
             //force reload of authorizations from db
             $piAuth->setAuthorizations(null);
+
     		return $piAuth;
     	}
 
@@ -2540,7 +2545,8 @@ class Rad_ActionManager extends ActionManager {
         $savedWaste = $dao->save($waste);
 
         $amountDao = $this->getDao(new ParcelUseAmount());
-        foreach($waste->getParcel_use_amounts() as &$amount){
+        $amts = $waste->getParcel_use_amounts();
+        foreach($amts as &$amount){
             if(is_array($amount)){
                 $amt = new ParcelUseAmount();
                 $amt->setCurie_level($amount["Curie_level"]);

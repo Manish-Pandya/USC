@@ -1,11 +1,24 @@
-'use strict';
-/* Auto-generated stub file for the ChemFumeHood class. */
-
-//constructor
-var ChemFumeHood = function() {};
-ChemFumeHood.prototype = {
-    
-}
-
-// inherit from GenericModel
-extend(ChemFumeHood, GenericModel);
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var equipment;
+(function (equipment) {
+    var ChemFumeHood = (function (_super) {
+        __extends(ChemFumeHood, _super);
+        function ChemFumeHood() {
+            return _super.call(this) || this;
+        }
+        ChemFumeHood.prototype.hasGetAllPermission = function () {
+            if (this._hasGetAllPermission == null) {
+                var allowedRoles = [Constants.ROLE.NAME.ADMIN];
+                _super.prototype.hasGetAllPermission.call(this, _.intersection(DataStoreManager.CurrentRoles, allowedRoles).length > 0);
+            }
+            return this._hasGetAllPermission;
+        };
+        return ChemFumeHood;
+    }(FluxCompositerBase));
+    ChemFumeHood.urlMapping = new UrlMapping("getAllChemFumeHoods", "getChemFumeHoodById&id=", "saveChemFumeHood");
+    equipment.ChemFumeHood = ChemFumeHood;
+})(equipment || (equipment = {}));

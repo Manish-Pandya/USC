@@ -1,9 +1,9 @@
 <div class="modal-header footer-present" style="padding:0;">
     <h2 style="padding:5px;" class="redBg">{{modalData.Hazard.Hazard_name}}</h2>
 </div>
-<div class="modal-body">
+<div class="modal-body" ng-init="modalData.Hazard.InspectionRooms = sortRooms(modalData.Hazard.InspectionRooms)">
     <ul>
-        <li ng-repeat="(key, room) in modalData.Hazard.InspectionRooms | orderBy:['Building_name', 'Room_name']" class="hazard-room">
+        <li ng-repeat="(key, room) in modalData.Hazard.InspectionRooms" class="hazard-room">
             <label class="checkbox inline">
                 <input type="checkbox" ng-model="room.ContainsHazard" ng-change="af.savePIHazardRoom(room, modalData.Hazard, true, modalData.GrandParent)" ng-disabled="constants.BRANCH_HAZARD_IDS.indexOf(modalData.Hazard.Parent_hazard_id) < 0 && !modalData.Parent.InspectionRooms[$index].ContainsHazard" />
                 <span class="metro-checkbox">
@@ -11,7 +11,10 @@
                 </span>
                 <label class="checkbox inline" ng-if="room.ContainsHazard">
                     <!-- must be checked and disabled if the corresponding room for the parent has a stored only status.  a hazard MUST be stored only if its parent is -->
-                    <input type="checkbox" ng-model="room.storedOnly" ng-checked="room.Status == constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY || modalData.Parent.InspectionRooms[$index].Status == constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY" ng-change="room.Status = room.storedOnly ? 'STORED_ONLY':'IN_USE';af.savePIHazardRoom(room, modalData.Hazard)" ng-disabled="constants.BRANCH_HAZARD_IDS.indexOf(modalData.Hazard.Parent_hazard_id)<0 && modalData.Parent.InspectionRooms[$index].Status == constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY"/>
+                    <input type="checkbox" ng-model="room.storedOnly"
+                           ng-checked="room.Status == constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY || modalData.Parent.InspectionRooms[$index].Status == constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY" ng-change="room.Status = room.storedOnly ? 'STORED_ONLY':'IN_USE';af.savePIHazardRoom(room, modalData.Hazard)" 
+                           ng-disabled="constants.BRANCH_HAZARD_IDS.indexOf(modalData.Hazard.Parent_hazard_id)<0 
+                           && modalData.Parent.InspectionRooms[$index].Status == constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY"/>
                     <span class="metro-checkbox">Stored Only</span>
                 </label>
             </label>

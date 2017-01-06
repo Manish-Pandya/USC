@@ -46,7 +46,7 @@
     </div>
 
     <div class="card full parcels" ng-if="pi">
-        <h3 class="card-header padding">Package Usages <a ng-click="addUsage(parcel)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Usage</a></h3>
+        <h3 class="card-header padding">Package Usages <button ng-click="addUsage(parcel)" ng-disabled="parcel.AmountOnHand == 0" class="btn btn-success left"><i class="icon-plus-2"></i>Add Usage</button></h3>
         <div class="card-content">
             <table class="table-bordered table parcel-uses" ng-show="parcel.edit || parcel.ParcelUses">
                 <tr class="table-header">
@@ -136,7 +136,7 @@
                                         <div class="control-group">
                                             <div class="controls input-append">
                                                 <input ng-disabled="solid.IsPickedUp" style="max-width:50%;" name="solid-curies" ng-model="solid.Curie_level">
-                                                <select ng-disabled="solid.IsPickedUp" ng-model="solid.Waste_bag" ng-selected="selectedBag(solid, pi.WasteBags)" ng-change="selectContainer(solid)" ng-options="bag.Container_name for bag in pi.WasteBags">
+                                                <select ng-disabled="solid.IsPickedUp" ng-model="solid.Waste_bag" ng-selected="selectedBag(solid, pi.WasteBags)" ng-change="selectContainer(solid)" ng-options="bag.Container_name for bag in pi.WasteBags | availableBags">
                                                     <option value="">Select Receptical</option>
                                                 </select>
                                                 <span class="help-block " style="">mCi <i title="Picked Up" ng-if="solid.IsPickedUp" class="danger icon-remove"></i></span>

@@ -230,6 +230,12 @@ angular
                             }
                         }
                     }
+
+                    if (parent.ActiveSubHazards && parent.ActiveSubHazards.length) {
+                        parent.ActiveSubHazards.forEach(function (h) {
+                            ac.evaluateHazardPresent(h);
+                        })
+                    }
                 }
             }
             if(hazardDto.IsPresent){
@@ -372,6 +378,7 @@ angular
 
             if(inspectionId) url+='&inspectionId='+inspectionId;
             var temp = this;
+            console.log(url);
              $rootScope.InspectionSaving = genericAPIFactory.read(url).then(
                                               function( returned ){
                                                   var inspection = returned.data;

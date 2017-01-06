@@ -1,0 +1,15 @@
+
+<div class="modal-header" style="padding:0;" class="">
+    <h2 style="padding:5px" ng-if="!modalData.Key_id" class="redBg">Submit Corrective Action Plan?</h2>
+</div>
+<div class="modal-body">
+    <h4 ng-if="validationError" class="alert alert-danger">{{validationError}}</h4>
+    <div class="alert alert-success">
+        <h2>Your lab's corrective actions have been successfully submitted.</h2>
+    </div>
+</div>
+<div class="modal-footer">
+    <a  class="btn left btn-large" ng-click="cancel()">
+        <i class="icon-cancel-2"></i>Close
+    </a>
+</div>

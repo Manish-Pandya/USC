@@ -67,6 +67,14 @@ abstract class DataStoreManager {
         this._actualModel = InstanceFactory.convertToClasses(value);
     }
 
+    private static _modalData: any;
+    static get ModalData(): any {
+        return this._modalData;
+    }
+    static set ModalData(value: any) {
+        this._modalData = _.cloneDeep(value);
+    }
+
     //----------------------------------------------------------------------
     //
     //  Constructor
@@ -88,6 +96,7 @@ abstract class DataStoreManager {
      * @param viewModelParent
      * @param compMaps
      */
+     //TODO:  Switch of allCompMaps when we hit circular structure in get alls, for instance, a PI can get its Rooms which can get its PIs, but we should stop there.
     static getAll(type: string, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase[] | Promise<any> {
         if (!PermissionMap.getPermission(type).getAll) {
             throw new Error("You don't have permission to call getAll for " + type);
@@ -116,21 +125,23 @@ abstract class DataStoreManager {
                                             if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
                                                 allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
                                             } else {
-                                                allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
-                                                if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-                                                    var manyTypeToManyGerundType: string = d[0].TypeName + "To" + compMap.ChildType;
-                                                    if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
-                                                        DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
-                                                        DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
-                                                            .then((gerundReturns: any[]) => {
-                                                                DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
-                                                            });
-                                                    }
-                                                }
-                                            }
+                                                allComps.push( DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")) );
+                                            }                                           
                                         } else {
                                             console.log(type + " fetching local " + compMap.ChildType);
                                             allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
+                                        }
+                                        if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
+                                            var manyTypeToManyGerundType: string = d[0].TypeName + "To" + compMap.ChildType;
+                                            if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
+                                                DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
+                                                console.log(manyTypeToManyGerundType, "gerund getting baked...");
+                                                DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
+                                                    .then((gerundReturns: any[]) => {
+                                                        DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
+                                                    });
+                                                allComps.push(DataStoreManager._actualModel[manyTypeToManyGerundType].promise);
+                                            }
                                         }
                                     }
                                 }
@@ -154,7 +165,6 @@ abstract class DataStoreManager {
                         } else {
                             // Dig this neat way to use viewModelParent as a reference instead of a value!
                             Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
-                            
                             return viewModelParent;
                         }
                     })
@@ -200,7 +210,7 @@ abstract class DataStoreManager {
                             if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE && DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                                 // if compMaps == true or if it's an array with an approved compMap...
                                 if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
-                                    allComps.push(DataStoreManager.getAll(compMap.ChildType, []));
+                                    allComps.push( DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")) );
                                     if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
                                         var manyTypeToManyGerundType: string = d[0].TypeName + "To" + compMap.ChildType;
                                         if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
@@ -234,7 +244,6 @@ abstract class DataStoreManager {
                         viewModelParent.test = d.viewModelWatcher;
                         viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
                         //DataStoreManager._actualModel[type].Data = d;
-                        console.log("yup");
                         return this.promisifyData(d);
                     }
                 })
@@ -253,11 +262,16 @@ abstract class DataStoreManager {
      *
      * @param viewModel
      */
-    static save(viewModel: FluxCompositerBase): void | Promise<FluxCompositerBase>{
-        //TODO: create copy without circular JSON, then post it.
-
+    static save(viewModel: FluxCompositerBase): Promise<FluxCompositerBase> | Promise<FluxCompositerBase>[] {
         return XHR.POST(viewModel.thisClass["urlMapping"].urlSave, viewModel)
             .then((d) => {
+                if (Array.isArray(d)) {
+                    d.forEach((value: any, index: number, array: any[]) => {
+                        d[index] = DataStoreManager.commitToActualModel(value);
+                    });
+                    console.log(d);
+                    return d;
+                }
                 return DataStoreManager.commitToActualModel(d);
             });
     }
@@ -287,13 +301,13 @@ abstract class DataStoreManager {
      */
     static commitToActualModel(viewModelParent: any): FluxCompositerBase {
         var vmParent: FluxCompositerBase = InstanceFactory.convertToClasses(viewModelParent);
-        var actualModelInstance: FluxCompositerBase = this.getActualModelEquivalent(vmParent);
-        if (!actualModelInstance) {
+        var actualModelEquivalent: FluxCompositerBase = this.getActualModelEquivalent(vmParent);
+        if (!actualModelEquivalent) {
             DataStoreManager._actualModel[vmParent.TypeName].Data.push(_.cloneDeep(vmParent));
-            actualModelInstance = this.getActualModelEquivalent(vmParent);
+            actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         }
-        vmParent = InstanceFactory.copyProperties(actualModelInstance, vmParent);
-        InstanceFactory.copyProperties(actualModelInstance.viewModelWatcher, vmParent);
+        vmParent = InstanceFactory.copyProperties(actualModelEquivalent, vmParent);
+        InstanceFactory.copyProperties(actualModelEquivalent.viewModelWatcher, vmParent);
 
         return vmParent.viewModelWatcher;
     }
