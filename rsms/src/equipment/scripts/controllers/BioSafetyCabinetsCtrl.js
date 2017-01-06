@@ -256,7 +256,7 @@ angular.module('EquipmentModule')
           $scope.message = null;
           copy.Certification_date = convenienceMethods.setMysqlTime(copy.viewDate);
           copy.Fail_date = convenienceMethods.setMysqlTime(copy.viewFailDate);
-          af.save(copy).then(function () { $scope.close() })
+          af.save(copy).then(function (r) { console.log(r);$scope.close() })
       }
 
       $scope.close = function () {

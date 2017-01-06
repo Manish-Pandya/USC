@@ -59,9 +59,11 @@ class Equipment_ActionManager extends ActionManager {
             $equipment->setFrequency($decodedObject->getFrequency());
 
             //certify and create subsequent inspection as well
-            $equipment->conditionallyCreateEquipmentInspection($decodedObject);
+            $n = $equipment->conditionallyCreateEquipmentInspection($decodedObject);
             //force reload of all inspections for relevant equipment by client
-            return $equipment->getEquipmentInspections();
+			$is = $equipment->getEquipmentInspections();
+			$LOG->fatal($is);
+            return $is;
         }
     }
 
