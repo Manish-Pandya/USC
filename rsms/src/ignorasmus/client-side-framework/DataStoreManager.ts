@@ -111,7 +111,7 @@ abstract class DataStoreManager {
                     .then((d: FluxCompositerBase[]): FluxCompositerBase[] | Promise<any> => {
                         d = InstanceFactory.convertToClasses(d);
                         DataStoreManager._actualModel[type].Data = d;
-                        if (compMaps) {
+                        if (compMaps && d.length) {
                             var allComps: any[] = [];
                             var allCompMaps: CompositionMapping[] = d[0].allCompMaps;
                             var l: number = allCompMaps.length;
@@ -269,7 +269,6 @@ abstract class DataStoreManager {
                     d.forEach((value: any, index: number, array: any[]) => {
                         d[index] = DataStoreManager.commitToActualModel(value);
                     });
-                    console.log(d);
                     return d;
                 }
                 return DataStoreManager.commitToActualModel(d);

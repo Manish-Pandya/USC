@@ -16,11 +16,6 @@
             super();
         }
 
-        onFulfill(): void {
-            super.onFulfill();
-            this.getChildUrl(PrincipalInvestigator.RoomMap);
-        }
-
         hasGetAllPermission(): boolean {
             if (this._hasGetAllPermission == null) {
                 var allowedRoles = [Constants.ROLE.NAME.ADMIN];

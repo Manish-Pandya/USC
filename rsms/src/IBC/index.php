@@ -76,7 +76,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <!-- included javascript libraries
 -->
 	<script type="text/javascript" src="../js/lib/moment.js"></script>
-    <script src="../js/lib/lodash.4.17.0/content/Scripts/lodash.min.js"></script>
+    <script src="../js/lib/lodash.4.17.3/content/Scripts/lodash.min.js"></script>
 	<script src="../js/lib/jQuery.3.1.1/Content/Scripts/jquery-3.1.1.min.js"></script>
 	<script src="../js/lib/promise.min.js"></script>
 

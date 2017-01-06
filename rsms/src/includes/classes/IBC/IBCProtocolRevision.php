@@ -16,10 +16,12 @@ class IBCProtocolRevision extends GenericCrud
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"revision_number"				=> "integer",
-		"protocol_id"					=> "integer",
-		"date_returned"					=> "timestamp",
-        "date_submitted"                => "timestamp",
+		"revision_number"			=> "integer",
+		"protocol_id"				=> "integer",
+		"date_returned"				=> "timestamp",
+        "date_submitted"            => "timestamp",
+		"protocol_type"				=> "text",
+		"status"					=> "text",
 		//GenericCrud
 		"key_id"				=> "integer",
 		"date_created"			=> "timestamp",
@@ -40,6 +42,10 @@ class IBCProtocolRevision extends GenericCrud
 
     /* date this revision was submitted to the committee after being revised by the lab */
 	private $date_submitted;
+
+	private $protocol_type;
+
+	private $status;
 
     /* array of responses submitted in this revision */
     private $IBCResponses;
@@ -95,6 +101,20 @@ class IBCProtocolRevision extends GenericCrud
 	}
 	public function setDate_submitted($date_submitted){
 		$this->date_submitted = $date_submitted;
+	}
+
+	public function getProtocol_type(){
+		return $this->protocol_type;
+	}
+	public function setProtocol_type($protocol_type){
+		$this->protocol_type = $protocol_type;
+	}
+
+	public function getStatus(){
+		return $this->status;
+	}
+	public function setStatus($status){
+		$this->status = $status;
 	}
 
     public function getIBCResponses(){

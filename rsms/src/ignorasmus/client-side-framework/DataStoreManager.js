@@ -94,7 +94,7 @@ var DataStoreManager = (function () {
                     .then(function (d) {
                     d = InstanceFactory.convertToClasses(d);
                     DataStoreManager._actualModel[type].Data = d;
-                    if (compMaps) {
+                    if (compMaps && d.length) {
                         var allComps = [];
                         var allCompMaps = d[0].allCompMaps;
                         var l = allCompMaps.length;
@@ -255,7 +255,6 @@ var DataStoreManager = (function () {
                 d.forEach(function (value, index, array) {
                     d[index] = DataStoreManager.commitToActualModel(value);
                 });
-                console.log(d);
                 return d;
             }
             return DataStoreManager.commitToActualModel(d);
