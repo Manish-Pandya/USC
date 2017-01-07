@@ -127,36 +127,36 @@ PrincipalInvestigator.prototype = {
 
     Buildings: {},
 
-    loadActiveParcels: function() {
-        dataLoader.loadOneToManyRelationship( this, 'ActiveParcels', this.ActiveParcelsRelationship, null, true  );
+    loadActiveParcels: function () {
+        return dataLoader.loadOneToManyRelationship( this, 'ActiveParcels', this.ActiveParcelsRelationship, null, true  );
     },
 
     loadRooms: function() {
-        dataLoader.loadManyToManyRelationship( this, this.RoomsRelationship );
+        return dataLoader.loadManyToManyRelationship(this, this.RoomsRelationship);
     },
 
     loadPurchaseOrders: function() {
-        dataLoader.loadOneToManyRelationship( this, 'PurchaseOrders', this.PurchaseOrdersRelationship);
+        return dataLoader.loadOneToManyRelationship(this, 'PurchaseOrders', this.PurchaseOrdersRelationship);
     },
 
     loadSolidsContainers: function() {
-        dataLoader.loadOneToManyRelationship(this, 'SolidsContainers', this.SolidsContainersRelationship);
+        return dataLoader.loadOneToManyRelationship(this, 'SolidsContainers', this.SolidsContainersRelationship);
     },
 
     loadCarboyUseCycles: function () {
-        dataLoader.loadOneToManyRelationship( this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship);
+        return dataLoader.loadOneToManyRelationship(this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship);
     },
 
     loadPickups: function() {
-        dataLoader.loadOneToManyRelationship( this, 'Pickups', this.PickupsRelationship);
+        return dataLoader.loadOneToManyRelationship(this, 'Pickups', this.PickupsRelationship);
     },
 
     loadPIAuthorizations: function() {
-        dataLoader.loadOneToManyRelationship(this, 'Pi_authorization', this.PIAuthorizationsRelationship);
+        return dataLoader.loadOneToManyRelationship(this, 'Pi_authorization', this.PIAuthorizationsRelationship);
     },
 
     loadPIWipeTests: function () {
-        dataLoader.loadOneToManyRelationship(this, 'WipeTests', this.WipeTestsRelationship);
+        return dataLoader.loadOneToManyRelationship(this, 'WipeTests', this.WipeTestsRelationship);
     },
 
     loadUser:  function() {

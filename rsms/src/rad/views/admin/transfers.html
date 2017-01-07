@@ -1,5 +1,6 @@
 ﻿<!--div cg-busy="{promise:CarboyReadingAmountSaving, message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div-->
-<div cg-busy="{promise:loading, message:'loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:loading, message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:PrincipalInvestigatorsBusy, message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="right-column transfers">
 
@@ -20,13 +21,13 @@
             </div>
             <div class="table-row" ng-repeat="transfer in transfersIn = (parcels | transferInParcels)">
                 <div>
-                    <a ng-click="openTransferInModal(transfer)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
+                   <a ng-click="openTransferInModal(transfer)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
                 </div>
                 <div>
                     {{transfer.ReceivingPiName}}
                 </div>
                 <div>
-                    {{transfer.Transfer_in_date | dateToIso}}
+                    {{transfer.Transfer_in_date | dateToIso:transfer:'Transfer_in_date':true}}
                 </div>
                 <div>
                     {{transfer.Authorization.IsotopeName}}
@@ -77,7 +78,7 @@
     </div>
 
     <div class="well two-thirds card">
-        <h3><i class="icon-tab"></i>{{transfersOut.length}} Transfer<span ng-show="transfersOut.length != 1">s</span> to Other Institutions<a ng-click="openModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-tab"></i>New Transfer</a></h3>
+        <h3><i class="icon-tab"></i>{{transfersOut.length}} Transfer<span ng-show="transfersOut.length != 1">s</span> to Other Institutions<a ng-click="openTransferOutModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-tab"></i>New Transfer</a></h3>
         <div class="fake-table bordered" ng-show="transfersOut.length">
             <div class="table-header">
                 <h3>Edit</h3>
@@ -87,18 +88,10 @@
             </div>
             <div class="table-row" ng-repeat="transfer in transfersOut = (uses | transferOutUses)">
                 <div>
-                    <a ng-disabled="carboy.edit" ng-class="{'disabled':carboy.edit}" ng-click="openModal(carboy)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
-                    <!-- TODO: Possible Status values should be enums -->
-                    <a ng-disabled="carboy.edit" ng-if="carboy.Current_carboy_use_cycle.Status != 'In Use' && carboy.Current_carboy_use_cycle.Status != 'Decaying'" ng-class="{'disabled':carboy.edit}" ng-click="deactivate(carboy)" class="btn btn-danger left"><i class="icon-remove"></i>Deactivate</a>
+                    <a ng-disabled="carboy.edit" ng-class="{'disabled':carboy.edit}" ng-click="openTransferOutModal(transfer)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
                 </div>
                 <div>
-                    {{carboy.Carboy_number}}
-                </div>
-                <div>
-                    {{carboy.Current_carboy_use_cycle.Status}}
-                </div>
-                <div ng-init="carboy.Current_carboy_use_cycle.loadPrincipalInvestigator()">
-                    {{carboy.Current_carboy_use_cycle.Principal_investigator.User.Name}}
+                    {{use}}
                 </div>
             </div>
         </div>

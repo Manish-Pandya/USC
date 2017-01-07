@@ -895,83 +895,111 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new ParcelUse());
-            $use = $dao->save($decodedObject);
 
-            $amounts = $decodedObject->getParcelUseAmounts();
-            foreach($amounts as $amount){
-                $amountDao = $this->getDao(new ParcelUseAmount());
-                $newAmount = new ParcelUseAmount();
-                if($amount['Curie_level'] != NULL && $amount['Curie_level'] > 0){
-                    $newAmount->setParcel_use_id($use->getKey_id());
-                    $newAmount->setCurie_level($amount['Curie_level']);
-                    if($amount['Key_id'] != NULL)$newAmount->setKey_id($amount['Key_id']);
+            if($decodedObject->getDate_transfered() != null){
+                //this is a use for a transfer
+                if($decodedObject->getDestination_parcel_id() != null){
+                    $dParcel = $this->getParcelById();
+                }
+                //create a parcel for the new pi
+                else{
+                    $dParcel = new Parcel();
+                    $decodedObject->setDestination_parcel_id($dParcel->getKey_id());
+                }
+                $parcelDao = new GenericDAO($dParcel);
+                $dParcel = $parcelDao->save($dParcel);
 
-                    if($amount['Waste_bag_id'] != NULL){
+                $use = $dao->save($decodedObject);
 
-                        if($newAmount->getKey_id() != null){
-                            //this amount has been saved previously.
-                            //We need to make sure that we aren't accidentally moving it to a new waste bag in the same container
-                            $amountDao = $this->getDao(new ParcelUseAmount());
-                            $relevantAmount = $amountDao->getById($newAmount->getKey_id());
-                            $bag = $this->getWasteBagById($amount['Waste_bag_id']);
-                            $oldBag = $this->getWasteBagById($relevantAmount->getWaste_bag_id());
-                            if( $oldBag == null || ( $oldBag->getContainer_id() != $bag->getContainer_id() ) ){
+                //do we already have a parcelUseAmount for this parcel?
+                $amountDao = new GenericDAO(new ParcelUseAmount);
+                if($decodedObject->getParcelUseAmounts() != null){
+                    $amount = end($decodedObject->getParcelUseAmounts());
+                }else{
+                    $amount = new ParcelUseAmount();
+                }
+                $amount->setParcel_use_id($use->getKey_id());
+                $amount->setCurie_level($use->getQuantity());
+                $amount = $amountDao->save($amount);
+            }else{
+                $use = $dao->save($decodedObject);
+
+                $amounts = $decodedObject->getParcelUseAmounts();
+                foreach($amounts as $amount){
+                    $amountDao = $this->getDao(new ParcelUseAmount());
+                    $newAmount = new ParcelUseAmount();
+                    if($amount['Curie_level'] != NULL && $amount['Curie_level'] > 0){
+                        $newAmount->setParcel_use_id($use->getKey_id());
+                        $newAmount->setCurie_level($amount['Curie_level']);
+                        if($amount['Key_id'] != NULL)$newAmount->setKey_id($amount['Key_id']);
+
+                        if($amount['Waste_bag_id'] != NULL){
+
+                            if($newAmount->getKey_id() != null){
+                                //this amount has been saved previously.
+                                //We need to make sure that we aren't accidentally moving it to a new waste bag in the same container
+                                $amountDao = $this->getDao(new ParcelUseAmount());
+                                $relevantAmount = $amountDao->getById($newAmount->getKey_id());
+                                $bag = $this->getWasteBagById($amount['Waste_bag_id']);
+                                $oldBag = $this->getWasteBagById($relevantAmount->getWaste_bag_id());
+                                if( $oldBag == null || ( $oldBag->getContainer_id() != $bag->getContainer_id() ) ){
+                                    $newAmount->setWaste_bag_id($amount['Waste_bag_id']);
+                                }else{
+                                    $newAmount->setWaste_bag_id($relevantAmount->getWaste_bag_id());
+                                }
+                            }
+                            //this ParcelUseAmount is either new or was missing its waste_bag_id
+                            else{
                                 $newAmount->setWaste_bag_id($amount['Waste_bag_id']);
-                            }else{
-                                $newAmount->setWaste_bag_id($relevantAmount->getWaste_bag_id());
                             }
                         }
-                        //this ParcelUseAmount is either new or was missing its waste_bag_id
-                        else{
-                            $newAmount->setWaste_bag_id($amount['Waste_bag_id']);
+                        if($amount['Carboy_id'] != NULL){
+                            $newAmount->setCarboy_id($amount['Carboy_id']);
+                            $entityMaps = array();
+                            $entityMaps[] = new EntityMap("eager", "getCarboy");
+                            $entityMaps[] = new EntityMap("lazy", "getWaste_type");
+                            $entityMaps[] = new EntityMap("lazy", "getContainer_name");
+                            $newAmount->setEntityMaps($entityMaps);
                         }
-                    }
-                    if($amount['Carboy_id'] != NULL){
-                        $newAmount->setCarboy_id($amount['Carboy_id']);
-                        $entityMaps = array();
-                        $entityMaps[] = new EntityMap("eager", "getCarboy");
-                        $entityMaps[] = new EntityMap("lazy", "getWaste_type");
-                        $entityMaps[] = new EntityMap("lazy", "getContainer_name");
-                        $newAmount->setEntityMaps($entityMaps);
-                    }
-                    if($amount['Comments'] != NULL)$newAmount->setComments($amount['Comments']);
-                    $newAmount->setWaste_type_id($amount['Waste_type_id']);
+                        if($amount['Comments'] != NULL)$newAmount->setComments($amount['Comments']);
+                        $newAmount->setWaste_type_id($amount['Waste_type_id']);
 
-                    if($newAmount->getWaste_type()->getName() == "Vial"){
-                        //get the pi
-                        $use = $this->getParcelUseById($newAmount->getParcel_use_id());
-                        $parcelDao = $this->getDao(new Parcel());
-                        $parcel = $parcelDao->getById($use->getParcel_id());
-                        $authDao = $this->getDao(new Authorization());
-                        $auth = $authDao->getById($parcel->getAuthorization_id());
-                        $piAuthDao = $this->getDao(new PIAuthorization());
-                        $piAuth = $piAuthDao->getById($auth->getPi_authorization_id());
-                        $pi = $this->getPIById($piAuth->getPrincipal_investigator_id());
-                        if($pi->getCurrentScintVialCollections() == null){
+                        if($newAmount->getWaste_type()->getName() == "Vial"){
+                            //get the pi
+                            $use = $this->getParcelUseById($newAmount->getParcel_use_id());
+                            $parcelDao = $this->getDao(new Parcel());
+                            $parcel = $parcelDao->getById($use->getParcel_id());
+                            $authDao = $this->getDao(new Authorization());
+                            $auth = $authDao->getById($parcel->getAuthorization_id());
+                            $piAuthDao = $this->getDao(new PIAuthorization());
+                            $piAuth = $piAuthDao->getById($auth->getPi_authorization_id());
+                            $pi = $this->getPIById($piAuth->getPrincipal_investigator_id());
+                            if($pi->getCurrentScintVialCollections() == null){
 
-                            //make new svCollection
-                            $collectionDao = $this->getDao(new ScintVialCollection());
-                            $collection = new ScintVialCollection();
-                            $collection->setIs_active(true);
-                            $collection->setPrincipal_investigator_id($pi->getKey_id());
-                            $collection = $collectionDao->save($collection);
+                                //make new svCollection
+                                $collectionDao = $this->getDao(new ScintVialCollection());
+                                $collection = new ScintVialCollection();
+                                $collection->setIs_active(true);
+                                $collection->setPrincipal_investigator_id($pi->getKey_id());
+                                $collection = $collectionDao->save($collection);
 
-                            //$LOG->fatal($collection);
+                                //$LOG->fatal($collection);
 
-                            $newAmount->setScint_vial_collection_id($collection->getKey_id());
-                        }else{
-                            $id = end($pi->getCurrentScintVialCollections())->getKey_id();
-                            $newAmount->setScint_vial_collection_id($id);
+                                $newAmount->setScint_vial_collection_id($collection->getKey_id());
+                            }else{
+                                $id = end($pi->getCurrentScintVialCollections())->getKey_id();
+                                $newAmount->setScint_vial_collection_id($id);
+                            }
                         }
-                    }
 
-                    $amountDao->save($newAmount);
-                }
-                //if a ParcelUseAmount has no activity, we assume it's supposed to be deleted
-                else{
-                    if($amount['Key_id'] != NULL){
-                        $amountDao = $this->getDao(new ParcelUseAmount());
-                        $amountDao->deleteById($amount['Key_id']);
+                        $amountDao->save($newAmount);
+                    }
+                    //if a ParcelUseAmount has no activity, we assume it's supposed to be deleted
+                    else{
+                        if($amount['Key_id'] != NULL){
+                            $amountDao = $this->getDao(new ParcelUseAmount());
+                            $amountDao->deleteById($amount['Key_id']);
+                        }
                     }
                 }
             }
@@ -1010,17 +1038,7 @@ class Rad_ActionManager extends ActionManager {
                     $bagDao = $this->getDao(new WasteBag());
                     $bag = $bagDao->getById($bagArray['Key_id']);
                     $bag->setPickup_id($pickup->getKey_id());
-                    $bag = $bagDao->save($bag);
-
-                    if($decodedObject->getStatus() == "AT RSO" || $decodedObject->getStatus() == "PICKED UP"){
-                        $container = $bag->getContainer();
-                        $currentBags = $container->getCurrentWasteBags();
-                        $currentBag = $currentBags[0];
-                        //replace the waste bag in the container, but only if it was still in there, and therefore the one we picked up
-                        if($currentBag->getKey_id() == $bag->getKey_id()){
-                            $this->changeWasteBag($bag);
-                        }
-                    }
+                    $bagDao->save($bag);
                 }
 
                 foreach($svCollections as $collectionArray){
@@ -1122,10 +1140,10 @@ class Rad_ActionManager extends ActionManager {
             return $decodedObject;
         }
     }
-    function changeWasteBag($bag = null) {
+    function changeWasteBag() {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-        $decodedObject = $bag != null ? $bag : $this->convertInputJson();
-        $LOG->fatal($decodedObject);
+        $decodedObject = $this->convertInputJson();
+        $LOG->debug($decodedObject);
         if( $decodedObject === NULL ) {
             return new ActionError('Error converting input stream to WasteBag', 202);
         }
@@ -1157,15 +1175,7 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new SolidsContainer());
-            $container = $decodedObject = $dao->save($decodedObject);
-            //add a bag to the container if it doesn't have any
-            if($container->getCurrentWasteBags() == null){
-                $bag = new WasteBag();
-                $bag->setContainer_id($container->getKey_id());
-                $bag->setDate_added(date('Y-m-d H:i:s'));
-                $bag = $this->saveWasteBag($bag);
-            }
-
+            $decodedObject = $dao->save($decodedObject);
             return $decodedObject;
         }
     }
@@ -1840,7 +1850,7 @@ class Rad_ActionManager extends ActionManager {
         }
 
         if($id == null){
-         return new ActionError("No request parameter 'id' was provided");
+            return new ActionError("No request parameter 'id' was provided");
         }
 
         $dao = $this->getDao(new Pickup());
@@ -2548,7 +2558,7 @@ class Rad_ActionManager extends ActionManager {
     function saveMiscellaneousWaste(MiscellaneousWaste $waste){
         $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
         if($waste == null){
-             $waste = $this->convertInputJson();
+            $waste = $this->convertInputJson();
         }
     	if( $waste === NULL ) {
     		return new ActionError('Error converting input stream to MiscWaste', 202);

@@ -66,6 +66,21 @@ angular.module('00RsmsAngularOrmApp')
             });
         }
 
+        $scope.openTransferOutModal = function (object) {
+            console.log(object);
+            var modalData = {};
+            if (object) {
+                modalData.Parcel = object;
+            } else {
+                modalData.Parcel = { Class: "Parcel" };
+            }
+            af.setModalData(modalData);
+            var modalInstance = $modal.open({
+                templateUrl: 'views/admin/admin-modals/transfer-out-modal.html',
+                controller: 'TransferModalCtrl'
+            });
+        }
+
     })
     .controller('TransferModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', 'modelInflatorFactory', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods, modelInflatorFactory) {
 

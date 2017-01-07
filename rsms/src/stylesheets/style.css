@@ -772,11 +772,25 @@ tr.notedit, tr.notedit td {
   width: 137px;
   margin-right: 5px;
 }
+
 /* line 465, ../sass/style.scss */
 .modal-content .form-horizontal .controls {
   margin-left: 130px;
 }
 
+.modal-content .form-horizontal input + .help-block, 
+.modal-content .form-horizontal select + .help-block,
+.modal-content .form-horizontal textarea + .help-block{
+  margin-left:0;
+  margin-top: -1px;
+}
+.form-horizontal .input-append{
+  display:block;
+}
+.modal-body .controls .ui-select-container{
+    float:left;
+    width: 80%;
+}
 /*******************************************************
 * HAZARD HUB STYLES
 *******************************************************/
@@ -4187,4 +4201,16 @@ table.quickdate-calendar td:hover {
   font-weight:500 !important;
   font-size:16px !Important;
 }
- 
+.icon-style{
+  
+}
+.flex-table{
+  flex:1 auto;
+}
+.flex-table > div{
+  width:100%
+  display:flex;
+  flex-grow: 1;
+  color:#333;
+  display: flex;
+}

@@ -19,8 +19,8 @@ class ParcelUse extends RadCrud {
 		"quantity"						=> "float",
 		"experiment_use"				=> "text",
 		"date_used"						=> "timestamp",
-        //"date_transfered"               => "timestamp",
-        //"destination_pi_id"             => "integer",
+        "date_transfered"               => "timestamp",
+        "destination_parcel_id"         => "integer",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -73,7 +73,7 @@ class ParcelUse extends RadCrud {
     private $date_transfered;
     /** Is this a transfer? **/
     private $is_transfer;
-    private $destination_pi_id;
+    private $destination_parcel_id;
 
 	public function __construct() {
 
@@ -154,11 +154,11 @@ class ParcelUse extends RadCrud {
         return $this->is_transfer;
     }
 
-    public function getDestination_pi_id(){
-        return $this->destination_pi_id;
+    public function getDestination_parcel_id(){
+        return $this->destination_parcel_id;
     }
-    public function setDestination_pi_id($id){
-        $this->destination_pi_id = $id;
+    public function setDestination_parcel_id($id){
+        $this->destination_parcel_id = $id;
     }
 
 }
