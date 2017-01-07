@@ -120,6 +120,7 @@ if(!isset($_SESSION["USER"])){ ?>
 
 <!-- filters -->
 <!--script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></!--script>-->
+<script src="scripts/filters/IBCFilters.js"></script>
 
 
 <!-- framework -->

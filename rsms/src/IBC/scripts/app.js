@@ -18,7 +18,6 @@ angular
         'angular.filter',
         'ui.tinymce',
         'ui.router',
-
     ])
     .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
         $urlRouterProvider.otherwise("/home");
