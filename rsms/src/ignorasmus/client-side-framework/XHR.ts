@@ -54,6 +54,9 @@ abstract class XHR {
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onload = () => {
                 if (this.SUCCESS_CODES.indexOf(xhr.status) > -1) {
+                    if (method.toLowerCase() == "post") {
+                        console.log(JSON.parse(xhr.responseText));
+                    }
                     resolve(JSON.parse(xhr.responseText));
                 } else {
                     reject(xhr.statusText);

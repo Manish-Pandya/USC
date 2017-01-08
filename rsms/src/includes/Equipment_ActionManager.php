@@ -50,7 +50,6 @@ class Equipment_ActionManager extends ActionManager {
             return $decodedObject;
         }
         else{
-            $LOG->fatal($decodedObject);
             $type = $decodedObject->getEquipment_class();
             $equipment = new $type();
             $equipmentDao = $this->getDao($equipment);
@@ -62,7 +61,6 @@ class Equipment_ActionManager extends ActionManager {
             $n = $equipment->conditionallyCreateEquipmentInspection($decodedObject);
             //force reload of all inspections for relevant equipment by client
 			$is = $equipment->getEquipmentInspections();
-			$LOG->fatal($is);
             return $is;
         }
     }
@@ -90,7 +88,6 @@ class Equipment_ActionManager extends ActionManager {
         	$dao = $this->getDao(new BioSafetyCabinet());
             $insp = $decodedObject->getSelectedInspection();
             $pisToAdd = $insp->getPrincipalInvestigators();
-
             $cabinet = $dao->save($decodedObject);
             $decodedObject->setKey_id($cabinet->getKey_id());
 
@@ -99,6 +96,7 @@ class Equipment_ActionManager extends ActionManager {
             //if the inspection already exists, remove its PIs first, then add the relevant ones
             if($decodedObject->getSelectedInspection() != null){
                 foreach ($inspection->getPrincipalInvestigators() as $pi){
+                    $pi = JsonManager::assembleObjectFromDecodedArray($pi);                    
                     $dao->removeRelatedItems($pi->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(EquipmentInspection::$PIS_RELATIONSHIP));
                 }
 

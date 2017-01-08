@@ -302,12 +302,15 @@ abstract class DataStoreManager {
         var vmParent: FluxCompositerBase = InstanceFactory.convertToClasses(viewModelParent);
         var actualModelEquivalent: FluxCompositerBase = this.getActualModelEquivalent(vmParent);
         if (!actualModelEquivalent) {
+            vmParent.viewModelWatcher = _.cloneDeep(vmParent);
             DataStoreManager._actualModel[vmParent.TypeName].Data.push(_.cloneDeep(vmParent));
             actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         }
         vmParent = InstanceFactory.copyProperties(actualModelEquivalent, vmParent);
         InstanceFactory.copyProperties(actualModelEquivalent.viewModelWatcher, vmParent);
-
+        if (viewModelParent["Class"] == "EquipmentInspection") {
+            console.log(vmParent);
+        }
         return vmParent.viewModelWatcher;
     }
 
