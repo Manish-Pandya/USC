@@ -50,7 +50,6 @@ angular.module('EquipmentModule')
             }
             $rootScope.selectedCertificationDate = currentYearString;
             $rootScope.selectedDueDate = currentYearString;
-            console.log($rootScope.selectedCertificationDate);
             $scope.$apply();
         });
         console.log($scope.cabinets);
@@ -206,7 +205,6 @@ angular.module('EquipmentModule')
         }
     });
     $scope.save = function (cabinet) {
-        console.log(cabinet);
         cabinet.Certification_date = convenienceMethods.setMysqlTime(cabinet.Certification_date);
         af.save(cabinet).then(function () { $scope.close(); });
     };
@@ -226,7 +224,6 @@ angular.module('EquipmentModule')
         var thing = $scope.modalData.BioSafetyCabinet.EquipmentInspections.filter(function (i) {
             return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
         })[0];
-        console.log(thing);
         if (thing)
             return thing.Comment || $scope.modalData.BioSafetyCabinet.Comment || "";
     };

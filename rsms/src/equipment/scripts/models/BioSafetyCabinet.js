@@ -10,10 +10,6 @@ var equipment;
         function BioSafetyCabinet() {
             return _super.call(this) || this;
         }
-        BioSafetyCabinet.prototype.onFulfill = function () {
-            _super.prototype.onFulfill.call(this);
-            this.getChildUrl(BioSafetyCabinet.EquipmentInspectionMap);
-        };
         BioSafetyCabinet.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
                 var allowedRoles = [Constants.ROLE.NAME.ADMIN];

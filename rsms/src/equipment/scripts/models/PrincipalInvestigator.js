@@ -10,10 +10,6 @@ var equipment;
         function PrincipalInvestigator() {
             return _super.call(this) || this;
         }
-        PrincipalInvestigator.prototype.onFulfill = function () {
-            _super.prototype.onFulfill.call(this);
-            this.getChildUrl(PrincipalInvestigator.RoomMap);
-        };
         PrincipalInvestigator.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
                 var allowedRoles = [Constants.ROLE.NAME.ADMIN];

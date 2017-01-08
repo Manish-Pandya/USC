@@ -10,11 +10,6 @@ var equipment;
         function EquipmentInspection() {
             return _super.call(this) || this;
         }
-        EquipmentInspection.prototype.onFulfill = function () {
-            _super.prototype.onFulfill.call(this);
-            this.getChildUrl(EquipmentInspection.RoomMap);
-            this.getChildUrl(EquipmentInspection.PIMap);
-        };
         EquipmentInspection.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
                 var allowedRoles = [Constants.ROLE.NAME.ADMIN];

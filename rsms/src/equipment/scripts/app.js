@@ -27,7 +27,7 @@ angular
     'uploadContainer'
     //'ngMockE2E'
   ])
-  .config(function ($stateProvider, $urlRouterProvider, $qProvider, $provide, $httpProvider, $sceDelegateProvider, dataSwitchFactoryProvider, modelInflatorFactoryProvider) {
+  .config(function ($stateProvider, $urlRouterProvider, $qProvider, $provide, $httpProvider, $sceDelegateProvider) {
     $urlRouterProvider.otherwise("/home");
     $stateProvider
       .state('equipment', {
@@ -59,11 +59,6 @@ angular
         url: "/x-ray",
         templateUrl: "views/x-ray.html",
         controller: "X-RayCtrl"
-      })
-      .state('testpage', {
-        url: '/testpage',
-        templateUrl: 'views/testpage.php',
-        controller: "TestCtrl"
       })
 
        $provide.decorator('$q', function ($delegate) {
