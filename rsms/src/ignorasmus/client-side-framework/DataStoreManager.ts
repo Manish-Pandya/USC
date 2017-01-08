@@ -97,7 +97,7 @@ abstract class DataStoreManager {
      * @param compMaps
      */
      //TODO:  Switch of allCompMaps when we hit circular structure in get alls, for instance, a PI can get its Rooms which can get its PIs, but we should stop there.
-    static getAll(type: string, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase[] | Promise<any> {
+    static getAll(type: string, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): Promise<FluxCompositerBase[]> {
         if (!PermissionMap.getPermission(type).getAll) {
             throw new Error("You don't have permission to call getAll for " + type);
         }
@@ -194,7 +194,7 @@ abstract class DataStoreManager {
      * @param viewModelParent
      * @param compMaps
      */
-    static getById(type: string, id: string | number, viewModelParent: any, compMaps: CompositionMapping[] | boolean = null): FluxCompositerBase | Promise<any> {
+    static getById(type: string, id: string | number, viewModelParent: any, compMaps: CompositionMapping[] | boolean = null): Promise<FluxCompositerBase> {
         id = id.toString();
         if (!this._actualModel[type].Data || !this._actualModel[type].Data.length) {
             return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetById + id)
@@ -253,7 +253,8 @@ abstract class DataStoreManager {
                 })
         } else {
             var d: FluxCompositerBase = this.findByPropValue(this._actualModel[type].Data, this.uidString, id);
-            return InstanceFactory.convertToClasses( _.assign(viewModelParent, d) );
+            d = InstanceFactory.convertToClasses(_.assign(viewModelParent, d));
+            return this.promisifyData(d);
         }
     }
 
@@ -262,7 +263,7 @@ abstract class DataStoreManager {
      *
      * @param viewModel
      */
-    static save(viewModel: FluxCompositerBase): Promise<FluxCompositerBase> | Promise<FluxCompositerBase>[] {
+    static save(viewModel: FluxCompositerBase): Promise<FluxCompositerBase> | Promise<FluxCompositerBase[]> {
         return XHR.POST(viewModel.thisClass["urlMapping"].urlSave, viewModel)
             .then((d) => {
                 if (Array.isArray(d)) {

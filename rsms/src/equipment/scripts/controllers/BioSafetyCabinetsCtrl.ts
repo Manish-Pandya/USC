@@ -76,14 +76,14 @@ angular.module('EquipmentModule')
       }
 
       $scope.openModal = function (object, inspection, isCabinet) {
-          var modalData = {};
+          var modalData = {inspection:null};
           if (!object) {
               object = new equipment.BioSafetyCabinet();
               object.Is_active = true;
               object.Class = "BioSafetyCabinet";
           }
           if (isCabinet && !inspection) {
-              var inspection:equipment.EquipmentInspection = new equipment.EquipmentInspection();
+              inspection = new equipment.EquipmentInspection();
               inspection.Is_active = true;
               inspection.Class = "EquipmentInspection";
               inspection.Equipment_class = "BioSafetyCabinet";
@@ -115,16 +115,6 @@ angular.module('EquipmentModule')
               if (dueSeconds < todayInSeconds) return true;
           }
           return false;
-      }
-
-      $scope.save = function (copy) {
-          copy.Certification_date = convenienceMethods.setMysqlTime($scope.certDate);
-          af.save(copy).then(function () { $scope.close() })
-      }
-
-      $scope.certify = function (original) {
-          original.Certification_date = convenienceMethods.setMysqlTime(original.viewDate);
-          $scope.saving = af.save(original);
       }
 
       $scope.$on('fileUpload', function (event, data) {
@@ -251,7 +241,7 @@ angular.module('EquipmentModule')
           $scope.message = null;
           copy.Certification_date = convenienceMethods.setMysqlTime(copy.viewDate);
           copy.Fail_date = convenienceMethods.setMysqlTime(copy.viewFailDate);
-          af.save(copy).then(function (r) { console.log(r, DataStoreManager._actualModel.EquipmentInspection); $scope.close() })
+          af.save(copy).then(function (r) { console.log(r); $scope.close(); })
       }
 
       $scope.close = function () {

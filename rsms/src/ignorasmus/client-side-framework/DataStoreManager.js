@@ -240,7 +240,8 @@ var DataStoreManager = (function () {
         }
         else {
             var d = this.findByPropValue(this._actualModel[type].Data, this.uidString, id);
-            return InstanceFactory.convertToClasses(_.assign(viewModelParent, d));
+            d = InstanceFactory.convertToClasses(_.assign(viewModelParent, d));
+            return this.promisifyData(d);
         }
     };
     /**
@@ -287,11 +288,15 @@ var DataStoreManager = (function () {
         var vmParent = InstanceFactory.convertToClasses(viewModelParent);
         var actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         if (!actualModelEquivalent) {
+            vmParent.viewModelWatcher = _.cloneDeep(vmParent);
             DataStoreManager._actualModel[vmParent.TypeName].Data.push(_.cloneDeep(vmParent));
             actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         }
         vmParent = InstanceFactory.copyProperties(actualModelEquivalent, vmParent);
         InstanceFactory.copyProperties(actualModelEquivalent.viewModelWatcher, vmParent);
+        if (viewModelParent["Class"] == "EquipmentInspection") {
+            console.log(vmParent);
+        }
         return vmParent.viewModelWatcher;
     };
     /**

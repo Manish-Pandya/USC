@@ -53,11 +53,11 @@ angular
                 $rootScope.selectedView = view;
             }
 
-            af.save = function (viewModel: FluxCompositerBase): Promise<FluxCompositerBase> {
+            af.save = function (viewModel: FluxCompositerBase): Promise<FluxCompositerBase> | Promise<FluxCompositerBase[]> {
                 $rootScope.error = null;
                 return $rootScope.saving = DataStoreManager.save(viewModel);
             }
-            
+
             /********************************************************************
             **
             **      HANDY FUNCTIONS
