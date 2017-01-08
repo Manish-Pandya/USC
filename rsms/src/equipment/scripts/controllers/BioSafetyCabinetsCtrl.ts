@@ -231,17 +231,17 @@ angular.module('EquipmentModule')
           }
       });
 
-      $scope.save = function (copy) {
-          console.log(copy);
-          copy.Certification_date = convenienceMethods.setMysqlTime(copy.Certification_date);
-          af.save(copy).then(function () { $scope.close() })
+      $scope.save = function (cabinet) {
+          console.log(cabinet);
+          cabinet.Certification_date = convenienceMethods.setMysqlTime(cabinet.Certification_date);
+          af.save(cabinet).then(function () { $scope.close() })
       }
 
-      $scope.certify = function (copy) {
+      $scope.certify = function (inspection) {
           $scope.message = null;
-          copy.Certification_date = convenienceMethods.setMysqlTime(copy.viewDate);
-          copy.Fail_date = convenienceMethods.setMysqlTime(copy.viewFailDate);
-          af.save(copy).then(function (r) { console.log(r); $scope.close(); })
+          inspection.Certification_date = convenienceMethods.setMysqlTime(inspection.viewDate);
+          inspection.Fail_date = convenienceMethods.setMysqlTime(inspection.viewFailDate);
+          af.save(inspection).then(function (r) { console.log(r, DataStoreManager._actualModel.BioSafetyCabinet); $scope.close(); })
       }
 
       $scope.close = function () {
