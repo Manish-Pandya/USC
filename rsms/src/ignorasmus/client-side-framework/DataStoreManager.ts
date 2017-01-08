@@ -109,63 +109,65 @@ abstract class DataStoreManager {
                 DataStoreManager._actualModel[type].getAllCalled = true;
                 return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetAll)
                     .then((d: FluxCompositerBase[]): FluxCompositerBase[] | Promise<any> => {
-                        d = InstanceFactory.convertToClasses(d);
-                        DataStoreManager._actualModel[type].Data = d;
-                        if (compMaps && d.length) {
-                            var allComps: any[] = [];
-                            var allCompMaps: CompositionMapping[] = d[0].allCompMaps;
-                            var l: number = allCompMaps.length;
-                            for (let n: number = 0; n < l; n++) {
-                                var compMap: CompositionMapping = allCompMaps[n];
-                                if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
-                                    // if compMaps == true or if it's an array with an approved compMap...
-                                    if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
-                                        if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
-                                            console.log(type + " fetching remote " + compMap.ChildType);
-                                            if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
-                                                allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
+                        if (d.length) {
+                            d = InstanceFactory.convertToClasses(d);
+                            DataStoreManager._actualModel[type].Data = d;
+                            if (compMaps) {
+                                var allComps: any[] = [];
+                                var allCompMaps: CompositionMapping[] = d[0].allCompMaps;
+                                var l: number = allCompMaps.length;
+                                for (let n: number = 0; n < l; n++) {
+                                    var compMap: CompositionMapping = allCompMaps[n];
+                                    if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
+                                        // if compMaps == true or if it's an array with an approved compMap...
+                                        if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
+                                            if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
+                                                console.log(type + " fetching remote " + compMap.ChildType);
+                                                if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
+                                                    allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
+                                                } else {
+                                                    allComps.push(DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")));
+                                                }
                                             } else {
-                                                allComps.push( DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")) );
-                                            }                                           
-                                        } else {
-                                            console.log(type + " fetching local " + compMap.ChildType);
-                                            allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
-                                        }
-                                        if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-                                            var manyTypeToManyGerundType: string = d[0].TypeName + "To" + compMap.ChildType;
-                                            if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
-                                                DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
-                                                console.log(manyTypeToManyGerundType, "gerund getting baked...");
-                                                DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
-                                                    .then((gerundReturns: any[]) => {
-                                                        DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
-                                                    });
-                                                allComps.push(DataStoreManager._actualModel[manyTypeToManyGerundType].promise);
+                                                console.log(type + " fetching local " + compMap.ChildType);
+                                                allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
+                                            }
+                                            if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
+                                                var manyTypeToManyGerundType: string = d[0].TypeName + "To" + compMap.ChildType;
+                                                if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
+                                                    DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
+                                                    console.log(manyTypeToManyGerundType, "gerund getting baked...");
+                                                    DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
+                                                        .then((gerundReturns: any[]) => {
+                                                            DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
+                                                        });
+                                                    allComps.push(DataStoreManager._actualModel[manyTypeToManyGerundType].promise);
+                                                }
                                             }
                                         }
                                     }
                                 }
+
+                                return Promise.all(allComps)
+                                    .then((whateverGotReturned) => {
+                                        d.forEach((value: FluxCompositerBase, index: number, array: FluxCompositerBase[]) => {
+                                            value.doCompose(compMaps);
+                                            // I think we are cloning before it's done building...
+                                            if (!value.viewModelWatcher) value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
+                                            viewModelParent[index] = value.viewModelWatcher;
+                                        });
+                                        DataStoreManager._actualModel[type].Data = d;
+
+                                        return viewModelParent;
+                                    })
+                                    .catch((reason) => {
+                                        console.log("getAll (inner promise):", reason);
+                                    })
+                            } else {
+                                // Dig this neat way to use viewModelParent as a reference instead of a value!
+                                Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
+                                return viewModelParent;
                             }
-                            
-                            return Promise.all(allComps)
-                                .then((whateverGotReturned) => {
-                                    d.forEach((value: FluxCompositerBase, index: number, array: FluxCompositerBase[]) => {
-                                        value.doCompose(compMaps);
-                                        // I think we are cloning before it's done building...
-                                        if (!value.viewModelWatcher) value.viewModelWatcher = _.cloneDeep(value);
-                                        viewModelParent[index] = value.viewModelWatcher;
-                                    });
-                                    DataStoreManager._actualModel[type].Data = d;
-                                    
-                                    return viewModelParent;
-                                })
-                                .catch((reason) => {
-                                    console.log("getAll (inner promise):", reason);
-                                })
-                        } else {
-                            // Dig this neat way to use viewModelParent as a reference instead of a value!
-                            Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
-                            return viewModelParent;
                         }
                     })
                     .catch((d) => {
@@ -177,7 +179,7 @@ abstract class DataStoreManager {
             var d: FluxCompositerBase[] = DataStoreManager._actualModel[type].Data;
             d.forEach((value: any, index: number, array: FluxCompositerBase[]) => {
                 value.doCompose(compMaps);
-                if (!value.viewModelWatcher) value.viewModelWatcher = _.cloneDeep(value);
+                if (!value.viewModelWatcher) value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
                 viewModelParent[index] = value.viewModelWatcher;
             });
 
@@ -229,7 +231,7 @@ abstract class DataStoreManager {
                             .then(
                                 function (whateverGotReturned) {
                                     d.doCompose(compMaps);
-                                    if (!d.viewModelWatcher) d.viewModelWatcher = _.cloneDeep(d);
+                                    if (!d.viewModelWatcher) d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
                                     viewModelParent = d.viewModelWatcher;
                                     
                                     return viewModelParent;
@@ -239,7 +241,7 @@ abstract class DataStoreManager {
                                 console.log("getById (inner promise):", reason);
                             })
                     } else {
-                        if (!d.viewModelWatcher) d.viewModelWatcher = _.cloneDeep(d);
+                        if (!d.viewModelWatcher) d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
                         //TODO Figger thisun' out: do we have to _assign here?  I hope not, because we really need viewModelParent to be a reference to viewModelWatcher
                         viewModelParent.test = d.viewModelWatcher;
                         viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
@@ -303,16 +305,34 @@ abstract class DataStoreManager {
         var vmParent: FluxCompositerBase = InstanceFactory.convertToClasses(viewModelParent);
         var actualModelEquivalent: FluxCompositerBase = this.getActualModelEquivalent(vmParent);
         if (!actualModelEquivalent) {
-            vmParent.viewModelWatcher = _.cloneDeep(vmParent);
             DataStoreManager._actualModel[vmParent.TypeName].Data.push(_.cloneDeep(vmParent));
             actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         }
         vmParent = InstanceFactory.copyProperties(actualModelEquivalent, vmParent);
         InstanceFactory.copyProperties(actualModelEquivalent.viewModelWatcher, vmParent);
-        if (viewModelParent["Class"] == "EquipmentInspection") {
-            console.log(vmParent);
-        }
+        
         return vmParent.viewModelWatcher;
+    }
+
+    /**
+     * Returns fluxBase quazi-clone and recursively sets all sub-models to reference their respective viewModelWatchers, as opposed to independent copies or references to ActualModel.
+     * So... changes on any deep-nested FluxCompositerBase will reflect Everywhere that FluxCompositerBase's viewModelWatcher is referenced.
+     * Full roundtrip, depth-independent model syncing!
+     *
+     * @param fluxBase
+     */
+
+    static buildNestedViewModelWatcher(fluxBase: FluxCompositerBase): FluxCompositerBase {
+        if (fluxBase.viewModelWatcher) fluxBase = fluxBase.viewModelWatcher;
+        return _.cloneDeepWith(fluxBase, (value: any) => {
+            if (value instanceof FluxCompositerBase) {
+                if (value.viewModelWatcher) {
+                    // set reference to nested FluxCompositerBase's viewModelWatcher, instead of cloning
+                    return value.viewModelWatcher;
+                }
+                // otherwise, default deep-cloning happens
+            }
+        });
     }
 
     /**
