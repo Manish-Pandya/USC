@@ -295,11 +295,15 @@ button.btn:not(.btn-large) {
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(7),.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th:nth-of-type(7){
     max-width:8%;
 }
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(6) > div,.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th:nth-of-type(6) >div{
+    display:table;
+
+}
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(6) ul,.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th:nth-of-type(6) ul{
     margin-bottom: 0;
     width: 100%;
     margin-left:0;
-    display:block;
+    display:table-row;
 
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li,.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li{
@@ -345,8 +349,8 @@ button.btn:not(.btn-large) {
 }
 
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li:nth-of-type(1),.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li:nth-of-type(1){
-    min-width: 163px;
-    width: 15.5%;
+    min-width: 150px;
+    width: 13.5%;
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li:nth-of-type(2),.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li:nth-of-type(2){
     width: 8%;
