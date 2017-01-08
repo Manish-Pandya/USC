@@ -96,7 +96,7 @@ class Equipment_ActionManager extends ActionManager {
             //if the inspection already exists, remove its PIs first, then add the relevant ones
             if($decodedObject->getSelectedInspection() != null){
                 foreach ($inspection->getPrincipalInvestigators() as $pi){
-                    $pi = JsonManager::assembleObjectFromDecodedArray($pi);                    
+					if (is_array($pi)) $pi = JsonManager::assembleObjectFromDecodedArray($pi);
                     $dao->removeRelatedItems($pi->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(EquipmentInspection::$PIS_RELATIONSHIP));
                 }
 
