@@ -24,6 +24,10 @@ angular.module('ng-IBC')
         });
     }
     $scope.loading = $rootScope.getCurrentRoles().then(getAllProtocols);
+    $scope.toggleActive = function (protocol) {
+        protocol.Is_active = !protocol.Is_active;
+        $scope.saving = $q.all([DataStoreManager.save(protocol)]);
+    };
 })
     .controller('IBCModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, roleBasedFactory) {
     $scope.constants = Constants;

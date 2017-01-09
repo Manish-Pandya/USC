@@ -254,10 +254,10 @@ var Constants = (function (thing) {
 
     constants.IBC_PROTOCOL_REVISION = {
         STATUS: {
-            NOT_SUBMITTED: "NOT_SUBMITTED",
-            SUBMITTED: "SUBMITTED",
-            RETURNED_FOR_REVISION: "RETURNED_FOR_REVISION",
-            APPROVED: "APPROVED"
+            NOT_SUBMITTED: "Not Submitted",
+            SUBMITTED: "Submitted",
+            RETURNED_FOR_REVISION: "Returned for Revision",
+            APPROVED: "Approved"
         }
     }
 
