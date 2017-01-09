@@ -896,25 +896,28 @@ class Rad_ActionManager extends ActionManager {
         else {
             $dao = $this->getDao(new ParcelUse());
 
-            if($decodedObject->getDate_transfered() != null){
+            if($decodedObject->getDate_transferred() != null){
+
                 //this is a use for a transfer
-                if($decodedObject->getDestination_parcel_id() != null){
-                    $dParcel = $this->getParcelById();
-                }
-                //create a parcel for the new pi
-                else{
-                    $dParcel = new Parcel();
-                    $decodedObject->setDestination_parcel_id($dParcel->getKey_id());
-                }
+                if($decodedObject->getDestination_parcel() != null){
+                    if($decodedObject->getDestination_parcel_id() != null){
+                        $dParcel = $this->getParcelById($decodedObject->getDestination_parcel_id());
+                    }
+                    //create a parcel for the new pi
+                    else{
+                        $dParcel = new Parcel();
+                        $decodedObject->setDestination_parcel_id($dParcel->getKey_id());
+                    }
                 $parcelDao = new GenericDAO($dParcel);
                 $dParcel = $parcelDao->save($dParcel);
-
+                }
                 $use = $dao->save($decodedObject);
 
                 //do we already have a parcelUseAmount for this parcel?
-                $amountDao = new GenericDAO(new ParcelUseAmount);
+                $amountDao = new GenericDAO(new ParcelUseAmount());
                 if($decodedObject->getParcelUseAmounts() != null){
                     $amount = end($decodedObject->getParcelUseAmounts());
+                    if(is_array($amount)) $amount = JsonManager::assembleObjectFromDecodedArray($amount);
                 }else{
                     $amount = new ParcelUseAmount();
                 }

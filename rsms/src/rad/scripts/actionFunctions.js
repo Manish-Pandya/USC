@@ -1608,17 +1608,18 @@ angular
                                 }
                             }
                             if(use){
-                                angular.extend(use, returnedUse)
+                                angular.extend(use, returnedUse);
+                                use.edit = false;
                             }else{
                                 dataStoreManager.addOnSave(returnedUse);
-                                parcel.ParcelUses.push(returnedUse)
+                                parcel.ParcelUses.push(returnedUse);
+
                             }
                             $rootScope.ParcelUseCopy = {};
                             
                             parcel.Remainder = returnedUse.ParcelRemainder;
                             parcel.AmountOnHand = returnedUse.ParcelAmountOnHand;
 
-                            use.edit = false;
                             af.clearError();
                             return parcel;
                         },

@@ -19,7 +19,7 @@ class ParcelUse extends RadCrud {
 		"quantity"						=> "float",
 		"experiment_use"				=> "text",
 		"date_used"						=> "timestamp",
-        "date_transfered"               => "timestamp",
+        "date_transferred"               => "timestamp",
         "destination_parcel_id"         => "integer",
 
 		//GenericCrud
@@ -49,6 +49,7 @@ class ParcelUse extends RadCrud {
 
 	/** Integer containing the id of the parcel this usage concerns */
 	private $parcel_id;
+    private $destination_parcel;
 
 	/** timestamp of the date that this usage took place */
 	private $date_of_use;
@@ -70,7 +71,7 @@ class ParcelUse extends RadCrud {
 
 
     /** If this ParcelUse is a transfer, when did the transfer take place **/
-    private $date_transfered;
+    private $date_transferred;
     /** Is this a transfer? **/
     private $is_transfer;
     private $destination_parcel_id;
@@ -146,11 +147,11 @@ class ParcelUse extends RadCrud {
         return $this->parcelRemainder;
     }
 
-    public function getDate_transfered(){return $this->date_transfered;}
-	public function setDate_transfered($date_transfered){$this->date_transfered = $date_transfered;}
+    public function getDate_transferred(){return $this->date_transferred;}
+	public function setDate_transferred($date_transferred){$this->date_transferred = $date_transferred;}
 
 	public function getIs_transfer(){
-        $this->is_transfer = (bool) $this->getDate_transfered()!= null;
+        $this->is_transfer = (bool) $this->getDate_transferred() != null;
         return $this->is_transfer;
     }
 
@@ -161,5 +162,11 @@ class ParcelUse extends RadCrud {
         $this->destination_parcel_id = $id;
     }
 
+    public function getDestination_parcel(){
+        return $this->destination_parcel;
+    }
+    public function setDestination_parcel($parcel){
+        $this->destination_parcel = $parcel;
+    }
 }
 ?>

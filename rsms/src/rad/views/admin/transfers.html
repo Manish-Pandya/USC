@@ -1,6 +1,7 @@
 ﻿<!--div cg-busy="{promise:CarboyReadingAmountSaving, message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div-->
 <div cg-busy="{promise:loading, message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:PrincipalInvestigatorsBusy, message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:saving, message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="right-column transfers">
 
@@ -54,9 +55,11 @@
         <div class="fake-table bordered" ng-show="transfersBetween.length > 0">
             <div class="table-header">
                 <h3>Edit</h3>
-                <h3>Carboy Number</h3>
-                <h3>Status</h3>
                 <h3>PI</h3>
+                <h3>Date Transfered</h3>
+                <h3>Isotope</h3>
+                <h3>Quantity</h3>
+                <h3>Notes</h3>
             </div>
             <div class="table-row" ng-repeat="transfer in transfersBetween = (parcels | transferBetweenParcels)">
                 <div>
@@ -82,17 +85,29 @@
         <div class="fake-table bordered" ng-show="transfersOut.length">
             <div class="table-header">
                 <h3>Edit</h3>
-                <h3>Carboy Number</h3>
-                <h3>Status</h3>
+                <h3>Isotope</h3>
                 <h3>PI</h3>
+                <h3>Quantity</h3>
+                <h3>Date Transferred</h3>
+                <h3>Notes</h3>
             </div>
-            <div class="table-row" ng-repeat="transfer in transfersOut = (uses | transferOutUses)">
+            <div class="table-row" ng-repeat="transfer in transfersOut = (uses | transferOutUses)" ng-init="parcel = dsm.getById('Parcel', transfer.Parcel_id)">
                 <div>
-                    <a ng-disabled="carboy.edit" ng-class="{'disabled':carboy.edit}" ng-click="openTransferOutModal(transfer)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
+                    <a ng-disabled="transfer.edit" ng-class="{'disabled':carboy.edit}" ng-click="openTransferOutModal(transfer)" class="btn btn-primary"><i class="icon-pencil"></i></a>
                 </div>
                 <div>
-                    {{use}}
+                    {{parcel.Authorization.IsotopeName}}
                 </div>
+                <div ng-init="piAuth = dsm.getById('PIAuthorization', parcel.Authorization.Pi_authorization_id); pi = dsm.getById('PrincipalInvestigator',piAuth.Principal_investigator_id)">
+                    {{pi.User.Name}}
+                </div>
+                <div>
+                    {{transfer.Quantity}} mCi
+                </div>
+                <div>
+                    {{transfer.Date_transferred | dateToIso:transfer:'Date_transferred':true}}
+                </div>
+                <div>{{transfer.ParcelUseAmounts[0].Comments}}</div>
             </div>
         </div>
     </div>
