@@ -5,20 +5,20 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var equipment;
 (function (equipment) {
-    var Campus = (function (_super) {
-        __extends(Campus, _super);
-        function Campus() {
+    var Role = (function (_super) {
+        __extends(Role, _super);
+        function Role() {
             return _super.call(this) || this;
         }
-        Campus.prototype.hasGetAllPermission = function () {
+        Role.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
                 var allowedRoles = [Constants.ROLE.NAME.ADMIN];
                 _super.prototype.hasGetAllPermission.call(this, _.intersection(DataStoreManager.CurrentRoles, allowedRoles).length > 0);
             }
             return this._hasGetAllPermission;
         };
-        return Campus;
+        return Role;
     }(FluxCompositerBase));
-    Campus.urlMapping = new UrlMapping("getAllCampuses", "getCampusById&id=", "");
-    equipment.Campus = Campus;
+    Role.urlMapping = new UrlMapping("getAllRoles", "getRoleById&id=", "saveRole");
+    equipment.Role = Role;
 })(equipment || (equipment = {}));

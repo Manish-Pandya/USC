@@ -49,7 +49,7 @@
                 <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit, 'btn-success':!cabinet.Is_active}" ng-click="deactivate(cabinet)" class="btn btn-danger btn-mini left"><i class="icon-remove" ng-class="{'icon-checkmark':!cabinet.Is_active}"></i></button>
             </td>
             <td>
-                {{cabinet.Type}}
+                {{cabinet.Type}} {{cabinet.butt}}
             </td>
             <td>
                 {{cabinet.Serial_number}}
@@ -63,6 +63,7 @@
             <td watch="inspections.length" otherwatch="completeCabinets.length" class="asdful-table-heights">
                 <ul ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
                     <li>
+                        {{inspection.Butt}}
                         {{inspection.Room.Building.Alias || inspection.Room.Building.Name}}
                     </li>
                     <li>

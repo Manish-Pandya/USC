@@ -5,6 +5,7 @@
  *
  * @author David Hamiter
  */
+ 
 class EquipmentInspection extends GenericCrud{
 
 	/** Name of the DB Table */

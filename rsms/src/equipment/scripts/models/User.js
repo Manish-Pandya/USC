@@ -5,20 +5,21 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var equipment;
 (function (equipment) {
-    var Campus = (function (_super) {
-        __extends(Campus, _super);
-        function Campus() {
+    var User = (function (_super) {
+        __extends(User, _super);
+        function User() {
             return _super.call(this) || this;
         }
-        Campus.prototype.hasGetAllPermission = function () {
+        User.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
                 var allowedRoles = [Constants.ROLE.NAME.ADMIN];
                 _super.prototype.hasGetAllPermission.call(this, _.intersection(DataStoreManager.CurrentRoles, allowedRoles).length > 0);
             }
             return this._hasGetAllPermission;
         };
-        return Campus;
+        return User;
     }(FluxCompositerBase));
-    Campus.urlMapping = new UrlMapping("getAllCampuses", "getCampusById&id=", "");
-    equipment.Campus = Campus;
+    User.urlMapping = new UrlMapping("getAllUsers", "getUserById&id=", "saveUser");
+    User.RoleMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Role", "getAllRoles", "Roles", "User_id", "Role_id", "UserRole", "getRelationships&class1=User&class2=Role");
+    equipment.User = User;
 })(equipment || (equipment = {}));

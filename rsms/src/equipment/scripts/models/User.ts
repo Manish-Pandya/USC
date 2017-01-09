@@ -1,7 +1,10 @@
 ﻿namespace equipment {
-    export class Campus extends FluxCompositerBase {
+    export class User extends FluxCompositerBase {
 
-        static urlMapping: UrlMapping = new UrlMapping("getAllCampuses", "getCampusById&id=", "");
+        static urlMapping: UrlMapping = new UrlMapping("getAllUsers", "getUserById&id=", "saveUser");
+
+        Roles: Role[];
+        static RoleMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Role", "getAllRoles", "Roles", "User_id", "Role_id", "UserRole", "getRelationships&class1=User&class2=Role");
 
         constructor() {
             super();
@@ -12,9 +15,7 @@
                 var allowedRoles = [Constants.ROLE.NAME.ADMIN];
                 super.hasGetAllPermission(_.intersection(DataStoreManager.CurrentRoles, allowedRoles).length > 0);
             }
-
             return this._hasGetAllPermission;
         }
-
     }
 }

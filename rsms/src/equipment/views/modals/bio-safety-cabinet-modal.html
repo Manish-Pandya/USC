@@ -5,7 +5,6 @@
 
     <div class="modal-body">
         <div class="control-group">
-            {{pis.length}}
             <label class="control-label">Principal Investigator(s)</label>
             <div class="controls" style="display:block">
                 <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push($item)" class="span3" style="margin-left:0">
@@ -27,7 +26,7 @@
         <div class="control-group">
             <label class="control-label">Room</label>
             <div class="controls">
-                <select class="span1" ng-model="modalData.BioSafetyCabinet.Room" ng-change="onSelectRoom()" ng-options="room as (room.Name + room.Building_name) for room in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators | getSharedRooms">
+                <select class="span1" ng-model="modalData.BioSafetyCabinet.SelectedInspection.Room_id" ng-change="onSelectRoom()" ng-options="room.Key_id as (room.Name + room.Building_name) for room in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators | getSharedRooms">
                     <option value="">--Select Room--</option>
                 </select>
             </div>
@@ -62,14 +61,14 @@
         </div>
         <div class="control-group">
             <label class="control-label">Certification Frequency</label>
-            <select ng-model="modalData.BioSafetyCabinet.Frequency" ng-options="frequency as frequency for (key,frequency) in Constants.BIOSAFETY_CABINET.FREQUENCY">
+            <select ng-model="modalData.BioSafetyCabinet.SelectedInspection.Frequency" ng-options="frequency as frequency for (key,frequency) in Constants.BIOSAFETY_CABINET.FREQUENCY">
                 <option value="">--Select--</option>
             </select>
         </div>
     </div>
 
     <div class="modal-footer">
-        <button ng-disabled="!modalData.BioSafetyCabinet.Room" class="btn btn-large btn-success left"><i class="icon-checkmark"></i>Save</button>
+        <button ng-disabled="!modalData.BioSafetyCabinet.SelectedInspection.Room_id" class="btn btn-large btn-success left"><i class="icon-checkmark"></i>Save</button>
         <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
     </div>
 </form>

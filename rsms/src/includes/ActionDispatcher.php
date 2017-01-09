@@ -55,8 +55,7 @@ class ActionDispatcher {
         else {
             $this->actionManagerType = "ActionManager";
         }
-        $this->LOG->fatal( 'getting action manager type' );
-        $this->LOG->fatal( $this->actionManagerType );
+        $this->LOG->fatal( 'getting action manager type: ' . $this->actionManagerType );
     }
 
     public function setDefaultErrorPage($errorPage){
