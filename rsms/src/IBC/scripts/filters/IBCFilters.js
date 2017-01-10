@@ -1,7 +1,6 @@
 angular.module('ng-IBC')
     .filter('isNotSubmitted', function () {
     return function (protocols) {
-        console.log('running filter');
         if (!protocols)
             return;
         var unsubmittedProtocols = protocols.filter(function (p) {

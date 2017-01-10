@@ -3,7 +3,7 @@
 
         static urlMapping: UrlMapping = new UrlMapping("getAllProtocolRevisions", "getProtocolRevisionById&id=", "saveProtocolRevision");
 
-        PimraryReviewers: User[];
+        PrimaryReviewers: User[];
         static PrimaryReviewersMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "User", "getAllUsers", "PimraryReviewers", "Revisions_id", "Reviewer_id", "IBCRevisionPrimaryReviewer", "getRelationships&class1=IBCProtocolRevision&class2=User&override=PRIMARY_REVIEWERS_RELATIONSHIP");
 
         PreliminaryReviewers: PrincipalInvestigator[];
