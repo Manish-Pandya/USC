@@ -44,6 +44,8 @@ class IBCProtocol extends GenericCrud {
 
 	private $hazard_id;
 
+    private $revisions;
+
 
 	public function __construct(){
 
@@ -61,6 +63,13 @@ class IBCProtocol extends GenericCrud {
 		"tableName"	=>	"protocol_pi",
 		"keyName"	=>	"principal_investigator_id",
 		"foreignKeyName"	=>	"protocol_id"
+	);
+
+    public static $REVISIONS_RELATIONSHIP = array(
+			"className" => "IBCProtocolRevision",
+			"tableName" => "ibc_protocol_revision",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "protocol_id"
 	);
 
 	// Required for GenericCrud
@@ -139,6 +148,15 @@ class IBCProtocol extends GenericCrud {
 	public function setHazards($hazard_id){
 		$this->hazard_id = $hazard_id;
 	}
+
+    public function getRevisions(){
+		if($this->labPersonnel === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->revisions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$REVISIONS_RELATIONSHIP));
+		}
+		return $this->revisions;
+	}
+	public function setRevisions($revisions){ $this->labPersonnel = $revisions; }
 
 }
 ?>

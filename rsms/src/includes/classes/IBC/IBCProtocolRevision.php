@@ -50,6 +50,12 @@ class IBCProtocolRevision extends GenericCrud
     /* array of responses submitted in this revision */
     private $IBCResponses;
 
+    /* array of primary reviewers responsible for reviewing this protocal revision*/
+    private $primaryReviewers;
+
+    /* array of primary reviewers responsible for reviewing this protocal revision*/
+    private $preliminaryReviewers;
+
 	public function __construct(){
 
 		// Define which subentities to load
@@ -64,6 +70,20 @@ class IBCProtocolRevision extends GenericCrud
 		"keyName"	=>	"protocol_id",
 		"foreignKeyName"	=>	"revision_id"
 	);
+
+    public static $PRIMARY_REVIEWERS_RELATIONSHIP = array(
+        "className"	=>	"User",
+        "tableName"	=>	"ibc_revision_primary_reviewer",
+        "keyName"	=>	"reviewer_id",
+        "foreignKeyName"	=>	"revision_id"
+    );
+
+    public static $PRELIMINARY_REVIEWERS_RELATIONSHIP = array(
+        "className"	=>	"User",
+        "tableName"	=>	"ibc_revision_preliminary_reviewer",
+        "keyName"	=>	"reviewer_id",
+        "foreignKeyName"	=>	"revision_id"
+    );
 
 	// Required for GenericCrud
 	public function getTableName(){
@@ -126,6 +146,29 @@ class IBCProtocolRevision extends GenericCrud
 	}
 	public function setIBCResponses($IBCResponses){
 		$this->IBCResponses = $IBCResponses;
+	}
+
+    public function getPrimaryReviewers(){
+        if($this->primaryReviewers === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->primaryReviewers = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PRIMARY_REVIEWERS_RELATIONSHIP));
+		}
+		return $this->primaryReviewers;
+	}
+	public function setPrimaryReviewers($primaryReviewers){
+		$this->primaryReviewers = $primaryReviewers;
+	}
+
+	public function getPreliminaryReviewers(){
+        if($this->preliminaryReviewers === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->preliminaryReviewers = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
+		}
+		return $this->preliminaryReviewers;
+	}
+
+	public function setPreliminaryReviewers($preliminaryReviewers){
+		$this->preliminaryReviewers = $preliminaryReviewers;
 	}
 
 }

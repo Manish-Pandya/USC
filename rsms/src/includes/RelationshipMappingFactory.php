@@ -22,6 +22,8 @@ class RelationshipMappingFactory {
 			new RelationMapping("PIAuthorization"	   , "Room"				        , "pi_authorization_room"		            , "pi_authorization_id"       , "room_id"             ),
 			new RelationMapping("PIAuthorization"	   , "Department"		        , "pi_authorization_department"  	  		, "pi_authorization_id"       , "department_id"       ),
 		    new RelationMapping("IBCProtocol"	       , "PrincipalInvestigator"	, "protocol_pi"  	  		                , "protocol_id"               , "principal_investigator_id"  ),
+            new RelationMapping("IBCProtocolRevision"	, "User"                     , "ibc_revision_primary_reviewer"  	  	    , "revision_id"               , "reviewer_id", "PRIMARY_REVIEWERS_RELATIONSHIP"  ),
+            new RelationMapping("IBCProtocolRevision"	, "User"                     , "ibc_revision_preliminary_reviewer"  	  	    , "revision_id"               , "reviewer_id", "PRELIMINARY_REVIEWERS_RELATIONSHIP"  ),
 			new RelationMapping("EquipmentInspection"  , "PrincipalInvestigator"	, "principal_investigator_equipment_inspection"      , "inspection_id"               , "principal_investigator_id"  )
        );
 	}
@@ -35,11 +37,11 @@ class RelationshipMappingFactory {
 	 *
 	 * @return string name of associated table
 	 */
-	public function getRelationship($classA, $classB) {
+	public function getRelationship($classA, $classB, $override = null) {
 		$relationships = $this->getMap();
 
 		foreach($relationships as $relation) {
-			if( $relation->isPresent($classA, $classB) ) {
+			if( $relation->isPresent($classA, $classB, $override) ) {
 				return $relation;
 			}
 		}
