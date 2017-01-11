@@ -8,35 +8,41 @@
  * Controller of the EquipmentModule Autoclaves view
  */
 angular.module('EquipmentModule')
-  .controller('AutoclavesCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-  		var af = $scope.af = actionFunctionsFactory;
+  .controller('AutoclavesCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods, $q) {
+      var af = $scope.af = applicationControllerFactory;
     
-        var getAllAutoclaves = function(){
-  			af.getAllAutoclaves()
-  			.then(
-  				function(autoclaves){  	
-  					$scope.autoclaves = dataStore.Autoclave;
-  				},
-  				function(){}
-  			)
-  		}
+      function getAll() {
+            $scope.inspections = [];
+            $scope.autoclaves = [];
+            $q.all([DataStoreManager.getAll("EquipmentInspection", $scope.inspections, false), DataStoreManager.getAll("Autoclave", $scope.autoclaves, false)])
+            .then(
+                function (whateverGotReturned) {
+                    console.log($scope.inspections);
+                    console.log($scope.autoclaves);
+                }
+            )
+            .catch(
+                function (reason) {
+                    console.log("bad Promise.all:", reason);
+                }
+            )
+        }
 
-  		getAllAutoclaves();
+        $scope.loading = $rootScope.getCurrentRoles().then(getAll);
 
         $scope.deactivate = function(autoclave) {
-            var copy = dataStoreManager.createCopy(autoclave);
-            copy.Retirement_date = new Date();
-            af.saveAutoclave(autoclave.pi, copy, autoclave);
+            autoclave.Retirement_date = new Date();
+            af.save(autoclave);
         }
     
         $scope.openModal = function(object) {
             var modalData = {};
             if (!object) {
-                object = new window.Autoclave();
+                object = new Autoclave();
                 object.Class = "Autoclave";
             }
             modalData[object.Class] = object;
-            af.setModalData(modalData);
+            DataStoreManager.ModalData = modalData;
             var modalInstance = $modal.open({
                 templateUrl: 'views/modals/autoclave-modal.html',
                 controller: 'AutoclaveModalCtrl'
@@ -47,17 +53,16 @@ angular.module('EquipmentModule')
   .controller('AutoclaveModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
 		var af = $scope.af = actionFunctionsFactory;
 
-		$scope.modalData = af.getModalData();
+		$scope.modalData = DataStoreManager.ModalData;
         console.log($scope.modalData);
-        $scope.save = function(copy, autoclave) {
-            af.saveAutoclave(copy, autoclave)
+        $scope.save = function(copy) {
+            af.save(copy)
                 .then($scope.close);
         }
 
 		$scope.close = function(){
             $modalInstance.dismiss();
-            dataStore.Autoclave.push($scope.modalData.AutoclaveCopy);
-            af.deleteModalData();
+            DataStoreManager.ModalData = null;
 		}
 
 	});

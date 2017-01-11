@@ -193,6 +193,18 @@ angular
             $rootScope.bannerClass = viewMap.Name;
             $rootScope.dashboardView = viewMap.Dashboard;
             $rootScope.noHead = viewMap.NoHead;
-          });
+        });
+
+      //global authorization getter function used by multiple controllers
+    $rootScope.getHighestAuth = function (pi) {
+        console.log(pi);
+        if (pi.Pi_authorization && pi.Pi_authorization.length) {
+            var auths = _.sortBy(pi.Pi_authorization, [function (amendment) {
+                return moment(amendment.Approval_date).valueOf();
+            }]);
+
+            return auths[auths.length - 1];
+        }
+    }
 
   });;

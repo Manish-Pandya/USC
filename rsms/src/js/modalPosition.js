@@ -10,7 +10,11 @@ angular.module('modalPosition', [])
                 $(element[0]).css({ maxHeight: $window.innerHeight * .95, minHeight: '250px' });
                 $(element[0]).find('.modal-content').css({ maxHeight: ($window.innerHeight * .95 - 50), minHeight: '250px' });
                 $(element[0]).css({ top: (topMargin / 2) - 20, marginTop: -10 });
-                $(element[0]).find('.modal-body').css({ overflowY: 'auto', maxHeight: $window.innerHeight * .85 - 150 });
+                $(element[0]).find('.modal-body').css({ maxHeight: $window.innerHeight * .85 - 150 });
+                //overflowY: 'auto',
+                if ($(element[0]).find('.modal-body').css('overflowY') != 'visible') {
+                    $(element[0]).find('.modal-body').css({ overflowY: 'auto'});
+                }
                 $(element[0]).find('.modal-body ul').css({ maxHeight: $window.innerHeight * .85 - 210 });
 
                 if ($('.wide-modal').length) {

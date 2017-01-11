@@ -1,0 +1,73 @@
+﻿<form class="form" ng-submit="saveTransferOut(modalData.selectedParcel, modalData.ParcelUseCopy, modalData.ParcelUse)">
+    <div class="modal-header" style="padding:0;">
+        <h2 ng-show="!addRoom" style="padding:5px; background:rgb(26, 109, 168); color:white">Transfer a package</h2>
+    </div>
+    <div class="modal-body" style="min-height:600px !important">
+        <div class="control-group">
+            <label class="control-label">Originating PI</label>
+            <div class="controls">
+                <ui-select ng-model="modalData.pi" theme="selectize" ng-disabled="disabled" on-select="parcels = $item.loadActiveParcels()">
+                    <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
+                    <ui-select-choices repeat="pi in dataStore.PrincipalInvestigator | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
+                        <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+
+
+        <h4 class="control-group" ng-if="(modalData.pi && !modalData.pi.ActiveParcels.length)">{{modalData.pi.User.Name}} doesn't have any packages.</h4>
+        
+        <div ng-if="(modalData.pi && modalData.pi.ActiveParcels.length)">
+            <div class="control-group parcel-list" ng-if="!modalData.selectedParcel || modalData.forceSelectParcel">
+                <label class="control-label">Select Package:</label>
+                <div class="controls">
+                    <ul class="header"><li>RS/Transfer #</li><li>Unused Amount</li></ul>
+                    <ul class="scroll-container">
+                        <li ng-repeat="parcel in modalData.pi.ActiveParcels" class="parcel-row" ng-class="{'green':parcel.Key_id == modalData.selectedParcel.Key_id}" ng-click="modalData.forceSelectParcel = false; modalData.ParcelUseCopy.Parcel_id = parcel.Key_id; modalData.selectedParcel = dsm.getById('Parcel',modalData.ParcelUseCopy.Parcel_id)">
+                            <ul><li>{{parcel.Rs_number}}</li><li>{{parcel.Remainder}}</li></ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div ng-show="modalData.ParcelUseCopy.Parcel_id && !modalData.forceSelectParcel">
+                <div class="parcel-label" ng-init="modalData.selectedParcel = dsm.getById('Parcel',modalData.ParcelUseCopy.Parcel_id)">
+                    <h3><i class="primary icon-pencil redo-select-parcel" ng-click="modalData.forceSelectParcel = true;"></i>Selected Package:</h3>
+                    <p><span class="bold">RS/Transfer Number: </span>{{modalData.selectedParcel.Rs_number}}</p>
+                    <p><span class="bold">Unused Amount: </span>{{modalData.selectedParcel.Remainder}}mCi</p>
+                </div>
+
+                <div class="control-group">
+                    <label>Transfer Quantity</label>
+                    <div class="controls input-append">
+                        <input style="max-width:50%;" name="quantity" ng-model="modalData.ParcelUseCopy.Quantity">
+                        <span class="add-on" style="">mCi</span>
+                        <span ng-if="modalData.tooMuch" class="red error too-much">{{modalData.tooMuch}}</span>
+                    </div>
+                </div>
+                
+
+                <div class="control-group">
+                    <label class="control-label" for="inputEmail">Date Transfered</label>
+                    <div class="controls">
+                        <input ng-model="modalData.ParcelUseCopy.view_Date_transferred">
+                        <span class="help-block" style="">mm/dd/yy</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="inputEmail">Notes</label>
+                    <div class="controls" ng-init="modalData.ParcelUseCopy.ParcelUseAmounts = modalData.ParcelUseCopy.ParcelUseAmounts || [{Class:'ParcelUseAmount'}];">
+                        <textarea style="width:100%" ng-model="modalData.ParcelUseCopy.ParcelUseAmounts[0].Comments"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-large btn-success left"><i class="icon-checkmark"></i>Save</button>
+        <a class="btn btn-large left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+        <h3 class="red" ng-if="error">{{error}}</h3>
+    </div>
+</form>

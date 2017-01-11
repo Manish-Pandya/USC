@@ -812,9 +812,38 @@ class GenericDAO {
 
 		//Prepare to query all from the table
 		//$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name, pi_name');
-        $sql = "select `a`.`key_id` AS `pi_key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,`d`.`name` AS `building_name`,`d`.`key_id` AS `building_key_id`,`e`.`name` AS `campus_name`,`e`.`key_id` AS `campus_key_id`,bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,year(curdate()) AS `year`,NULL AS `inspection_id` from (((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `principal_investigator_room` `f`) where ((`a`.`is_active` = 1) and (`c`.`is_active` = 1) and (`b`.`key_id` = `a`.`user_id`) and (`f`.`principal_investigator_id` = `a`.`key_id`) and (`f`.`room_id` = `c`.`key_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`) and (not(`a`.`key_id` in (select `inspection`.`principal_investigator_id` from `inspection` where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?))))) group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,year(curdate()),NULL union select `a`.`key_id` AS `pi_key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,`d`.`name` AS `building_name`,`d`.`key_id` AS `building_key_id`,`e`.`name` AS `campus_name`,`e`.`key_id` AS `campus_key_id`,bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,coalesce(year(`g`.`date_started`),`g`.`schedule_year`) AS `year`,`g`.`key_id` AS `inspection_id` from ((((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `inspection_room` `f`) join `inspection` `g`) where ((`a`.`key_id` = `g`.`principal_investigator_id`) and (`b`.`key_id` = `a`.`user_id`) and (`g`.`key_id` = `f`.`inspection_id`) and (`c`.`key_id` = `f`.`room_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`)) group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,coalesce(year(`g`.`date_started`),`g`.`schedule_year`),`f`.`inspection_id` ORDER BY campus_name, building_name, pi_name";
+        $sql = "select `a`.`key_id` AS `pi_key_id`,
+                concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,
+                `d`.`name` AS `building_name`,
+                `d`.`key_id` AS `building_key_id`,
+                `e`.`name` AS `campus_name`,
+                `e`.`key_id` AS `campus_key_id`,
+                bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,
+                bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,
+                bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,
+                year(curdate()) AS `year`,
+                NULL AS `inspection_id` from (((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `principal_investigator_room` `f`)
+                where ((`a`.`is_active` = 1) and (`c`.`is_active` = 1) and (`b`.`key_id` = `a`.`user_id`) and (`f`.`principal_investigator_id` = `a`.`key_id`) and (`f`.`room_id` = `c`.`key_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`) and (not(`a`.`key_id` in (select `inspection`.`principal_investigator_id`
+                from `inspection`
+                where (coalesce(year(`inspection`.`date_started`),
+                `inspection`.`schedule_year`) = ?))))) group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,year(curdate()),
+                NULL union select `a`.`key_id` AS `pi_key_id`,
+                concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,
+                `d`.`name` AS `building_name`,
+                `d`.`key_id` AS `building_key_id`,
+                `e`.`name` AS `campus_name`,`e`.`key_id` AS `campus_key_id`,bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,
+                bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,
+                bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,
+                coalesce(year(`g`.`date_started`),`g`.`schedule_year`) AS `year`,`g`.`key_id`
+                AS `inspection_id`
+                from ((((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `inspection_room` `f`) join `inspection` `g`)
+                where ((`a`.`key_id` = `g`.`principal_investigator_id`) and (`b`.`key_id` = `a`.`user_id`) and (`g`.`key_id` = `f`.`inspection_id`) and (`c`.`key_id` = `f`.`room_id`)
+                and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`) and (coalesce(year(`g`.`date_started`),
+                `g`.`schedule_year`) = ?) )
+                group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,coalesce(year(`g`.`date_started`),`g`.`schedule_year`),`f`.`inspection_id` ORDER BY campus_name, building_name, pi_name";
         $stmt = $db->prepare($sql);
 		$stmt->bindParam(1,$year,PDO::PARAM_STR);
+        $stmt->bindParam(2,$year,PDO::PARAM_STR);
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
@@ -851,16 +880,27 @@ class GenericDAO {
     }
 
 	/*
-	 * @param RelationshipMapping relationship
+	 * @param RelationMapping relationship
 	 */
 
-	function getRelationships( $relationship ){
+	function getRelationships( RelationMapping $relationship ){
 		$this->LOG->debug("about to get relationships from $tableName");
 
 		global $db;
-		$parentColumn = $relationship->getParentColumn();
-		$childColumn  = $relationship->getChildColumn();
-		$stmt = $db->prepare("SELECT $parentColumn as parentId, $childColumn as childId FROM " . $relationship->getTableName());
+
+		//sometimes, in many to many relationships, we are asking for what we usually think of as the child objects to get their collection of parents
+		//in those cases, we reverse the relationships
+		if($relationship->getIsReversed()){
+			$parentColumn = $relationship->getChildColumn();
+			$childColumn  = $relationship->getParentColumn();
+		}else{
+			$parentColumn = $relationship->getParentColumn();
+			$childColumn  = $relationship->getChildColumn();
+		}
+		$stmt = "SELECT $parentColumn as parentId, $childColumn as childId FROM " . $relationship->getTableName();
+		$this->LOG->fatal($relationship);
+		$this->LOG->fatal($stmt);
+		$stmt = $db->prepare($stmt);
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {

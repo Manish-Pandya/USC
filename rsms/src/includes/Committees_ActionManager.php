@@ -17,7 +17,7 @@ class Committees_ActionManager extends ActionManager {
 
 
 	public function getAllProtocols(){
-		$dao = $this->getDao(new BiosafetyProtocol());
+		$dao = $this->getDao(new BioSafetyProtocol());
 		return $dao->getAll();
 	}
 
@@ -32,7 +32,7 @@ class Committees_ActionManager extends ActionManager {
 		}
 
 		if( $id !== NULL ){
-			$dao = $this->getDao(new BiosafetyProtocol());
+			$dao = $this->getDao(new BioSafetyProtocol());
 			return $dao->getById($id);
 		}
 		else{
@@ -42,7 +42,7 @@ class Committees_ActionManager extends ActionManager {
 
 	}
 
-	public function saveProtocol( BiosafetyProtocol $decodedObject = NULL){
+	public function saveProtocol( BioSafetyProtocol $decodedObject = NULL){
 		$LOG = Logger::getLogger('Action:' . __function__);
 		if( $decodedObject === NULL ){
 			$decodedObject = $this->convertInputJson();
@@ -54,7 +54,7 @@ class Committees_ActionManager extends ActionManager {
 			return $decodedObject;
 		}
 		else{
-			$dao = $this->getDao(new BiosafetyProtocol());
+			$dao = $this->getDao(new BioSafetyProtocol());
 			$decodedObject = $dao->save($decodedObject);
 			$LOG->fatal($decodedObject);
 			return $decodedObject;
@@ -131,7 +131,7 @@ class Committees_ActionManager extends ActionManager {
 
 		//if so, update the path of that protocol now and save it.
 		if($id != NULL){
-			$protocolDao = $this->getDao( new BiosafetyProtocol() );
+			$protocolDao = $this->getDao( new BioSafetyProtocol() );
 			$protocol = $this->getProtocolById( $id );
 			$protocol->setReport_path( $name );
 			$LOG->fatal($protocol);

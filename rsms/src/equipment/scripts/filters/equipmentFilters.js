@@ -61,11 +61,16 @@ angular
         If dateString is currentYear, also accept matches of null Certification_date and Due_date.
         */
         return function (inspections, dateString, currentYear) {
-            console.log(dateString, currentYear, inspections.length);
+            //console.log(dateString, currentYear, inspections.length);
             if (!inspections) {
                 return;
             } else if (dateString != '' && (!dateString)) {
                 return inspections;
+            } else if (dateString == "Not Yet Certified") {
+                return inspections.filter(function (i) {
+                    console.log(i);
+                    return !i.Certification_date;
+                });
             }
             var year = dateString.split('-')[0];
             var matches = [];
@@ -95,12 +100,22 @@ angular
                 return;
             } else if (dateString != '' && (!dateString || !dateProp)) {
                 return equipments;
+            } else if (dateString == "Not Yet Certified") {
+                
+                return equipments.filter(function (e) {
+                    return e.EquipmentInspections.every(function (i) {
+                        return !i.Certification_date;
+                    })
+                });
             }
             
             var year = dateString.split('-')[0];
             var matches = [];
             var i = equipments.length;
-            while(i--){
+            while (i--) {
+                if (equipments[i].Key_id == 13) {
+                    console.log(equipments[i]);
+                }
                 if (equipments[i].EquipmentInspections) {
                     var j = equipments[i].EquipmentInspections.length;
                     var matched = false;
@@ -141,3 +156,84 @@ angular
             return matches;
         }
     })
+    .filter("pi",function () {
+        return function (cabs, string) {
+            if (!cabs) return;
+            if (!string) return cabs;
+            return cabs.filter(function (c) {
+                return c.EquipmentInspections && c.EquipmentInspections.length && c.EquipmentInspections.some(function (i) {
+                    console.log(i, string);
+                    return i.PrincipalInvestigators.some(function(i){return i.User.Name.toLowerCase().indexOf(string.toLowerCase()) > -1});
+                })
+            })
+        }
+    })
+    .filter("status", function () {
+        return function (cabs, string) {
+            if (!cabs) return;
+            if (!string) return cabs;
+            return cabs.filter(function (c) {
+                return c.EquipmentInspections && c.EquipmentInspections.length && c.EquipmentInspections.some(function (i) {
+                    return i.Status && i.Status.toLowerCase().indexOf(string.toLowerCase()) > -1;
+                })
+            })
+        }
+    })
+    .filter("cabinetYear", function () {
+        return function (cabs, dateString, uncertified) {
+            if (!cabs) {
+                return;
+            } else if (!dateString) {
+                return cabs;
+            } else if (uncertified) {
+                return cabs.filter(function (e) {
+                    return e.EquipmentInspections.every(function (i) {
+                        return !i.Certification_date;
+                    })
+                });
+            }
+
+            return cabs.filter(function (c) {
+                return c.EquipmentInspections.some(function (i) {
+                    return (i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1);
+                })
+            })
+        }
+    })
+    .filter("cabinetInspectionYear", function () {
+        return function (inspections, dateString, uncertified) {
+           
+            if (!inspections) return;
+            if (!dateString) return inspections;
+
+            return inspections.filter(function (i) {
+                return uncertified ? !i.Certification_date : (i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1);
+            });
+        }
+    })
+     .filter("getSharedRooms", function () {
+         return function (pis) {
+             if(!pis)return;
+             var allRooms = [];
+             pis.forEach(function (pi) {
+                 if (!pi.Rooms) return;
+                 //console.log(pi);
+
+                 pi.Rooms.forEach(function (r) {
+                     var index = parseInt(r.Key_id);
+                     if (!allRooms[index]) {
+                         allRooms[index] = [];
+                     }
+                     r.Bulding_name = r.Building_name || r.Building.Room.Name;
+                     allRooms[index].push(r);
+                 })
+             })
+             //console.log(allRooms);
+             if (!allRooms || !allRooms.length) return;
+             return allRooms.reduce(function (i) {
+                 return i.length == pis.length;
+             })
+        }
+     
+    })
+

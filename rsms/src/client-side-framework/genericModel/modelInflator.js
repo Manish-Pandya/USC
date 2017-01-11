@@ -37,7 +37,8 @@ angular
                     var modelledObject = new window[objectFlavor]( );
                     modelledObject.setApi( genericAPIFactory );
                     modelledObject.setRootScope( $rootScope );
-                    modelledObject.setInflator( this );
+                    modelledObject.setInflator(this);
+                    modelledObject.$q = $q;
 
                     //modelledObject.setApi( genericAPIFactory );
                     //add all the json's properties to the object

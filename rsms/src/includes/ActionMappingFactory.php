@@ -22,6 +22,8 @@ class ActionMappingFactory {
 
     protected static $ROLE_GROUPS = array(
             "ADMIN" 				=> array("Admin", "Radiation Admin"),
+            "IBC_COMMITTEE" 		=> array("Admin", "Radiation Admin", "IBC Member"),
+            "IBC_AND_LAB" 		    => array("Admin", "Radiation Admin", "IBC Member", "Principal Investigator", "Lab Contact"),
             "EHS"					=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector"),
             "EHS_AND_LAB"			=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "Lab Contact", "Principal Investigator", "Radiation User"),
             "ALL_RAD_USERS"			=> array("Admin", "Radiation Admin", "Safety User", "Radiation Inspector"),
@@ -44,6 +46,11 @@ class ActionMappingFactory {
                 //TODO: Assign response codes
                 "loginAction"=>new ActionMapping("loginAction", "views/RSMSCenter.php", LOGIN_PAGE, array(), false),
                 "logoutAction"=>new ActionMapping("logoutAction",LOGIN_PAGE, LOGIN_PAGE, array(), false),
+				"getCurrentRoles"=>new ActionMapping("getCurrentRoles","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getPropertyByName"=>new ActionMapping("getPropertyByName","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getCurrentRoles"=>new ActionMapping("getCurrentRoles","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getPropertyByName"=>new ActionMapping("getPropertyByName","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+
 
                 //Generic
                 "activate"=>new ActionMapping("activate", "", "", $this::$ROLE_GROUPS["ADMIN"]),
