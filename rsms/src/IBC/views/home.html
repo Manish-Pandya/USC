@@ -77,7 +77,7 @@
             <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Protocol_type}} </td>
             <td>{{protocol.Hazard.Name}} </td>
             <td><a href="">do thing</a> </td>
-            <td></td>
+            <td><button ng-click="openModal(protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1])" class="btn btn-mini"><i class="icon-plus"></i>Reviewers</button></td>
         </tr>
     </tbody>
 </table>

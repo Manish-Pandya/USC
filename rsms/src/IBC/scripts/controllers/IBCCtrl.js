@@ -28,11 +28,25 @@ angular.module('ng-IBC')
         protocol.Is_active = !protocol.Is_active;
         $scope.saving = $q.all([DataStoreManager.save(protocol)]);
     };
+    $scope.openModal = function (object) {
+        var modalData = {};
+        if (!object) {
+            object = new ibc.IBCProtocolRevision;
+        }
+        modalData[object.thisClass['name']] = object;
+        DataStoreManager.ModalData = modalData;
+        var modalInstance = $modal.open({
+            templateUrl: 'views/modals/assign-for-review-modal.html',
+            controller: 'IBCModalCtrl'
+        });
+    };
 })
-    .controller('IBCModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, roleBasedFactory) {
+    .controller('IBCModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods) {
     $scope.constants = Constants;
-    var rbf = roleBasedFactory;
+    $scope.users = [];
+    DataStoreManager.getAll("User", $scope.users);
     $scope.close = function () {
         $modalInstance.dismiss();
+        DataStoreManager.ModalData = null;
     };
 });
