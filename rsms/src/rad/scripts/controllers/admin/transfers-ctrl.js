@@ -97,6 +97,50 @@ angular.module('00RsmsAngularOrmApp')
             
         }
 
+        $scope.openTransferBetweenModal = function (object) {
+            console.log(object);
+            var modalData = {};
+            modalData.transferBetween = true;
+
+            
+
+            if (object) {
+                if (!object.Destination_parcel_id) {
+                    object.DestinationParcel = new Parcel();
+                    object.DestinationParcel.Class = "Parcel";
+                }
+
+                if (object.Parcel_id) {
+                    var parcel = dataStoreManager.getById("Parcel", object.Parcel_id)
+                    if (parcel) var auth = dataStoreManager.getById("Authorization", parcel.Authorization_id);
+                    if (auth) var piAuth = dataStoreManager.getById("PIAuthorization", auth.Pi_authorization_id);
+                    if (piAuth) modalData.pi = dataStoreManager.getById("PrincipalInvestigator", piAuth.Principal_investigator_id);
+
+                    modalData.pi.loadActiveParcels().then(function () {
+                        modalData.ParcelUse = object;
+                        af.setModalData(modalData);
+                        var modalInstance = $modal.open({
+                            templateUrl: 'views/admin/admin-modals/transfer-between-modal.html',
+                            controller: 'TransferModalCtrl'
+                        });
+                    })
+                }
+            } else {
+                
+                modalData.ParcelUse = { Class: "ParcelUse" };
+                var object = modalData.ParcelUse;
+                object.DestinationParcel = new Parcel();
+                object.DestinationParcel.Class = "Parcel";               
+
+                af.setModalData(modalData);
+                var modalInstance = $modal.open({
+                    templateUrl: 'views/admin/admin-modals/transfer-between-modal.html',
+                    controller: 'TransferModalCtrl'
+                });
+            }
+
+        }
+
     })
     .controller('TransferModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', 'modelInflatorFactory', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods, modelInflatorFactory) {
 
@@ -109,6 +153,8 @@ angular.module('00RsmsAngularOrmApp')
         console.log($scope.modalData);
         $scope.cv = convenienceMethods;
 
+
+        //set up local model for transfer between
 
         $scope.onSelectPi = function (pi) {
             pi.loadPIAuthorizations();
@@ -160,11 +206,51 @@ angular.module('00RsmsAngularOrmApp')
             })
             
         }
-        $scope.saveTransferBetween = function (copy, parcel) {
-            copy.Transfer_in_date = convenienceMethods.setMysqlTime(af.getDate(copy.view_Transfer_in_date));
-            af.saveParcelUse(copy, parcel, $scope.modalData.PI)
-                .then($scope.close);
+
+
+        $scope.selectReceivingPi = function (pi) {
+            $scope.loading = pi.loadPIAuthorizations().then(function () {
+                console.log(pi);
+                $scope.auths = $scope.getHighestAuth(pi);
+                console.log($scope.auths);
+                return $scope.auths;
+            })
         }
+        $scope.getReceivingPi = function (use) {
+            var pi = dataStoreManager.getById("PrincipalInvestigator", use.DestinationParcel.Principal_investigator_id);
+            $scope.selectReceivingPi(pi);
+            return pi;
+        }
+        $scope.saveTransferBetween = function (parcel, copy, use) {
+            $scope.modalData.tooMuch = false;
+            if (copy.Quantity > parcel.Remainder) {
+                $scope.modalData.tooMuch = "You can't transfer that much.";
+                return;
+            }
+            parcel.loadUses().then(function () {
+                var amt = new ParcelUseAmount();
+                amt.Parcel_use_id = copy.Key_id || null;
+                if (copy.ParcelUseAmounts && copy.ParcelUseAmounts.length) {
+                    amt.Key_id = copy.ParcelUseAmounts[0].Key_id || null;
+                    amt.Comments = copy.ParcelUseAmounts[0].Comments;
+                }
+                amt.Class = "ParcelUseAmount";
+                amt.Curie_level = copy.Quantity;
+                amt.Waste_type_id = Constants.WASTE_TYPE.TRANSFER;
+
+                copy.ParcelUseAmounts = [amt];
+                copy.Date_transferred = convenienceMethods.setMysqlTime(copy.view_Date_transferred);
+                copy.DestinationParcel.Transfer_in_date = convenienceMethods.setMysqlTime(copy.view_Date_transferred);
+
+                console.log(copy);
+
+                //if it walks like a duck
+                if (!use.Key_id) use = false;
+                $scope.saving = af.saveParcelUse(parcel, copy, use)
+                    .then($scope.close);
+            })
+        }
+
 
         $scope.close = function () {
             af.deleteModalData();

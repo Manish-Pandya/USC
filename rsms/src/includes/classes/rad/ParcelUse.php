@@ -49,7 +49,7 @@ class ParcelUse extends RadCrud {
 
 	/** Integer containing the id of the parcel this usage concerns */
 	private $parcel_id;
-    private $destination_parcel;
+    private $destinationParcel;
 
 	/** timestamp of the date that this usage took place */
 	private $date_of_use;
@@ -162,11 +162,15 @@ class ParcelUse extends RadCrud {
         $this->destination_parcel_id = $id;
     }
 
-    public function getDestination_parcel(){
-        return $this->destination_parcel;
+    public function getDestinationParcel(){
+        if($this->destinationParcel == null && $this->destination_parcel_id != null) {
+			$parcelDAO = new GenericDAO(new Parcel());
+			$this->destinationParcel = $parcelDAO->getById($this->getDestination_parcel_id());
+		}
+        return $this->destinationParcel;
     }
-    public function setDestination_parcel($parcel){
-        $this->destination_parcel = $parcel;
+    public function setDestinationParcel($parcel){
+		$this->destinationParcel = $parcel;
     }
 }
 ?>

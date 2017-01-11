@@ -5,7 +5,9 @@
 var ParcelUse = function() {};
 ParcelUse.prototype = {
     eagerAccessors:[
-        {method:"loadParcelUseAmounts", boolean: 'Key_id'}
+        { method: "loadParcelUseAmounts", boolean: 'Key_id' },
+        { method: "loadDestinationParcel", boolean: 'Destination_parcel_id' }
+
     ],
     AmountsRelationship:{
         className: 	  'ParcelUseAmount',
@@ -13,6 +15,12 @@ ParcelUse.prototype = {
         queryString:  'getParcelUseAmountById',
         paramValue: 'Key_id',
         queryParam:   ''
+    },
+    DestiantionParcelRelationship: {
+        className: 'Parcel',
+        keyReference: 'Destination_parcel_id',
+        queryString: 'getUserById',
+        queryParam: ''
     },
     loadParcel: function() {
         if(!this.Parcel) {
@@ -39,8 +47,13 @@ ParcelUse.prototype = {
             }
         }
         return this.IsPickedUp;
-    }
+    },
 
+    loadDestinationParcel:  function() {
+        if (this.Destination_parcel_id) {
+            dataLoader.loadChildObject(this, 'DestinationParcel', 'Parcel', this.Destination_parcel_id);
+        }
+    }
 }
 
 // inherit from GenericModel

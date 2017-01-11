@@ -897,22 +897,31 @@ class Rad_ActionManager extends ActionManager {
             $dao = $this->getDao(new ParcelUse());
 
             if($decodedObject->getDate_transferred() != null){
-
                 //this is a use for a transfer
-                if($decodedObject->getDestination_parcel() != null){
-                    if($decodedObject->getDestination_parcel_id() != null){
-                        $dParcel = $this->getParcelById($decodedObject->getDestination_parcel_id());
+                if($decodedObject->getDestinationParcel() != null){
+                    $p =  $decodedObject->getDestinationParcel();
+                    $p->setIs_active(true);
+                    $p->setArrival_date($p->getTransfer_in_date());
+                    $authDao = $this->getDao(new Authorization());
+                    $piAuthDao = $this->getDao(new PIAuthorization());
+                    $auth = $authDao->getById($p->getAuthorization_id());
+                    if($auth != null){
+                        $piAuth = $piAuthDao->getById($auth->getPi_authorization_id());
+                        if($piAuth != null){
+                            $p->setPrincipal_investigator_id($piAuth->getPrincipal_investigator_id());
+                        }
                     }
-                    //create a parcel for the new pi
-                    else{
-                        $dParcel = new Parcel();
-                        $decodedObject->setDestination_parcel_id($dParcel->getKey_id());
-                    }
-                $parcelDao = new GenericDAO($dParcel);
-                $dParcel = $parcelDao->save($dParcel);
+
+                    $parcelDao = new GenericDAO(new Parcel());
+                    $p->setQuantity($decodedObject->getQuantity());
+                    $dParcel = $parcelDao->save($p);
+                    $decodedObject->setDestination_parcel_id($dParcel->getKey_id());
                 }
                 $use = $dao->save($decodedObject);
-
+                if($dParcel != null){
+                    $dParcel->setTransfer_amount_id($use->getKey_id());
+                    $dParcel = $parcelDao->save($dParcel);
+                }
                 //do we already have a parcelUseAmount for this parcel?
                 $amountDao = new GenericDAO(new ParcelUseAmount());
                 if($decodedObject->getParcelUseAmounts() != null){
@@ -1012,6 +1021,8 @@ class Rad_ActionManager extends ActionManager {
 		    $entityMaps[] = new EntityMap("eager", "getParcelUseAmounts");
             $entityMaps[] = new EntityMap("eager", "getParcelAmountOnHand");
             $entityMaps[] = new EntityMap("eager", "getParcelRemainder");
+            $entityMaps[] = new EntityMap("eager", "getDestinationParcel");
+
 
             $use->setEntityMaps($entityMaps);
             return $use;

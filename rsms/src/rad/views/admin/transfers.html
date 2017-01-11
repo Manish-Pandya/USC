@@ -22,7 +22,7 @@
             </div>
             <div class="table-row" ng-repeat="transfer in transfersIn = (parcels | transferInParcels)">
                 <div>
-                   <a ng-click="openTransferInModal(transfer)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
+                    <a ng-click="openTransferInModal(transfer)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
                 </div>
                 <div>
                     {{transfer.ReceivingPiName}}
@@ -51,32 +51,39 @@
     </div>
 
     <div class="well two-thirds card">
-        <h3><i class="icon-tab"></i>{{transfersBetween.length}} Transfer<span ng-show="transfersBetween.length != 1">s</span> Between Labs<a ng-click="openModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-tab"></i>New Transfer</a></h3>
+        <h3><i class="icon-tab"></i>{{transfersBetween.length}} Transfer<span ng-show="transfersBetween.length != 1">s</span> Between Labs<a ng-click="openTransferBetweenModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-tab"></i>New Transfer</a></h3>
         <div class="fake-table bordered" ng-show="transfersBetween.length > 0">
             <div class="table-header">
                 <h3>Edit</h3>
-                <h3>PI</h3>
-                <h3>Date Transfered</h3>
                 <h3>Isotope</h3>
+                <h3>Orginating PI</h3>
+                <h3>Receiving PI</h3>
                 <h3>Quantity</h3>
+                <h3>Date Transferred</h3>
                 <h3>Notes</h3>
             </div>
-            <div class="table-row" ng-repeat="transfer in transfersBetween = (parcels | transferBetweenParcels)">
+            <div class="table-row" ng-repeat="transfer in transfersBetween = (uses | transferBetweenUses)">
                 <div>
-                    <a ng-disabled="carboy.edit" ng-class="{'disabled':carboy.edit}" ng-click="openModal(carboy)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
-                    <!-- TODO: Possible Status values should be enums -->
-                    <a ng-disabled="carboy.edit" ng-if="carboy.Current_carboy_use_cycle.Status != 'In Use' && carboy.Current_carboy_use_cycle.Status != 'Decaying'" ng-class="{'disabled':carboy.edit}" ng-click="deactivate(carboy)" class="btn btn-danger left"><i class="icon-remove"></i>Deactivate</a>
+                    <a ng-disabled="transfer.edit" ng-click="openTransferBetweenModal(transfer)" class="btn btn-primary"><i class="icon-pencil"></i></a>
+                </div>
+                <div ng-init="parcel = dsm.getById('Parcel', transfer.Parcel_id);auth = dsm.getById('Authorization',parcel.Authorization_id);">
+                    {{auth.IsotopeName}}
+                </div>
+                <div ng-init="parcel = dsm.getById('Parcel', transfer.Parcel_id); piAuth = dsm.getById('PIAuthorization',auth.Pi_authorization_id); pi = dsm.getById('PrincipalInvestigator',piAuth.Principal_investigator_id)">
+                    {{pi.User.Name}}
+                </div>
+                <div ng-init="dParcel = dsm.getById('Parcel', transfer.Destination_parcel_id); destPi = dsm.getById('PrincipalInvestigator', dParcel.Principal_investigator_id)">
+                    {{destPi.User.Name || transfer.DestinationParcel.ReceivingPiName}}
                 </div>
                 <div>
-                    {{carboy.Carboy_number}}
+                    {{transfer.Quantity}} mCi
                 </div>
                 <div>
-                    {{carboy.Current_carboy_use_cycle.Status}}
+                    {{transfer.Date_transferred | dateToIso:transfer:'Date_transferred':true}}
                 </div>
-                <div ng-init="carboy.Current_carboy_use_cycle.loadPrincipalInvestigator()">
-                    {{carboy.Current_carboy_use_cycle.Principal_investigator.User.Name}}
-                </div>
+                <div>{{transfer.ParcelUseAmounts[0].Comments}}</div>
             </div>
+
         </div>
     </div>
 

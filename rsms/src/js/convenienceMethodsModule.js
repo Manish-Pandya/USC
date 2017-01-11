@@ -543,17 +543,20 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
         }else{
             var properties = keys;
         }
-
-        var myResultItem = item;
-        for(var i = 0; i < properties.length; i++){
-            myResultItem = myResultItem[ properties[i] ];
-        }
-        if(myResultItem){
-            var text = props[properties.join('.')].toLowerCase();
-            if(myResultItem.toString().toLowerCase().indexOf(text) !== -1)itemMatches = true;
-        }
-        if (itemMatches) {
-          out.push(item);
+        if (item && item != null) {
+            var myResultItem = item;
+            for (var i = 0; i < properties.length; i++) {
+                if (myResultItem[properties[i]]) {
+                    myResultItem = myResultItem[properties[i]];
+                }
+            }
+            if (myResultItem) {
+                var text = props[properties.join('.')].toLowerCase();
+                if (myResultItem.toString().toLowerCase().indexOf(text) !== -1) itemMatches = true;
+            }
+            if (itemMatches) {
+                out.push(item);
+            }
         }
       });
     } else {

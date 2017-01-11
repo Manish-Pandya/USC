@@ -22,10 +22,10 @@
             <div class="control-group parcel-list" ng-if="!modalData.selectedParcel || modalData.forceSelectParcel">
                 <label class="control-label">Select Package:</label>
                 <div class="controls">
-                    <ul class="header"><li>RS/Transfer #</li><li>Unused Amount</li></ul>
+                    <ul class="header"><li>RS/Transfer #</li><li>Isotope</li><li>Unused Amount</li></ul>
                     <ul class="scroll-container">
                         <li ng-repeat="parcel in modalData.pi.ActiveParcels" class="parcel-row" ng-class="{'green':parcel.Key_id == modalData.selectedParcel.Key_id}" ng-click="modalData.forceSelectParcel = false; modalData.ParcelUseCopy.Parcel_id = parcel.Key_id; modalData.selectedParcel = dsm.getById('Parcel',modalData.ParcelUseCopy.Parcel_id)">
-                            <ul><li>{{parcel.Rs_number}}</li><li>{{parcel.Remainder}}</li></ul>
+                            <ul><li>{{parcel.Rs_number}}</li><li>{{parcel.Authorization.IsotopeName}}</li><li>{{parcel.Remainder}}</li></ul>
                         </li>
                     </ul>
                 </div>
@@ -34,6 +34,7 @@
                 <div class="parcel-label" ng-init="modalData.selectedParcel = dsm.getById('Parcel',modalData.ParcelUseCopy.Parcel_id)">
                     <h3><i class="primary icon-pencil redo-select-parcel" ng-click="modalData.forceSelectParcel = true;"></i>Selected Package:</h3>
                     <p><span class="bold">RS/Transfer Number: </span>{{modalData.selectedParcel.Rs_number}}</p>
+                    <p><span class="bold">Isotope </span>{{modalData.selectedParcel.Authorization.IsotopeName}}</p>
                     <p><span class="bold">Unused Amount: </span>{{modalData.selectedParcel.Remainder}}mCi</p>
                 </div>
 

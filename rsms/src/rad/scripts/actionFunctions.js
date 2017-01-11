@@ -1596,9 +1596,21 @@ angular
                 copy.Date_used = convenienceMethods.setMysqlTime(af.getDate(copy.view_Date_used));
                 return this.save( copy )
                     .then(
-                        function(returnedUse){
+                        function (returnedUse) {
+
+                            if (returnedUse.DestinationParcel) {
+                                if (use && use.DestinationParcel) {
+                                    angular.extend(use.DestinationParcel, returnedUse.DestinationParcel);
+                                } else {
+                                    returnedUse.DestinationParcel = modelInflatorFactory.instateAllObjectsFromJson(returnedUse.DestinationParcel);
+                                    store.store(returnedUse.DestinationParcel);
+                                    dataStoreManager.addOnSave(returnedUse.DestinationParcel);
+                                }
+                            }
+
                             returnedUse = modelInflatorFactory.instateAllObjectsFromJson(returnedUse);
-                            console.log(returnedUse);
+                            returnedUse.loadDestinationParcel();
+
                             var i = returnedUse.ParcelUseAmounts.length;
                             while(i--){
                                 returnedUse.ParcelUseAmounts[i] = modelInflatorFactory.instateAllObjectsFromJson( returnedUse.ParcelUseAmounts[i] );
@@ -1607,14 +1619,15 @@ angular
                                     returnedUse.ParcelUseAmounts[i].loadCarboy();
                                 }
                             }
-                            if(use){
+
+                            if (use.Key_id) {
+                                console.log(use);
                                 angular.extend(use, returnedUse);
-                                use.edit = false;
-                            }else{
+                            } else {
                                 dataStoreManager.addOnSave(returnedUse);
                                 parcel.ParcelUses.push(returnedUse);
-
                             }
+
                             $rootScope.ParcelUseCopy = {};
                             
                             parcel.Remainder = returnedUse.ParcelRemainder;
