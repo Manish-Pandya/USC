@@ -843,6 +843,7 @@ class GenericDAO {
                 group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,coalesce(year(`g`.`date_started`),`g`.`schedule_year`),`f`.`inspection_id` ORDER BY campus_name, building_name, pi_name";
         $stmt = $db->prepare($sql);
 		$stmt->bindParam(1,$year,PDO::PARAM_STR);
+        $stmt->bindParam(2,$year,PDO::PARAM_STR);
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
