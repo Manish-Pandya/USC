@@ -17,7 +17,7 @@ angular.module('ng-IBC')
         $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, true)])
             .then(function (whateverGotReturned) {
             console.log($scope.protocols);
-            console.log(DataStoreManager._actualModel);
+            //console.log(DataStoreManager._actualModel);
         })
             .catch(function (reason) {
             console.log("bad Promise.all:", reason);
@@ -41,10 +41,14 @@ angular.module('ng-IBC')
         });
     };
 })
-    .controller('IBCModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods) {
+    .controller('IBCModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, $q) {
     $scope.constants = Constants;
+    $scope.modalData = DataStoreManager.ModalData;
     $scope.users = [];
     DataStoreManager.getAll("User", $scope.users);
+    $scope.save = function (copy) {
+        $scope.saving = $q.all([DataStoreManager.save(copy)]).then($scope.close);
+    };
     $scope.close = function () {
         $modalInstance.dismiss();
         DataStoreManager.ModalData = null;
