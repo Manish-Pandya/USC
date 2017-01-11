@@ -219,22 +219,18 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
 
     factory.getInspectionsByYear = function () {
         var deferred = $q.defer();
-        //lazy load
-        if (factory.Inspections.length) {
-            deferred.resolve(factory.Inspections);
-        } else {
-            var url = '../../ajaxaction.php?action=getInspectionsByYear&year=' + factory.year.Name + '&callback=JSON_CALLBACK';
-            convenienceMethods.getDataAsDeferredPromise(url).then(
-                function (promise) {
-                    console.log(promise)
-                    factory.Inspections = promise;
-                    deferred.resolve(promise);
-                },
-                function (promise) {
-                    deferred.reject();
-                }
-            );
-        }
+        var url = '../../ajaxaction.php?action=getInspectionsByYear&year=' + factory.year.Name + '&callback=JSON_CALLBACK';
+        convenienceMethods.getDataAsDeferredPromise(url).then(
+            function (promise) {
+                console.log(promise)
+                factory.Inspections = promise;
+                deferred.resolve(promise);
+            },
+            function (promise) {
+                deferred.reject();
+            }
+        );
+        
         return deferred.promise;
     }
 
