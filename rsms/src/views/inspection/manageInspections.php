@@ -107,28 +107,26 @@ require_once '../top_view.php';
             </tr>
         </thead>
         <tbody>
-
             <tr ng-repeat="dto in filtered" ng-class="{inactive: dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_CAP)>-1 || dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION)>-1 ,'pending':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && !dto.Inspections.Cap_complete,'complete':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && dto.Inspections.Cap_complete}" repeat-done="layoutDone()">
-				
-                <td style="width:8.5%"><span once-text="dto.Pi_name"></span></td>
+                <td style="width:8.5%"><span once-text="dto.Pi_name + dto.Inspections.Schedule_year"></span></td>
                 <!--
-                <td style="width:9.5%"><span once-text="dto.Campus_name"></span></td>
-                <td style="width:8.5%"><span once-text="dto.Building_name"></span></td>
-                <td style="width:6.5%">
-                    <ul ng-if="!dto.Inspection_rooms">
-                        <li ng-repeat="room in dto.Building_rooms"><span once-text="room.Name"></span></li>
-                    </ul>
-                    <ul ng-if="dto.Inspection_rooms">
-                        <li ng-repeat="room in dto.Inspection_rooms"><span once-text="room.Name"></span></li>
-                    </ul>
-                    <pre>{{dto.Campuses | json}}</pre>
-                </td>
-					-->
-				<td style="width:24.5%" class="triple">
-					<table>
-						<tr ng-repeat="campus in dto.Campuses">
+				<td style="width:9.5%"><span once-text="dto.Campus_name"></span></td>
+				<td style="width:8.5%"><span once-text="dto.Building_name"></span></td>
+				<td style="width:6.5%">
+					<ul ng-if="!dto.Inspection_rooms">
+						<li ng-repeat="room in dto.Building_rooms"><span once-text="room.Name"></span></li>
+					</ul>
+					<ul ng-if="dto.Inspection_rooms">
+						<li ng-repeat="room in dto.Inspection_rooms"><span once-text="room.Name"></span></li>
+					</ul>
+					<pre>{{dto.Campuses | json}}</pre>
+				</td>
+				-->
+                <td style="width:24.5%" class="triple">
+                    <table>
+                        <tr ng-repeat="campus in dto.Campuses">
                             <td class="triple-inner">{{campus.Campus_name}}</td>
-							<td class="triple-inner-2">
+                            <td class="triple-inner-2">
                                 <table>
                                     <tr ng-repeat="building in campus.Buildings">
                                         <td class="triple-inner-inner">{{building.Building_name}}</td>
@@ -137,10 +135,10 @@ require_once '../top_view.php';
                                         </td>
                                     </tr>
                                 </table>
-							</td>
-						</tr>
-					</table>
-				</td>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
                 <td style="width:6.5%">
                     <span ng-if="dto.Inspection_id">
                         <span ng-if="dto.Inspections.Date_started">
