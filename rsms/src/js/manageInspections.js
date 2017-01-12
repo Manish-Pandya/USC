@@ -199,21 +199,16 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
 
     factory.getDtos = function (year) {
         var deferred = $q.defer();
-        //lazy load
-        if (factory.InspectionScheduleDtos.length) {
-            deferred.resolve(factory.InspectionScheduleDtos);
-        } else {
-            var url = '../../ajaxaction.php?action=getInspectionSchedule&year=' + year.Name + '&callback=JSON_CALLBACK';
-            convenienceMethods.getDataAsDeferredPromise(url).then(
-                function (promise) {
-                    factory.InspectionScheduleDtos = promise;
-                    deferred.resolve(promise);
-                },
-                function (promise) {
-                    deferred.reject();
-                }
-            );
-        }
+        var url = '../../ajaxaction.php?action=getInspectionSchedule&year=' + year.Name + '&callback=JSON_CALLBACK';
+        convenienceMethods.getDataAsDeferredPromise(url).then(
+            function (promise) {
+                factory.InspectionScheduleDtos = promise;
+                deferred.resolve(promise);
+            },
+            function (promise) {
+                deferred.reject();
+            }
+        );
         return deferred.promise;
     }
 
@@ -230,7 +225,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                 deferred.reject();
             }
         );
-        
         return deferred.promise;
     }
 
@@ -680,7 +674,8 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             .then(
                 function (dtos) {
                     console.log(dtos);
-                    $scope.dtos = dtos;
+                    //$scope.dtos = dtos;
+                    $scope.dtos = manageInspectionsFactory.collapseDtos(dtos);
                     $scope.loading = false;
                 },
                 function (error) {
