@@ -433,6 +433,36 @@ class GenericDAO {
 		return $sum;
 	}
 
+
+    /**
+     * Gets the sum of Parcels transfered in or ordered durring a given period
+     *
+     * @param string $startDate mysql timestamp formatted date representing beginning of the period
+     * @param string $enddate mysql timestamp formatted date representing end of the period
+     * @param bool $hasTransferDate true if we are looking for parcels with an transfer_in_date (those that count as transfer), false if those without one (parcels that count as orders), or null for all parcels
+     * @return int $sum
+     */
+	public function getTransferOutAmounts( $startDate, $endDate ){
+		$sql = "SELECT SUM(`quantity`)
+				FROM `parcel_use`
+				where `parcel_id` in (select key_id from parcel where `authorization_id` = ?)
+				AND `date_transferred` BETWEEN ? AND ?";
+
+		// Get the db connection
+		global $db;
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(1, $this->modelObject->getAuthorization_id());
+		$stmt->bindValue(2, $startDate);
+		$stmt->bindValue(3, $endDate);
+
+		$stmt->execute();
+
+		$total = $stmt->fetch(PDO::FETCH_NUM);
+		$sum = $total[0]; // 0 is the first array. here array is only one.
+		if($sum == NULL)$sum = 0;
+
+		return $sum;
+	}
 	/**
 	 * Commits the values of this entity to the database
 	 *

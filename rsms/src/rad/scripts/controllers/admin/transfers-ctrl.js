@@ -227,6 +227,13 @@ angular.module('00RsmsAngularOrmApp')
                 $scope.modalData.tooMuch = "You can't transfer that much.";
                 return;
             }
+
+            var parcels = dataStoreManager.get("Parcel");
+            $scope.rsError = false;
+            parcels.forEach(function (p) {
+                if (p.Rs_number == copy.DestinationParcel.Rs_number) $scope.rsError = true;
+            });
+            if ($scope.rsError) return;
             parcel.loadUses().then(function () {
                 var amt = new ParcelUseAmount();
                 amt.Parcel_use_id = copy.Key_id || null;

@@ -159,5 +159,23 @@ include_once 'RadCrud.php';
         }
     }
 
+    //Accessors/Mutators
+	public function getStart_date() {
+        $this->start_date = $this->getQuarterly_inventory()->getStart_date();
+		return $this->start_date;
+	}
+	public function setStart_date($start_date) {
+		$this->start_date = $start_date;
+	}
+
+	public function getEnd_date() {
+        $this->end_date = $this->getQuarterly_inventory()->getEnd_date();
+
+		return $this->end_date;
+	}
+	public function setEnd_date($end_date) {
+		$this->end_date = $end_date;
+	}
+
 }
 ?>
