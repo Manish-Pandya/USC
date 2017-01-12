@@ -677,6 +677,8 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     //$scope.dtos = dtos;
                     $scope.dtos = manageInspectionsFactory.collapseDtos(dtos);
                     $scope.loading = false;
+                    $scope.genericFilter(true);
+
                 },
                 function (error) {
                     $scope.error = "The system could not retrieve the list of inspections for the selected year.  Please check your internet connection and try again."
