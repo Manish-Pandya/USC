@@ -58,12 +58,29 @@ angular.module('00RsmsAngularOrmApp')
             var modalData = {};
             if (object) {
                 modalData.Parcel = object;
+                modalData.pi = dataStoreManager.getById("PrincipalInvestigator", object.Principal_investigator_id);
             } else {
                 modalData.Parcel = { Class: "Parcel" };
             }
             af.setModalData(modalData);
             var modalInstance = $modal.open({
                 templateUrl: 'views/admin/admin-modals/transfer-in-modal.html',
+                controller: 'TransferModalCtrl'
+            });
+        }
+
+        $scope.openTransferInventoryModal = function (object) {
+            console.log(object);
+            var modalData = {};
+            if (object) {
+                modalData.Parcel = object;
+                modalData.pi = dataStoreManager.getById("PrincipalInvestigator", object.Principal_investigator_id);
+            } else {
+                modalData.Parcel = { Class: "Parcel" };
+            }
+            af.setModalData(modalData);
+            var modalInstance = $modal.open({
+                templateUrl: 'views/admin/admin-modals/transfer-inventory-modal.html',
                 controller: 'TransferModalCtrl'
             });
         }
@@ -251,6 +268,20 @@ angular.module('00RsmsAngularOrmApp')
             })
         }
 
+        $scope.getTransferNumberSuggestion = function (str) {
+            console.log(str);
+            var parcels = dataStoreManager.get("Parcel");
+            var num = 0;
+            var finalNum = 1;
+            parcels.forEach(function (p) {
+                if (p.Rs_number.indexOf(str) != -1) {
+                    console.log(p.Rs_number.substring(2));
+                    var pNum = parseInt(p.Rs_number.substring(2));
+                    if (pNum > num) num = pNum;
+                }
+            });
+            return num+1;
+        }
 
         $scope.close = function () {
             af.deleteModalData();

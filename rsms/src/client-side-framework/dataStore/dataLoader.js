@@ -9,6 +9,7 @@
 
 // constructor
 var dataLoader = {};
+dataLoader.promiseMatrix = {};
 
 /* NOTE
     These methods do not return anything - instead, they set the given property on parent.
@@ -22,10 +23,8 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
     if (relationship.methodString) {
 
         var paramValue = '&' + relationship.paramName + '=' + parent[relationship.paramValue];
-        console.log(property);
         return parent.rootScope[parent.Class + "sBusy"] = parent.api.read(relationship.methodString, paramValue)
             .then(function (returnedPromise) {
-                console.log(parent.Class + "sBusy",parent.rootScope[parent.Class + "sBusy"])
                 parent[property] = parent.inflator.instateAllObjectsFromJson(returnedPromise.data, null, recurse);
             });
     }
@@ -56,8 +55,26 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
             d.resolve(parent[property]);
             return d.promise;
 
-        } else {
+        }
+        else if (parent.rootScope[parent.Class + "sBusy"]) {
+            return parent.rootScope[parent.Class + "sBusy"].then(function (returnedPromise) {
+                if (!returnedPromise) {
+                    parent[property] = [];
+                    return;
+                }
 
+                var instatedObjects = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
+                dataStoreManager.store(instatedObjects);
+                if (!whereClause) whereClause = false;
+
+                parent[property] = dataStoreManager.getChildrenByParentProperty(
+                    relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
+
+                if (recurse) dataLoader.recursivelyInstantiate(instatedObjects, parent);
+                return parent[property];
+            })
+        }
+        else {
             var urlFragment = parent.api.fetchActionString("getAll", relationship.className);
             return parent.rootScope[parent.Class + "sBusy"] = parent.api.read(urlFragment).then(function (returnedPromise) {
                 //cache result so we don't hit the server next time
@@ -65,8 +82,8 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
                     parent[property] = [];
                     return;
                 }
-           
-                var instatedObjects = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
+
+                var instatedObjects = returnedPromise[0] && returnedPromise[0].api ? returnedPromise : parent.inflator.instateAllObjectsFromJson(returnedPromise);
                 dataStoreManager.store(instatedObjects);
                 if (!whereClause) whereClause = false;
 
@@ -162,7 +179,6 @@ dataLoader.instateRelationItems = function (relationList, className, keyProperty
 }
 
 dataLoader.loadChildObject = function (parent, property, className, id) {
-
     // check cache first
     if (dataStoreManager.checkCollection(className)) {
         var d = parent.$q.defer();
@@ -170,11 +186,23 @@ dataLoader.loadChildObject = function (parent, property, className, id) {
         d.resolve(parent[property]);
         return d.promise;
     }
+    else if (dataLoader.promiseMatrix[className] && dataLoader.promiseMatrix[className][id]) {
+        return dataLoader.promiseMatrix[className][id].then(function (returnedPromise) {
+            if (returnedPromise && returnedPromise.Class) {
+                return parent[property] = returnedPromise.api ? returnedPromise : parent.inflator.instateAllObjectsFromJson(returnedPromise);
+            }
+        });
+    }
     // not cached, get from server
     else {
         var getString = parent.api.fetchActionString("getById", className);
         var idParam = '&id=' + id;
-        return parent.api.read(getString, idParam).then(function (returnedPromise) {
+
+        if (!dataLoader.promiseMatrix[className]) {
+            dataLoader.promiseMatrix[className] = {};
+        }
+
+        return dataLoader.promiseMatrix[className][id] = parent.api.read(getString, idParam).then(function (returnedPromise) {
             if (returnedPromise && returnedPromise.data) {
                 return parent[property] = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
             }
@@ -200,7 +228,6 @@ dataLoader.loadChildObjectByParentProperty = function (parent, property, classNa
 }
 
 dataLoader.recursivelyInstantiate = function(instatedObjects, parent){
-    console.log(instatedObjects);
     var i = instatedObjects.length;
     while(i--){
         for(var prop in instatedObjects[i]){

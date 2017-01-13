@@ -241,7 +241,17 @@ angular.module('00RsmsAngularOrmApp')
         return function (parcels) {
             if (!parcels) return;
             filteredParcels = parcels.filter(function (parcel) {
-                return (parcel.Transfer_in_date && !parcel.Transfer_amount_id);
+                return (parcel.Transfer_in_date && moment(parcel.Transfer_in_date).year() > 2016 && !parcel.Transfer_amount_id);
+            });
+            return filteredParcels;
+        };
+    })
+    //parcels that are transfers from other insitutions
+    .filter('transferInventoryParcels', function () {
+        return function (parcels) {
+            if (!parcels) return;
+            filteredParcels = parcels.filter(function (parcel) {
+                return (parcel.Transfer_in_date && moment(parcel.Transfer_in_date).year() < 2017 && !parcel.Transfer_amount_id);
             });
             return filteredParcels;
         };
@@ -277,7 +287,10 @@ angular.module('00RsmsAngularOrmApp')
     })
     .filter('availableBags', function () {
         return function (bags, solid) {
-            return bags.filter(function (b) { return solid ? (!b.Pickup_id || b.Key_id == solid.Waste_bag_id) : !b.Pickup_id})
+            var overridingRoles = [Constants.ROLE.NAME.ADMIN, Constants.ROLE.NAME.RADIATION_ADMIN, Constants.ROLE.NAME.RADIATION_INSPECTOR];
+            return overridingRoles.filter(function (r) {
+                return GLOBAL_SESSION_ROLES.userRoles.indexOf(r) != -1;
+            }).length ? bags : bags.filter(function (b) { return solid ? (!b.Pickup_id || b.Key_id == solid.Waste_bag_id) : !b.Pickup_id})
         }
     })
     .filter('matchingIsotope', function () {

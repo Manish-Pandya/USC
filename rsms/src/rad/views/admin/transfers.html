@@ -12,6 +12,7 @@
         <div class="fake-table bordered" ng-show="transfersIn.length > 0">
             <div class="table-header">
                 <h3>Edit</h3>
+                <h3>Transfer #</h3>
                 <h3>PI</h3>
                 <h3>Date Transfered</h3>
                 <h3>Isotope</h3>
@@ -23,6 +24,9 @@
             <div class="table-row" ng-repeat="transfer in transfersIn = (parcels | transferInParcels)">
                 <div>
                     <a ng-click="openTransferInModal(transfer)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
+                </div>
+                <div>
+                    {{transfer.Rs_number}}
                 </div>
                 <div>
                     {{transfer.ReceivingPiName}}
@@ -70,10 +74,10 @@
                     {{auth.IsotopeName}}
                 </div>
                 <div ng-init="parcel = dsm.getById('Parcel', transfer.Parcel_id); piAuth = dsm.getById('PIAuthorization',auth.Pi_authorization_id); pi = dsm.getById('PrincipalInvestigator',piAuth.Principal_investigator_id)">
-                    {{pi.User.Name}}
+                    {{pi.User.Name}} ({{parcel.Rs_number}})
                 </div>
                 <div ng-init="dParcel = dsm.getById('Parcel', transfer.Destination_parcel_id); destPi = dsm.getById('PrincipalInvestigator', dParcel.Principal_investigator_id)">
-                    {{destPi.User.Name || transfer.DestinationParcel.ReceivingPiName}}
+                    {{destPi.User.Name || transfer.DestinationParcel.ReceivingPiName}} ({{dParcel.Rs_number}})
                 </div>
                 <div>
                     {{transfer.Quantity}} mCi
@@ -92,6 +96,7 @@
         <div class="fake-table bordered" ng-show="transfersOut.length">
             <div class="table-header">
                 <h3>Edit</h3>
+                <h3>Transfer #</h3>
                 <h3>Isotope</h3>
                 <h3>PI</h3>
                 <h3>Quantity</h3>
@@ -101,6 +106,9 @@
             <div class="table-row" ng-repeat="transfer in transfersOut = (uses | transferOutUses)" ng-init="parcel = dsm.getById('Parcel', transfer.Parcel_id)">
                 <div>
                     <a ng-disabled="transfer.edit" ng-class="{'disabled':carboy.edit}" ng-click="openTransferOutModal(transfer)" class="btn btn-primary"><i class="icon-pencil"></i></a>
+                </div>
+                <div>
+                    {{parcel.Rs_number}}
                 </div>
                 <div>
                     {{parcel.Authorization.IsotopeName}}
@@ -115,6 +123,49 @@
                     {{transfer.Date_transferred | dateToIso:transfer:'Date_transferred':true}}
                 </div>
                 <div>{{transfer.ParcelUseAmounts[0].Comments}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="well full card">
+        <h3><i class="icon-tab"></i>{{transfersIn.length}} Inventory Transfers<a ng-click="openTransferInventoryModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-tab"></i>New Transfer</a></h3>
+        <div class="fake-table bordered" ng-show="transfersIn.length > 0">
+            <div class="table-header">
+                <h3>Edit</h3>
+                <h3>Transfer #</h3>
+                <h3>PI</h3>
+                <h3>Isotope</h3>
+                <h3>Quantity</h3>
+                <h3>Chemical Compound</h3>
+                <h3>Form</h3>
+                <h3>Notes</h3>
+            </div>
+            <div class="table-row" ng-repeat="transfer in transfersIn = (parcels | transferInventoryParcels)">
+                <div>
+                    <a ng-click="openTransferInventoryModal(transfer)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
+                </div>
+                <div>
+                    {{transfer.Rs_number}}
+                </div>
+                <div>
+                    {{transfer.ReceivingPiName}}
+                </div>
+                <div>
+                    {{transfer.Authorization.IsotopeName}}
+                </div>
+                <div>
+                    {{transfer.Quantity}}
+                </div>
+                <div>
+                    {{transfer.Chemical_compound}}
+                </div>
+                <div>
+                    {{transfer.Authorization.Form}}
+                </div>
+                <div>
+                    {{transfer.Comments}}
+                </div>
+
             </div>
         </div>
     </div>

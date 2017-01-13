@@ -1,6 +1,6 @@
 ﻿<form class="form" ng-submit="saveTransferBetween(modalData.selectedParcel, modalData.ParcelUseCopy, modalData.ParcelUse)">
     <div class="modal-header" style="padding:0;">
-        <h2 ng-show="!addRoom" style="padding:5px; background:rgb(26, 109, 168); color:white">Transfer a package</h2>
+        <h2 ng-show="!addRoom" style="padding:5px; background:rgb(26, 109, 168); color:white">Transfer a package between labs</h2>
     </div>
     <div class="modal-body" style="min-height:600px !important">
         <div class="control-group">
@@ -61,7 +61,7 @@
                     <div class="control-group">
                         <label class="control-label">Transfer Number</label>
                         <div class="controls">
-                            <input ng-model="modalData.ParcelUseCopy.DestinationParcel.Rs_number" ng-init="modalData.ParcelUseCopy.DestinationParcel.Rs_number = modalData.ParcelUseCopy.DestinationParcel.Rs_number || 'T-'" />
+                            <input ng-model="modalData.ParcelUseCopy.DestinationParcel.Rs_number" ng-init="modalData.ParcelUseCopy.DestinationParcel.Rs_number = modalData.ParcelUseCopy.DestinationParcel.Rs_number || 'T-'+getTransferNumberSuggestion('T')" />
                         </div>
                     </div>
 

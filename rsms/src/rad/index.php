@@ -55,6 +55,24 @@ if(!isset($_SESSION["USER"])){ ?>
 <?php
       }
 ?>
+<!-- init authenticated user's role before we even mess with angular so that we can store the roles in a global var -->
+<?php if($_SESSION["USER"] != null){ ?>
+<script>
+    var GLOBAL_SESSION_ROLES = <?php echo json_encode($_SESSION['ROLE']); ?>;
+    //grab usable properties from the session user object
+    var GLOBAL_SESSION_USER = {
+        Name:    '<?php echo $_SESSION['USER']->getName(); ?>',
+        Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>'
+    }
+    var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
+    var isProductionServer;
+<?php
+          if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
+              echo 'isProductionServer = true;';
+          }
+      }
+?>
+</script
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -218,7 +236,15 @@ if(!isset($_SESSION["USER"])){ ?>
 
 </head>
     <body>
-        <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid">
+        <?php if($_SESSION['USER'] != NULL){ ?>
+        <div class="user-info" ng-controller="roleBasedCtrl">
+            <div>
+                Signed in as <?php echo $_SESSION['USER']->getName(); ?>
+                <a style="float:right;" href="<?php echo WEB_ROOT?>action.php?action=logoutAction">Sign Out</a>
+            </div>
+        </div>
+        <?php }?>
+        <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid" style="margin-top:25px;">
         <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
         <!-- NAVIGATION -->
         <div class="banner {{bannerClass | splitAtPeriod}} radiation" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
