@@ -261,7 +261,7 @@ angular.module('00RsmsAngularOrmApp')
         return function (uses) {
             if (!uses) return;
             filteredUses = uses.filter(function (use) {
-                return use.Is_transfer && !use.Destination_pi_id;
+                return use.Is_transfer && !use.Destination_parcel_id;
             });
             return filteredUses;
         };

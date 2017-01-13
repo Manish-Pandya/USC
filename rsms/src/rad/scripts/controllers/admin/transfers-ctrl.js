@@ -156,7 +156,7 @@ angular.module('00RsmsAngularOrmApp')
 
         //set up local model for transfer between
 
-        $scope.onSelectPi = function (pi) {
+        $scope.onSelectPi = function (pi, parcel) {
             pi.loadPIAuthorizations();
             pi.loadActiveParcels();
             $scope.modalData.PI = pi;
@@ -173,6 +173,7 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.saveTransferIn = function (copy, parcel) {
+            console.log(parcel);
             copy.Transfer_in_date = convenienceMethods.setMysqlTime(af.getDate(copy.view_Transfer_in_date));
             af.saveParcel(copy, parcel, $scope.modalData.PI)
                 .then($scope.close);

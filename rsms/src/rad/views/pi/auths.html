@@ -1,4 +1,5 @@
 ﻿<div cg-busy="{promise:parcelPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:roomsLoading,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div style="margin-top:90px;" ng-if="pi" class="card full auths">
     <h1 class="alert alert-danger fixed-full" ng-if="error">{{error}}</h1>
@@ -15,11 +16,11 @@
     
             <div style="margin-left:20px" ng-if="selectedPiAuth.Termination_date">(Terminated {{selectedPiAuth.Termination_date | dateToISO}})</div>
         </h3>
-        <h3 class="card-header padding auths" ng-if="!mappedAmendments.length">
+        <h3 class="card-header padding auths" ng-if="!selectedPiAuth">
             <i class="icon-unlocked-2"></i>{{pi.User.Name}} has no authorized rad materials <span ng-if="piAuth">under Authorization #{{piAuth.Authorization_number}}</span>
         </h3>
-        <div class="card-content" ng-repeat="piAuth in mappedAmendments" ng-if="selectedAmendment == piAuth.weight">
-            <div class="fake-table striped bordered half" style="margin:0 0 19px 0; width:60%; border-right:3px solid #DDD" ng-if="mappedAmendments.length">
+        <div class="card-content" ng-init="piAuth = selectedPiAuth;">
+            <div class="fake-table striped bordered half" style="margin:0 0 19px 0; width:60%; border-right:3px solid #DDD" ng-if="piAuth">
                 <div class="table-header">
                     <h3>Authorization Number</h3>
                     <h3>Rooms</h3>

@@ -184,7 +184,12 @@ class Parcel extends RadCrud {
 		$this->isotope = $newIsotope;
 	}
 
-	public function getArrival_date() { return $this->arrival_date; }
+	public function getArrival_date() {
+        if($this->arrival_date ==  null && $this->transfer_in_date != null){
+            $this->arrival_date = $this->transfer_in_date;
+        }
+        return $this->arrival_date;
+    }
 	public function setArrival_date($newDate) { $this->arrival_date = $newDate; }
 
 	public function getQuantity() { return $this->quantity; }

@@ -406,16 +406,17 @@ class GenericDAO {
         $l = Logger::getLogger("transfer amounts");
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel`
-				where `authorization_id` = ?
-				AND `arrival_date` BETWEEN ? AND ?";
+				where `authorization_id` = ?";
 
-        if($hasTransferDate != null){
-            if($hasTransferDate == true){
-                $sql .= " AND transfer_in_date IS NOT NULL";
-            }elseif($hasTransferDate === false){
-                $sql .= " AND transfer_in_date IS NULL";
-            }
+        if($hasTransferDate == true){
+            $sql .= " AND transfer_in_date BETWEEN ? AND ?";
+
+        }elseif($hasTransferDate != true){
+            $sql .= " AND transfer_in_date IS NULL AND `arrival_date` BETWEEN ? AND ?";
+            $l->fatal($sql);
+            $l->fatal(array($startDate, $endDate, $hasTransferDate,  $this->modelObject->getAuthorization_id()));
         }
+        
 
 		// Get the db connection
 		global $db;

@@ -415,6 +415,16 @@ class Rad_ActionManager extends ActionManager {
     	$amountMaps[] = new EntityMap("eager", "getWaste_type");
     	$amountMaps[] = new EntityMap("eager", "getContainer_name");
 
+        $cycleMaps = array();
+		$cycleMaps[] = new EntityMap("eager", "getCarboy");
+		$cycleMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
+		$cycleMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
+		$cycleMaps[] = new EntityMap("eager", "getContents");
+		$cycleMaps[] = new EntityMap("lazy", "getCarboy_reading_amounts");
+		$cycleMaps[] = new EntityMap("lazy", "getRoom");
+		$cycleMaps[] = new EntityMap("lazy", "getPickup");
+		$cycleMaps[] = new EntityMap("lazy", "getPour_allowed_date");
+
         if($pi->getPi_authorization() != NULL){
         	$piAuths = $pi->getPi_authorization();
             foreach($piAuths as $piAuth){
@@ -430,6 +440,10 @@ class Rad_ActionManager extends ActionManager {
                     $amount->setEntityMaps($amountMaps);
                 }
             }
+        }
+
+        foreach($pi->getCarboyUseCycles() as $cycle){
+            $cycle->setEntityMaps(eager);
         }
 
         $pi->setEntityMaps($entityMaps);
@@ -1053,6 +1067,10 @@ class Rad_ActionManager extends ActionManager {
                     $bag = $bagDao->getById($bagArray['Key_id']);
                     $bag->setPickup_id($pickup->getKey_id());
                     $bagDao->save($bag);
+                    //if this pickup has been picked up, we but a new waste bag in the container that previously held the bag
+                    if($decodedObject->getStatus() == "PICKED UP"){
+                        $this->changeWasteBag($bag);
+                    }
                 }
 
                 foreach($svCollections as $collectionArray){
@@ -1154,9 +1172,13 @@ class Rad_ActionManager extends ActionManager {
             return $decodedObject;
         }
     }
-    function changeWasteBag() {
+    function changeWasteBag(WasteBag $bag = null) {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-        $decodedObject = $this->convertInputJson();
+        if($bag == null){
+            $decodedObject = $this->convertInputJson();
+        }else{
+            $decodedObject = $bag;
+        }
         $LOG->debug($decodedObject);
         if( $decodedObject === NULL ) {
             return new ActionError('Error converting input stream to WasteBag', 202);
@@ -1170,12 +1192,19 @@ class Rad_ActionManager extends ActionManager {
             //get the bags for the container and find the one we need to remove
             $bag = $dao->save($decodedObject);
             $container = $bag->getContainer();
-            $LOG->fatal($bag);
-            $newBag = new WasteBag();
-            $newBag->setDate_added(date('Y-m-d H:i:s'));
-            $newBag->setIs_active(true);
-            $newBag->setContainer_id($container->getKey_id());
-            return $dao->save($newBag);
+
+            $group = new WhereClauseGroup(array(new WhereClause("container_id","=",$container->getKey_id())));
+            $curBags = $dao->getAllWhere($group,"AND","date_removed");
+            $latestBag = $curBags[0];
+            $LOG->fatal($latestBag);
+            if($latestBag == null || $latestBag->getDate_removed() != null){
+                $newBag = new WasteBag();
+                $newBag->setDate_added(date('Y-m-d H:i:s'));
+                $newBag->setIs_active(true);
+                $newBag->setContainer_id($container->getKey_id());
+                return $dao->save($newBag);
+            }
+
         }
     }
     function saveSolidsContainer() {
