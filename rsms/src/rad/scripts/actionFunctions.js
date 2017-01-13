@@ -2449,6 +2449,19 @@ angular
                         });
             }
 
+            af.getQuartleryInventoryById = function (id) {
+                var urlSegment = 'getQuartleryInventoryById&id=' + id;
+                console.log("hey you", urlSegment);
+
+                return genericAPIFactory.read(urlSegment)
+                        .then(function (returnedPromise) {
+                            var inventory = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
+                            store.store(inventory);
+                            return inventory;
+                        });
+
+            }
+
             af.savePiQuarterlyInventory = function(inventory, copy)
             {
                 af.clearError();

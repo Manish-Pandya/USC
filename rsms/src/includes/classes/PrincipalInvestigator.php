@@ -448,6 +448,24 @@ class PrincipalInvestigator extends GenericCrud {
 		return $this->pi_authorization;
 	}
 
+    public function getCurrentPi_authorization(){
+        $LOG = Logger::getLogger("asdf");
+		if($this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO(new PIAuthorization());
+			$whereClauseGroup = new WhereClauseGroup(
+					array(
+						new WhereClause("principal_investigator_id", "=" , $this->getKey_id()),
+					)
+			);
+			$auths = $thisDAO->getAllWhere($whereClauseGroup, "AND", "Approval_date");
+            if($auths != null){
+                return end($auths);
+            }
+		}
+        return array();
+
+	}
+
     public function getCurrentIsotopeInventories(){
         if($this->currentIsotopeInventories == null && $this->hasPrimaryKeyValue() && $this->getPi_authorization() != null){
             $inventoriesDao = new GenericDAO($this);

@@ -145,7 +145,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                     deferred.resolve(promise);
                 },
                 function (promise) {
-                    console.log('uh ih')
                     deferred.reject();
                 }
             );
@@ -199,42 +198,31 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
 
     factory.getDtos = function (year) {
         var deferred = $q.defer();
-        //lazy load
-        if (factory.InspectionScheduleDtos.length) {
-            deferred.resolve(factory.InspectionScheduleDtos);
-        } else {
-            var url = '../../ajaxaction.php?action=getInspectionSchedule&year=' + year.Name + '&callback=JSON_CALLBACK';
-            convenienceMethods.getDataAsDeferredPromise(url).then(
-                function (promise) {
-                    factory.InspectionScheduleDtos = promise;
-                    deferred.resolve(promise);
-                },
-                function (promise) {
-                    deferred.reject();
-                }
-            );
-        }
+        var url = '../../ajaxaction.php?action=getInspectionSchedule&year=' + year.Name + '&callback=JSON_CALLBACK';
+        convenienceMethods.getDataAsDeferredPromise(url).then(
+            function (promise) {
+                factory.InspectionScheduleDtos = promise;
+                deferred.resolve(promise);
+            },
+            function (promise) {
+                deferred.reject();
+            }
+        );
         return deferred.promise;
     }
 
     factory.getInspectionsByYear = function () {
         var deferred = $q.defer();
-        //lazy load
-        if (factory.Inspections.length) {
-            deferred.resolve(factory.Inspections);
-        } else {
-            var url = '../../ajaxaction.php?action=getInspectionsByYear&year=' + factory.year.Name + '&callback=JSON_CALLBACK';
-            convenienceMethods.getDataAsDeferredPromise(url).then(
-                function (promise) {
-                    console.log(promise)
-                    factory.Inspections = promise;
-                    deferred.resolve(promise);
-                },
-                function (promise) {
-                    deferred.reject();
-                }
-            );
-        }
+        var url = '../../ajaxaction.php?action=getInspectionsByYear&year=' + factory.year.Name + '&callback=JSON_CALLBACK';
+        convenienceMethods.getDataAsDeferredPromise(url).then(
+            function (promise) {
+                factory.Inspections = promise;
+                deferred.resolve(promise);
+            },
+            function (promise) {
+                deferred.reject();
+            }
+        );
         return deferred.promise;
     }
 
@@ -322,13 +310,11 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             Inspectors: inspectors,
             Is_active: true
         }
-        console.log(dto);
 
         var url = '../../ajaxaction.php?action=scheduleInspection';
         return convenienceMethods.saveDataAndDefer(url, dto)
             .then(
                 function (inspection) {
-                    console.log(inspection);
                     dto.Inspections = inspection;
                     dto.Inspection_id = inspection.Key_id;
                     $rootScope.saving = false;
@@ -342,25 +328,21 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
 
     factory.replaceInspector = function (dto, year, oldInspector, newInspector, inspector) {
         $rootScope.saving = true;
-        console.log($rootScope.dtoCopy);
         //find the inspector when need to replace and remove them from the copy
         var i = $rootScope.dtoCopy.Inspections.Inspectors.length;
         while (i--) {
             if (inspector.Key_id == $rootScope.dtoCopy.Inspections.Inspectors[i].Key_id) {
-                console.log('removing ' + $rootScope.dtoCopy.Inspections.Inspectors[i].Name);
                 $rootScope.dtoCopy.Inspections.Inspectors.splice(i, 1);
             }
         }
 
         //push the replacement inspector into the list
         $rootScope.dtoCopy.Inspections.Inspectors.push(newInspector);
-        console.log($rootScope.dtoCopy);
         //save the inspection, then set the dto's inspection object to the returned inspection
         var url = '../../ajaxaction.php?action=scheduleInspection';
         return convenienceMethods.saveDataAndDefer(url, $rootScope.dtoCopy)
             .then(
                 function (inspection) {
-                    console.log(inspection);
                     inspector.edit = false;
                     dto.Inspections.Inspectors = [];
                     dto.Inspections.Inspectors = inspection.Inspectors;
@@ -379,12 +361,10 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
     factory.removeInspector = function (dto, year, inspector) {
         $rootScope.dtoCopy = convenienceMethods.copyObject(dto);
         $rootScope.saving = true;
-        console.log($rootScope.dtoCopy);
         //find the inspector when need to replace and remove them from the copy
         var i = $rootScope.dtoCopy.Inspections.Inspectors.length;
         while (i--) {
             if (inspector.Key_id == $rootScope.dtoCopy.Inspections.Inspectors[i].Key_id) {
-                console.log('removing ' + $rootScope.dtoCopy.Inspections.Inspectors[i].Name);
                 $rootScope.dtoCopy.Inspections.Inspectors.splice(i, 1);
             }
         }
@@ -394,7 +374,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         return convenienceMethods.saveDataAndDefer(url, $rootScope.dtoCopy)
             .then(
                 function (inspection) {
-                    console.log(inspection);
                     inspector.edit = false;
                     dto.Inspections.Inspectors = [];
                     dto.Inspections.Inspectors = inspection.Inspectors;
@@ -437,7 +416,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
     }
 
     factory.editInspector = function (inspector, dto) {
-        console.log(dto);
         $rootScope.dtoCopy = convenienceMethods.copyObject(dto);
         inspector.edit = true;
     }
@@ -448,7 +426,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
     }
 
     factory.parseDtos = function (dto) {
-        console.log(dto);
         var dtos = [];
         var l = dto.Pis.length;
         for (var i = 0; i < l; i++) {
@@ -467,7 +444,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         }
         //create a dto obj for each inspection the pi still needs
         dtos = dto.Pis;
-        console.log(dtos);
         return dtos;
     }
 
@@ -528,7 +504,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                 Campuses: invertRooms(relevantDtos)
             }
             angular.extend(masterDto, map);
-            console.log(masterDto);
             dtos.splice(masterIndex, 0, masterDto);
         }
 
@@ -625,7 +600,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                 function (dtos) {
                     //$scope.dtos = manageInspectionsFactory.parseDtos(dto);
                     $scope.dtos = manageInspectionsFactory.collapseDtos(dtos);
-                    console.log(dtos.length);
                     //$scope.dtos = dtos;
                     $scope.loading = false;
                     $scope.genericFilter(true);
@@ -683,9 +657,11 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         manageInspectionsFactory.getInspectionScheduleDtos($scope.yearHolder.selectedYear)
             .then(
                 function (dtos) {
-                    console.log(dtos);
-                    $scope.dtos = dtos;
+                    //$scope.dtos = dtos;
+                    $scope.dtos = manageInspectionsFactory.collapseDtos(dtos);
                     $scope.loading = false;
+                    $scope.genericFilter(true);
+
                 },
                 function (error) {
                     $scope.error = "The system could not retrieve the list of inspections for the selected year.  Please check your internet connection and try again."
@@ -710,7 +686,6 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             $scope.filtering = true;
             window.setTimeout(function () {
                 var i = items.length;
-                console.log(i);
                 var filtered = [];
                 var matched;
                 while (i--) {
@@ -738,15 +713,12 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                             continue;
                         }                 
                         
-                        console.log(search.type + ' | ' + Constants.INSPECTION.TYPE.BIO)
                         if (search.type == Constants.INSPECTION.TYPE.BIO) {
-                            console.log('bio');
                             //only items with inspections that aren't rad inspection that have bio hazards
                             if (item.Inspections.Is_rad || !item.Bio_hazards_present) {
                                 matched = false;
                                 continue;
                             }
-                            console.log(item);
                         } else if (search.type == Constants.INSPECTION.TYPE.CHEM) {
                             //only items with inspections that aren't rad inspection that have bio hazards
                             if (item.Inspections.Is_rad || !item.Chem_hazards_present) {

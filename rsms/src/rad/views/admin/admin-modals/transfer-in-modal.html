@@ -9,7 +9,7 @@
                 Select Recipient
             </label>
             <div class="controls">
-                <ui-select class="span3" style="margin-left:0" ng-model="modalData.pi" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)">
+                <ui-select class="span3" style="margin-left:0" ng-model="modalData.pi" theme="selectize" ng-disabled="disabled" on-select="modalData.ParcelCopy.Principal_investigator_id = $item.Key_id; onSelectPi($item)">
                     <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
                     <ui-select-choices repeat="pi in dataStore.PrincipalInvestigator | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
                         <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>

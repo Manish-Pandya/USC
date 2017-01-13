@@ -73,11 +73,11 @@
                 <div ng-init="parcel = dsm.getById('Parcel', transfer.Parcel_id);auth = dsm.getById('Authorization',parcel.Authorization_id);">
                     {{auth.IsotopeName}}
                 </div>
-                <div ng-init="parcel = dsm.getById('Parcel', transfer.Parcel_id); piAuth = dsm.getById('PIAuthorization',auth.Pi_authorization_id); pi = dsm.getById('PrincipalInvestigator',piAuth.Principal_investigator_id)">
-                    {{pi.User.Name}} ({{parcel.Rs_number}})
+                <div ng-init="parcel = dsm.getById('Parcel', transfer.Parcel_id);  pi = dsm.getById('PrincipalInvestigator',parcel.Principal_investigator_id)">
+                    {{pi.User.Name}}
                 </div>
                 <div ng-init="dParcel = dsm.getById('Parcel', transfer.Destination_parcel_id); destPi = dsm.getById('PrincipalInvestigator', dParcel.Principal_investigator_id)">
-                    {{destPi.User.Name || transfer.DestinationParcel.ReceivingPiName}} ({{dParcel.Rs_number}})
+                    {{transfer.DestinationParcel.ReceivingPiName || destPi.User.Name}}
                 </div>
                 <div>
                     {{transfer.Quantity}} mCi
