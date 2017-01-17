@@ -89,11 +89,36 @@ class IBC_ActionManager extends ActionManager {
      * @param IBCProtocolRevision
      * @return GenericCrud | ActionError | IBCProtocolRevision
      */
-    function saveProtocolRevision($decodedObject = null){
+    function saveProtocolRevision(IBCProtocolRevision $decodedObject = null){
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
+        //hold Preliminary and Primary reviewers
+        $decodedObject = new IBCProtocolRevision();
+        $primaryReviewers = $decodedObject->getPrimaryReviewers();
+        $preliminaryReviewers = $decodedObject->getPreliminaryReviewers();
         $dao = $this->getDao($decodedObject);
         $revision = $dao->save($decodedObject);
+
+        foreach($revision->getPrimaryReviewers() as $reviwer){
+            if(is_array($reviwer))$reviwer = JsonManager::assembleObjectFromDecodedArray($reviwer);
+            $dao->removeRelatedItems($revision->getKey_id(), $reviwer->getKey_id(), IBCProtocolRevision::$PRIMARY_REVIEWERS_RELATIONSHIP);
+        }
+
+        foreach($primaryReviewers as $reviwer){
+            if(is_array($reviwer))$reviwer = JsonManager::assembleObjectFromDecodedArray($reviwer);
+            $dao->addRelatedItems($revision->getKey_id(), $reviwer->getKey_id(), IBCProtocolRevision::$PRIMARY_REVIEWERS_RELATIONSHIP);
+        }
+
+        foreach($revision->getPreliminaryReviwers() as $reviwer){
+            if(is_array($reviwer))$reviwer = JsonManager::assembleObjectFromDecodedArray($reviwer);
+            $dao->removeRelatedItems($revision->getKey_id(), $reviwer->getKey_id(), IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP);
+        }
+
+        foreach($preliminaryReviewers as $reviwer){
+            if(is_array($reviwer))$reviwer = JsonManager::assembleObjectFromDecodedArray($reviwer);
+            $dao->addRelatedItems($revision->getKey_id(), $reviwer->getKey_id(), IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP);
+        }
+
         return $revision;
     }
 
