@@ -76,7 +76,7 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
         }
         else {
             var urlFragment = parent.api.fetchActionString("getAll", relationship.className);
-            return parent.rootScope[parent.Class + "sBusy"] = parent.api.read(urlFragment).then(function (returnedPromise) {
+            return parent.rootScope[parent.Class + "sBusy"] = dataStore['loading'+relationship.table] = parent.api.read(urlFragment).then(function (returnedPromise) {
                 //cache result so we don't hit the server next time
                 if (!returnedPromise) {
                     parent[property] = [];
@@ -139,7 +139,7 @@ dataLoader.loadManyToManyRelationship = function (parent, relationship) {
     // data not cached, get from the server
     else {
         var urlFragment = 'getRelationships&class1=' + parent.Class + '&class2=' + relationship.childClass;
-        return dataStore['loading'+relationship.table] = parent.api.read(urlFragment)
+        return parent.rootScope[parent.Class + "sBusy"] = dataStore['loading'+relationship.table] = parent.api.read(urlFragment)
             .then(function (returnedPromise) {
                 //cache result so we don't hit the server next time
                 dataStoreManager.storeGerunds(returnedPromise.data, relationship.table);

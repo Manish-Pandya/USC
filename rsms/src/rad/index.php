@@ -139,8 +139,11 @@ if(!isset($_SESSION["USER"])){ ?>
 
 <!-- business logic-->
 <script type="text/javascript" src="./scripts/actionFunctions.js"></script>
+<script src="scripts/controllers/admin/rad-admin-ctrls.js"></script>
+<script src="scripts/controllers/pi/rad-pi-ctrls.js"></script>
+<script type="text/javascript" src="./scripts/controllers/inspection/inspectionWipeCtrl.js"></script>
 
-<!-- controllers -->
+<!-- controllers 
 <script type="text/javascript" src="./scripts/controllers/generic-modal-controller.js"></script>
 <script type="text/javascript" src="./scripts/controllers/main.js"></script>
 <script type="text/javascript" src="./scripts/controllers/about.js"></script>
@@ -158,10 +161,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <script type="text/javascript" src="./scripts/controllers/admin/OrdersCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/transfers-ctrl.js"></script>
 <script type="text/javascript"  src="scripts/controllers/admin/auth-report-ctrl.js"></script>
-
 <script type="text/javascript" src="./scripts/controllers/pi/OrdersCtrl.js"></script>
-
-
 <script type="text/javascript" src="./scripts/controllers/pi/PiRadHomeCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/RecepticalCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/UseLogCtrl.js"></script>
@@ -169,9 +169,9 @@ if(!isset($_SESSION["USER"])){ ?>
 <script type="text/javascript" src="./scripts/controllers/pi/PickupCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/QuarterlyInventoryCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/isotope-ctrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/inspection/inspectionWipeCtrl.js"></script>
 <script src="scripts/controllers/pi/PIWipeTestCtrl.js"></script>
 <script src="scripts/controllers/pi/AuthCtrl.js"></script>
+    -->
 <!-- directives -->
 <script type="text/javascript" src="./scripts/directives/dateInput.js"></script>
 <script type="text/javascript" src="./scripts/directives/combobox.js"></script>
@@ -198,7 +198,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="../client-side-framework/dataStore/dataLoader.js"></script>
 
 
-<!-- models -->
+<!-- models 
 <script src="./scripts/models/Authorization.js"></script>
 <script src="./scripts/models/Carboy.js"></script>
 <script src="./scripts/models/CarboyUseCycle.js"></script>
@@ -208,7 +208,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="./scripts/models/Isotope.js"></script>
 <script src="./scripts/models/Parcel.js"></script>
 <script src="./scripts/models/ParcelUse.js"></script>
-<script src="./scripts/models/ParcelUseAmount.js"></script> <!-- this may not be needed on the frontend, think about that later -->
+<script src="./scripts/models/ParcelUseAmount.js"></script>
 <script src="./scripts/models/Pickup.js"></script>
 <script src="./scripts/models/PrincipalInvestigator.js"></script>
 <script src="./scripts/models/PurchaseOrder.js"></script>
@@ -233,7 +233,8 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="scripts/models/DrumWipe.js"></script>
 <script src="scripts/models/DrumWipeTest.js"></script>
 <script src="scripts/models/MiscellaneousWaste.js"></script>
-
+    -->
+<script src="scripts/models/rad-models-bundle.js"></script>
 </head>
     <body>
         <?php if($_SESSION['USER'] != NULL){ ?>
