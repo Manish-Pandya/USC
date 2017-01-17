@@ -1,18 +1,95 @@
-﻿<div class="modal-header" style="padding:0;">
-    <h2 ng-show="!addRoom" style="padding:5px; background:rgb(26, 109, 168); color:white">Transfer a package</h2>
-</div>
-<div class="modal-body">
-    <label>
-        Select 
-    </label>
-    <ui-select class="span3" style="margin-left:0" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)">
-        <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
-        <ui-select-choices repeat="pi in dataStore.PrincipalInvestigator | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
-            <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
-        </ui-select-choices>
-    </ui-select>
-</div>
-<div class="modal-footer">
-    <a class="btn btn-large btn-success left" ng-click="save(modalData.ParcelCopy)"><i class="icon-cancel-2"></i>Save</a>
-    <a class="btn btn-large left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
-</div>
+﻿<form class="form form-horizontal" ng-submit="saveTransferIn(modalData.ParcelCopy, modalData.Parcel)">
+    <div class="modal-header" style="padding:0;">
+        <h2 ng-show="!addRoom" style="padding:5px; background:rgb(26, 109, 168); color:white">Transfer a package from another institution</h2>
+    </div>
+    <div class="modal-body">
+        <div class="control-group">
+
+            <label class="control-label">
+                Select Recipient
+            </label>
+            <div class="controls">
+                <ui-select class="span3" style="margin-left:0" ng-model="modalData.pi" theme="selectize" ng-disabled="disabled" on-select="modalData.ParcelCopy.Principal_investigator_id = $item.Key_id; onSelectPi($item)">
+                    <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
+                    <ui-select-choices repeat="pi in dataStore.PrincipalInvestigator | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
+                        <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Status</label>
+            <div class="controls">
+                <select data-ng-model="modalData.ParcelCopy.Status" ng-options="status as status for (k,status) in Constants.PARCEL.STATUS">
+                    <option value="">Select A Status</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Authorization</label>
+            <div class="controls">
+                <select data-ng-model="modalData.ParcelCopy.Authorization_id" ng-options="auth.Key_id as (auth.Isotope.Name + ':   (' + auth.Form + ')') for auth in getHighestAuth(modalData.pi).Authorizations" ng-change="selectAuth()">
+                    <option selected="selected" value="">Select an authorization</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Transfer Number</label>
+            <div class="controls">
+                <input ng-model="modalData.ParcelCopy.Rs_number" ng-init="modalData.ParcelCopy.Rs_number = modalData.ParcelCopy.Rs_number || 'T-'+getTransferNumberSuggestion('T')" />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Date Transferred:</label>
+            <div class="controls">
+                <input ng-model="modalData.ParcelCopy.view_Transfer_in_date">
+                <span class="help-block" style="">mm/dd/yy</span>
+            </div>
+        </div>
+
+
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Purchase Order</label>
+            <div class="controls">
+                <select data-ng-change="selectPO()" ng-options="po.Key_id as po.Purchase_order_number for po in modalData.pi.PurchaseOrders" ng-model="modalData.ParcelCopy.Purchase_order_id">
+                    <option value="">Select a Purchase Order</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Quantity</label>
+            <div class="controls input-append">
+                <input ng-model="modalData.ParcelCopy.Quantity" /><span class="add-on">mCi</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Chemical Compound</label>
+            <div class="controls input-append">
+                <input ng-model="modalData.ParcelCopy.Chemical_compound" />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Catalog Number</label>
+            <div class="controls input-append">
+                <input ng-model="modalData.ParcelCopy.Catalog_number" />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Comments</label>
+            <div class="controls input-append">
+                <textarea ng-model="modalData.ParcelCopy.Comments"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-large btn-success left"><i class="icon-checkmark"></i>Save</button>
+        <a class="btn btn-large left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+        <h3 class="red" ng-if="error">{{error}}</h3>
+    </div>
+</form>

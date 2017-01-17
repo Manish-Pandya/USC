@@ -41,10 +41,10 @@ PIAuthorization.prototype = {
     },
 
     loadRooms: function() {
-        dataLoader.loadManyToManyRelationship( this, this.RoomsRelationship );
+        return dataLoader.loadManyToManyRelationship( this, this.RoomsRelationship );
     },
     loadDepartments: function() {
-        dataLoader.loadManyToManyRelationship( this, this.DepartmentsRelationship );
+        return dataLoader.loadManyToManyRelationship( this, this.DepartmentsRelationship );
     },
 }
 

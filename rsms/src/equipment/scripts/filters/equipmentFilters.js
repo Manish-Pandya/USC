@@ -217,8 +217,6 @@ angular
              var allRooms = [];
              pis.forEach(function (pi) {
                  if (!pi.Rooms) return;
-                 //console.log(pi);
-
                  pi.Rooms.forEach(function (r) {
                      var index = parseInt(r.Key_id);
                      if (!allRooms[index]) {
@@ -230,9 +228,14 @@ angular
              })
              //console.log(allRooms);
              if (!allRooms || !allRooms.length) return;
-             return allRooms.reduce(function (i) {
+             var filtered = allRooms.filter(function (i) {
                  return i.length == pis.length;
              })
+             filtered.forEach(function (rooms, idx, arr) {
+                 arr[idx] = rooms[0];
+             });
+             console.log(filtered);
+             return filtered;
         }
      
     })

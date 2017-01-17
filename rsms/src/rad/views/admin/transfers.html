@@ -1,5 +1,7 @@
 ﻿<!--div cg-busy="{promise:CarboyReadingAmountSaving, message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div-->
-<div cg-busy="{promise:loading, message:'loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:loading, message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:PrincipalInvestigatorsBusy, message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:saving, message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="right-column transfers">
 
@@ -10,6 +12,7 @@
         <div class="fake-table bordered" ng-show="transfersIn.length > 0">
             <div class="table-header">
                 <h3>Edit</h3>
+                <h3>Transfer #</h3>
                 <h3>PI</h3>
                 <h3>Date Transfered</h3>
                 <h3>Isotope</h3>
@@ -23,10 +26,13 @@
                     <a ng-click="openTransferInModal(transfer)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
                 </div>
                 <div>
+                    {{transfer.Rs_number}}
+                </div>
+                <div>
                     {{transfer.ReceivingPiName}}
                 </div>
                 <div>
-                    {{transfer.Transfer_in_date | dateToIso}}
+                    {{transfer.Transfer_in_date | dateToIso:transfer:'Transfer_in_date':true}}
                 </div>
                 <div>
                     {{transfer.Authorization.IsotopeName}}
@@ -49,57 +55,117 @@
     </div>
 
     <div class="well two-thirds card">
-        <h3><i class="icon-tab"></i>{{transfersBetween.length}} Transfer<span ng-show="transfersBetween.length != 1">s</span> Between Labs<a ng-click="openModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-tab"></i>New Transfer</a></h3>
+        <h3><i class="icon-tab"></i>{{transfersBetween.length}} Transfer<span ng-show="transfersBetween.length != 1">s</span> Between Labs<a ng-click="openTransferBetweenModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-tab"></i>New Transfer</a></h3>
         <div class="fake-table bordered" ng-show="transfersBetween.length > 0">
             <div class="table-header">
                 <h3>Edit</h3>
-                <h3>Carboy Number</h3>
-                <h3>Status</h3>
-                <h3>PI</h3>
+                <h3>Isotope</h3>
+                <h3>Orginating PI</h3>
+                <h3>Receiving PI</h3>
+                <h3>Quantity</h3>
+                <h3>Date Transferred</h3>
+                <h3>Notes</h3>
             </div>
-            <div class="table-row" ng-repeat="transfer in transfersBetween = (parcels | transferBetweenParcels)">
+            <div class="table-row" ng-repeat="transfer in transfersBetween = (uses | transferBetweenUses)">
                 <div>
-                    <a ng-disabled="carboy.edit" ng-class="{'disabled':carboy.edit}" ng-click="openModal(carboy)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
-                    <!-- TODO: Possible Status values should be enums -->
-                    <a ng-disabled="carboy.edit" ng-if="carboy.Current_carboy_use_cycle.Status != 'In Use' && carboy.Current_carboy_use_cycle.Status != 'Decaying'" ng-class="{'disabled':carboy.edit}" ng-click="deactivate(carboy)" class="btn btn-danger left"><i class="icon-remove"></i>Deactivate</a>
+                    <a ng-disabled="transfer.edit" ng-click="openTransferBetweenModal(transfer)" class="btn btn-primary"><i class="icon-pencil"></i></a>
+                </div>
+                <div ng-init="parcel = dsm.getById('Parcel', transfer.Parcel_id);auth = dsm.getById('Authorization',parcel.Authorization_id);">
+                    {{auth.IsotopeName}}
+                </div>
+                <div ng-init="parcel = dsm.getById('Parcel', transfer.Parcel_id);  pi = dsm.getById('PrincipalInvestigator',parcel.Principal_investigator_id)">
+                    {{pi.User.Name}}
+                </div>
+                <div ng-init="dParcel = dsm.getById('Parcel', transfer.Destination_parcel_id); destPi = dsm.getById('PrincipalInvestigator', dParcel.Principal_investigator_id)">
+                    {{transfer.DestinationParcel.ReceivingPiName || destPi.User.Name}}
                 </div>
                 <div>
-                    {{carboy.Carboy_number}}
+                    {{transfer.Quantity}} mCi
                 </div>
                 <div>
-                    {{carboy.Current_carboy_use_cycle.Status}}
+                    {{transfer.Date_transferred | dateToIso:transfer:'Date_transferred':true}}
                 </div>
-                <div ng-init="carboy.Current_carboy_use_cycle.loadPrincipalInvestigator()">
-                    {{carboy.Current_carboy_use_cycle.Principal_investigator.User.Name}}
-                </div>
+                <div>{{transfer.ParcelUseAmounts[0].Comments}}</div>
             </div>
+
         </div>
     </div>
 
     <div class="well two-thirds card">
-        <h3><i class="icon-tab"></i>{{transfersOut.length}} Transfer<span ng-show="transfersOut.length != 1">s</span> to Other Institutions<a ng-click="openModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-tab"></i>New Transfer</a></h3>
+        <h3><i class="icon-tab"></i>{{transfersOut.length}} Transfer<span ng-show="transfersOut.length != 1">s</span> to Other Institutions<a ng-click="openTransferOutModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-tab"></i>New Transfer</a></h3>
         <div class="fake-table bordered" ng-show="transfersOut.length">
             <div class="table-header">
                 <h3>Edit</h3>
-                <h3>Carboy Number</h3>
-                <h3>Status</h3>
+                <h3>Transfer #</h3>
+                <h3>Isotope</h3>
                 <h3>PI</h3>
+                <h3>Quantity</h3>
+                <h3>Date Transferred</h3>
+                <h3>Notes</h3>
             </div>
-            <div class="table-row" ng-repeat="transfer in transfersOut = (uses | transferOutUses)">
+            <div class="table-row" ng-repeat="transfer in transfersOut = (uses | transferOutUses)" ng-init="parcel = dsm.getById('Parcel', transfer.Parcel_id)">
                 <div>
-                    <a ng-disabled="carboy.edit" ng-class="{'disabled':carboy.edit}" ng-click="openModal(carboy)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
-                    <!-- TODO: Possible Status values should be enums -->
-                    <a ng-disabled="carboy.edit" ng-if="carboy.Current_carboy_use_cycle.Status != 'In Use' && carboy.Current_carboy_use_cycle.Status != 'Decaying'" ng-class="{'disabled':carboy.edit}" ng-click="deactivate(carboy)" class="btn btn-danger left"><i class="icon-remove"></i>Deactivate</a>
+                    <a ng-disabled="transfer.edit" ng-class="{'disabled':carboy.edit}" ng-click="openTransferOutModal(transfer)" class="btn btn-primary"><i class="icon-pencil"></i></a>
                 </div>
                 <div>
-                    {{carboy.Carboy_number}}
+                    {{parcel.Rs_number}}
                 </div>
                 <div>
-                    {{carboy.Current_carboy_use_cycle.Status}}
+                    {{parcel.Authorization.IsotopeName}}
                 </div>
-                <div ng-init="carboy.Current_carboy_use_cycle.loadPrincipalInvestigator()">
-                    {{carboy.Current_carboy_use_cycle.Principal_investigator.User.Name}}
+                <div ng-init="piAuth = dsm.getById('PIAuthorization', parcel.Authorization.Pi_authorization_id); pi = dsm.getById('PrincipalInvestigator',piAuth.Principal_investigator_id)">
+                    {{pi.User.Name}}
                 </div>
+                <div>
+                    {{transfer.Quantity}} mCi
+                </div>
+                <div>
+                    {{transfer.Date_transferred | dateToIso:transfer:'Date_transferred':true}}
+                </div>
+                <div>{{transfer.ParcelUseAmounts[0].Comments}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="well full card">
+        <h3><i class="icon-tab"></i>{{transfersIn.length}} Inventory Transfers<a ng-click="openTransferInventoryModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-tab"></i>New Transfer</a></h3>
+        <div class="fake-table bordered" ng-show="transfersIn.length > 0">
+            <div class="table-header">
+                <h3>Edit</h3>
+                <h3>Transfer #</h3>
+                <h3>PI</h3>
+                <h3>Isotope</h3>
+                <h3>Quantity</h3>
+                <h3>Chemical Compound</h3>
+                <h3>Form</h3>
+                <h3>Notes</h3>
+            </div>
+            <div class="table-row" ng-repeat="transfer in transfersIn = (parcels | transferInventoryParcels)">
+                <div>
+                    <a ng-click="openTransferInventoryModal(transfer)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
+                </div>
+                <div>
+                    {{transfer.Rs_number}}
+                </div>
+                <div>
+                    {{transfer.ReceivingPiName}}
+                </div>
+                <div>
+                    {{transfer.Authorization.IsotopeName}}
+                </div>
+                <div>
+                    {{transfer.Quantity}}
+                </div>
+                <div>
+                    {{transfer.Chemical_compound}}
+                </div>
+                <div>
+                    {{transfer.Authorization.Form}}
+                </div>
+                <div>
+                    {{transfer.Comments}}
+                </div>
+
             </div>
         </div>
     </div>

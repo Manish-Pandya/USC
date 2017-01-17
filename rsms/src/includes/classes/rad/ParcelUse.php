@@ -19,8 +19,8 @@ class ParcelUse extends RadCrud {
 		"quantity"						=> "float",
 		"experiment_use"				=> "text",
 		"date_used"						=> "timestamp",
-        //"date_transfered"               => "timestamp",
-        //"destination_pi_id"             => "integer",
+        "date_transferred"               => "timestamp",
+        "destination_parcel_id"         => "integer",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -49,6 +49,7 @@ class ParcelUse extends RadCrud {
 
 	/** Integer containing the id of the parcel this usage concerns */
 	private $parcel_id;
+    private $destinationParcel;
 
 	/** timestamp of the date that this usage took place */
 	private $date_of_use;
@@ -70,10 +71,10 @@ class ParcelUse extends RadCrud {
 
 
     /** If this ParcelUse is a transfer, when did the transfer take place **/
-    private $date_transfered;
+    private $date_transferred;
     /** Is this a transfer? **/
     private $is_transfer;
-    private $destination_pi_id;
+    private $destination_parcel_id;
 
 	public function __construct() {
 
@@ -146,20 +147,30 @@ class ParcelUse extends RadCrud {
         return $this->parcelRemainder;
     }
 
-    public function getDate_transfered(){return $this->date_transfered;}
-	public function setDate_transfered($date_transfered){$this->date_transfered = $date_transfered;}
+    public function getDate_transferred(){return $this->date_transferred;}
+	public function setDate_transferred($date_transferred){$this->date_transferred = $date_transferred;}
 
 	public function getIs_transfer(){
-        $this->is_transfer = (bool) $this->getDate_transfered()!= null;
+        $this->is_transfer = (bool) $this->getDate_transferred() != null;
         return $this->is_transfer;
     }
 
-    public function getDestination_pi_id(){
-        return $this->destination_pi_id;
+    public function getDestination_parcel_id(){
+        return $this->destination_parcel_id;
     }
-    public function setDestination_pi_id($id){
-        $this->destination_pi_id = $id;
+    public function setDestination_parcel_id($id){
+        $this->destination_parcel_id = $id;
     }
 
+    public function getDestinationParcel(){
+        if($this->destinationParcel == null && $this->destination_parcel_id != null) {
+			$parcelDAO = new GenericDAO(new Parcel());
+			$this->destinationParcel = $parcelDAO->getById($this->getDestination_parcel_id());
+		}
+        return $this->destinationParcel;
+    }
+    public function setDestinationParcel($parcel){
+		$this->destinationParcel = $parcel;
+    }
 }
 ?>

@@ -17,7 +17,6 @@ angular.module('00RsmsAngularOrmApp')
         return af.getRadPIById($stateParams.pi)
     			.then(
     				function(pi){
-              console.log(pi);
               $scope.pi = pi;
               return pi;
     				},
@@ -26,11 +25,11 @@ angular.module('00RsmsAngularOrmApp')
       }
 
       var getInventory = function(pi){
-        console.log(pi);
         return af.getQuartleryInventory(pi.Key_id)
                   .then(
-                    function(inventory){
-                      $scope.pi_inventory = inventory;
+                    function (inventory) {
+                        $scope.pi_inventory = inventory;
+                        return inventory;
                     }
                   )
       }
@@ -47,7 +46,7 @@ angular.module('00RsmsAngularOrmApp')
       }
 
       $rootScope.inventoryPromise = getPi()
-                              .then(getInventory);
+                              .then(getInventory)
  })
  .controller('InventoryConfirmationModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
         var af = actionFunctionsFactory;

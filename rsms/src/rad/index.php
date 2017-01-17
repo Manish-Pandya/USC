@@ -55,16 +55,32 @@ if(!isset($_SESSION["USER"])){ ?>
 <?php
       }
 ?>
+<!-- init authenticated user's role before we even mess with angular so that we can store the roles in a global var -->
+<?php if($_SESSION["USER"] != null){ ?>
+<script>
+    var GLOBAL_SESSION_ROLES = <?php echo json_encode($_SESSION['ROLE']); ?>;
+    //grab usable properties from the session user object
+    var GLOBAL_SESSION_USER = {
+        Name:    '<?php echo $_SESSION['USER']->getName(); ?>',
+        Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>'
+    }
+    var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
+    var isProductionServer;
+<?php
+          if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
+              echo 'isProductionServer = true;';
+          }
+      }
+?>
+</script
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <!-- stylesheets -->
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/bootstrap.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/bootstrap-responsive.css"/>
-<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/ui-lightness/jquery-ui-1.10.3.custom.min.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/bootmetro.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/bootmetro-tiles.css"/>
-<link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/bootmetro-charms.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/metro-ui-light.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/icomoon.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/datepicker.css"/>
@@ -123,8 +139,11 @@ if(!isset($_SESSION["USER"])){ ?>
 
 <!-- business logic-->
 <script type="text/javascript" src="./scripts/actionFunctions.js"></script>
+<script src="scripts/controllers/admin/rad-admin-ctrls.js"></script>
+<script src="scripts/controllers/pi/rad-pi-ctrls.js"></script>
+<script type="text/javascript" src="./scripts/controllers/inspection/inspectionWipeCtrl.js"></script>
 
-<!-- controllers -->
+<!-- controllers 
 <script type="text/javascript" src="./scripts/controllers/generic-modal-controller.js"></script>
 <script type="text/javascript" src="./scripts/controllers/main.js"></script>
 <script type="text/javascript" src="./scripts/controllers/about.js"></script>
@@ -142,10 +161,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <script type="text/javascript" src="./scripts/controllers/admin/OrdersCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/transfers-ctrl.js"></script>
 <script type="text/javascript"  src="scripts/controllers/admin/auth-report-ctrl.js"></script>
-
 <script type="text/javascript" src="./scripts/controllers/pi/OrdersCtrl.js"></script>
-
-
 <script type="text/javascript" src="./scripts/controllers/pi/PiRadHomeCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/RecepticalCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/UseLogCtrl.js"></script>
@@ -153,9 +169,9 @@ if(!isset($_SESSION["USER"])){ ?>
 <script type="text/javascript" src="./scripts/controllers/pi/PickupCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/pi/QuarterlyInventoryCtrl.js"></script>
 <script type="text/javascript" src="./scripts/controllers/admin/isotope-ctrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/inspection/inspectionWipeCtrl.js"></script>
 <script src="scripts/controllers/pi/PIWipeTestCtrl.js"></script>
 <script src="scripts/controllers/pi/AuthCtrl.js"></script>
+    -->
 <!-- directives -->
 <script type="text/javascript" src="./scripts/directives/dateInput.js"></script>
 <script type="text/javascript" src="./scripts/directives/combobox.js"></script>
@@ -182,7 +198,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="../client-side-framework/dataStore/dataLoader.js"></script>
 
 
-<!-- models -->
+<!-- models 
 <script src="./scripts/models/Authorization.js"></script>
 <script src="./scripts/models/Carboy.js"></script>
 <script src="./scripts/models/CarboyUseCycle.js"></script>
@@ -192,7 +208,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="./scripts/models/Isotope.js"></script>
 <script src="./scripts/models/Parcel.js"></script>
 <script src="./scripts/models/ParcelUse.js"></script>
-<script src="./scripts/models/ParcelUseAmount.js"></script> <!-- this may not be needed on the frontend, think about that later -->
+<script src="./scripts/models/ParcelUseAmount.js"></script>
 <script src="./scripts/models/Pickup.js"></script>
 <script src="./scripts/models/PrincipalInvestigator.js"></script>
 <script src="./scripts/models/PurchaseOrder.js"></script>
@@ -217,10 +233,19 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="scripts/models/DrumWipe.js"></script>
 <script src="scripts/models/DrumWipeTest.js"></script>
 <script src="scripts/models/MiscellaneousWaste.js"></script>
-
+    -->
+<script src="scripts/models/rad-models-bundle.js"></script>
 </head>
     <body>
-        <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid">
+        <?php if($_SESSION['USER'] != NULL){ ?>
+        <div class="user-info" ng-controller="roleBasedCtrl">
+            <div>
+                Signed in as <?php echo $_SESSION['USER']->getName(); ?>
+                <a style="float:right;" href="<?php echo WEB_ROOT?>action.php?action=logoutAction">Sign Out</a>
+            </div>
+        </div>
+        <?php }?>
+        <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid" style="margin-top:25px;">
         <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
         <!-- NAVIGATION -->
         <div class="banner {{bannerClass | splitAtPeriod}} radiation" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">

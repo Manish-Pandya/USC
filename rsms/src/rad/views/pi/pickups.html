@@ -19,28 +19,14 @@
                     <h3><i class="icon-remove-2 solids-containers"></i>Solid Waste Containers</h3>
                     <ul>
                         <li ng-repeat="container in pi.SolidsContainers" ng-init="container.loadWasteBagsForPickup();container.loadCurrentWasteBags()">
-                            <label class="checkbox" ng-if="solidsContainerHasPickups(pi.SolidsContainers[$index])">
-                                <input type="checkbox" ng-true-value="yes" ng-model="container.include" />
-                                <span class="metro-checkbox bold">Bags removed from {{container.Name}} since last pickup:</span>
-                                <p ng-repeat="bag in container.WasteBagsForPickup" ng-if="!bag.Pickup_id">
-                                    <span class="metro-checkbox">Waste Removed {{bag.Date_removed | dateToISO}} (<span ng-if="!bag.Contents.length">No Activity</span><span ng-repeat="isotope in bag.Contents track by $index">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span>
-                                </p>
-                            </label>
-                            
-                            <label class="checkbox" ng-if="!solidsContainerHasPickups(pi.SolidsContainers[$index])">
-                                <input type="checkbox" disabled ng-true-value="yes" ng-model="container.include" />
-                                <span class="metro-checkbox bold">No bags removed from {{container.Name}} since last pickup</span>
-                            </label>
-                            
-
                             <label class="checkbox" ng-if="!container.CurrentWasteBags[0].Pickup_id">
                                 <input type="checkbox" ng-true-value="yes" ng-model="container.includeCurrentBag" />
-                                <span class="metro-checkbox">Pickup contents currently in {{container.Name}} (<span ng-if="!container.CurrentWasteBags[0].Contents.length">No Activity</span><span ng-repeat="isotope in container.CurrentWasteBags[0].Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span>
+                                <span class="metro-checkbox">{{container.Name}} (<span ng-if="!container.CurrentWasteBags[0].Contents.length">No Activity</span><span ng-repeat="isotope in container.CurrentWasteBags[0].Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>)</span>
                             </label>
 
                             <label class="checkbox" ng-if="container.CurrentWasteBags[0].Pickup_id">
                                 <input type="checkbox" disabled checked />
-                                <span class="metro-checkbox">{{container.CurrentWasteBags[0].test}}Contents currently in {{container.Name}} (<span ng-if="!container.CurrentWasteBags[0].Contents.length">No Activity</span><span ng-repeat="isotope in container.CurrentWasteBags[0].Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>) have been scheduled for pickup.</span>
+                                <span class="metro-checkbox">{{container.Name}} (<span ng-if="!container.CurrentWasteBags[0].Contents.length">No Activity</span><span ng-repeat="isotope in container.CurrentWasteBags[0].Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}<span ng-if="!$last">, </span></span>) has been scheduled for pickup.</span>
                             </label>
 
                         </li>

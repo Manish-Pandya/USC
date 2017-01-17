@@ -241,19 +241,29 @@ angular.module('00RsmsAngularOrmApp')
         return function (parcels) {
             if (!parcels) return;
             filteredParcels = parcels.filter(function (parcel) {
-                return (parcel.Transfer_in_date && !parcel.Original_pi_id);
+                return (parcel.Transfer_in_date && moment(parcel.Transfer_in_date).year() > 2016 && !parcel.Transfer_amount_id);
+            });
+            return filteredParcels;
+        };
+    })
+    //parcels that are transfers from other insitutions
+    .filter('transferInventoryParcels', function () {
+        return function (parcels) {
+            if (!parcels) return;
+            filteredParcels = parcels.filter(function (parcel) {
+                return (parcel.Transfer_in_date && moment(parcel.Transfer_in_date).year() < 2017 && !parcel.Transfer_amount_id);
             });
             return filteredParcels;
         };
     })
     //parcels that are transfers from other one pi to another
-    .filter('transferBetweenParcels', function () {
-        return function (parcels) {
-            if (!parcels) return;
-            filteredParcels = parcels.filter(function (parcel) {
-                return (parcel.Transfer_in_date && parcel.Original_pi_id);
+    .filter('transferBetweenUses', function () {
+        return function (uses) {
+            if (!uses) return;
+            filteredUses = uses.filter(function (use) {
+                return use.Is_transfer && use.Destination_parcel_id;
             });
-            return filteredParcels;
+            return filteredUses;
         };
     })
     //transfers out to other institutions
@@ -261,7 +271,7 @@ angular.module('00RsmsAngularOrmApp')
         return function (uses) {
             if (!uses) return;
             filteredUses = uses.filter(function (use) {
-                return use.Is_transfer && !use.Destination_pi_id;
+                return use.Is_transfer && !use.Destination_parcel_id;
             });
             return filteredUses;
         };
@@ -276,7 +286,18 @@ angular.module('00RsmsAngularOrmApp')
         }
     })
     .filter('availableBags', function () {
-        return function (bags) {
-            return bags.filter(function (b) { return !b.Pickup_id})
+        return function (bags, solid) {
+            var overridingRoles = [Constants.ROLE.NAME.ADMIN, Constants.ROLE.NAME.RADIATION_ADMIN, Constants.ROLE.NAME.RADIATION_INSPECTOR];
+            return overridingRoles.filter(function (r) {
+                return GLOBAL_SESSION_ROLES.userRoles.indexOf(r) != -1;
+            }).length ? bags : bags.filter(function (b) { return solid ? (!b.Pickup_id || b.Key_id == solid.Waste_bag_id) : !b.Pickup_id})
+        }
+    })
+    .filter('matchingIsotope', function () {
+        return function (auths, parcel) {
+            if (!auths) return;
+            var auth = dataStoreManager.getById("Authorization", parcel.Authorization_id);
+            var id = auth.Isotope_id;
+            return auths.filter( function (a) { return a.Isotope_id == id; } )
         }
     });

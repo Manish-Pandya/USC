@@ -406,16 +406,17 @@ class GenericDAO {
         $l = Logger::getLogger("transfer amounts");
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel`
-				where `authorization_id` = ?
-				AND `arrival_date` BETWEEN ? AND ?";
+				where `authorization_id` = ?";
 
-        if($hasTransferDate != null){
-            if($hasTransferDate == true){
-                $sql .= " AND transfer_in_date IS NOT NULL";
-            }elseif($hasTransferDate === false){
-                $sql .= " AND transfer_in_date IS NULL";
-            }
+        if($hasTransferDate == true){
+            $sql .= " AND transfer_in_date BETWEEN ? AND ?";
+
+        }elseif($hasTransferDate != true){
+            $sql .= " AND transfer_in_date IS NULL AND `arrival_date` BETWEEN ? AND ?";
+            $l->fatal($sql);
+            $l->fatal(array($startDate, $endDate, $hasTransferDate,  $this->modelObject->getAuthorization_id()));
         }
+        
 
 		// Get the db connection
 		global $db;
@@ -433,6 +434,36 @@ class GenericDAO {
 		return $sum;
 	}
 
+
+    /**
+     * Gets the sum of Parcels transfered in or ordered durring a given period
+     *
+     * @param string $startDate mysql timestamp formatted date representing beginning of the period
+     * @param string $enddate mysql timestamp formatted date representing end of the period
+     * @param bool $hasTransferDate true if we are looking for parcels with an transfer_in_date (those that count as transfer), false if those without one (parcels that count as orders), or null for all parcels
+     * @return int $sum
+     */
+	public function getTransferOutAmounts( $startDate, $endDate ){
+		$sql = "SELECT SUM(`quantity`)
+				FROM `parcel_use`
+				where `parcel_id` in (select key_id from parcel where `authorization_id` = ?)
+				AND `date_transferred` BETWEEN ? AND ?";
+
+		// Get the db connection
+		global $db;
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(1, $this->modelObject->getAuthorization_id());
+		$stmt->bindValue(2, $startDate);
+		$stmt->bindValue(3, $endDate);
+
+		$stmt->execute();
+
+		$total = $stmt->fetch(PDO::FETCH_NUM);
+		$sum = $total[0]; // 0 is the first array. here array is only one.
+		if($sum == NULL)$sum = 0;
+
+		return $sum;
+	}
 	/**
 	 * Commits the values of this entity to the database
 	 *
@@ -812,9 +843,38 @@ class GenericDAO {
 
 		//Prepare to query all from the table
 		//$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name, pi_name');
-        $sql = "select `a`.`key_id` AS `pi_key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,`d`.`name` AS `building_name`,`d`.`key_id` AS `building_key_id`,`e`.`name` AS `campus_name`,`e`.`key_id` AS `campus_key_id`,bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,year(curdate()) AS `year`,NULL AS `inspection_id` from (((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `principal_investigator_room` `f`) where ((`a`.`is_active` = 1) and (`c`.`is_active` = 1) and (`b`.`key_id` = `a`.`user_id`) and (`f`.`principal_investigator_id` = `a`.`key_id`) and (`f`.`room_id` = `c`.`key_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`) and (not(`a`.`key_id` in (select `inspection`.`principal_investigator_id` from `inspection` where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?))))) group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,year(curdate()),NULL union select `a`.`key_id` AS `pi_key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,`d`.`name` AS `building_name`,`d`.`key_id` AS `building_key_id`,`e`.`name` AS `campus_name`,`e`.`key_id` AS `campus_key_id`,bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,coalesce(year(`g`.`date_started`),`g`.`schedule_year`) AS `year`,`g`.`key_id` AS `inspection_id` from ((((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `inspection_room` `f`) join `inspection` `g`) where ((`a`.`key_id` = `g`.`principal_investigator_id`) and (`b`.`key_id` = `a`.`user_id`) and (`g`.`key_id` = `f`.`inspection_id`) and (`c`.`key_id` = `f`.`room_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`)) group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,coalesce(year(`g`.`date_started`),`g`.`schedule_year`),`f`.`inspection_id` ORDER BY campus_name, building_name, pi_name";
+        $sql = "select `a`.`key_id` AS `pi_key_id`,
+                concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,
+                `d`.`name` AS `building_name`,
+                `d`.`key_id` AS `building_key_id`,
+                `e`.`name` AS `campus_name`,
+                `e`.`key_id` AS `campus_key_id`,
+                bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,
+                bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,
+                bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,
+                year(curdate()) AS `year`,
+                NULL AS `inspection_id` from (((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `principal_investigator_room` `f`)
+                where ((`a`.`is_active` = 1) and (`c`.`is_active` = 1) and (`b`.`key_id` = `a`.`user_id`) and (`f`.`principal_investigator_id` = `a`.`key_id`) and (`f`.`room_id` = `c`.`key_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`) and (not(`a`.`key_id` in (select `inspection`.`principal_investigator_id`
+                from `inspection`
+                where (coalesce(year(`inspection`.`date_started`),
+                `inspection`.`schedule_year`) = ?))))) group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,year(curdate()),
+                NULL union select `a`.`key_id` AS `pi_key_id`,
+                concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,
+                `d`.`name` AS `building_name`,
+                `d`.`key_id` AS `building_key_id`,
+                `e`.`name` AS `campus_name`,`e`.`key_id` AS `campus_key_id`,bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,
+                bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,
+                bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,
+                coalesce(year(`g`.`date_started`),`g`.`schedule_year`) AS `year`,`g`.`key_id`
+                AS `inspection_id`
+                from ((((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `inspection_room` `f`) join `inspection` `g`)
+                where ((`a`.`key_id` = `g`.`principal_investigator_id`) and (`b`.`key_id` = `a`.`user_id`) and (`g`.`key_id` = `f`.`inspection_id`) and (`c`.`key_id` = `f`.`room_id`)
+                and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`) and (coalesce(year(`g`.`date_started`),
+                `g`.`schedule_year`) = ?) )
+                group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,coalesce(year(`g`.`date_started`),`g`.`schedule_year`),`f`.`inspection_id` ORDER BY campus_name, building_name, pi_name";
         $stmt = $db->prepare($sql);
 		$stmt->bindParam(1,$year,PDO::PARAM_STR);
+        $stmt->bindParam(2,$year,PDO::PARAM_STR);
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {

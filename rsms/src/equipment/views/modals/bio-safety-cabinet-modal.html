@@ -26,7 +26,7 @@
         <div class="control-group">
             <label class="control-label">Room</label>
             <div class="controls">
-                <select class="span1" ng-model="modalData.BioSafetyCabinet.SelectedInspection.Room_id" ng-change="onSelectRoom()" ng-options="room.Key_id as (room.Name + room.Building_name) for room in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators | getSharedRooms">
+                <select class="span3" ng-model="modalData.BioSafetyCabinet.SelectedInspection.Room_id" ng-change="onSelectRoom()" ng-options="room.Key_id as (room.Name + ' ' + room.Building_name) for room in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators | getSharedRooms">
                     <option value="">--Select Room--</option>
                 </select>
             </div>

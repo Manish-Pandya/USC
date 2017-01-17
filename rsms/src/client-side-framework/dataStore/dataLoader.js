@@ -9,6 +9,7 @@
 
 // constructor
 var dataLoader = {};
+dataLoader.promiseMatrix = {};
 
 /* NOTE
     These methods do not return anything - instead, they set the given property on parent.
@@ -22,7 +23,6 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
     if (relationship.methodString) {
 
         var paramValue = '&' + relationship.paramName + '=' + parent[relationship.paramValue];
-
         return parent.rootScope[parent.Class + "sBusy"] = parent.api.read(relationship.methodString, paramValue)
             .then(function (returnedPromise) {
                 parent[property] = parent.inflator.instateAllObjectsFromJson(returnedPromise.data, null, recurse);
@@ -31,33 +31,38 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
 
     // if the required data is already cached get it from there.
     else if (!parent[property] && dataStore[relationship.className] && dataStore[relationship.className].length) {
+        var d = parent.$q.defer();
         if (!whereClause) whereClause = false;
         parent[property] = [];
         parent[property] = dataStoreManager.getChildrenByParentProperty(
             relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
+        d.resolve(parent[property]);
+        return d.promise;
     }
 
     // data not cached, get it from the server, unless it was eagerly loaded on the server
     else {
+
         //the collection is present in the parent, but the objects have not been placed in the dataStore
         if (parent[property] && parent[property].length) {
-            
+            var d = parent.$q.defer();
+
             dataStoreManager.store(parent.inflator.instateAllObjectsFromJson(parent[property]), relationship.className);
             parent[property] = dataStoreManager.getChildrenByParentProperty(
                     relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
 
             if (recurse) dataLoader.recursivelyInstantiate(instatedObjects, parent);
+            d.resolve(parent[property]);
+            return d.promise;
 
-        } else {
-
-            var urlFragment = parent.api.fetchActionString("getAll", relationship.className);
-            parent.rootScope[parent.Class + "sBusy"] = parent.api.read(urlFragment).then(function (returnedPromise) {
-                //cache result so we don't hit the server next time
+        }
+        else if (parent.rootScope[parent.Class + "sBusy"]) {
+            return parent.rootScope[parent.Class + "sBusy"].then(function (returnedPromise) {
                 if (!returnedPromise) {
                     parent[property] = [];
                     return;
                 }
-           
+
                 var instatedObjects = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
                 dataStoreManager.store(instatedObjects);
                 if (!whereClause) whereClause = false;
@@ -66,6 +71,27 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
                     relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
 
                 if (recurse) dataLoader.recursivelyInstantiate(instatedObjects, parent);
+                return parent[property];
+            })
+        }
+        else {
+            var urlFragment = parent.api.fetchActionString("getAll", relationship.className);
+            return parent.rootScope[parent.Class + "sBusy"] = dataStore['loading'+relationship.table] = parent.api.read(urlFragment).then(function (returnedPromise) {
+                //cache result so we don't hit the server next time
+                if (!returnedPromise) {
+                    parent[property] = [];
+                    return;
+                }
+
+                var instatedObjects = returnedPromise[0] && returnedPromise[0].api ? returnedPromise : parent.inflator.instateAllObjectsFromJson(returnedPromise);
+                dataStoreManager.store(instatedObjects);
+                if (!whereClause) whereClause = false;
+
+                parent[property] = dataStoreManager.getChildrenByParentProperty(
+                    relationship.className, relationship.keyReference, parent[relationship.paramValue], whereClause);
+
+                if (recurse) dataLoader.recursivelyInstantiate(instatedObjects, parent);
+                return parent[property];
 
             });
         }
@@ -73,8 +99,11 @@ dataLoader.loadOneToManyRelationship = function (parent, property, relationship,
 }
 
 dataLoader.loadManyToManyRelationship = function (parent, relationship) {
-    if(dataStoreManager.checkCollection(parent.Class) && dataStoreManager.checkCollection(relationship.table)){
+    if (dataStoreManager.checkCollection(parent.Class) && dataStoreManager.checkCollection(relationship.table)) {
+        var d = parent.$q.defer();
         parent[relationship.parentProperty] = dataStoreManager.getManyToMany(parent, relationship);
+        d.resolve(relationship.parentProperty);
+        return d.promise;
     }
     // data not cached, but we already requested it from the server
     else if(dataStore['loading'+relationship.table]){
@@ -93,15 +122,16 @@ dataLoader.loadManyToManyRelationship = function (parent, relationship) {
                         dataStore['loading'+relationship.table] = null;
                     });
                 } else {
+                    var d = parent.$q.defer();
+
                     //the collection is present in the parent, but the objects have not been placed in the dataStore
                     if (parent[relationship.parentProperty]) {
                         dataStoreManager.store(parent.inflator.instateAllObjectsFromJson(parent[relationship.parentProperty]), relationship.className);
                     }
-                    if (relationship.className == "PIWipeTest") {
-                        console.log(dataStoreManager.getManyToMany(parent, relationship));
-                    }
-                   parent[relationship.parentProperty] = dataStoreManager.getManyToMany(parent, relationship);
-                   dataStore['loading'+relationship.table] = null;
+                    parent[relationship.parentProperty] = dataStoreManager.getManyToMany(parent, relationship);
+                    d.resolve(relationship.parentProperty);
+                    dataStore['loading' + relationship.table] = null;
+                    return d.promise;
                 }
             }
         )
@@ -109,7 +139,7 @@ dataLoader.loadManyToManyRelationship = function (parent, relationship) {
     // data not cached, get from the server
     else {
         var urlFragment = 'getRelationships&class1=' + parent.Class + '&class2=' + relationship.childClass;
-        dataStore['loading'+relationship.table] = parent.api.read(urlFragment)
+        return parent.rootScope[parent.Class + "sBusy"] = dataStore['loading'+relationship.table] = parent.api.read(urlFragment)
             .then(function (returnedPromise) {
                 //cache result so we don't hit the server next time
                 dataStoreManager.storeGerunds(returnedPromise.data, relationship.table);
@@ -118,14 +148,17 @@ dataLoader.loadManyToManyRelationship = function (parent, relationship) {
                     var action = parent.api.fetchActionString('getAll', relationship.childClass);
 
                     // get data
-                    parent.api.read(action).then(function (returned) {
+                    return parent.api.read(action).then(function (returned) {
                         var instatedObjects = parent.inflator.instateAllObjectsFromJson(returned.data);
                         // add returned data to cache
                         dataStoreManager.store(instatedObjects);
-                        parent[relationship.parentProperty] = dataStoreManager.getManyToMany(parent, relationship);
+                        return parent[relationship.parentProperty] = dataStoreManager.getManyToMany(parent, relationship);
                     });
                 } else {
+                   var d = parent.$q.defer();
                    parent[relationship.parentProperty] = dataStoreManager.getManyToMany(parent, relationship);
+                   d.resolve(relationship.parentProperty);
+                   return d.promise;
 
                 }
 
@@ -146,18 +179,32 @@ dataLoader.instateRelationItems = function (relationList, className, keyProperty
 }
 
 dataLoader.loadChildObject = function (parent, property, className, id) {
-
     // check cache first
     if (dataStoreManager.checkCollection(className)) {
+        var d = parent.$q.defer();
         parent[property] = dataStoreManager.getById(className, id);
+        d.resolve(parent[property]);
+        return d.promise;
+    }
+    else if (dataLoader.promiseMatrix[className] && dataLoader.promiseMatrix[className][id]) {
+        return dataLoader.promiseMatrix[className][id].then(function (returnedPromise) {
+            if (returnedPromise && returnedPromise.Class) {
+                return parent[property] = returnedPromise.api ? returnedPromise : parent.inflator.instateAllObjectsFromJson(returnedPromise);
+            }
+        });
     }
     // not cached, get from server
     else {
         var getString = parent.api.fetchActionString("getById", className);
         var idParam = '&id=' + id;
-        parent.api.read(getString, idParam).then(function (returnedPromise) {
+
+        if (!dataLoader.promiseMatrix[className]) {
+            dataLoader.promiseMatrix[className] = {};
+        }
+
+        return dataLoader.promiseMatrix[className][id] = parent.api.read(getString, idParam).then(function (returnedPromise) {
             if (returnedPromise && returnedPromise.data) {
-                parent[property] = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
+                return parent[property] = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
             }
         });
     }
@@ -166,19 +213,21 @@ dataLoader.loadChildObject = function (parent, property, className, id) {
 dataLoader.loadChildObjectByParentProperty = function (parent, property, className, int, childProperty, getString) {
     // check cache first
     if (dataStoreManager.checkCollection(className)) {
+        var d = parent.$q.defer();
         parent[property] = dataStoreManager.getChildByParentProperty(className, childProperty, int);
+        d.resolve(parent[property]);
+        return d.promise;
     }
     // not cached, get from server
     else {
         var idParam = '&id=' + int;
-        parent.api.read(getString, idParam).then(function (returnedPromise) {
-            parent[property] = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
+        return parent.api.read(getString, idParam).then(function (returnedPromise) {
+            return parent[property] = parent.inflator.instateAllObjectsFromJson(returnedPromise.data);
         });
     }
 }
 
 dataLoader.recursivelyInstantiate = function(instatedObjects, parent){
-    console.log(instatedObjects);
     var i = instatedObjects.length;
     while(i--){
         for(var prop in instatedObjects[i]){
