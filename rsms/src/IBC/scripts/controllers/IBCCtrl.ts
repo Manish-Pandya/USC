@@ -56,7 +56,36 @@ angular.module('ng-IBC')
         $scope.modalData = DataStoreManager.ModalData;
 
         $scope.users = [];
-        DataStoreManager.getAll("User", $scope.users);
+        $scope.reviewers = [];
+        $scope.loading = DataStoreManager.getAll("User", $scope.users).then(
+            function (whateverGotReturned) {
+                var approvedUsers = $scope.users.filter(function (u) {
+                    var hasCorrectRole: boolean = false;
+                    u.Roles.forEach((value: ibc.Role, index: number, array: ibc.Role[]) => {
+                        if (value.Name == Constants.ROLE.NAME.IBC_MEMBER || value.Name == Constants.ROLE.NAME.IBC_CHAIR) {
+                            hasCorrectRole = true;
+                        }
+                    })
+                    return hasCorrectRole;
+                })
+                $scope.reviewers = $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.concat(approvedUsers);
+            }
+        );
+
+        $scope.addRemoveReviewer = function (user, add: boolean) {
+            var preliminaryReviewersIndex: number = $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.indexOf(user);
+            if (add) {
+                if ($scope.reviewers.indexOf(user) == -1) {
+                    $scope.reviewers.push(user);
+                }
+                if (user.isChecked && preliminaryReviewersIndex == -1) {
+                    $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.push(user);
+                }
+            } else {
+                $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.splice(preliminaryReviewersIndex, 1);
+            }
+            console.log($scope.modalData.IBCProtocolRevision.PreliminaryReviewers);
+        }
 
         $scope.save = function (copy) {
             $scope.saving = $q.all([DataStoreManager.save(copy)]).then($scope.close);

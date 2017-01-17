@@ -38,7 +38,9 @@ var Constants = (function (thing) {
             RADIATION_ADMIN: "Radiation Admin",
             EMERGENCY_ACCOUNT: "Emergency Account",
             READ_ONLY: "Read Only",
-            OCCUPATIONAL_HEALTH: "Occupational Health"
+            OCCUPATIONAL_HEALTH: "Occupational Health",
+            IBC_MEMBER: "IBC Member",
+            IBC_CHAIR: "IBC Chair"
         }
     };
     constants.CARBOY_USE_CYCLE = {
@@ -151,10 +153,8 @@ var Constants = (function (thing) {
         CADAVER: 2,
         VIAL: 3,
         OTHER: 4,
-        SOLID: 5,
-        TRANSFER:6
-    }
-
+        SOLID: 5
+    };
     //these have to be strings instead of ints because the server will return IDS as strings, and we don't want to have to convert them all
     constants.BRANCH_HAZARD_IDS = ['1', '9999', '10009', '10010'];
     constants.MASTER_HAZARDS_BY_ID = {

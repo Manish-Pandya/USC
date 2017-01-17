@@ -38,4 +38,20 @@ angular.module('ng-IBC')
         });
         return approvedProtocols;
     };
+})
+    .filter('isIBCMember', function () {
+    return function (users) {
+        if (!users)
+            return;
+        var approvedUsers = users.filter(function (u) {
+            var hasCorrectRole = false;
+            u.Roles.forEach(function (value, index, array) {
+                if (value.Name == Constants.ROLE.NAME.IBC_MEMBER || value.Name == Constants.ROLE.NAME.IBC_CHAIR) {
+                    hasCorrectRole = true;
+                }
+            });
+            return hasCorrectRole;
+        });
+        return approvedUsers;
+    };
 });

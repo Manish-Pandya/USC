@@ -90,33 +90,34 @@ class IBC_ActionManager extends ActionManager {
      * @return GenericCrud | ActionError | IBCProtocolRevision
      */
     function saveProtocolRevision(IBCProtocolRevision $decodedObject = null){
+		$l = Logger::getLogger("save revision");
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         //hold Preliminary and Primary reviewers
-        $decodedObject = new IBCProtocolRevision();
-        $primaryReviewers = $decodedObject->getPrimaryReviewers();
+
+		$primaryReviewers = $decodedObject->getPrimaryReviewers();
         $preliminaryReviewers = $decodedObject->getPreliminaryReviewers();
         $dao = $this->getDao($decodedObject);
         $revision = $dao->save($decodedObject);
 
-        foreach($revision->getPrimaryReviewers() as $reviwer){
-            if(is_array($reviwer))$reviwer = JsonManager::assembleObjectFromDecodedArray($reviwer);
-            $dao->removeRelatedItems($revision->getKey_id(), $reviwer->getKey_id(), IBCProtocolRevision::$PRIMARY_REVIEWERS_RELATIONSHIP);
+        foreach($revision->getPrimaryReviewers() as $reviewer){
+            if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
+            $dao->removeRelatedItems($revision->getKey_id(), $reviewer->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRIMARY_REVIEWERS_RELATIONSHIP));
         }
 
-        foreach($primaryReviewers as $reviwer){
-            if(is_array($reviwer))$reviwer = JsonManager::assembleObjectFromDecodedArray($reviwer);
-            $dao->addRelatedItems($revision->getKey_id(), $reviwer->getKey_id(), IBCProtocolRevision::$PRIMARY_REVIEWERS_RELATIONSHIP);
+        foreach($primaryReviewers as $reviewer){
+            if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
+            $dao->addRelatedItems($revision->getKey_id(), $reviewer->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRIMARY_REVIEWERS_RELATIONSHIP));
         }
 
-        foreach($revision->getPreliminaryReviwers() as $reviwer){
-            if(is_array($reviwer))$reviwer = JsonManager::assembleObjectFromDecodedArray($reviwer);
-            $dao->removeRelatedItems($revision->getKey_id(), $reviwer->getKey_id(), IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP);
+        foreach($revision->getPreliminaryReviewers() as $reviewer){
+            if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
+            $dao->removeRelatedItems($revision->getKey_id(), $reviewer->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
         }
 
-        foreach($preliminaryReviewers as $reviwer){
-            if(is_array($reviwer))$reviwer = JsonManager::assembleObjectFromDecodedArray($reviwer);
-            $dao->addRelatedItems($revision->getKey_id(), $reviwer->getKey_id(), IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP);
+        foreach($preliminaryReviewers as $reviewer){
+            if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
+            $dao->addRelatedItems($revision->getKey_id(), $reviewer->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
         }
 
         return $revision;

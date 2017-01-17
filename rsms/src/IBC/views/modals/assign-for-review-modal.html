@@ -1,4 +1,5 @@
-﻿<div class="modal-header blueBg" style="padding:0;">
+﻿<div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../busy-templates/full-page-busy.html'}"></div>
+<div class="modal-header blueBg" style="padding:0;">
     <h2 style="padding:5px; color:white">Assign for Review</h2>
 </div>
 
@@ -6,7 +7,7 @@
     <div class="control-group">
         <label class="control-label">Add Reviewer</label>
         <div class="controls">
-            <ui-select ng-model="user.selected" theme="selectize" ng-disabled="disabled" on-select="modalData.IBCProtocolRevision.PrimaryReviewers.push($item)" class="span3" style="margin-left:0">
+            <ui-select ng-model="user.selected" theme="selectize" ng-disabled="disabled" on-select="addRemoveReviewer($item, true)" class="span3" style="margin-left:0">
                 <ui-select-match placeholder="Select or search for a reviewer">{{$select.selected.Name}}</ui-select-match>
                 <ui-select-choices repeat="user in users | orderBy:'Name' | propsFilter: {Name: $select.search}">
                     <div ng-bind-html="user.Name | highlight: $select.search"></div>
@@ -14,7 +15,12 @@
             </ui-select> 
         </div>
         <ul>
-            <li ng-repeat="user in modalData.IBCProtocolRevision.PrimaryReviewers" style="padding: 3px 0; font-size: 15px;"><i style="margin-right:5px" class="icon-checkmark" ng-click="modalData.IBCProtocolRevision.PrimaryReviewers.splice($index,1)"></i>{{user.Name}}</li>
+            <li ng-repeat="reviewer in reviewers" style="padding: 3px 0; font-size: 15px;">
+                <label class="checkbox inline">
+                    <input type="checkbox" ng-model="reviewer.isChecked" ng-change="addRemoveReviewer(reviewer, reviewer.isChecked)" />
+                    <span class="metro-checkbox" once-text="reviewer.Name"></span>
+                </label>
+            </li>
         </ul>
     </div>
 </div>

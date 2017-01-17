@@ -43,7 +43,9 @@ var Constants = (function (thing) {
             RADIATION_ADMIN:"Radiation Admin",
             EMERGENCY_ACCOUNT:"Emergency Account",
             READ_ONLY:"Read Only",
-            OCCUPATIONAL_HEALTH:"Occupational Health"
+            OCCUPATIONAL_HEALTH: "Occupational Health",
+            IBC_MEMBER: "IBC Member",
+            IBC_CHAIR: "IBC Chair"
         }
     };
 

@@ -35,3 +35,18 @@
             return approvedProtocols;
         };
     })
+    .filter('isIBCMember', function () {
+        return function (users) {
+            if (!users) return;
+            var approvedUsers = users.filter(function (u: ibc.User) {
+                var hasCorrectRole: boolean = false;
+                u.Roles.forEach((value: ibc.Role, index: number, array: ibc.Role[]) => {
+                    if (value.Name == Constants.ROLE.NAME.IBC_MEMBER || value.Name == Constants.ROLE.NAME.IBC_CHAIR) {
+                        hasCorrectRole = true;
+                    }
+                })
+                return hasCorrectRole;
+            })
+            return approvedUsers;
+        };
+    })
