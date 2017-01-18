@@ -58,7 +58,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- stylesheets -->
+<!-- stylesheets
 	<link type="text/css" rel="stylesheet" href="../css/bootstrap.css"/>
 	<link type="text/css" rel="stylesheet" href="../css/bootstrap-responsive.css"/>
 	<link type="text/css" rel="stylesheet" href="../css/bootmetro.css"/>
@@ -69,7 +69,8 @@ if(!isset($_SESSION["USER"])){ ?>
 	<link rel="stylesheet" type="text/css" href="../css/datepicker.css"/>
 	<link type="text/css" rel="stylesheet" href="../css/font-awesome.min.css"/>
 
-
+ -->
+    <link href="../css/10-18-2017-manual-bundle.min.css" rel="stylesheet" />
 	<link type="text/css" rel="stylesheet" href="../css/angular-busy.css">
 	<link type="text/css" rel="stylesheet" href="../css/select.min.css"/>
     <link type="text/css" rel="stylesheet" href="../stylesheets/style.css" />
