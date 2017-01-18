@@ -12,10 +12,10 @@
 <div class="card full">
     <table class="table table-striped table-bordered" ng-if="protocolStatuses.indexOf(selectedProtocolStatus) == -1 || selectedProtocolStatus == Constants.IBC_PROTOCOL_REVISION.STATUS.NOT_SUBMITTED">
         <thead>
-            <tr class="blueBg">
-                <th colspan="9" class="blueBg">
-                    <h1 class="blueBg">Not Submitted Protocols</h1>
-                    <h2 class="blueBg" style="float:right; margin-top:-40px;"><span class="bold underline">{{(protocols|isNotSubmitted).length}}</span> Protocols Displayed</h2>
+            <tr class="redBg">
+                <th colspan="9" class="redBg">
+                    <h1 class="redBg">Not Submitted Protocols</h1>
+                    <h2 class="redBg"><span class="bold underline">{{(protocols|isNotSubmitted).length || "0"}}</span> Protocols Displayed</h2>
                 </th>
             </tr>
             <tr>
@@ -48,10 +48,10 @@
 </div>
 <table class="table table-striped table-bordered" ng-if="protocolStatuses.indexOf(selectedProtocolStatus) == -1 || selectedProtocolStatus == Constants.IBC_PROTOCOL_REVISION.STATUS.SUBMITTED">
     <thead>
-        <tr class="blueBg">
-            <th colspan="9" class="blueBg">
-                <h1 class="blueBg">Submitted Protocols</h1>
-                <h2 class="blueBg" style="float:right; margin-top:-40px;"><span class="bold underline">{{(protocols|isSubmitted).length}}</span> Protocols Displayed</h2>
+        <tr class="redBg">
+            <th colspan="9" class="redBg">
+                <h1 class="redBg">Submitted Protocols</h1>
+                <h2 class="redBg"><span class="bold underline">{{(protocols|isSubmitted).length || "0"}}</span> Protocols Displayed</h2>
             </th>
         </tr>
         <tr>
@@ -84,10 +84,10 @@
 
 <table class="table table-striped table-bordered" ng-if="protocolStatuses.indexOf(selectedProtocolStatus) == -1 || selectedProtocolStatus == Constants.IBC_PROTOCOL_REVISION.STATUS.RETURNED_FOR_REVISION">
     <thead>
-        <tr class="blueBg">
-            <th colspan="9" class="blueBg">
-                <h1 class="blueBg">Returned for Revisions</h1>
-                <h2 class="blueBg" style="float:right; margin-top:-40px;"><span class="bold underline">{{(protocols|isReturned).length}}</span> Protocols Displayed</h2>
+        <tr class="redBg">
+            <th colspan="9" class="redBg">
+                <h1 class="redBg">Returned for Revisions</h1>
+                <h2 class="redBg"><span class="bold underline">{{(protocols|isReturned).length || "0"}}</span> Protocols Displayed</h2>
             </th>
         </tr>
         <tr>
@@ -118,10 +118,10 @@
 
 <table class="table table-striped table-bordered" ng-if="protocolStatuses.indexOf(selectedProtocolStatus) == -1 || selectedProtocolStatus == Constants.IBC_PROTOCOL_REVISION.STATUS.APPROVED">
     <thead>
-        <tr class="blueBg">
-            <th colspan="9" class="blueBg">
-                <h1 class="blueBg">Approved Protocols</h1>
-                <h2 class="blueBg" style="float:right; margin-top:-40px;"><span class="bold underline">{{(protocols|isApproved).length}}</span> Protocols Displayed</h2>
+        <tr class="redBg">
+            <th colspan="9" class="redBg">
+                <h1 class="redBg">Approved Protocols</h1>
+                <h2 class="redBg"><span class="bold underline">{{(protocols|isApproved).length || "0"}}</span> Protocols Displayed</h2>
             </th>
         </tr>
         <tr>

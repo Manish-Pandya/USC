@@ -6,6 +6,11 @@
         User: User;
         static UserMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=", "User", "User_id");
 
+
+        /**
+         * I don't think we'll need these props, so that should speed up loading a lot
+         * we can load them on deman when we need them
+         */
         LabPersonnel: User[];
         static LabPersonnelMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "User", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=LabPersonnel&id={{UID}}", "LabPersonnel", "Supervisor_id");
 

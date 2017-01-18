@@ -54,6 +54,7 @@ class IBCProtocol extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
 		$entityMaps[] = new EntityMap("lazy","getHazard");
 		$entityMaps[] = new EntityMap("lazy","getDepartment");
+        $entityMaps[] = new EntityMap("lazy","getRevisions");
 		$this->setEntityMaps($entityMaps);
 	}
 

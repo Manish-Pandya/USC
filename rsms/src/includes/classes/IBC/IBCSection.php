@@ -50,7 +50,6 @@ class IBCSection extends GenericCrud {
 
     private $questions;
 
-
 	public function __construct(){
 
 		// Define which subentities to load
