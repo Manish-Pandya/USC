@@ -14,7 +14,7 @@ angular.module('ng-IBC')
     console.log($scope.protocolStatuses);
     function getAllProtocols() {
         $scope.protocols = [];
-        $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, true)])
+        $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap])])
             .then(function (whateverGotReturned) {
             console.log($scope.protocols);
             //console.log(DataStoreManager._actualModel);
@@ -46,7 +46,8 @@ angular.module('ng-IBC')
     $scope.modalData = DataStoreManager.ModalData;
     $scope.users = [];
     $scope.reviewers = [];
-    $scope.loading = DataStoreManager.getAll("User", $scope.users).then(function (whateverGotReturned) {
+    $scope.loading = $q.all([DataStoreManager.getAll("User", $scope.users)]).then(function (whateverGotReturned) {
+        $scope.modalData.IBCProtocolRevision.doCompose(true);
         var approvedUsers = $scope.users.filter(function (u) {
             var hasCorrectRole = false;
             u.Roles.forEach(function (value, index, array) {

@@ -255,7 +255,9 @@ abstract class DataStoreManager {
                 })
         } else {
             var d: FluxCompositerBase = this.findByPropValue(this._actualModel[type].Data, this.uidString, id);
+            if (compMaps) d.doCompose(compMaps);
             d = InstanceFactory.convertToClasses(_.assign(viewModelParent, d));
+
             return this.promisifyData(d);
         }
     }
