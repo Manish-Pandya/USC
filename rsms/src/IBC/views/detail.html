@@ -1,9 +1,4 @@
-﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title></title>
-</head>
-<body>
-    detail
-</body>
-</html>
+﻿<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+
+<pre>{{protocol | json}}</pre>
+<pre>{{protocol.IBCProtocolRevisions | getMostRecentRevision}}</pre>

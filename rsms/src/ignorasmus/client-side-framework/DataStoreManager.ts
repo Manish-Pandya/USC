@@ -56,7 +56,7 @@ abstract class DataStoreManager {
 
     static classPropName: string = "Class";
     static uidString: string = "Key_id";
-    static baseUrl: string = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
+    static baseUrl: string = "http://erasmus.graysail.com:9080/rsms/src/ajaxAction.php?action=";
     static isPromisified: boolean = true;
 
     static CurrentRoles: any[];

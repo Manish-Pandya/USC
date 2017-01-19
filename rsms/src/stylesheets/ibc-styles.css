@@ -1,0 +1,25 @@
+﻿/* ADMIN HOME PAGE STYLES*/
+.ibc table tr:first-child th {
+    padding:0;
+}
+.ibc table tr:first-child th h1, .ibc table tr:first-child th h2 {
+    margin: 0px !important;
+    padding: 0 10px 0;
+}
+.ibc table tr:first-child th h1 {
+    display:inline;
+    font-size: 1.3vw;
+}
+.ibc table tr:first-child th h2 {
+    float:right;
+    font-size: 1vw;
+    padding-top:9px;
+}
+
+.ibc table th {
+    font-weight:bold;
+    text-transform:uppercase;
+}
+.ibc table th, .ibc table td {
+    font-size:.8vw;
+}

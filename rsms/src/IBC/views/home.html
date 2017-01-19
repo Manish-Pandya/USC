@@ -40,7 +40,7 @@
                 <td>{{protocol.Date_created | dateToISO}} </td>
                 <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Protocol_type}} </td>
                 <td>{{protocol.Hazard.Name}} </td>
-                <td><a href="">do thing</a> </td>
+                <td><a class="btn btn-primary left" ui-sref="detail({id:protocol.UID})"><i class="icon-document-alt-fill"></i>View Protocol</a> </td>
                 <td><button ng-class="{'btn-danger': protocol.Is_active, 'btn-success':!protocol.Is_active}" ng-click="toggleActive(protocol)" class="btn btn-mini"><i ng-class="{'icon-remove':protocol.Is_active, 'icon-checkmark':!protocol.Is_active}"></i></button></td>
             </tr>
         </tbody>
@@ -76,7 +76,7 @@
             <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Date_submitted | dateToISO}} </td>
             <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Protocol_type}} </td>
             <td>{{protocol.Hazard.Name}} </td>
-            <td><a href="">do thing</a> </td>
+            <td><a class="btn btn-primary left" ui-sref="detail({id:protocol.UID})"><i class="icon-document-alt-fill"></i>View Protocol</a> </td>
             <td><button ng-click="openModal(protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1])" class="btn btn-mini"><i class="icon-plus"></i>Reviewers</button></td>
         </tr>
     </tbody>
@@ -111,7 +111,7 @@
             <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Date_returned | dateToISO}} </td>
             <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Protocol_type}} </td>
             <td>{{protocol.Hazard.Name}} </td>
-            <td><a href="">do thing</a> </td>
+            <td><a class="btn btn-primary left" ui-sref="detail({id:protocol.UID})"><i class="icon-document-alt-fill"></i>View Protocol</a> </td>
         </tr>
     </tbody>
 </table>
@@ -146,7 +146,7 @@
             <td>{{protocol.Approval_date | dateToISO}} </td>
             <td>{{protocol.Expiration_date | dateToISO}} </td>
             <td>{{protocol.Hazard.Name}} </td>
-            <td><a href="">do thing</a> </td>
+            <td><a class="btn btn-primary left" ui-sref="detail({id:protocol.UID})"><i class="icon-document-alt-fill"></i>View Protocol</a> </td>
             <td><button ng-class="{'btn-danger': protocol.Is_active, 'btn-success':!protocol.Is_active}" ng-click="toggleActive(protocol)" class="btn btn-mini"><i ng-class="{'icon-remove':protocol.Is_active, 'icon-checkmark':!protocol.Is_active}"></i></button></td>
         </tr>
     </tbody>

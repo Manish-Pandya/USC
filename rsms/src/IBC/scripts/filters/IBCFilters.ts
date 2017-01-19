@@ -50,3 +50,9 @@
             return approvedUsers;
         };
     })
+    .filter('getMostRecentRevision', () => {
+        return (revisions) => {
+            if (!revisions || !revisions.length) return;
+            return revisions.sort((a,b) => { return a.Revision_number > b. Revision_number})[0];
+        }
+    })

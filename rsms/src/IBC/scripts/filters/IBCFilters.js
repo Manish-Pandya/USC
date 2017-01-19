@@ -54,4 +54,11 @@ angular.module('ng-IBC')
         });
         return approvedUsers;
     };
+})
+    .filter('getMostRecentRevision', function () {
+    return function (revisions) {
+        if (!revisions || !revisions.length)
+            return;
+        return revisions.sort(function (a, b) { return a.Revision_number > b.Revision_number; })[0];
+    };
 });
