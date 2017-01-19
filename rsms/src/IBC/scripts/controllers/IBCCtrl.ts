@@ -10,7 +10,6 @@
 angular.module('ng-IBC')
     .controller('IBCCtrl', function ($rootScope, $scope, $modal, $location, $q) {
         console.log("IBCCtrl running");
-        console.log("approved classNames:", InstanceFactory.getClassNames(ibc));
         $scope.protocolStatuses = _.toArray(Constants.IBC_PROTOCOL_REVISION.STATUS);
         console.log($scope.protocolStatuses);
 

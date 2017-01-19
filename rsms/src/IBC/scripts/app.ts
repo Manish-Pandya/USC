@@ -22,23 +22,30 @@ angular
     .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
         $urlRouterProvider.otherwise("/home");
         $stateProvider
-          .state('home', {
+            .state('ibc', {
+                abstract: true,
+                url: '',
+                template: '<ui-view/>'
+            })
+            .state('ibc.home', {
               url: "/home",
               templateUrl: "views/home.html",
               controller: "IBCCtrl"
           })
-          .state('detail', {
+            .state('ibc.detail', {
               url: "/detail:id/",
               templateUrl: "views/detail.html",
               controller: "IBCDetailCtrl"
           })
-          .state('emails', {
+            .state('ibc.emails', {
               url: "/emails",
               templateUrl: "views/emails.html",
               controller: "IBCEmailCtrl"
           })
     })
     .controller('AppCtrl', function ($rootScope, $q) {
+        //register classes with app
+        console.log("approved classNames:", InstanceFactory.getClassNames(ibc));
         // method to async fetch current roles
         $rootScope.getCurrentRoles = function () {
             if (!DataStoreManager.CurrentRoles) {
