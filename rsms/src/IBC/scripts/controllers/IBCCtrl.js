@@ -16,7 +16,7 @@ angular.module('ng-IBC')
         $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap])])
             .then(function (whateverGotReturned) {
             console.log($scope.protocols);
-            //console.log(DataStoreManager._actualModel);
+            console.log(DataStoreManager._actualModel);
         })
             .catch(function (reason) {
             console.log("bad Promise.all:", reason);

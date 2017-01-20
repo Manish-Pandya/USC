@@ -145,6 +145,9 @@ var InstanceFactory = (function (_super) {
                         }
                     }
                 }
+                else {
+                    console.log(manyTypeToManyGerundType + " doesn't exist in actualModel");
+                }
                 return;
             }
             else {

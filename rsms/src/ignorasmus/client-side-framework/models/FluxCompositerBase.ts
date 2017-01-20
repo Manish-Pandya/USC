@@ -98,7 +98,7 @@ abstract class FluxCompositerBase {
 
     thisClass: Function; // reference to instance's class for calling static props and methods
 
-    protected _allCompMaps: CompositionMapping[];
+    private _allCompMaps: CompositionMapping[];
     get allCompMaps(): CompositionMapping[] {
         if (!this._allCompMaps) {
             this._allCompMaps = [];

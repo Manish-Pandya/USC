@@ -19,7 +19,7 @@ angular.module('ng-IBC')
             .then(
                 function (whateverGotReturned) {
                     console.log($scope.protocols);
-                    //console.log(DataStoreManager._actualModel);
+                    console.log(DataStoreManager._actualModel);
                 }
             )
             .catch(

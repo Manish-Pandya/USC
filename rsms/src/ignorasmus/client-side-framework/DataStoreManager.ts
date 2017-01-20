@@ -56,7 +56,7 @@ abstract class DataStoreManager {
 
     static classPropName: string = "Class";
     static uidString: string = "Key_id";
-    static baseUrl: string = "http://erasmus.graysail.com:9080/rsms/src/ajaxAction.php?action=";
+    static baseUrl: string = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
     static isPromisified: boolean = true;
 
     static CurrentRoles: any[];
@@ -113,42 +113,7 @@ abstract class DataStoreManager {
                             d = InstanceFactory.convertToClasses(d);
                             DataStoreManager._actualModel[type].Data = d;
                             if (compMaps) {
-                                var allComps: any[] = [];
-                                var allCompMaps: CompositionMapping[] = d[0].allCompMaps;
-                                var l: number = allCompMaps.length;
-                                for (let n: number = 0; n < l; n++) {
-                                    var compMap: CompositionMapping = allCompMaps[n];
-                                    if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
-                                        // if compMaps == true or if it's an array with an approved compMap...
-                                        if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
-                                            if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
-                                                console.log(type + " fetching remote " + compMap.ChildType);
-                                                if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
-                                                    allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
-                                                } else {
-                                                    allComps.push(DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")));
-                                                }
-                                            } else {
-                                                console.log(type + " fetching local " + compMap.ChildType);
-                                                allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
-                                            }
-                                            if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-                                                var manyTypeToManyGerundType: string = d[0].TypeName + "To" + compMap.ChildType;
-                                                if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
-                                                    DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
-                                                    console.log(manyTypeToManyGerundType, "gerund getting baked...");
-                                                    DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
-                                                        .then((gerundReturns: any[]) => {
-                                                            DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
-                                                        });
-                                                    allComps.push(DataStoreManager._actualModel[manyTypeToManyGerundType].promise);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                return Promise.all(allComps)
+                                return this.resolveCompMaps(d[0], compMaps)
                                     .then((whateverGotReturned) => {
                                         d.forEach((value: FluxCompositerBase, index: number, array: FluxCompositerBase[]) => {
                                             value.doCompose(compMaps);
@@ -156,7 +121,6 @@ abstract class DataStoreManager {
                                             if (!value.viewModelWatcher) value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
                                             viewModelParent[index] = value.viewModelWatcher;
                                         });
-                                        DataStoreManager._actualModel[type].Data = d;
 
                                         return viewModelParent;
                                     })
@@ -202,34 +166,10 @@ abstract class DataStoreManager {
             return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetById + id)
                 .then((d: FluxCompositerBase): FluxCompositerBase | Promise<any> => {
                     d = InstanceFactory.convertToClasses(d);
-                    this.commitToActualModel(d);
+                    DataStoreManager._actualModel[type].Data.push(d);
                     if (compMaps) {
-                        var allComps: any[] = [];
-                        var allCompMaps: CompositionMapping[] = (<FluxCompositerBase>DataStoreManager._actualModel[type].Data[0]).allCompMaps;
-                        var l: number = allCompMaps.length;
-                        for (let n: number = 0; n < l; n++) {
-                            var compMap: CompositionMapping = allCompMaps[n];
-                            if (compMap.CompositionType != CompositionMapping.ONE_TO_ONE && DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
-                                // if compMaps == true or if it's an array with an approved compMap...
-                                if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
-                                    allComps.push( DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")) );
-                                    if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-                                        var manyTypeToManyGerundType: string = d[0].TypeName + "To" + compMap.ChildType;
-                                        if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
-                                            DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
-                                            DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
-                                                .then((gerundReturns: any[]) => {
-                                                    DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
-                                                });
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        return Promise.all(allComps)
-                            .then(
-                                function (whateverGotReturned) {
+                        return this.resolveCompMaps(d, compMaps)
+                            .then((whateverGotReturned) => {
                                     d.doCompose(compMaps);
                                     if (!d.viewModelWatcher) d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
                                     viewModelParent = d.viewModelWatcher;
@@ -243,7 +183,6 @@ abstract class DataStoreManager {
                     } else {
                         if (!d.viewModelWatcher) d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
                         //TODO Figger thisun' out: do we have to _assign here?  I hope not, because we really need viewModelParent to be a reference to viewModelWatcher
-                        viewModelParent.test = d.viewModelWatcher;
                         viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
                         //DataStoreManager._actualModel[type].Data = d;
                         return this.promisifyData(d);
@@ -257,9 +196,48 @@ abstract class DataStoreManager {
             var d: FluxCompositerBase = this.findByPropValue(this._actualModel[type].Data, this.uidString, id);
             if (compMaps) d.doCompose(compMaps);
             d = InstanceFactory.convertToClasses(_.assign(viewModelParent, d));
-
+            
             return this.promisifyData(d);
         }
+    }
+
+    private static resolveCompMaps(fluxCompositerBase:FluxCompositerBase, compMaps: CompositionMapping[] | boolean): Promise<any[]> {
+        var allComps: any[] = [];
+        var allCompMaps: CompositionMapping[] = fluxCompositerBase.allCompMaps;
+        var l: number = allCompMaps.length;
+        for (let n: number = 0; n < l; n++) {
+            var compMap: CompositionMapping = allCompMaps[n];
+            if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
+                // if compMaps == true or if it's an array with an approved compMap...
+                if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
+                    if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
+                        console.log(fluxCompositerBase.TypeName + " fetching remote " + compMap.ChildType);
+                        if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
+                            allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
+                        } else {
+                            allComps.push(DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")));
+                        }
+                    } else {
+                        console.log(fluxCompositerBase.TypeName + " fetching local " + compMap.ChildType);
+                        allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
+                    }
+                    if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
+                        var manyTypeToManyGerundType: string = fluxCompositerBase.TypeName + "To" + compMap.ChildType;
+                        if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
+                            DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
+                            console.log(manyTypeToManyGerundType, "gerund getting baked...");
+                            DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
+                                .then((gerundReturns: any[]) => {
+                                    DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
+                                });
+                            allComps.push(DataStoreManager._actualModel[manyTypeToManyGerundType].promise);
+                        }
+                    }
+                }
+            }
+        }
+
+        return Promise.all(allComps);
     }
 
     /**
