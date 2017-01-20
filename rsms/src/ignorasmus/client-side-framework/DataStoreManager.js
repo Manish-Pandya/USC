@@ -127,13 +127,19 @@ var DataStoreManager = (function () {
         }
         else {
             var d = DataStoreManager._actualModel[type].Data;
-            d.forEach(function (value, index, array) {
-                value.doCompose(compMaps);
-                if (!value.viewModelWatcher)
-                    value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
-                viewModelParent[index] = value.viewModelWatcher;
+            return (compMaps ? this.resolveCompMaps(d[0], compMaps) : this.promisifyData(d))
+                .then(function (whateverGotReturned) {
+                d.forEach(function (value, index, array) {
+                    value.doCompose(compMaps);
+                    if (!value.viewModelWatcher)
+                        value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
+                    viewModelParent[index] = value.viewModelWatcher;
+                });
+                return viewModelParent;
+            })
+                .catch(function (reason) {
+                console.log("getAll (inner promise):", reason);
             });
-            return this.promisifyData(DataStoreManager._actualModel[type].Data);
         }
     };
     /**
@@ -183,21 +189,25 @@ var DataStoreManager = (function () {
         }
         else {
             var d = this.findByPropValue(this._actualModel[type].Data, this.uidString, id);
-            if (compMaps)
+            return (compMaps ? this.resolveCompMaps(d, compMaps) : this.promisifyData(d))
+                .then(function (whateverGotReturned) {
                 d.doCompose(compMaps);
-            d = InstanceFactory.convertToClasses(_.assign(viewModelParent, d));
-            return this.promisifyData(d);
+                if (!d.viewModelWatcher)
+                    d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
+                viewModelParent = d.viewModelWatcher;
+                return viewModelParent;
+            })
+                .catch(function (reason) {
+                console.log("getById (inner promise):", reason);
+            });
         }
     };
     DataStoreManager.resolveCompMaps = function (fluxCompositerBase, compMaps) {
         var allComps = [];
-        var allCompMaps = fluxCompositerBase.allCompMaps;
-        var l = allCompMaps.length;
-        for (var n = 0; n < l; n++) {
-            var compMap = allCompMaps[n];
+        fluxCompositerBase.allCompMaps.forEach(function (compMap) {
             if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                 // if compMaps == true or if it's an array with an approved compMap...
-                if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
+                if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && _.findIndex(compMaps, compMap) > -1)) {
                     if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
                         console.log(fluxCompositerBase.TypeName + " fetching remote " + compMap.ChildType);
                         if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
@@ -215,7 +225,7 @@ var DataStoreManager = (function () {
                         var manyTypeToManyGerundType = fluxCompositerBase.TypeName + "To" + compMap.ChildType;
                         if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
                             DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
-                            console.log(manyTypeToManyGerundType, "gerund getting baked...");
+                            console.log(fluxCompositerBase.TypeName, manyTypeToManyGerundType, "gerund getting baked...");
                             DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
                                 .then(function (gerundReturns) {
                                 DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
@@ -225,7 +235,7 @@ var DataStoreManager = (function () {
                     }
                 }
             }
-        }
+        });
         return Promise.all(allComps);
     };
     /**
@@ -237,7 +247,7 @@ var DataStoreManager = (function () {
         return XHR.POST(viewModel.thisClass["urlMapping"].urlSave, viewModel)
             .then(function (d) {
             if (Array.isArray(d)) {
-                d.forEach(function (value, index, array) {
+                d.forEach(function (value, index) {
                     d[index] = DataStoreManager.commitToActualModel(value);
                 });
                 return d;

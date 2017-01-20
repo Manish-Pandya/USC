@@ -139,7 +139,7 @@ var FluxCompositerBase = (function () {
                 // compose just properties in array...
                 var len = compMaps.length;
                 for (var i = 0; i < len; i++) {
-                    if (this.allCompMaps.indexOf(compMaps[i]) > -1) {
+                    if (_.findIndex(this.allCompMaps, compMaps[i]) > -1) {
                         InstanceFactory.getChildInstances(compMaps[i], this);
                     }
                 }

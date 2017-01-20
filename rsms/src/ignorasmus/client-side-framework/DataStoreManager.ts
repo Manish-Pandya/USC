@@ -141,13 +141,20 @@ abstract class DataStoreManager {
             }
         } else {       
             var d: FluxCompositerBase[] = DataStoreManager._actualModel[type].Data;
-            d.forEach((value: any, index: number, array: FluxCompositerBase[]) => {
-                value.doCompose(compMaps);
-                if (!value.viewModelWatcher) value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
-                viewModelParent[index] = value.viewModelWatcher;
-            });
 
-            return this.promisifyData(DataStoreManager._actualModel[type].Data);
+            return (compMaps ? this.resolveCompMaps(d[0], compMaps) : this.promisifyData(d))
+                .then((whateverGotReturned) => {
+                    d.forEach((value: FluxCompositerBase, index: number, array: FluxCompositerBase[]) => {
+                        value.doCompose(compMaps);
+                        if (!value.viewModelWatcher) value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
+                        viewModelParent[index] = value.viewModelWatcher;
+                    });
+
+                    return viewModelParent;
+                })
+                .catch((reason) => {
+                    console.log("getAll (inner promise):", reason);
+                });
         }
     }
 
@@ -170,13 +177,12 @@ abstract class DataStoreManager {
                     if (compMaps) {
                         return this.resolveCompMaps(d, compMaps)
                             .then((whateverGotReturned) => {
-                                    d.doCompose(compMaps);
-                                    if (!d.viewModelWatcher) d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
-                                    viewModelParent = d.viewModelWatcher;
-                                    
-                                    return viewModelParent;
-                                }
-                            )
+                                d.doCompose(compMaps);
+                                if (!d.viewModelWatcher) d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
+                                viewModelParent = d.viewModelWatcher;
+
+                                return viewModelParent;
+                            })
                             .catch((reason) => {
                                 console.log("getById (inner promise):", reason);
                             })
@@ -194,22 +200,27 @@ abstract class DataStoreManager {
                 })
         } else {
             var d: FluxCompositerBase = this.findByPropValue(this._actualModel[type].Data, this.uidString, id);
-            if (compMaps) d.doCompose(compMaps);
-            d = InstanceFactory.convertToClasses(_.assign(viewModelParent, d));
-            
-            return this.promisifyData(d);
+
+            return (compMaps ? this.resolveCompMaps(d, compMaps) : this.promisifyData(d))
+                .then((whateverGotReturned) => {
+                    d.doCompose(compMaps);
+                    if (!d.viewModelWatcher) d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
+                    viewModelParent = d.viewModelWatcher;
+                    
+                    return viewModelParent;
+                })
+                .catch((reason) => {
+                    console.log("getById (inner promise):", reason);
+                })
         }
     }
 
     private static resolveCompMaps(fluxCompositerBase:FluxCompositerBase, compMaps: CompositionMapping[] | boolean): Promise<any[]> {
         var allComps: any[] = [];
-        var allCompMaps: CompositionMapping[] = fluxCompositerBase.allCompMaps;
-        var l: number = allCompMaps.length;
-        for (let n: number = 0; n < l; n++) {
-            var compMap: CompositionMapping = allCompMaps[n];
+        fluxCompositerBase.allCompMaps.forEach((compMap: CompositionMapping) => {
             if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                 // if compMaps == true or if it's an array with an approved compMap...
-                if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && compMaps.indexOf(compMap) > -1)) {
+                if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && _.findIndex(compMaps, compMap) > -1)) {
                     if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
                         console.log(fluxCompositerBase.TypeName + " fetching remote " + compMap.ChildType);
                         if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
@@ -225,7 +236,7 @@ abstract class DataStoreManager {
                         var manyTypeToManyGerundType: string = fluxCompositerBase.TypeName + "To" + compMap.ChildType;
                         if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
                             DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
-                            console.log(manyTypeToManyGerundType, "gerund getting baked...");
+                            console.log(fluxCompositerBase.TypeName, manyTypeToManyGerundType, "gerund getting baked...");
                             DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
                                 .then((gerundReturns: any[]) => {
                                     DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
@@ -235,7 +246,7 @@ abstract class DataStoreManager {
                     }
                 }
             }
-        }
+        });
 
         return Promise.all(allComps);
     }
@@ -249,7 +260,7 @@ abstract class DataStoreManager {
         return XHR.POST(viewModel.thisClass["urlMapping"].urlSave, viewModel)
             .then((d) => {
                 if (Array.isArray(d)) {
-                    d.forEach((value: any, index: number, array: any[]) => {
+                    d.forEach((value: any, index: number) => {
                         d[index] = DataStoreManager.commitToActualModel(value);
                     });
                     return d;
@@ -358,7 +369,7 @@ abstract class DataStoreManager {
      *
      * @param data
      */
-    private static promisifyData(data: any): any {
+    public static promisifyData(data: any): any {
         if (!this.isPromisified) {
             return data;
         } else {

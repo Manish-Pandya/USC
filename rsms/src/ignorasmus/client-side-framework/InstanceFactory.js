@@ -120,13 +120,12 @@ var InstanceFactory = (function (_super) {
         parent[compMap.PropertyName] = []; // clear property
         var childStore = DataStoreManager._actualModel[compMap.ChildType].Data;
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
-            var len = childStore.length;
-            for (var i = 0; i < len; i++) {
+            childStore.forEach(function (value) {
                 //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
-                if (childStore[i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
-                    parent[compMap.PropertyName].push(childStore[i]);
+                if (value[compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
+                    parent[compMap.PropertyName].push(value);
                 }
-            }
+            });
         }
         else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
             if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
@@ -135,20 +134,22 @@ var InstanceFactory = (function (_super) {
                 if (DataStoreManager._actualModel[manyTypeToManyGerundType] && DataStoreManager._actualModel[manyTypeToManyGerundType].Data) {
                     var d = DataStoreManager._actualModel[manyTypeToManyGerundType].Data;
                     var gerundLen = d.length;
+                    var _loop_1 = function (i) {
+                        childStore.forEach(function (value) {
+                            if (parent.UID == d[i].ParentId && value.UID == d[i].ChildId) {
+                                parent[compMap.PropertyName].push(value);
+                            }
+                        });
+                    };
                     //loop through all the gerunds
                     for (var i = 0; i < gerundLen; i++) {
-                        var childLen = childStore.length;
-                        for (var x = 0; x < childLen; x++) {
-                            if (parent.UID == d[i].ParentId && childStore[x].UID == d[i].ChildId) {
-                                parent[compMap.PropertyName].push(childStore[x]);
-                            }
-                        }
+                        _loop_1(i);
                     }
                 }
                 else {
-                    console.log(manyTypeToManyGerundType + " doesn't exist in actualModel");
+                    DataStoreManager.getById(parent.TypeName, parent.UID, parent, [compMap]);
+                    console.log(manyTypeToManyGerundType + " doesn't exist in actualModel. Running getById to resolve...");
                 }
-                return;
             }
             else {
                 parent[compMap.PropertyName + "Promise"] = (parent[compMap.PropertyName + "Promise"] || XHR.GET(parent.getChildUrl(compMap)))
@@ -165,13 +166,12 @@ var InstanceFactory = (function (_super) {
             }
         }
         else {
-            var len = childStore.length;
-            for (var i = 0; i < len; i++) {
+            childStore.forEach(function (value) {
                 //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
-                if (childStore[i][compMap.ParentIdProp] == parent[compMap.ChildIdProp]) {
-                    parent[compMap.PropertyName] = childStore[i];
+                if (value[compMap.ParentIdProp] == parent[compMap.ChildIdProp]) {
+                    parent[compMap.PropertyName] = value;
                 }
-            }
+            });
         }
     };
     /**

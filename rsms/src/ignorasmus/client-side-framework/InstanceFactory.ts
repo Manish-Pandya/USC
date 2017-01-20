@@ -129,13 +129,12 @@ abstract class InstanceFactory extends DataStoreManager {
         var childStore: FluxCompositerBase[] = DataStoreManager._actualModel[compMap.ChildType].Data;
 
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
-            var len: number = childStore.length;
-            for (let i: number = 0; i < len; i++) {
+            childStore.forEach((value: FluxCompositerBase) => {
                 //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
-                if (childStore[i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
-                    parent[compMap.PropertyName].push(childStore[i]);
+                if (value[compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
+                    parent[compMap.PropertyName].push(value);
                 }
-            }
+            })
         } else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
             if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                 // Get the gerunds
@@ -145,18 +144,16 @@ abstract class InstanceFactory extends DataStoreManager {
                     var gerundLen: number = d.length;
                     //loop through all the gerunds
                     for (let i: number = 0; i < gerundLen; i++) {
-                        let childLen: number = childStore.length;
-                        for (let x: number = 0; x < childLen; x++) {
-                            if (parent.UID == d[i].ParentId && childStore[x].UID == d[i].ChildId) {
-                                parent[compMap.PropertyName].push(childStore[x]);
+                        childStore.forEach((value: FluxCompositerBase) => {
+                            if (parent.UID == d[i].ParentId && value.UID == d[i].ChildId) {
+                                parent[compMap.PropertyName].push(value);
                             }
-                        }
+                        });
                     }
                 } else {
-                    console.log(manyTypeToManyGerundType + " doesn't exist in actualModel");
+                    DataStoreManager.getById(parent.TypeName, parent.UID, parent, [compMap]);
+                    console.log(manyTypeToManyGerundType + " doesn't exist in actualModel. Running getById to resolve...");
                 }
-
-                return;
             } else {
                 parent[compMap.PropertyName + "Promise"] = ( parent[compMap.PropertyName + "Promise"] || XHR.GET(parent.getChildUrl(compMap)) )
                     .then((d) => {
@@ -172,13 +169,12 @@ abstract class InstanceFactory extends DataStoreManager {
                     })
             }
         } else { // CompMap is CompositionMapping.ONE_TO_ONE
-            var len: number = childStore.length;
-            for (let i: number = 0; i < len; i++) {
+            childStore.forEach((value: FluxCompositerBase) => {
                 //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
-                if (childStore[i][compMap.ParentIdProp] == parent[compMap.ChildIdProp]) {
-                    parent[compMap.PropertyName] = childStore[i];
+                if (value[compMap.ParentIdProp] == parent[compMap.ChildIdProp]) {
+                    parent[compMap.PropertyName] = value;
                 }
-            }
+            })
         }
     }
 
