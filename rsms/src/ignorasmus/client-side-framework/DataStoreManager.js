@@ -99,7 +99,7 @@ var DataStoreManager = (function () {
                         if (compMaps) {
                             return _this.resolveCompMaps(d[0], compMaps)
                                 .then(function (whateverGotReturned) {
-                                d.forEach(function (value, index, array) {
+                                d.forEach(function (value, index) {
                                     value.doCompose(compMaps);
                                     // I think we are cloning before it's done building...
                                     if (!value.viewModelWatcher)
@@ -113,8 +113,11 @@ var DataStoreManager = (function () {
                             });
                         }
                         else {
-                            // Dig this neat way to use viewModelParent as a reference instead of a value!
-                            Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
+                            d.forEach(function (value, index) {
+                                if (!value.viewModelWatcher)
+                                    value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
+                                viewModelParent[index] = value.viewModelWatcher;
+                            });
                             return viewModelParent;
                         }
                     }
@@ -178,7 +181,6 @@ var DataStoreManager = (function () {
                         d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
                     //TODO Figger thisun' out: do we have to _assign here?  I hope not, because we really need viewModelParent to be a reference to viewModelWatcher
                     viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
-                    //DataStoreManager._actualModel[type].Data = d;
                     return _this.promisifyData(d);
                 }
             })
@@ -222,18 +224,20 @@ var DataStoreManager = (function () {
                         allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
                     }
                     if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-                        var manyTypeToManyGerundType = fluxCompositerBase.TypeName + "To" + compMap.ChildType;
-                        if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
-                            DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
-                            console.log(fluxCompositerBase.TypeName, manyTypeToManyGerundType, "gerund getting baked...");
-                            DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
+                        if (!DataStoreManager._actualModel[compMap.GerundName] || !DataStoreManager._actualModel[compMap.GerundName].promise) {
+                            DataStoreManager._actualModel[compMap.GerundName] = {}; // clear property
+                            console.log(fluxCompositerBase.TypeName, compMap.GerundName, "gerund getting baked...");
+                            DataStoreManager._actualModel[compMap.GerundName].promise = XHR.GET(compMap.GerundUrl)
                                 .then(function (gerundReturns) {
-                                DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
+                                DataStoreManager._actualModel[compMap.GerundName].Data = gerundReturns;
                             });
-                            allComps.push(DataStoreManager._actualModel[manyTypeToManyGerundType].promise);
+                            allComps.push(DataStoreManager._actualModel[compMap.GerundName].promise);
                         }
                     }
                 }
+            }
+            else {
+                throw new Error("You don't have permission to call getAll for " + compMap.ChildType);
             }
         });
         return Promise.all(allComps);

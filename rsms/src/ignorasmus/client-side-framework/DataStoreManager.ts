@@ -115,7 +115,7 @@ abstract class DataStoreManager {
                             if (compMaps) {
                                 return this.resolveCompMaps(d[0], compMaps)
                                     .then((whateverGotReturned) => {
-                                        d.forEach((value: FluxCompositerBase, index: number, array: FluxCompositerBase[]) => {
+                                        d.forEach((value: FluxCompositerBase, index: number) => {
                                             value.doCompose(compMaps);
                                             // I think we are cloning before it's done building...
                                             if (!value.viewModelWatcher) value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
@@ -128,8 +128,11 @@ abstract class DataStoreManager {
                                         console.log("getAll (inner promise):", reason);
                                     })
                             } else {
-                                // Dig this neat way to use viewModelParent as a reference instead of a value!
-                                Array.prototype.push.apply(viewModelParent, _.cloneDeep(d));
+                                d.forEach((value: FluxCompositerBase, index: number) => {
+                                    if (!value.viewModelWatcher) value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
+                                    viewModelParent[index] = value.viewModelWatcher;
+                                });
+
                                 return viewModelParent;
                             }
                         }
@@ -190,7 +193,6 @@ abstract class DataStoreManager {
                         if (!d.viewModelWatcher) d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
                         //TODO Figger thisun' out: do we have to _assign here?  I hope not, because we really need viewModelParent to be a reference to viewModelWatcher
                         viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
-                        //DataStoreManager._actualModel[type].Data = d;
                         return this.promisifyData(d);
                     }
                 })
@@ -233,18 +235,19 @@ abstract class DataStoreManager {
                         allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
                     }
                     if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-                        var manyTypeToManyGerundType: string = fluxCompositerBase.TypeName + "To" + compMap.ChildType;
-                        if (!DataStoreManager._actualModel[manyTypeToManyGerundType] || !DataStoreManager._actualModel[manyTypeToManyGerundType].promise) {
-                            DataStoreManager._actualModel[manyTypeToManyGerundType] = {}; // clear property
-                            console.log(fluxCompositerBase.TypeName, manyTypeToManyGerundType, "gerund getting baked...");
-                            DataStoreManager._actualModel[manyTypeToManyGerundType].promise = XHR.GET(compMap.GerundUrl)
+                        if (!DataStoreManager._actualModel[compMap.GerundName] || !DataStoreManager._actualModel[compMap.GerundName].promise) {
+                            DataStoreManager._actualModel[compMap.GerundName] = {}; // clear property
+                            console.log(fluxCompositerBase.TypeName, compMap.GerundName, "gerund getting baked...");
+                            DataStoreManager._actualModel[compMap.GerundName].promise = XHR.GET(compMap.GerundUrl)
                                 .then((gerundReturns: any[]) => {
-                                    DataStoreManager._actualModel[manyTypeToManyGerundType].Data = gerundReturns;
+                                    DataStoreManager._actualModel[compMap.GerundName].Data = gerundReturns;
                                 });
-                            allComps.push(DataStoreManager._actualModel[manyTypeToManyGerundType].promise);
+                            allComps.push(DataStoreManager._actualModel[compMap.GerundName].promise);
                         }
                     }
                 }
+            } else {
+                throw new Error("You don't have permission to call getAll for " + compMap.ChildType);
             }
         });
 
