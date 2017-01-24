@@ -134,6 +134,8 @@ var DataStoreManager = (function () {
     DataStoreManager.getById = function (type, id, viewModelParent, compMaps) {
         var _this = this;
         if (compMaps === void 0) { compMaps = null; }
+        if (!InstanceFactory._classNames)
+            InstanceFactory.getClassNames("/models");
         id = id.toString();
         if (!this._actualModel[type].Data || !this._actualModel[type].Data.length) {
             DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetById + id);

@@ -113,7 +113,7 @@ abstract class DataStoreManager {
         }
 
         return DataStoreManager._actualModel[type].getAllPromise
-            .then((d: FluxCompositerBase[]): FluxCompositerBase[] | Promise<any> => {
+            .then((d: FluxCompositerBase[]): Promise<any> => {
                 if (d.length) {
                     d = InstanceFactory.convertToClasses(d);
                     DataStoreManager._actualModel[type].Data = d;
@@ -149,6 +149,8 @@ abstract class DataStoreManager {
      * @param compMaps
      */
     static getById(type: string, id: string | number, viewModelParent: any, compMaps: CompositionMapping[] | boolean = null): Promise<FluxCompositerBase> {
+        if (!InstanceFactory._classNames) InstanceFactory.getClassNames("/models");
+
         id = id.toString();
 
         if (!this._actualModel[type].Data || !this._actualModel[type].Data.length) {
@@ -158,7 +160,7 @@ abstract class DataStoreManager {
         }
 
         return DataStoreManager._actualModel[type].getByIdPromise
-            .then((d: FluxCompositerBase): FluxCompositerBase | Promise<any> => {
+            .then((d: FluxCompositerBase): Promise<any> => {
                 d = InstanceFactory.convertToClasses(d);
                 DataStoreManager._actualModel[type].Data.push(d);
 
