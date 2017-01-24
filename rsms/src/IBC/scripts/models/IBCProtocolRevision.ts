@@ -4,10 +4,10 @@
         static urlMapping: UrlMapping = new UrlMapping("getAllProtocolRevisions", "getProtocolRevisionById&id=", "saveProtocolRevision");
 
         PrimaryReviewers: User[];
-        static PrimaryReviewersMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "User", "getAllUsers", "PimraryReviewers", "Revisions_id", "Reviewer_id", "IBCRevisionPrimaryReviewer", "getRelationships&class1=IBCProtocolRevision&class2=User&override=PRIMARY_REVIEWERS_RELATIONSHIP");
+        static PrimaryReviewersMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "User", "getPropertyByName&id={{this.UID}}&property=primaryReviewers&type=IBCProtocolRevision", "PimraryReviewers", "Revisions_id", "Reviewer_id", "IBCRevisionPrimaryReviewer", "getRelationships&class1=IBCProtocolRevision&class2=User&override=PRIMARY_REVIEWERS_RELATIONSHIP");
 
         PreliminaryReviewers: User[];
-        static PreliminaryReviewersMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "User", "getAllUsers", "PreliminaryReviewers", "Revisions_id", "Reviewer_id", "IBCRevisionPreliminaryReviewer", "getRelationships&class1=IBCProtocolRevision&class2=User&override=PRELIMINARY_REVIEWERS_RELATIONSHIP");
+        static PreliminaryReviewersMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "User", "getPropertyByName&id={{this.UID}}&property=preliminaryReviewers&type=IBCProtocolRevision", "PreliminaryReviewers", "Revisions_id", "Reviewer_id", "IBCRevisionPreliminaryReviewer", "getRelationships&class1=IBCProtocolRevision&class2=User&override=PRELIMINARY_REVIEWERS_RELATIONSHIP");
 
 
         constructor() {

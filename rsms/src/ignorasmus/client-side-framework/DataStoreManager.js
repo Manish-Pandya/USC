@@ -91,59 +91,36 @@ var DataStoreManager = (function () {
         if (!DataStoreManager._actualModel[type].Data || !DataStoreManager._actualModel[type].Data.length) {
             if (!DataStoreManager._actualModel[type].getAllCalled) {
                 DataStoreManager._actualModel[type].getAllCalled = true;
-                return DataStoreManager._actualModel[type].getAllPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetAll)
-                    .then(function (d) {
-                    if (d.length) {
-                        d = InstanceFactory.convertToClasses(d);
-                        DataStoreManager._actualModel[type].Data = d;
-                        if (compMaps) {
-                            return _this.resolveCompMaps(d[0], compMaps)
-                                .then(function (whateverGotReturned) {
-                                d.forEach(function (value, index) {
-                                    value.doCompose(compMaps);
-                                    // I think we are cloning before it's done building...
-                                    if (!value.viewModelWatcher)
-                                        value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
-                                    viewModelParent[index] = value.viewModelWatcher;
-                                });
-                                return viewModelParent;
-                            })
-                                .catch(function (reason) {
-                                console.log("getAll (inner promise):", reason);
-                            });
-                        }
-                        else {
-                            d.forEach(function (value, index) {
-                                if (!value.viewModelWatcher)
-                                    value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
-                                viewModelParent[index] = value.viewModelWatcher;
-                            });
-                            return viewModelParent;
-                        }
-                    }
-                })
-                    .catch(function (d) {
-                    console.log("getAll:", d);
-                    return d;
-                });
+                DataStoreManager._actualModel[type].getAllPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetAll);
             }
         }
         else {
-            var d = DataStoreManager._actualModel[type].Data;
-            return (compMaps ? this.resolveCompMaps(d[0], compMaps) : this.promisifyData(d))
-                .then(function (whateverGotReturned) {
-                d.forEach(function (value, index, array) {
-                    value.doCompose(compMaps);
-                    if (!value.viewModelWatcher)
-                        value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
-                    viewModelParent[index] = value.viewModelWatcher;
-                });
-                return viewModelParent;
-            })
-                .catch(function (reason) {
-                console.log("getAll (inner promise):", reason);
-            });
+            DataStoreManager._actualModel[type].getAllPromise = this.promisifyData(DataStoreManager._actualModel[type].Data);
         }
+        return DataStoreManager._actualModel[type].getAllPromise
+            .then(function (d) {
+            if (d.length) {
+                d = InstanceFactory.convertToClasses(d);
+                DataStoreManager._actualModel[type].Data = d;
+                return (compMaps ? _this.resolveCompMaps(d[0], compMaps) : _this.promisifyData(d))
+                    .then(function (whateverGotReturned) {
+                    d.forEach(function (value, index) {
+                        value.doCompose(compMaps);
+                        if (!value.viewModelWatcher)
+                            value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
+                        viewModelParent[index] = value.viewModelWatcher;
+                    });
+                    return viewModelParent;
+                })
+                    .catch(function (reason) {
+                    console.log("getAll (inner promise):", reason);
+                });
+            }
+        })
+            .catch(function (d) {
+            console.log("getAll:", d);
+            return d;
+        });
     };
     /**
      * Gets instance of a given type by id and passes it to the given viewModelParent.
@@ -159,87 +136,70 @@ var DataStoreManager = (function () {
         if (compMaps === void 0) { compMaps = null; }
         id = id.toString();
         if (!this._actualModel[type].Data || !this._actualModel[type].Data.length) {
-            return DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetById + id)
-                .then(function (d) {
-                d = InstanceFactory.convertToClasses(d);
-                DataStoreManager._actualModel[type].Data.push(d);
-                if (compMaps) {
-                    return _this.resolveCompMaps(d, compMaps)
-                        .then(function (whateverGotReturned) {
-                        d.doCompose(compMaps);
-                        if (!d.viewModelWatcher)
-                            d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
-                        viewModelParent = d.viewModelWatcher;
-                        return viewModelParent;
-                    })
-                        .catch(function (reason) {
-                        console.log("getById (inner promise):", reason);
-                    });
-                }
-                else {
-                    if (!d.viewModelWatcher)
-                        d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
-                    //TODO Figger thisun' out: do we have to _assign here?  I hope not, because we really need viewModelParent to be a reference to viewModelWatcher
-                    viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
-                    return _this.promisifyData(d);
-                }
-            })
-                .catch(function (d) {
-                console.log("getById:", d);
-                return d;
-            });
+            DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetById + id);
         }
         else {
-            var d = this.findByPropValue(this._actualModel[type].Data, this.uidString, id);
-            return (compMaps ? this.resolveCompMaps(d, compMaps) : this.promisifyData(d))
+            DataStoreManager._actualModel[type].getByIdPromise = this.promisifyData(this.findByPropValue(this._actualModel[type].Data, this.uidString, id));
+        }
+        return DataStoreManager._actualModel[type].getByIdPromise
+            .then(function (d) {
+            d = InstanceFactory.convertToClasses(d);
+            DataStoreManager._actualModel[type].Data.push(d);
+            return (compMaps ? _this.resolveCompMaps(d, compMaps) : _this.promisifyData(d))
                 .then(function (whateverGotReturned) {
                 d.doCompose(compMaps);
                 if (!d.viewModelWatcher)
                     d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
-                viewModelParent = d.viewModelWatcher;
+                viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
                 return viewModelParent;
             })
                 .catch(function (reason) {
                 console.log("getById (inner promise):", reason);
             });
-        }
+        })
+            .catch(function (d) {
+            console.log("getById:", d);
+            return d;
+        });
     };
     DataStoreManager.resolveCompMaps = function (fluxCompositerBase, compMaps) {
         var allComps = [];
-        fluxCompositerBase.allCompMaps.forEach(function (compMap) {
-            if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
-                // if compMaps == true or if it's an array with an approved compMap...
-                if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && _.findIndex(compMaps, compMap) > -1)) {
-                    if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
-                        console.log(fluxCompositerBase.TypeName + " fetching remote " + compMap.ChildType);
-                        if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
-                            allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
+        if (compMaps) {
+            fluxCompositerBase.allCompMaps.forEach(function (compMap) {
+                if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
+                    // if compMaps == true or if it's an array with an approved compMap...
+                    if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && _.findIndex(compMaps, compMap) > -1)) {
+                        if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
+                            console.log(fluxCompositerBase.TypeName + " fetching remote " + compMap.ChildType);
+                            if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
+                                allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
+                            }
+                            else {
+                                allComps.push(DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")));
+                            }
                         }
                         else {
-                            allComps.push(DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")));
+                            console.log(fluxCompositerBase.TypeName + " fetching local " + compMap.ChildType);
+                            allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
                         }
-                    }
-                    else {
-                        console.log(fluxCompositerBase.TypeName + " fetching local " + compMap.ChildType);
-                        allComps.push(DataStoreManager._actualModel[compMap.ChildType].Data);
-                    }
-                    if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
-                        if (!DataStoreManager._actualModel[compMap.GerundName] || !DataStoreManager._actualModel[compMap.GerundName].promise) {
-                            DataStoreManager._actualModel[compMap.GerundName] = {}; // clear property
-                            console.log(fluxCompositerBase.TypeName, compMap.GerundName, "gerund getting baked...");
-                            DataStoreManager._actualModel[compMap.GerundName].promise = XHR.GET(compMap.GerundUrl)
-                                .then(function (gerundReturns) {
-                                DataStoreManager._actualModel[compMap.GerundName].Data = gerundReturns;
-                            });
-                            allComps.push(DataStoreManager._actualModel[compMap.GerundName].promise);
+                        if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
+                            if (!DataStoreManager._actualModel[compMap.GerundName] || !DataStoreManager._actualModel[compMap.GerundName].promise) {
+                                DataStoreManager._actualModel[compMap.GerundName] = {}; // clear property
+                                console.log(fluxCompositerBase.TypeName, compMap.GerundName, "gerund getting baked...");
+                                DataStoreManager._actualModel[compMap.GerundName].promise = XHR.GET(compMap.GerundUrl)
+                                    .then(function (gerundReturns) {
+                                    DataStoreManager._actualModel[compMap.GerundName].Data = gerundReturns;
+                                });
+                                allComps.push(DataStoreManager._actualModel[compMap.GerundName].promise);
+                            }
                         }
                     }
                 }
-            }
-            else {
-                throw new Error("You don't have permission to call getAll for " + compMap.ChildType);
-            }
-        });
+                else {
+                    throw new Error("You don't have permission to call getAll for " + compMap.ChildType);
+                }
+            });
+        }
         return Promise.all(allComps);
     };
     /**
@@ -354,20 +314,15 @@ var DataStoreManager = (function () {
      * @param data
      */
     DataStoreManager.promisifyData = function (data) {
-        if (!this.isPromisified) {
-            return data;
-        }
-        else {
-            var p = new Promise(function (resolve, reject) {
-                if (data) {
-                    resolve(data);
-                }
-                else {
-                    reject("bad in dsm");
-                }
-            });
-            return p;
-        }
+        var p = new Promise(function (resolve, reject) {
+            if (data) {
+                resolve(data);
+            }
+            else {
+                reject("bad in dsm");
+            }
+        });
+        return p;
     };
     return DataStoreManager;
 }());
@@ -379,6 +334,5 @@ var DataStoreManager = (function () {
 DataStoreManager.classPropName = "Class";
 DataStoreManager.uidString = "Key_id";
 DataStoreManager.baseUrl = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
-DataStoreManager.isPromisified = true;
 // NOTE: there's intentionally no getter. Only internal framework classes should have read access of actual model.
 DataStoreManager._actualModel = {};

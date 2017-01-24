@@ -130,7 +130,6 @@ abstract class InstanceFactory extends DataStoreManager {
 
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
             childStore.forEach((value: FluxCompositerBase) => {
-                //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
                 if (value[compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
                     parent[compMap.PropertyName].push(value.viewModelWatcher);
                 }
@@ -144,7 +143,7 @@ abstract class InstanceFactory extends DataStoreManager {
                     //loop through all the gerunds
                     for (let i: number = 0; i < gerundLen; i++) {
                         childStore.forEach((value: FluxCompositerBase) => {
-                            if (parent.UID == d[i].ParentId && value.UID == d[i].ChildId) {
+                            if (value.UID == d[i].ChildId && parent.UID == d[i].ParentId) {
                                 parent[compMap.PropertyName].push(value.viewModelWatcher);
                             }
                         });
@@ -169,7 +168,6 @@ abstract class InstanceFactory extends DataStoreManager {
             }
         } else { // CompMap is CompositionMapping.ONE_TO_ONE
             childStore.forEach((value: FluxCompositerBase) => {
-                //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
                 if (value[compMap.ParentIdProp] == parent[compMap.ChildIdProp]) {
                     parent[compMap.PropertyName] = value.viewModelWatcher;
                 }

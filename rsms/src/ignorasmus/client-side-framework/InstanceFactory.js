@@ -121,7 +121,6 @@ var InstanceFactory = (function (_super) {
         var childStore = DataStoreManager._actualModel[compMap.ChildType].Data;
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
             childStore.forEach(function (value) {
-                //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
                 if (value[compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
                     parent[compMap.PropertyName].push(value.viewModelWatcher);
                 }
@@ -135,7 +134,7 @@ var InstanceFactory = (function (_super) {
                     var gerundLen = d.length;
                     var _loop_1 = function (i) {
                         childStore.forEach(function (value) {
-                            if (parent.UID == d[i].ParentId && value.UID == d[i].ChildId) {
+                            if (value.UID == d[i].ChildId && parent.UID == d[i].ParentId) {
                                 parent[compMap.PropertyName].push(value.viewModelWatcher);
                             }
                         });
@@ -166,7 +165,6 @@ var InstanceFactory = (function (_super) {
         }
         else {
             childStore.forEach(function (value) {
-                //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
                 if (value[compMap.ParentIdProp] == parent[compMap.ChildIdProp]) {
                     parent[compMap.PropertyName] = value.viewModelWatcher;
                 }
