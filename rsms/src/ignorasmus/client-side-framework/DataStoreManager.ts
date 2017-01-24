@@ -149,6 +149,7 @@ abstract class DataStoreManager {
      * @param compMaps
      */
     static getById(type: string, id: string | number, viewModelParent: any, compMaps: CompositionMapping[] | boolean = null): Promise<FluxCompositerBase> {
+        alert("asdf")
         if (!InstanceFactory._classNames) InstanceFactory.getClassNames("/models");
 
         id = id.toString();
@@ -169,7 +170,7 @@ abstract class DataStoreManager {
                         d.doCompose(compMaps);
                         if (!d.viewModelWatcher) d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
                         viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
-
+                        console.log("parent is: ", d, viewModelParent);
                         return viewModelParent;
                     })
                     .catch((reason) => {
@@ -278,15 +279,16 @@ abstract class DataStoreManager {
     static commitToActualModel(viewModelParent: any): FluxCompositerBase {
         var vmParent: FluxCompositerBase = InstanceFactory.convertToClasses(viewModelParent);
         if (!(vmParent instanceof FluxCompositerBase)) return;
-
+        
         var actualModelEquivalent: FluxCompositerBase = this.getActualModelEquivalent(vmParent);
         if (!actualModelEquivalent && vmParent.TypeName) {
             DataStoreManager._actualModel[vmParent.TypeName].Data.push(_.cloneDeep(vmParent));
             actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         }
         vmParent = InstanceFactory.copyProperties(actualModelEquivalent, vmParent);
+        if (!actualModelEquivalent.viewModelWatcher) actualModelEquivalent.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(actualModelEquivalent);
         InstanceFactory.copyProperties(actualModelEquivalent.viewModelWatcher, vmParent);
-        
+
         return vmParent.viewModelWatcher;
     }
 

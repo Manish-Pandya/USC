@@ -134,6 +134,7 @@ var DataStoreManager = (function () {
     DataStoreManager.getById = function (type, id, viewModelParent, compMaps) {
         var _this = this;
         if (compMaps === void 0) { compMaps = null; }
+        alert("asdf");
         if (!InstanceFactory._classNames)
             InstanceFactory.getClassNames("/models");
         id = id.toString();
@@ -153,6 +154,7 @@ var DataStoreManager = (function () {
                 if (!d.viewModelWatcher)
                     d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
                 viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
+                console.log("parent is: ", d, viewModelParent);
                 return viewModelParent;
             })
                 .catch(function (reason) {
@@ -267,6 +269,8 @@ var DataStoreManager = (function () {
             actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         }
         vmParent = InstanceFactory.copyProperties(actualModelEquivalent, vmParent);
+        if (!actualModelEquivalent.viewModelWatcher)
+            actualModelEquivalent.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(actualModelEquivalent);
         InstanceFactory.copyProperties(actualModelEquivalent.viewModelWatcher, vmParent);
         return vmParent.viewModelWatcher;
     };
