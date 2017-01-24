@@ -149,7 +149,6 @@ abstract class DataStoreManager {
      * @param compMaps
      */
     static getById(type: string, id: string | number, viewModelParent: any, compMaps: CompositionMapping[] | boolean = null): Promise<FluxCompositerBase> {
-        alert("asdf")
         if (!InstanceFactory._classNames) InstanceFactory.getClassNames("/models");
 
         id = id.toString();
