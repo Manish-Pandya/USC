@@ -129,6 +129,8 @@ if(!isset($_SESSION["USER"])){ ?>
 <!--script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></!--script>-->
 <script src="scripts/filters/IBCFilters.js"></script>
 
+<!-- directives -->
+<script src="scripts/directives/collapsibleCard.js"></script>
 
 <!-- framework -->
     <script src="../ignorasmus/client-side-framework/DataStoreManager.js"></script>
