@@ -23,3 +23,130 @@
 .ibc table th, .ibc table td {
     font-size:.8vw;
 }
+
+.collapsible-card .p, .collapsible-card ul li i.flipper:before, .collapsible-card ul li i.flipper:after {
+  transition: all 0.25s ease-in-out;
+}
+
+.collapsible-card .flipIn, h1, ul li {
+  animation: flipdown 0.5s ease both;
+}
+.collapsible-card {
+    padding:0px;
+    background: rgba(255,255,255,.7);
+    border: 2px solid #CDCDCD;
+    box-sizing: border-box;
+    border-radius: 3px;
+}
+.collapsible-card .no-select, h2 {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.collapsible-card .p {
+  position: relative;
+  overflow: hidden;
+  opacity: 1;
+  transform: translate(0, 0);
+  margin-top: 14px;
+  z-index: 2;
+}
+
+.collapsible-card ul {
+  list-style: none;
+  perspective: 900;
+  padding: 0;
+  margin: 0;
+}
+.collapsible-card ul li {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  padding:0px;
+}
+.collapsible-card ul li .card-header {
+    background:#d00;
+    color:white;
+    padding:7px
+}
+.collapsible-card ul li .card-header i{
+    margin: 7px 0px 0 6px;
+}
+.collapsible-card ul li .card-content {
+    padding-left:20px;
+    padding-bottom:10px;
+    background-color:rgba(255,255,255,.5);
+}
+.collapsible-card ul li i.flipper {
+  position: absolute;
+  transform: translate(-6px, 0);
+  margin-top: 18px;
+  right: 10px;
+}
+.collapsible-card ul li i.flipper:before, .collapsible-card ul li i.flipper:after {
+  content: "";
+  position: absolute;
+  background-color: #CDCDCD;
+  width: 3px;
+  height: 9px;
+}
+.collapsible-card:hover ul li i.flipper:before, .collapsible-card:hover ul li i.flipper:after {
+  background-color: white;
+}
+.collapsible-card ul li i.flipper:before {
+  transform: translate(-5px, 0) rotate(45deg);
+}
+.collapsible-card ul li i.flipper:after {
+  transform: translate(1px, -1px) rotate(-45deg);
+}
+.collapsible-card ul li input[type=checkbox] {
+  position: absolute;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  opacity: 0;
+}
+.collapsible-card ul li input[type=checkbox]:checked ~ .p {
+  margin-top: 0;
+  padding-bottom:0;
+  max-height: 0;
+  opacity: 0;
+  transform: translate(0, 20%);
+  background:none;
+}
+.collapsible-card ul li input[type=checkbox]:checked ~ i.flipper:before {
+  transform: translate(3px, 0) rotate(45deg);
+}
+.collapsible-card ul li input[type=checkbox]:checked ~ i.flipper:after {
+  transform: translate(-2px, 0) rotate(-45deg);
+}
+
+@keyframes flipdown {
+  0% {
+    opacity: 0;
+    transform-origin: top center;
+    transform: rotateX(-90deg);
+  }
+  5% {
+    opacity: 1;
+  }
+  80% {
+    transform: rotateX(8deg);
+  }
+  83% {
+    transform: rotateX(6deg);
+  }
+  92% {
+    transform: rotateX(-3deg);
+  }
+  100% {
+    transform-origin: top center;
+    transform: rotateX(0deg);
+  }
+}
