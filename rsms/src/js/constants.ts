@@ -1,6 +1,6 @@
 class Constants  {
 
-    public static PENDING_CHANGE:any = {
+    public static PENDING_CHANGE = {
         USER_STATUS:{
             NO_LONGER_CONTACT:"Still in this lab, but no longer a contact",
             NOW_A_CONTACT:"Still in this lab, but now a lab contact",
@@ -30,7 +30,7 @@ class Constants  {
         "Other"
     ];
 
-    public static ROLE:any = {
+    public static ROLE = {
         NAME:{
             ADMIN:"Admin",
             SAFETY_INSPECTOR:"Safety Inspector",
@@ -48,7 +48,7 @@ class Constants  {
         }
     };
 
-    public static CARBOY_USE_CYCLE:any = {
+    public static CARBOY_USE_CYCLE = {
         STATUS: {
             AVAILABLE: "Available",
             IN_USE: "In Use",
