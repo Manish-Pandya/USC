@@ -45,7 +45,8 @@ angular.module('ng-IBC')
     $scope.modalData = DataStoreManager.ModalData;
     $scope.users = [];
     $scope.reviewers = [];
-    $scope.loading = $q.all([DataStoreManager.getAll("User", $scope.users)]).then(function (whateverGotReturned) {
+    $scope.loading = $q.all([DataStoreManager.getAll("User", $scope.users), DataStoreManager.resolveCompMaps($scope.modalData.IBCProtocolRevision, true)])
+        .then(function (stuff) {
         $scope.modalData.IBCProtocolRevision.doCompose(true);
         var approvedUsers = $scope.users.filter(function (u) {
             var hasCorrectRole = false;
@@ -57,6 +58,7 @@ angular.module('ng-IBC')
             return hasCorrectRole;
         });
         $scope.reviewers = $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.concat(approvedUsers);
+        console.log($scope.reviewers);
     });
     $scope.addRemoveReviewer = function (user, add) {
         var preliminaryReviewersIndex = $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.indexOf(user);
