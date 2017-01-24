@@ -163,19 +163,20 @@ var DataStoreManager = (function () {
         });
     };
     DataStoreManager.resolveCompMaps = function (fluxCompositerBase, compMaps) {
+        var _this = this;
         var allComps = [];
         if (compMaps) {
             fluxCompositerBase.allCompMaps.forEach(function (compMap) {
-                if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
-                    // if compMaps == true or if it's an array with an approved compMap...
-                    if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && _.findIndex(compMaps, compMap) > -1)) {
+                // if compMaps == true or if it's an array with an approved compMap...
+                if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && _.findIndex(compMaps, compMap) > -1)) {
+                    if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                         if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
                             console.log(fluxCompositerBase.TypeName + " fetching remote " + compMap.ChildType);
                             if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
                                 allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
                             }
                             else {
-                                allComps.push(DataStoreManager.getAll(compMap.ChildType, [], (typeof compMaps === "boolean")));
+                                allComps.push(DataStoreManager.getAll(compMap.ChildType, [], typeof compMaps === "boolean"));
                             }
                         }
                         else {
@@ -185,7 +186,7 @@ var DataStoreManager = (function () {
                         if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
                             if (!DataStoreManager._actualModel[compMap.GerundName] || !DataStoreManager._actualModel[compMap.GerundName].promise) {
                                 DataStoreManager._actualModel[compMap.GerundName] = {}; // clear property
-                                console.log(fluxCompositerBase.TypeName, compMap.GerundName, "gerund getting baked...");
+                                console.log(fluxCompositerBase.TypeName + "'s", compMap.GerundName, "gerund getting baked...");
                                 DataStoreManager._actualModel[compMap.GerundName].promise = XHR.GET(compMap.GerundUrl)
                                     .then(function (gerundReturns) {
                                     DataStoreManager._actualModel[compMap.GerundName].Data = gerundReturns;
@@ -194,9 +195,21 @@ var DataStoreManager = (function () {
                             }
                         }
                     }
-                }
-                else {
-                    throw new Error("You don't have permission to call getAll for " + compMap.ChildType);
+                    else {
+                        console.log(compMap.ChildType + " has no getAll permission, so resolving childUrl...");
+                        fluxCompositerBase[compMap.PropertyName + "Promise"] = (fluxCompositerBase[compMap.PropertyName + "Promise"] || XHR.GET(fluxCompositerBase.getChildUrl(compMap)))
+                            .then(function (d) {
+                            delete fluxCompositerBase[compMap.PropertyName + "Promise"];
+                            d = InstanceFactory.convertToClasses(d);
+                            if (Array.isArray(d)) {
+                                var len = d.length;
+                                for (var i = 0; i < d.length; i++) {
+                                    _this.commitToActualModel(d[i]);
+                                }
+                            }
+                        });
+                        allComps.push(fluxCompositerBase[compMap.PropertyName + "Promise"]);
+                    }
                 }
             });
         }
@@ -244,8 +257,10 @@ var DataStoreManager = (function () {
      */
     DataStoreManager.commitToActualModel = function (viewModelParent) {
         var vmParent = InstanceFactory.convertToClasses(viewModelParent);
+        if (!(vmParent instanceof FluxCompositerBase))
+            return;
         var actualModelEquivalent = this.getActualModelEquivalent(vmParent);
-        if (!actualModelEquivalent) {
+        if (!actualModelEquivalent && vmParent.TypeName) {
             DataStoreManager._actualModel[vmParent.TypeName].Data.push(_.cloneDeep(vmParent));
             actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         }
