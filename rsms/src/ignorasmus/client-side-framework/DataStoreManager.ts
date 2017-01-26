@@ -169,7 +169,6 @@ abstract class DataStoreManager {
                         d.doCompose(compMaps);
                         if (!d.viewModelWatcher) d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
                         viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
-                        console.log("parent is: ", d, viewModelParent);
                         return viewModelParent;
                     })
                     .catch((reason) => {
@@ -209,13 +208,14 @@ abstract class DataStoreManager {
                                         DataStoreManager._actualModel[compMap.GerundName].Data = gerundReturns;
                                     });
                                 allComps.push(DataStoreManager._actualModel[compMap.GerundName].promise);
+                            } else {
+                                allComps.push(DataStoreManager._actualModel[compMap.GerundName].Data);
                             }
                         }
                     } else {
                         console.log(compMap.ChildType + " has no getAll permission, so resolving childUrl...");
                         fluxCompositerBase[compMap.PropertyName + "Promise"] = (fluxCompositerBase[compMap.PropertyName + "Promise"] || XHR.GET(fluxCompositerBase.getChildUrl(compMap)))
                             .then((d) => {
-                                delete fluxCompositerBase[compMap.PropertyName + "Promise"];
                                 d = InstanceFactory.convertToClasses(d);
                                 if (Array.isArray(d)) {
                                     var len: number = d.length;

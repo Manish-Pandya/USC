@@ -129,19 +129,40 @@ var InstanceFactory = (function (_super) {
         else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
             if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                 // Get the gerunds
-                if (DataStoreManager._actualModel[compMap.GerundName] && DataStoreManager._actualModel[compMap.GerundName].Data) {
-                    var d = DataStoreManager._actualModel[compMap.GerundName].Data;
-                    var gerundLen = d.length;
-                    var _loop_1 = function (i) {
-                        childStore.forEach(function (value) {
-                            if (value.UID == d[i].ChildId && parent.UID == d[i].ParentId) {
-                                parent[compMap.PropertyName].push(value.viewModelWatcher);
+                if (DataStoreManager._actualModel[compMap.GerundName]) {
+                    if (DataStoreManager._actualModel[compMap.GerundName].Data) {
+                        var d = DataStoreManager._actualModel[compMap.GerundName].Data;
+                        var gerundLen = d.length;
+                        var _loop_1 = function (i) {
+                            childStore.forEach(function (value) {
+                                if (value.UID == d[i].ChildId && parent.UID == d[i].ParentId) {
+                                    parent[compMap.PropertyName].push(value.viewModelWatcher);
+                                }
+                            });
+                        };
+                        //loop through all the gerunds
+                        for (var i = 0; i < gerundLen; i++) {
+                            _loop_1(i);
+                        }
+                    }
+                    else {
+                        DataStoreManager._actualModel[compMap.GerundName].promise = (DataStoreManager._actualModel[compMap.GerundName].promise || XHR.GET(compMap.GerundUrl))
+                            .then(function (gerundReturns) {
+                            var d = DataStoreManager._actualModel[compMap.GerundName].Data = gerundReturns;
+                            var gerundLen = d.length;
+                            var _loop_2 = function (i) {
+                                childStore.forEach(function (value) {
+                                    if (value.UID == d[i].ChildId && parent.UID == d[i].ParentId) {
+                                        parent[compMap.PropertyName].push(value.viewModelWatcher);
+                                    }
+                                });
+                            };
+                            //loop through all the gerunds
+                            for (var i = 0; i < gerundLen; i++) {
+                                _loop_2(i);
                             }
                         });
-                    };
-                    //loop through all the gerunds
-                    for (var i = 0; i < gerundLen; i++) {
-                        _loop_1(i);
+                        console.log(compMap.GerundName + " doesn't exist in actualModel. Running GET to resolve...");
                     }
                 }
                 else {
