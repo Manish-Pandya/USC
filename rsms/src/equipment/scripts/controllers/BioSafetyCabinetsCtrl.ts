@@ -36,22 +36,24 @@ angular.module('EquipmentModule')
             $rootScope.selectedDueDate = "";
 
             DataStoreManager.getAll("EquipmentInspection", [], false).then(function (inspections: any[]) {
-                var i = inspections.length;
-                while (i--) {
-                    if (inspections[i].Equipment_class == Constants.BIOSAFETY_CABINET.EQUIPMENT_CLASS) {
-                        if (inspections[i].Certification_date) {
-                            var certYear = inspections[i].Certification_date.split('-')[0];
-                            if ($scope.certYears.indexOf(certYear) == -1) {
-                                $scope.certYears.push(certYear);
+                if (inspections) {
+                    var i = inspections.length;
+                    while (i--) {
+                        if (inspections[i].Equipment_class == Constants.BIOSAFETY_CABINET.EQUIPMENT_CLASS) {
+                            if (inspections[i].Certification_date) {
+                                var certYear = inspections[i].Certification_date.split('-')[0];
+                                if ($scope.certYears.indexOf(certYear) == -1) {
+                                    $scope.certYears.push(certYear);
+                                }
                             }
-                        }
-                        if (inspections[i].Due_date) {
-                            var dueYear = inspections[i].Due_date.split('-')[0];
-                            if ($scope.certYears.indexOf(dueYear) == -1) {
-                                $scope.certYears.push(dueYear);
+                            if (inspections[i].Due_date) {
+                                var dueYear = inspections[i].Due_date.split('-')[0];
+                                if ($scope.certYears.indexOf(dueYear) == -1) {
+                                    $scope.certYears.push(dueYear);
+                                }
                             }
-                        }
 
+                        }
                     }
                 }
 
@@ -154,7 +156,7 @@ angular.module('EquipmentModule')
 
       $scope.modalData = DataStoreManager.ModalData;
       $scope.PIs = [];
-      $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $scope.PIs, true)]);
+      $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $scope.PIs, true)])
 
 
       if ($scope.modalData.BioSafetyCabinet.EquipmentInspections) {

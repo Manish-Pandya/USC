@@ -68,7 +68,6 @@ angular
                 return inspections;
             } else if (dateString == "Not Yet Certified") {
                 return inspections.filter(function (i) {
-                    console.log(i);
                     return !i.Certification_date;
                 });
             }
@@ -113,9 +112,6 @@ angular
             var matches = [];
             var i = equipments.length;
             while (i--) {
-                if (equipments[i].Key_id == 13) {
-                    console.log(equipments[i]);
-                }
                 if (equipments[i].EquipmentInspections) {
                     var j = equipments[i].EquipmentInspections.length;
                     var matched = false;
@@ -162,7 +158,6 @@ angular
             if (!string) return cabs;
             return cabs.filter(function (c) {
                 return c.EquipmentInspections && c.EquipmentInspections.length && c.EquipmentInspections.some(function (i) {
-                    console.log(i, string);
                     return i.PrincipalInvestigators.some(function(i){return i.User.Name.toLowerCase().indexOf(string.toLowerCase()) > -1});
                 })
             })
@@ -226,7 +221,6 @@ angular
                      allRooms[index].push(r);
                  })
              })
-             //console.log(allRooms);
              if (!allRooms || !allRooms.length) return;
              var filtered = allRooms.filter(function (i) {
                  return i.length == pis.length;
@@ -234,7 +228,6 @@ angular
              filtered.forEach(function (rooms, idx, arr) {
                  arr[idx] = rooms[0];
              });
-             console.log(filtered);
              return filtered;
         }
      
