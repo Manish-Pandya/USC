@@ -59,10 +59,11 @@
                 </tr>
                 <tr class="table-row top-align" ng-repeat="use in parcel.ParcelUses" ng-class="{'edit' : use.edit, 'formError': use.error, 'inactive': use.getIsPickedUp()}" table-error="{{use.error}}" obj="use">
                     <td ng-class="{'vertical-align-middle': use.edit}" ng-init="use.loadParcelUseAmounts()">
-                        <button class="btn btn-primary" ng-click="editUse(use)" ng-disabled="use.edit || use.getIsPickedUp()"><i class="icon-pencil"></i></button>
+                        <button class="btn btn-primary" ng-click="editUse(use)" ng-disabled="use.edit || use.Date_transferred || use.getIsPickedUp()"><i class="icon-pencil"></i></button>
                     </td>
                     <td ng-if="!use.edit">
-                        {{use.Date_used | dateToISO:use:'Date_used':true}}
+                        <span ng-if="use.Date_transferred">Transferred: {{use.Date_transferred | dateToISO}}</span>
+                        <span ng-if="!use.Date_transferred">{{use.Date_used || use.Date_transferred | dateToISO:use:'Date_used':true}}</span>
                     </td>
                     <td ng-if="use.edit" class="push-top">
                         <div class="control-group">
@@ -75,7 +76,8 @@
                     </td>
 
                     <td ng-if="!use.edit">
-                        {{use.Experiment_use}}
+                        <span ng-if="!use.Date_transferred">{{use.Experiment_use}}</span>
+                        <span ng-if="use.Date_transferred">{{use.Comments || 'Tranfser'}}</span>
                     </td>
                     <td ng-if="use.edit" class="push-top" style="max-width:129px; padding:2px;">
                         <div class="control-group" style="max-width:100%">
@@ -122,7 +124,7 @@
                                 </td>
                                 <td class="use-amount others">
                                     <span class="bold" style="margin-bottom:10px;display:block">Other:<span class="bold" ng-show="!others.length">N/A</span></span>
-                                    <div ng-repeat="other in others = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.OTHER})">
+                                    <div ng-repeat="other in others = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.TRANSFER})">
                                          {{other.Curie_level}} mCi <span ng-if="other.Comments"><br />{{other.Comments}}</span>
                                     </div>
                                 </td>
@@ -136,7 +138,7 @@
                                         <div class="control-group">
                                             <div class="controls input-append">
                                                 <input ng-disabled="solid.IsPickedUp" style="max-width:50%;" name="solid-curies" ng-model="solid.Curie_level">
-                                                <select ng-disabled="solid.IsPickedUp" ng-model="solid.Waste_bag" ng-selected="selectedBag(solid, pi.WasteBags)" ng-change="selectContainer(solid)" ng-options="bag.Container_name for bag in pi.WasteBags | availableBags">
+                                                <select ng-disabled="solid.IsPickedUp" ng-model="solid.Waste_bag" ng-selected="selectedBag(solid, pi.WasteBags)" ng-change="selectContainer(solid)" ng-options="bag.Container_name for bag in pi.WasteBags | availableBags:solid">
                                                     <option value="">Select Receptical</option>
                                                 </select>
                                                 <span class="help-block " style="">mCi <i title="Picked Up" ng-if="solid.IsPickedUp" class="danger icon-remove"></i></span>
@@ -176,7 +178,7 @@
                                         <div class="control-group" style="width:100%;">
                                             <div class="controls input-append">
                                                 <input style="max-width:50%;" name="other-curies" ng-model="other.Curie_level">
-                                                <span class="help-inline " style="">mCi</span>
+                                                <span class="add-on">mCi</span>
                                             </div>
                                         </div>
                                         <div class="control-group" >

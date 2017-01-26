@@ -1,15 +1,16 @@
 <div cg-busy="{promise:inventoryPromise,message:'Loading Inventory', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:loading,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+
 <div cg-busy="{promise:PIQuarterlyInventorySaving,message:'Saving Inventory', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="neg-marg dashboard" ng-if="pi_inventory">
 	<div class="well almost-full">
 		<h2 class="card-header padding parcels">
-			<i class="fa fa-calendar-o"></i>{{pi_inventory.Principal_investigator.User.Name}}'s Quarterly Inventory for {{pi_inventory.Quarterly_inventory.Start_date | dateToISO}} - {{pi_inventory.Quarterly_inventory.End_date | dateToISO}}
+			<i class="fa fa-calendar-o"></i>{{pi_inventory.Principal_investigator.User.Name}}'s Quarterly Inventory for {{pi_inventory.Start_date | dateToISO}} - {{pi_inventory.End_date | dateToISO}}
 			<a ng-if="!pi_inventory.Sign_off_date" class="btn btn-success left" ng-click="openModal(pi_inventory)"><i class="icon-checkmark"></i>Confirm Inventory</a>
 			<a class="btn btn-info left" ui-sref="use-log({pi: pi_inventory.Principal_investigator.Key_id})"><i class="icon-list-2"></i>Use Logs</a>
 		</h2>
 		<h2 ng-if="pi_inventory.Sign_off_date" class="alert almost-full alert-success">Inventory Confirmed {{pi_inventory.Sign_off_date | dateToISO}}</h2>
-
 		<div class="card almost-full parcels">			
 
 			<div class="fake-table striped bordered">
@@ -33,7 +34,7 @@
 					<div>{{amount.Starting_amount | roundFloat}} mCi</div>
 					<div>{{amount.Total_ordered | roundFloat}} mCi</div>
 					<div>{{amount.Transfer_in | roundFloat}} mCi</div>
-					<div>0 mCi</div>
+					<div>{{amount.Transfer_out | roundFloat}} mCi</div>
 					<div>{{amount.Solid_waste | roundFloat}} mCi</div>
 					<div>{{amount.Liquid_waste | roundFloat}} mCi</div>
 					<div>{{amount.Scint_vial_waste | roundFloat}} mCi</div>

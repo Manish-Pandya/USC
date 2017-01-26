@@ -22,11 +22,7 @@ CarboyUseCycle.prototype = {
     },
     // TODO eager accessors, relationships, method names.
     loadCarboy: function () {
-        dataLoader.loadChildObject(this, 'Carboy', 'Carboy', this.Carboy_id);
-        var thing = this;
-        if (!this.Carboy) {
-            window.setTimeout(function () { thing.loadCarboy(); }, 100)
-        }
+        dataLoader.loadChildObject(this, 'Carboy', 'Carboy', this.Carboy_id);     
     },
 
     loadCarboy_reading_amounts:function(){

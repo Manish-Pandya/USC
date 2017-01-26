@@ -19,7 +19,7 @@ SolidsContainer.prototype = {
 	    keyReference: 'Container_id',
 	    paramValue: 'Key_id',
 	    paramName: 'id',
-	    where: [{ 'Pickup_id': "IS NULL" }, { 'Date_removed': "IS NULL" }]
+	    where: [{ 'Date_removed': "IS NULL" }]
 	},
 
 	loadRoom: function(){

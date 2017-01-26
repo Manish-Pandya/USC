@@ -1273,6 +1273,19 @@ angular
             af.saveParcel = function( copy, parcel, pi )
             {
                 af.clearError();
+                //check the parcel to make sure the Rs_number is unique
+                //we could not have gotten here without first loading the parcels
+                var parcels = store.get("Parcel");
+                for (var i = 0; i < parcels.length; i++) {
+                    var p = parcels[i];
+                    if (p.Rs_number == copy.Rs_number) {
+                        var pr = $q.defer();
+                        pr.reject(p);
+                        $rootScope.error = copy.Transfer_in_date ? "The transfer number you entered is already in use." : "The RS Number you entered is already in use.";
+                        return pr.promise;
+                    }
+                }
+
                 return this.save( copy )
                     .then(
                         function(returnedParcel){
@@ -1583,9 +1596,21 @@ angular
                 copy.Date_used = convenienceMethods.setMysqlTime(af.getDate(copy.view_Date_used));
                 return this.save( copy )
                     .then(
-                        function(returnedUse){
+                        function (returnedUse) {
+
+                            if (returnedUse.DestinationParcel) {
+                                if (use && use.DestinationParcel) {
+                                    angular.extend(use.DestinationParcel, returnedUse.DestinationParcel);
+                                } else {
+                                    returnedUse.DestinationParcel = modelInflatorFactory.instateAllObjectsFromJson(returnedUse.DestinationParcel);
+                                    store.store(returnedUse.DestinationParcel);
+                                    dataStoreManager.addOnSave(returnedUse.DestinationParcel);
+                                }
+                            }
+
                             returnedUse = modelInflatorFactory.instateAllObjectsFromJson(returnedUse);
-                            console.log(returnedUse);
+                            returnedUse.loadDestinationParcel();
+
                             var i = returnedUse.ParcelUseAmounts.length;
                             while(i--){
                                 returnedUse.ParcelUseAmounts[i] = modelInflatorFactory.instateAllObjectsFromJson( returnedUse.ParcelUseAmounts[i] );
@@ -1594,18 +1619,20 @@ angular
                                     returnedUse.ParcelUseAmounts[i].loadCarboy();
                                 }
                             }
-                            if(use){
-                                angular.extend(use, returnedUse)
-                            }else{
+
+                            if (use.Key_id) {
+                                console.log(use);
+                                angular.extend(use, returnedUse);
+                            } else {
                                 dataStoreManager.addOnSave(returnedUse);
-                                parcel.ParcelUses.push(returnedUse)
+                                parcel.ParcelUses.push(returnedUse);
                             }
+
                             $rootScope.ParcelUseCopy = {};
                             
                             parcel.Remainder = returnedUse.ParcelRemainder;
                             parcel.AmountOnHand = returnedUse.ParcelAmountOnHand;
 
-                            use.edit = false;
                             af.clearError();
                             return parcel;
                         },
@@ -2420,6 +2447,19 @@ angular
                             store.store(inventory);
                             return inventory;
                         });
+            }
+
+            af.getQuartleryInventoryById = function (id) {
+                var urlSegment = 'getQuartleryInventoryById&id=' + id;
+                console.log("hey you", urlSegment);
+
+                return genericAPIFactory.read(urlSegment)
+                        .then(function (returnedPromise) {
+                            var inventory = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
+                            store.store(inventory);
+                            return inventory;
+                        });
+
             }
 
             af.savePiQuarterlyInventory = function(inventory, copy)

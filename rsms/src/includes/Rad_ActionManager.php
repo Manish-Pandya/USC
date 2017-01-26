@@ -415,6 +415,16 @@ class Rad_ActionManager extends ActionManager {
     	$amountMaps[] = new EntityMap("eager", "getWaste_type");
     	$amountMaps[] = new EntityMap("eager", "getContainer_name");
 
+        $cycleMaps = array();
+		$cycleMaps[] = new EntityMap("eager", "getCarboy");
+		$cycleMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
+		$cycleMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
+		$cycleMaps[] = new EntityMap("eager", "getContents");
+		$cycleMaps[] = new EntityMap("lazy", "getCarboy_reading_amounts");
+		$cycleMaps[] = new EntityMap("lazy", "getRoom");
+		$cycleMaps[] = new EntityMap("lazy", "getPickup");
+		$cycleMaps[] = new EntityMap("lazy", "getPour_allowed_date");
+
         if($pi->getPi_authorization() != NULL){
         	$piAuths = $pi->getPi_authorization();
             foreach($piAuths as $piAuth){
@@ -430,6 +440,10 @@ class Rad_ActionManager extends ActionManager {
                     $amount->setEntityMaps($amountMaps);
                 }
             }
+        }
+
+        foreach($pi->getCarboyUseCycles() as $cycle){
+            $cycle->setEntityMaps(eager);
         }
 
         $pi->setEntityMaps($entityMaps);
@@ -895,83 +909,123 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new ParcelUse());
-            $use = $dao->save($decodedObject);
 
-            $amounts = $decodedObject->getParcelUseAmounts();
-            foreach($amounts as $amount){
-                $amountDao = $this->getDao(new ParcelUseAmount());
-                $newAmount = new ParcelUseAmount();
-                if($amount['Curie_level'] != NULL && $amount['Curie_level'] > 0){
-                    $newAmount->setParcel_use_id($use->getKey_id());
-                    $newAmount->setCurie_level($amount['Curie_level']);
-                    if($amount['Key_id'] != NULL)$newAmount->setKey_id($amount['Key_id']);
+            if($decodedObject->getDate_transferred() != null){
+                //this is a use for a transfer
+                if($decodedObject->getDestinationParcel() != null){
+                    $p =  $decodedObject->getDestinationParcel();
+                    $p->setIs_active(true);
+                    $p->setArrival_date($p->getTransfer_in_date());
+                    $authDao = $this->getDao(new Authorization());
+                    $piAuthDao = $this->getDao(new PIAuthorization());
+                    $auth = $authDao->getById($p->getAuthorization_id());
+                    if($auth != null){
+                        $piAuth = $piAuthDao->getById($auth->getPi_authorization_id());
+                        if($piAuth != null){
+                            $p->setPrincipal_investigator_id($piAuth->getPrincipal_investigator_id());
+                        }
+                    }
 
-                    if($amount['Waste_bag_id'] != NULL){
+                    $parcelDao = new GenericDAO(new Parcel());
+                    $p->setQuantity($decodedObject->getQuantity());
+                    $dParcel = $parcelDao->save($p);
+                    $decodedObject->setDestination_parcel_id($dParcel->getKey_id());
+                }
+                $use = $dao->save($decodedObject);
+                if($dParcel != null){
+                    $dParcel->setTransfer_amount_id($use->getKey_id());
+                    $dParcel = $parcelDao->save($dParcel);
+                }
+                //do we already have a parcelUseAmount for this parcel?
+                $amountDao = new GenericDAO(new ParcelUseAmount());
+                if($decodedObject->getParcelUseAmounts() != null){
+                    $amount = end($decodedObject->getParcelUseAmounts());
+                    if(is_array($amount)) $amount = JsonManager::assembleObjectFromDecodedArray($amount);
+                }else{
+                    $amount = new ParcelUseAmount();
+                }
+                $amount->setParcel_use_id($use->getKey_id());
+                $amount->setCurie_level($use->getQuantity());
+                $amount = $amountDao->save($amount);
+            }else{
+                $use = $dao->save($decodedObject);
 
-                        if($newAmount->getKey_id() != null){
-                            //this amount has been saved previously.
-                            //We need to make sure that we aren't accidentally moving it to a new waste bag in the same container
-                            $amountDao = $this->getDao(new ParcelUseAmount());
-                            $relevantAmount = $amountDao->getById($newAmount->getKey_id());
-                            $bag = $this->getWasteBagById($amount['Waste_bag_id']);
-                            $oldBag = $this->getWasteBagById($relevantAmount->getWaste_bag_id());
-                            if( $oldBag == null || ( $oldBag->getContainer_id() != $bag->getContainer_id() ) ){
+                $amounts = $decodedObject->getParcelUseAmounts();
+                foreach($amounts as $amount){
+                    $amountDao = $this->getDao(new ParcelUseAmount());
+                    $newAmount = new ParcelUseAmount();
+                    if($amount['Curie_level'] != NULL && $amount['Curie_level'] > 0){
+                        $newAmount->setParcel_use_id($use->getKey_id());
+                        $newAmount->setCurie_level($amount['Curie_level']);
+                        if($amount['Key_id'] != NULL)$newAmount->setKey_id($amount['Key_id']);
+
+                        if($amount['Waste_bag_id'] != NULL){
+
+                            if($newAmount->getKey_id() != null){
+                                //this amount has been saved previously.
+                                //We need to make sure that we aren't accidentally moving it to a new waste bag in the same container
+                                $amountDao = $this->getDao(new ParcelUseAmount());
+                                $relevantAmount = $amountDao->getById($newAmount->getKey_id());
+                                $bag = $this->getWasteBagById($amount['Waste_bag_id']);
+                                $oldBag = $this->getWasteBagById($relevantAmount->getWaste_bag_id());
+                                if( $oldBag == null || ( $oldBag->getContainer_id() != $bag->getContainer_id() ) ){
+                                    $newAmount->setWaste_bag_id($amount['Waste_bag_id']);
+                                }else{
+                                    $newAmount->setWaste_bag_id($relevantAmount->getWaste_bag_id());
+                                }
+                            }
+                            //this ParcelUseAmount is either new or was missing its waste_bag_id
+                            else{
                                 $newAmount->setWaste_bag_id($amount['Waste_bag_id']);
-                            }else{
-                                $newAmount->setWaste_bag_id($relevantAmount->getWaste_bag_id());
                             }
                         }
-                        //this ParcelUseAmount is either new or was missing its waste_bag_id
-                        else{
-                            $newAmount->setWaste_bag_id($amount['Waste_bag_id']);
+                        if($amount['Carboy_id'] != NULL){
+                            $newAmount->setCarboy_id($amount['Carboy_id']);
+                            $entityMaps = array();
+                            $entityMaps[] = new EntityMap("eager", "getCarboy");
+                            $entityMaps[] = new EntityMap("lazy", "getWaste_type");
+                            $entityMaps[] = new EntityMap("lazy", "getContainer_name");
+                            $newAmount->setEntityMaps($entityMaps);
                         }
-                    }
-                    if($amount['Carboy_id'] != NULL){
-                        $newAmount->setCarboy_id($amount['Carboy_id']);
-                        $entityMaps = array();
-                        $entityMaps[] = new EntityMap("eager", "getCarboy");
-                        $entityMaps[] = new EntityMap("lazy", "getWaste_type");
-                        $entityMaps[] = new EntityMap("lazy", "getContainer_name");
-                        $newAmount->setEntityMaps($entityMaps);
-                    }
-                    if($amount['Comments'] != NULL)$newAmount->setComments($amount['Comments']);
-                    $newAmount->setWaste_type_id($amount['Waste_type_id']);
+                        if($amount['Comments'] != NULL)$newAmount->setComments($amount['Comments']);
+                        $newAmount->setWaste_type_id($amount['Waste_type_id']);
 
-                    if($newAmount->getWaste_type()->getName() == "Vial"){
-                        //get the pi
-                        $use = $this->getParcelUseById($newAmount->getParcel_use_id());
-                        $parcelDao = $this->getDao(new Parcel());
-                        $parcel = $parcelDao->getById($use->getParcel_id());
-                        $authDao = $this->getDao(new Authorization());
-                        $auth = $authDao->getById($parcel->getAuthorization_id());
-                        $piAuthDao = $this->getDao(new PIAuthorization());
-                        $piAuth = $piAuthDao->getById($auth->getPi_authorization_id());
-                        $pi = $this->getPIById($piAuth->getPrincipal_investigator_id());
-                        if($pi->getCurrentScintVialCollections() == null){
+                        if($newAmount->getWaste_type()->getName() == "Vial"){
+                            //get the pi
+                            $use = $this->getParcelUseById($newAmount->getParcel_use_id());
+                            $parcelDao = $this->getDao(new Parcel());
+                            $parcel = $parcelDao->getById($use->getParcel_id());
+                            $authDao = $this->getDao(new Authorization());
+                            $auth = $authDao->getById($parcel->getAuthorization_id());
+                            $piAuthDao = $this->getDao(new PIAuthorization());
+                            $piAuth = $piAuthDao->getById($auth->getPi_authorization_id());
+                            $pi = $this->getPIById($piAuth->getPrincipal_investigator_id());
+                            if($pi->getCurrentScintVialCollections() == null){
 
-                            //make new svCollection
-                            $collectionDao = $this->getDao(new ScintVialCollection());
-                            $collection = new ScintVialCollection();
-                            $collection->setIs_active(true);
-                            $collection->setPrincipal_investigator_id($pi->getKey_id());
-                            $collection = $collectionDao->save($collection);
+                                //make new svCollection
+                                $collectionDao = $this->getDao(new ScintVialCollection());
+                                $collection = new ScintVialCollection();
+                                $collection->setIs_active(true);
+                                $collection->setPrincipal_investigator_id($pi->getKey_id());
+                                $collection = $collectionDao->save($collection);
 
-                            //$LOG->fatal($collection);
+                                //$LOG->fatal($collection);
 
-                            $newAmount->setScint_vial_collection_id($collection->getKey_id());
-                        }else{
-                            $id = end($pi->getCurrentScintVialCollections())->getKey_id();
-                            $newAmount->setScint_vial_collection_id($id);
+                                $newAmount->setScint_vial_collection_id($collection->getKey_id());
+                            }else{
+                                $id = end($pi->getCurrentScintVialCollections())->getKey_id();
+                                $newAmount->setScint_vial_collection_id($id);
+                            }
                         }
-                    }
 
-                    $amountDao->save($newAmount);
-                }
-                //if a ParcelUseAmount has no activity, we assume it's supposed to be deleted
-                else{
-                    if($amount['Key_id'] != NULL){
-                        $amountDao = $this->getDao(new ParcelUseAmount());
-                        $amountDao->deleteById($amount['Key_id']);
+                        $amountDao->save($newAmount);
+                    }
+                    //if a ParcelUseAmount has no activity, we assume it's supposed to be deleted
+                    else{
+                        if($amount['Key_id'] != NULL){
+                            $amountDao = $this->getDao(new ParcelUseAmount());
+                            $amountDao->deleteById($amount['Key_id']);
+                        }
                     }
                 }
             }
@@ -981,6 +1035,8 @@ class Rad_ActionManager extends ActionManager {
 		    $entityMaps[] = new EntityMap("eager", "getParcelUseAmounts");
             $entityMaps[] = new EntityMap("eager", "getParcelAmountOnHand");
             $entityMaps[] = new EntityMap("eager", "getParcelRemainder");
+            $entityMaps[] = new EntityMap("eager", "getDestinationParcel");
+
 
             $use->setEntityMaps($entityMaps);
             return $use;
@@ -1011,6 +1067,10 @@ class Rad_ActionManager extends ActionManager {
                     $bag = $bagDao->getById($bagArray['Key_id']);
                     $bag->setPickup_id($pickup->getKey_id());
                     $bagDao->save($bag);
+                    //if this pickup has been picked up, we but a new waste bag in the container that previously held the bag
+                    if($decodedObject->getStatus() == "PICKED UP"){
+                        $this->changeWasteBag($bag);
+                    }
                 }
 
                 foreach($svCollections as $collectionArray){
@@ -1112,9 +1172,13 @@ class Rad_ActionManager extends ActionManager {
             return $decodedObject;
         }
     }
-    function changeWasteBag() {
+    function changeWasteBag(WasteBag $bag = null) {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-        $decodedObject = $this->convertInputJson();
+        if($bag == null){
+            $decodedObject = $this->convertInputJson();
+        }else{
+            $decodedObject = $bag;
+        }
         $LOG->debug($decodedObject);
         if( $decodedObject === NULL ) {
             return new ActionError('Error converting input stream to WasteBag', 202);
@@ -1128,12 +1192,19 @@ class Rad_ActionManager extends ActionManager {
             //get the bags for the container and find the one we need to remove
             $bag = $dao->save($decodedObject);
             $container = $bag->getContainer();
-            $LOG->fatal($bag);
-            $newBag = new WasteBag();
-            $newBag->setDate_added(date('Y-m-d H:i:s'));
-            $newBag->setIs_active(true);
-            $newBag->setContainer_id($container->getKey_id());
-            return $dao->save($newBag);
+
+            $group = new WhereClauseGroup(array(new WhereClause("container_id","=",$container->getKey_id())));
+            $curBags = $dao->getAllWhere($group,"AND","date_removed");
+            $latestBag = $curBags[0];
+            $LOG->fatal($latestBag);
+            if($latestBag == null || $latestBag->getDate_removed() != null){
+                $newBag = new WasteBag();
+                $newBag->setDate_added(date('Y-m-d H:i:s'));
+                $newBag->setIs_active(true);
+                $newBag->setContainer_id($container->getKey_id());
+                return $dao->save($newBag);
+            }
+
         }
     }
     function saveSolidsContainer() {
@@ -1822,7 +1893,7 @@ class Rad_ActionManager extends ActionManager {
         }
 
         if($id == null){
-         return new ActionError("No request parameter 'id' was provided");
+            return new ActionError("No request parameter 'id' was provided");
         }
 
         $dao = $this->getDao(new Pickup());
@@ -2052,7 +2123,7 @@ class Rad_ActionManager extends ActionManager {
 
         //get the total transfered out since the previous inventory
         //??what is a tranfer out?
-        $amount->setTransfer_out(0);
+        $amount->setTransfer_out($transferInDao->getTransferOutAmounts($startDate, $endDate));
 
         //subtract this quarters parcel uses, going by parcel use amount, maintaining a count of each kind of disposal (liquid, solid or scintvial)
 
@@ -2106,57 +2177,63 @@ class Rad_ActionManager extends ActionManager {
 
         //build the QuarterlyIsotopeAmounts for each isotope the PI could have
         $amounts = array();
-        foreach($pi->getPi_authorization() as $piAuth){
-            $auths = $piAuth->getAuthorizations();
-            foreach($auths as $authorization){
-                $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
+        $piAuth = $pi->getCurrentPi_authorization();
 
-                //do we already have a QuarterlyIsotopeAmount?
-                $whereClauseGroup = new WhereClauseGroup();
-                $clauses = array(
-                        new WhereClause('authorization_id','=', $authorization->getKey_id() ),
-                        new WhereClause('quarterly_inventory_id','=', $pi_inventory->getKey_id() ),
-                );
+        $auths = $piAuth->getAuthorizations();
+        foreach($auths as $authorization){
+            $isotopeFound = false;
 
-                $whereClauseGroup->setClauses($clauses);
-                $oldAmounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);
+            $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
 
-                if($oldAmounts != NULL){
-                    $newAmount = $oldAmounts[0];
-                }else{
-                    $newAmount = new QuarterlyIsotopeAmount();
-                }
+            //do we already have a QuarterlyIsotopeAmount?
+            $whereClauseGroup = new WhereClauseGroup();
+            $clauses = array(
+                    new WhereClause('authorization_id','=', $authorization->getKey_id() ),
+                    new WhereClause('quarterly_inventory_id','=', $pi_inventory->getKey_id() ),
+            );
 
-                $newAmount->setQuarterly_inventory_id($mostRecentIntentory->getKey_id());
+            $whereClauseGroup->setClauses($clauses);
+            $oldAmounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);
 
-                //if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
-                if($mostRecentIntentory != null){
-                    foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
-                        if($amount->getAuthorization_id() == $authorization->getIsotope_id()){
-                            $newAmount->setStarting_amount($amount->getEnding_amount());
-                            $isotopeFound = true;
-                        }
+            if($oldAmounts != NULL){
+                $newAmount = $oldAmounts[0];
+            }else{
+                $newAmount = new QuarterlyIsotopeAmount();
+                $newAmount->setAuthorization_id($authorization->getKey_id());
+            }
+            $newAmount->setQuarterly_inventory_id($mostRecentIntentory->getKey_id());
+
+            //if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
+            if($mostRecentIntentory != null){
+                foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
+                    if($amount->getAuthorization_id() == $authorization->getIsotope_id()){
+                        $newAmount->setStarting_amount($amount->getEnding_amount());
+                        $isotopeFound = true;
                     }
                 }
+            }
 
-                //there wasn't an record of this isotope for the previous quarter, so we assume the starting amount to be 0
-                if($isotopeFound == false){
-                    $newAmount->setStarting_amount(0);
-                }
+            //there wasn't an record of this isotope for the previous quarter, so we assume the starting amount to be 0
+            if($isotopeFound == false){
+                $newAmount->setStarting_amount(0);
+            }
 
+            //calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
+            $newAmount = $this->calculateQuarterlyAmount($newAmount, $startDate, $endDate);
+            $LOG->fatal($newAmount);
 
-                //calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
-                $newAmount = $this->calculateQuarterlyAmount($newAmount, $startDate, $endDate);
-                $newAmount = $quarterlyAmountDao->save($newAmount);
-                $auth = $newAmount->getAuthorization();
-                if($auth != null){
-                    $entityMaps = array();
-                    $entityMaps[] = new EntityMap("eager", "getIsotope");
-                    $newAmount->getAuthorization()->setEntityMaps($entityMaps);
-                    $amounts[] = $newAmount;
-                }
+            $newAmount = $quarterlyAmountDao->save($newAmount);
+            $LOG->fatal($newAmount);
+            $auth = $newAmount->getAuthorization();
+            if($auth != null){
+                $entityMaps = array();
+                $entityMaps[] = new EntityMap("eager", "getIsotope");
+                $newAmount->getAuthorization()->setEntityMaps($entityMaps);
+                $amounts[] = $newAmount;
             }
         }
+
+        $LOG->fatal($amounts);
 
         $pi_inventory->setQuarterly_isotope_amounts($amounts);
         $entityMaps = array();
@@ -2229,6 +2306,19 @@ class Rad_ActionManager extends ActionManager {
             $dao = $this->getDao(new PIQuarterlyInventory());
             $piq = $dao->save($decodedObject);
             return $piq;
+        }
+    }
+
+    public function getQuartleryInventoryById($id = null){
+
+        $id = $this->getValueFromRequest('id', $id);
+
+        if( $id !== NULL ){
+            $dao = $this->getDao(new QuarterlyInventory());
+            return $dao->getById($id);
+        }
+        else {
+            return new ActionError("No request parameter 'id' was provided", 201);
         }
     }
 
@@ -2530,7 +2620,7 @@ class Rad_ActionManager extends ActionManager {
     function saveMiscellaneousWaste(MiscellaneousWaste $waste){
         $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
         if($waste == null){
-             $waste = $this->convertInputJson();
+            $waste = $this->convertInputJson();
         }
     	if( $waste === NULL ) {
     		return new ActionError('Error converting input stream to MiscWaste', 202);

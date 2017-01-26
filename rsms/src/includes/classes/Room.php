@@ -177,7 +177,8 @@ class Room extends GenericCrud {
     public function getBuilding_name(){
 		if($this->building_name == null && $this->getBuilding_id() != null) {
 			$buildingDAO = new GenericDAO(new Building());
-			$this->building_name = $buildingDAO->getById($this->building_id)->getName();
+            $bldg = $buildingDAO->getById($this->building_id);
+			$this->building_name = $bldg->getAlias() != null ? $bldg->getAlias() : $bldg->getName();
 		}
 		return $this->building_name;
 	}

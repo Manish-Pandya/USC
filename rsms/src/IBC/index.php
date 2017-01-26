@@ -62,6 +62,10 @@ if(!isset($_SESSION["USER"])){ ?>
 	<link type="text/css" rel="stylesheet" href="../css/bootstrap.css"/>
 	<link type="text/css" rel="stylesheet" href="../css/bootstrap-responsive.css"/>
 	<link type="text/css" rel="stylesheet" href="../css/bootmetro.css"/>
+    <link type="text/css" rel="stylesheet" href="../css/bootmetro.css" />
+    <link rel="stylesheet" type="text/css" href="../css/bootmetro-tiles.css" />
+    <link rel="stylesheet" type="text/css" href="../css/bootmetro-charms.css" />
+    <link rel="stylesheet" type="text/css" href="../css/metro-ui-light.css" />
 	<link rel="stylesheet" type="text/css" href="../css/icomoon.css"/>
 	<link rel="stylesheet" type="text/css" href="../css/datepicker.css"/>
 	<link type="text/css" rel="stylesheet" href="../stylesheets/style.css"/>
@@ -120,6 +124,7 @@ if(!isset($_SESSION["USER"])){ ?>
 
 <!-- filters -->
 <!--script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></!--script>-->
+<script src="scripts/filters/IBCFilters.js"></script>
 
 
 <!-- framework -->

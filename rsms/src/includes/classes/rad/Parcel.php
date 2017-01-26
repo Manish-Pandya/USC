@@ -16,7 +16,7 @@ class Parcel extends RadCrud {
 	/** Key/Value array listing column names and their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"principal_investigator_id"		=> "integer",
-        "original_pi_id"		        => "integer",
+        "transfer_amount_id"		    => "integer",
         "transfer_in_date"              => "timestamp",
 
 		"purchase_order_id"				=> "integer",
@@ -108,6 +108,9 @@ class Parcel extends RadCrud {
 
     /** Is this parcel a transfer? **/
     private $is_transfer;
+    private $transfer_in_date;
+    /** If this parcel resulted from a trasnfer from another PI, what was the id of the parcel use amount used to remove it from the other pis inventory **/
+    private $transfer_amount_id;
     private $receivingPiName;
 
     /** If this parcel was transfered to it's current pi by another pi, what was the key_id of the original parcel? **/
@@ -181,7 +184,12 @@ class Parcel extends RadCrud {
 		$this->isotope = $newIsotope;
 	}
 
-	public function getArrival_date() { return $this->arrival_date; }
+	public function getArrival_date() {
+        if($this->arrival_date ==  null && $this->transfer_in_date != null){
+            $this->arrival_date = $this->transfer_in_date;
+        }
+        return $this->arrival_date;
+    }
 	public function setArrival_date($newDate) { $this->arrival_date = $newDate; }
 
 	public function getQuantity() { return $this->quantity; }
@@ -327,6 +335,9 @@ class Parcel extends RadCrud {
         }
         return $this->receivingPiName;
     }
+
+    public function getTransfer_amount_id(){return $this->transfer_amount_id;}
+    public function setTransfer_amount_id($id){$this->transfer_amount_id = $id;}
 
 }
 ?>

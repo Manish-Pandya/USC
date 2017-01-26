@@ -4570,11 +4570,12 @@ class ActionManager {
         return $dao->getAll();
     }
 
-    public function getRelationships( $class1 = NULL, $class2 = NULL ){
+    public function getRelationships( $class1 = NULL, $class2 = NULL, $override = NULL ){
     	$LOG = Logger::getLogger( 'Action:' . __function__ );
 
     	if($class1==NULL)$class1 = $this->getValueFromRequest('class1', $class1);
     	if($class2==NULL)$class2 = $this->getValueFromRequest('class2', $class2);
+        if($override==NULL)$override = $this->getValueFromRequest('override', $override);
 
     	// make sure first letter of class name is capitalized.
     	$class1 = ucfirst($class1);
@@ -4582,7 +4583,7 @@ class ActionManager {
 
     	$relationshipFactory = new RelationshipMappingFactory();
     	// get the relationship mapping for the relevant classes
-    	$relationship = $relationshipFactory->getRelationship($class1, $class2);
+    	$relationship = $relationshipFactory->getRelationship($class1, $class2, $override);
 
     	if( $relationship instanceof ActionError ) {
     		return $relationship;

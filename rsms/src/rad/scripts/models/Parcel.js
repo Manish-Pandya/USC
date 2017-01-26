@@ -66,15 +66,14 @@ Parcel.prototype = {
 
     loadPrincipalInvestigator: function() {
         if(!this.PrincipalInvestigator) {
-            dataLoader.loadChildObject(this, 'Principal_investigator','PrincipalInvestigator', this.Principal_investigator_id);
+            return dataLoader.loadChildObject(this, 'Principal_investigator','PrincipalInvestigator', this.Principal_investigator_id);
 
         }
     },
 
     loadUses: function() {
-        if(!this.Uses) {
-            dataLoader.loadOneToManyRelationship( this, 'ParcelUses', this.ParcelUsesRelationship);
-        }
+        return dataLoader.loadOneToManyRelationship(this, 'ParcelUses', this.ParcelUsesRelationship);
+        
     },
     loadAuthorization: function() {
         if (!this.Authorization) {

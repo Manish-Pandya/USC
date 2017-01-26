@@ -1,23 +1,153 @@
-﻿<div cg-busy="{promise:UsersBusy,message:'This one will take around 1.4 seconds', backdrop:true}"></div>
-<table class="table table-striped table-bordered">
-	<tr>
-		<th>Protocol #</th>
-		<th>Prinicipal Investigator</th>
-		<th>Department</th>
-        <th>Project Title</th>
-        <th>Approval Date</th>
-        <th>Expiration Date</th>
-        <th>Biological Hazard</th>
-        <th>Biosafety Protocol</th>
-	</tr>
-	<tr ng-repeat="protocol in protocols">
-		<td>{{protocol.Protocol_number}}</td>
-		<td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
-        <td>{{protocol.Department.Name}} </td>
-        <td>{{protocol.Project_title}} </td>
-        <td>{{protocol.Approval_date | dateToISO}} </td>
-        <td>{{protocol.Expiration_date | dateToISO}} </td>
-        <td>{{protocol.Hazard.Name}} </td>
-        <td><a href>do thing</a> </td>
-	</tr>
+﻿<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:saving, message:'Saving...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+
+<h1 class="card full">
+    <i class="icon-protocol"></i>IBC Administrator – Protocol Management
+    <select ng-options="status for status in protocolStatuses" ng-model="selectedProtocolStatus">
+        <option value="">View All Protocols</option>
+    </select>
+    <a ng-show="selectedProtocolStatus != Constants.IBC_PROTOCOL_REVISION.STATUS.SUBMITTED && selectedProtocolStatus != Constants.IBC_PROTOCOL_REVISION.STATUS.RETURNED_FOR_REVISION" ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>
+</h1>
+<br/>
+<div class="card full">
+    <table class="table table-striped table-bordered" ng-if="protocolStatuses.indexOf(selectedProtocolStatus) == -1 || selectedProtocolStatus == Constants.IBC_PROTOCOL_REVISION.STATUS.NOT_SUBMITTED">
+        <thead>
+            <tr class="blueBg">
+                <th colspan="9" class="blueBg">
+                    <h1 class="blueBg">Not Submitted Protocols</h1>
+                    <h2 class="blueBg" style="float:right; margin-top:-40px;"><span class="bold underline">{{(protocols|isNotSubmitted).length}}</span> Protocols Displayed</h2>
+                </th>
+            </tr>
+            <tr>
+                <th>Original Protocol #</th>
+                <th>Prinicipal Investigator</th>
+                <th>Department</th>
+                <th>Project Title</th>
+                <th>Date Started</th>
+                <th>Protocol Type</th>
+                <th>Biological Hazard</th>
+                <th>Biosafety Protocol</th>
+                <th>{{showInactive ? 'Activate' : 'Inactivate'}} Protocol</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr ng-repeat="protocol in protocols | isNotSubmitted | filter:{Is_active:!showInactive}">
+                <td>{{protocol.Protocol_number}}</td>
+                <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
+                <td>{{protocol.Department.Name}} </td>
+                <td>{{protocol.Project_title}} </td>
+                <td>{{protocol.Date_created | dateToISO}} </td>
+                <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Protocol_type}} </td>
+                <td>{{protocol.Hazard.Name}} </td>
+                <td><a href="">do thing</a> </td>
+                <td><button ng-class="{'btn-danger': protocol.Is_active, 'btn-success':!protocol.Is_active}" ng-click="toggleActive(protocol)" class="btn btn-mini"><i ng-class="{'icon-remove':protocol.Is_active, 'icon-checkmark':!protocol.Is_active}"></i></button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<table class="table table-striped table-bordered" ng-if="protocolStatuses.indexOf(selectedProtocolStatus) == -1 || selectedProtocolStatus == Constants.IBC_PROTOCOL_REVISION.STATUS.SUBMITTED">
+    <thead>
+        <tr class="blueBg">
+            <th colspan="9" class="blueBg">
+                <h1 class="blueBg">Submitted Protocols</h1>
+                <h2 class="blueBg" style="float:right; margin-top:-40px;"><span class="bold underline">{{(protocols|isSubmitted).length}}</span> Protocols Displayed</h2>
+            </th>
+        </tr>
+        <tr>
+            <th>Original Protocol #</th>
+            <th>Prinicipal Investigator</th>
+            <th>Department</th>
+            <th>Project Title</th>
+            <th>Date Submitted</th>
+            <th>Protocol Type</th>
+            <th>Biological Hazard</th>
+            <th>Biosafety Protocol</th>
+            <th>Assign for Review</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr ng-repeat="protocol in protocols | isSubmitted">
+            <td>{{protocol.Protocol_number}}</td>
+            <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
+            <td>{{protocol.Department.Name}} </td>
+            <td>{{protocol.Project_title}} </td>
+            <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Date_submitted | dateToISO}} </td>
+            <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Protocol_type}} </td>
+            <td>{{protocol.Hazard.Name}} </td>
+            <td><a href="">do thing</a> </td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table table-striped table-bordered" ng-if="protocolStatuses.indexOf(selectedProtocolStatus) == -1 || selectedProtocolStatus == Constants.IBC_PROTOCOL_REVISION.STATUS.RETURNED_FOR_REVISION">
+    <thead>
+        <tr class="blueBg">
+            <th colspan="9" class="blueBg">
+                <h1 class="blueBg">Returned for Revisions</h1>
+                <h2 class="blueBg" style="float:right; margin-top:-40px;"><span class="bold underline">{{(protocols|isReturned).length}}</span> Protocols Displayed</h2>
+            </th>
+        </tr>
+        <tr>
+            <th>Original Protocol #</th>
+            <th>Prinicipal Investigator</th>
+            <th>Department</th>
+            <th>Project Title</th>
+            <th>Date Returned</th>
+            <th>Protocol Type</th>
+            <th>Biological Hazard</th>
+            <th>Biosafety Protocol</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr ng-repeat="protocol in protocols | isReturned">
+            <td>{{protocol.Protocol_number}}</td>
+            <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
+            <td>{{protocol.Department.Name}} </td>
+            <td>{{protocol.Project_title}} </td>
+            <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Date_returned | dateToISO}} </td>
+            <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Protocol_type}} </td>
+            <td>{{protocol.Hazard.Name}} </td>
+            <td><a href="">do thing</a> </td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table table-striped table-bordered" ng-if="protocolStatuses.indexOf(selectedProtocolStatus) == -1 || selectedProtocolStatus == Constants.IBC_PROTOCOL_REVISION.STATUS.APPROVED">
+    <thead>
+        <tr class="blueBg">
+            <th colspan="9" class="blueBg">
+                <h1 class="blueBg">Approved Protocols</h1>
+                <h2 class="blueBg" style="float:right; margin-top:-40px;"><span class="bold underline">{{(protocols|isApproved).length}}</span> Protocols Displayed</h2>
+            </th>
+        </tr>
+        <tr>
+            <th>Protocol #</th>
+            <th>Prinicipal Investigator</th>
+            <th>Department</th>
+            <th>Project Title</th>
+            <th>Approval Date</th>
+            <th>Expiration Date</th>
+            <th>Biological Hazard</th>
+            <th>Biosafety Protocol</th>
+            <th>{{showInactive ? 'Active' : 'Inactive'}} Protocol</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr ng-repeat="protocol in protocols | isApproved | filter:{Is_active:!showInactive}">
+            <td>{{protocol.Protocol_number}}</td>
+            <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
+            <td>{{protocol.Department.Name}} </td>
+            <td>{{protocol.Project_title}} </td>
+            <td>{{protocol.Approval_date | dateToISO}} </td>
+            <td>{{protocol.Expiration_date | dateToISO}} </td>
+            <td>{{protocol.Hazard.Name}} </td>
+            <td><a href="">do thing</a> </td>
+            <td><button ng-class="{'btn-danger': protocol.Is_active, 'btn-success':!protocol.Is_active}" ng-click="toggleActive(protocol)" class="btn btn-mini"><i ng-class="{'icon-remove':protocol.Is_active, 'icon-checkmark':!protocol.Is_active}"></i></button></td>
+        </tr>
+    </tbody>
 </table>

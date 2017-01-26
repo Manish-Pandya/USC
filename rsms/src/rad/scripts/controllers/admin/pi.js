@@ -71,11 +71,15 @@ angular.module('00RsmsAngularOrmApp')
 
     $scope.getHighestAmendmentNumber = function (amendments) {
         if (!amendments)  return;
-               
+        console.log(amendments);
+
         var highestAuthNumber = 0;
-        _.sortBy(amendments, [function (amendment) {
-            return moment(amendment.Approval_date).valueOf();
-        }]);
+        amendments.sort(function (a, b) {
+            return moment(a.Approval_date).valueOf() - moment(b.Approval_date).valueOf();
+        })
+
+        console.log(amendments);
+
         for (var i = 0; i < amendments.length; i++) {
             var amendment = amendments[i];
             convenienceMethods.dateToIso(amendment.Approval_date, amendment, "Approval_date", true);
@@ -143,15 +147,7 @@ angular.module('00RsmsAngularOrmApp')
         $scope.af = af;
         $scope.modalData = af.getModalData();
 
-        $scope.getHighestAuth = function (pi) {
-            if (pi.Pi_authorization && pi.Pi_authorization.length) {
-                var auths = _.sortBy(pi.Pi_authorization, [function (amendment) {
-                    return moment(amendment.Approval_date).valueOf();
-                }]);
-
-                return auths[auths.length - 1];
-            }
-        }
+        
 
         if(!$scope.modalData.PurchaseOrderCopy){
             $scope.modalData.PurchaseOrderCopy = {

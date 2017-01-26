@@ -1,37 +1,42 @@
-﻿angular.module('ng-IBC')
+angular.module('ng-IBC')
     .filter('isNotSubmitted', function () {
-        return function (protocols) {
-            if (!protocols) return;
-            unsubmittedProtocols = protocols.filter(function (p) {
-                return !p.Date_submitted;
-            })
-            return unsubmittedProtocols;
-        };
-    })
-	.filter('isSubmitted', function () {
-	    return function (protocols) {
-	        if (!protocols) return;	        
-	        submittedProtocols = protocols.filter(function (p) {
-	            return p.Date_submitted && !p.Date_approved;
-	        })
-	        return submittedProtocols;
-	    };
-	})
+    return function (protocols) {
+        console.log('running filter');
+        if (!protocols)
+            return;
+        var unsubmittedProtocols = protocols.filter(function (p) {
+            return p.IBCProtocolRevisions[p.IBCProtocolRevisions.length - 1].Status == Constants.IBC_PROTOCOL_REVISION.STATUS.NOT_SUBMITTED;
+        });
+        return unsubmittedProtocols;
+    };
+})
+    .filter('isSubmitted', function () {
+    return function (protocols) {
+        if (!protocols)
+            return;
+        var submittedProtocols = protocols.filter(function (p) {
+            return p.IBCProtocolRevisions[p.IBCProtocolRevisions.length - 1].Status == Constants.IBC_PROTOCOL_REVISION.STATUS.SUBMITTED;
+        });
+        return submittedProtocols;
+    };
+})
     .filter('isReturned', function () {
-        return function (protocols) {
-            if (!protocols) return;
-            returnedProtocols = protocols.filter(function (p) {
-                return p.Returned_for_review && !p.Date_approved;
-            })
-            return returnedProtocols;
-        };
-    })
+    return function (protocols) {
+        if (!protocols)
+            return;
+        var returnedProtocols = protocols.filter(function (p) {
+            return p.IBCProtocolRevisions[p.IBCProtocolRevisions.length - 1].Status == Constants.IBC_PROTOCOL_REVISION.STATUS.RETURNED_FOR_REVISION;
+        });
+        return returnedProtocols;
+    };
+})
     .filter('isApproved', function () {
-        return function (protocols) {
-            if (!protocols) return;
-            approvedProtocols = protocols.filter(function (p) {
-                return p.Date_approved;
-            })
-            return approvedProtocols;
-        };
-    })
+    return function (protocols) {
+        if (!protocols)
+            return;
+        var approvedProtocols = protocols.filter(function (p) {
+            return p.IBCProtocolRevisions[p.IBCProtocolRevisions.length - 1].Status == Constants.IBC_PROTOCOL_REVISION.STATUS.APPROVED;
+        });
+        return approvedProtocols;
+    };
+});
