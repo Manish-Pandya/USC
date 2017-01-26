@@ -58,21 +58,24 @@ if(!isset($_SESSION["USER"])){ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- stylesheets -->
+<!-- stylesheets
 	<link type="text/css" rel="stylesheet" href="../css/bootstrap.css"/>
 	<link type="text/css" rel="stylesheet" href="../css/bootstrap-responsive.css"/>
 	<link type="text/css" rel="stylesheet" href="../css/bootmetro.css"/>
-    <link type="text/css" rel="stylesheet" href="../css/bootmetro.css" />
     <link rel="stylesheet" type="text/css" href="../css/bootmetro-tiles.css" />
     <link rel="stylesheet" type="text/css" href="../css/bootmetro-charms.css" />
     <link rel="stylesheet" type="text/css" href="../css/metro-ui-light.css" />
 	<link rel="stylesheet" type="text/css" href="../css/icomoon.css"/>
 	<link rel="stylesheet" type="text/css" href="../css/datepicker.css"/>
-	<link type="text/css" rel="stylesheet" href="../stylesheets/style.css"/>
 	<link type="text/css" rel="stylesheet" href="../css/font-awesome.min.css"/>
 
+ -->
+    <link href="../css/10-18-2017-manual-bundle.min.css" rel="stylesheet" />
 	<link type="text/css" rel="stylesheet" href="../css/angular-busy.css">
 	<link type="text/css" rel="stylesheet" href="../css/select.min.css"/>
+    <link type="text/css" rel="stylesheet" href="../stylesheets/style.css" />
+
+    <link type="text/css" rel="stylesheet" href="../stylesheets/ibc-styles.css" />
 
 <!-- included fonts
  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
@@ -126,6 +129,8 @@ if(!isset($_SESSION["USER"])){ ?>
 <!--script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></!--script>-->
 <script src="scripts/filters/IBCFilters.js"></script>
 
+<!-- directives -->
+<script src="scripts/directives/collapsibleCard.js"></script>
 
 <!-- framework -->
     <script src="../ignorasmus/client-side-framework/DataStoreManager.js"></script>
@@ -158,7 +163,7 @@ if(!isset($_SESSION["USER"])){ ?>
     <h1>{{viewLabel}} <a style="float:right;margin: 11px 128px 0 0; color:black" href="../views/RSMSCenter.php#/safety-programs"><i class="icon-home" style="font-size:40px;"></i></a></h1>
   </div>
 <!-- VIEW NESTING -->
-    <div ui-view class="noBg"></div>
+    <div ui-view class="noBg ibc"></div>
 </div>
 </body>
 </html>

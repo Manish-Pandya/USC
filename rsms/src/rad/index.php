@@ -84,14 +84,14 @@ if(!isset($_SESSION["USER"])){ ?>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/metro-ui-light.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/icomoon.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/datepicker.css"/>
-<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css"/>
-<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/jqtree.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/font-awesome.min.css"/>
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/ng-mobile-menu.css"/>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/angular-busy.css">
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rad-styles.css">
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css"/>
+
+<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css" />
 
 <!-- included fonts
  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>

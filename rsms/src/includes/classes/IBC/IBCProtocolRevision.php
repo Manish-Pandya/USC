@@ -57,9 +57,10 @@ class IBCProtocolRevision extends GenericCrud
     private $preliminaryReviewers;
 
 	public function __construct(){
-
 		// Define which subentities to load
 		$entityMaps = array();
+        $entityMaps[] = new EntityMap("lazy","getPreliminaryReviewers");
+        $entityMaps[] = new EntityMap("lazy","getPrimaryReviewers");
 		$this->setEntityMaps($entityMaps);
 	}
 

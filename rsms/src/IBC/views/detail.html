@@ -1,9 +1,16 @@
-﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title></title>
-</head>
-<body>
-    detail
-</body>
-</html>
+﻿<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div class="protocol-document">
+    <collapsible-card class="card full protocol-info" header-text="Protocol Information" header-icon="icon-info">
+            <h3>Section Heading</h3>
+            <ul class="questions">
+                <li>
+                    <h4>1. this is the text of the question.</h4>
+                    <ul class="answers">
+                        <li>Possible answer 1</li>
+                        <li>Possible answer 2</li>
+                    </ul>
+                </li>
+            </ul>
+    </collapsible-card>
+</div>
+<pre>{{revision | json}}</pre>

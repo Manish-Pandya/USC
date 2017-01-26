@@ -1,0 +1,31 @@
+﻿<div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../busy-templates/full-page-busy.html'}"></div>
+<div class="modal-header blueBg" style="padding:0;">
+    <h2 style="padding:5px; color:white">Assign for Review</h2>
+</div>
+
+<div class="modal-body">
+    <div class="control-group">
+        <label class="control-label">Add Reviewer</label>
+        <div class="controls">
+            <ui-select ng-model="user.selected" theme="selectize" ng-disabled="disabled" on-select="addRemoveReviewer($item, true)" class="span3" style="margin-left:0">
+                <ui-select-match placeholder="Select or search for a reviewer">{{$select.selected.Name}}</ui-select-match>
+                <ui-select-choices repeat="user in users | orderBy:'Name' | propsFilter: {Name: $select.search}">
+                    <div ng-bind-html="user.Name | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select> 
+        </div>
+        <ul>
+            <li ng-repeat="reviewer in reviewers" style="padding: 3px 0; font-size: 15px;">
+                <label class="checkbox inline">
+                    <input type="checkbox" ng-model="reviewer.isChecked" ng-change="addRemoveReviewer(reviewer, reviewer.isChecked)" />
+                    <span class="metro-checkbox" once-text="reviewer.Name"></span>
+                </label>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <a class="btn btn-large btn-success left" ng-click="save(modalData.IBCProtocolRevision)"><i class="icon-checkmark"></i>Save</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>

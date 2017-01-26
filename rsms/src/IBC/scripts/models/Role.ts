@@ -3,6 +3,8 @@
 
         static urlMapping: UrlMapping = new UrlMapping("getAllRoles", "getRoleById&id=", "saveRole");
 
+        Name: string;
+
         constructor() {
             super();
         }

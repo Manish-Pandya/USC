@@ -120,32 +120,34 @@ var InstanceFactory = (function (_super) {
         parent[compMap.PropertyName] = []; // clear property
         var childStore = DataStoreManager._actualModel[compMap.ChildType].Data;
         if (compMap.CompositionType == CompositionMapping.ONE_TO_MANY) {
-            var len = childStore.length;
-            for (var i = 0; i < len; i++) {
-                //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
-                if (childStore[i][compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
-                    parent[compMap.PropertyName].push(childStore[i]);
+            childStore.forEach(function (value) {
+                if (value[compMap.ChildIdProp] == parent[compMap.ParentIdProp]) {
+                    parent[compMap.PropertyName].push(value.viewModelWatcher);
                 }
-            }
+            });
         }
         else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
             if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                 // Get the gerunds
-                var manyTypeToManyGerundType = parent.TypeName + "To" + compMap.ChildType;
-                if (DataStoreManager._actualModel[manyTypeToManyGerundType] && DataStoreManager._actualModel[manyTypeToManyGerundType].Data) {
-                    var d = DataStoreManager._actualModel[manyTypeToManyGerundType].Data;
+                if (DataStoreManager._actualModel[compMap.GerundName] && DataStoreManager._actualModel[compMap.GerundName].Data) {
+                    var d = DataStoreManager._actualModel[compMap.GerundName].Data;
                     var gerundLen = d.length;
+                    var _loop_1 = function (i) {
+                        childStore.forEach(function (value) {
+                            if (value.UID == d[i].ChildId && parent.UID == d[i].ParentId) {
+                                parent[compMap.PropertyName].push(value.viewModelWatcher);
+                            }
+                        });
+                    };
                     //loop through all the gerunds
                     for (var i = 0; i < gerundLen; i++) {
-                        var childLen = childStore.length;
-                        for (var x = 0; x < childLen; x++) {
-                            if (parent.UID == d[i].ParentId && childStore[x].UID == d[i].ChildId) {
-                                parent[compMap.PropertyName].push(childStore[x]);
-                            }
-                        }
+                        _loop_1(i);
                     }
                 }
-                return;
+                else {
+                    DataStoreManager.getById(parent.TypeName, parent.UID, parent, [compMap]);
+                    console.log(compMap.GerundName + " doesn't exist in actualModel. Running getById to resolve...");
+                }
             }
             else {
                 parent[compMap.PropertyName + "Promise"] = (parent[compMap.PropertyName + "Promise"] || XHR.GET(parent.getChildUrl(compMap)))
@@ -162,13 +164,11 @@ var InstanceFactory = (function (_super) {
             }
         }
         else {
-            var len = childStore.length;
-            for (var i = 0; i < len; i++) {
-                //TODO, don't push members of ActualModel, instead create new childWatcher view model thinguses
-                if (childStore[i][compMap.ParentIdProp] == parent[compMap.ChildIdProp]) {
-                    parent[compMap.PropertyName] = childStore[i];
+            childStore.forEach(function (value) {
+                if (value[compMap.ParentIdProp] == parent[compMap.ChildIdProp]) {
+                    parent[compMap.PropertyName] = value.viewModelWatcher;
                 }
-            }
+            });
         }
     };
     /**

@@ -1,7 +1,6 @@
 ﻿angular.module('ng-IBC')
     .filter('isNotSubmitted', function () {
         return function (protocols) {
-            console.log('running filter');
             if (!protocols) return;
             var unsubmittedProtocols = protocols.filter(function (p) {
                 return p.IBCProtocolRevisions[p.IBCProtocolRevisions.length - 1].Status == Constants.IBC_PROTOCOL_REVISION.STATUS.NOT_SUBMITTED;
@@ -35,4 +34,25 @@
             })
             return approvedProtocols;
         };
+    })
+    .filter('isIBCMember', function () {
+        return function (users) {
+            if (!users) return;
+            var approvedUsers = users.filter(function (u: ibc.User) {
+                var hasCorrectRole: boolean = false;
+                u.Roles.forEach((value: ibc.Role, index: number, array: ibc.Role[]) => {
+                    if (value.Name == Constants.ROLE.NAME.IBC_MEMBER || value.Name == Constants.ROLE.NAME.IBC_CHAIR) {
+                        hasCorrectRole = true;
+                    }
+                })
+                return hasCorrectRole;
+            })
+            return approvedUsers;
+        };
+    })
+    .filter('getMostRecentRevision', () => {
+        return (revisions) => {
+            if (!revisions || !revisions.length) return;
+            return revisions.sort((a,b) => { return a.Revision_number > b. Revision_number})[0];
+        }
     })

@@ -98,7 +98,7 @@ abstract class FluxCompositerBase {
 
     thisClass: Function; // reference to instance's class for calling static props and methods
 
-    protected _allCompMaps: CompositionMapping[];
+    private _allCompMaps: CompositionMapping[];
     get allCompMaps(): CompositionMapping[] {
         if (!this._allCompMaps) {
             this._allCompMaps = [];
@@ -179,7 +179,7 @@ abstract class FluxCompositerBase {
                 // compose just properties in array...
                 var len: number = (<CompositionMapping[]>compMaps).length;
                 for (let i: number = 0; i < len; i++) {
-                    if (this.allCompMaps.indexOf(compMaps[i]) > -1) {
+                    if (_.findIndex(this.allCompMaps, compMaps[i]) > -1) {
                         InstanceFactory.getChildInstances(compMaps[i], this);
                     }
                 }

@@ -1,7 +1,6 @@
-var Constants = (function (thing) {
-    var constants = {};
+class Constants  {
 
-    constants.PENDING_CHANGE = {
+    public static PENDING_CHANGE = {
         USER_STATUS:{
             NO_LONGER_CONTACT:"Still in this lab, but no longer a contact",
             NOW_A_CONTACT:"Still in this lab, but now a lab contact",
@@ -19,7 +18,7 @@ var Constants = (function (thing) {
         }
     };
 
-    constants.POSITION = ["Undergraduate", 
+    public static POSITION: string[] = ["Undergraduate", 
         "Graduate Student", 
         "Post-Doctoral Fellow", 
         "Research Professor", 
@@ -31,7 +30,7 @@ var Constants = (function (thing) {
         "Other"
     ];
 
-    constants.ROLE = {
+    public static ROLE = {
         NAME:{
             ADMIN:"Admin",
             SAFETY_INSPECTOR:"Safety Inspector",
@@ -43,11 +42,13 @@ var Constants = (function (thing) {
             RADIATION_ADMIN:"Radiation Admin",
             EMERGENCY_ACCOUNT:"Emergency Account",
             READ_ONLY:"Read Only",
-            OCCUPATIONAL_HEALTH:"Occupational Health"
+            OCCUPATIONAL_HEALTH: "Occupational Health",
+            IBC_MEMBER: "IBC Member",
+            IBC_CHAIR: "IBC Chair"
         }
     };
 
-    constants.CARBOY_USE_CYCLE = {
+    public static CARBOY_USE_CYCLE = {
         STATUS: {
             AVAILABLE: "Available",
             IN_USE: "In Use",
@@ -59,7 +60,7 @@ var Constants = (function (thing) {
         }
     };
 
-    constants.INSPECTION = {
+    public static INSPECTION = {
         STATUS:{
             NOT_ASSIGNED:"NOT ASSIGNED",
             NOT_SCHEDULED:"NOT SCHEDULED",
@@ -96,7 +97,7 @@ var Constants = (function (thing) {
         OTHER_DEFICIENCY_ID: 100032
     };
 
-    constants.CORRECTIVE_ACTION = {
+    public static CORRECTIVE_ACTION = {
         STATUS:{
             INCOMPLETE:"Incomplete",
             PENDING:"Pending",
@@ -110,14 +111,14 @@ var Constants = (function (thing) {
         }
     };
 
-    constants.DRUM = {
+    public static DRUM = {
         STATUS:{
             SHIPPED: "Shipped",
 
         }
     };
 
-    constants.PICKUP = {
+    public static PICKUP = {
         STATUS:{
             PICKED_UP:"PICKED UP",
             AT_RSO:"AT RSO",
@@ -125,7 +126,7 @@ var Constants = (function (thing) {
         }
     };
 
-    constants.PARCEL = {
+    public static PARCEL = {
         STATUS: {
             REQUESTED: "Requested",
             ARRIVED:"Arrived",
@@ -136,7 +137,7 @@ var Constants = (function (thing) {
         }
     };
 
-    constants.INVENTORY = {
+    public static INVENTORY = {
         STATUS:{
             LATE:"Late",
             COMPLETE:"Complete",
@@ -144,7 +145,7 @@ var Constants = (function (thing) {
         }
     };
 
-    constants.ISOTOPE = {
+    public static ISOTOPE = {
         EMITTER_TYPE:{
             ALPHA: "Alpha",
             BETA: "Beta",
@@ -152,7 +153,7 @@ var Constants = (function (thing) {
         }
     };
 
-    constants.WIPE_TEST = {
+    public static WIPE_TEST = {
         READING_TYPE:{
             LSC:"LSC",
             ALPHA_BETA:"Alpha/Beta",
@@ -162,7 +163,7 @@ var Constants = (function (thing) {
     };
 
     //match the key_id for each waste type to a readable string
-    constants.WASTE_TYPE = {
+    public static WASTE_TYPE = {
         LIQUID: 1,
         CADAVER: 2,
         VIAL: 3,
@@ -171,29 +172,29 @@ var Constants = (function (thing) {
     }
 
     //these have to be strings instead of ints because the server will return IDS as strings, and we don't want to have to convert them all
-    constants.BRANCH_HAZARD_IDS = ['1', '9999', '10009', '10010'];
+    public static BRANCH_HAZARD_IDS = ['1', '9999', '10009', '10010'];
 
-    constants.MASTER_HAZARDS_BY_ID = {
+    public static MASTER_HAZARDS_BY_ID = {
         1: {Name:'Biological Safety', cssID:'biologicalMaterialsHeader'},
         9999: {Name:'Chemical Safety', cssID:'chemicalSafetyHeader'},
         10009: {Name:'Radiation Safety', cssID:'radiationSafetyHeader'},
         10010: {Name:'General Laboratory Safety', cssID:'generalSafetyHeader'}
     }
 
-    constants.MASTER_HAZARD_IDS = {
+    public static MASTER_HAZARD_IDS = {
         BIOLOGICAL: 1,
         CHEMICAL: 10009,
         RADIATION: 10010
     }
 
-    constants.CHECKLIST_CATEGORIES_BY_MASTER_ID = [
+    public static CHECKLIST_CATEGORIES_BY_MASTER_ID = [
         { Key_id: 1, Label: 'Biological', Image: 'biohazard-white-con.png', cssID: 'biologicalMaterialsHeader' },
         { Key_id: 10009, Label: 'Chemical', Image: 'chemical-safety-large-icon.png', cssID: 'chemicalSafetyHeader' },
         { Key_id: 10010, Label: 'Radiation', Image: 'radiation-large-icon.png', cssID: 'radiationSafetyHeader' },
         { Key_id: 9999, Label: 'General', Image: 'gen-hazard-large-icon.png', cssID: 'generalSafetyHeader' }
     ]
 
-    constants.HAZARD_PI_ROOM = {
+    public static HAZARD_PI_ROOM = {
         STATUS:{
             STORED_ONLY: "Stored Only",
             OTHER_PI: "Other Lab's Hazard",
@@ -201,7 +202,7 @@ var Constants = (function (thing) {
         }
     }
 
-    constants.BIOSAFETY_CABINET = {
+    public static BIOSAFETY_CABINET = {
         FREQUENCY: {
             ANNUALLY: "Annually",
             SEMI_ANNUALLY: "Semi-annually"
@@ -225,19 +226,19 @@ var Constants = (function (thing) {
         }
     }
 
-    constants.ROOM_HAZARDS = {
+    public static ROOM_HAZARDS = {
         BIO_HAZARDS_PRESENT: { label: "Biological Hazards", value: "Bio_hazards_present" },
         CHEM_HAZARDS_PRESENT: { label: "Chemical Hazards", value: "Chem_hazards_present" },
         RAD_HAZARDS_PRESENT: { label: "Radiation Hazards", value: "Rad_hazards_present" }
     }
 
-    constants.ROOM_HAZARD_STATUS = {
+    public static ROOM_HAZARD_STATUS = {
         IN_USE: { KEY: "IN_USE", LAB_LABEL: "Used by my lab in room", ADMIN_LABEL: "In use in room" },
         STORED_ONLY: { KEY: "STORED_ONLY", LAB_LABEL: "Stored in room", ADMIN_LABEL: "Stored only in room" },
         NOT_USED: { KEY: "NOT_USED", LAB_LABEL: "Not used by my lab in room", ADMIN_LABEL: "Not used in room" }
     }
 
-    constants.VERIFICATION = {
+    public static VERIFICATION = {
         STATUS: {
             COMPLETE:"COMPLETE",
             OVERDUE: "OVERDUE",
@@ -245,14 +246,14 @@ var Constants = (function (thing) {
         }
     }
 
-    constants.PROTOCOL_HAZARDS = [
+    public static PROTOCOL_HAZARDS = [
         { Name: "Recombinant or Synthetic Nucleic Acids", Key_id: 1, Class: "Hazard" },
         { Name: "Risk Group 2 (RG2) or Higher Agents", Key_id: 2, Class: "Hazard" },
         { Name: "Human-Derived Materials", Key_id: 3, Class: "Hazard" },
         { Name: "HHS Biological Toxins", Key_id: 4, Class: "Hazard" }
     ]
 
-    constants.IBC_PROTOCOL_REVISION = {
+    public static IBC_PROTOCOL_REVISION = {
         STATUS: {
             NOT_SUBMITTED: "Not Submitted",
             SUBMITTED: "Submitted",
@@ -260,7 +261,4 @@ var Constants = (function (thing) {
             APPROVED: "Approved"
         }
     }
-
-
-    return constants;
-})();
+}
