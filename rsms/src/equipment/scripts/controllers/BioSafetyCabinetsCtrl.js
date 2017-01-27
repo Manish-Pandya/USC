@@ -15,34 +15,38 @@ angular.module('EquipmentModule')
         $scope.campuses = [];
         return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $scope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false)])
             .then(function (whateverGotReturned) {
-            getYears();
+            getYears($scope.cabinets);
             return true;
         })
             .catch(function (reason) {
             console.log("bad Promise.all:", reason);
         });
-    }, getYears = function () {
+    }, getYears = function (cabs) {
+        console.log(cabs);
         var currentYearString = $rootScope.currentYearString = new Date().getFullYear().toString();
         var inspections = [];
         $scope.certYears = [];
         $rootScope.selectedCertificationDate = "";
         $rootScope.selectedDueDate = "";
-        DataStoreManager.getAll("EquipmentInspection", [], false).then(function (inspections) {
-            if (inspections) {
-                var i = inspections.length;
-                while (i--) {
-                    if (inspections[i].Equipment_class == Constants.BIOSAFETY_CABINET.EQUIPMENT_CLASS) {
-                        if (inspections[i].Certification_date) {
-                            var certYear = inspections[i].Certification_date.split('-')[0];
-                            if ($scope.certYears.indexOf(certYear) == -1) {
-                                $scope.certYears.push(certYear);
-                            }
+        var inspections = [];
+        cabs.forEach(function (c) {
+            if (c.EquipmentInspections)
+                inspections = inspections.concat(c.EquipmentInspections);
+        });
+        if (inspections) {
+            var i = inspections.length;
+            while (i--) {
+                if (inspections[i].Equipment_class == Constants.BIOSAFETY_CABINET.EQUIPMENT_CLASS) {
+                    if (inspections[i].Certification_date) {
+                        var certYear = inspections[i].Certification_date.split('-')[0];
+                        if ($scope.certYears.indexOf(certYear) == -1) {
+                            $scope.certYears.push(certYear);
                         }
-                        if (inspections[i].Due_date) {
-                            var dueYear = inspections[i].Due_date.split('-')[0];
-                            if ($scope.certYears.indexOf(dueYear) == -1) {
-                                $scope.certYears.push(dueYear);
-                            }
+                    }
+                    if (inspections[i].Due_date) {
+                        var dueYear = inspections[i].Due_date.split('-')[0];
+                        if ($scope.certYears.indexOf(dueYear) == -1) {
+                            $scope.certYears.push(dueYear);
                         }
                     }
                 }
@@ -52,9 +56,7 @@ angular.module('EquipmentModule')
             }
             $rootScope.selectedCertificationDate = currentYearString;
             $rootScope.selectedDueDate = currentYearString;
-            $scope.$apply();
-        });
-        console.log($scope.cabinets);
+        }
     };
     //init load
     $scope.loading = $rootScope.getCurrentRoles().then(getAll);
@@ -87,7 +89,7 @@ angular.module('EquipmentModule')
             controller: 'BioSafetyCabinetsModalCtrl'
         });
         modalInstance.result.then(function () {
-            getAll();
+            console.log(DataStoreManager._actualModel);
         });
     };
     $scope.isOverdue = function (cab) {

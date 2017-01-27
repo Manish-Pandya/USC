@@ -121,6 +121,7 @@ abstract class Equipment extends GenericCrud{
                     $inspection  = $selectedInspection;
                 }
 			}
+            $inspection->setEquipment_id($this->key_id);
             $inspectionDao = new GenericDao($inspection);
             $inspection = $inspectionDao->save($inspection);
             //We only do this if the current inspection is passed
@@ -128,12 +129,10 @@ abstract class Equipment extends GenericCrud{
                 //first, save the current inspection, because it's likely we've just certifiied it.
                 if($this->getRoomId() != null) $inspection->setRoom_id($this->getRoomId());
                 $l->fatal("going to make a new one");
-                $l->fatal($inspection);
-
 
                 //Next, see if there is already an inspection we can infer to to be the next one.
                 global $db;
-                $query = $db->prepare("select * from equipment_inspection where equipment_id = :id and equipment_class = :class and due_date AFTER :date ORDER BY due_date");
+                $query = $db->prepare("select * from equipment_inspection where equipment_id = :id and equipment_class = :class and due_date > :date ORDER BY due_date");
                 $id = (int) $this->key_id;
                 $date = date('Y-m-d H:i:s',strtotime($inspection->getCertification_date()));
                 $query->bindParam(":id",$id,PDO::PARAM_INT);
@@ -143,9 +142,10 @@ abstract class Equipment extends GenericCrud{
 
                 $this->principaInvestigatorId = $inspection->getPrincipal_investigator_id();
 
-                $query->setFetchMode(PDO::FETCH_CLASS, "EequipmentInspection");			// Query the db and return one user
+                $query->setFetchMode(PDO::FETCH_CLASS, "EquipmentInspection");			// Query the db and return one user
                 if ($query->execute()) {
-                    $result = $query->fetch();
+                    $result = $query->fetchAll();
+                    $l->fatal($result);
                 }
 
                 if($result != null){
@@ -173,10 +173,10 @@ abstract class Equipment extends GenericCrud{
                     $newCertDate->modify(('+6 months'));
                     $nextInspection->setDue_date($newCertDate);
                 }
+                $nextInspection->setEquipment_id($this->key_id);
 
                 if($inspection->getRoom_id() != null) $nextInspection->setRoom_id($inspection->getRoom_id());
                 if($inspection->getEquipment_class() != null) $nextInspection->setEquipment_class($inspection->getEquipment_class());
-                if($inspection->getEquipment_id() != null) $nextInspection->setEquipment_id($inspection->getEquipment_id());
                 if($inspection->getFrequency() != null) $nextInspection->setFrequency($inspection->getFrequency());
 
                 $nextInspection = $inspectionDao->save($nextInspection);
