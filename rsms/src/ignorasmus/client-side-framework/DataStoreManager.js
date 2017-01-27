@@ -105,10 +105,9 @@ var DataStoreManager = (function () {
                 return (compMaps ? _this.resolveCompMaps(d[0], compMaps) : _this.promisifyData(d))
                     .then(function (whateverGotReturned) {
                     d.forEach(function (value, index) {
-                        value.doCompose(compMaps);
-                        if (!value.viewModelWatcher)
-                            value.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
-                        viewModelParent[index] = value.viewModelWatcher;
+                        d[index].doCompose(compMaps);
+                        d[index].viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
+                        viewModelParent[index] = d[index].viewModelWatcher;
                     });
                     return viewModelParent;
                 })
@@ -141,17 +140,22 @@ var DataStoreManager = (function () {
             DataStoreManager._actualModel[type].getByIdPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetById + id);
         }
         else {
-            DataStoreManager._actualModel[type].getByIdPromise = this.promisifyData(this.findByPropValue(this._actualModel[type].Data, this.uidString, id));
+            DataStoreManager._actualModel[type].getByIdPromise = this.promisifyData(this.findByPropValue(DataStoreManager._actualModel[type].Data, DataStoreManager.uidString, id, type));
         }
         return DataStoreManager._actualModel[type].getByIdPromise
             .then(function (d) {
             d = InstanceFactory.convertToClasses(d);
-            DataStoreManager._actualModel[type].Data.push(d);
+            var actualModelInstance = DataStoreManager.getActualModelEquivalent(d);
+            if (actualModelInstance) {
+                actualModelInstance = d;
+            }
+            else {
+                DataStoreManager._actualModel[type].Data.push(d);
+            }
             return (compMaps ? _this.resolveCompMaps(d, compMaps) : _this.promisifyData(d))
                 .then(function (whateverGotReturned) {
                 d.doCompose(compMaps);
-                if (!d.viewModelWatcher)
-                    d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
+                d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
                 viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
                 return viewModelParent;
             })
@@ -229,7 +233,7 @@ var DataStoreManager = (function () {
             .then(function (d) {
             if (Array.isArray(d)) {
                 d.forEach(function (value, index) {
-                    d[index] = DataStoreManager.commitToActualModel(value);
+                    d[index] = DataStoreManager.commitToActualModel(d[index]);
                 });
                 return d;
             }
@@ -269,10 +273,8 @@ var DataStoreManager = (function () {
             actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         }
         vmParent = InstanceFactory.copyProperties(actualModelEquivalent, vmParent);
-        if (!actualModelEquivalent.viewModelWatcher)
-            actualModelEquivalent.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(actualModelEquivalent);
-        InstanceFactory.copyProperties(actualModelEquivalent.viewModelWatcher, vmParent);
-        return vmParent.viewModelWatcher;
+        actualModelEquivalent.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(actualModelEquivalent);
+        return vmParent.viewModelWatcher || vmParent;
     };
     /**
      * Returns fluxBase quazi-clone and recursively sets all sub-models to reference their respective viewModelWatchers, as opposed to independent copies or references to ActualModel.
@@ -282,12 +284,11 @@ var DataStoreManager = (function () {
      * @param fluxBase
      */
     DataStoreManager.buildNestedViewModelWatcher = function (fluxBase) {
-        if (fluxBase.viewModelWatcher)
-            fluxBase = fluxBase.viewModelWatcher;
         return _.cloneDeepWith(fluxBase, function (value) {
             if (value instanceof FluxCompositerBase) {
                 if (value.viewModelWatcher) {
                     // set reference to nested FluxCompositerBase's viewModelWatcher, instead of cloning
+                    delete value.viewModelWatcher.viewModelWatcher;
                     return value.viewModelWatcher;
                 }
             }
@@ -312,21 +313,20 @@ var DataStoreManager = (function () {
      * @param propName
      * @param value
      */
-    DataStoreManager.findByPropValue = function (obj, propName, value) {
+    DataStoreManager.findByPropValue = function (obj, propName, value, className) {
         //Early return
-        if (obj[propName] === value) {
+        if ((!className || className == obj.constructor.name) && obj[propName] === value) {
             return obj;
         }
         var result;
         for (var prop in obj) {
             if (obj.hasOwnProperty(prop) && obj[prop] && typeof obj[prop] === 'object') {
-                result = this.findByPropValue(obj[prop], propName, value);
+                result = this.findByPropValue(obj[prop], propName, value, className);
                 if (result) {
                     return result;
                 }
             }
         }
-        return result;
     };
     /**
      * Returns a Promise for data passed.

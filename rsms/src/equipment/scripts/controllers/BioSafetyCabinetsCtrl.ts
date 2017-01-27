@@ -244,7 +244,11 @@ $scope.$on('fileUpload', function (event, data) {
         $scope.message = null;
         inspection.Certification_date = convenienceMethods.setMysqlTime(inspection.viewDate);
         inspection.Fail_date = convenienceMethods.setMysqlTime(inspection.viewFailDate);
-        af.save(inspection).then(function (r) { console.log(r, DataStoreManager._actualModel.BioSafetyCabinet); $scope.close(); })
+        af.save(inspection).then(function (r) {
+            // we added an equipmentInspection, so recompose the cabinet.
+            DataStoreManager.getById("BioSafetyCabinet", inspection.Equipment_id, {}, true);
+            $scope.close();
+        })
     }
 
     $scope.close = function () {
