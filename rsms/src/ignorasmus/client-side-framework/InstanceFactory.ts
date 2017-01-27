@@ -137,16 +137,33 @@ abstract class InstanceFactory extends DataStoreManager {
         } else if (compMap.CompositionType == CompositionMapping.MANY_TO_MANY) {
             if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
                 // Get the gerunds
-                if (DataStoreManager._actualModel[compMap.GerundName] && DataStoreManager._actualModel[compMap.GerundName].Data) {
-                    var d: any[] = DataStoreManager._actualModel[compMap.GerundName].Data;
-                    var gerundLen: number = d.length;
-                    //loop through all the gerunds
-                    for (let i: number = 0; i < gerundLen; i++) {
-                        childStore.forEach((value: FluxCompositerBase) => {
-                            if (value.UID == d[i].ChildId && parent.UID == d[i].ParentId) {
-                                parent[compMap.PropertyName].push(value.viewModelWatcher);
-                            }
-                        });
+                if (DataStoreManager._actualModel[compMap.GerundName]) {
+                    if (DataStoreManager._actualModel[compMap.GerundName].Data) {
+                        var d: any[] = DataStoreManager._actualModel[compMap.GerundName].Data;
+                        var gerundLen: number = d.length;
+                        //loop through all the gerunds
+                        for (let i: number = 0; i < gerundLen; i++) {
+                            childStore.forEach((value: FluxCompositerBase) => {
+                                if (value.UID == d[i].ChildId && parent.UID == d[i].ParentId) {
+                                    parent[compMap.PropertyName].push(value.viewModelWatcher);
+                                }
+                            });
+                        }
+                    } else {
+                        DataStoreManager._actualModel[compMap.GerundName].promise = (DataStoreManager._actualModel[compMap.GerundName].promise || XHR.GET(compMap.GerundUrl))
+                            .then((gerundReturns: any[]) => {
+                                var d: any[] = DataStoreManager._actualModel[compMap.GerundName].Data = gerundReturns;
+                                var gerundLen: number = d.length;
+                                //loop through all the gerunds
+                                for (let i: number = 0; i < gerundLen; i++) {
+                                    childStore.forEach((value: FluxCompositerBase) => {
+                                        if (value.UID == d[i].ChildId && parent.UID == d[i].ParentId) {
+                                            parent[compMap.PropertyName].push(value.viewModelWatcher);
+                                        }
+                                    });
+                                }
+                            });
+                        console.log(compMap.GerundName + " doesn't exist in actualModel. Running GET to resolve...");
                     }
                 } else {
                     DataStoreManager.getById(parent.TypeName, parent.UID, parent, [compMap]);

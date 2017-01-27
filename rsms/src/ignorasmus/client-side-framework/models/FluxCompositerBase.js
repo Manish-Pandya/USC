@@ -134,24 +134,25 @@ var FluxCompositerBase = (function () {
      * @param compMaps
      */
     FluxCompositerBase.prototype.doCompose = function (compMaps) {
-        if (compMaps) {
-            if (Array.isArray(compMaps)) {
-                // compose just properties in array...
-                var len = compMaps.length;
-                for (var i = 0; i < len; i++) {
-                    if (_.findIndex(this.allCompMaps, compMaps[i]) > -1) {
-                        InstanceFactory.getChildInstances(compMaps[i], this);
-                    }
-                }
-            }
-            else {
-                // compose all compmaps...
-                var len = this.allCompMaps.length;
-                for (var i = 0; i < len; i++) {
-                    InstanceFactory.getChildInstances(this.allCompMaps[i], this);
+        if (!compMaps)
+            return this;
+        if (Array.isArray(compMaps)) {
+            // compose just properties in array...
+            var len = compMaps.length;
+            for (var i = 0; i < len; i++) {
+                if (_.findIndex(this.allCompMaps, compMaps[i]) > -1) {
+                    InstanceFactory.getChildInstances(compMaps[i], this);
                 }
             }
         }
+        else {
+            // compose all compmaps...
+            var len = this.allCompMaps.length;
+            for (var i = 0; i < len; i++) {
+                InstanceFactory.getChildInstances(this.allCompMaps[i], this);
+            }
+        }
+        return this;
     };
     /**
      * Determines if class has required permissions. Intended for overriding.
