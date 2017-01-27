@@ -274,7 +274,7 @@ var DataStoreManager = (function () {
         }
         vmParent = InstanceFactory.copyProperties(actualModelEquivalent, vmParent);
         actualModelEquivalent.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(actualModelEquivalent);
-        return vmParent.viewModelWatcher || vmParent;
+        return vmParent.viewModelWatcher;
     };
     /**
      * Returns fluxBase quazi-clone and recursively sets all sub-models to reference their respective viewModelWatchers, as opposed to independent copies or references to ActualModel.
@@ -284,6 +284,7 @@ var DataStoreManager = (function () {
      * @param fluxBase
      */
     DataStoreManager.buildNestedViewModelWatcher = function (fluxBase) {
+        fluxBase.viewModelWatcher = InstanceFactory.copyProperties(fluxBase.viewModelWatcher, fluxBase);
         return _.cloneDeepWith(fluxBase, function (value) {
             if (value instanceof FluxCompositerBase) {
                 if (value.viewModelWatcher) {

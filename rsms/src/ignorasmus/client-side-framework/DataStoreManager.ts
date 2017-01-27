@@ -291,8 +291,8 @@ abstract class DataStoreManager {
         }
         vmParent = InstanceFactory.copyProperties(actualModelEquivalent, vmParent);
         actualModelEquivalent.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(actualModelEquivalent);
-
-        return vmParent.viewModelWatcher || vmParent;
+        
+        return vmParent.viewModelWatcher;
     }
 
     /**
@@ -304,6 +304,7 @@ abstract class DataStoreManager {
      */
 
     static buildNestedViewModelWatcher(fluxBase: FluxCompositerBase): FluxCompositerBase {
+        fluxBase.viewModelWatcher = InstanceFactory.copyProperties(fluxBase.viewModelWatcher, fluxBase);
         return _.cloneDeepWith(fluxBase, (value) => {
             if (value instanceof FluxCompositerBase) {
                 if (value.viewModelWatcher) {
