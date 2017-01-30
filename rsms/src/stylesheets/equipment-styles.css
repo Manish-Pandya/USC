@@ -44,11 +44,13 @@
     box-sizing: border-box;
 }
 .dashboard .well {
-    background: rgba(255, 255, 255, .7);
+    background: rgba(255, 255, 255, .4);
     border: 2px solid #CDCDCD;
     float: left;
     box-sizing: border-box;
-    border-radius: 3px;
+    border-radius: 5px;
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.5);
+    margin-bottom:10px;
 }
 .dashboard .well .alert {
     box-sizing: border-box;
@@ -261,6 +263,25 @@ button.btn:not(.btn-large) {
         font-size: 20px;
     }
 }
+.bio-safety-cabinets-container .fake-table .table-header h3 ul li,
+.bio-safety-cabinets-container .fake-table .table-row > div ul li{
+    display:table-cell;
+    padding:3px;
+    box-sizing:border-box;
+}
+.bio-safety-cabinets-container .fake-table .table-header h3 ul,
+.bio-safety-cabinets-container .fake-table .table-row div ul{
+    margin:0;
+}
+.bio-safety-cabinets-container .fake-table .table-header h3:nth-of-type(2) ul li:nth-of-type(1),
+.bio-safety-cabinets-container .fake-table .table-row > div:nth-of-type(2) ul li:nth-of-type(1){
+    width: 80%;
+    background:green;
+}
+.bio-safety-cabinets-container .fake-table .table-header h3:nth-of-type(2) ul li:nth-of-type(2),
+.bio-safety-cabinets-container .fake-table .table-row > div:nth-of-type(2) ul li:nth-of-type(2){
+    background:blue;
+}
 .bio-safety-cabinets-container > h2{
     padding: 0;
     border-bottom: 2px solid #333333;
@@ -272,6 +293,7 @@ button.btn:not(.btn-large) {
     border: 2px solid #C7C7C7;
     border-radius: 0;
     margin-top: 4px;
+    width:100%;
 }
 
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr th,.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td table tr td{
@@ -281,49 +303,77 @@ button.btn:not(.btn-large) {
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr td table tr , bio-safety-cabinets-container table:not(.quickdate-calendar) tr td table tr td{
     background:none !important;
 }
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(1),.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th:nth-of-type(1){
-    width: 7%;
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(1){
+    width: 5%;
 }
-
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(5),.bio-safety-cabinets-container tabl:not(.quickdate-calendar)e tr th:nth-of-type(5){
-    width: 6%;
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(6),.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th:nth-of-type(6){
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(2){
     padding:0;
-    width: 62%;
+    width:10%;
 }
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(7),.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th:nth-of-type(7){
-    max-width:8%;
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(3){
+    padding:0;
+    width:8%;
 }
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(6) > div,.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th:nth-of-type(6) >div{
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(4){
+    width:7%;
+}
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(5){
+    width: 8%;
+}
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(6){
+    width: 8%;
+}
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(7){
+    width: 8%;
+}
+
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(8){
+    width: 6%;
+    padding:0;
+
+}
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(9){
+    width:6%;
+    padding:0;
+
+}
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(10){
+    width:9%;
+    padding:0;
+
+}
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(11){
+    width:6%;
+    padding:0;
+
+}
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(12){
+    width:6%;
+    padding:0;
+
+}
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(13){
+    width:13%;
+    padding:0;
+
+}
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td > div{
+    padding:5px 0;
     display:table;
-
+    width:100%;
 }
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(6) ul,.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th:nth-of-type(6) ul{
-    margin-bottom: 0;
-    width: 100%;
-    margin-left:0;
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td > div > div{
     display:table-row;
-
 }
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li,.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li{
-    /* float: left; */
-    padding: 10px 5px;
-    border-right: 1px solid #DDDDDD;
-    border-bottom: 1px solid #DDDDDD !important;
-    box-sizing:border-box;
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td > div > div > span{
+    border-bottom: 3px dotted #dddddd;
     display:table-cell;
-    vertical-align: middle;
+    vertical-align:middle;
+    height:70px;
+    padding:0 7px;
 }
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li,.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li{
-}
-
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li{
-    min-height: 62px;
-    font-weight:bold;
-    border-bottom: none !important;
-    font-size: 17px;
-
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td > div > div:last-child > span{
+    border-bottom:0
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr td{
     vertical-align:middle;
@@ -331,56 +381,6 @@ button.btn:not(.btn-large) {
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr th{
     font-size: 16px;
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li{
-    display:table-cell;
-    height:auto;
-     vertical-align:middle;
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul {
-    display:table
-    /* border-bottom:1px solid #DDDDDD; */
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul:last-child li{
-   border-bottom:none;   
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li:last-child,.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li:last-child{
-    border-right:none;
-}
-
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li:nth-of-type(1),.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li:nth-of-type(1){
-    min-width: 150px;
-    width: 13.5%;
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li:nth-of-type(2),.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li:nth-of-type(2){
-    width: 8%;
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li:nth-of-type(3),.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li:nth-of-type(3){
-    width: 14%;
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li:nth-of-type(3) select{
-    width: 117px;
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li:nth-of-type(4),.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li:nth-of-type(4){
-    width: 10%;
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li:nth-of-type(5),.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li:nth-of-type(5){
-    width: 16.5%;
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li:nth-of-type(6),.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li:nth-of-type(6){
-    width: 10%;
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li:nth-of-type(7),.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li:nth-of-type(7){
-    width: 12.5%;
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li:nth-of-type(8),.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li:nth-of-type(8){
-    width: 13.5%;
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td ul li:nth-of-type(7){
-    text-align:center;
-}
-.bio-safety-cabinets-container table:not(.quickdate-calendar) tr th, bio-safety-cabinets table:not(.quickdate-calendar) tr td table:not(.quickdate-calendar) tr td {
-    padding:5px;
 }
 
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr th ul li input, select{

@@ -99,13 +99,40 @@ $scope.openModal = function (object, inspection, isCabinet) {
     modalData[object.Class] = object;
     modalData.inspection = inspection;
     DataStoreManager.ModalData = modalData;
+
+    modalData["isCabinet"] = isCabinet;
     var modalInstance = $modal.open({
         templateUrl: isCabinet ? 'views/modals/bio-safety-cabinet-modal.html' : 'views/modals/bio-safety-cabinet-inspection-modal.html',
         controller: 'BioSafetyCabinetsModalCtrl'
     });
 
-    modalInstance.result.then(function () {
+    modalInstance.result.then(function (r) {
+        //bandaids for data binding after save
+        if (!object.Key_id) {
+            if (!Array.isArray(r)) {
+                console.log(r);
+                $scope.cabinets.push(r);
+            }
+        }
         console.log(DataStoreManager._actualModel);
+
+        var test = DataStoreManager.getActualModelEquivalent(object.EquipmentInspections[0]);
+        console.log(object,test)
+        test.viewModelWatcher["test"] = "i SHOULD show up";
+
+        test["test"] = "i shouldn't show up";
+
+        object.doCompose([equipment.BioSafetyCabinet.EquipmentInspectionMap]);
+    });
+}
+
+$scope.openPiInfoModal = function (pi) {
+    var modalData = {};
+    modalData[pi.Class] = pi;
+    DataStoreManager.ModalData = modalData;
+    var modalInstance = $modal.open({
+        templateUrl: 'views/modals/pi-info-modal.html',
+        controller: 'BioSafetyCabinetsModalCtrl'
     });
 }
 
@@ -150,6 +177,7 @@ $scope.$on('fileUpload', function (event, data) {
             $scope.$apply();
         }
     }
+    
 });
 
   })
@@ -158,11 +186,12 @@ $scope.$on('fileUpload', function (event, data) {
     $scope.constants = Constants;
 
     $scope.modalData = DataStoreManager.ModalData;
-    $scope.PIs = [];
-    $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $scope.PIs, true)])
+    if ($scope.modalData.isCabinet) {
+        $scope.PIs = [];
+        $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $scope.PIs, true)])
+    }
 
-
-    if ($scope.modalData.BioSafetyCabinet.EquipmentInspections) {
+    if ($scope.modalData.BioSafetyCabinet && $scope.modalData.BioSafetyCabinet.EquipmentInspections) {
         if ($scope.modalData.inspection.Room) {
             $scope.modalData.BioSafetyCabinet.Room = $scope.modalData.inspection.Room;
         }
@@ -237,7 +266,7 @@ $scope.$on('fileUpload', function (event, data) {
 
     $scope.save = function (cabinet) {
         cabinet.Certification_date = convenienceMethods.setMysqlTime(cabinet.Certification_date);
-        af.save(cabinet).then(function () { $scope.close() })
+        af.save(cabinet).then(function (r) { console.log(r);$scope.close(r) })
     }
 
     $scope.certify = function (inspection) {
@@ -246,13 +275,13 @@ $scope.$on('fileUpload', function (event, data) {
         inspection.Fail_date = convenienceMethods.setMysqlTime(inspection.viewFailDate);
         af.save(inspection).then(function (r) {
             // we added an equipmentInspection, so recompose the cabinet.
-            DataStoreManager.getById("BioSafetyCabinet", inspection.Equipment_id, {}, true);
-            $scope.close();
+            //DataStoreManager.getById("BioSafetyCabinet", inspection.Equipment_id, {}, true);
+            $scope.close(r);
         })
     }
 
-    $scope.close = function () {
-        $modalInstance.close();
+    $scope.close = function (r) {
+        $modalInstance.close(r || null);
         DataStoreManager.ModalData = null;
     }
 

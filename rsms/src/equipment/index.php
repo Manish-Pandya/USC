@@ -98,18 +98,6 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="scripts/filters/equipmentFilters.js"></script>
 <script type="text/javascript" src="../js/lib/angular.filter.js"></script>
 
-<!-- framework -->
-<script src="../client-side-framework/genericModel/inheritance.js"></script>
-<script src="../client-side-framework/genericModel/genericModel.js"></script>
-<script src="../client-side-framework/genericModel/genericPrincipalInvestigator.js"></script>
-<script src="../client-side-framework/genericModel/genericAPI.js"></script>
-<script src="../client-side-framework/genericModel/modelInflator.js"></script>
-<script src="../client-side-framework/genericModel/urlMapper.js"></script>
-<script src="./scripts/equipmentUrlMapper.js"></script>
-<script src="../client-side-framework/dataStore/dataStore.js"></script>
-<script src="../client-side-framework/dataStore/dataStoreManager.js"></script>
-<script src="../client-side-framework/dataStore/dataSwitch.js"></script>
-<script src="../client-side-framework/dataStore/dataLoader.js"></script>
 <!-- new framework -->
 <script src="../ignorasmus/client-side-framework/DataStoreManager.js"></script>
 <script src="../ignorasmus/client-side-framework/InstanceFactory.js"></script>

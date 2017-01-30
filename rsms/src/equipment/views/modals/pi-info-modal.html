@@ -1,0 +1,30 @@
+﻿<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px; background:#428642; color:white">{{modalData.PrincipalInvestigator.User.Name}}</h2>
+</div>
+
+<div class="modal-body">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Office Phone</th>
+                <th>Email</th>
+                <th>Department(s)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{modalData.PrincipalInvestigator.User.Office_phone || "N/A"}}</td>
+                <td>{{modalData.PrincipalInvestigator.User.Email || "N/A"}}</td>
+                <td>
+                    <ul>
+                        <li ng-repeat="dept in modalData.PrincipalInvestigator.Departments">{{dept.Name}}</li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="modal-footer">
+    <a class="btn btn-large left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>

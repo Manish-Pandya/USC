@@ -2,10 +2,10 @@
 
 angular
     .module('EquipmentModule')
-        .factory('applicationControllerFactory', function applicationControllerFactory(rootApplicationControllerFactory, modelInflatorFactory, genericAPIFactory, $rootScope, $q, dataSwitchFactory, $modal, convenienceMethods ){
-            var af = rootApplicationControllerFactory;
+        .factory('applicationControllerFactory', function applicationControllerFactory($rootScope, $q, $modal, convenienceMethods ){
+            var af = $rootScope.af = this;
 
-            $rootScope.af = this; //give us access to this factory in all views. Because that's cool.
+             //give us access to this factory in all views. Because that's cool.
 
             af.getViewMap = function(current) {
                 var viewMap = [
