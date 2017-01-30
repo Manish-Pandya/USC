@@ -97,11 +97,6 @@ angular.module('EquipmentModule')
                     $scope.cabinets.push(r);
                 }
             }
-            console.log(DataStoreManager._actualModel);
-            var test = DataStoreManager.getActualModelEquivalent(object.EquipmentInspections[0]);
-            console.log(object, test);
-            test.viewModelWatcher["test"] = "i SHOULD show up";
-            test["test"] = "i shouldn't show up";
             object.doCompose([equipment.BioSafetyCabinet.EquipmentInspectionMap]);
         });
     };
@@ -161,11 +156,11 @@ angular.module('EquipmentModule')
     var af = $scope.af = applicationControllerFactory;
     $scope.constants = Constants;
     $scope.modalData = DataStoreManager.ModalData;
-    if ($scope.modalData.isCabinet) {
+    if ($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet) {
         $scope.PIs = [];
         $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $scope.PIs, true)]);
     }
-    if ($scope.modalData.BioSafetyCabinet && $scope.modalData.BioSafetyCabinet.EquipmentInspections) {
+    if (($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet) && $scope.modalData.BioSafetyCabinet.EquipmentInspections) {
         if ($scope.modalData.inspection.Room) {
             $scope.modalData.BioSafetyCabinet.Room = $scope.modalData.inspection.Room;
         }
