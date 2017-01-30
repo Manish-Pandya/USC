@@ -355,6 +355,6 @@ var DataStoreManager = (function () {
 //----------------------------------------------------------------------
 DataStoreManager.classPropName = "Class";
 DataStoreManager.uidString = "Key_id";
-DataStoreManager.baseUrl = "http://erasmus.graysail.com/rsms/src/ajaxAction.php?action=";
+DataStoreManager.baseUrl = "../ajaxaction.php?action=";
 // NOTE: there's intentionally no getter. Only internal framework classes should have read access of actual model.
 DataStoreManager._actualModel = {};
