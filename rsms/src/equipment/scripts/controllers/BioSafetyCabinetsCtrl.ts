@@ -179,12 +179,13 @@ $scope.$on('fileUpload', function (event, data) {
     $scope.constants = Constants;
 
     $scope.modalData = DataStoreManager.ModalData;
-    if ($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet) {
-        $scope.PIs = [];
-        $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $scope.PIs, true)])
+    if (!$rootScope.PIs && ($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet)) {
+        $rootScope.PIs = [];
+        $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $rootScope.PIs, true)])
     }
-
+    
     if (($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet) && $scope.modalData.BioSafetyCabinet.EquipmentInspections) {
+    
         if ($scope.modalData.inspection.Room) {
             $scope.modalData.BioSafetyCabinet.Room = $scope.modalData.inspection.Room;
         }
@@ -216,8 +217,9 @@ $scope.$on('fileUpload', function (event, data) {
                 $scope.modalData.BioSafetyCabinet.SelectedInspection = $scope.modalData.inspection;
             }
         }
+     
     }
-
+       
 
     $scope.getBuilding = function () {
         if ($scope.modalData.BioSafetyCabinet.EquipmentInspections) {
@@ -247,10 +249,6 @@ $scope.$on('fileUpload', function (event, data) {
         $scope.getRoom();
     }
 
-    $scope.onSelectRoom = function () {
-        $scope.modalData.BioSafetyCabinet.RoomId = $scope.modalData.BioSafetyCabinet.Room.Key_id;
-    }
-
     $scope.$watch('modalData.BioSafetyCabinet.PrincipalInvestigator.Rooms', function () {
         if ($scope.modalData.BioSafetyCabinet.PrincipalInvestigator) {
             $scope.modalData.BioSafetyCabinet.PrincipalInvestigator.loadBuildings();
@@ -274,7 +272,11 @@ $scope.$on('fileUpload', function (event, data) {
     }
 
     $scope.close = function (r) {
-        $modalInstance.close(r || null);
+        if (r) {
+            $modalInstance.close(r || null);
+        } else{
+            $modalInstance.dismiss();
+        }
         DataStoreManager.ModalData = null;
     }
 

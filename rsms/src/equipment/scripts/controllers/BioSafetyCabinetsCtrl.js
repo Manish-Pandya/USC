@@ -156,9 +156,9 @@ angular.module('EquipmentModule')
     var af = $scope.af = applicationControllerFactory;
     $scope.constants = Constants;
     $scope.modalData = DataStoreManager.ModalData;
-    if ($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet) {
-        $scope.PIs = [];
-        $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $scope.PIs, true)]);
+    if (!$rootScope.PIs && ($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet)) {
+        $rootScope.PIs = [];
+        $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $rootScope.PIs, true)]);
     }
     if (($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet) && $scope.modalData.BioSafetyCabinet.EquipmentInspections) {
         if ($scope.modalData.inspection.Room) {
@@ -219,9 +219,6 @@ angular.module('EquipmentModule')
         $scope.roomFilter = $scope.modalData.SelectedBuilding;
         $scope.getRoom();
     };
-    $scope.onSelectRoom = function () {
-        $scope.modalData.BioSafetyCabinet.RoomId = $scope.modalData.BioSafetyCabinet.Room.Key_id;
-    };
     $scope.$watch('modalData.BioSafetyCabinet.PrincipalInvestigator.Rooms', function () {
         if ($scope.modalData.BioSafetyCabinet.PrincipalInvestigator) {
             $scope.modalData.BioSafetyCabinet.PrincipalInvestigator.loadBuildings();
@@ -242,7 +239,12 @@ angular.module('EquipmentModule')
         });
     };
     $scope.close = function (r) {
-        $modalInstance.close(r || null);
+        if (r) {
+            $modalInstance.close(r || null);
+        }
+        else {
+            $modalInstance.dismiss();
+        }
         DataStoreManager.ModalData = null;
     };
     $scope.getMostRecentComment = function () {

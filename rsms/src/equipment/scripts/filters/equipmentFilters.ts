@@ -233,7 +233,8 @@ angular
      })
     .filter("hasMoved", function () {
         return function (collection, prop) {
-            return collection.every((i) => {
+            return collection && collection.length == 1 ? collection :
+            collection.every((i) => {
                 return !Array.isArray(i[prop]) ? _.isEqual(i[prop], collection[0][prop]) : i[prop].every((j) => { return _.isEqual(_.omit(j, "$$hashKey"), _.omit(i[prop][0],  "$$hashKey")) });
             })  ? [collection[0]] : collection;
         }
