@@ -174,7 +174,7 @@ angular.module('EquipmentModule')
         });
 
     })
-    .controller('BioSafetyCabinetsModalCtrl', function ($scope, $q, $modal,applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
+    .controller('BioSafetyCabinetsModalCtrl', function ($scope, $q, $modal, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
         var af = $scope.af = applicationControllerFactory;
         $scope.constants = Constants;
 
@@ -264,7 +264,7 @@ angular.module('EquipmentModule')
             cabinet.Certification_date = convenienceMethods.setMysqlTime(cabinet.Certification_date);
             var l = $rootScope.cabinets.length;
             for (let i = 0; i < l; i++) {
-                var cab = $rootScope.cabinets[i];  
+                var cab = $rootScope.cabinets[i];
                 if (cab.Serial_number == cabinet.Serial_number && (!cabinet.UID || cabinet.UID != cab.UID)) {
                     var modalInstance = $modal.open({
                         templateUrl: 'views/modals/bsc-warning-modal.html',

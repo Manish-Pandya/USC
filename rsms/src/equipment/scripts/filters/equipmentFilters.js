@@ -251,8 +251,9 @@ angular
 })
     .filter("hasMoved", function () {
     return function (collection, prop) {
-        return collection.every(function (i) {
-            return !Array.isArray(i[prop]) ? _.isEqual(i[prop], collection[0][prop]) : i[prop].every(function (j) { return _.isEqual(_.omit(j, "$$hashKey"), _.omit(i[prop][0], "$$hashKey")); });
-        }) ? [collection[0]] : collection;
+        return collection && collection.length == 1 ? collection :
+            collection.every(function (i) {
+                return !Array.isArray(i[prop]) ? _.isEqual(i[prop], collection[0][prop]) : i[prop].every(function (j) { return _.isEqual(_.omit(j, "$$hashKey"), _.omit(i[prop][0], "$$hashKey")); });
+            }) ? [collection[0]] : collection;
     };
 });

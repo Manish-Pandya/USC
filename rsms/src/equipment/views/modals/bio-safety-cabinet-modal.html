@@ -13,14 +13,14 @@
                     <ui-select-choices repeat="pi in PIs | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
                         <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
                     </ui-select-choices>
-                </ui-select>                
+                </ui-select>
             </div>
             <ul>
                 <li ng-repeat="pi in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators" style="padding: 3px 0; font-size: 15px;"><i style="margin-right:5px" class="red icon-cancel-2" ng-click="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.splice($index,1)"></i>{{pi.User.Name}}</li>
             </ul>
         </div>
 
-        
+
 
         <!-- to do -- concat pis rooms to list of rooms they share-->
         <span ng-if="modalData.BioSafetyCabinet.PrincipalInvestigator.Rooms" ng-init="modalData.BioSafetyCabinet.PrincipalInvestigator.loadBuildings()" />

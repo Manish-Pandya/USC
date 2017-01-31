@@ -1,0 +1,13 @@
+﻿<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div style="width: 660px; border: 3px solid #da4f49; margin-left: -60px; background: white;">
+    <div class="modal-header" style="padding:0;">
+        <h2 style="padding:5px; background: #da4f49; color:white">Duplicate Serial Number.</h2>
+    </div>
+    <div class="modal-body">
+        <h2>A biosafety cabinet with serial # {{cabinet.Serial_number}} already exists<span ng-if="cabinet.EquipmentInspections[0].Room"> in {{cabinet.EquipmentInspections[0].Room.Building.Name}}, room {{cabinet.EquipmentInspections[0].Room.Name}}.</span><span ng-if="!cabinet.EquipmentInspections[0].Room">, but has not been assigned a room.</span></h2>
+    </div>
+
+    <div class="modal-footer">
+        <a class="btn btn-large left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+    </div>
+</div>
