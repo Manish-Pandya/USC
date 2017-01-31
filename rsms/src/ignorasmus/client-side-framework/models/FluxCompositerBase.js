@@ -69,6 +69,7 @@ var FluxCompositerBase = (function () {
      *
      */
     function FluxCompositerBase() {
+        this.viewModelWatcher = null;
         this._hasGetAllPermission = null;
         if (!FluxCompositerBase.urlMapping) {
             console.log(new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server"));
