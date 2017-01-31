@@ -3747,7 +3747,7 @@ tbody tr:hover{/* background:#BDC3C7; */color: #FFFFFF !important;}
   filter: alpha(opacity=80);
   z-index: 1051 !important;
 }
-.modal.fade.in{z-index: 1052 !important;}
+.modal.fade.in{box-shadow: 0 0 10px rgba(0,0,0,0.9);z-index: 1052 !important;}
 button.btn-large{
   height: 50px;
 }

@@ -87,12 +87,12 @@ class Equipment_ActionManager extends ActionManager {
         else{
         	$dao = $this->getDao(new BioSafetyCabinet());
             $insp = $decodedObject->getSelectedInspection();
-
             $pisToAdd = $insp->getPrincipalInvestigators();
             $cabinet = $dao->save($decodedObject);
             $decodedObject->setKey_id($cabinet->getKey_id());
 
             $inspection = $cabinet->conditionallyCreateEquipmentInspection($insp);
+            $LOG->fatal($inspection);
 
             //if the inspection already exists, remove its PIs first, then add the relevant ones
             if($decodedObject->getSelectedInspection() != null){

@@ -8,7 +8,7 @@
         <div class="control-group">
             <label class="control-label">Principal Investigator(s)</label>
             <div class="controls" style="display:block">
-                <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push($item)" class="span3" style="margin-left:0">
+                <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push($item)" class="span2" style="margin-left:0; width:269px;">
                     <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
                     <ui-select-choices repeat="pi in PIs | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
                         <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
@@ -27,7 +27,7 @@
         <div class="control-group">
             <label class="control-label">Room</label>
             <div class="controls">
-                <select class="span3" ng-model="modalData.BioSafetyCabinet.SelectedInspection.Room_id" ng-change="onSelectRoom()" ng-options="room.Key_id as (room.Name + ' ' + room.Building_name) for room in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators | getSharedRooms">
+                <select class="span3" ng-model="modalData.BioSafetyCabinet.SelectedInspection.Room_id" ng-change="onSelectRoom()" ng-options="room.Key_id as (room.Building_name + ' ' + room.Name) for room in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators | getSharedRooms">
                     <option value="">--Select Room--</option>
                 </select>
             </div>
@@ -43,7 +43,7 @@
             </div>
         </div>
         <div class="control-group">
-            <label class="control-label">SERIAL #</label>
+            <label class="control-label">Serial #</label>
             <div class="controls">
                 <input ng-model="modalData.BioSafetyCabinet.Serial_number" placehold="Label" />
             </div>

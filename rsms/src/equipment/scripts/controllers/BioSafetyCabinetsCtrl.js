@@ -11,11 +11,11 @@ angular.module('EquipmentModule')
     var af = $scope.af = applicationControllerFactory;
     $scope.constants = Constants;
     var getAll = function () {
-        $scope.cabinets = [];
+        $rootScope.cabinets = [];
         $scope.campuses = [];
-        return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $scope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false)])
+        return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $rootScope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false)])
             .then(function (whateverGotReturned) {
-            getYears($scope.cabinets);
+            getYears($rootScope.cabinets);
             return true;
         })
             .catch(function (reason) {
@@ -94,7 +94,7 @@ angular.module('EquipmentModule')
             if (!object.Key_id) {
                 if (!Array.isArray(r)) {
                     console.log(r);
-                    $scope.cabinets.push(r);
+                    $rootScope.cabinets.push(r);
                 }
             }
             object.doCompose([equipment.BioSafetyCabinet.EquipmentInspectionMap]);
@@ -152,13 +152,13 @@ angular.module('EquipmentModule')
         };
     });
 })
-    .controller('BioSafetyCabinetsModalCtrl', function ($scope, $q, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
+    .controller('BioSafetyCabinetsModalCtrl', function ($scope, $q, $modal, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
     var af = $scope.af = applicationControllerFactory;
     $scope.constants = Constants;
     $scope.modalData = DataStoreManager.ModalData;
-    if ($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet) {
-        $scope.PIs = [];
-        $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $scope.PIs, true)]);
+    if (!$rootScope.PIs && ($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet)) {
+        $rootScope.PIs = [];
+        $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $rootScope.PIs, true)]);
     }
     if (($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet) && $scope.modalData.BioSafetyCabinet.EquipmentInspections) {
         if ($scope.modalData.inspection.Room) {
@@ -228,7 +228,27 @@ angular.module('EquipmentModule')
         }
     });
     $scope.save = function (cabinet) {
+        console.log(cabinet);
+        if (!cabinet)
+            return;
+        $scope.error = false;
         cabinet.Certification_date = convenienceMethods.setMysqlTime(cabinet.Certification_date);
+        var l = $rootScope.cabinets.length;
+        for (var i = 0; i < l; i++) {
+            var cab = $rootScope.cabinets[i];
+            if (cab.Serial_number == cabinet.Serial_number && (!cabinet.UID || cabinet.UID != cab.UID)) {
+                var modalInstance = $modal.open({
+                    templateUrl: 'views/modals/bsc-warning-modal.html',
+                    controller: 'warningModalCtrl',
+                    resolve: {
+                        cabinet: function () {
+                            return cab;
+                        }
+                    }
+                });
+                return;
+            }
+        }
         af.save(cabinet).then(function (r) { console.log(r); $scope.close(r); });
     };
     $scope.certify = function (inspection) {
@@ -242,7 +262,11 @@ angular.module('EquipmentModule')
         });
     };
     $scope.close = function (r) {
-        $modalInstance.close(r || null);
+        if (!r) {
+            $modalInstance.dismiss();
+            return;
+        }
+        $modalInstance.close(r);
         DataStoreManager.ModalData = null;
     };
     $scope.getMostRecentComment = function () {
@@ -255,4 +279,10 @@ angular.module('EquipmentModule')
             return thing.Comment || $scope.modalData.BioSafetyCabinet.Comment || "";
     };
     console.log($scope.modalData);
+})
+    .controller('warningModalCtrl', function ($scope, cabinet, $modalInstance) {
+    $scope.cabinet = cabinet;
+    $scope.close = function () {
+        $modalInstance.dismiss();
+    };
 });
