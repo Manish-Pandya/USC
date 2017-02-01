@@ -284,7 +284,9 @@ var DataStoreManager = (function () {
      * @param fluxBase
      */
     DataStoreManager.buildNestedViewModelWatcher = function (fluxBase) {
-        fluxBase.viewModelWatcher = InstanceFactory.convertToClasses(InstanceFactory.copyProperties(fluxBase.viewModelWatcher, fluxBase));
+        if (fluxBase.hasOwnProperty("viewModelWatcher")) {
+            fluxBase.viewModelWatcher = InstanceFactory.convertToClasses(InstanceFactory.copyProperties(fluxBase.viewModelWatcher, fluxBase));
+        }
         return _.cloneDeepWith(fluxBase, function (value) {
             if (value instanceof FluxCompositerBase) {
                 if (value.viewModelWatcher) {

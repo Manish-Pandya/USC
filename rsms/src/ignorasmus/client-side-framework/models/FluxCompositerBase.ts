@@ -94,7 +94,7 @@ abstract class FluxCompositerBase {
 
     UID: number;
     TypeName: string;
-    viewModelWatcher: FluxCompositerBase | null;
+    viewModelWatcher: FluxCompositerBase = null;
 
     thisClass: Function; // reference to instance's class for calling static props and methods
 
