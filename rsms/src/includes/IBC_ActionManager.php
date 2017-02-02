@@ -102,24 +102,27 @@ class IBC_ActionManager extends ActionManager {
 
         foreach($revision->getPrimaryReviewers() as $reviewer){
             if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
-            $dao->removeRelatedItems($revision->getKey_id(), $reviewer->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRIMARY_REVIEWERS_RELATIONSHIP));
+            $dao->removeRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRIMARY_REVIEWERS_RELATIONSHIP));
         }
 
         foreach($primaryReviewers as $reviewer){
             if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
-            $dao->addRelatedItems($revision->getKey_id(), $reviewer->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRIMARY_REVIEWERS_RELATIONSHIP));
+            $dao->addRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRIMARY_REVIEWERS_RELATIONSHIP));
         }
 
         foreach($revision->getPreliminaryReviewers() as $reviewer){
             if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
-            $dao->removeRelatedItems($revision->getKey_id(), $reviewer->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
+            $dao->removeRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
         }
 
         foreach($preliminaryReviewers as $reviewer){
             if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
-            $dao->addRelatedItems($revision->getKey_id(), $reviewer->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
+            $dao->addRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
         }
-
+        $entityMaps = array();
+        $entityMaps[] = new EntityMap("eager","getPreliminaryReviewers");
+        $entityMaps[] = new EntityMap("eager","getPrimaryReviewers");
+		$revision->setEntityMaps($entityMaps);
         return $revision;
     }
 

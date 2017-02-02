@@ -78,15 +78,15 @@ class IBCProtocolRevision extends GenericCrud
     public static $PRIMARY_REVIEWERS_RELATIONSHIP = array(
         "className"	=>	"User",
         "tableName"	=>	"ibc_revision_primary_reviewer",
-        "keyName"	=>	"revision_id",
-        "foreignKeyName"	=>	"reviewer_id"
+        "keyName"	=>	"reviewer_id",
+        "foreignKeyName"	=>	"revision_id"
     );
 
     public static $PRELIMINARY_REVIEWERS_RELATIONSHIP = array(
         "className"	=>	"User",
         "tableName"	=>	"ibc_revision_preliminary_reviewer",
-        "keyName"	=>	"revision_id",
-        "foreignKeyName"	=>	"reviewer_id"
+        "keyName"	=>	"reviewer_id",
+        "foreignKeyName"	=>	"revision_id"
     );
 
 	// Required for GenericCrud
