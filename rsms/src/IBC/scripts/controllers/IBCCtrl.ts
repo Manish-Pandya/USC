@@ -56,16 +56,19 @@ angular.module('ng-IBC')
 
         $scope.users = [];
         $scope.reviewers = [];
+
         $scope.loading = $q.all([DataStoreManager.getAll("User", $scope.users), DataStoreManager.resolveCompMaps($scope.modalData.IBCProtocolRevision, true)])
             .then((stuff) => {
                 $scope.modalData.IBCProtocolRevision.doCompose(true);
                 var approvedUsers = $scope.users.filter(function (u) {
                     var hasCorrectRole: boolean = false;
-                    u.Roles.forEach((value: ibc.Role, index: number, array: ibc.Role[]) => {
-                        if (value.Name == Constants.ROLE.NAME.IBC_MEMBER || value.Name == Constants.ROLE.NAME.IBC_CHAIR) {
-                            hasCorrectRole = true;
-                        }
-                    })
+                    if (_.indexOf($scope.modalData.IBCProtocolRevision.PreliminaryReviewers, u) == -1) {
+                        u.Roles.forEach((value: ibc.Role, index: number, array: ibc.Role[]) => {
+                            if (value.Name == Constants.ROLE.NAME.IBC_MEMBER || value.Name == Constants.ROLE.NAME.IBC_CHAIR) {
+                                hasCorrectRole = true;
+                            }
+                        })
+                    }
                     return hasCorrectRole;
                 })
                 $scope.reviewers = $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.concat(approvedUsers);
@@ -73,9 +76,9 @@ angular.module('ng-IBC')
             });
 
         $scope.addRemoveReviewer = function (user, add: boolean) {
-            var preliminaryReviewersIndex: number = $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.indexOf(user);
+            var preliminaryReviewersIndex: number = _.indexOf($scope.modalData.IBCProtocolRevision.PreliminaryReviewers, user);
             if (add) {
-                if ($scope.reviewers.indexOf(user) == -1) {
+                if (_.indexOf($scope.reviewers, user) == -1) {
                     $scope.reviewers.push(user);
                 }
                 if (user.isChecked && preliminaryReviewersIndex == -1) {

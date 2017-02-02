@@ -50,20 +50,22 @@ angular.module('ng-IBC')
         $scope.modalData.IBCProtocolRevision.doCompose(true);
         var approvedUsers = $scope.users.filter(function (u) {
             var hasCorrectRole = false;
-            u.Roles.forEach(function (value, index, array) {
-                if (value.Name == Constants.ROLE.NAME.IBC_MEMBER || value.Name == Constants.ROLE.NAME.IBC_CHAIR) {
-                    hasCorrectRole = true;
-                }
-            });
+            if (_.indexOf($scope.modalData.IBCProtocolRevision.PreliminaryReviewers, u) == -1) {
+                u.Roles.forEach(function (value, index, array) {
+                    if (value.Name == Constants.ROLE.NAME.IBC_MEMBER || value.Name == Constants.ROLE.NAME.IBC_CHAIR) {
+                        hasCorrectRole = true;
+                    }
+                });
+            }
             return hasCorrectRole;
         });
         $scope.reviewers = $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.concat(approvedUsers);
         console.log($scope.reviewers);
     });
     $scope.addRemoveReviewer = function (user, add) {
-        var preliminaryReviewersIndex = $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.indexOf(user);
+        var preliminaryReviewersIndex = _.indexOf($scope.modalData.IBCProtocolRevision.PreliminaryReviewers, user);
         if (add) {
-            if ($scope.reviewers.indexOf(user) == -1) {
+            if (_.indexOf($scope.reviewers, user) == -1) {
                 $scope.reviewers.push(user);
             }
             if (user.isChecked && preliminaryReviewersIndex == -1) {
