@@ -56,6 +56,9 @@ class IBCProtocolRevision extends GenericCrud
     /* array of primary reviewers responsible for reviewing this protocal revision*/
     private $preliminaryReviewers;
 
+    /** array of sections containing questions relevant to this protocol revision's hazard **/
+    private $section;
+
 	public function __construct(){
 		// Define which subentities to load
 		$entityMaps = array();
@@ -75,15 +78,15 @@ class IBCProtocolRevision extends GenericCrud
     public static $PRIMARY_REVIEWERS_RELATIONSHIP = array(
         "className"	=>	"User",
         "tableName"	=>	"ibc_revision_primary_reviewer",
-        "keyName"	=>	"reviewer_id",
-        "foreignKeyName"	=>	"revision_id"
+        "keyName"	=>	"revision_id",
+        "foreignKeyName"	=>	"reviewer_id"
     );
 
     public static $PRELIMINARY_REVIEWERS_RELATIONSHIP = array(
         "className"	=>	"User",
         "tableName"	=>	"ibc_revision_preliminary_reviewer",
-        "keyName"	=>	"reviewer_id",
-        "foreignKeyName"	=>	"revision_id"
+        "keyName"	=>	"revision_id",
+        "foreignKeyName"	=>	"reviewer_id"
     );
 
 	// Required for GenericCrud
