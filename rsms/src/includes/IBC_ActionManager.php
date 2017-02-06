@@ -130,6 +130,20 @@ class IBC_ActionManager extends ActionManager {
         return $revision;
     }
 
+    public function saveProtocolRevisions(array $decodedObject = null){
+        $l = Logger::getLogger("save revisions");
+        if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
+        if($decodedObject == NULL)return new ActionError("No input read from stream");
+        //hold Preliminary and Primary reviewers
+        if(!is_array($decodedObject))return new ActionError("Not an array");
+
+        $savedRevisions = array();
+        foreach($decodedObject as $revision){
+            $savedRevisions[] = $this->saveProtocolRevision($revision);
+        }
+        return $savedRevisions;
+    }
+
     /**
      * Summary of getAllIBCSections
      * @return array
