@@ -82,7 +82,7 @@ var InstanceFactory = (function (_super) {
     };
     /**
      * Crawls through passed data and its children, creating class instances as needed.
-     *
+     * TODO: Needs to be optimized. Can check if conversion has already been done at current depth and 'continue' to next, if so.
      * @param data
      */
     InstanceFactory.convertToClasses = function (data) {
@@ -95,14 +95,17 @@ var InstanceFactory = (function (_super) {
         var drillDown = function (parentNode) {
             for (var prop in parentNode) {
                 if (parentNode[prop] && typeof parentNode[prop] === 'object') {
-                    if (parentNode[prop].hasOwnProperty(DataStoreManager.classPropName)) {
-                        var instance = InstanceFactory.createInstance(parentNode[prop][DataStoreManager.classPropName]);
-                        if (instance) {
-                            instance = parentNode[prop] = InstanceFactory.copyProperties(instance, parentNode[prop]); // set instance
-                            instance.onFulfill();
+                    // if either parentNode isn't a FluxCompositerBase or it is AND parentNode[prop] is its viewModelWatcher...
+                    if (!(parentNode instanceof FluxCompositerBase && parentNode.viewModelWatcher == parentNode[prop])) {
+                        if (parentNode[prop].hasOwnProperty(DataStoreManager.classPropName)) {
+                            var instance = InstanceFactory.createInstance(parentNode[prop][DataStoreManager.classPropName]);
+                            if (instance) {
+                                instance = parentNode[prop] = InstanceFactory.copyProperties(instance, parentNode[prop]); // set instance
+                                instance.onFulfill();
+                            }
                         }
+                        drillDown(parentNode[prop]);
                     }
-                    drillDown(parentNode[prop]);
                 }
             }
         };

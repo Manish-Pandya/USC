@@ -48,6 +48,10 @@ angular.module('ng-IBC')
     $scope.loading = $q.all([DataStoreManager.getAll("User", $scope.users), DataStoreManager.resolveCompMaps($scope.modalData.IBCProtocolRevision, true)])
         .then(function (stuff) {
         $scope.modalData.IBCProtocolRevision.doCompose(true);
+        // loop through and check current PreliminaryReviewers before concactinating final reviewers list.
+        $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.forEach(function (value) {
+            value.isChecked = true;
+        });
         var approvedUsers = $scope.users.filter(function (u) {
             var hasCorrectRole = false;
             if (_.indexOf($scope.modalData.IBCProtocolRevision.PreliminaryReviewers, u) == -1) {

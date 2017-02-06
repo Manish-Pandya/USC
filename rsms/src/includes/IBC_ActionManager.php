@@ -119,6 +119,10 @@ class IBC_ActionManager extends ActionManager {
             if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
             $dao->addRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
         }
+
+		$revision->setPreliminaryReviewers(null);
+		$revision->setPrimaryReviewers(null);
+
         $entityMaps = array();
         $entityMaps[] = new EntityMap("eager","getPreliminaryReviewers");
         $entityMaps[] = new EntityMap("eager","getPrimaryReviewers");
