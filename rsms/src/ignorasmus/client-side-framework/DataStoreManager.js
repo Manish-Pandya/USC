@@ -229,7 +229,9 @@ var DataStoreManager = (function () {
      * @param viewModel
      */
     DataStoreManager.save = function (viewModel) {
-        return XHR.POST(viewModel.thisClass["urlMapping"].urlSave, viewModel)
+        // if viewModel is array, add 's' to end of save url to differentiate it as plural call on the server
+        var urlSave = Array.isArray(viewModel) ? viewModel[0].thisClass["urlMapping"].urlSave + "s" : viewModel.thisClass["urlMapping"].urlSave;
+        return XHR.POST(urlSave, viewModel)
             .then(function (d) {
             if (Array.isArray(d)) {
                 d.forEach(function (value, index) {

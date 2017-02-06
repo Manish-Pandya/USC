@@ -155,15 +155,17 @@ abstract class InstanceFactory extends DataStoreManager {
                     } else {
                         DataStoreManager._actualModel[compMap.GerundName].promise = (DataStoreManager._actualModel[compMap.GerundName].promise || XHR.GET(compMap.GerundUrl))
                             .then((gerundReturns: any[]) => {
-                                var d: any[] = DataStoreManager._actualModel[compMap.GerundName].Data = gerundReturns;
-                                var gerundLen: number = d.length;
-                                //loop through all the gerunds
-                                for (let i: number = 0; i < gerundLen; i++) {
-                                    childStore.forEach((value: FluxCompositerBase) => {
-                                        if (value.UID == d[i].ChildId && parent.UID == d[i].ParentId) {
-                                            parent[compMap.PropertyName].push(value.viewModelWatcher);
-                                        }
-                                    });
+                                if (gerundReturns) {
+                                    var d: any[] = DataStoreManager._actualModel[compMap.GerundName].Data = gerundReturns;
+                                    var gerundLen: number = d.length;
+                                    //loop through all the gerunds
+                                    for (let i: number = 0; i < gerundLen; i++) {
+                                        childStore.forEach((value: FluxCompositerBase) => {
+                                            if (value.UID == d[i].ChildId && parent.UID == d[i].ParentId) {
+                                                parent[compMap.PropertyName].push(value.viewModelWatcher);
+                                            }
+                                        });
+                                    }
                                 }
                             });
                         console.log(compMap.GerundName + " doesn't exist in actualModel. Running GET to resolve...");
