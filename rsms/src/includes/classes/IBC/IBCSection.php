@@ -17,6 +17,7 @@ class IBCSection extends GenericCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"hazard_id"						=> "integer",
 		"answer_id"					    => "integer",
+        "weight"					    => "integer",
 
 		//GenericCrud
 		"key_id"				=> "integer",
@@ -50,6 +51,9 @@ class IBCSection extends GenericCrud {
 
     private $questions;
 
+    private $weight;
+
+
 	public function __construct(){
 
 		// Define which subentities to load
@@ -80,5 +84,9 @@ class IBCSection extends GenericCrud {
 		return $this->questions;
     }
     public function setQuestions($questions){$this->questions = $questions;}
+
+
+	public function getWeight(){return $this->weight;}
+	public function setWeight($weight){$this->weight = $weight;}
 }
 ?>

@@ -6,7 +6,7 @@
 
     <div class="modal-body">
         <div class="control-group">
-            <label class="control-label">Principal Investigator(s)</label>
+            <label class="control-label">PI / CONTACT</label>
             <div class="controls" style="display:block">
                 <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push($item)" class="span2" style="margin-left:0; width:269px;">
                     <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
@@ -25,7 +25,7 @@
         <!-- to do -- concat pis rooms to list of rooms they share-->
         <span ng-if="modalData.BioSafetyCabinet.PrincipalInvestigator.Rooms" ng-init="modalData.BioSafetyCabinet.PrincipalInvestigator.loadBuildings()" />
         <div class="control-group">
-            <label class="control-label">Room</label>
+            <label class="control-label">Building & Room</label>
             <div class="controls">
                 <select class="span3" ng-model="modalData.BioSafetyCabinet.SelectedInspection.Room_id" ng-change="onSelectRoom()" ng-options="room.Key_id as (room.Building_name + ' ' + room.Name) for room in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators | getSharedRooms">
                     <option value="">--Select Room--</option>
@@ -42,14 +42,9 @@
                 </select>
             </div>
         </div>
+       
         <div class="control-group">
-            <label class="control-label">Serial #</label>
-            <div class="controls">
-                <input ng-model="modalData.BioSafetyCabinet.Serial_number" placehold="Label" />
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">Make</label>
+            <label class="control-label">Manufacturer</label>
             <div class="controls">
                 <input ng-model="modalData.BioSafetyCabinet.Make" placehold="Label" />
             </div>
@@ -58,6 +53,12 @@
             <label class="control-label">Model</label>
             <div class="controls">
                 <input ng-model="modalData.BioSafetyCabinet.Model" placehold="Label" />
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label">Serial #</label>
+            <div class="controls">
+                <input ng-model="modalData.BioSafetyCabinet.Serial_number" placehold="Label" />
             </div>
         </div>
         <div class="control-group">

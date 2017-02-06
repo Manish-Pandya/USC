@@ -19,8 +19,6 @@ class IBCAnswer extends GenericCrud
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"question_id"			=> "integer",
-		"response_type_id"		=> "integer",
-        "response_type"         => "text",
         "grid_column_index"		=> "integer",
 		"grid_column_name"		=> "text",
 
@@ -68,13 +66,7 @@ class IBCAnswer extends GenericCrud
 
     public function getQuestion_id(){return $this->question_id;}
 	public function setQuestion_id($question_id){$this->question_id = $question_id;}
-
-	public function getResponse_type_id(){return $this->response_type_id;}
-	public function setResponse_type_id($response_type_id){$this->response_type_id = $response_type_id;}
-
-	public function getResponse_type(){return $this->response_type;}
-	public function setResponse_type($response_type){$this->response_type = $response_type;}
-
+    
 	public function getResponses(){
         if($this->responses === NULL && $this->protocol_id != null && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO(new IBCResponse());
