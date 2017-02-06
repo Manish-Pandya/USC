@@ -1,0 +1,53 @@
+﻿<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:saving, message:'Saving...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+
+<h1 class="card full">
+    <i class="icon-protocol"></i>IBC Administrator – Assign Protocols for Full IBC Review
+</h1>
+<br />
+<div class="card full">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr class="redBg">
+                <th colspan="9" class="redBg">
+                    <h1 class="redBg">Submitted Protocols</h1>
+                    <h2 class="redBg"><span class="bold underline">{{submittedProtocols.length || "0"}}</span> Protocols Displayed</h2>
+                </th>
+            </tr>
+            <tr>
+                <th>Original Protocol #</th>
+                <th>Prinicipal Investigator</th>
+                <th>Biological Hazard</th>
+                <th>Biosafety Protocol</th>
+                <th>Assign for Review</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr ng-repeat="protocol in submittedProtocols = (protocols | isSubmitted)" ng-click="activeRow = $index">
+                <td>{{protocol.Protocol_number}}</td>
+                <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
+                <td>{{protocol.Hazard.Name}} </td>
+                <td><a class="btn btn-primary left" ui-sref="ibc.detail({id:protocol.UID})"><i class="icon-document-alt-fill"></i>View Protocol</a> </td>
+                <td>
+                    <ul>
+                        <li ng-show="$parent.$index == activeRow" ng-repeat="reviewer in reviewers" style="padding: 3px 0; font-size: 15px;">
+                            <label class="checkbox inline">
+                                <input type="checkbox" ng-checked="_.indexOf(protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].PrimaryReviewers, reviewer) > -1" ng-model="isChecked" ng-change="addRemoveReviewer(protocol, reviewer, isChecked)" />
+                                <span class="metro-checkbox" once-text="reviewer.Name"></span>
+                            </label>
+                        </li>
+                        <li ng-show="$parent.$index != activeRow" ng-repeat="reviewer in protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].PrimaryReviewers" style="padding: 3px 0; font-size: 15px;">
+                            {{reviewer.Name}}
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="modal-footer">
+        <a class="btn btn-large btn-success left" ng-click="save(submittedProtocols)"><i class="icon-checkmark"></i>Assign</a>
+        <a class="btn btn-large btn-danger left" href="./#/home"><i class="icon-cancel-2"></i>Back</a>
+    </div>
+</div>
