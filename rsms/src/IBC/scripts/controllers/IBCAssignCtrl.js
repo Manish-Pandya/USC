@@ -49,6 +49,7 @@ angular.module('ng-IBC')
                 protocolRevisions.push(value.IBCProtocolRevisions[value.IBCProtocolRevisions.length - 1]);
             }
         });
+        protocolRevisions[protocolRevisions.length - 1]["Status"] = Constants.IBC_PROTOCOL_REVISION.STATUS.IN_REVIEW;
         $scope.saving = $q.all([DataStoreManager.save(protocolRevisions)])
             .then(function () {
             console.log("i finished saving");
