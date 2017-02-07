@@ -26,6 +26,15 @@
             return returnedProtocols;
         };
     })
+    .filter('isInReview', function () {
+        return function (protocols) {
+            if (!protocols) return;
+            var returnedProtocols = protocols.filter(function (p) {
+                return p.IBCProtocolRevisions[p.IBCProtocolRevisions.length - 1].Status == Constants.IBC_PROTOCOL_REVISION.STATUS.IN_REVIEW;
+            })
+            return returnedProtocols;
+        };
+    })
     .filter('isApproved', function () {
         return function (protocols) {
             if (!protocols) return;

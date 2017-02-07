@@ -8,12 +8,14 @@
  * Controller of the IBC protocol Assign for Review view
  */
 angular.module('ng-IBC')
-    .controller('IBCAssignCtrl', function ($rootScope, $scope, $modal, $location, $q) {
+    .controller('IBCAssignCtrl', function ($rootScope, $scope, $modal, $location, $q, convenienceMethods) {
         console.log("IBCAssignCtrl running");
-
-        $scope.protocols = [];
-        $scope.reviewers = [];
-        $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap]), DataStoreManager.getAll("IBCProtocolRevision", [], true), DataStoreManager.getAll("User", $scope.reviewers)])
+        $scope.cv = convenienceMethods;
+        
+        function getProtocols() {
+            $scope.protocols = [];
+            $scope.reviewers = [];
+            $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap]), DataStoreManager.getAll("IBCProtocolRevision", [], true), DataStoreManager.getAll("User", $scope.reviewers, true)])
             .then((stuff) => {
                 console.log($scope.protocols);
                 console.log(DataStoreManager._actualModel);
@@ -28,10 +30,13 @@ angular.module('ng-IBC')
                     return hasCorrectRole;
                 })
             });
+        }
+
+        $scope.loading = $rootScope.getCurrentRoles().then(getProtocols);
 
         $scope.addRemoveReviewer = function (protocol: ibc.IBCProtocol, user: ibc.User, add: boolean) {
             var protocolRevision: ibc.IBCProtocolRevision = protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1];
-            var primaryReviewersIndex: number = _.indexOf(protocolRevision.PrimaryReviewers, user);
+            var primaryReviewersIndex: number = _.findIndex(protocolRevision.PrimaryReviewers, ["UID", user.UID]);
             if (add && primaryReviewersIndex == -1) {
                 if (primaryReviewersIndex == -1) {
                     protocolRevision.PrimaryReviewers.push(user);

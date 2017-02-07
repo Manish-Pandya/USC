@@ -235,6 +235,7 @@ Constants.IBC_PROTOCOL_REVISION = {
         NOT_SUBMITTED: "Not Submitted",
         SUBMITTED: "Submitted",
         RETURNED_FOR_REVISION: "Returned for Revision",
+        IN_REVIEW: "In Review",
         APPROVED: "Approved"
     }
 };

@@ -49,6 +49,9 @@ angular
           })
     })
     .controller('AppCtrl', function ($rootScope, $q) {
+        //expose lodash to views
+        $rootScope._ = _;
+
         //register classes with app
         console.log("approved classNames:", InstanceFactory.getClassNames(ibc));
         // method to async fetch current roles

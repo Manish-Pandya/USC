@@ -24,21 +24,18 @@
         </thead>
 
         <tbody>
-            <tr ng-repeat="protocol in submittedProtocols = (protocols | isSubmitted)" ng-click="activeRow = $index">
+            <tr ng-repeat="protocol in submittedProtocols = (protocols | isSubmitted)">
                 <td>{{protocol.Protocol_number}}</td>
                 <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
                 <td>{{protocol.Hazard.Name}} </td>
                 <td><a class="btn btn-primary left" ui-sref="ibc.detail({id:protocol.UID})"><i class="icon-document-alt-fill"></i>View Protocol</a> </td>
                 <td>
                     <ul>
-                        <li ng-show="$parent.$index == activeRow" ng-repeat="reviewer in reviewers" style="padding: 3px 0; font-size: 15px;">
+                        <li ng-repeat="reviewer in reviewers" style="padding: 3px 0; font-size: 15px;">
                             <label class="checkbox inline">
-                                <input type="checkbox" ng-checked="_.indexOf(protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].PrimaryReviewers, reviewer) > -1" ng-model="isChecked" ng-change="addRemoveReviewer(protocol, reviewer, isChecked)" />
+                                <input type="checkbox" ng-init="reviewer.isChecked = _.findIndex(protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].PrimaryReviewers, ['UID', reviewer.UID]) > -1" ng-model="reviewer.isChecked" ng-change="addRemoveReviewer(protocol, reviewer, reviewer.isChecked)" />
                                 <span class="metro-checkbox" once-text="reviewer.Name"></span>
                             </label>
-                        </li>
-                        <li ng-show="$parent.$index != activeRow" ng-repeat="reviewer in protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].PrimaryReviewers" style="padding: 3px 0; font-size: 15px;">
-                            {{reviewer.Name}}
                         </li>
                     </ul>
                 </td>
