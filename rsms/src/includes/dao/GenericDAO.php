@@ -416,7 +416,7 @@ class GenericDAO {
             $l->fatal($sql);
             $l->fatal(array($startDate, $endDate, $hasTransferDate,  $this->modelObject->getAuthorization_id()));
         }
-        
+
 
 		// Get the db connection
 		global $db;
@@ -1257,6 +1257,7 @@ class GenericDAO {
 	                        OR g.pickup_id = i.key_id
 	                        OR h.pickup_id = i.key_id
 	                        AND i.status != 'REQUESTED'
+                            WHERE i.principal_investigator_id = ?
 	                        group by e.name, e.key_id
                         ) as picked_up
                         ON picked_up.isotope_id = b.isotope_id
@@ -1271,6 +1272,7 @@ class GenericDAO {
 	                        ON c.authorization_id = d.key_id
 	                        JOIN isotope e
 	                        ON d.isotope_id = e.key_id
+                            WHERE c.principal_investigator_id = ?
 	                        group by e.name, e.key_id
                         ) as total_used
                         ON total_used.isotope_id = b.isotope_id
@@ -1280,6 +1282,9 @@ class GenericDAO {
         $stmt = $db->prepare($queryString);
 
         $stmt->bindValue(1, $id);
+        $stmt->bindValue(2, $id);
+        $stmt->bindValue(3, $id);
+
         $stmt->execute();
         $inventories = $stmt->fetchAll(PDO::FETCH_CLASS, "CurrentIsotopeInventoryDto");
         return $inventories;
