@@ -176,20 +176,14 @@ class JsonManager {
 	 *
 	 * @param Array $decodedJsonArray
 	 * @param string $object
-	 * @return Object populated by the array
+	 * @return Object || Array populated by the array
 	 */
 	public static function assembleObjectFromDecodedArray($decodedJsonArray, $object = NULL){
 
+        $LOG = Logger::getLogger(__FUNCTION__);
 
-		//if object is null, pull ["Class"] from decode to infer type
-		$object = JsonManager::buildModelObject($decodedJsonArray, $object);
 
 		//Make sure we have a base object
-		if( $object == NULL ){
-			// We have a problem!
-			//$this->LOG->error("Error assembling object from decoded JSON - NULL base object");
-			return NULL;
-		}
 
 		//FIXME: Remember listed fields:
 		// *SEE DtoManager::rememberSetFieldName
@@ -199,6 +193,7 @@ class JsonManager {
 
 		// assemble embedded entities
 		// For each value in the array...
+
 		foreach( $decodedJsonArray as $key=>$value){
 			// ...If value is an Array that contains the key "Class",
 			if( is_array($value) && array_key_exists('Class', $value) ){
@@ -211,13 +206,28 @@ class JsonManager {
 			//We may have an array containing arrays that should be instantiated as well
 			else if( is_array($value) && is_array($value[0]) && array_key_exists('Class', $value[0] ) ){
 				//TODO:  instantiate child objects
-				$LOG = Logger::getLogger('yo');
-				//$LOG->fatal('found child object');
-			}
+				$LOG->fatal('found child array');
+			}else{
+            }
 		}
+
+        if(JsonManager::getIsArrayOfType($decodedJsonArray)){
+            return $decodedJsonArray;
+        }
 
 		//Transform the decoded array into the object
 		//	This can be done by the DtoManager using an empty prefix
+        if( $object == NULL ){
+            $object = JsonManager::buildModelObject($decodedJsonArray, $object);
+		}
+
+        if( $object == NULL ){
+            return NULL;
+			// We have a problem!
+			//$this->LOG->error("Error assembling object from decoded JSON - NULL base object");
+		}
+
+        //if object is null, pull ["Class"] from decode to infer type
 		return DtoManager::autoSetFieldsFromArray($decodedJsonArray, $object, '');
 	}
 
@@ -249,6 +259,28 @@ class JsonManager {
 		//Spit object back out
 		return $object;
 	}
+
+    /**
+     * UTILITY function for assembleObjectFromDecodedArray
+     * determines if an array is composed of objects of a single class
+     *
+     * @param Array $array
+     * @return boolean
+     *
+     */
+    public static function getIsArrayOfType(array $array){
+        if(!is_array($array) || !isset($array[0]) || !get_class($array[0])) return false;
+
+        //store the class of the first index
+        $type = get_class($array[0]);
+
+        foreach($array as $value){
+            //if the class has changed or has no value, we know we don't have an array of a single type
+            if(!get_class($value) || get_class($value) != $type) return false;
+        }
+
+        return true;
+    }
 
 	public static function objectToBasicArray($object){
 		//Call Accessors
