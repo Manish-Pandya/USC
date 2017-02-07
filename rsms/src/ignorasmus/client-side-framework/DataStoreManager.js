@@ -109,6 +109,9 @@ var DataStoreManager = (function () {
                         d[index].viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
                         viewModelParent[index] = d[index].viewModelWatcher;
                     });
+                    if (compMaps && typeof compMaps === "boolean") {
+                        DataStoreManager._actualModel[type].fullyComposed = true;
+                    }
                     return viewModelParent;
                 })
                     .catch(function (reason) {
@@ -157,6 +160,9 @@ var DataStoreManager = (function () {
                 d.doCompose(compMaps);
                 d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
                 viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
+                if (compMaps && typeof compMaps === "boolean") {
+                    DataStoreManager._actualModel[type].fullyComposed = true;
+                }
                 return viewModelParent;
             })
                 .catch(function (reason) {
@@ -176,9 +182,10 @@ var DataStoreManager = (function () {
                 // if compMaps == true or if it's an array with an approved compMap...
                 if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && _.findIndex(compMaps, compMap) > -1)) {
                     if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
-                        if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
+                        var needsNestedComposing = typeof compMaps === "boolean" && !DataStoreManager._actualModel[compMap.ChildType].fullyComposed;
+                        if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length || needsNestedComposing) {
                             console.log(fluxCompositerBase.TypeName + " fetching remote " + compMap.ChildType);
-                            if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
+                            if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled && !needsNestedComposing) {
                                 allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
                             }
                             else {
@@ -287,7 +294,7 @@ var DataStoreManager = (function () {
      */
     DataStoreManager.buildNestedViewModelWatcher = function (fluxBase) {
         if (fluxBase.hasOwnProperty("viewModelWatcher")) {
-            fluxBase.viewModelWatcher = InstanceFactory.convertToClasses(InstanceFactory.copyProperties(fluxBase.viewModelWatcher, fluxBase));
+            fluxBase.viewModelWatcher = InstanceFactory.convertToClasses(InstanceFactory.copyProperties(fluxBase.viewModelWatcher, fluxBase, ["viewModelWatcher"]));
         }
         return _.cloneDeepWith(fluxBase, function (value) {
             if (value instanceof FluxCompositerBase) {

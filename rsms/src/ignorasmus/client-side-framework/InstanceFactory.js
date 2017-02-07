@@ -95,8 +95,8 @@ var InstanceFactory = (function (_super) {
         var drillDown = function (parentNode) {
             for (var prop in parentNode) {
                 if (parentNode[prop] && typeof parentNode[prop] === 'object') {
-                    // if either parentNode isn't a FluxCompositerBase or it is AND parentNode[prop] is its viewModelWatcher...
-                    if (!(parentNode instanceof FluxCompositerBase && parentNode.viewModelWatcher == parentNode[prop])) {
+                    // if either parentNode isn't a FluxCompositerBase, OR it is and parentNode[prop] is NOT its viewModelWatcher, OR parentNode[prop] is the viewModelWatcher, but isn't composed yet...
+                    if (!(parentNode instanceof FluxCompositerBase && parentNode.viewModelWatcher == parentNode[prop] && parentNode.viewModelWatcher instanceof FluxCompositerBase)) {
                         if (parentNode[prop].hasOwnProperty(DataStoreManager.classPropName)) {
                             var instance = InstanceFactory.createInstance(parentNode[prop][DataStoreManager.classPropName]);
                             if (instance) {

@@ -11,13 +11,10 @@ angular.module('ng-IBC')
     console.log("IBCAssignCtrl running");
     $scope.protocols = [];
     $scope.reviewers = [];
-    $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap]), DataStoreManager.getAll("User", $scope.reviewers)])
+    $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap]), DataStoreManager.getAll("IBCProtocolRevision", [], true), DataStoreManager.getAll("User", $scope.reviewers)])
         .then(function (stuff) {
-        $scope.protocols.forEach(function (value) {
-            if (value.IBCProtocolRevisions) {
-                value.IBCProtocolRevisions[value.IBCProtocolRevisions.length - 1].doCompose([ibc.IBCProtocolRevision.PrimaryReviewersMap]);
-            }
-        });
+        console.log($scope.protocols);
+        console.log(DataStoreManager._actualModel);
         $scope.reviewers = $scope.reviewers.filter(function (u) {
             var hasCorrectRole = false;
             u.Roles.forEach(function (value, index, array) {
@@ -41,6 +38,7 @@ angular.module('ng-IBC')
         }
     };
     $scope.save = function (protocols) {
+        console.log(protocols);
         var protocolRevisions = [];
         protocols.forEach(function (value) {
             if (value.IBCProtocolRevisions) {

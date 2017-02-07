@@ -13,13 +13,11 @@ angular.module('ng-IBC')
 
         $scope.protocols = [];
         $scope.reviewers = [];
-        $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap]), DataStoreManager.getAll("User", $scope.reviewers)])
+        $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap]), DataStoreManager.getAll("IBCProtocolRevision", [], true), DataStoreManager.getAll("User", $scope.reviewers)])
             .then((stuff) => {
-                $scope.protocols.forEach((value: ibc.IBCProtocol) => {
-                    if (value.IBCProtocolRevisions) {
-                        value.IBCProtocolRevisions[value.IBCProtocolRevisions.length - 1].doCompose([ibc.IBCProtocolRevision.PrimaryReviewersMap]);
-                    }
-                })
+                console.log($scope.protocols);
+                console.log(DataStoreManager._actualModel);
+
                 $scope.reviewers = $scope.reviewers.filter(function (u) {
                     var hasCorrectRole: boolean = false;
                     u.Roles.forEach((value: ibc.Role, index: number, array: ibc.Role[]) => {
@@ -44,6 +42,7 @@ angular.module('ng-IBC')
         }
 
         $scope.save = function (protocols: ibc.IBCProtocol[]) {
+            console.log(protocols);
             var protocolRevisions: ibc.IBCProtocolRevision[] = [];
             protocols.forEach((value) => {
                 if (value.IBCProtocolRevisions) {

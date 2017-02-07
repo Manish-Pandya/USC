@@ -125,6 +125,9 @@ abstract class DataStoreManager {
                                 d[index].viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(value);
                                 viewModelParent[index] = d[index].viewModelWatcher;
                             });
+                            if (compMaps && typeof compMaps === "boolean") {
+                                DataStoreManager._actualModel[type].fullyComposed = true;
+                            }
 
                             return viewModelParent;
                         })
@@ -173,6 +176,9 @@ abstract class DataStoreManager {
                         d.doCompose(compMaps);
                         d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
                         viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
+                        if (compMaps && typeof compMaps === "boolean") {
+                            DataStoreManager._actualModel[type].fullyComposed = true;
+                        }
                         
                         return viewModelParent;
                     })
@@ -193,9 +199,10 @@ abstract class DataStoreManager {
                 // if compMaps == true or if it's an array with an approved compMap...
                 if (typeof compMaps === "boolean" || (Array.isArray(compMaps) && _.findIndex(compMaps, compMap) > -1)) {
                     if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled || PermissionMap.getPermission(compMap.ChildType).getAll) {
-                        if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length) {
+                        var needsNestedComposing: boolean = typeof compMaps === "boolean" && !DataStoreManager._actualModel[compMap.ChildType].fullyComposed;
+                        if (!DataStoreManager._actualModel[compMap.ChildType].Data || !DataStoreManager._actualModel[compMap.ChildType].Data.length || needsNestedComposing) {
                             console.log(fluxCompositerBase.TypeName + " fetching remote " + compMap.ChildType);
-                            if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled) {
+                            if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled && !needsNestedComposing) {
                                 allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
                             } else {
                                 allComps.push(DataStoreManager.getAll(compMap.ChildType, [], typeof compMaps === "boolean"));
@@ -307,7 +314,7 @@ abstract class DataStoreManager {
 
     static buildNestedViewModelWatcher(fluxBase: FluxCompositerBase): FluxCompositerBase {
         if (fluxBase.hasOwnProperty("viewModelWatcher")) {
-            fluxBase.viewModelWatcher = InstanceFactory.convertToClasses(InstanceFactory.copyProperties(fluxBase.viewModelWatcher, fluxBase));
+            fluxBase.viewModelWatcher = InstanceFactory.convertToClasses( InstanceFactory.copyProperties(fluxBase.viewModelWatcher, fluxBase, ["viewModelWatcher"]) );
         }
         return _.cloneDeepWith(fluxBase, (value) => {
             if (value instanceof FluxCompositerBase) {
