@@ -5,21 +5,20 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var ibc;
 (function (ibc) {
-    var IBCSection = (function (_super) {
-        __extends(IBCSection, _super);
-        function IBCSection() {
+    var IBCResponse = (function (_super) {
+        __extends(IBCResponse, _super);
+        function IBCResponse() {
             return _super.call(this) || this;
         }
-        IBCSection.prototype.hasGetAllPermission = function () {
+        IBCResponse.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
                 var allowedRoles = [Constants.ROLE.NAME.ADMIN];
                 _super.prototype.hasGetAllPermission.call(this, _.intersection(DataStoreManager.CurrentRoles, allowedRoles).length > 0);
             }
             return this._hasGetAllPermission;
         };
-        return IBCSection;
+        return IBCResponse;
     }(FluxCompositerBase));
-    IBCSection.urlMapping = new UrlMapping("getAllSections", "getSectionById&id=", "saveSection");
-    IBCSection.QuestionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCQuestion", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Questions&id={{UID}}", "IBCQuestions", "Section_id");
-    ibc.IBCSection = IBCSection;
+    IBCResponse.urlMapping = new UrlMapping("getAllResponses", "getResponseById&id=", "saveResponse");
+    ibc.IBCResponse = IBCResponse;
 })(ibc || (ibc = {}));

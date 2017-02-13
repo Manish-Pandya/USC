@@ -36,9 +36,9 @@ class IBC_ActionMappingFactory extends ActionMappingFactory {
 				"getIBCQuestionById" 			=> new ActionMapping("getIBCQuestionById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
 				"saveIBCQuestion" 				=> new ActionMapping("saveIBCQuestion", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
 
-                "getAllIBCAnswers" 				=> new ActionMapping("getAllIBCAnswers", "", "", $this::$ROLE_GROUPS["IBC_COMMITTEE"] ),
-				"getIBCAnswerById" 				=> new ActionMapping("getIBCAnswerById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
-				"saveIBCAnswer" 				=> new ActionMapping("saveIBCAnswer", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
+                "getAllIBCPossibleAnswers" 				=> new ActionMapping("getAllIBCPossibleAnswers", "", "", $this::$ROLE_GROUPS["IBC_COMMITTEE"] ),
+				"getIBCPossibleAnswerById" 				=> new ActionMapping("getIBCPossibleAnswerById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
+				"saveIBCPossibleAnswer" 				=> new ActionMapping("saveIBCPossibleAnswer", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
 
                 "getAllIBCResponses" 			=> new ActionMapping("getAllIBCResponses", "", "", $this::$ROLE_GROUPS["IBC_COMMITTEE"] ),
 				"getIBCResponseById" 			=> new ActionMapping("getIBCResponseById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),

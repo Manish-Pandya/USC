@@ -205,29 +205,29 @@ class IBC_ActionManager extends ActionManager {
     }
 
     /**
-     * Summary of getAllIBCAnswers
+	 * Summary of getAllIBCPossibleAnswers
      * @return array
      */
-    function getAllIBCAnswers(){
+    function getAllIBCPossibleAnswers(){
         //TODO: restrict revisions to only those of protocols that belong to user
-        $dao = $this->getDao(new IBCAnswer());
+        $dao = $this->getDao(new IBCPossibleAnswer());
         return $dao->getAll();
     }
     /**
      * @param integer $id
-     * @return GenericCrud | IBCAnswer | ActionError
+     * @return GenericCrud | IBCPossibleAnswer | ActionError
      */
-    function getIBCAnswerById($id = null){
+    function getIBCPossibleAnswerById($id = null){
         if($id == NULL)$id = $this->getValueFromRequest('id', $id);
         if($id == NULL)return new ActionError("No request param 'id' provided.");
-        $dao = $this->getDao(new IBCAnswer());
+        $dao = $this->getDao(new IBCPossibleAnswer());
         return $dao->getById($id);
     }
     /**
-     * @param IBCAnswer
-     * @return GenericCrud | ActionError | IBCAnswer
+     * @param IBCPossibleAnswer
+	 * @return GenericCrud | ActionError | IBCPossibleAnswer
      */
-    function saveIBCAnswer($decodedObject = null){
+    function saveIBCPossibleAnswer($decodedObject = null){
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         $dao = $this->getDao($decodedObject);

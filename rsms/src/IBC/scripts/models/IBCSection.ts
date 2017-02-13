@@ -3,6 +3,9 @@
 
         static urlMapping: UrlMapping = new UrlMapping("getAllSections", "getSectionById&id=", "saveSection");
 
+        IBCQuestions: IBCQuestion[];
+        static QuestionMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCQuestion", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Questions&id={{UID}}", "IBCQuestions", "Section_id");
+
         constructor() {
             super();
         }

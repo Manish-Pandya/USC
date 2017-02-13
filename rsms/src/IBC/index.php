@@ -148,10 +148,11 @@ if(!isset($_SESSION["USER"])){ ?>
     <script src="scripts/models/Role.js"></script>
     <script src="scripts/models/Room.js"></script>
     <script src="scripts/models/User.js"></script>
-    <script src="scripts/models/IBCAnswer.js"></script>
+    <script src="scripts/models/IBCPossibleAnswer.js"></script>
     <script src="scripts/models/IBCProtocol.js"></script>
     <script src="scripts/models/IBCProtocolRevision.js"></script>
     <script src="scripts/models/IBCQuestion.js"></script>
+    <script src="scripts/models/IBCResponse.js"></script>
     <script src="scripts/models/IBCSection.js"></script>
 
 </head>
