@@ -15,6 +15,9 @@
         IBCProtocolRevisions: IBCProtocolRevision[];
         static RevisionMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCProtocolRevision", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Revisions&id={{UID}}", "IBCProtocolRevisions", "Protocol_id");
 
+        IBCSections: IBCSection[];
+        static SectionMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCSection", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Sections&id={{UID}}", "IBCSections", "Hazard_id");
+
         constructor() {
             super();
         }

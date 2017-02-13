@@ -24,5 +24,6 @@ var ibc;
     IBCProtocol.DepartmentMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "Department", "getDepartmentById&id={{this.Department_id}}", "Department", "Department_id");
     IBCProtocol.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=PrincipalInvestigator&id={{UID}}", "PrincipalInvestigators", "Protocol_id", "Principal_investigator_id", "IBCProtocolPrincipalInvestigator", "getRelationships&class1=IBCProtocol&class2=PrincipalInvestigator");
     IBCProtocol.RevisionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCProtocolRevision", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Revisions&id={{UID}}", "IBCProtocolRevisions", "Protocol_id");
+    IBCProtocol.SectionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCSection", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Sections&id={{UID}}", "IBCSections", "Hazard_id");
     ibc.IBCProtocol = IBCProtocol;
 })(ibc || (ibc = {}));
