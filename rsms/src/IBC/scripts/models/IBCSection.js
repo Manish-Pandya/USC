@@ -19,7 +19,7 @@ var ibc;
         };
         return IBCSection;
     }(FluxCompositerBase));
-    IBCSection.urlMapping = new UrlMapping("getAllSections", "getSectionById&id=", "saveSection");
+    IBCSection.urlMapping = new UrlMapping("getAllIBCSections", "getIBCSectionById&id=", "saveIBCSection");
     IBCSection.QuestionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCQuestion", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Questions&id={{UID}}", "IBCQuestions", "Section_id");
     ibc.IBCSection = IBCSection;
 })(ibc || (ibc = {}));

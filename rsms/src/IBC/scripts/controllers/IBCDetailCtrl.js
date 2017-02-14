@@ -11,7 +11,13 @@ angular.module('ng-IBC')
     console.log("IBCDetailCtrl running");
     var getProtocol = function (id) {
         $scope.protocol = {};
-        return $q.all([DataStoreManager.getById("IBCProtocol", id, $scope.protocol).then(function (p) { console.log(p); })]);
+        return $q.all([DataStoreManager.getById("IBCProtocol", id, $scope.protocol)])
+            .then(function (p) {
+            DataStoreManager.getById("IBCSection", $scope.protocol.IBCSections[0].UID, {}, true)
+                .then(function (fart) {
+                console.log($scope.protocol);
+            });
+        });
     };
     $scope.loading = getProtocol($stateParams.id);
 })

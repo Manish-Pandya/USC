@@ -58,6 +58,7 @@ class IBCSection extends GenericCrud {
 
 		// Define which subentities to load
 		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy", "getQuestions");
 		$this->setEntityMaps($entityMaps);
 	}
 

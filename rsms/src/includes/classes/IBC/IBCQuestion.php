@@ -33,7 +33,7 @@ class IBCQuestion extends GenericCrud
 
     /** Relationships */
 	public static $ANSWERS_RELATIONSHIP = array(
-		"className"	=>	"IBCAnswer",
+		"className"	=>	"IBCPossibleAnswer",
 		"tableName"	=>	"ibc_question",
 		"keyName"	=>	"key_id",
 		"foreignKeyName"	=>	"question_id"

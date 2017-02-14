@@ -15,7 +15,7 @@ angular.module('ng-IBC')
 
         function getAllProtocols() {
             $scope.protocols = [];
-            return $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap])])
+            return $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap, ibc.IBCProtocol.SectionMap])])
             .then(
                 function (whateverGotReturned) {
                     console.log($scope.protocols);

@@ -19,6 +19,6 @@ var ibc;
         };
         return IBCResponse;
     }(FluxCompositerBase));
-    IBCResponse.urlMapping = new UrlMapping("getAllResponses", "getResponseById&id=", "saveResponse");
+    IBCResponse.urlMapping = new UrlMapping("getAllIBCResponses", "getIBCResponseById&id=", "saveIBCResponse");
     ibc.IBCResponse = IBCResponse;
 })(ibc || (ibc = {}));

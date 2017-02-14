@@ -13,7 +13,17 @@ angular.module('ng-IBC')
 
         var getProtocol = function (id: number | string): Promise<any> {
             $scope.protocol = {};
-            return $q.all([DataStoreManager.getById("IBCProtocol", id, $scope.protocol).then((p) => { console.log(p) })]);
+            return $q.all([DataStoreManager.getById("IBCProtocol", id, $scope.protocol)])
+                .then(
+                    function (p) {
+                        DataStoreManager.getById("IBCSection", $scope.protocol.IBCSections[0].UID, {}, true)
+                            .then(
+                                function (fart) {
+                                    console.log($scope.protocol);
+                                }
+                            )
+                    }
+                );
         }
 
         $scope.loading = getProtocol($stateParams.id);
