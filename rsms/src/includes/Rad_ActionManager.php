@@ -1218,8 +1218,8 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new SolidsContainer());
-            $decodedObject = $dao->save($decodedObject);
-            return $decodedObject;
+            $container = $dao->save($decodedObject);
+            return $container;
         }
     }
 

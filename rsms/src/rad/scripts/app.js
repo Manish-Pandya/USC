@@ -62,11 +62,16 @@ angular
         templateUrl: "views/admin/parcels.html",
         controller: "AllOrdersCtrl"
       })
-        .state('radmin.auth-report', {
-            url: "/auth-report",
-            templateUrl: "views/admin/auth-report.html",
-            controller: "AuthReportCtrl"
-        })
+     .state('radmin.auth-report', {
+        url: "/auth-report",
+        templateUrl: "views/admin/auth-report.html",
+        controller: "AuthReportCtrl"
+     })
+    .state('auth-report-print', {
+        url: "/auth-report-print",
+        templateUrl: "views/admin/auth-report-print.html",
+        controller: "AuthReportCtrl"
+    })
       //admin overview for a QuarterlyInventories
       .state('radmin.inventories', {
         url: "/inventories",
@@ -182,6 +187,7 @@ angular
 
   })
   .controller('NavCtrl', function ($rootScope, actionFunctionsFactory, $state) {
+      $rootScope.constants = Constants;
     $rootScope.$on('$stateChangeStart ',function(){
       $rootScope.loading = true;
     });

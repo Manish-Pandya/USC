@@ -5,7 +5,23 @@
 *   RAD STYLES;
 *
 **********************************************************/
-
+@media print {
+  @page {size: landscape}
+   .authReports div.fake-table > div.table-row > div, .authReports div.fake-table > div.table-row > div ul li, .authReports div.fake-table > div.table-row > div h4{
+       font-size:8pt !important;
+    }
+    input, br, .user-info{
+        display:none
+    }
+    div.table-row {
+        position:relative;
+    }
+    div.table-row > div{
+        border-top:1px solid #000;
+        page-break-inside:avoid;
+        position:relative;
+    }
+}
 .form-inline .control-group {
     float: left;
 }
@@ -959,3 +975,5 @@ div.fake-table .table-row > div div.pickup-comments .btn i {
     display: block !important;
     margin: 0 !important;
 }
+
+
