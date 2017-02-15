@@ -42,7 +42,7 @@ class IBCQuestion extends GenericCrud
 
 	private $section_id;
 	private $text;
-    private $answers;
+    private $IBCPossibleAnswers;
     private $response_type;
     private $weight;
 
@@ -68,14 +68,14 @@ class IBCQuestion extends GenericCrud
 	public function getText(){return $this->text;}
 	public function setText($text){$this->text = $text;}
 
-    public function getAnswers(){
-        if($this->answers === NULL && $this->hasPrimaryKeyValue()) {
+    public function getIBCPossibleAnswers(){
+        if($this->IBCPossibleAnswers === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->answers = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ANSWERS_RELATIONSHIP));
+			$this->IBCPossibleAnswers = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ANSWERS_RELATIONSHIP));
 		}
-		return $this->answers;
+		return $this->IBCPossibleAnswers;
 	}
-	public function setAnswers($answers){$this->answers = $answers;}
+	public function setIBCPossibleAnswers($answers){$this->IBCPossibleAnswers = $answers;}
 
 	public function getResponse_type(){return $this->response_type;}
 	public function setResponse_type($response_type){$this->response_type = $response_type;}

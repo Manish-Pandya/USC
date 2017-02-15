@@ -42,7 +42,7 @@ class IBCPossibleAnswer extends GenericCrud
     private $question_id;
     private $response_type_id;
     private $response_type;
-    private $responses;
+    private $IBCResponses;
     private $grid_column_index;
     private $answer_text;
 
@@ -67,18 +67,18 @@ class IBCPossibleAnswer extends GenericCrud
     public function getQuestion_id(){return $this->question_id;}
 	public function setQuestion_id($question_id){$this->question_id = $question_id;}
 
-	public function getResponses(){
-        if($this->responses === NULL && $this->protocol_id != null && $this->hasPrimaryKeyValue()) {
+	public function getIBCResponses(){
+        if($this->IBCResponses === NULL && $this->protocol_id != null && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO(new IBCResponse());
             $grp = new WhereClauseGroup(
                 new WhereClause("protocol_id","=",$this->protocol_id),
                 new WhereClause("answer_id","=",$this->key_id)
             );
-			$this->responses = $thisDAO->getAllWhere($grp);
+			$this->IBCResponses = $thisDAO->getAllWhere($grp);
 		}
-		return $this->responses;
+		return $this->IBCResponses;
 	}
-	public function setResponses($responses){$this->responses = $responses;}
+	public function setIBCResponses($responses){$this->IBCResponses = $responses;}
 
 	public function getGrid_column_index(){return (integer) $this->grid_column_index;}
 	public function setGrid_column_index($grid_column_index){$this->grid_column_index = $grid_column_index;}
