@@ -4,8 +4,9 @@
         static urlMapping: UrlMapping = new UrlMapping("getAllIBCPossibleAnswers", "getIBCPossibleAnswerById&id=", "saveIBCPossibleAnswer");
 
         IBCResponses: IBCResponse[];
-        static ResponseMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCResponse", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Responses&id={{UID}}", "IBCResponses", "Answer_id");
+        static ResponseMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCResponse", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCResponses&id={{UID}}", "IBCResponses", "Answer_id");
 
+        
         constructor() {
             super();
         }

@@ -4,7 +4,7 @@
         static urlMapping: UrlMapping = new UrlMapping("getAllIBCQuestions", "getIBCQuestionById&id=", "saveIBCQuestion");
 
         IBCPossibleAnswers: IBCPossibleAnswer[];
-        static PossibleAnswerMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCPossibleAnswer", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=PossibleAnswers&id={{UID}}", "IBCPossibleAnswers", "Question_id");
+        static PossibleAnswerMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCPossibleAnswer", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCPossibleAnswers&id={{UID}}", "IBCPossibleAnswers", "Question_id");
 
         constructor() {
             super();

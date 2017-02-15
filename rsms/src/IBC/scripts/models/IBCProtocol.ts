@@ -13,10 +13,10 @@
         static PIMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=PrincipalInvestigator&id={{UID}}", "PrincipalInvestigators", "Protocol_id", "Principal_investigator_id", "IBCProtocolPrincipalInvestigator", "getRelationships&class1=IBCProtocol&class2=PrincipalInvestigator");
 
         IBCProtocolRevisions: IBCProtocolRevision[];
-        static RevisionMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCProtocolRevision", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Revisions&id={{UID}}", "IBCProtocolRevisions", "Protocol_id");
+        static RevisionMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCProtocolRevision", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCProtocolRevisions&id={{UID}}", "IBCProtocolRevisions", "Protocol_id");
 
         IBCSections: IBCSection[];
-        static SectionMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCSection", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Sections&id={{UID}}", "IBCSections", "Hazard_id", "Hazard_id");
+        static SectionMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCSection", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCSections&id={{UID}}", "IBCSections", "Hazard_id", "Hazard_id");
 
         constructor() {
             super();

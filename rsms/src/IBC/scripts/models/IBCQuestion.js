@@ -20,6 +20,6 @@ var ibc;
         return IBCQuestion;
     }(FluxCompositerBase));
     IBCQuestion.urlMapping = new UrlMapping("getAllIBCQuestions", "getIBCQuestionById&id=", "saveIBCQuestion");
-    IBCQuestion.PossibleAnswerMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCPossibleAnswer", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=PossibleAnswers&id={{UID}}", "IBCPossibleAnswers", "Question_id");
+    IBCQuestion.PossibleAnswerMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCPossibleAnswer", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCPossibleAnswers&id={{UID}}", "IBCPossibleAnswers", "Question_id");
     ibc.IBCQuestion = IBCQuestion;
 })(ibc || (ibc = {}));
