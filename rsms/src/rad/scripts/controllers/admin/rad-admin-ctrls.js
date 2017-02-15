@@ -95,32 +95,34 @@ angular.module('00RsmsAngularOrmApp')
 angular.module('00RsmsAngularOrmApp')
     .filter('authsFilter', function () {
         return function (auths, filterObj) {
-            if (!filterObj) return auths;
+            console.log(filterObj)
             var filtered = auths.filter(function (a) {
-                var include = true;
+                if (a.Termination_date) return false;
+                if (!filterObj) return true;
+
                 if (filterObj.piName && a.PiName.toLowerCase().indexOf(filterObj.piName.toLowerCase()) == -1) {
-                    include = false;
+                    return false;
                 }
 
                 if (filterObj.department) {
                     if (!a.Departments.some(function (d) {
                        return d.Name.toLowerCase().indexOf(filterObj.department.toLowerCase()) != -1;
-                    })) include = false;
+                    })) return  false;
                 }
 
                 if (filterObj.room) {
                     if (!a.Rooms.some(function (r) {
                         return r.Name.toLowerCase().indexOf(filterObj.room.toLowerCase()) != -1;
-                    })) include = false;
+                    })) return  false;
                 }
 
                 if (filterObj.building) {
                     if(!a.Rooms.some(function (r) {
                         return r.Building.Name.toLowerCase().indexOf(filterObj.building.toLowerCase()) != -1;
-                    })) include = false;
+                    })) return false;
                 }
 
-                return include;
+                return true;
             })
             return filtered;
         }
@@ -150,31 +152,8 @@ angular.module('00RsmsAngularOrmApp')
 
       $rootScope.piAuthsPromise = af.getAllPIs().then(getAllPIAuthorizations);
 
-      /*$scope.getHighestAmendmentNumber = function (amendments) {
-          if (!amendments) return;
 
-          var highestAuthNumber = 0;
-          _.sortBy(amendments, [function (amendment) {
-              return moment(amendment.Approval_date).valueOf();
-          }]);
-          for (var i = 0; i < amendments.length; i++) {
-              var amendment = amendments[i];
-              convenienceMethods.dateToIso(amendment.Approval_date, amendment, "Approval_date", true);
-              convenienceMethods.dateToIso(amendment.Termination_date, amendment, "Termination_date", true);
-              amendment.Amendment_label = amendment.Amendment_number ? "Amendment " + amendment.Amendment_number : "Original Authorization";
-              amendment.Amendment_label = amendment.Termination_date ? amendment.Amendment_label + " (Terminated " + amendment.view_Termination_date + ")" : amendment.Amendment_label + " (" + amendment.view_Approval_date + ")";
-              amendment.weight = i;
-              console.log(i);
-          }
-
-          $scope.mappedAmendments = amendments;
-
-          $scope.selectedPiAuth = $scope.mappedAmendments[amendments.length - 1];
-          $scope.selectedAmendment = amendments.length - 1;
-          return $scope.selectedAmendment;
-      }*/
-
-      console.log("AuthReportCtrl running");
+      console.log("AuthReportCtrl running asdf");
   });
 
 'use strict';
@@ -939,12 +918,12 @@ angular.module('00RsmsAngularOrmApp')
         });
     }
 
-    $scope.markAsArrived = function(pi, parcel){
+    $scope.markAsArrived = function (pi, parcel) {
         var copy = new window.Parcel();
         angular.extend(copy, parcel);
         copy.Status = Constants.PARCEL.STATUS.DELIVERED;
         copy.Arrival_date = convenienceMethods.setMysqlTime(new Date());
-        af.saveParcel( copy, parcel, pi )
+        $scope.saving = af.saveParcel( copy, parcel, pi )
     }
 
     $scope.reopenAuth = function (piAuth) {
@@ -965,6 +944,7 @@ angular.module('00RsmsAngularOrmApp')
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
+        $scope.cm = convenienceMethods;
 
         
 
