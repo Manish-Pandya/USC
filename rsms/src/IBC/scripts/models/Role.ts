@@ -1,7 +1,7 @@
 ﻿namespace ibc {
     export class Role extends FluxCompositerBase {
 
-        static urlMapping: UrlMapping = new UrlMapping("getAllRoles", "getRoleById&id=", "saveRole");
+        static urlMapping = new UrlMapping("getAllRoles", "getRoleById&id=", "saveRole");
 
         Name: string;
 

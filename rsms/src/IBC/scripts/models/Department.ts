@@ -1,7 +1,7 @@
 ﻿namespace ibc {
     export class Department extends FluxCompositerBase {
 
-        static urlMapping: UrlMapping = new UrlMapping("getAllDepartments", "getDepartmentById&id=", "saveDepartment");
+        static urlMapping = new UrlMapping("getAllDepartments", "getDepartmentById&id=", "saveDepartment");
 
         constructor() {
             super();

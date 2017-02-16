@@ -1,11 +1,13 @@
 ﻿namespace ibc {
     export class IBCPossibleAnswer extends FluxCompositerBase {
 
-        static urlMapping: UrlMapping = new UrlMapping("getAllIBCPossibleAnswers", "getIBCPossibleAnswerById&id=", "saveIBCPossibleAnswer");
+        static urlMapping = new UrlMapping("getAllIBCPossibleAnswers", "getIBCPossibleAnswerById&id=", "saveIBCPossibleAnswer");
 
         IBCResponses: IBCResponse[];
-        static ResponseMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCResponse", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCResponses&id={{UID}}", "IBCResponses", "Answer_id");
+        static ResponseMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCResponse", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCResponses&id={{UID}}", "IBCResponses", "Answer_id");
 
+        //IBCResponses: IBCResponse[];
+        //static ResponseMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "IBCResponse", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=PrincipalInvestigator&id={{UID}}", "PrincipalInvestigators", "Protocol_id", "Principal_investigator_id", "IBCProtocolPrincipalInvestigator", "getRelationships&class1=IBCProtocol&class2=PrincipalInvestigator");
         
         constructor() {
             super();

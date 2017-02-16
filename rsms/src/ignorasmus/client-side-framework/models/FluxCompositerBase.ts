@@ -1,6 +1,6 @@
 ﻿////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright(C) 2016 Neighsayer/Harshmellow, Inc.
+//  Copyright(C) 2017 Neighsayer/Harshmellow, Inc.
 //  All Rights Reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,18 +53,18 @@ class CompositionMapping {
         childUrl: string,
         propertyName: string,
         childIdProp: string,
-        parentIdProp: string = null,
-        gerundName: string = null,
-        gerundUrl: string = null
+        parentIdProp?: string,
+        gerundName?: string,
+        gerundUrl?: string
     ) {
         this.CompositionType = compositionType;
         this.ChildType = childType;
         this.ChildUrl = childUrl;
         this.PropertyName = propertyName;
         this.ChildIdProp = childIdProp;
-
-        this.ParentIdProp = parentIdProp || DataStoreManager.uidString;
         
+        this.ParentIdProp = parentIdProp || DataStoreManager.uidString;
+
         if (this.CompositionType == CompositionMapping.MANY_TO_MANY) {
             if (!gerundName || !gerundUrl) {
                 throw new Error("You must provide a gerundName and gerundUrl to fullfill this MANY TO MANY compositional relationship");
@@ -73,11 +73,9 @@ class CompositionMapping {
                 this.GerundUrl = gerundUrl;
             }
         }
-        
     }
 
 }
-
 
 abstract class FluxCompositerBase {
     //----------------------------------------------------------------------
@@ -225,7 +223,7 @@ abstract class FluxCompositerBase {
 
             return this[sub];
         });
-
+        
         return str;
     }
 

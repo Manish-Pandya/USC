@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright(C) 2016 Neighsayer/Harshmellow, Inc.
+//  Copyright(C) 2017 Neighsayer/Harshmellow, Inc.
 //  All Rights Reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,9 +27,6 @@ var CompositionMapping = (function () {
      * @param gerundUrl
      */
     function CompositionMapping(compositionType, childType, childUrl, propertyName, childIdProp, parentIdProp, gerundName, gerundUrl) {
-        if (parentIdProp === void 0) { parentIdProp = null; }
-        if (gerundName === void 0) { gerundName = null; }
-        if (gerundUrl === void 0) { gerundUrl = null; }
         this.CompositionType = compositionType;
         this.ChildType = childType;
         this.ChildUrl = childUrl;

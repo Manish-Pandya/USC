@@ -8,7 +8,9 @@ var ibc;
     var IBCProtocol = (function (_super) {
         __extends(IBCProtocol, _super);
         function IBCProtocol() {
-            return _super.call(this) || this;
+            var _this = _super.call(this) || this;
+            _this.PrincipalInvestigators = [];
+            return _this;
         }
         IBCProtocol.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {

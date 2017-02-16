@@ -139,7 +139,6 @@ if(!isset($_SESSION["USER"])){ ?>
     <script src="../ignorasmus/client-side-framework/UrlMapping.js"></script>
     <script src="../ignorasmus/client-side-framework/XHR.js"></script>
 
-
 <!-- models -->
     <script src="../ignorasmus/client-side-framework/models/FluxCompositerBase.js"></script>
     <script src="scripts/models/Department.js"></script>
