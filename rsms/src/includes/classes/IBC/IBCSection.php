@@ -18,6 +18,7 @@ class IBCSection extends GenericCrud {
 		"hazard_id"						=> "integer",
 		"answer_id"					    => "integer",
         "weight"					    => "integer",
+		"label"							=> "text",
 
 		//GenericCrud
 		"key_id"				=> "integer",
@@ -53,6 +54,7 @@ class IBCSection extends GenericCrud {
 
     private $weight;
 
+	private $label;
 
 	public function __construct(){
 
@@ -89,5 +91,8 @@ class IBCSection extends GenericCrud {
 
 	public function getWeight(){return $this->weight;}
 	public function setWeight($weight){$this->weight = $weight;}
+
+	public function getLabel(){return $this->label;}
+	public function setLabel($label){$this->label = $label;}
 }
 ?>

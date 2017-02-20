@@ -5,6 +5,7 @@
         scope: {
             headerText: "@",
             headerIcon: "@",
+            scoped: "=",
             open: "="
         },
         replace:false,

@@ -34,7 +34,7 @@ class IBCProtocolRevision extends GenericCrud
     /* which revision of the the protocol is this?  If 0 or null, this is the first submission as opposed to a revision */
     private $revision_number;
 
-    /* id of the protocol of this is a revision of*/
+    /* id of the protocol this is a revision of*/
 	private $protocol_id;
 
     /* date this revision's protocl was sent to the lab to be revised this time*/
@@ -64,6 +64,7 @@ class IBCProtocolRevision extends GenericCrud
 		$entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getPreliminaryReviewers");
         $entityMaps[] = new EntityMap("lazy","getPrimaryReviewers");
+		$entityMaps[] = new EntityMap("lazy","getIBCResponses");
 		$this->setEntityMaps($entityMaps);
 	}
 
@@ -72,7 +73,7 @@ class IBCProtocolRevision extends GenericCrud
 		"className"	=>	"IBCResponse",
 		"tableName"	=>	"ibc_response",
 		"keyName"	=>	"key_id",
-		"foreignKeyName"	=>	"protocol_id"
+		"foreignKeyName"	=>	"revision_id"
 	);
 
     public static $PRIMARY_REVIEWERS_RELATIONSHIP = array(

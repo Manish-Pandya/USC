@@ -12,5 +12,11 @@
                 </li>
             </ul>
     </collapsible-card>
+
+    <collapsible-card class="card full protocol-info" header-text="{{section.Label}}" header-icon="icon-info" ng-repeat="section in protocol.IBCSections">
+        <ul class="questions" >
+            <question-view question="question" question-type="{{question.Answer_type}}" ng-repeat="question in section.IBCQuestions"></question-view>
+        </ul>
+    </collapsible-card>
 </div>
-<pre>{{revision | json}}</pre>
+<pre>hello?{{revision | json}}</pre>

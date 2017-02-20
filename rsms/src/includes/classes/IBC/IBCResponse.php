@@ -15,7 +15,7 @@ class IBCResponse extends GenericCrud
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"protocol_id"			=> "integer",
+		"revision_id"			=> "integer",
 		"answer_id"				=> "integer",
 		"free_text"             => "text",
         "is_selected"           => "boolean",
@@ -30,7 +30,7 @@ class IBCResponse extends GenericCrud
 		"created_user_id"		=> "integer",
 	);
 
-	private $protocol_id;
+	private $revision_id;
     /* Not all responses will have an answer id.  Some responses are free text*/
 	private $answer_id;
 	private $free_text;
@@ -53,8 +53,8 @@ class IBCResponse extends GenericCrud
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 
-    public function getProtocol_id(){return $this->protocol_id;}
-	public function setProtocol_id($protocol_id){$this->protocol_id = $protocol_id;}
+    public function getRevision_id(){return $this->revision_id;}
+	public function setRevision_id($revision_id){$this->revision_id = $revision_id;}
 
 	public function getAnswer_id(){return $this->answer_id;}
 	public function setAnswer_id($answer_id){$this->answer_id = $answer_id;}

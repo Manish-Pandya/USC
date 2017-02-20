@@ -11,11 +11,17 @@ angular.module('ng-IBC')
     console.log("IBCDetailCtrl running");
     var getProtocol = function (id) {
         $scope.protocol = {};
+        $scope.revision = {};
         return $q.all([DataStoreManager.getById("IBCProtocol", id, $scope.protocol)])
             .then(function (p) {
             DataStoreManager.getById("IBCSection", $scope.protocol.IBCSections[0].UID, {}, true)
-                .then(function (fart) {
-                console.log($scope.protocol);
+                .then(function (someData) {
+                var pRevision = $scope.protocol.IBCProtocolRevisions[$scope.protocol.IBCProtocolRevisions.length - 1];
+                console.log($scope.revision);
+                $q.all([DataStoreManager.getById("IBCProtocolRevision", pRevision.UID, $scope.revision, [ibc.IBCProtocolRevision.IBCReponseMap])])
+                    .then(function (someData) {
+                    console.log($scope.revision);
+                });
             });
         });
     };

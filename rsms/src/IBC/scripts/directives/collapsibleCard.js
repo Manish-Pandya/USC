@@ -5,6 +5,7 @@ angular.module('ng-IBC')
         scope: {
             headerText: "@",
             headerIcon: "@",
+            scoped: "=",
             open: "="
         },
         replace: false,

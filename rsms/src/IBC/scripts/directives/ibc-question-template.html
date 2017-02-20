@@ -1,0 +1,21 @@
+﻿<div class="ibc-question">
+    <h4>{{question.Text}}</h4>
+    <ul ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.MULTIPLE_CHOICE">
+        <li ng-repeat="a in question.IBCPossibleAnswers">{{a.Answer_text}}</li>
+    </ul>
+
+    <div ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.TABLE">
+        {{ constants.IBC_ANSWER_TYPE.TABLE}} {{question.Answer_type}}
+    </div>
+
+    <div ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.FREE_TEXT">
+        {{ constants.IBC_ANSWER_TYPE.FREE_TEXT}} {{question.Answer_type}}
+    </div>
+
+    <ul ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.MULTI_SELECT">
+        <li>{{ constants.IBC_ANSWER_TYPE.MULTI_SELECT}} {{question.Answer_type}}</li>
+        <li ng-repeat="a in question.IBCPossibleAnswers">{{a.Answer_text}}</li>
+    </ul>
+</div>
+
+

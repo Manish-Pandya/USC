@@ -18,7 +18,7 @@ class IBCQuestion extends GenericCrud
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"section_id"			=> "integer",
 		"text"					=> "text",
-        "response_type"         => "text",
+        "answer_type"			=> "text",
         "weight"			    => "integer",
 
 
@@ -43,7 +43,7 @@ class IBCQuestion extends GenericCrud
 	private $section_id;
 	private $text;
     private $IBCPossibleAnswers;
-    private $response_type;
+    private $answer_type;
     private $weight;
 
 	public function __construct(){
@@ -77,8 +77,8 @@ class IBCQuestion extends GenericCrud
 	}
 	public function setIBCPossibleAnswers($answers){$this->IBCPossibleAnswers = $answers;}
 
-	public function getResponse_type(){return $this->response_type;}
-	public function setResponse_type($response_type){$this->response_type = $response_type;}
+	public function getAnswer_type(){return $this->answer_type;}
+	public function setAnswer_type($type){$this->answer_type = $type;}
 
 	public function getWeight(){return $this->weight;}
 	public function setWeight($weight){$this->weight = $weight;}

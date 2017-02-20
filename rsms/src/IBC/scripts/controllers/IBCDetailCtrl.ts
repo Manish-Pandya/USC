@@ -13,13 +13,21 @@ angular.module('ng-IBC')
 
         var getProtocol = function (id: number | string): Promise<any> {
             $scope.protocol = {};
+            $scope.revision = {};
             return $q.all([DataStoreManager.getById("IBCProtocol", id, $scope.protocol)])
                 .then(
                     function (p) {
                         DataStoreManager.getById("IBCSection", $scope.protocol.IBCSections[0].UID, {}, true)
                             .then(
-                                function (fart) {
-                                    console.log($scope.protocol);
+                            function (someData) {
+                                var pRevision: ibc.IBCProtocolRevision = $scope.protocol.IBCProtocolRevisions[$scope.protocol.IBCProtocolRevisions.length - 1];
+                                console.log($scope.revision);
+                                $q.all([DataStoreManager.getById("IBCProtocolRevision", pRevision.UID, $scope.revision, [ibc.IBCProtocolRevision.IBCReponseMap])])
+                                        .then(
+                                            function (someData) {
+                                                console.log($scope.revision);
+                                            }
+                                        )
                                 }
                             )
                     }

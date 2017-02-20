@@ -7,8 +7,6 @@ var ibc;
 (function (ibc) {
     var IBCPossibleAnswer = (function (_super) {
         __extends(IBCPossibleAnswer, _super);
-        //IBCResponses: IBCResponse[];
-        //static ResponseMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "IBCResponse", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=PrincipalInvestigator&id={{UID}}", "PrincipalInvestigators", "Protocol_id", "Principal_investigator_id", "IBCProtocolPrincipalInvestigator", "getRelationships&class1=IBCProtocol&class2=PrincipalInvestigator");
         function IBCPossibleAnswer() {
             return _super.call(this) || this;
         }
@@ -22,6 +20,5 @@ var ibc;
         return IBCPossibleAnswer;
     }(FluxCompositerBase));
     IBCPossibleAnswer.urlMapping = new UrlMapping("getAllIBCPossibleAnswers", "getIBCPossibleAnswerById&id=", "saveIBCPossibleAnswer");
-    IBCPossibleAnswer.ResponseMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCResponse", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCResponses&id={{UID}}", "IBCResponses", "Answer_id");
     ibc.IBCPossibleAnswer = IBCPossibleAnswer;
 })(ibc || (ibc = {}));

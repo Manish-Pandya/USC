@@ -131,8 +131,8 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="scripts/filters/IBCFilters.js"></script>
 
 <!-- directives -->
-<script src="scripts/directives/collapsibleCard.js"></script>
-
+	<script src="scripts/directives/collapsibleCard.js"></script>
+    <script src="scripts/directives/questionView.js"></script>
 <!-- framework -->
     <script src="../ignorasmus/client-side-framework/DataStoreManager.js"></script>
     <script src="../ignorasmus/client-side-framework/InstanceFactory.js"></script>

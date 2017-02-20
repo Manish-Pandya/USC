@@ -262,4 +262,11 @@ class Constants  {
             APPROVED: "Approved"
         }
     }
+
+    public static IBC_ANSWER_TYPE = {        
+        MULTIPLE_CHOICE: "MULTIPLE_CHOICE",
+        TABLE: "TABLE",
+        FREE_TEXT: "FREE_TEXT",
+        MULTI_SELECT: "MULTI_SELECT"
+    }
 }

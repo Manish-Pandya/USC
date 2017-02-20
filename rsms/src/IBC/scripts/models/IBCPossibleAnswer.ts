@@ -1,7 +1,9 @@
 ﻿namespace ibc {
     export class IBCPossibleAnswer extends FluxCompositerBase {
 
-        static urlMapping = new UrlMapping("getAllIBCPossibleAnswers", "getIBCPossibleAnswerById&id=", "saveIBCPossibleAnswer");            
+        static urlMapping = new UrlMapping("getAllIBCPossibleAnswers", "getIBCPossibleAnswerById&id=", "saveIBCPossibleAnswer");          
+
+          
         constructor() {
             super();
         }
