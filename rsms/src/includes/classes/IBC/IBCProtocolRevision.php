@@ -70,9 +70,9 @@ class IBCProtocolRevision extends GenericCrud
     /** Relationships */
 	public static $RESPONSES_RELATIONSHIP = array(
 		"className"	=>	"IBCResponse",
-		"tableName"	=>	"protocol_response",
-		"keyName"	=>	"protocol_id",
-		"foreignKeyName"	=>	"revision_id"
+		"tableName"	=>	"ibc_response",
+		"keyName"	=>	"key_id",
+		"foreignKeyName"	=>	"protocol_id"
 	);
 
     public static $PRIMARY_REVIEWERS_RELATIONSHIP = array(
