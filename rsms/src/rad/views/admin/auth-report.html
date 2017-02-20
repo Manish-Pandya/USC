@@ -2,25 +2,44 @@
 
 <div class="right-column">
     <div class="well full auths">
-        <h1 class="auth-report"><i class="icon-copy"></i>Print Authorization Rep <a target="_blank" class="btn btn-info left" href="../rad/#/auth-report-print"><i class="icon-printer"></i>Print</a></h1>
+        <h1 class="auth-report"><i class="icon-copy"></i>Authorization Report
+            <a class="btn btn-primary left" ng-click="filterObj.showNew =! filterObj.showNew; filterObj.toDate = null; filterObj.fromDate = null; filtered = piAuths">
+                <span ng-if="!filterObj.showNew">Show New Authorizations</span>
+                <span ng-if="filterObj.showNew">Show All Authorizations</span>
+            </a>
+            <a class="btn btn-info left" ui-sref="auth-report-print"><i class="icon-printer"></i>Print</a>
+
+            <span ng-if="filterObj.showNew" style="display:block">
+                from <input placeholder="mm/dd/yy" ng-model="filterObj.fromDate" /> to <input placeholder="mm/dd/yy" ng-model="filterObj.toDate"/><a class="btn btn-success" ng-click="filtered = search(filterObj, piAuths)"><i class="icon-search"></i></a>
+            </span>
+        </h1>
         <h3 ng-if="!piAuths.length">No Authorizations</h3>
         <span ng-init="filterObj"></span>
         <div class="card full authReports" ng-if="piAuths.length">
             <div class="fake-table striped">
                 <div class="table-header">
-                    <h3>Name<br /><input ng-model="filterObj.piName" /></h3>
-                    <h3>Department<br /><input ng-model="filterObj.department" /></h3>
-                    <h3>
+                    <h3 ng-if="filterObj.showNew">Date</h3>
+                    <h3>Investigator<br /><input ng-model="filterObj.piName" /></h3>
+                    <h3 ng-if="!filterObj.showNew">Department<br /><input ng-model="filterObj.department" /></h3>
+                    <h3 ng-if="!filterObj.showNew">
                         <span class="span6">Building<br /><input ng-model="filterObj.building" /></span>
                         <span class="span6">Room<br /><input ng-model="filterObj.room" /></span>
                     </h3>
-                    <h3>Auth #</h3>
+                    <h3 ng-if="!filterObj.showNew">Auth #</h3>
+
+                    <h3 ng-if="filterObj.showNew">Amendments</h3>
+                    <h3 ng-if="filterObj.showNew">License Authorization</h3>
                 </div>
-                <div class="table-row" ng-repeat="piAuth in piAuths | authsFilter:filterObj | orderBy: 'PiName'">
+                <div class="table-row" ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: 'PiName'">
+                    <div ng-if="filterObj.showNew" style="padding:10px !important;">{{piAuth.Approval_date | dateToIso}}</div>
                     <div>
                         {{piAuth.PiName}}
                     </div>
-                    <div>
+
+                    <div ng-if="filterObj.showNew">{{piAuth.Update_notes}}</div>
+                    <div ng-if="filterObj.showNew">{{piAuth.New_notes}}</div>
+
+                    <div ng-if="!filterObj.showNew">
                         <ul>
                             <li ng-repeat="dept in piAuth.Departments">
                                 {{dept.Name}}
@@ -28,7 +47,7 @@
                         </ul>
                         
                     </div>
-                    <div>
+                    <div ng-if="!filterObj.showNew">
                         <ul class="selectedBuildings">
                             <li ng-repeat="(key, r) in piAuth.Rooms | groupBy: 'Building.Name'">
                                 <div class="span6">
@@ -42,7 +61,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div>
+                    <div ng-if="!filterObj.showNew">
                         {{piAuth.Authorization_number}}
                     </div>
                 </div>

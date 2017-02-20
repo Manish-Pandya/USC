@@ -95,7 +95,6 @@ angular.module('00RsmsAngularOrmApp')
 angular.module('00RsmsAngularOrmApp')
     .filter('authsFilter', function () {
         return function (auths, filterObj) {
-            console.log(filterObj)
             var filtered = auths.filter(function (a) {
                 if (a.Termination_date) return false;
                 if (!filterObj) return true;
@@ -129,19 +128,20 @@ angular.module('00RsmsAngularOrmApp')
     })
   .controller('AuthReportCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
       var af = $scope.af = actionFunctionsFactory;
-
+      if (!$rootScope.filterObj) $rootScope.filterObj = {showNew:false};
       var getAllPIAuthorizations = function () {
           af.getAllPIAuthorizations()
           .then(
               function (piAuths) {
-                  $scope.piAuths = [];
+                  $rootScope.piAuths = [];
                   var piAuths = _.groupBy(dataStore.PIAuthorization, 'Principal_investigator_id');
                   for (var pi_id in piAuths) {
                       var newest_pi_auth = piAuths[pi_id].sort(function (a, b) {
                           var sortVector = b.Approval_date - a.Approval_date || b.Amendment_number - a.Amendment_number || b.Key_id - a.Key_id;
                           return sortVector;
                       })[0];
-                      $scope.piAuths.push(newest_pi_auth);
+                      $rootScope.piAuths.push(newest_pi_auth);
+                      $rootScope.filtered = $rootScope.piAuths;
                   }
               },
               function () {
@@ -151,7 +151,21 @@ angular.module('00RsmsAngularOrmApp')
       }
 
       $rootScope.piAuthsPromise = af.getAllPIs().then(getAllPIAuthorizations);
+      $rootScope.search = function (filterObj,auths) {
+        if (!filterObj.fromDate) return $scope.piAuths;
+        $scope.filtered = auths.filter(function (a) {
+            var d = moment(a.Approval_date);
+            if (d < moment(filterObj.fromDate)) return false;
+            if (filterObj.toDate && d > moment(filterObj.toDate)) return false;
+            return true;
+        });
+        console.log($scope.filtered);
+        return $scope.filtered;
+      }
 
+      $scope.print = function () {
+          window.print();
+      }
 
       console.log("AuthReportCtrl running asdf");
   });

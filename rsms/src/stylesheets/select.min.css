@@ -376,10 +376,10 @@ i.solids-containers {
    width:13%;
 }
 .authReports div.fake-table > div.table-row > div:nth-of-type(2){
-   width:25%;
+   width:20%;
 }
 .authReports div.fake-table > div.table-row > div:nth-of-type(3){
-   width:34%;
+   width:40%;
 }
 .authReports div.fake-table > div.table-row > div:nth-of-type(4){
    width:10%;

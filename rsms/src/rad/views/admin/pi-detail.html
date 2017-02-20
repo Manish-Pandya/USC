@@ -31,6 +31,8 @@
                         <h3>Authorization Number</h3>
                         <h3>Rooms</h3>
                         <h3>Departments</h3>
+                        <h3>Comment</h3>
+
                     </div>
                     <div class="table-row">
                         <div>{{piAuth.Authorization_number}} {{piAuth.Amendment_number ? ' Amendment #' + piAuth.Amendment_number : ''}}</div>
@@ -39,6 +41,9 @@
                         </div>
                         <div>
                             <ul><li ng-repeat="dept in piAuth.Departments | orderBy:'Name'">{{dept.Name}}</li></ul>
+                        </div>
+                        <div>
+                            {{piAuth.New_notes || piAuth.Update_notes}}
                         </div>
                     </div>
                 </div>
