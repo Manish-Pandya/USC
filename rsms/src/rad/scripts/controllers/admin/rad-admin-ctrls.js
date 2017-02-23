@@ -14,7 +14,9 @@ angular.module('00RsmsAngularOrmApp')
               af.getAllPickups()
               .then(
                   function(pickups){
+                      console.log(pickups);
                       $scope.pickups = pickups;
+                      console.log(dataStore);
                   },
                   function(){}
               )
@@ -41,7 +43,10 @@ angular.module('00RsmsAngularOrmApp')
                                         )
 
         $scope.setStatusAndSave = function(pickup, oldStatus, isChecked){
+            console.log(status);
+            console.log(isChecked);
             isChecked = !isChecked;
+            console.log(isChecked);
 
             var pickupCopy = dataStoreManager.createCopy(pickup);
 
@@ -141,6 +146,7 @@ angular.module('00RsmsAngularOrmApp')
                       })[0];
                       $scope.piAuths.push(newest_pi_auth);
                   }
+                  console.log($scope.piAuths);
               },
               function () {
                   console.log("dang!");
@@ -230,15 +236,16 @@ angular.module('00RsmsAngularOrmApp')
 		$scope.af = af;
 
 		$scope.modalData = af.getModalData();
+        console.log($scope.modalData);
         $scope.save = function(carboy) {
             af.saveCarboy(carboy.PrincipalInvestigator, carboy, $scope.modalData.Carboy)
                 .then($scope.close);
         }
 
 		$scope.close = function(){
-            $modalInstance.dismiss();
+           $modalInstance.dismiss();
             dataStore.Carboy.push($scope.modalData.CarboyCopy);
-            af.deleteModalData();
+           af.deleteModalData();
 		}
 
 	});
@@ -602,6 +609,7 @@ angular.module('00RsmsAngularOrmApp')
         md.MiscellaneousWasteCopy.Parcel_use_amounts = [amount];
 
         $scope.save = function (copy, mw) {
+            console.log(copy, mw);
             af.saveMiscellaneousWaste(copy, mw).then(function () {
                 $modalInstance.close(mw);
             });
@@ -628,7 +636,11 @@ angular.module('00RsmsAngularOrmApp')
 
       var af = actionFunctionsFactory;
       var getInventory = function(){
-        
+        /*
+        console.log($state);
+        $scope.pi_inventory = dataStoreManager.getById("PIQuarterlyInventory", $state.params.pi_inventory);
+        console.log($scope.pi_inventory);
+        */
         af.getQuartleryInventory(1)
           .then(
             function(){
@@ -656,6 +668,7 @@ angular.module('00RsmsAngularOrmApp')
           .then(
               function(inventory){
                   $scope.inventory = inventory;
+                  console.log(inventory);
               },
               function(){}
           )
@@ -668,6 +681,7 @@ angular.module('00RsmsAngularOrmApp')
           $scope.piInventoriesPromise = af.getInventoriesByPiId(id)
             .then(
               function(piInventories){
+                  console.log(piInventories);
                   $scope.piInventories = piInventories;
               }
             )
@@ -678,6 +692,7 @@ angular.module('00RsmsAngularOrmApp')
           .then(
             function(inventory){
               $scope.inventory = inventory;
+              console.log(inventory);
             },
             function(){}
           );
@@ -742,6 +757,7 @@ angular.module('00RsmsAngularOrmApp')
             $scope.modalData.IsotopeCopy.Class="Isotope";
         }
     
+        console.log($scope.modalData);
         $scope.save = function(copy, isotope) {
             af.saveIsotope(copy, isotope)
                 .then($scope.close);
@@ -793,6 +809,7 @@ angular.module('00RsmsAngularOrmApp')
             }
             modalData.pi = pi;
             modalData[object.Class] = object;
+            console.log(modalData);
             af.setModalData(modalData);
             var modalInstance = $modal.open({
                 templateUrl: 'views/admin/admin-modals/parcel-modal.html',
@@ -867,6 +884,7 @@ angular.module('00RsmsAngularOrmApp')
     }
 
     $scope.selectAmendement = function (num) {
+        console.log(num);
         $scope.mappedAmendments.forEach(function (a) {
             if (a.weight == num) {
                 $scope.selectedPiAuth = a;
@@ -894,11 +912,14 @@ angular.module('00RsmsAngularOrmApp')
 
     $scope.getHighestAmendmentNumber = function (amendments) {
         if (!amendments)  return;
+        console.log(amendments);
 
         var highestAuthNumber = 0;
         amendments.sort(function (a, b) {
             return moment(a.Approval_date).valueOf() - moment(b.Approval_date).valueOf();
         })
+
+        console.log(amendments);
 
         for (var i = 0; i < amendments.length; i++) {
             var amendment = amendments[i];
@@ -907,6 +928,7 @@ angular.module('00RsmsAngularOrmApp')
             amendment.Amendment_label = amendment.Amendment_number ? "Amendment " + amendment.Amendment_number : "Original Authorization";
             amendment.Amendment_label = amendment.Termination_date ? amendment.Amendment_label + " (Terminated " + amendment.view_Termination_date + ")" : amendment.Amendment_label + " (" + amendment.view_Approval_date + ")";
             amendment.weight = i;
+            console.log(i);
         }
 
         $scope.mappedAmendments = amendments;
@@ -1147,6 +1169,7 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.addCarboyToLab = function (cycle, pi) {
+            console.log(cycle);
             //cycle.loadCarboy();
             cycle.Is_active = false;
             $modalInstance.dismiss();
@@ -1157,6 +1180,7 @@ angular.module('00RsmsAngularOrmApp')
                 Key_id: cycle.Key_id || null,
                 Carboy_id: cycle.Carboy_id
             }
+            console.log(cycleCopy);
             af.deleteModalData();
             af.addCarboyToLab(cycleCopy,pi);
         }
@@ -1240,6 +1264,7 @@ angular.module('00RsmsAngularOrmApp')
             .then(
                 function (models) {
                     var pis = dataStoreManager.get('PrincipalInvestigator');
+                    console.log(dataStore);
                     $scope.typeAheadPis = [];
                     var i = pis.length;
                     while (i--) {
@@ -1310,8 +1335,8 @@ angular.module('00RsmsAngularOrmApp')
         var getAllPis = function () {
             return af.getAllPIs().then(
             function (pis) {
-                return $scope.pis = dataStore.PrincipalInvestigator;
-            }
+                    return $scope.pis = dataStore.PrincipalInvestigator;
+                }
             )
         }
         var getUses = function () {
@@ -1335,6 +1360,7 @@ angular.module('00RsmsAngularOrmApp')
             .then(getParcels);
 
         $scope.openTransferInModal = function (object) {
+            console.log(object);
             var modalData = {};
             if (object) {
                 modalData.Parcel = object;
@@ -1350,6 +1376,7 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.openTransferInventoryModal = function (object) {
+            console.log(object);
             var modalData = {};
             if (object) {
                 modalData.Parcel = object;
@@ -1360,6 +1387,7 @@ angular.module('00RsmsAngularOrmApp')
             modalData.Parcel.Is_active = true;
             modalData.Parcel.Status = Constants.PARCEL.STATUS.DELIVERED;
             //all inventory transfers get a date of the end of the year before the system's o
+            console.log(modalData);
             af.setModalData(modalData);
             var modalInstance = $modal.open({
                 templateUrl: 'views/admin/admin-modals/transfer-inventory-modal.html',
@@ -1368,6 +1396,7 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.openTransferOutModal = function (object) {
+            console.log(object);
             var modalData = {};
             if (object) {
                 if (object.Parcel_id) {
@@ -1392,12 +1421,15 @@ angular.module('00RsmsAngularOrmApp')
                     controller: 'TransferModalCtrl'
                 });
             }
-
+            
         }
 
         $scope.openTransferBetweenModal = function (object) {
+            console.log(object);
             var modalData = {};
             modalData.transferBetween = true;
+
+            
 
             if (object) {
                 if (!object.Destination_parcel_id) {
@@ -1421,11 +1453,11 @@ angular.module('00RsmsAngularOrmApp')
                     })
                 }
             } else {
-
+                
                 modalData.ParcelUse = { Class: "ParcelUse" };
                 var object = modalData.ParcelUse;
                 object.DestinationParcel = new Parcel();
-                object.DestinationParcel.Class = "Parcel";
+                object.DestinationParcel.Class = "Parcel";               
 
                 af.setModalData(modalData);
                 var modalInstance = $modal.open({
@@ -1445,6 +1477,7 @@ angular.module('00RsmsAngularOrmApp')
         $scope.dataStore = dataStore;
         $scope.dsm = dataStoreManager;
         $scope.modalData = af.getModalData();
+        console.log($scope.modalData);
         $scope.cv = convenienceMethods;
 
 
@@ -1467,6 +1500,7 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.saveTransferIn = function (copy, parcel) {
+            console.log(parcel);
             copy.Transfer_in_date = convenienceMethods.setMysqlTime(af.getDate(copy.view_Transfer_in_date));
             af.saveParcel(copy, parcel, $scope.modalData.PI)
                 .then($scope.close);
@@ -1491,19 +1525,22 @@ angular.module('00RsmsAngularOrmApp')
 
                 copy.ParcelUseAmounts = [amt];
                 copy.Date_transferred = convenienceMethods.setMysqlTime(copy.view_Date_transferred);
-
+                console.log(copy);
+               
                 //if it walks like a duck
                 if (!use.Key_id) use = false;
                 $scope.saving = af.saveParcelUse(parcel, copy, use)
                     .then($scope.close);
             })
-
+            
         }
 
 
         $scope.selectReceivingPi = function (pi) {
             $scope.loading = pi.loadPIAuthorizations().then(function () {
+                console.log(pi);
                 $scope.auths = $scope.getHighestAuth(pi);
+                console.log($scope.auths);
                 return $scope.auths;
             })
         }
@@ -1540,6 +1577,8 @@ angular.module('00RsmsAngularOrmApp')
                 copy.Date_transferred = convenienceMethods.setMysqlTime(copy.view_Date_transferred);
                 copy.DestinationParcel.Transfer_in_date = convenienceMethods.setMysqlTime(copy.view_Date_transferred);
 
+                console.log(copy);
+
                 //if it walks like a duck
                 if (!use.Key_id) use = false;
                 $scope.saving = af.saveParcelUse(parcel, copy, use)
@@ -1548,16 +1587,18 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.getTransferNumberSuggestion = function (str) {
+            console.log(str);
             var parcels = dataStoreManager.get("Parcel");
             var num = 0;
             var finalNum = 1;
             parcels.forEach(function (p) {
                 if (p.Rs_number.indexOf(str) != -1) {
+                    console.log(p.Rs_number.substring(2));
                     var pNum = parseInt(p.Rs_number.substring(2));
                     if (pNum > num) num = pNum;
                 }
             });
-            return num + 1;
+            return num+1;
         }
 
         $scope.close = function () {
@@ -1565,6 +1606,8 @@ angular.module('00RsmsAngularOrmApp')
             $modalInstance.dismiss();
         }
     }])
+
+'use strict';
 
 /**
  * @ngdoc function
@@ -1711,6 +1754,7 @@ angular.module('00RsmsAngularOrmApp')
             var i = test.Miscellaneous_wipes.length;
             while (i--) {
                 if (!test.Miscellaneous_wipes[i].Key_id) {
+                    console.log()
                     test.Miscellaneous_wipes.splice(i, 1);
                 }
             }
@@ -1720,6 +1764,7 @@ angular.module('00RsmsAngularOrmApp')
         $scope.parcelWipeLocations = ['Background', 'Outside', 'Inside', 'Bag', 'Styrofoam', 'Cylinder', 'Vial', 'Lead Pig'];
 
         $scope.openModal = function (object) {
+            console.log(object);
             var modalData = {};
             if (object) modalData[object.Class] = object;
             af.setModalData(modalData);
@@ -1734,6 +1779,7 @@ angular.module('00RsmsAngularOrmApp')
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
+        console.log($scope.modalData);
 
         if (!$scope.modalData.MiscellaneousWipeTest) {
             $scope.modalData.MiscellaneousWipeTest = new window.MiscellaneousWipeTest();
@@ -1781,6 +1827,7 @@ angular.module('00RsmsAngularOrmApp')
                 }
                 if(!force) var force = true;
             } else {
+                console.log(parcel);
                 af.createCopy(parcel.Wipe_test[0]);
             }
             if(force)originalParcel.Creating_wipe = true;
@@ -1881,6 +1928,8 @@ angular.module('00RsmsAngularOrmApp')
                     }
                 }
             }
+            console.log(wipe);
+
         }
 
         $scope.save = function (test) {

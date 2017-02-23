@@ -35,7 +35,7 @@
                 {{ room.Room_name }}
                 <span ng-if="room.Status == 'STORED_ONLY'"><i class="icon-box" title="{{child.Hazard_name}} is stored by this lab in room {{room.Room_name}}"></i></span>
             </span>
-            <span style="margin-right: -2px;margin-left: -4px;" ng-if="!$last">, </span>
+            <span style="margin-right: 1px;margin-left: -4px;" ng-if="!$last">, </span>
         </span>
     </li>
 </ul>

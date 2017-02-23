@@ -2174,7 +2174,7 @@ td.report-question-detail{
   cursor: pointer;
 }
 ul.hazInvSubRooms li span i {
-    margin: -2px 1px 0 -1px;
+    margin: 1px 1px 0 -1px;
     font-size: 13px;
     cursor: auto;
 }
