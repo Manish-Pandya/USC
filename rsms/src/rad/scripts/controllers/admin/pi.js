@@ -12,7 +12,7 @@ angular.module('00RsmsAngularOrmApp')
     //do we have access to action functions?
     var af = actionFunctionsFactory;
     $scope.af = af;
-
+      alert("running")
     var getRadPi = function(){
         return actionFunctionsFactory.getRadPIById($stateParams.pi)
                 .then(

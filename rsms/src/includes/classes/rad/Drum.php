@@ -226,7 +226,7 @@ class Drum extends RadCrud {
 		}
         foreach($this->getCarboyUseCycles() as $cycle){
 			if($cycle->getParcelUseAmounts() != NULL){
-				$amounts = array_merge($amounts, $cycle->getParcel_use_amounts());
+				$amounts = array_merge($amounts, $cycle->getParcelUseAmounts());
 			}
 		}
 

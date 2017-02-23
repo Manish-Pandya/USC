@@ -34,7 +34,16 @@ class Carboy extends RadCrud {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getCarboy_use_cycles");
 		$this->setEntityMaps($entityMaps);
-        
+
+        //create a carboy use cycle if this carboy doesn't have one
+        if($this->hasPrimaryKeyValue() && $this->getCarboy_use_cycles() == null ){
+            $cycle = new CarboyUseCycle();
+            $cycle->setCarboy_id($this->key_id);
+            $cycle->setIs_active(true);
+            $cycle->setStatus("Available");
+            $cycleDao = new GenericDAO($cycle);
+            $cycle = $cycleDao->save($cycle);
+        }
 	}
 	
 	/** Relationships */

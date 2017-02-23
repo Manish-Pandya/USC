@@ -5,7 +5,29 @@
 *   RAD STYLES;
 *
 **********************************************************/
-
+.only-print{
+    display:block;
+}
+@media print {
+  @page {size: landscape}
+   .authReports div.fake-table > div.table-row > div, .authReports div.fake-table > div.table-row > div ul li, .authReports div.fake-table > div.table-row > div h4{
+       font-size:8pt !important;
+    }
+    input, br, .user-info{
+        display:none
+    }
+    div.table-row {
+        position:relative;
+    }
+    div.table-row > div{
+        border-top:1px solid #000;
+        page-break-inside:avoid;
+        position:relative;
+    }
+    .hide-print{
+        display:none;
+    }
+}
 .form-inline .control-group {
     float: left;
 }
@@ -360,15 +382,20 @@ i.solids-containers {
    width:13%;
 }
 .authReports div.fake-table > div.table-row > div:nth-of-type(2){
-   width:25%;
+   width:20%;
 }
 .authReports div.fake-table > div.table-row > div:nth-of-type(3){
-   width:34%;
+   width:39%;
+}
+.authReports div.fake-table.print-it > div.table-row > div:nth-of-type(3){
+   width:20%;
 }
 .authReports div.fake-table > div.table-row > div:nth-of-type(4){
    width:10%;
 }
-
+.authReports div.fake-table.print-it > div.table-row > div{
+   width:auto !important;
+}
 
 .right-column {
     margin-left: 210px;
@@ -959,3 +986,5 @@ div.fake-table .table-row > div div.pickup-comments .btn i {
     display: block !important;
     margin: 0 !important;
 }
+
+
