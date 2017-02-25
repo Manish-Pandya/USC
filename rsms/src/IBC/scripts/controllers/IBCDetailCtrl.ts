@@ -14,6 +14,7 @@ angular.module('ng-IBC')
         var getProtocol = function (id: number | string): Promise<any> {
             $scope.protocol = {};
             $scope.revision = {};
+            $scope.responsesMapped = <{ [index: string]: ibc.IBCResponse }>Object.create(null);
             return $q.all([DataStoreManager.getById("IBCProtocol", id, $scope.protocol)])
                 .then(
                     function (p) {
@@ -26,6 +27,10 @@ angular.module('ng-IBC')
                                         .then(
                                             function (someData) {
                                                 console.log($scope.revision);
+                                                for (var n = 0; n < $scope.revision.IBCResponses.length; n++) {
+                                                    var response = $scope.revision.IBCResponses[n];
+                                                    $scope.responsesMapped[response.Answer_id] = response;
+                                                }
                                             }
                                         )
                                 }

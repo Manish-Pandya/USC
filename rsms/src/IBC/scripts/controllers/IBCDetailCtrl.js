@@ -12,6 +12,7 @@ angular.module('ng-IBC')
     var getProtocol = function (id) {
         $scope.protocol = {};
         $scope.revision = {};
+        $scope.responsesMapped = Object.create(null);
         return $q.all([DataStoreManager.getById("IBCProtocol", id, $scope.protocol)])
             .then(function (p) {
             DataStoreManager.getById("IBCSection", $scope.protocol.IBCSections[0].UID, {}, true)
@@ -21,6 +22,10 @@ angular.module('ng-IBC')
                 $q.all([DataStoreManager.getById("IBCProtocolRevision", pRevision.UID, $scope.revision, [ibc.IBCProtocolRevision.IBCReponseMap])])
                     .then(function (someData) {
                     console.log($scope.revision);
+                    for (var n = 0; n < $scope.revision.IBCResponses.length; n++) {
+                        var response = $scope.revision.IBCResponses[n];
+                        $scope.responsesMapped[response.Answer_id] = response;
+                    }
                 });
             });
         });

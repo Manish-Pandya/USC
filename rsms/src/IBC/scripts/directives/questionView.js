@@ -6,7 +6,8 @@ angular.module('ng-IBC')
         restrict: 'E',
         scope: {
             question: "=",
-            questionType: "@"
+            questionType: "@",
+            responses: "="
         },
         link: function (scope, elem, attrs) {
             scope.constants = Constants;

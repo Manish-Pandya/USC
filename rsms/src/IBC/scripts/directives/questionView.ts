@@ -5,11 +5,11 @@
         }
 
         return {
-
             restrict: 'E',
             scope: {
                 question: "=",
-                questionType: "@"
+                questionType: "@",
+                responses: "="
             },
             link: (scope, elem, attrs) => {
                 scope.constants = Constants;

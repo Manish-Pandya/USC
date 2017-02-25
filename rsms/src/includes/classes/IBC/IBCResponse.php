@@ -17,7 +17,7 @@ class IBCResponse extends GenericCrud
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"revision_id"			=> "integer",
 		"answer_id"				=> "integer",
-		"free_text"             => "text",
+		"text"					=> "text",
         "is_selected"           => "boolean",
         "grid_row"              => "integer",
 
@@ -31,9 +31,9 @@ class IBCResponse extends GenericCrud
 	);
 
 	private $revision_id;
-    /* Not all responses will have an answer id.  Some responses are free text*/
+    /* Not all responses will have an answer id.  Some responses are free text*/ // TODO: Find out if this is at all true!
 	private $answer_id;
-	private $free_text;
+	private $text;
 	private $is_selected;
     private $grid_row;
 
@@ -59,8 +59,8 @@ class IBCResponse extends GenericCrud
 	public function getAnswer_id(){return $this->answer_id;}
 	public function setAnswer_id($answer_id){$this->answer_id = $answer_id;}
 
-	public function getFree_text(){return $this->free_text;}
-	public function setFree_text($free_text){$this->free_text = $free_text;}
+	public function getText(){return $this->text;}
+	public function setText($text){$this->text = $text;}
 
 	public function getIs_selected(){return $this->is_selected;}
 	public function setIs_selected($is_selected){$this->is_selected = $is_selected;}
