@@ -1,7 +1,7 @@
 ﻿<div class="ibc-question" style="margin:10px">
     <h4>{{question.Text}}</h4>
     <ul ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.MULTIPLE_CHOICE">
-        <li ng-repeat="a in question.IBCPossibleAnswers">{{a.Answer_text}} {{responses[a.UID].Is_selected}}</li>
+        <li ng-repeat="a in question.IBCPossibleAnswers">{{a.Answer_text}} {{responses[a.UID][0].Is_selected}}</li>
     </ul>
 
     <div ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.TABLE">
@@ -9,18 +9,20 @@
             <tr>
                 <th ng-repeat="a in question.IBCPossibleAnswers | orderBy:'Grid_column_index'">{{a.Answer_text}}<br />{{responses[question.IBCPossibleAnswers].Text}}</th>
             </tr>
-            <tr ng-repeat="response in responses[question.IBCPossibleAnswers[0].UID]">
-                <td ng-repeat="a in question.IBCPossibleAnswers"><input ng-model="responses[a.UID].Text"/></td>
+            <tr ng-repeat="(key, response) in responses[question.IBCPossibleAnswers[0].UID]">
+                <td ng-repeat="a in question.IBCPossibleAnswers | orderBy:'Grid_column_index'">
+                    <input ng-model="responses[a.UID][key].Text" ng-init="createResponse(responses, a.UID)"/>
+                </td>
             </tr>
         </table>
     </div>
-
+    
     <ul ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.MULTI_SELECT">
-        <li ng-repeat="a in question.IBCPossibleAnswers">{{a.Answer_text}} {{responses[a.UID].Is_selected}}</li>
+        <li ng-repeat="a in question.IBCPossibleAnswers">{{a.Answer_text}} {{responses[a.UID][0].Is_selected}}</li>
     </ul>
 
-    <div ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.FREE_TEXT">
-        <textarea ng-model="responses[question.IBCPossibleAnswers[0].UID].Text"></textarea>
+    <div ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.FREE_TEXT" ng-init="createResponse(responses, a.UID)">
+        <textarea ng-model="responses[question.IBCPossibleAnswers[0].UID][0].Text"></textarea>
     </div>
 
 

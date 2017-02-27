@@ -24,13 +24,25 @@ angular.module('ng-IBC')
                     console.log($scope.revision);
                     for (var n = 0; n < $scope.revision.IBCResponses.length; n++) {
                         var response = $scope.revision.IBCResponses[n];
-                        $scope.responsesMapped[response.Answer_id] = response;
+                        if (!$scope.responsesMapped[response.Answer_id])
+                            $scope.responsesMapped[response.Answer_id] = [];
+                        $scope.responsesMapped[response.Answer_id].push(response);
                     }
                 });
             });
         });
     };
     $scope.loading = getProtocol($stateParams.id);
+    $scope.createResponse = function (responses, key) {
+        console.log(key, responses);
+        if (!responses[key]) {
+            var newResponse = new ibc.IBCResponse();
+            newResponse["Answer_id"] = key;
+            newResponse["Revision_id"] = $scope.revision.UID;
+            responses[key] = [newResponse];
+            console.log(responses);
+        }
+    };
 })
     .controller('IBCDetailModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, roleBasedFactory) {
     $scope.constants = Constants;

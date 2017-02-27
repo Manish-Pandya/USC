@@ -14,7 +14,7 @@ angular.module('ng-IBC')
         var getProtocol = function (id: number | string): Promise<any> {
             $scope.protocol = {};
             $scope.revision = {};
-            $scope.responsesMapped = <{ [index: string]: ibc.IBCResponse }>Object.create(null);
+            $scope.responsesMapped = <{ [index: string]: ibc.IBCResponse[] }>Object.create(null);
             return $q.all([DataStoreManager.getById("IBCProtocol", id, $scope.protocol)])
                 .then(
                     function (p) {
@@ -29,7 +29,8 @@ angular.module('ng-IBC')
                                                 console.log($scope.revision);
                                                 for (var n = 0; n < $scope.revision.IBCResponses.length; n++) {
                                                     var response = $scope.revision.IBCResponses[n];
-                                                    $scope.responsesMapped[response.Answer_id] = response;
+                                                    if (!$scope.responsesMapped[response.Answer_id]) $scope.responsesMapped[response.Answer_id] = [];
+                                                    $scope.responsesMapped[response.Answer_id].push(response);
                                                 }
                                             }
                                         )
@@ -40,6 +41,17 @@ angular.module('ng-IBC')
         }
 
         $scope.loading = getProtocol($stateParams.id);
+
+        $scope.createResponse = function (responses: ibc.IBCResponse[], key:string):void {
+            console.log(key, responses)
+            if (!responses[key]) {
+                let newResponse: ibc.IBCResponse = new ibc.IBCResponse();
+                newResponse["Answer_id"] = key;
+                newResponse["Revision_id"] = $scope.revision.UID;
+                responses[key] = [newResponse];
+                console.log(responses);
+            }
+        }
     })
     .controller('IBCDetailModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, roleBasedFactory) {
         $scope.constants = Constants;

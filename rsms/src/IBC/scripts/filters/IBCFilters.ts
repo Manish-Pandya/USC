@@ -2,10 +2,10 @@
     .filter('isNotSubmitted', function () {
         return function (protocols) {
             if (!protocols) return;
-            var unsubmittedProtocols = protocols.filter(function (p) {
+            return protocols.filter(function (p) {
+                console.log(p, p.Status);
                 return p.IBCProtocolRevisions[p.IBCProtocolRevisions.length - 1].Status == Constants.IBC_PROTOCOL_REVISION.STATUS.NOT_SUBMITTED;
             })
-            return unsubmittedProtocols;
         };
     })
 	.filter('isSubmitted', function () {
