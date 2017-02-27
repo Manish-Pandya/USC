@@ -1250,7 +1250,7 @@ html[xmlns] .clearfix {
   border: none;
   float: left;
   margin-right: 5px;
-  color: rgb(0, 152, 255) !important;
+  color: rgb(68, 68, 68) !important;
 }
 /* line 873, ../sass/style.scss */
 .subRooms li:last-child:after {
@@ -2239,8 +2239,38 @@ ul.hazInvSubRooms li span i.icon-users {
   top: 5px;
   position:absolute;
 }
-.stored{
+.key{
+  border:3px solid #d0d0d0;
+  padding:10px;
+  box-sizing:border-box;
+  margin:-40px 0 20px;
+  width: 1056px;
+}
+.key > i{
+  width: 30px;
+  float:left;
+  font-size:25px;
+  margin-top:5px;
+}
+.key > h4{
+  margin-left: 10px;
+  padding:3px 0;
+  display:inline;
+}
+.key > h4 i{
+  font-size: 20px;
+  margin-right: 10px;
+  margin-top: 3px;
+  display: inline-block;
+}
+.shared{
+    color:#59008c;
+}
+.other{
     color:crimson;
+}
+.stored{
+    color:#3fa1ff;
 }
 @media (max-width: 1375px) {
   /* line 501, ../sass/style.scss */

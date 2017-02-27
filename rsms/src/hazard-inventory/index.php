@@ -58,6 +58,7 @@ echo "</script>";
     <!-- init authenticated user's role before we even mess with angular so that we can store the roles in a global var -->
     <?php if($_SESSION != NULL){
         $am = new ActionManager();
+        $r = $am->getCurrentUserRoles();
         ?>
         <script>
             var GLOBAL_SESSION_ROLES = <?php echo json_encode($_SESSION['ROLE']); ?>;
@@ -66,7 +67,7 @@ echo "</script>";
                 Name: '<?php echo $_SESSION['USER']->getName(); ?>',
                 Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>',
                 Inspector_id: '<?php echo $_SESSION['USER']->getInspector_id(); ?>',
-                Roles: '<?php echo json_encode($am->getCurrentUserRoles()["userRoles"]);?>'
+                Roles: '<?php echo json_encode($r["userRoles"]);?>'
             }
             var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
         </script>
@@ -177,7 +178,6 @@ echo "</script>";
         <div>
             Signed in as <?php echo $_SESSION['USER']->getName(); ?>
             <a style="float:right;" href="<?php echo WEB_ROOT?>action.php?action=logoutAction">Sign Out</a>
-            <?php print_r($am->getCurrentUserRoles()["userRoles"]);?>
         </div>
     </div>
     <?php }?>
@@ -262,6 +262,12 @@ echo "</script>";
                     </div>
             </form>
         </div>
+        <div class="key">
+            <i class="primary icon-key"></i>
+            <h4 class="other"><i class="icon-users"></i>Used in this labs room(s) by other labs</h4>
+            <h4 class="shared"><i class="icon-users"></i>Used by this lab and other labs</h4>
+            <h4 class="stored"><i class="icon-box"></i>Stored, but not used by this lab</h4>
+        </div>
         <ul class="allHazardList">
             <li class="hazardList" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazard.ActiveSubHazards | orderBy: 'Name'" ng-if="hazard.Hazard_name != 'General Safety'">
                 <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" ng-if="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
@@ -290,8 +296,6 @@ echo "</script>";
                         <span style="font-size: 14px;font-weight: normal;line-height: 20px;">
                             <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">
                                 {{child.Hazard_name}}
-                                <span ng-if="child.Stored_only" class="stored">(Stored Only)</span>
-                                <span ng-if="child.BelongsToOtherPI  && !child.IsPresent" class="stored">(Other Lab's Hazard)</span>
                             </span>
                         </span>
                         <!--</h4>-->
@@ -302,25 +306,22 @@ echo "</script>";
                             <span ng-if="child.IsPresent">
                                 <i class="icon-pencil primary" ng-click="openRoomsModal(child)"></i>
                             </span>
-
-                            <span ng-if="child.BelongsToOtherPI || (child.IsPresent && child.HasMultiplePis)">
+                            <span ng-if="child.Stored_only" class="stored"><i class="icon-box"></i></span>
+                            <span ng-if="child.BelongsToOtherPI || (child.IsPresent && child.HasMultiplePis)" ng-class="{'other':child.BelongsToOtherPI  && !child.IsPresent, 'shared':child.IsPresent && child.HasMultiplePis}">
                                 <i class="icon-users" ng-click="openMultiplePIHazardsModal(child)"></i>
                             </span>
                         </div>
                         <ul class="subRooms hazInvSubRooms" ng-if="getShowRooms(child, room, key)" ng-repeat="(key, rooms) in child.InspectionRooms | groupBy: 'Building_name'">
                             <li>
                                 <span ng-show="relevantRooms.length">{{ key }}:</span>
-                                <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms)">
-                                    <a ng-click="openMultiplePIHazardsModal(child, room)" ng-if="room.HasMultiplePis" ng-class="{'red':room.OtherLab && !room.ContainsHazard}">
-                                        {{ room.Room_name }}
-                                        <span><i class="icon-users" title="{{child.Hazard_name}} is used by more than one lab in room {{room.Room_name}}"></i></span>
-                                    </a>
-                                    <span ng-if="room.ContainsHazard && !room.HasMultiplePis">
-                                        {{ room.Room_name }}
-                                        <span ng-if="room.Status == 'STORED_ONLY'"><i class="icon-box" title="{{child.Hazard_name}} is stored by this lab in room {{room.Room_name}}"></i></span>
+                                <a ng-click="openMultiplePIHazardsModal(child, room)" ng-class="{'other':room.OtherLab && !room.ContainsHazard, 'shared':room.OtherLab && room.ContainsHazard, 'stored':room.Stored}">
+                                    {{ room.Room_name }}
+                                    <span ng-if="room.HasMultiplePIs || room.OtherLab"><i class="icon-users" title="{{child.Hazard_name}} is used by more than one lab in room {{room.Room_name}}"></i></span>
+                                    <span ng-if="room.Stored" class="stored">
+                                        <i class="icon-box" title="{{child.Hazard_name}} is stored by this lab in room {{room.Room_name}}"></i>
                                     </span>
-                                    <span style="margin-right: -2px;margin-left: -4px;" ng-if="!$last">, </span>
-                                </span>
+                                </a>
+                                <span style="margin-right: 1px;margin-left: -4px;" ng-if="!$last">, </span>
                             </li>
                         </ul>
                        <ul>
@@ -335,17 +336,17 @@ echo "</script>";
                 <h1 ng-if="!hazard.hidden" ng-class="{narrow: hazard.hidden}" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" style="margin-bottom:-12px;"><span ng-if="hazard.Hazard_name == 'Biological Safety' || hazard.Hazard_name == 'Chemical and Physical Safety' || hazard.Hazard_name == 'Chemical/Physical Safety'">Safety Equipment</span><span ng-if="hazard.Hazard_name.indexOf('adiation') > -1">Equipment/Device</span></h1>
                 <hr style="margin-bottom:4px;" ng-if="!hazard.hidden">
                 <ul ng-if="!hazard.hidden" class="topChildren equipment-list" ng-init="hazard.loadSubhazards()">
-                    <li ng-class="{'yellowed': child.Stored_only}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: true} | orderBy: 'Hazard_name'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
+                    <li ng-class="{'yellowed': child.Stored_only}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: true} | orderBy: 'Order_index'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
                         <label class="checkbox inline">
-                            <input type="checkbox" ng-disabled="getDisabled(child)" ng-model="child.IsPresent" ng-change="af.handleHazardChecked(child, hazard)" />
+                            <input type="checkbox" ng-model="child.IsPresent" ng-disabled="getDisabled(child)" ng-change="af.handleHazardChecked(child, hazard)" />
                             <span class="metro-checkbox"></span>
                         </label>
                         <span style="font-size: 14px;font-weight: normal;line-height: 20px;">
                             <span class="metro-checkbox targetHaz" ng-if="!room.HasMultiplePIs">
                                 {{child.Hazard_name}}
-                                <span ng-if="child.Stored_only" class="stored">(Stored Only)</span>
                             </span>
                         </span>
+                        <!--</h4>-->
                         <div class="icons">
                             <span ng-if="child.ActiveSubHazards.length && child.IsPresent ">
                                 <i class="icon-plus-2 modal-trigger-plus-2" ng-click="openSubsModal(child, hazard)"></i>
@@ -353,8 +354,8 @@ echo "</script>";
                             <span ng-if="child.IsPresent">
                                 <i class="icon-pencil primary" ng-click="openRoomsModal(child)"></i>
                             </span>
-
-                            <span ng-if="child.IsPresent && child.HasMultiplePis">
+                            <span ng-if="child.Stored_only" class="stored"><i class="icon-box"></i></span>
+                            <span ng-if="child.BelongsToOtherPI || (child.IsPresent && child.HasMultiplePis)" ng-class="{'other':child.BelongsToOtherPI  && !child.IsPresent, 'shared':child.IsPresent && child.HasMultiplePis}">
                                 <i class="icon-users" ng-click="openMultiplePIHazardsModal(child)"></i>
                             </span>
                         </div>
@@ -362,21 +363,19 @@ echo "</script>";
                             <li>
                                 <span ng-show="relevantRooms.length">{{ key }}:</span>
                                 <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms)">
-                                    <a ng-click="openMultiplePIHazardsModal(child, room)" ng-if="room.HasMultiplePis" ng-class="{'red':room.OtherLab && !room.ContainsHazard}">
+                                    <a ng-click="openMultiplePIHazardsModal(child, room)" ng-class="{'other':room.OtherLab && !room.ContainsHazard, 'shared':room.OtherLab && room.ContainsHazard, 'stored':room.Stored}">
                                         {{ room.Room_name }}
-                                        <span><i class="icon-users" title="{{child.Hazard_name}} is used by more than one lab in room {{room.Room_name}}"></i></span>
+                                        <span ng-if="room.HasMultiplePIs || room.OtherLab"><i class="icon-users" title="{{child.Hazard_name}} is used by more than one lab in room {{room.Room_name}}"></i></span>
+                                        <span ng-if="room.Stored" class="stored">
+                                            <i class="icon-box" title="{{child.Hazard_name}} is stored by this lab in room {{room.Room_name}}"></i>
+                                        </span>
                                     </a>
-                                    <span ng-if="room.ContainsHazard && !room.HasMultiplePis">
-                                        {{ room.Room_name }}
-                                        <span ng-if="room.Status == 'STORED_ONLY'"><i class="icon-box" title="{{child.Hazard_name}} is stored by this lab in room {{room.Room_name}}"></i></span>
-                                    </span>
                                     <span style="margin-right: -2px;margin-left: -4px;" ng-if="!$last">, </span>
                                 </span>
-                            </li>
-                        </ul>                     
-                        <ul>
-                            <li ng-class="{'yellowed': child.Stored_only || child.storedOnly}" ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent" ng-init="child.loadActiveSubHazards()" id="id-{{child.Hazard_id}}" class="hazardLi"><span data-ng-include="'views/sub-hazard.html'"></span></li>
-                        </ul>
+                            
+                            <ul>
+                                <li ng-class="{'yellowed': child.Stored_only || child.storedOnly}" ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent" ng-init="child.loadActiveSubHazards()" id="id-{{child.Hazard_id}}" class="hazardLi"><span data-ng-include="'views/sub-hazard.html'"></span></li>
+                            </ul>
 
                     </li>
                 </ul>

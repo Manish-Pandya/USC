@@ -114,9 +114,12 @@ class HazardDto {
             			$room->setContainsHazard(true);
             			$this->isPresent = true;
             			$room->setStatus($relation->getStatus());
-            			if($room->getStatus() != "STORED_ONLY"){
+            			if($relation->getStatus() != "STORED_ONLY"){
             				$storedOnly = false;
-            			}
+            			}else{
+                            $room->setStored(true);
+                        }
+                        $LOG->fatal($relation->getHazard_id());
             		}
             		if($relation->getHasMultiplePis() == true){
             			$room->setHasMultiplePis(true);
