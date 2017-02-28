@@ -1,7 +1,21 @@
 ﻿<div class="ibc-question" style="margin:10px">
     <h4>{{question.Text}}</h4>
     <ul ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.MULTIPLE_CHOICE">
-        <li ng-repeat="a in question.IBCPossibleAnswers">{{a.Answer_text}} {{responses[a.UID][0].Is_selected}}</li>
+        <li ng-repeat="a in question.IBCPossibleAnswers">
+            <label class="checkbox inline">
+                <input type="radio" ng-model="responses[a.UID][0].Is_selected" ng-change="responses[a.UID][0].IsSingleSelect = true; DataStoreManager.save(responses[a.UID])" />
+                <span class="metro-radio">{{a.Answer_text}}</span>
+            </label>
+        </li>
+    </ul>
+
+    <ul ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.MULTI_SELECT">
+        <li ng-repeat="a in question.IBCPossibleAnswers">
+            <label class="checkbox inline">
+                <input type="checkbox" ng-model="responses[a.UID][0].Is_selected" ng-change="DataStoreManager.save(responses[a.UID])" />
+                <span class="metro-checkbox">{{a.Answer_text}}</span>
+            </label>
+        </li>
     </ul>
 
     <div ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.TABLE">
@@ -11,18 +25,16 @@
             </tr>
             <tr ng-repeat="(key, response) in responses[question.IBCPossibleAnswers[0].UID]">
                 <td ng-repeat="a in question.IBCPossibleAnswers | orderBy:'Grid_column_index'">
-                    <input ng-model="responses[a.UID][key].Text" ng-init="createResponse(responses, a.UID)"/>
+                    <input ng-model="responses[a.UID][key].Text"/>
                 </td>
             </tr>
         </table>
+        <a class="btn btn-small btn-success left" ng-click="DataStoreManager.save(responses[a.UID])"><i class="icon-checkmark"></i>Save</a>
     </div>
-    
-    <ul ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.MULTI_SELECT">
-        <li ng-repeat="a in question.IBCPossibleAnswers">{{a.Answer_text}} {{responses[a.UID][0].Is_selected}}</li>
-    </ul>
 
-    <div ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.FREE_TEXT" ng-init="createResponse(responses, a.UID)">
+    <div ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.FREE_TEXT">
         <textarea ng-model="responses[question.IBCPossibleAnswers[0].UID][0].Text"></textarea>
+        <a class="btn btn-small btn-success left" ng-click="DataStoreManager.save(responses[a.UID])"><i class="icon-checkmark"></i>Save</a>
     </div>
 
 </div>

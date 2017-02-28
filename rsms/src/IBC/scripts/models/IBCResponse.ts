@@ -3,6 +3,8 @@
 
         static urlMapping = new UrlMapping("getAllIBCResponses", "getIBCResponseById&id=", "saveIBCResponse");
 
+        IsSingleSelect: boolean;
+
         constructor() {
             super();
         }
