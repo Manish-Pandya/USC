@@ -7,10 +7,20 @@ angular.module('ng-IBC')
         scope: {
             question: "=",
             questionType: "@",
-            responses: "="
+            responses: "=",
+            revisionId: "@"
         },
         link: function (scope, elem, attrs) {
             scope.constants = Constants;
+            scope.question.IBCPossibleAnswers.forEach(function (pa) {
+                if (!scope.responses[pa.UID]) {
+                    var response = new ibc.IBCResponse();
+                    response["Answer_id"] = pa.UID;
+                    response["Revision_id"] = scope.revisionId;
+                    response["Class"] = response.thisClass.name;
+                    scope.responses[pa.UID] = [response];
+                }
+            });
         },
         replace: false,
         transclude: true,

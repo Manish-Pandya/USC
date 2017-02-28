@@ -3,7 +3,6 @@
         return function (protocols) {
             if (!protocols) return;
             return protocols.filter(function (p) {
-                console.log(p, p.Status);
                 return p.IBCProtocolRevisions[p.IBCProtocolRevisions.length - 1].Status == Constants.IBC_PROTOCOL_REVISION.STATUS.NOT_SUBMITTED;
             })
         };
