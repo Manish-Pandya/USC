@@ -3,7 +3,7 @@
     <ul ng-if="question.Answer_type == constants.IBC_ANSWER_TYPE.MULTIPLE_CHOICE">
         <li ng-repeat="a in question.IBCPossibleAnswers">
             <label class="checkbox inline">
-                <input type="radio" ng-model="responses[a.UID][0].Is_selected" ng-change="responses[a.UID][0].IsSingleSelect = true; DataStoreManager.save(responses[a.UID])" />
+                <input type="radio" ng-model="responses[a.UID][0].Is_selected" ng-change="DataStoreManager.save(responses[a.UID])" />
                 <span class="metro-radio">{{a.Answer_text}}</span>
             </label>
         </li>

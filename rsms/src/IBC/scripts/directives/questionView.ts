@@ -19,6 +19,7 @@
                         let response = new ibc.IBCResponse();
                         response["Answer_id"] = pa.UID;
                         response["Revision_id"] = scope.revisionId;
+                        response["Question_id"] = scope.question.UID;
                         response["Class"] = (<any>response.thisClass).name;
                         scope.responses[pa.UID] = [response];
                     }

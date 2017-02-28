@@ -17,6 +17,7 @@ angular.module('ng-IBC')
                     var response = new ibc.IBCResponse();
                     response["Answer_id"] = pa.UID;
                     response["Revision_id"] = scope.revisionId;
+                    response["Question_id"] = scope.question.UID;
                     response["Class"] = response.thisClass.name;
                     scope.responses[pa.UID] = [response];
                 }

@@ -67,7 +67,7 @@ class IBCResponse extends GenericCrud
 	public function getText(){return $this->text;}
 	public function setText($text){$this->text = $text;}
 
-	public function getIs_selected(){return $this->is_selected;}
+	public function getIs_selected(){return (bool) $this->is_selected;}
 	public function setIs_selected($is_selected){$this->is_selected = $is_selected;}
 
 	public function getGrid_row(){return $this->grid_row;}
