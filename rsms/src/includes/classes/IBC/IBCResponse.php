@@ -20,6 +20,8 @@ class IBCResponse extends GenericCrud
 		"text"					=> "text",
         "is_selected"           => "boolean",
         "grid_row"              => "integer",
+        "question_id"           => "integer",
+
 
 		//GenericCrud
 		"key_id"				=> "integer",
@@ -36,6 +38,9 @@ class IBCResponse extends GenericCrud
 	private $text;
 	private $is_selected;
     private $grid_row;
+
+    /**for convenience, we want to know what question this is a response to, rather than just what IBCPossibleAnswer it is a child of**/
+    private $question_id;
 
 	public function __construct(){
 
@@ -67,5 +72,8 @@ class IBCResponse extends GenericCrud
 
 	public function getGrid_row(){return $this->grid_row;}
 	public function setGrid_row($grid_row){$this->grid_row = $grid_row;}
+
+    public function getQuestion_id(){return $this->question_id;}
+    public function setQuestion_id($id){$this->question_id = $id;}
 
 }
