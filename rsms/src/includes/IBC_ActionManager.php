@@ -255,16 +255,66 @@ class IBC_ActionManager extends ActionManager {
         return $dao->getById($id);
     }
     /**
-     * @param IBCResponse
-     * @return GenericCrud | ActionError | IBCResponse
+     * @param Array
+     * @return Array | ActionError | IBCResponse
      */
     function saveIBCResponse($decodedObject = null){
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         $dao = $this->getDao($decodedObject);
-        $r = $dao->save($decodedObject);
-        return $r;
+        foreach($decodedObject as $response){
+            $responseDao = new GenericDAO($response);  
+            $question = $this->getQuestionById($response->getQuestion_id());
+            if($question->getAnswer_type() == IBCQuestion::$ANSWER_TYPES["MULTIPLE_CHOICE"]){
+                //find and update all relevant responses
+                
+                $existingResponses = $this->getSiblingReponses($response);
+                foreach($existingResponses as $r){
+                    $r->setIs_selected(false);
+                    $r = $responseDao->save($r);
+                }
+                $response->setIs_selected(true);
+                $response = $responseDao->save($response);
+            }
+        }
+        $response = $dao->save($response);
+        return $this->getSiblingReponses($response);
     }
+
+    function saveIBCResponses($decodedObject = null){
+        if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
+        if($decodedObject == NULL)return new ActionError("No input read from stream");
+        foreach($decodedObject as $response){
+            $responseDao = new GenericDAO($response);
+            $question = $this->getIBCQuestionById($response->getQuestion_id());
+            if($question->getAnswer_type() == IBCQuestion::$ANSWER_TYPES["MULTIPLE_CHOICE"]){
+                //find and update all relevant responses
+
+                $existingResponses = $this->getSiblingReponses($response);
+                foreach($existingResponses as $r){
+                    $r->setIs_selected(false);
+                    $r = $responseDao->save($r);
+                }
+                $response->setIs_selected(true);
+                $response = $responseDao->save($response);
+            }
+            $response = $responseDao->save($response);
+        }
+        return $this->getSiblingReponses($decodedObject[0]);
+    }
+
+    private function getSiblingReponses(IBCResponse $r){
+        $l = Logger::getLogger(__FUNCTION__);
+        $responseDao = new GenericDAO($r);
+        $whereClauseGroup = new WhereClauseGroup(
+            new WhereClause('question_id','=', $r->getQuestion_id()),
+            new WhereClause('revision_id','=',$r->getRevision_id())
+        );
+        $responses = $responseDao->getAllWhere($whereClauseGroup);
+        $l->fatal($responses);
+        return $responses;
+    }
+
 }
 
 ?>

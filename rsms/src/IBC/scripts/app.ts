@@ -51,6 +51,8 @@ angular
     .controller('AppCtrl', function ($rootScope, $q) {
         //expose lodash to views
         $rootScope._ = _;
+        $rootScope.DataStoreManager = DataStoreManager;
+        $rootScope.constants = Constants;
 
         //register classes with app
         console.log("approved classNames:", InstanceFactory.getClassNames(ibc));

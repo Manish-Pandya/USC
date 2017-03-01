@@ -62,6 +62,8 @@ class IBCQuestion extends GenericCrud
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 
+    
+
     public function getSection_id(){return $this->section_id;}
 	public function setSection_id($section_id){$this->section_id = $section_id;}
 
@@ -77,6 +79,13 @@ class IBCQuestion extends GenericCrud
 	}
 	public function setIBCPossibleAnswers($answers){$this->IBCPossibleAnswers = $answers;}
 
+    /*Enumeration of available types for this question */
+    static $ANSWER_TYPES = array(
+            "MULTIPLE_CHOICE" => "MULTIPLE_CHOICE",
+            "TABLE" => "TABLE",
+            "FREE_TEXT" => "FREE_TEXT",
+            "MULTI_SELECT" => "MULTI_SELECT"
+        );
 	public function getAnswer_type(){return $this->answer_type;}
 	public function setAnswer_type($type){$this->answer_type = $type;}
 
