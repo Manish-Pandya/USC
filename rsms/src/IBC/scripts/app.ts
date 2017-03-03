@@ -76,4 +76,8 @@ angular
             }
         }
 
+        $rootScope.save = function (copy): Promise<any> {
+            return $rootScope.saving = $q.all([DataStoreManager.save(copy)]);
+        }
+
     });

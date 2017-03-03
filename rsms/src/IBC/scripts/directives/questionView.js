@@ -11,6 +11,7 @@ angular.module('ng-IBC')
             revisionId: "@"
         },
         link: function (scope, elem, attrs) {
+            scope.constants = Constants;
             scope.question.IBCPossibleAnswers.forEach(function (pa) {
                 if (!scope.responses[pa.UID]) {
                     var response = new ibc.IBCResponse();

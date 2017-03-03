@@ -6,10 +6,13 @@
             headerText: "@",
             headerIcon: "@",
             scoped: "=",
-            open: "="
+            closed: "@"
         },
-        replace:false,
+        replace: false,
         transclude: true,
-        templateUrl: "./scripts/directives/collapsible-card.html"
+        templateUrl: "./scripts/directives/collapsible-card.html",
+        link: function (scope) {
+            if (typeof scope.closed == 'undefined') scope.closed = true;
+        }
     }
 });

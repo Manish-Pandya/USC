@@ -1,8 +1,9 @@
 ﻿<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:saving, message:'Saving...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 <div class="protocol-document">
     <collapsible-card class="card full protocol-info" header-text="Protocol Information" header-icon="icon-info">
             <h3>Section Heading</h3>
-            <ul class="questions">
+            <ul class="questions" ng-if="!closed">
                 <li>
                     <h4>1. this is the text of the question.</h4>
                     <ul class="answers">
@@ -13,8 +14,8 @@
             </ul>
     </collapsible-card>
 
-    <collapsible-card class="card full protocol-info" header-text="{{section.Label}}" header-icon="icon-info" ng-repeat="section in protocol.IBCSections">
-        <ul class="questions" >
+    <collapsible-card id="collapse2" class="card full protocol-info" header-text="{{section.Label}}" header-icon="icon-info" ng-repeat="section in protocol.IBCSections">
+        <ul class="questions" ng-if="!closed">
             <question-view question="question" revision-id="{{revision.UID}}" question-type="{{question.Answer_type}}" responses="responsesMapped" ng-repeat="question in section.IBCQuestions"></question-view>
         </ul>
     </collapsible-card>

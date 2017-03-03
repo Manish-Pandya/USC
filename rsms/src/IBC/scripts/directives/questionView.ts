@@ -13,6 +13,7 @@
                 revisionId: "@"
             },
             link: (scope, elem, attrs) => {
+                scope.constants = Constants;
                 scope.question.IBCPossibleAnswers.forEach((pa: ibc.IBCPossibleAnswer) => {
                     if (!scope.responses[pa.UID]) {
                         let response = new ibc.IBCResponse();

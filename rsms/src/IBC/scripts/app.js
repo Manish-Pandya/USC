@@ -70,4 +70,7 @@ angular
                 })]);
         }
     };
+    $rootScope.save = function (copy) {
+        return $rootScope.saving = $q.all([DataStoreManager.save(copy)]);
+    };
 });

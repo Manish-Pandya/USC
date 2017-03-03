@@ -1,7 +1,7 @@
 ﻿<div class="collapsible-card">
     <ul class="full">
         <li>
-            <input type="checkbox" ng-checked="!open">
+            <input type="checkbox" ng-model="$parent.closed" ng-checked="$parent.closed">
             <i class="flipper"></i>
             <h2 class="card-header">{{headerText}}<i class="{{headerIcon}}"></i></h2>
             <div ng-transclude class="p card-content"></div>

@@ -9,6 +9,7 @@
 angular.module('ng-IBC')
     .controller('IBCDetailCtrl', function ($rootScope, $scope, $modal, $location, $stateParams, $q) {
     console.log("IBCDetailCtrl running");
+    $scope.test = "Look at my asshole!";
     var getProtocol = function (id) {
         $scope.protocol = {};
         $scope.revision = {};
@@ -32,16 +33,6 @@ angular.module('ng-IBC')
         });
     };
     $scope.loading = getProtocol($stateParams.id);
-    $scope.createResponse = function (responses, key) {
-        console.log(key, responses);
-        if (!responses[key]) {
-            var newResponse = new ibc.IBCResponse();
-            newResponse["Answer_id"] = key;
-            newResponse["Revision_id"] = $scope.revision.UID;
-            responses[key] = [newResponse];
-            console.log(responses);
-        }
-    };
 })
     .controller('IBCDetailModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, roleBasedFactory) {
     $scope.constants = Constants;
