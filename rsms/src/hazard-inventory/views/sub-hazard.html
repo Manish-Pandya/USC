@@ -13,7 +13,7 @@
     <span ng-if="child.IsPresent">
         <i class="icon-pencil primary" ng-click="openRoomsModal(child)"></i>
     </span>
-    <span ng-if="child.Stored_only" class="stored"><i class="icon-box"></i></span>
+    <span ng-if="child.Stored_only" ng-class="{'stored':child.IsPresent, 'other':child.BelongsToOtherPI}"><i class="icon-box"></i></span>
     <span ng-if="child.BelongsToOtherPI || (child.IsPresent && child.HasMultiplePis)" ng-class="{'other':child.BelongsToOtherPI  && !child.IsPresent, 'shared':child.IsPresent && child.HasMultiplePis}">
         <i class="icon-users" ng-click="openMultiplePIHazardsModal(child)"></i>
     </span>
