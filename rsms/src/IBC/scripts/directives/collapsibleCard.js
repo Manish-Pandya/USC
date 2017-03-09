@@ -6,14 +6,18 @@ angular.module('ng-IBC')
             headerText: "@",
             headerIcon: "@",
             scoped: "=",
-            closed: "@"
+            openHandler: "&",
         },
         replace: false,
         transclude: true,
         templateUrl: "./scripts/directives/collapsible-card.html",
-        link: function (scope) {
-            if (typeof scope.closed == 'undefined')
-                scope.closed = true;
+        controller: function ($scope) {
+            if (typeof $scope.closed == 'undefined')
+                $scope.closed = true;
+            $scope.open = function (param) {
+                if (!$scope.closed)
+                    $scope.openHandler().apply(void 0, $scope.scoped);
+            };
         }
     };
 });

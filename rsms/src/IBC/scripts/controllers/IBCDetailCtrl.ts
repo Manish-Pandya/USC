@@ -17,23 +17,25 @@ angular.module('ng-IBC')
             $scope.protocol = {};
             $scope.revision = {};
             $scope.responsesMapped = <{ [index: string]: ibc.IBCResponse[] }>Object.create(null);
-            return $q.all([DataStoreManager.getById("IBCProtocol", id, $scope.protocol)])
+            return $q.all([DataStoreManager.getById("IBCProtocol", id, $scope.protocol, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.SectionMap])])
                 .then(
                     function (p) {
-                        DataStoreManager.getById("IBCSection", $scope.protocol.IBCSections[0].UID, {}, true)
+                        DataStoreManager.getById("IBCSection", $scope.protocol.IBCSections[0].UID, {}, false)
                             .then(
                             function (someData) {
                                 var pRevision: ibc.IBCProtocolRevision = $scope.protocol.IBCProtocolRevisions[$scope.protocol.IBCProtocolRevisions.length - 1];
-                                $q.all([DataStoreManager.getById("IBCProtocolRevision", pRevision.UID, $scope.revision, [ibc.IBCProtocolRevision.IBCReponseMap])])
+                                $q.all([DataStoreManager.getById("IBCProtocolRevision", pRevision.UID, $scope.revision, true)])
                                         .then(
-                                            function (someData) {
-                                                console.log($scope.revision);
-                                                for (var n = 0; n < $scope.revision.IBCResponses.length; n++) {
+                                    function (someData) {
+                                        console.log(DataStoreManager._actualModel);
+                                                /*for (var n = 0; n < $scope.revision.IBCResponses.length; n++) {
                                                     var response = $scope.revision.IBCResponses[n];
-                                                    if (!$scope.responsesMapped[response.Answer_id]) $scope.responsesMapped[response.Answer_id] = [];
-                                                    $scope.responsesMapped[response.Answer_id].push(response);
-                                                }
-                                            }
+                                                    console.log(response);
+                                                    if (!$scope.revision.responsesMapped[response.Answer_id]) $scope.revision.responsesMapped[response.Answer_id] = [];
+                                                    $scope.revision.responsesMapped[response.Answer_id].push(response);
+                                                }*/
+                                    }
+                                            
                                         )
                                 }
                             )
@@ -41,7 +43,9 @@ angular.module('ng-IBC')
                 );
         }
 
-        $scope.loading = getProtocol($stateParams.id);
+        
+
+        $scope.loading = $rootScope.getCurrentRoles().then(getProtocol($stateParams.id));
     })
     .controller('IBCDetailModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, roleBasedFactory) {
         $scope.constants = Constants;

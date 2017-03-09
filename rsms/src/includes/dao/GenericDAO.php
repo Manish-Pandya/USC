@@ -196,7 +196,6 @@ class GenericDAO {
 
 		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' ';
 		$whereClauses = $whereClauseGroup->getClauses();
-
 		//White lists for queries to safeguard against injection
 		$columnWhiteList = $this->modelObject->getColumnData();
 		//Likely operators.  Add to this list as needed (Only operators commonly used with SELECT statements should be here)
@@ -234,6 +233,7 @@ class GenericDAO {
 				}else{
 					$sql .= " ?";
 				}
+				$this->LOG->fatal($sql);
 			}else{
 				if ( !in_array($junction, $junctionWhiteList) ) {
 					$this->LOG->fatal("The junction, $junction, used was not in the white list.");
@@ -254,10 +254,9 @@ class GenericDAO {
         if($sortColumn != null && array_key_exists($sortColumn, $columnWhiteList)){
             $sql .= " ORDER BY " . $sortColumn;
         }
-        //$this->LOG->fatal($sql);
 		//Prepare to query all from the table
 		$stmt = $db->prepare($sql);
-        //$this->LOG->fatal($stmt);
+        //$this->LOG->fatal($sql);
 
 		$i = 1;
 		foreach($whereClauses as $clause){
@@ -417,7 +416,7 @@ class GenericDAO {
             $l->fatal($sql);
             $l->fatal(array($startDate, $endDate, $hasTransferDate,  $this->modelObject->getAuthorization_id()));
         }
-        
+
 
 		// Get the db connection
 		global $db;

@@ -1,7 +1,7 @@
 ﻿<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:saving, message:'Saving...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 <div class="protocol-document">
-    <collapsible-card class="card full protocol-info" header-text="Protocol Information" header-icon="icon-info">
+    <collapsible-card class="card full protocol-info" header-text="Protocol Information" header-icon="icon-info" open-handler="loadQuestionsChain">
             <h3>Section Heading</h3>
             <ul class="questions" ng-if="!closed">
                 <li>
@@ -14,10 +14,12 @@
             </ul>
     </collapsible-card>
 
-    <collapsible-card id="collapse2" class="card full protocol-info" header-text="{{section.Label}}" header-icon="icon-info" ng-repeat="section in protocol.IBCSections">
-        <ul class="questions" ng-if="!closed">
-            <question-view question="question" revision-id="{{revision.UID}}" question-type="{{question.Answer_type}}" responses="responsesMapped" ng-repeat="question in section.IBCQuestions"></question-view>
+    <collapsible-card open-handler="loadQuestionsChain" id="collapse2" scoped="[section.UID, revision.UID]" class="card full protocol-info" header-text="{{section.Label}}" header-icon="icon-info" ng-repeat="section in protocol.IBCSections">
+        <ul class="questions" ng-if="!closed && section.IBCQuestions.length">
+            <question-view question="question" revision-id="{{revision.UID}}" question-type="{{question.Answer_type}}" revision="revision" ng-repeat="question in section.IBCQuestions"></question-view>
         </ul>
+        <h3 ng-if="!closed && !section.IBCQuestions.length"><i class="icon-spinnery-dealie spinner small" style="margin: 3px;"></i>Loading Questions</h3>
     </collapsible-card>
+    
 </div>
-<pre>hello?{{responsesMapped | json}}</pre>
+<pre>hello?{{revision | json}}</pre>

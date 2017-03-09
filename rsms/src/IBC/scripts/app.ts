@@ -1,4 +1,4 @@
-﻿'use strict';
+﻿//'use strict';
 
 /**
  * @ngdoc overview
@@ -76,8 +76,28 @@ angular
             }
         }
 
-        $rootScope.save = function (copy): Promise<any> {
-            return $rootScope.saving = $q.all([DataStoreManager.save(copy)]);
+        $rootScope.loadQuestionsChain = function (sectionId: any, revisionId: any): Promise<any> | void {
+            return $q.all([DataStoreManager.getById("IBCSection", sectionId, {}, true)])
+                .then(
+                function (section) {
+                    console.log(DataStoreManager._actualModel);
+                    return section;
+                })
+        }
+
+        $rootScope.saveReponses = function (responses: ibc.IBCResponse[], revision: ibc.IBCProtocolRevision, thing): Promise<any> {
+            return $q.all([$rootScope.save(responses)]).then((returnedResponses: ibc.IBCResponse[]) => {
+                revision.getResponsesMapped();
+                return revision;
+            })
+        }
+        
+        $rootScope.save = function (copy, thing = null): Promise<any> {
+            return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(
+                function (responses) {
+                    console.log(DataStoreManager._actualModel);
+                    return responses;
+                });
         }
 
     });

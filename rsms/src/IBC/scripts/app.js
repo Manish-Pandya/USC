@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 /**
  * @ngdoc overview
  * @name IBC
@@ -70,7 +70,24 @@ angular
                 })]);
         }
     };
-    $rootScope.save = function (copy) {
-        return $rootScope.saving = $q.all([DataStoreManager.save(copy)]);
+    $rootScope.loadQuestionsChain = function (sectionId, revisionId) {
+        return $q.all([DataStoreManager.getById("IBCSection", sectionId, {}, true)])
+            .then(function (section) {
+            console.log(DataStoreManager._actualModel);
+            return section;
+        });
+    };
+    $rootScope.saveReponses = function (responses, revision, thing) {
+        return $q.all([$rootScope.save(responses)]).then(function (returnedResponses) {
+            revision.getResponsesMapped();
+            return revision;
+        });
+    };
+    $rootScope.save = function (copy, thing) {
+        if (thing === void 0) { thing = null; }
+        return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(function (responses) {
+            console.log(DataStoreManager._actualModel);
+            return responses;
+        });
     };
 });

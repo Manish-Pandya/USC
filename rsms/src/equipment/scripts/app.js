@@ -20,7 +20,6 @@ angular
     'SideNav',
     'ngQuickDate',
     'uploadContainer'
-    //'ngMockE2E'
 ])
     .config(function ($stateProvider, $urlRouterProvider, $qProvider, $provide, $httpProvider, $sceDelegateProvider) {
     $urlRouterProvider.otherwise("/home");

@@ -46,6 +46,7 @@ class IBCProtocol extends GenericCrud {
 
     private $IBCProtocolRevisions;
 
+	private $IBCSections;
 
 	public function __construct(){
 
@@ -159,5 +160,16 @@ class IBCProtocol extends GenericCrud {
 	}
 	public function setIBCProtocolRevisions($revisions){ $this->labPersonnel = $revisions; }
 
+	public function getIBCSections(){
+		if($this->IBCSections == null){
+			$sectionDao= new GenericDAO(new IBCSection());
+			$whereClauseGroup = new WhereClauseGroup(
+				array(new WhereClause("hazard_id","=",$this->hazard_id))
+			);
+			$this->IBCSections = $sectionDao->getAllWhere($whereClauseGroup);
+		}
+		return $this->IBCSections;
+	}
+	public function setIbcSections($sections){$this->IBCSections = $sections;}
 }
 ?>

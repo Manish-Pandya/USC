@@ -263,11 +263,11 @@ class IBC_ActionManager extends ActionManager {
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         $dao = $this->getDao($decodedObject);
         foreach($decodedObject as $response){
-            $responseDao = new GenericDAO($response);  
+            $responseDao = new GenericDAO($response);
             $question = $this->getQuestionById($response->getQuestion_id());
             if($question->getAnswer_type() == IBCQuestion::$ANSWER_TYPES["MULTIPLE_CHOICE"]){
                 //find and update all relevant responses
-                
+
                 $existingResponses = $this->getSiblingReponses($response);
                 foreach($existingResponses as $r){
                     $r->setIs_selected(false);
@@ -289,29 +289,33 @@ class IBC_ActionManager extends ActionManager {
             $question = $this->getIBCQuestionById($response->getQuestion_id());
             if($question->getAnswer_type() == IBCQuestion::$ANSWER_TYPES["MULTIPLE_CHOICE"]){
                 //find and update all relevant responses
-
                 $existingResponses = $this->getSiblingReponses($response);
                 foreach($existingResponses as $r){
                     $r->setIs_selected(false);
                     $r = $responseDao->save($r);
                 }
+
+				//in the case of multiple choice answers, we send an array of one IBCResponse from the client,
+				//so we can safely set $response's Is_selected to true, knowing that it is the IBCResponse from the client
                 $response->setIs_selected(true);
                 $response = $responseDao->save($response);
-            }
+            }else{
+				$response->setText("butt");
+			}
             $response = $responseDao->save($response);
         }
         return $this->getSiblingReponses($decodedObject[0]);
     }
 
     private function getSiblingReponses(IBCResponse $r){
-        $l = Logger::getLogger(__FUNCTION__);
         $responseDao = new GenericDAO($r);
         $whereClauseGroup = new WhereClauseGroup(
-            new WhereClause('question_id','=', $r->getQuestion_id()),
-            new WhereClause('revision_id','=',$r->getRevision_id())
+			array(
+				new WhereClause('question_id','=', $r->getQuestion_id()),
+				new WhereClause('revision_id','=',$r->getRevision_id())
+			)
         );
         $responses = $responseDao->getAllWhere($whereClauseGroup);
-        $l->fatal($responses);
         return $responses;
     }
 

@@ -6,13 +6,18 @@
             headerText: "@",
             headerIcon: "@",
             scoped: "=",
-            closed: "@"
+            openHandler: "&",
+            //closed: "@"
         },
         replace: false,
         transclude: true,
         templateUrl: "./scripts/directives/collapsible-card.html",
-        link: function (scope) {
-            if (typeof scope.closed == 'undefined') scope.closed = true;
+        controller: ($scope) => {
+            if (typeof $scope.closed == 'undefined') $scope.closed = true;
+
+            $scope.open = (param): any => {
+                if(!$scope.closed)$scope.openHandler()(...$scope.scoped);
+            }
         }
     }
 });

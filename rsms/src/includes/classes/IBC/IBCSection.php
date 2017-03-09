@@ -94,5 +94,6 @@ class IBCSection extends GenericCrud {
 
 	public function getLabel(){return $this->label;}
 	public function setLabel($label){$this->label = $label;}
+
 }
 ?>

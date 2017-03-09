@@ -76,7 +76,7 @@ class IBCProtocolRevision extends GenericCrud
 		$entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getPreliminaryReviewers");
         $entityMaps[] = new EntityMap("lazy","getPrimaryReviewers");
-		$entityMaps[] = new EntityMap("eager","getIBCResponses");
+		$entityMaps[] = new EntityMap("lazy","getIBCResponses");
 		$this->setEntityMaps($entityMaps);
 	}
 
