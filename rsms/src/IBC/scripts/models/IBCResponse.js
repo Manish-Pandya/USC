@@ -12,7 +12,7 @@ var ibc;
         }
         IBCResponse.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
-                var allowedRoles = [Constants.ROLE.NAME.IBC_CHAIR];
+                var allowedRoles = [Constants.ROLE.NAME.ADMIN];
                 _super.prototype.hasGetAllPermission.call(this, _.intersection(DataStoreManager.CurrentRoles, allowedRoles).length > 0);
             }
             return this._hasGetAllPermission;
