@@ -7,12 +7,12 @@ namespace equipment {
             super();
         }
 
+        Rooms: equipment.Room[];
+        static RoomMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "Room", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Rooms&id={{UID}}", "Rooms", "Building_id");
+
         hasGetAllPermission(): boolean {
-            if (this._hasGetAllPermission == null) {
-                var allowedRoles = [Constants.ROLE.NAME.ADMIN];
-                super.hasGetAllPermission(_.intersection(DataStoreManager.CurrentRoles, allowedRoles).length > 0);
-            }
-            return this._hasGetAllPermission;
+            //list of buildings is public info and can be gotten by anybody;
+            return true;
         }
     }
 }

@@ -531,22 +531,26 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
         }
     }
 }])
-.filter('propsFilter', function() {
+.filter('propsFilter', function () {
+
   return function(items, props) {
-    var out = [];
+      var out = [];
+      if (!items || !props) return out;
+      var keys = Object.keys(props);
+      if (keys[0].indexOf(".") > 0) {
+          var properties = keys[0].split('.');
+      } else {
+          var properties = keys;
+      }
     if (angular.isArray(items)) {
-      items.forEach(function(item) {
+      items.forEach(function(item, key) {
         var itemMatches = false;
-        var keys = Object.keys(props);
-        if(keys[0].indexOf(".") > 0){
-            var properties = keys[0].split('.');
-        }else{
-            var properties = keys;
-        }
         if (item && item != null) {
             var myResultItem = item;
+
             for (var i = 0; i < properties.length; i++) {
                 if (myResultItem[properties[i]]) {
+                    console.log(key)
                     myResultItem = myResultItem[properties[i]];
                 }
             }
@@ -554,6 +558,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
                 var text = props[properties.join('.')].toLowerCase();
                 if (myResultItem.toString().toLowerCase().indexOf(text) !== -1) itemMatches = true;
             }
+
             if (itemMatches) {
                 out.push(item);
             }
