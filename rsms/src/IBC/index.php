@@ -121,7 +121,7 @@ if(!isset($_SESSION["USER"])){ ?>
     <script src="scripts/controllers/IBCAssignCtrl.js"></script>
 	<script src="scripts/controllers/IBCDetailCtrl.js"></script>
 	<script src="scripts/controllers/IBCEmailsCtrl.js"></script>
-
+    <script src="scripts/controllers/TestCtrl.js"></script>
 <!-- directives -->
 <!--script type="text/javascript" src="./scripts/directives/dateInput.js"><script>-->
 

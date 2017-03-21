@@ -45,6 +45,11 @@ angular
         url: "/emails",
         templateUrl: "views/emails.html",
         controller: "IBCEmailCtrl"
+    })
+        .state('ibc.test', {
+        url: "/test:id/",
+        templateUrl: "views/test.html",
+        controller: "TestCtrl"
     });
 })
     .controller('AppCtrl', function ($rootScope, $q) {

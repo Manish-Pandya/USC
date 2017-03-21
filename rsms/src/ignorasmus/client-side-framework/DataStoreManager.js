@@ -148,18 +148,18 @@ var DataStoreManager = (function () {
         return DataStoreManager._actualModel[type].getByIdPromise
             .then(function (d) {
             d = InstanceFactory.convertToClasses(d);
-            var actualModelInstance = DataStoreManager.getActualModelEquivalent(d);
-            if (actualModelInstance) {
-                actualModelInstance = d;
+            var existingIndex = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
+            if (existingIndex > -1) {
+                DataStoreManager._actualModel[type].Data[existingIndex] = d; // update existing
             }
             else {
-                DataStoreManager._actualModel[type].Data.push(d);
+                DataStoreManager._actualModel[type].Data.push(d); // add new
             }
             return (compMaps ? _this.resolveCompMaps(d, compMaps) : _this.promisifyData(d))
                 .then(function (whateverGotReturned) {
                 d.doCompose(compMaps);
-                d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
-                viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
+                d.viewModelWatcher = viewModelParent[0] = DataStoreManager.buildNestedViewModelWatcher(d);
+                //_.assign(viewModelParent, d.viewModelWatcher);
                 if (compMaps && typeof compMaps === "boolean") {
                     DataStoreManager._actualModel[type].fullyComposed = true;
                 }

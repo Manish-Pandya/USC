@@ -151,7 +151,7 @@ abstract class DataStoreManager {
      * @param viewModelParent
      * @param compMaps
      */
-    static getById(type: string, id: string | number, viewModelParent: any, compMaps: CompositionMapping[] | boolean = null): Promise<FluxCompositerBase> {
+    static getById(type: string, id: string | number, viewModelParent: FluxCompositerBase[], compMaps: CompositionMapping[] | boolean = null): Promise<FluxCompositerBase> {
         if (!InstanceFactory._classNames) InstanceFactory.getClassNames("/models");
         id = id.toString();
 
@@ -160,22 +160,22 @@ abstract class DataStoreManager {
         } else {
             DataStoreManager._actualModel[type].getByIdPromise = this.promisifyData(this.findByPropValue(DataStoreManager._actualModel[type].Data, DataStoreManager.uidString, id, type) );
         }
-
+        
         return DataStoreManager._actualModel[type].getByIdPromise
             .then((d: FluxCompositerBase): Promise<any> => {
                 d = InstanceFactory.convertToClasses(d);
-                var actualModelInstance: FluxCompositerBase = DataStoreManager.getActualModelEquivalent(d);
-                if (actualModelInstance) {
-                    actualModelInstance = d;
+                var existingIndex: number = _.findIndex(DataStoreManager._actualModel[type].Data, function (o) { return o.UID == d.UID; });
+                if (existingIndex > -1) {
+                    DataStoreManager._actualModel[type].Data[existingIndex] = d; // update existing
                 } else {
-                    DataStoreManager._actualModel[type].Data.push(d);
+                    DataStoreManager._actualModel[type].Data.push(d); // add new
                 }
 
                 return (compMaps ? this.resolveCompMaps(d, compMaps) : this.promisifyData(d))
                     .then((whateverGotReturned) => {
                         d.doCompose(compMaps);
-                        d.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(d);
-                        viewModelParent = _.assign(viewModelParent, d.viewModelWatcher);
+                        d.viewModelWatcher = viewModelParent[0] = DataStoreManager.buildNestedViewModelWatcher(d);
+                        //_.assign(viewModelParent, d.viewModelWatcher);
                         if (compMaps && typeof compMaps === "boolean") {
                             DataStoreManager._actualModel[type].fullyComposed = true;
                         }
