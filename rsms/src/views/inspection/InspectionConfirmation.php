@@ -18,11 +18,13 @@ require_once '../top_view.php';
 </div>
 
 <div class="container-fluid whitebg" style="padding-top:80px; padding-bottom:30px;">
-    <ul class="postInspectionNav row">
+    <ul class="postInspectionNav row" ng-if="inspection">
         <li>
-            <a ng-if="!inspection.Notification_date" ng-click="setRoute('/confirmation')" class="btn btn-large btn-success" ng-class="{selected: route=='/confirmation'}" ng-if="!inspection.isArchived && rbf.getHasPermission([ R[Constants.ROLE.NAME.SAFETY_INSPECTOR],  R[Constants.ROLE.NAME.RADIATION_INSPECTOR],  R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN] ])">Finalize Inspection</a>
-            <a style="color:black; cursor:not-allowed !important" ng-if="inspection.Notification_date" class="btn btn-large btn-success disabled" ng-class="{selected: route=='/confirmation'}" ng-if="!inspection.isArchived && rbf.getHasPermission([ R[Constants.ROLE.NAME.SAFETY_INSPECTOR],  R[Constants.ROLE.NAME.RADIATION_INSPECTOR],  R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN] ])">Email Sent {{inspection.Notification_date | dateToISO}}</a>
-        </li>
+                <a ng-click="setRoute('/confirmation')" class="btn btn-large btn-success" ng-class="{selected: route=='/confirmation'}" ng-if="!inspection.isArchived && rbf.getHasPermission([ R[Constants.ROLE.NAME.SAFETY_INSPECTOR],  R[Constants.ROLE.NAME.RADIATION_INSPECTOR],  R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN] ])">
+                    <span ng-if="!inspection.Notification_date">Finalize Inspection</span>
+                    <span ng-if="inspection.Notification_date">Resend Report</span>
+                </a>
+            </li>
         <li><a ng-click="setRoute('/report')" class="btn btn-large btn-info" ng-class="{selected: route=='/report'}">Inspection Report</a></li>
         <li><a ng-click="setRoute('/details')" class="btn btn-large btn-primary" ng-class="{selected: route=='/details'}">Inspection Details</a></li>
         <li><a href="InspectionChecklist.php#?inspection={{loc.inspection}}" class="btn btn-large btn-danger" ng-if="!inspection.isArchived && rbf.getHasPermission([ R[Constants.ROLE.NAME.SAFETY_INSPECTOR],  R[Constants.ROLE.NAME.RADIATION_INSPECTOR],  R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN] ])">Return to Inspection</a></li>
