@@ -856,7 +856,7 @@ class GenericDAO {
                 NULL AS `inspection_id` from (((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `principal_investigator_room` `f`)
                 where ((`a`.`is_active` = 1) and (`c`.`is_active` = 1) and (`b`.`key_id` = `a`.`user_id`) and (`f`.`principal_investigator_id` = `a`.`key_id`) and (`f`.`room_id` = `c`.`key_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`) and (not(`a`.`key_id` in (select `inspection`.`principal_investigator_id`
                 from `inspection`
-                where (coalesce(year(`inspection`.`date_started`),
+                where (coalesce(year(`inspection`.`date_started`) AND (is_rad IS NULL OR is_rad = 0),
                 `inspection`.`schedule_year`) = ?))))) group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,year(curdate()),
                 NULL union select `a`.`key_id` AS `pi_key_id`,
                 concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,
