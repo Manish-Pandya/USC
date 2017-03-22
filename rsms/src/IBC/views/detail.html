@@ -14,12 +14,13 @@
             </ul>
     </collapsible-card>
 
-    <collapsible-card open-handler="loadQuestionsChain" id="collapse2" scoped="[section.UID, revision.UID]" class="card full protocol-info" header-text="{{section.Label}}" header-icon="icon-info" ng-repeat="section in protocol.IBCSections">
+    <collapsible-card open-handler="loadQuestionsChain" id="collapse2" scoped="[section.UID, revision.data.UID]" class="card full protocol-info" header-text="{{section.Label}}" header-icon="icon-info" ng-repeat="section in protocol.data.IBCSections">
         <ul class="questions" ng-if="!closed && section.IBCQuestions.length">
-            <question-view question="question" revision-id="{{revision.UID}}" question-type="{{question.Answer_type}}" revision="revision" ng-repeat="question in section.IBCQuestions"></question-view>
+            <question-view question="question" revision-id="{{revision.data.UID}}" question-type="{{question.Answer_type}}" revision="revision.data" ng-repeat="question in section.IBCQuestions"></question-view>
         </ul>
         <h3 ng-if="!closed && !section.IBCQuestions.length"><i class="icon-spinnery-dealie spinner small" style="margin: 3px;"></i>Loading Questions</h3>
     </collapsible-card>
     
 </div>
-<pre>hello?{{revision | json}}</pre>
+<pre>hello?{{protocol.data.Department_id}} {{protocol.data.Date_last_modified}}</pre>
+<pre><a ng-click="testSave(protocol.data)">update it</a></pre>

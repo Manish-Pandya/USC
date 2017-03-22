@@ -11,13 +11,13 @@ angular.module('ng-IBC')
     console.log("IBCAssignCtrl running");
     $scope.cv = convenienceMethods;
     function getProtocols() {
-        $scope.protocols = [];
-        $scope.reviewers = [];
-        $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap]), DataStoreManager.getAll("IBCProtocolRevision", [], true), DataStoreManager.getAll("User", $scope.reviewers, true)])
+        $scope.protocols = new ViewModelInstance();
+        $scope.reviewers = new ViewModelInstance();
+        $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap]), DataStoreManager.getAll("IBCProtocolRevision", new ViewModelInstance(), true), DataStoreManager.getAll("User", $scope.reviewers, true)])
             .then(function (stuff) {
-            console.log($scope.protocols);
+            console.log($scope.protocols.data);
             console.log(DataStoreManager._actualModel);
-            $scope.reviewers = $scope.reviewers.filter(function (u) {
+            $scope.reviewers.data = $scope.reviewers.data.filter(function (u) {
                 var hasCorrectRole = false;
                 u.Roles.forEach(function (value, index, array) {
                     if (value.Name == Constants.ROLE.NAME.IBC_MEMBER || value.Name == Constants.ROLE.NAME.IBC_CHAIR) {

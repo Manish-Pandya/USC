@@ -71,7 +71,7 @@ angular
         }
     };
     $rootScope.loadQuestionsChain = function (sectionId, revisionId) {
-        return $q.all([DataStoreManager.getById("IBCSection", sectionId, {}, true)])
+        return $q.all([DataStoreManager.getById("IBCSection", sectionId, new ViewModelInstance(), true)])
             .then(function (section) {
             console.log(DataStoreManager._actualModel);
             return section;

@@ -11,24 +11,27 @@ angular.module('ng-IBC')
     .controller('IBCDetailCtrl', function ($rootScope, $scope, $modal, $location, $stateParams, $q) {
         console.log("IBCDetailCtrl running");
 
-        $scope.test = "Look at my asshole!";
-
-        var getProtocol = function (id: number | string): Promise<any> {
-            $scope.protocol = {};
-            $scope.revision = {};
+        var getProtocol = function (): Promise<any> {
+            $scope.protocol = new ViewModelInstance();
+            $scope.revision = new ViewModelInstance();
             $scope.responsesMapped = <{ [index: string]: ibc.IBCResponse[] }>Object.create(null);
-            return $q.all([DataStoreManager.getById("IBCProtocol", id, $scope.protocol, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.SectionMap])])
+            return $q.all([DataStoreManager.getById("IBCProtocol", $stateParams.id, $scope.protocol, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.SectionMap])])
                 .then(
-                    function (p) {
-                        DataStoreManager.getById("IBCSection", $scope.protocol.IBCSections[0].UID, {}, false)
+                function (p) {
+
+                    console.log($scope.protocol);
+                    console.log(DataStoreManager._actualModel);
+                    DataStoreManager._actualModel['IBCProtocol']['Data'][0].viewModelWatcher.Department_id = DataStoreManager._actualModel['IBCProtocol']['Data'][0].viewModelWatcher.Department_id + " updated in controller";
+
+                    return;
+                        DataStoreManager.getById("IBCSection", $scope.protocol.data.IBCSections[0].UID, new ViewModelInstance(), false)
                             .then(
                             function (someData) {
-                                var pRevision: ibc.IBCProtocolRevision = $scope.protocol.IBCProtocolRevisions[$scope.protocol.IBCProtocolRevisions.length - 1];
+                                var pRevision: ibc.IBCProtocolRevision = $scope.protocol.data.IBCProtocolRevisions[$scope.protocol.data.IBCProtocolRevisions.length - 1];
                                 $q.all([DataStoreManager.getById("IBCProtocolRevision", pRevision.UID, $scope.revision, true)])
                                         .then(
                                     function (someData) {
-                                        console.log(DataStoreManager._actualModel);
-                                                /*for (var n = 0; n < $scope.revision.IBCResponses.length; n++) {
+                                         /*for (var n = 0; n < $scope.revision.IBCResponses.length; n++) {
                                                     var response = $scope.revision.IBCResponses[n];
                                                     console.log(response);
                                                     if (!$scope.revision.responsesMapped[response.Answer_id]) $scope.revision.responsesMapped[response.Answer_id] = [];
@@ -43,9 +46,16 @@ angular.module('ng-IBC')
                 );
         }
 
-        
+        $scope.testSave = function (data) {
+            return $scope.loading = $q.all([DataStoreManager.save(data)]).then((r) => {
+                console.log(r);
+                console.log($scope.protocol.data);
+                console.log(DataStoreManager._actualModel);
+                return r;
+            });
+        }
 
-        $scope.loading = $rootScope.getCurrentRoles().then(getProtocol($stateParams.id));
+        $scope.loading = $rootScope.getCurrentRoles().then(getProtocol);
     })
     .controller('IBCDetailModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, roleBasedFactory) {
         $scope.constants = Constants;

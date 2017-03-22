@@ -32,7 +32,7 @@
         </thead>
 
         <tbody>
-            <tr ng-repeat="protocol in notSub = (protocols | isNotSubmitted | filter:{Is_active:!showInactive})">
+            <tr ng-repeat="protocol in notSub = (protocols.data | isNotSubmitted | filter:{Is_active:!showInactive})">
                 <td>{{protocol.Protocol_number}}</td>
                 <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
                 <td>{{protocol.Department.Name}} </td>
@@ -69,7 +69,7 @@
         </thead>
 
         <tbody>
-            <tr ng-repeat="protocol in isSubmitted = (protocols | isSubmitted)">
+            <tr ng-repeat="protocol in isSubmitted = (protocols.data | isSubmitted)">
                 <td>{{protocol.Protocol_number}}</td>
                 <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
                 <td>{{protocol.Department.Name}} </td>
@@ -105,7 +105,7 @@
         </thead>
 
         <tbody>
-            <tr ng-repeat="protocol in isInReview = (protocols | isInReview)">
+            <tr ng-repeat="protocol in isInReview = (protocols.data | isInReview)">
                 <td>{{protocol.Protocol_number}}</td>
                 <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
                 <td>{{protocol.Department.Name}} </td>
@@ -146,7 +146,7 @@
         </thead>
 
         <tbody>
-            <tr ng-repeat="protocol in isReturned = (protocols | isReturned)">
+            <tr ng-repeat="protocol in isReturned = (protocols.data | isReturned)">
                 <td>{{protocol.Protocol_number}}</td>
                 <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
                 <td>{{protocol.Department.Name}} </td>
@@ -181,7 +181,7 @@
         </thead>
 
         <tbody>
-            <tr ng-repeat="protocol in isApproved = (protocols | isApproved | filter:{Is_active:!showInactive})">
+            <tr ng-repeat="protocol in isApproved = (protocols.data | isApproved | filter:{Is_active:!showInactive})">
                 <td>{{protocol.Protocol_number}}</td>
                 <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
                 <td>{{protocol.Department.Name}} </td>

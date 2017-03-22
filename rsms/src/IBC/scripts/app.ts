@@ -77,7 +77,7 @@ angular
         }
 
         $rootScope.loadQuestionsChain = function (sectionId: any, revisionId: any): Promise<any> | void {
-            return $q.all([DataStoreManager.getById("IBCSection", sectionId, {}, true)])
+            return $q.all([DataStoreManager.getById("IBCSection", sectionId, new ViewModelInstance(), true)])
                 .then(
                 function (section) {
                     console.log(DataStoreManager._actualModel);
