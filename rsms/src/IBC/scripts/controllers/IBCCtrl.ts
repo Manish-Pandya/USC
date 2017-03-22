@@ -14,11 +14,11 @@ angular.module('ng-IBC')
         console.log($scope.protocolStatuses);
 
         function getAllProtocols() {
-            $scope.protocols = [];
-            $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap])])
+            $scope.protocols = new ViewModelInstance();
+            return $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap, ibc.IBCProtocol.SectionMap])])
             .then(
                 function (whateverGotReturned) {
-                    console.log($scope.protocols);
+                    console.log($scope.protocols.data);
                     console.log(DataStoreManager._actualModel);
                 }
             )
@@ -54,8 +54,8 @@ angular.module('ng-IBC')
         $scope.constants = Constants;
         $scope.modalData = DataStoreManager.ModalData;
 
-        $scope.users = [];
-        $scope.reviewers = [];
+        $scope.users = new ViewModelInstance();
+        $scope.reviewers = new ViewModelInstance();
 
         $scope.loading = $q.all([DataStoreManager.getAll("User", $scope.users), DataStoreManager.resolveCompMaps($scope.modalData.IBCProtocolRevision, true)])
             .then((stuff) => {
@@ -65,7 +65,7 @@ angular.module('ng-IBC')
                     value.isChecked = true;
                 })
 
-                var approvedUsers = $scope.users.filter(function (u) {
+                var approvedUsers = $scope.users.data.filter(function (u) {
                     var hasCorrectRole: boolean = false;
                     if (_.indexOf($scope.modalData.IBCProtocolRevision.PreliminaryReviewers, u) == -1) {
                         u.Roles.forEach((value: ibc.Role, index: number, array: ibc.Role[]) => {
@@ -76,15 +76,15 @@ angular.module('ng-IBC')
                     }
                     return hasCorrectRole;
                 })
-                $scope.reviewers = $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.concat(approvedUsers);
+                $scope.reviewers.data = $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.concat(approvedUsers);
                 console.log($scope.reviewers);
             });
 
         $scope.addRemoveReviewer = function (user, add: boolean) {
             var preliminaryReviewersIndex: number = _.indexOf($scope.modalData.IBCProtocolRevision.PreliminaryReviewers, user);
             if (add) {
-                if (_.indexOf($scope.reviewers, user) == -1) {
-                    $scope.reviewers.push(user);
+                if (_.indexOf($scope.reviewers.data, user) == -1) {
+                    $scope.reviewers.data.push(user);
                 }
                 if (user.isChecked && preliminaryReviewersIndex == -1) {
                     $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.push(user);

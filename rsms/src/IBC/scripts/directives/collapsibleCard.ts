@@ -5,10 +5,19 @@
         scope: {
             headerText: "@",
             headerIcon: "@",
-            open: "="
+            scoped: "=",
+            openHandler: "&",
+            //closed: "@"
         },
-        replace:false,
+        replace: false,
         transclude: true,
-        templateUrl: "./scripts/directives/collapsible-card.html"
+        templateUrl: "./scripts/directives/collapsible-card.html",
+        controller: ($scope) => {
+            if (typeof $scope.closed == 'undefined') $scope.closed = true;
+
+            $scope.open = (param): any => {
+                if(!$scope.closed)$scope.openHandler()(...$scope.scoped);
+            }
+        }
     }
 });

@@ -258,7 +258,15 @@ class Constants  {
             NOT_SUBMITTED: "Not Submitted",
             SUBMITTED: "Submitted",
             RETURNED_FOR_REVISION: "Returned for Revision",
+            IN_REVIEW: "In Review",
             APPROVED: "Approved"
         }
+    }
+
+    public static IBC_ANSWER_TYPE = {        
+        MULTIPLE_CHOICE: "MULTIPLE_CHOICE",
+        TABLE: "TABLE",
+        FREE_TEXT: "FREE_TEXT",
+        MULTI_SELECT: "MULTI_SELECT"
     }
 }

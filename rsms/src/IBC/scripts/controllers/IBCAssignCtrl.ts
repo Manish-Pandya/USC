@@ -8,17 +8,19 @@
  * Controller of the IBC protocol Assign for Review view
  */
 angular.module('ng-IBC')
-    .controller('IBCAssignCtrl', function ($rootScope, $scope, $modal, $location, $q) {
+    .controller('IBCAssignCtrl', function ($rootScope, $scope, $modal, $location, $q, convenienceMethods) {
         console.log("IBCAssignCtrl running");
-
-        $scope.protocols = [];
-        $scope.reviewers = [];
-        $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap]), DataStoreManager.getAll("IBCProtocolRevision", [], true), DataStoreManager.getAll("User", $scope.reviewers)])
+        $scope.cv = convenienceMethods;
+        
+        function getProtocols() {
+            $scope.protocols = new ViewModelInstance();
+            $scope.reviewers = new ViewModelInstance();
+            $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap]), DataStoreManager.getAll("IBCProtocolRevision", new ViewModelInstance(), true), DataStoreManager.getAll("User", $scope.reviewers, true)])
             .then((stuff) => {
-                console.log($scope.protocols);
+                console.log($scope.protocols.data);
                 console.log(DataStoreManager._actualModel);
 
-                $scope.reviewers = $scope.reviewers.filter(function (u) {
+                $scope.reviewers.data = $scope.reviewers.data.filter(function (u) {
                     var hasCorrectRole: boolean = false;
                     u.Roles.forEach((value: ibc.Role, index: number, array: ibc.Role[]) => {
                         if (value.Name == Constants.ROLE.NAME.IBC_MEMBER || value.Name == Constants.ROLE.NAME.IBC_CHAIR) {
@@ -28,10 +30,13 @@ angular.module('ng-IBC')
                     return hasCorrectRole;
                 })
             });
+        }
+
+        $scope.loading = $rootScope.getCurrentRoles().then(getProtocols);
 
         $scope.addRemoveReviewer = function (protocol: ibc.IBCProtocol, user: ibc.User, add: boolean) {
             var protocolRevision: ibc.IBCProtocolRevision = protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1];
-            var primaryReviewersIndex: number = _.indexOf(protocolRevision.PrimaryReviewers, user);
+            var primaryReviewersIndex: number = _.findIndex(protocolRevision.PrimaryReviewers, ["UID", user.UID]);
             if (add && primaryReviewersIndex == -1) {
                 if (primaryReviewersIndex == -1) {
                     protocolRevision.PrimaryReviewers.push(user);
@@ -46,12 +51,13 @@ angular.module('ng-IBC')
             var protocolRevisions: ibc.IBCProtocolRevision[] = [];
             protocols.forEach((value) => {
                 if (value.IBCProtocolRevisions) {
+                    value.IBCProtocolRevisions[value.IBCProtocolRevisions.length - 1]["Status"] = Constants.IBC_PROTOCOL_REVISION.STATUS.IN_REVIEW;
                     protocolRevisions.push(value.IBCProtocolRevisions[value.IBCProtocolRevisions.length - 1]);
                 }
             })
             $scope.saving = $q.all([DataStoreManager.save(protocolRevisions)])
                 .then(() => {
-                    console.log("i finished saving")
+                    console.log("i finished saving");
                 });
         }
     })

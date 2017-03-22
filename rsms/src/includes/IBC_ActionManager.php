@@ -205,29 +205,29 @@ class IBC_ActionManager extends ActionManager {
     }
 
     /**
-     * Summary of getAllIBCAnswers
+	 * Summary of getAllIBCPossibleAnswers
      * @return array
      */
-    function getAllIBCAnswers(){
+    function getAllIBCPossibleAnswers(){
         //TODO: restrict revisions to only those of protocols that belong to user
-        $dao = $this->getDao(new IBCAnswer());
+        $dao = $this->getDao(new IBCPossibleAnswer());
         return $dao->getAll();
     }
     /**
      * @param integer $id
-     * @return GenericCrud | IBCAnswer | ActionError
+     * @return GenericCrud | IBCPossibleAnswer | ActionError
      */
-    function getIBCAnswerById($id = null){
+    function getIBCPossibleAnswerById($id = null){
         if($id == NULL)$id = $this->getValueFromRequest('id', $id);
         if($id == NULL)return new ActionError("No request param 'id' provided.");
-        $dao = $this->getDao(new IBCAnswer());
+        $dao = $this->getDao(new IBCPossibleAnswer());
         return $dao->getById($id);
     }
     /**
-     * @param IBCAnswer
-     * @return GenericCrud | ActionError | IBCAnswer
+     * @param IBCPossibleAnswer
+	 * @return GenericCrud | ActionError | IBCPossibleAnswer
      */
-    function saveIBCAnswer($decodedObject = null){
+    function saveIBCPossibleAnswer($decodedObject = null){
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         $dao = $this->getDao($decodedObject);
@@ -255,16 +255,70 @@ class IBC_ActionManager extends ActionManager {
         return $dao->getById($id);
     }
     /**
-     * @param IBCResponse
-     * @return GenericCrud | ActionError | IBCResponse
+     * @param Array
+     * @return Array | ActionError | IBCResponse
      */
     function saveIBCResponse($decodedObject = null){
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         $dao = $this->getDao($decodedObject);
-        $r = $dao->save($decodedObject);
-        return $r;
+        foreach($decodedObject as $response){
+            $responseDao = new GenericDAO($response);
+            $question = $this->getQuestionById($response->getQuestion_id());
+            if($question->getAnswer_type() == IBCQuestion::$ANSWER_TYPES["MULTIPLE_CHOICE"]){
+                //find and update all relevant responses
+
+                $existingResponses = $this->getSiblingReponses($response);
+                foreach($existingResponses as $r){
+                    $r->setIs_selected(false);
+                    $r = $responseDao->save($r);
+                }
+                $response->setIs_selected(true);
+                $response = $responseDao->save($response);
+            }
+        }
+        $response = $dao->save($response);
+        return $this->getSiblingReponses($response);
     }
+
+    function saveIBCResponses($decodedObject = null){
+        if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
+        if($decodedObject == NULL)return new ActionError("No input read from stream");
+        foreach($decodedObject as $response){
+            $responseDao = new GenericDAO($response);
+            $question = $this->getIBCQuestionById($response->getQuestion_id());
+            if($question->getAnswer_type() == IBCQuestion::$ANSWER_TYPES["MULTIPLE_CHOICE"]){
+                //find and update all relevant responses
+                $existingResponses = $this->getSiblingReponses($response);
+                foreach($existingResponses as $r){
+                    $r->setIs_selected(false);
+                    $r = $responseDao->save($r);
+                }
+
+				//in the case of multiple choice answers, we send an array of one IBCResponse from the client,
+				//so we can safely set $response's Is_selected to true, knowing that it is the IBCResponse from the client
+                $response->setIs_selected(true);
+                $response = $responseDao->save($response);
+            }else{
+				$response->setText("butt");
+			}
+            $response = $responseDao->save($response);
+        }
+        return $this->getSiblingReponses($decodedObject[0]);
+    }
+
+    private function getSiblingReponses(IBCResponse $r){
+        $responseDao = new GenericDAO($r);
+        $whereClauseGroup = new WhereClauseGroup(
+			array(
+				new WhereClause('question_id','=', $r->getQuestion_id()),
+				new WhereClause('revision_id','=',$r->getRevision_id())
+			)
+        );
+        $responses = $responseDao->getAllWhere($whereClauseGroup);
+        return $responses;
+    }
+
 }
 
 ?>

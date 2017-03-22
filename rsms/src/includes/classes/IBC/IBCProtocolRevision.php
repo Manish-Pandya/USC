@@ -19,10 +19,12 @@ class IBCProtocolRevision extends GenericCrud
 		"revision_number"			=> "integer",
 		"protocol_id"				=> "integer",
 		"date_returned"				=> "timestamp",
+        "date_approved"				=> "timestamp",
         "date_submitted"            => "timestamp",
+        "date_in_review"            => "timestamp",
+
 		"protocol_type"				=> "text",
-		"status"					=> "text",
-		//GenericCrud
+        //GenericCrud
 		"key_id"				=> "integer",
 		"date_created"			=> "timestamp",
 		"date_last_modified"	=> "timestamp",
@@ -34,7 +36,7 @@ class IBCProtocolRevision extends GenericCrud
     /* which revision of the the protocol is this?  If 0 or null, this is the first submission as opposed to a revision */
     private $revision_number;
 
-    /* id of the protocol of this is a revision of*/
+    /* id of the protocol this is a revision of*/
 	private $protocol_id;
 
     /* date this revision's protocl was sent to the lab to be revised this time*/
@@ -42,6 +44,12 @@ class IBCProtocolRevision extends GenericCrud
 
     /* date this revision was submitted to the committee after being revised by the lab */
 	private $date_submitted;
+
+    /* date this revision was submitted to the full committee after pre-review by the chair */
+	private $date_in_review;
+
+    /* date this revision was approved by the committee after being revised by the lab */
+	private $date_approved;
 
 	private $protocol_type;
 
@@ -59,19 +67,24 @@ class IBCProtocolRevision extends GenericCrud
     /** array of sections containing questions relevant to this protocol revision's hazard **/
     private $section;
 
+   
+
+    
+
 	public function __construct(){
 		// Define which subentities to load
 		$entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getPreliminaryReviewers");
         $entityMaps[] = new EntityMap("lazy","getPrimaryReviewers");
+		$entityMaps[] = new EntityMap("lazy","getIBCResponses");
 		$this->setEntityMaps($entityMaps);
 	}
 
     /** Relationships */
 	public static $RESPONSES_RELATIONSHIP = array(
 		"className"	=>	"IBCResponse",
-		"tableName"	=>	"protocol_response",
-		"keyName"	=>	"protocol_id",
+		"tableName"	=>	"ibc_response",
+		"keyName"	=>	"key_id",
 		"foreignKeyName"	=>	"revision_id"
 	);
 
@@ -120,11 +133,25 @@ class IBCProtocolRevision extends GenericCrud
 		$this->date_returned = $date_returned;
 	}
 
+    public function getDate_in_review(){
+		return $this->date_in_review;
+	}
+	public function setDate_in_review($d){
+		$this->date_in_review = $d;
+	}
+
 	public function getDate_submitted(){
 		return $this->date_submitted;
 	}
 	public function setDate_submitted($date_submitted){
 		$this->date_submitted = $date_submitted;
+	}
+
+    public function getDate_approved(){
+		return $this->date_approved;
+	}
+	public function setDate_approved($date){
+		$this->date_approved = $date;
 	}
 
 	public function getProtocol_type(){
@@ -134,7 +161,30 @@ class IBCProtocolRevision extends GenericCrud
 		$this->protocol_type = $protocol_type;
 	}
 
+    /** define the possible statuses for revisions **/
+    private static $STATUSES = array(
+            "NOT_SUBMITTED" => "Not Submitted",
+            "SUBMITTED" => "Submitted",
+            "RETURNED_FOR_REVISION" => "Returned for Revision",
+            "IN_REVIEW" => "In Review",
+            "APPROVED" => "Approved"
+        );
 	public function getStatus(){
+        if(!$this->date_submitted && !$this->date_returned){
+            $this->status = IBCProtocolRevision::$STATUSES["NOT_SUBMITTED"];
+        }
+        elseif($this->date_submitted && !$this->date_to_review && !$this->date_approved && !$this->date_returned){
+            $this->status = IBCProtocolRevision::$STATUSES["SUBMITTED"];
+        }
+        elseif($this->date_to_review && !$this->date_approved && !$this->date_returned){
+            $this->status = IBCProtocolRevision::$STATUSES["IN_REVIEW"];
+        }
+        elseif(!$this->date_approved && $this->date_returned){
+            $this->status = IBCProtocolRevision::$STATUSES["RETURNED_FOR_REVISION"];
+        }
+        elseif($this->date_approved){
+            $this->status = IBCProtocolRevision::$STATUSES["APPROVED"];
+        }
 		return $this->status;
 	}
 	public function setStatus($status){

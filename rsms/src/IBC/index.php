@@ -131,27 +131,28 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="scripts/filters/IBCFilters.js"></script>
 
 <!-- directives -->
-<script src="scripts/directives/collapsibleCard.js"></script>
-
+	<script src="scripts/directives/collapsibleCard.js"></script>
+    <script src="scripts/directives/questionView.js"></script>
 <!-- framework -->
     <script src="../ignorasmus/client-side-framework/DataStoreManager.js"></script>
     <script src="../ignorasmus/client-side-framework/InstanceFactory.js"></script>
     <script src="../ignorasmus/client-side-framework/UrlMapping.js"></script>
     <script src="../ignorasmus/client-side-framework/XHR.js"></script>
 
-
 <!-- models -->
     <script src="../ignorasmus/client-side-framework/models/FluxCompositerBase.js"></script>
+    <script src="../ignorasmus/client-side-framework/models/ViewModelInstance.js"></script>
     <script src="scripts/models/Department.js"></script>
     <script src="scripts/models/Hazard.js"></script>
     <script src="scripts/models/PrincipalInvestigator.js"></script>
     <script src="scripts/models/Role.js"></script>
     <script src="scripts/models/Room.js"></script>
     <script src="scripts/models/User.js"></script>
-    <script src="scripts/models/IBCAnswer.js"></script>
+    <script src="scripts/models/IBCPossibleAnswer.js"></script>
     <script src="scripts/models/IBCProtocol.js"></script>
     <script src="scripts/models/IBCProtocolRevision.js"></script>
     <script src="scripts/models/IBCQuestion.js"></script>
+    <script src="scripts/models/IBCResponse.js"></script>
     <script src="scripts/models/IBCSection.js"></script>
 
 </head>

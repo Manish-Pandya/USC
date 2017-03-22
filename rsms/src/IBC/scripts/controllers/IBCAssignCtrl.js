@@ -7,27 +7,31 @@
  * Controller of the IBC protocol Assign for Review view
  */
 angular.module('ng-IBC')
-    .controller('IBCAssignCtrl', function ($rootScope, $scope, $modal, $location, $q) {
+    .controller('IBCAssignCtrl', function ($rootScope, $scope, $modal, $location, $q, convenienceMethods) {
     console.log("IBCAssignCtrl running");
-    $scope.protocols = [];
-    $scope.reviewers = [];
-    $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap]), DataStoreManager.getAll("IBCProtocolRevision", [], true), DataStoreManager.getAll("User", $scope.reviewers)])
-        .then(function (stuff) {
-        console.log($scope.protocols);
-        console.log(DataStoreManager._actualModel);
-        $scope.reviewers = $scope.reviewers.filter(function (u) {
-            var hasCorrectRole = false;
-            u.Roles.forEach(function (value, index, array) {
-                if (value.Name == Constants.ROLE.NAME.IBC_MEMBER || value.Name == Constants.ROLE.NAME.IBC_CHAIR) {
-                    hasCorrectRole = true;
-                }
+    $scope.cv = convenienceMethods;
+    function getProtocols() {
+        $scope.protocols = new ViewModelInstance();
+        $scope.reviewers = new ViewModelInstance();
+        $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap]), DataStoreManager.getAll("IBCProtocolRevision", new ViewModelInstance(), true), DataStoreManager.getAll("User", $scope.reviewers, true)])
+            .then(function (stuff) {
+            console.log($scope.protocols.data);
+            console.log(DataStoreManager._actualModel);
+            $scope.reviewers.data = $scope.reviewers.data.filter(function (u) {
+                var hasCorrectRole = false;
+                u.Roles.forEach(function (value, index, array) {
+                    if (value.Name == Constants.ROLE.NAME.IBC_MEMBER || value.Name == Constants.ROLE.NAME.IBC_CHAIR) {
+                        hasCorrectRole = true;
+                    }
+                });
+                return hasCorrectRole;
             });
-            return hasCorrectRole;
         });
-    });
+    }
+    $scope.loading = $rootScope.getCurrentRoles().then(getProtocols);
     $scope.addRemoveReviewer = function (protocol, user, add) {
         var protocolRevision = protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1];
-        var primaryReviewersIndex = _.indexOf(protocolRevision.PrimaryReviewers, user);
+        var primaryReviewersIndex = _.findIndex(protocolRevision.PrimaryReviewers, ["UID", user.UID]);
         if (add && primaryReviewersIndex == -1) {
             if (primaryReviewersIndex == -1) {
                 protocolRevision.PrimaryReviewers.push(user);
@@ -42,6 +46,7 @@ angular.module('ng-IBC')
         var protocolRevisions = [];
         protocols.forEach(function (value) {
             if (value.IBCProtocolRevisions) {
+                value.IBCProtocolRevisions[value.IBCProtocolRevisions.length - 1]["Status"] = Constants.IBC_PROTOCOL_REVISION.STATUS.IN_REVIEW;
                 protocolRevisions.push(value.IBCProtocolRevisions[value.IBCProtocolRevisions.length - 1]);
             }
         });

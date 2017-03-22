@@ -1,7 +1,7 @@
 ﻿namespace ibc {
     export class Hazard extends FluxCompositerBase {
 
-        static urlMapping: UrlMapping = new UrlMapping("getAllHazards", "getHazardById&id=", "saveHazard");
+        static urlMapping = new UrlMapping("getAllHazards", "getHazardById&id=", "saveHazard");
 
         constructor() {
             super();

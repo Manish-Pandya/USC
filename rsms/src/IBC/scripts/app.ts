@@ -1,4 +1,4 @@
-﻿'use strict';
+﻿//'use strict';
 
 /**
  * @ngdoc overview
@@ -54,6 +54,11 @@ angular
             })
     })
     .controller('AppCtrl', function ($rootScope, $q) {
+        //expose lodash to views
+        $rootScope._ = _;
+        $rootScope.DataStoreManager = DataStoreManager;
+        $rootScope.constants = Constants;
+
         //register classes with app
         console.log("approved classNames:", InstanceFactory.getClassNames(ibc));
         // method to async fetch current roles
@@ -74,6 +79,30 @@ angular
                     })]
                 )
             }
+        }
+
+        $rootScope.loadQuestionsChain = function (sectionId: any, revisionId: any): Promise<any> | void {
+            return $q.all([DataStoreManager.getById("IBCSection", sectionId, new ViewModelInstance(), true)])
+                .then(
+                function (section) {
+                    console.log(DataStoreManager._actualModel);
+                    return section;
+                })
+        }
+
+        $rootScope.saveReponses = function (responses: ibc.IBCResponse[], revision: ibc.IBCProtocolRevision, thing): Promise<any> {
+            return $q.all([$rootScope.save(responses)]).then((returnedResponses: ibc.IBCResponse[]) => {
+                revision.getResponsesMapped();
+                return revision;
+            })
+        }
+        
+        $rootScope.save = function (copy, thing = null): Promise<any> {
+            return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(
+                function (responses) {
+                    console.log(DataStoreManager._actualModel);
+                    return responses;
+                });
         }
 
     });

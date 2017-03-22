@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 /**
  * @ngdoc overview
  * @name IBC
@@ -53,6 +53,10 @@ angular
     });
 })
     .controller('AppCtrl', function ($rootScope, $q) {
+    //expose lodash to views
+    $rootScope._ = _;
+    $rootScope.DataStoreManager = DataStoreManager;
+    $rootScope.constants = Constants;
     //register classes with app
     console.log("approved classNames:", InstanceFactory.getClassNames(ibc));
     // method to async fetch current roles
@@ -70,5 +74,25 @@ angular
                     return DataStoreManager.CurrentRoles;
                 })]);
         }
+    };
+    $rootScope.loadQuestionsChain = function (sectionId, revisionId) {
+        return $q.all([DataStoreManager.getById("IBCSection", sectionId, new ViewModelInstance(), true)])
+            .then(function (section) {
+            console.log(DataStoreManager._actualModel);
+            return section;
+        });
+    };
+    $rootScope.saveReponses = function (responses, revision, thing) {
+        return $q.all([$rootScope.save(responses)]).then(function (returnedResponses) {
+            revision.getResponsesMapped();
+            return revision;
+        });
+    };
+    $rootScope.save = function (copy, thing) {
+        if (thing === void 0) { thing = null; }
+        return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(function (responses) {
+            console.log(DataStoreManager._actualModel);
+            return responses;
+        });
     };
 });

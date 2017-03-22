@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright(C) 2016 Neighsayer/Harshmellow, Inc.
+//  Copyright(C) 2017 Neighsayer/Harshmellow, Inc.
 //  All Rights Reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -171,7 +171,7 @@ var InstanceFactory = (function (_super) {
                     }
                 }
                 else {
-                    DataStoreManager.getById(parent.TypeName, parent.UID, parent, [compMap]);
+                    DataStoreManager.getById(parent.TypeName, parent.UID, new ViewModelInstance(parent), [compMap]);
                     console.log(compMap.GerundName + " doesn't exist in actualModel. Running getById to resolve...");
                 }
             }
