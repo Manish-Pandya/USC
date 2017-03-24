@@ -8,7 +8,9 @@ var ibc;
     var IBCProtocol = (function (_super) {
         __extends(IBCProtocol, _super);
         function IBCProtocol() {
-            return _super.call(this) || this;
+            var _this = _super.call(this) || this;
+            _this.PrincipalInvestigators = [];
+            return _this;
         }
         IBCProtocol.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
@@ -23,6 +25,7 @@ var ibc;
     IBCProtocol.HazardMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "Hazard", "getHazardById&id={{this.Hazard_id}}", "Hazard", "Hazard_id");
     IBCProtocol.DepartmentMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "Department", "getDepartmentById&id={{this.Department_id}}", "Department", "Department_id");
     IBCProtocol.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=PrincipalInvestigator&id={{UID}}", "PrincipalInvestigators", "Protocol_id", "Principal_investigator_id", "IBCProtocolPrincipalInvestigator", "getRelationships&class1=IBCProtocol&class2=PrincipalInvestigator");
-    IBCProtocol.RevisionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCProtocolRevision", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Revisions&id={{UID}}", "IBCProtocolRevisions", "Protocol_id");
+    IBCProtocol.RevisionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCProtocolRevision", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCProtocolRevisions&id={{UID}}", "IBCProtocolRevisions", "Protocol_id");
+    IBCProtocol.SectionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCSection", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCSections&id={{UID}}", "IBCSections", "Hazard_id", "Hazard_id");
     ibc.IBCProtocol = IBCProtocol;
 })(ibc || (ibc = {}));

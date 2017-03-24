@@ -5,20 +5,20 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var ibc;
 (function (ibc) {
-    var IBCAnswer = (function (_super) {
-        __extends(IBCAnswer, _super);
-        function IBCAnswer() {
+    var IBCPossibleAnswer = (function (_super) {
+        __extends(IBCPossibleAnswer, _super);
+        function IBCPossibleAnswer() {
             return _super.call(this) || this;
         }
-        IBCAnswer.prototype.hasGetAllPermission = function () {
+        IBCPossibleAnswer.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
                 var allowedRoles = [Constants.ROLE.NAME.ADMIN];
                 _super.prototype.hasGetAllPermission.call(this, _.intersection(DataStoreManager.CurrentRoles, allowedRoles).length > 0);
             }
             return this._hasGetAllPermission;
         };
-        return IBCAnswer;
+        return IBCPossibleAnswer;
     }(FluxCompositerBase));
-    IBCAnswer.urlMapping = new UrlMapping("getAllAnswerss", "getAnswerById&id=", "saveAnswer");
-    ibc.IBCAnswer = IBCAnswer;
+    IBCPossibleAnswer.urlMapping = new UrlMapping("getAllIBCPossibleAnswers", "getIBCPossibleAnswerById&id=", "saveIBCPossibleAnswer");
+    ibc.IBCPossibleAnswer = IBCPossibleAnswer;
 })(ibc || (ibc = {}));

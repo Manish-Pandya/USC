@@ -17,6 +17,8 @@ class IBCSection extends GenericCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"hazard_id"						=> "integer",
 		"answer_id"					    => "integer",
+        "weight"					    => "integer",
+		"label"							=> "text",
 
 		//GenericCrud
 		"key_id"				=> "integer",
@@ -48,12 +50,17 @@ class IBCSection extends GenericCrud {
 	 */
 	private $answer_id;
 
-    private $questions;
+    private $IBCQuestions;
+
+    private $weight;
+
+	private $label;
 
 	public function __construct(){
 
 		// Define which subentities to load
 		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy", "getIBCQuestions");
 		$this->setEntityMaps($entityMaps);
 	}
 
@@ -72,13 +79,21 @@ class IBCSection extends GenericCrud {
 	public function getAnswer_id(){return $this->answer_id;}
 	public function setAnswer_id($answer_id){$this->answer_id = $answer_id;}
 
-    public function getQuestions(){
+    public function getIBCQuestions(){
         if($this->questions === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->questions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$QUESTIONS_RELATIONSHIP));
+			$this->IBCQuestions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$QUESTIONS_RELATIONSHIP));
 		}
-		return $this->questions;
+		return $this->IBCQuestions;
     }
-    public function setQuestions($questions){$this->questions = $questions;}
+    public function setIBCQuestions($questions){$this->IBCQuestions = $questions;}
+
+
+	public function getWeight(){return $this->weight;}
+	public function setWeight($weight){$this->weight = $weight;}
+
+	public function getLabel(){return $this->label;}
+	public function setLabel($label){$this->label = $label;}
+
 }
 ?>

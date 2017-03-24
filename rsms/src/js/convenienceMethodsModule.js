@@ -206,7 +206,8 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
         *	@param (Bool, returnIdx)	OPTIONAL FOURTH PARAM Setting to true will cause this method to return the index of the object in an array instead of a boolean true, if the array contains the object
         *
         **/
-        arrayContainsObject: function(array, obj, props, returnIdx) {
+        arrayContainsObject: function (array, obj, props, returnIdx) {
+            console.log(array, obj);
             if(!props) {var props = ["Key_id","Key_id"];}
 
             for (var localI=0;localI<array.length;localI++) {
@@ -453,11 +454,12 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
         if (!tel) { return ''; }
 
         var value = tel.toString().trim().replace(/^\+/, '');
-
+        /*
         if (value.match(/[^0-9]/)) {
+            console.log(tel);
             return tel;
         }
-
+        */
         var city = value.slice(0, 3);
         var number = value.slice(3);
 

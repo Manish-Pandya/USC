@@ -196,7 +196,6 @@ class GenericDAO {
 
 		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' ';
 		$whereClauses = $whereClauseGroup->getClauses();
-
 		//White lists for queries to safeguard against injection
 		$columnWhiteList = $this->modelObject->getColumnData();
 		//Likely operators.  Add to this list as needed (Only operators commonly used with SELECT statements should be here)
@@ -254,10 +253,9 @@ class GenericDAO {
         if($sortColumn != null && array_key_exists($sortColumn, $columnWhiteList)){
             $sql .= " ORDER BY " . $sortColumn;
         }
-        //$this->LOG->fatal($sql);
 		//Prepare to query all from the table
 		$stmt = $db->prepare($sql);
-        //$this->LOG->fatal($stmt);
+        //$this->LOG->fatal($sql);
 
 		$i = 1;
 		foreach($whereClauses as $clause){
@@ -276,6 +274,7 @@ class GenericDAO {
 			$result = new QueryError($error);
 			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
             $this->LOG->fatal($stmt);
+            $this->LOG->fatal($this->modelObject);
 		}
 
 		return $result;
@@ -481,7 +480,7 @@ class GenericDAO {
 		//If $object is given, make sure it's the right type
 		else if( get_class($object) != $this->modelClassName ){
 			// we have a problem!
-			$this->LOG->error("Attempting to save entity of class " . get_class($object) . ", which does not match model object class of $this->modelClassName");
+			$this->LOG->fatal("Attempting to save entity of class " . get_class($object) . ", which does not match model object class of $this->modelClassName");
 
 			return new ModifyError("Entity did not match model object class", $object);
 		}
