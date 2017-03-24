@@ -319,6 +319,45 @@ class IBC_ActionManager extends ActionManager {
         return $responses;
     }
 
+    public function getAllIBCPIs(){
+        $LOG = Logger::getLogger( 'Action:' . __function__ );
+
+
+        $dao = $this->getDao(new PrincipalInvestigator());
+        $pis = $dao->getAll();
+        /** TODO: Instead of $dao->getAll, we gather PIs which are either active or have rooms associated with them. **/
+        /* $whereClauseGroup = new WhereClauseGroup( array( new WhereClause("is_active","=","1"), new WhereClause("key_id","IN","(SELECT principal_investigator_id FROM principal_investigator_room)") ) );
+        $pis = $dao->getAllWhere($whereClauseGroup, "OR");*/
+
+        $entityMaps = array();
+        $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+        $entityMaps[] = new EntityMap("lazy","getRooms");
+        $entityMaps[] = new EntityMap("lazy","getDepartments");
+        $entityMaps[] = new EntityMap("lazy","getUser");
+        $entityMaps[] = new EntityMap("lazy","getInspections");
+        $entityMaps[] = new EntityMap("lazy","getPi_authorization");
+        $entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+        $entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+        $entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+        $entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+        $entityMaps[] = new EntityMap("lazy", "getPickups");
+        $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+        $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+        $entityMaps[] = new EntityMap("lazy","getOpenInspections");
+        $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+        $entityMaps[] = new EntityMap("lazy","getVerifications");
+        $entityMaps[] = new EntityMap("lazy","getBuidling");
+        $entityMaps[] = new EntityMap("lazy","getWipeTests");
+        $entityMaps[] = new EntityMap("lazy","getCurrentPi_authorization");
+        $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+        $entityMaps[] = new EntityMap("lazy", "getCurrentIsotopeInventories");
+
+        foreach($pis as $pi){
+            $pi->setEntityMaps($entityMaps);
+        }
+        
+        return $pis;
+    }
 }
 
 ?>

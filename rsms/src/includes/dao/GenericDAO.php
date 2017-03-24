@@ -233,7 +233,6 @@ class GenericDAO {
 				}else{
 					$sql .= " ?";
 				}
-				$this->LOG->fatal($sql);
 			}else{
 				if ( !in_array($junction, $junctionWhiteList) ) {
 					$this->LOG->fatal("The junction, $junction, used was not in the white list.");

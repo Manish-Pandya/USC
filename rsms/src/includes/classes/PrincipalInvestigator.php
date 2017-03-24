@@ -186,6 +186,8 @@ class PrincipalInvestigator extends GenericCrud {
 
     private $wipeTests;
 
+    private $name;
+
 	public function __construct(){
 
 		$entityMaps = array();
@@ -204,6 +206,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
 		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
 		$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+        $entityMaps[] = new EntityMap("lazy","getCurrentPi_authorization");
 		$entityMaps[] = new EntityMap("lazy","getVerifications");
 		$entityMaps[] = new EntityMap("lazy","getPi_authorization");
 		$entityMaps[] = new EntityMap("lazy","getWipeTests");
@@ -485,6 +488,15 @@ class PrincipalInvestigator extends GenericCrud {
 		return $this->wipeTests;
 	}
 	public function setWipeTests($wipeTests){$this->wipeTests = $wipeTests;}
+
+    public function getName(){
+        if($this->name == null && $this->hasPrimaryKeyValue() && $this->getUser() != null){
+            $user = $this->getUser();
+            $this->name = $user->getName();
+        }
+        return $this->name;
+    }
+    public function setName($name){$this->name = $name;}
 
 }
 
