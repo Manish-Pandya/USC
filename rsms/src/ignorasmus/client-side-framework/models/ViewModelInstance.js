@@ -28,5 +28,23 @@ var ViewModelInstance = (function () {
         this.data = null;
         this.data = data;
     }
+    //----------------------------------------------------------------------
+    //
+    //  Methods
+    //
+    //----------------------------------------------------------------------
+    ViewModelInstance.prototype.save = function () {
+        return DataStoreManager.save(this.data);
+    };
+    ViewModelInstance.prototype.undo = function () {
+        if (Array.isArray(this.data)) {
+            this.data.forEach(function (value) {
+                DataStoreManager.undo(value);
+            });
+        }
+        else {
+            DataStoreManager.undo(this.data);
+        }
+    };
     return ViewModelInstance;
 }());

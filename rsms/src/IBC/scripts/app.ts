@@ -92,7 +92,7 @@ angular
             })
         }
         
-        $rootScope.save = function (copy, thing = null): Promise<any> {
+        $rootScope.save = function (copy): Promise<any> {
             return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(
                 function (responses) {
                     console.log(DataStoreManager._actualModel);

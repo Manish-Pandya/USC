@@ -83,8 +83,7 @@ angular
             return revision;
         });
     };
-    $rootScope.save = function (copy, thing) {
-        if (thing === void 0) { thing = null; }
+    $rootScope.save = function (copy) {
         return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(function (responses) {
             console.log(DataStoreManager._actualModel);
             return responses;

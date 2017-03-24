@@ -39,5 +39,18 @@ class ViewModelInstance {
     //
     //----------------------------------------------------------------------
 
+    save(): Promise<FluxCompositerBase> | Promise<FluxCompositerBase[]> {
+        return DataStoreManager.save(this.data);
+    }
+
+    undo(): void {
+        if (Array.isArray(this.data)) {
+            this.data.forEach((value) => {
+                DataStoreManager.undo(value);
+            })
+        } else {
+            DataStoreManager.undo(this.data);
+        }
+    }
 
 }
