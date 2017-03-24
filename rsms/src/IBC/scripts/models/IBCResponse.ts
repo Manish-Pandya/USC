@@ -1,7 +1,9 @@
 ﻿namespace ibc {
-    export class IBCAnswer extends FluxCompositerBase {
+    export class IBCResponse extends FluxCompositerBase {
 
-        static urlMapping: UrlMapping = new UrlMapping("getAllAnswerss", "getAnswerById&id=", "saveAnswer");
+        static urlMapping = new UrlMapping("getAllIBCResponses", "getIBCResponseById&id=", "saveIBCResponse");
+
+        Answer_id: string;
 
         constructor() {
             super();

@@ -3,10 +3,9 @@ angular.module('ng-IBC')
     return function (protocols) {
         if (!protocols)
             return;
-        var unsubmittedProtocols = protocols.filter(function (p) {
+        return protocols.filter(function (p) {
             return p.IBCProtocolRevisions[p.IBCProtocolRevisions.length - 1].Status == Constants.IBC_PROTOCOL_REVISION.STATUS.NOT_SUBMITTED;
         });
-        return unsubmittedProtocols;
     };
 })
     .filter('isSubmitted', function () {
@@ -25,6 +24,16 @@ angular.module('ng-IBC')
             return;
         var returnedProtocols = protocols.filter(function (p) {
             return p.IBCProtocolRevisions[p.IBCProtocolRevisions.length - 1].Status == Constants.IBC_PROTOCOL_REVISION.STATUS.RETURNED_FOR_REVISION;
+        });
+        return returnedProtocols;
+    };
+})
+    .filter('isInReview', function () {
+    return function (protocols) {
+        if (!protocols)
+            return;
+        var returnedProtocols = protocols.filter(function (p) {
+            return p.IBCProtocolRevisions[p.IBCProtocolRevisions.length - 1].Status == Constants.IBC_PROTOCOL_REVISION.STATUS.IN_REVIEW;
         });
         return returnedProtocols;
     };

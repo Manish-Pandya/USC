@@ -1,6 +1,6 @@
 ﻿////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright(C) 2016 Neighsayer/Harshmellow, Inc.
+//  Copyright(C) 2017 Neighsayer/Harshmellow, Inc.
 //  All Rights Reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ abstract class InstanceFactory extends DataStoreManager {
 
     /**
      * Crawls through passed data and its children, creating class instances as needed.
-     *
+     * TODO: Needs to be optimized. Can check if conversion has already been done at current depth and 'continue' to next, if so.
      * @param data
      */
     static convertToClasses(data: any): any {
@@ -102,14 +102,17 @@ abstract class InstanceFactory extends DataStoreManager {
         var drillDown = (parentNode: any): void => {
             for (var prop in parentNode) {
                 if (parentNode[prop] && typeof parentNode[prop] === 'object') {
-                    if (parentNode[prop].hasOwnProperty(DataStoreManager.classPropName)) {
-                        var instance: FluxCompositerBase = InstanceFactory.createInstance(parentNode[prop][DataStoreManager.classPropName]);
-                        if (instance) {
-                            instance = parentNode[prop] = InstanceFactory.copyProperties(instance, parentNode[prop]); // set instance
-                            instance.onFulfill();
+                    // if either parentNode isn't a FluxCompositerBase, OR it is and parentNode[prop] is NOT its viewModelWatcher, OR parentNode[prop] is the viewModelWatcher, but isn't composed yet...
+                    if (!(parentNode instanceof FluxCompositerBase && parentNode.viewModelWatcher == parentNode[prop] && parentNode.viewModelWatcher instanceof FluxCompositerBase)) {
+                        if (parentNode[prop].hasOwnProperty(DataStoreManager.classPropName)) {
+                            var instance: FluxCompositerBase = InstanceFactory.createInstance(parentNode[prop][DataStoreManager.classPropName]);
+                            if (instance) {
+                                instance = parentNode[prop] = InstanceFactory.copyProperties(instance, parentNode[prop]); // set instance
+                                instance.onFulfill();
+                            }
                         }
+                        drillDown(parentNode[prop]);
                     }
-                    drillDown(parentNode[prop]);
                 }
             }
         }
@@ -152,21 +155,23 @@ abstract class InstanceFactory extends DataStoreManager {
                     } else {
                         DataStoreManager._actualModel[compMap.GerundName].promise = (DataStoreManager._actualModel[compMap.GerundName].promise || XHR.GET(compMap.GerundUrl))
                             .then((gerundReturns: any[]) => {
-                                var d: any[] = DataStoreManager._actualModel[compMap.GerundName].Data = gerundReturns;
-                                var gerundLen: number = d.length;
-                                //loop through all the gerunds
-                                for (let i: number = 0; i < gerundLen; i++) {
-                                    childStore.forEach((value: FluxCompositerBase) => {
-                                        if (value.UID == d[i].ChildId && parent.UID == d[i].ParentId) {
-                                            parent[compMap.PropertyName].push(value.viewModelWatcher);
-                                        }
-                                    });
+                                if (gerundReturns) {
+                                    var d: any[] = DataStoreManager._actualModel[compMap.GerundName].Data = gerundReturns;
+                                    var gerundLen: number = d.length;
+                                    //loop through all the gerunds
+                                    for (let i: number = 0; i < gerundLen; i++) {
+                                        childStore.forEach((value: FluxCompositerBase) => {
+                                            if (value.UID == d[i].ChildId && parent.UID == d[i].ParentId) {
+                                                parent[compMap.PropertyName].push(value.viewModelWatcher);
+                                            }
+                                        });
+                                    }
                                 }
                             });
                         console.log(compMap.GerundName + " doesn't exist in actualModel. Running GET to resolve...");
                     }
                 } else {
-                    DataStoreManager.getById(parent.TypeName, parent.UID, parent, [compMap]);
+                    DataStoreManager.getById(parent.TypeName, parent.UID, new ViewModelInstance(parent), [compMap]);
                     console.log(compMap.GerundName + " doesn't exist in actualModel. Running getById to resolve...");
                 }
             } else {

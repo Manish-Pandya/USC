@@ -186,6 +186,8 @@ class PrincipalInvestigator extends GenericCrud {
 
     private $wipeTests;
 
+    private $name;
+
 	public function __construct(){
 
 		$entityMaps = array();
@@ -490,6 +492,14 @@ class PrincipalInvestigator extends GenericCrud {
 		return $this->wipeTests;
 	}
 	public function setWipeTests($wipeTests){$this->wipeTests = $wipeTests;}
+
+    public function getName(){
+		if( $this->hasPrimaryKeyValue() && $this->getUser() != NULL ) {
+			$this->name = $this->user->getName();
+		}
+		return $this->name;
+	}
+	public function setName($name){$this->name = $name;}
 
 }
 

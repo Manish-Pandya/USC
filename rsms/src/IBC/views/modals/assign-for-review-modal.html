@@ -15,7 +15,7 @@
             </ui-select> 
         </div>
         <ul>
-            <li ng-repeat="reviewer in reviewers" style="padding: 3px 0; font-size: 15px;">
+            <li ng-repeat="reviewer in reviewers.data" style="padding: 3px 0; font-size: 15px;">
                 <label class="checkbox inline">
                     <input type="checkbox" ng-model="reviewer.isChecked" ng-change="addRemoveReviewer(reviewer, reviewer.isChecked)" />
                     <span class="metro-checkbox" once-text="reviewer.Name"></span>

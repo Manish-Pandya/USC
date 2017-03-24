@@ -196,7 +196,6 @@ class GenericDAO {
 
 		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' ';
 		$whereClauses = $whereClauseGroup->getClauses();
-
 		//White lists for queries to safeguard against injection
 		$columnWhiteList = $this->modelObject->getColumnData();
 		//Likely operators.  Add to this list as needed (Only operators commonly used with SELECT statements should be here)
@@ -254,10 +253,9 @@ class GenericDAO {
         if($sortColumn != null && array_key_exists($sortColumn, $columnWhiteList)){
             $sql .= " ORDER BY " . $sortColumn;
         }
-        //$this->LOG->fatal($sql);
 		//Prepare to query all from the table
 		$stmt = $db->prepare($sql);
-        //$this->LOG->fatal($stmt);
+        //$this->LOG->fatal($sql);
 
 		$i = 1;
 		foreach($whereClauses as $clause){
@@ -276,6 +274,7 @@ class GenericDAO {
 			$result = new QueryError($error);
 			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
             $this->LOG->fatal($stmt);
+            $this->LOG->fatal($this->modelObject);
 		}
 
 		return $result;
@@ -496,7 +495,7 @@ class GenericDAO {
 		//If $object is given, make sure it's the right type
 		else if( get_class($object) != $this->modelClassName ){
 			// we have a problem!
-			$this->LOG->error("Attempting to save entity of class " . get_class($object) . ", which does not match model object class of $this->modelClassName");
+			$this->LOG->fatal("Attempting to save entity of class " . get_class($object) . ", which does not match model object class of $this->modelClassName");
 
 			return new ModifyError("Entity did not match model object class", $object);
 		}
@@ -871,7 +870,7 @@ class GenericDAO {
                 NULL AS `inspection_id` from (((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `principal_investigator_room` `f`)
                 where ((`a`.`is_active` = 1) and (`c`.`is_active` = 1) and (`b`.`key_id` = `a`.`user_id`) and (`f`.`principal_investigator_id` = `a`.`key_id`) and (`f`.`room_id` = `c`.`key_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`) and (not(`a`.`key_id` in (select `inspection`.`principal_investigator_id`
                 from `inspection`
-                where (coalesce(year(`inspection`.`date_started`),
+                where (coalesce(year(`inspection`.`date_started`) AND (is_rad IS NULL OR is_rad = 0),
                 `inspection`.`schedule_year`) = ?))))) group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,year(curdate()),
                 NULL union select `a`.`key_id` AS `pi_key_id`,
                 concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,

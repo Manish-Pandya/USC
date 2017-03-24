@@ -1,0 +1,44 @@
+﻿<div cg-busy="{promise:saving, message:'Saving...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div class="ibc-question" style="margin:10px">
+    <h4>{{question.Text}}</h4>
+    <ul ng-if="question.Answer_type == $root.constants.IBC_ANSWER_TYPE.MULTIPLE_CHOICE">
+        <li ng-repeat="a in question.IBCPossibleAnswers">
+            {{revision.responsesMapped[a.UID]}}
+            <label class="checkbox inline">
+                <input type="checkbox" ng-model="revision.responsesMapped[a.UID][0].Is_selected" ng-change="$root.saveReponses(revision.responsesMapped[a.UID], revision, responses)" />
+                <span class="metro-radio">{{a.Answer_text}}</span>
+            </label>
+        </li>
+    </ul>
+
+    <ul ng-if="question.Answer_type == $root.constants.IBC_ANSWER_TYPE.MULTI_SELECT">
+        <li ng-repeat="a in question.IBCPossibleAnswers">
+            <label class="checkbox inline">
+                <input type="checkbox" ng-model="revision.responsesMapped[a.UID][0].Is_selected" ng-change="$root.saveReponses(revision.responsesMapped[a.UID], revision)" />
+                <span class="metro-checkbox">{{a.Answer_text}}</span>
+            </label>
+        </li>
+    </ul>
+
+    <div ng-if="question.Answer_type == $root.constants.IBC_ANSWER_TYPE.TABLE">
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th ng-repeat="a in question.IBCPossibleAnswers | orderBy:'Grid_column_index'">{{a.Answer_text}}<br />{{revision.responsesMapped[question.IBCPossibleAnswers].Text}}</th>
+            </tr>
+            <tr ng-repeat="(key, response) in revision.responsesMapped[question.IBCPossibleAnswers[0].UID]">
+                <td ng-repeat="a in question.IBCPossibleAnswers | orderBy:'Grid_column_index'">
+                    <input ng-model="revision.responsesMapped[a.UID][key].Text"/>
+                </td>
+            </tr>
+        </table>
+        <a class="btn btn-small btn-success left" ng-click="$root.saveReponses(revision.responsesMapped[a.UID],revision)"><i class="icon-checkmark"></i>Save</a>
+    </div>
+
+    <div ng-if="question.Answer_type == $root.constants.IBC_ANSWER_TYPE.FREE_TEXT">
+        <textarea ng-model="revision.responsesMapped[question.IBCPossibleAnswers[0].UID][0].Text"></textarea>
+        <a class="btn btn-small btn-success left" ng-click="$root.saveReponses(revision.responsesMapped[question.IBCPossibleAnswers[0].UID],revision)"><i class="icon-checkmark"></i>Save</a>
+    </div>
+
+</div>
+
+

@@ -2600,8 +2600,8 @@ class Rad_ActionManager extends ActionManager {
     	$dto->setPickup($this->getAllPickups());
     	$dto->setPurchaseOrder($this->getAllPurchaseOrders());
     	//$dto->getQuarterlyIsotopeAmount($this->getAllQuarterlyInventories());
-    	$dto->setQuarterlInventory($this->getMostRecentInventory());
-    	$dto->setPIQuarterlyInventory($this->getAllPIQuarterlyInventories());
+    	//$dto->setQuarterlInventory($this->getMostRecentInventory());
+    	//$dto->setPIQuarterlyInventory($this->getAllPIQuarterlyInventories());
     	$dto->setScintVialCollection($this->getAllScintVialCollections());
         $dto->setMiscellaneousWaste($this->getAllMiscellaneousWaste());
     	$dto->setWasteBag($this->getAllWasteBags());

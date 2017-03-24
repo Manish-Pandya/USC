@@ -1,10 +1,9 @@
 ﻿namespace ibc {
-    export class Role extends FluxCompositerBase {
+    export class IBCPossibleAnswer extends FluxCompositerBase {
 
-        static urlMapping = new UrlMapping("getAllRoles", "getRoleById&id=", "saveRole");
+        static urlMapping = new UrlMapping("getAllIBCPossibleAnswers", "getIBCPossibleAnswerById&id=", "saveIBCPossibleAnswer");          
 
-        Name: string;
-
+          
         constructor() {
             super();
         }

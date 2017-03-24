@@ -206,7 +206,8 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
         *	@param (Bool, returnIdx)	OPTIONAL FOURTH PARAM Setting to true will cause this method to return the index of the object in an array instead of a boolean true, if the array contains the object
         *
         **/
-        arrayContainsObject: function(array, obj, props, returnIdx) {
+        arrayContainsObject: function (array, obj, props, returnIdx) {
+            console.log(array, obj);
             if(!props) {var props = ["Key_id","Key_id"];}
 
             for (var localI=0;localI<array.length;localI++) {
@@ -453,11 +454,12 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
         if (!tel) { return ''; }
 
         var value = tel.toString().trim().replace(/^\+/, '');
-
+        /*
         if (value.match(/[^0-9]/)) {
+            console.log(tel);
             return tel;
         }
-
+        */
         var city = value.slice(0, 3);
         var number = value.slice(3);
 
@@ -531,22 +533,26 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
         }
     }
 }])
-.filter('propsFilter', function() {
+.filter('propsFilter', function () {
+
   return function(items, props) {
-    var out = [];
+      var out = [];
+      if (!items || !props) return out;
+      var keys = Object.keys(props);
+      if (keys[0].indexOf(".") > 0) {
+          var properties = keys[0].split('.');
+      } else {
+          var properties = keys;
+      }
     if (angular.isArray(items)) {
-      items.forEach(function(item) {
+      items.forEach(function(item, key) {
         var itemMatches = false;
-        var keys = Object.keys(props);
-        if(keys[0].indexOf(".") > 0){
-            var properties = keys[0].split('.');
-        }else{
-            var properties = keys;
-        }
         if (item && item != null) {
             var myResultItem = item;
+
             for (var i = 0; i < properties.length; i++) {
                 if (myResultItem[properties[i]]) {
+                    console.log(key)
                     myResultItem = myResultItem[properties[i]];
                 }
             }
@@ -554,6 +560,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
                 var text = props[properties.join('.')].toLowerCase();
                 if (myResultItem.toString().toLowerCase().indexOf(text) !== -1) itemMatches = true;
             }
+
             if (itemMatches) {
                 out.push(item);
             }

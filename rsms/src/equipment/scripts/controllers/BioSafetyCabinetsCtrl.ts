@@ -11,14 +11,18 @@ angular.module('EquipmentModule')
     .controller('BioSafetyCabinetsCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods, $q) {
         var af = $scope.af = applicationControllerFactory;
         $scope.constants = Constants;
-
+        $rootScope.modalClosed = true;
         var getAll = function () {
             $rootScope.cabinets = [];
+            $rootScope.Rooms = [];
+
             $scope.campuses = [];
-            return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $rootScope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false)])
+            return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $rootScope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false), DataStoreManager.getAll("Room", $rootScope.Rooms, true)])
                 .then(
                 function (whateverGotReturned) {
                     getYears($rootScope.cabinets);
+                    console.log($scope.campuses);
+                    console.log(DataStoreManager._actualModel);
                     return true;
                 }
                 )
@@ -79,23 +83,33 @@ angular.module('EquipmentModule')
             $scope.saving = af.save(cabinet);
         }
 
-        $scope.openModal = function (object, inspection, isCabinet) {
+        $scope.openModal = function (object, insp, isCabinet) {
             var modalData = { inspection: null };
             if (!object) {
                 object = new equipment.BioSafetyCabinet();
                 object.Is_active = true;
                 object.Class = "BioSafetyCabinet";
+                console.log(object);
             }
-            if (isCabinet && !inspection) {
-                inspection = new equipment.EquipmentInspection();
-                inspection.Is_active = true;
-                inspection.Class = "EquipmentInspection";
-                inspection.Equipment_class = "BioSafetyCabinet";
-                inspection.Equipment_id = object.Key_id || null;
-                inspection.PrincipalInvestigators = inspection.PrincipalInvestigators || [];
-                object.SelectedInspection = inspection;
-            }
+           
+           //build new inspection object every time so we can assure we have a good one of proper type
+            var inspection = new equipment.EquipmentInspection();
+            inspection['Is_active'] = true;
+            inspection['Class'] = "EquipmentInspection";
+            inspection.Equipment_class = "BioSafetyCabinet";
+            inspection.Equipment_id = object.Key_id || null;
+            inspection['Key_id'] = insp ? insp.Key_id : null;
+            inspection.Comments = insp ? insp.Comments : null;
+            inspection.Frequency = insp ? insp.Frequency : null;
+            inspection.Room_id = insp ? insp.Room_id : null;
+            inspection.Certification_date = insp ? insp.Certification_date : null;
+            inspection.Due_date = insp ? insp.Due_date : null;
+            inspection.Status = insp ? insp.Status : null;
+            inspection.UID = insp ? insp.Key_id : null;
 
+            inspection.PrincipalInvestigators = insp ? insp.PrincipalInvestigators : [];
+            object.SelectedInspection = inspection;
+            
             modalData[object.Class] = object;
             modalData.inspection = inspection;
             DataStoreManager.ModalData = modalData;
@@ -114,8 +128,19 @@ angular.module('EquipmentModule')
                         $rootScope.cabinets.push(r);
                     }
                 }
-
+                /*
                 object.doCompose([equipment.BioSafetyCabinet.EquipmentInspectionMap]);
+                object.EquipmenInspections.forEach((i)=>{
+                    r.EquipmenInspections.forEach((innerI)=>{
+                        if(i.UID == innerI.UID){
+                            i.PrincipalInvestigators = innerI.PrincipalInvestigators;
+                            i.Due_date = innerI.Due_date;
+                            i.Status = innerI.Status;
+                            i.Certification_date = innerI.Certification_date;
+                        }
+                    });
+                });
+                */
             });
         }
 
@@ -179,12 +204,40 @@ angular.module('EquipmentModule')
         $scope.constants = Constants;
 
         $scope.modalData = DataStoreManager.ModalData;
-        if (!$rootScope.PIs && ($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet)) {
-            $rootScope.PIs = [];
-            $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $rootScope.PIs, true)])
+        $rootScope.modalClosed = false;
+
+        $scope.getBuilding = function (id :string | number):void {            
+            $rootScope.Buildings.forEach((b) => {
+                if(b.UID == id)$scope.modalData.selectedBuilding = b;
+            });
+        }
+
+        $scope.getRoom = function (id :string | number):void  {
+            $rootScope.Rooms.forEach((r) => {
+                if(r.UID == id){
+                    $scope.modalData.selectedRoom = r;
+                    console.log(r);
+                    $scope.getBuilding(r.Building_id);
+                }
+            });
+        }
+        
+        if(!$rootScope.Buildings){
+            $rootScope.Buildings = [];
+            $rootScope.loading = $q.all([DataStoreManager.getAll("Building", $rootScope.Buildings, true)]).then((b)=>{
+                if($scope.modalData.inspection && $scope.modalData.inspection.Room_id) {
+                     $scope.getRoom($scope.modalData.inspection.Room_id);
+                }
+            });
+        }else{
+            console.log($scope.modalData.inspection);
+            if($scope.modalData.inspection && $scope.modalData.inspection.Room_id) {
+                $scope.getRoom($scope.modalData.inspection.Room_id);
+            }
         }
 
         if (($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet) && $scope.modalData.BioSafetyCabinet.EquipmentInspections) {
+        
             if ($scope.modalData.inspection.Room) {
                 $scope.modalData.BioSafetyCabinet.Room = $scope.modalData.inspection.Room;
             }
@@ -206,7 +259,7 @@ angular.module('EquipmentModule')
             } else {
                 $scope.modalData.BioSafetyCabinet.viewDate = new Date();
             }
-
+            
             if ($rootScope.selectedCertificationDate) {
                 if (!$scope.modalData.inspection) {
                     $scope.modalData.BioSafetyCabinet.SelectedInspection = $scope.modalData.BioSafetyCabinet.EquipmentInspections.filter(function (i) {
@@ -216,47 +269,10 @@ angular.module('EquipmentModule')
                     $scope.modalData.BioSafetyCabinet.SelectedInspection = $scope.modalData.inspection;
                 }
             }
+            
         }
 
-
-        $scope.getBuilding = function () {
-            if ($scope.modalData.BioSafetyCabinet.EquipmentInspections) {
-                $scope.modalData.selectedBuilding = $scope.modalData.inspection.Room.Building.Name;
-            } else {
-                $scope.modalData.selectedBuilding = $scope.modalData.BioSafetyCabinet.PrincipalInvestigator.Buildings[0];
-            }
-
-        }
-
-        $scope.getRoom = function () {
-            if ($scope.modalData.BioSafetyCabinet.RoomId) {
-
-            } else {
-                for (var i = 0; i < $scope.modalData.BioSafetyCabinet.PrincipalInvestigator.Rooms.length; i++) {
-                    var room = $scope.modalData.BioSafetyCabinet.PrincipalInvestigator.Rooms[i];
-                    if (room.Building.Name == $scope.modalData.selectedBuilding) {
-                        $scope.modalData.BioSafetyCabinet.Room = room;
-                        $scope.modalData.BioSafetyCabinet.RoomId = room.Key_id;
-                    }
-                }
-            }
-        }
-
-        $scope.onSelectBuilding = function () {
-            $scope.roomFilter = $scope.modalData.SelectedBuilding;
-            $scope.getRoom();
-        }
-
-        $scope.onSelectRoom = function () {
-            $scope.modalData.BioSafetyCabinet.RoomId = $scope.modalData.BioSafetyCabinet.Room.Key_id;
-        }
-
-        $scope.$watch('modalData.BioSafetyCabinet.PrincipalInvestigator.Rooms', function () {
-            if ($scope.modalData.BioSafetyCabinet.PrincipalInvestigator) {
-                $scope.modalData.BioSafetyCabinet.PrincipalInvestigator.loadBuildings();
-            }
-        });
-
+    
         $scope.save = function (cabinet) {
             console.log(cabinet);
             if (!cabinet) return;
@@ -278,16 +294,21 @@ angular.module('EquipmentModule')
                     return;
                 }
             }
+            //clear the relationships between pis and inspections so the view reloads it
+            //TODO:actually solve this, you, know?
+            DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"] = null;
             af.save(cabinet).then(function (r) { console.log(r); $scope.close(r) })
         }
 
         $scope.certify = function (inspection) {
+            console.log(inspection);
             $scope.message = null;
             inspection.Certification_date = convenienceMethods.setMysqlTime(inspection.viewDate);
             inspection.Fail_date = convenienceMethods.setMysqlTime(inspection.viewFailDate);
             af.save(inspection).then(function (r) {
                 // we added an equipmentInspection, so recompose the cabinet.
                 //DataStoreManager.getById("BioSafetyCabinet", inspection.Equipment_id, {}, true);
+                console.log(r);
                 $scope.close(r);
             })
         }
@@ -297,6 +318,7 @@ angular.module('EquipmentModule')
                 $modalInstance.dismiss();
                 return;
             }
+            $rootScope.modalClosed = true;
             $modalInstance.close(r);
             DataStoreManager.ModalData = null;
         }
@@ -311,9 +333,10 @@ angular.module('EquipmentModule')
 
         console.log($scope.modalData);
     })
-    .controller('warningModalCtrl', function ($scope, cabinet, $modalInstance) {
+    .controller('warningModalCtrl', function ($scope, $rootScope, cabinet, $modalInstance) {
         $scope.cabinet = cabinet;
         $scope.close = function () {
+            $rootScope.modalClosed = true;
             $modalInstance.dismiss();
         }
     });

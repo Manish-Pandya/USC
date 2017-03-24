@@ -1,17 +1,37 @@
 ﻿namespace ibc {
     export class IBCProtocolRevision extends FluxCompositerBase {
 
-        static urlMapping: UrlMapping = new UrlMapping("getAllProtocolRevisions", "getProtocolRevisionById&id=", "saveProtocolRevision");
+        static urlMapping = new UrlMapping("getAllProtocolRevisions", "getProtocolRevisionById&id=", "saveProtocolRevision");
 
         PrimaryReviewers: User[];
-        static PrimaryReviewersMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "User", "getPropertyByName&id={{this.UID}}&property=primaryReviewers&type=IBCProtocolRevision", "PimraryReviewers", "Revisions_id", "Reviewer_id", "IBCRevisionPrimaryReviewer", "getRelationships&class1=IBCProtocolRevision&class2=User&override=PRIMARY_REVIEWERS_RELATIONSHIP");
+        static PrimaryReviewersMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "User", "getPropertyByName&id={{this.UID}}&property=PrimaryReviewers&type=IBCProtocolRevision", "PrimaryReviewers", "Revision_id", "Reviewer_id", "IBCRevisionPrimaryReviewer", "getRelationships&class1=IBCProtocolRevision&class2=User&override=PRIMARY_REVIEWERS_RELATIONSHIP");
 
         PreliminaryReviewers: User[];
-        static PreliminaryReviewersMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "User", "getPropertyByName&id={{this.UID}}&property=preliminaryReviewers&type=IBCProtocolRevision", "PreliminaryReviewers", "Revisions_id", "Reviewer_id", "IBCRevisionPreliminaryReviewer", "getRelationships&class1=IBCProtocolRevision&class2=User&override=PRELIMINARY_REVIEWERS_RELATIONSHIP");
+        static PreliminaryReviewersMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "User", "getPropertyByName&id={{this.UID}}&property=PreliminaryReviewers&type=IBCProtocolRevision", "PreliminaryReviewers", "Revision_id", "Reviewer_id", "IBCRevisionPreliminaryReviewer", "getRelationships&class1=IBCProtocolRevision&class2=User&override=PRELIMINARY_REVIEWERS_RELATIONSHIP");
 
+        IBCResponses: IBCResponse[];
+        static IBCReponseMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCResponse", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCResponses&id={{UID}}", "IBCResponses", "Revision_id");
+
+        responsesMapped: { [index: string]: ibc.IBCResponse[] } = {};
+        getResponsesMapped(): { [index: string]: ibc.IBCResponse[] } {
+            if (this.IBCResponses) {
+                for (var n = 0; n < this.IBCResponses.length; n++) {
+                    var response = this.IBCResponses[n];
+                    console.log(response);
+                    if (!this.responsesMapped[response.Answer_id]) this.responsesMapped[response.Answer_id] = [];
+                    this.responsesMapped[response.Answer_id].push(response);
+                }
+            }
+            return this.responsesMapped;
+        }
 
         constructor() {
             super();
+        }
+
+        onFulfill(): void {
+            super.onFulfill();
+            this.getResponsesMapped();
         }
 
         hasGetAllPermission(): boolean {

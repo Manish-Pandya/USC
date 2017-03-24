@@ -109,6 +109,7 @@ abstract class XHR {
             }
             parentObj = this;
             lastKey = key;
+            //console.log(key, value);
             return replacer ? replacer(key, value) : value;
         }, space);
         cache = null;
