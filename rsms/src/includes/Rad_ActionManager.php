@@ -1960,7 +1960,10 @@ class Rad_ActionManager extends ActionManager {
                 $inventory->setStart_date(date('Y-m-d H:i:s', $time));
             }else{
                 $LOG->debug('was not null');
-                $inventory->setStart_date($previousInventory->getEnd_date());
+                $dateinsec=strtotime($previousInventory->getEnd_date());
+                $newdate=$dateinsec+1;
+                $newdate = date('Y-m-d H:i:s',$newdate);
+                $inventory->setStart_date($newdate);
             }
 
             $inventory->setDue_date($dueDate);
@@ -2072,7 +2075,7 @@ class Rad_ActionManager extends ActionManager {
                 if($mostRecentIntentory != null){
                     foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
                         if($amount->getAuthorization_id() == $authorization->getIsotope_id()){
-                            $newAmount->setStarting_amount($amount->getEnding_amount());
+                            //$newAmount->setStarting_amount($amount->getEnding_amount());
                             $isotopeFound = true;
                         }
                     }
@@ -2085,6 +2088,7 @@ class Rad_ActionManager extends ActionManager {
                 //calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
                 $newAmount = $this->calculateQuarterlyAmount($newAmount, $startDate, $endDate);
                 $newAmount = $quarterlyAmountDao->save($newAmount);
+                $newAmount->setPi_authorization_id($mostRecentIntentory->getKey_id());
 
                 $amounts[] = $newAmount;
 
@@ -2105,11 +2109,8 @@ class Rad_ActionManager extends ActionManager {
         //get the total ordered since the previous inventory
         $ordersDao = $this->getDao($amount);
 
-        //if there wasn't a previous inventory, the amount's starting_amount will be null, and we need to query for it
-        if($amount->getStarting_amount() == NULL){
-            $amount->setStarting_amount($ordersDao->getTransferAmounts('0000-00-00 00:00:00', $startDate));
-        }
-
+        $amount->setStarting_amount($ordersDao->getStartingAmount($startDate));
+        $LOG->fatal($ordersDao->getStartingAmount($startDate));
 
         //get parcels for this QuarterlyIsotopsAmount's authorization that have an RS ID for the given dates
         $amount->setTotal_ordered($ordersDao->getTransferAmounts($startDate, $endDate, false));
@@ -2201,13 +2202,15 @@ class Rad_ActionManager extends ActionManager {
                 $newAmount = new QuarterlyIsotopeAmount();
                 $newAmount->setAuthorization_id($authorization->getKey_id());
             }
+            $newAmount->setPrincipal_investigator_id($piId);
+
             $newAmount->setQuarterly_inventory_id($mostRecentIntentory->getKey_id());
 
             //if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
             if($mostRecentIntentory != null){
                 foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
                     if($amount->getAuthorization_id() == $authorization->getIsotope_id()){
-                        $newAmount->setStarting_amount($amount->getEnding_amount());
+                        //$newAmount->setStarting_amount($amount->getEnding_amount());
                         $isotopeFound = true;
                     }
                 }
@@ -2215,7 +2218,7 @@ class Rad_ActionManager extends ActionManager {
 
             //there wasn't an record of this isotope for the previous quarter, so we assume the starting amount to be 0
             if($isotopeFound == false){
-                $newAmount->setStarting_amount(0);
+                //$newAmount->setStarting_amount(0);
             }
 
             //calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)

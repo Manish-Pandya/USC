@@ -12,10 +12,10 @@
         </div>
     </div>
 
-    <div class="control-group" ng-if="[constants.PARCEL.STATUS.ORDERED, constants.PARCEL.STATUS.REQUESTED].indexOf(modalData.ParcelCopy.Status) == -1">
+    <div class="control-group">
         <label class="control-label" for="inputEmail">Arrival Date:</label>
         <div class="controls">
-            <input ng-model="modalData.ParcelCopy.view_Arrival_date" ng-init="modalData.ParcelCopy.view_Arrival_date = modalData.ParcelCopy.Arrival_date &&  modalData.ParcelCopy.Arrival_dat != '0000-00-00 00:00:00' ? cm.dateToIso(modalData.ParcelCopy.Arrival_date) : ''">
+            <input ng-model="modalData.ParcelCopy.view_Arrival_date" ng-init="modalData.ParcelCopy.view_Arrival_date = modalData.ParcelCopy.Arrival_date &&  modalData.ParcelCopy.Arrival_date != '0000-00-00 00:00:00' ? cm.dateToIso(modalData.ParcelCopy.Arrival_date) : ''">
             <span class="help-block" style="">mm/dd/yy</span>
         </div>
     </div>

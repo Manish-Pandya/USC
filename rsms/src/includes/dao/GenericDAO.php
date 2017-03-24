@@ -344,7 +344,7 @@ class GenericDAO {
                 OR g.pickup_id = i.key_id
                 OR h.pickup_id = i.key_id
                 AND i.status != 'Requested'
-				WHERE c.authorization_id = ?
+				WHERE c.authorization_id IN (select key_id from authorization where pi_authorization_id IN (select key_id from pi_authorization where principal_investigator_id = ?))
 				AND b.date_used BETWEEN ? AND ?
 				AND `waste_type_id` = ?
                 AND (f.pickup_id IS NOT NULL OR g.pickup_id IS NOT NULL OR h.pickup_id IS NOT NULL )";
@@ -352,7 +352,7 @@ class GenericDAO {
 		// Get the db connection
 		global $db;
 		$stmt = $db->prepare($sql);
-		$stmt->bindValue(1, $this->modelObject->getAuthorization_id());
+		$stmt->bindValue(1, $this->modelObject->getPrincipal_investigator_id());
 		$stmt->bindValue(2, $startDate);
 		$stmt->bindValue(3, $endDate);
 		$stmt->bindValue(4, $wasteTypeId);
@@ -375,22 +375,38 @@ class GenericDAO {
         $l = Logger::getLogger("transfer amounts");
 		$sql = "SELECT SUM(`quantity`)
 				FROM parcel a
-                WHERE `authorization_id` = ?";
+                WHERE `authorization_id` IN (select key_id from authorization where pi_authorization_id IN (select key_id from pi_authorization where principal_investigator_id = ?))";
 
 		// Get the db connection
 		global $db;
-		$stmt = $db->prepare($sql);
-		$stmt->bindValue(1, $this->modelObject->getAuthorization_id());
         if($startDate != null){
-            $sql .= "AND arrival_date < ?";
+            $sql .= " AND (a.arrival_date < ? OR a.transfer_in_date < ?)";
+            $stmt = $db->prepare($sql);
+
             $stmt->bindValue(2, $startDate);
+            $stmt->bindValue(3, $startDate);
+
+        }else{
+            $stmt = $db->prepare($sql);
         }
+        $stmt->bindValue(1, $this->modelObject->getPrincipal_investigator_id());
 
-		$stmt->execute();
+        $l->fatal($sql);
+        $l->fatal(array($startDate, $this->modelObject->getPrincipal_investigator_id()));
+        if ( $stmt->execute() ) {
 
-		$total = $stmt->fetch(PDO::FETCH_NUM);
-		$sum = $total[0]; // 0 is the first array. here array is only one.
-		if($sum == NULL)$sum = 0;
+            $total = $stmt->fetch(PDO::FETCH_NUM);
+            $l->fatal($total);
+
+            $sum = $total[0]; // 0 is the first array. here array is only one.
+
+            if($sum == NULL)$sum = 100;
+        }else{
+            $error = $stmt->errorInfo();
+			$result = new QueryError($error);
+			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
+            return $result;
+        }
 		return $sum;
 	}
 
@@ -406,22 +422,21 @@ class GenericDAO {
         $l = Logger::getLogger("transfer amounts");
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel`
-				where `authorization_id` = ?";
+				where `authorization_id` IN (select key_id from authorization where pi_authorization_id IN (select key_id from pi_authorization where principal_investigator_id = ?))";
 
         if($hasTransferDate == true){
             $sql .= " AND transfer_in_date BETWEEN ? AND ?";
 
         }elseif($hasTransferDate != true){
             $sql .= " AND transfer_in_date IS NULL AND `arrival_date` BETWEEN ? AND ?";
-            $l->fatal($sql);
-            $l->fatal(array($startDate, $endDate, $hasTransferDate,  $this->modelObject->getAuthorization_id()));
+           
         }
 
-
+        
 		// Get the db connection
 		global $db;
 		$stmt = $db->prepare($sql);
-		$stmt->bindValue(1, $this->modelObject->getAuthorization_id());
+		$stmt->bindValue(1, $this->modelObject->getPrincipal_investigator_id());
 		$stmt->bindValue(2, $startDate);
 		$stmt->bindValue(3, $endDate);
 
@@ -446,13 +461,13 @@ class GenericDAO {
 	public function getTransferOutAmounts( $startDate, $endDate ){
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel_use`
-				where `parcel_id` in (select key_id from parcel where `authorization_id` = ?)
+				where `parcel_id` in (select key_id from parcel where `authorization_id` IN (select authorization_id from authorization where pi_authorization_id IN (select key_id from pi_authorization where principal_investigator_id = ?))
 				AND `date_transferred` BETWEEN ? AND ?";
 
 		// Get the db connection
 		global $db;
 		$stmt = $db->prepare($sql);
-		$stmt->bindValue(1, $this->modelObject->getAuthorization_id());
+		$stmt->bindValue(1, $this->modelObject->getPrincipal_investigator_id());
 		$stmt->bindValue(2, $startDate);
 		$stmt->bindValue(3, $endDate);
 
@@ -1212,7 +1227,7 @@ class GenericDAO {
         return $piHazRooms;
     }
 
-    function getCurrentInvetoriesByPiId($id){
+    function getCurrentInvetoriesByPiId($piId, $authId){
 
         global $db;
 
@@ -1234,7 +1249,7 @@ class GenericDAO {
                         LEFT OUTER JOIN isotope c
                         ON c.key_id = b.isotope_id
                         LEFT OUTER JOIN parcel d
-                        ON d.authorization_id = b.key_id
+                        ON d.principal_investigator_id = ?
                         LEFT OUTER JOIN (
 	                        select sum(a.curie_level) as amount_picked_up, e.name as isotope, e.key_id as isotope_id
 	                        from parcel_use_amount a
@@ -1276,14 +1291,15 @@ class GenericDAO {
 	                        group by e.name, e.key_id
                         ) as total_used
                         ON total_used.isotope_id = b.isotope_id
-                        where a.principal_investigator_id = ?
+                        where a.key_id = ?
                         group by b.key_id, b.form, b.max_quantity,c.name, c.key_id, a.principal_investigator_id";
 
         $stmt = $db->prepare($queryString);
 
-        $stmt->bindValue(1, $id);
-        $stmt->bindValue(2, $id);
-        $stmt->bindValue(3, $id);
+        $stmt->bindValue(1, $piId);
+        $stmt->bindValue(2, $piId);
+        $stmt->bindValue(3, $piId);
+        $stmt->bindValue(4, $authId);
 
         $stmt->execute();
         $inventories = $stmt->fetchAll(PDO::FETCH_CLASS, "CurrentIsotopeInventoryDto");
