@@ -552,7 +552,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
 
             for (var i = 0; i < properties.length; i++) {
                 if (myResultItem[properties[i]]) {
-                    console.log(key)
                     myResultItem = myResultItem[properties[i]];
                 }
             }

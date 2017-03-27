@@ -21,6 +21,9 @@ class Authorization extends GenericCrud {
 		"approval_date"					=> "timestamp",
 		"revocation_date"				=> "timestamp",
 		"form"							=> "text",
+        "original_pi_auth_id"			=> "text",
+        "principal_investigator_id"		=> "integer",
+
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -62,6 +65,16 @@ class Authorization extends GenericCrud {
      * @var array of parcels ordered under this authorization
      */
     private $parcels;
+
+    /** 
+        Each child authorization of a PI's PIAuthorizations that has the same isotope and same form should have the same UID in this field for audit/inventory calculation purposes 
+        By default, it should be set to the key_id of the PIAuthorization in which it, or it's ancestors first appeared, with its form appended, assuring uniqueness.
+    */
+    private $original_pi_auth_id;
+
+
+    /** The id of the PI that owns the PIAuthorization of which this PI is a part. stored for ease of audit when running inventories */
+    private $principal_investigator_id;
 
 
 	public function __construct() {
@@ -128,5 +141,55 @@ class Authorization extends GenericCrud {
 
 	public function getForm(){return $this->form;}
 	public function setForm($form){$this->form = $form;}
+
+    public function makeOriginal_pi_auth_id(){
+        if(($this->original_pi_auth_id || $this->principal_investigator_id == null) && $this->pi_authorization_id != null and  $this->hasPrimaryKeyValue()){
+            $piAuthDao = new GenericDAO(new PIAuthorization());
+            $piAuth = $piAuthDao->getById($this->pi_authorization_id);
+            $group = new WhereClauseGroup(array(new WhereClause("principal_investigator_id", "=", $piAuth->getPrincipal_investigator_id() )));
+            $piAuths = $piAuthDao->getAllWhere($group);
+            
+            $piAuthIds = array();
+            foreach($piAuths as $pia){
+                $piAuthIds[] = $pia->getKey_id();
+            }
+
+            $thisDao = new GenericDAO(new Authorization());
+            $group = new WhereClauseGroup(array(
+                new WhereClause("pi_authorization_id", "IN", $piAuthIds),
+                new WhereClause("isotope_id", "=", $this->isotope_id)
+            ));
+            $siblingsInclusive = $thisDao->getAllWhere($group);
+            $siblingMap = array();
+            $LOG = Logger::getLogger(__FUNCTION__);
+            foreach($siblingsInclusive as $key=>$sibling){
+                //we assume that an authorization with a null form is for any form
+                $form = $sibling->getForm() != null ? strtoupper($sibling->getForm()) : "ANY";
+                if(!array_key_exists($form ,$siblingMap )){
+                    $siblingMap[$form] = $sibling->getIsotope_id() . "-" . $form;
+                }
+                $sibling->setOriginal_pi_auth_id($siblingMap[$form]);
+                $sibling->setPrincipal_investigator_id($piAuth->getPrincipal_investigator_id());
+                if($siblingMap[$form] != null && $sibling->getKey_id() != null)
+                    $sibling = $thisDao->save($sibling);
+            }           
+        
+        }
+        return $this->original_pi_auth_id;
+    
+    }
+    public function getOriginal_pi_auth_id(){
+        return $this->original_pi_auth_id;
+    }
+    public function setOriginal_pi_auth_id($id){
+        $this->original_pi_auth_id = $id;
+    }
+
+    public function getPrincipal_investigator_id(){
+        return $this->principal_investigator_id;
+    }
+    public function setPrincipal_investigator_id($id){
+        $this->principal_investigator_id = $id;
+    }
 }
 ?>

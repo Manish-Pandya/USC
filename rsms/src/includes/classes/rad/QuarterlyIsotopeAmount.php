@@ -78,6 +78,7 @@ include_once 'RadCrud.php';
 
     	// Define which subentities to load
     	$entityMaps = array();
+        $entityMaps[] = new EntityMap("lazy", "getAuthorization");
     	$this->setEntityMaps($entityMaps);
     }
 
@@ -117,6 +118,7 @@ include_once 'RadCrud.php';
 
 		return $this->authorization;
 	}
+    public function setAuthorization($auth){$this->authorization = $auth;}
 
     public function getPi_authorization_id() {
 		return $this->pi_authorization_id;
