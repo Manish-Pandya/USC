@@ -66,9 +66,33 @@ class HazardDto {
         $this->isPresent = false;
         // Get the db connection
         global $db;
-        //$LOG->fatal("filtering rooms for ".$this->getHazard_name());
-
         $roomIds = implode (',',$this->roomIds);
+
+		$queryString = "SELECT principal_investigator_id, room_id
+                        FROM principal_investigator_room a
+                        LEFT JOIN principal_investigator b
+                        ON a.principal_investigator_id = b.key_id
+                        WHERE b.is_active = 1 AND a.room_id IN ( $roomIds ) group by a.principal_investigator_id";
+
+		$stmt = $db->prepare($queryString);
+        foreach ($roomIds as $k => $id){
+		    $stmt->bindValue(($k+1), $id);
+		}
+		$stmt->execute();
+		$piIds = array();
+
+
+        /*principal_investigator_id] => 344
+            [0] => 344
+            [room_id] => 718
+            [1] => 718
+            */
+        foreach($stmt->fetchAll() as $row){
+            if(!array_key_exists($row["room_id"], $piIds)){
+                $piIds[$row["room_id"]] = array();
+            }
+            $piIds[$row["room_id"]][] = $row["principal_investigator_id"];
+        }
 
         //get all the Relationships between this hazard and rooms that this PI has, so we can determine if this PI or ANY PI has the hazard in any of these rooms
         $queryString = "SELECT
@@ -79,10 +103,10 @@ class HazardDto {
                         LEFT JOIN principal_investigator c
                         ON c.key_id = a.principal_investigator_id
 						WHERE (c.is_active = 1 OR c.key_id = $this->principal_investigator_id) AND a.hazard_id = $this->hazard_id AND a.room_id IN ($roomIds) AND b.room_id IN($roomIds)";
+        
         $stmt = $db->prepare($queryString);
         $stmt->execute();
         $piHazardRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
-
 
         $this->stored_only = false;
 
@@ -90,7 +114,9 @@ class HazardDto {
         //build key_id arrays for fast comparison in the next step
         foreach($piHazardRooms as $relation){
         	//while we're at it, determine if any of these relations belong to other PIs
-        	if($relation->getPrincipal_investigator_id() != $this->getPrincipal_investigator_id()){
+        	if($relation->getPrincipal_investigator_id() != $this->getPrincipal_investigator_id()
+                    && array_key_exists($relation->getRoom_id(), $piIds) && in_array($relation->getPrincipal_investigator_id(), $piIds[$relation->getRoom_id()])){
+
         		$this->hasMultiplePis = true;
         		$relation->setHasMultiplePis(true);
         	}else{
@@ -114,13 +140,16 @@ class HazardDto {
             			$room->setContainsHazard(true);
             			$this->isPresent = true;
             			$room->setStatus($relation->getStatus());
-            			if($room->getStatus() != "STORED_ONLY"){
+            			if($relation->getStatus() != "STORED_ONLY"){
             				$storedOnly = false;
-            			}
+            			}else{
+                            $room->setStored(true);
+                        }
+
             		}
             		if($relation->getHasMultiplePis() == true){
             			$room->setHasMultiplePis(true);
-                        if($relation->getPrincipal_investigator_id() != $this->principal_investigator_id){
+                        if($relation->getPrincipal_investigator_id() != $this->principal_investigator_id && in_array($relation->getPrincipal_investigator_id(), $piIds)){
                             //array_push($this->inspectionRooms, $room);
                             $room->setOtherLab(true);
                         }
@@ -135,9 +164,7 @@ class HazardDto {
         }
 
         //if the hazard is stored only in every room, and is present, set its stored_only property to true.
-        if($this->isPresent == true && $storedOnly == true){
-        	$this->stored_only = true;
-        }
+        $this->stored_only = (bool) ($storedOnly && ($this->isPresent || $this->belongsToOtherPI));
         return $rooms;
     }
 

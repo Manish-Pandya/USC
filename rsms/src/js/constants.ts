@@ -168,7 +168,8 @@ class Constants  {
         CADAVER: 2,
         VIAL: 3,
         OTHER: 4,
-        SOLID: 5
+        SOLID: 5,
+        TRANSFER: 6
     }
 
     //these have to be strings instead of ints because the server will return IDS as strings, and we don't want to have to convert them all
@@ -258,7 +259,15 @@ class Constants  {
             NOT_SUBMITTED: "Not Submitted",
             SUBMITTED: "Submitted",
             RETURNED_FOR_REVISION: "Returned for Revision",
+            IN_REVIEW: "In Review",
             APPROVED: "Approved"
         }
+    }
+
+    public static IBC_ANSWER_TYPE = {        
+        MULTIPLE_CHOICE: "MULTIPLE_CHOICE",
+        TABLE: "TABLE",
+        FREE_TEXT: "FREE_TEXT",
+        MULTI_SELECT: "MULTI_SELECT"
     }
 }

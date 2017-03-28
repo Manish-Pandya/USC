@@ -5,7 +5,29 @@
 *   RAD STYLES;
 *
 **********************************************************/
-
+.only-print{
+    display:block;
+}
+@media print {
+  @page {size: landscape}
+   .authReports div.fake-table > div.table-row > div, .authReports div.fake-table > div.table-row > div ul li, .authReports div.fake-table > div.table-row > div h4{
+       font-size:8pt !important;
+    }
+    input, br, .user-info{
+        display:none
+    }
+    div.table-row {
+        position:relative;
+    }
+    div.table-row > div{
+        border-top:1px solid #000;
+        page-break-inside:avoid;
+        position:relative;
+    }
+    .hide-print{
+        display:none;
+    }
+}
 .form-inline .control-group {
     float: left;
 }
@@ -360,15 +382,20 @@ i.solids-containers {
    width:13%;
 }
 .authReports div.fake-table > div.table-row > div:nth-of-type(2){
-   width:25%;
+   width:20%;
 }
 .authReports div.fake-table > div.table-row > div:nth-of-type(3){
-   width:34%;
+   width:39%;
+}
+.authReports div.fake-table.print-it > div.table-row > div:nth-of-type(3){
+   width:20%;
 }
 .authReports div.fake-table > div.table-row > div:nth-of-type(4){
    width:10%;
 }
-
+.authReports div.fake-table.print-it > div.table-row > div{
+   width:auto !important;
+}
 
 .right-column {
     margin-left: 210px;
@@ -958,4 +985,38 @@ div.fake-table .table-row > div div.pickup-comments .btn i {
     font-weight:bold !important;
     display: block !important;
     margin: 0 !important;
+}
+.use-log-form,.parcel-info{
+    box-sizing:border-box;
+    padding:10px;
+}
+.use-log-form{
+    width: 390px;
+    margin-left: 0;
+    border-right:1px solid #d7d7d7;
+}
+.parcel-info{
+    width: 300px;  margin-left: 0;
+}
+.parcel-info ul li{
+    margin-bottom:10px;
+    font-size:15px
+}
+.use-log-modal{
+    padding:0 20px !Important;
+}
+.use-log-modal h2 {
+    margin-bottom:15px
+}
+.disposal-info h3{
+    margin-bottom:10px
+}
+.use-log-modal-form{
+    margin-bottom:0;
+}
+.disposal-info{
+    background:#eee;
+    padding:5px 10px;
+    border:1px solid #ccc;
+    margin-bottom:10px
 }

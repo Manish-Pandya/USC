@@ -102,25 +102,44 @@ class IBC_ActionManager extends ActionManager {
 
         foreach($revision->getPrimaryReviewers() as $reviewer){
             if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
-            $dao->removeRelatedItems($revision->getKey_id(), $reviewer->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRIMARY_REVIEWERS_RELATIONSHIP));
+            $dao->removeRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRIMARY_REVIEWERS_RELATIONSHIP));
         }
 
         foreach($primaryReviewers as $reviewer){
             if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
-            $dao->addRelatedItems($revision->getKey_id(), $reviewer->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRIMARY_REVIEWERS_RELATIONSHIP));
+            $dao->addRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRIMARY_REVIEWERS_RELATIONSHIP));
         }
 
         foreach($revision->getPreliminaryReviewers() as $reviewer){
             if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
-            $dao->removeRelatedItems($revision->getKey_id(), $reviewer->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
+            $dao->removeRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
         }
 
         foreach($preliminaryReviewers as $reviewer){
             if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
-            $dao->addRelatedItems($revision->getKey_id(), $reviewer->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
+            $dao->addRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
         }
 
+		$revision->setPreliminaryReviewers(null);
+		$revision->setPrimaryReviewers(null);
+
+        $entityMaps = array();
+        $entityMaps[] = new EntityMap("eager","getPreliminaryReviewers");
+        $entityMaps[] = new EntityMap("eager","getPrimaryReviewers");
+		$revision->setEntityMaps($entityMaps);
         return $revision;
+    }
+
+    public function saveProtocolRevisions(array $decodedObject = null){
+        if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
+        if($decodedObject == NULL)return new ActionError("No input read from stream");
+        if(!is_array($decodedObject))return new ActionError("Not an array");
+        $savedRevisions = array();
+        foreach($decodedObject as $revision){
+            if(is_array($revision))$revision = JsonManager::assembleObjectFromDecodedArray($revision);
+            $savedRevisions[] = $this->saveProtocolRevision($revision);
+        }
+        return $savedRevisions;
     }
 
     /**
@@ -186,29 +205,29 @@ class IBC_ActionManager extends ActionManager {
     }
 
     /**
-     * Summary of getAllIBCAnswers
+	 * Summary of getAllIBCPossibleAnswers
      * @return array
      */
-    function getAllIBCAnswers(){
+    function getAllIBCPossibleAnswers(){
         //TODO: restrict revisions to only those of protocols that belong to user
-        $dao = $this->getDao(new IBCAnswer());
+        $dao = $this->getDao(new IBCPossibleAnswer());
         return $dao->getAll();
     }
     /**
      * @param integer $id
-     * @return GenericCrud | IBCAnswer | ActionError
+     * @return GenericCrud | IBCPossibleAnswer | ActionError
      */
-    function getIBCAnswerById($id = null){
+    function getIBCPossibleAnswerById($id = null){
         if($id == NULL)$id = $this->getValueFromRequest('id', $id);
         if($id == NULL)return new ActionError("No request param 'id' provided.");
-        $dao = $this->getDao(new IBCAnswer());
+        $dao = $this->getDao(new IBCPossibleAnswer());
         return $dao->getById($id);
     }
     /**
-     * @param IBCAnswer
-     * @return GenericCrud | ActionError | IBCAnswer
+     * @param IBCPossibleAnswer
+	 * @return GenericCrud | ActionError | IBCPossibleAnswer
      */
-    function saveIBCAnswer($decodedObject = null){
+    function saveIBCPossibleAnswer($decodedObject = null){
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         $dao = $this->getDao($decodedObject);
@@ -236,15 +255,108 @@ class IBC_ActionManager extends ActionManager {
         return $dao->getById($id);
     }
     /**
-     * @param IBCResponse
-     * @return GenericCrud | ActionError | IBCResponse
+     * @param Array
+     * @return Array | ActionError | IBCResponse
      */
     function saveIBCResponse($decodedObject = null){
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         $dao = $this->getDao($decodedObject);
-        $r = $dao->save($decodedObject);
-        return $r;
+        foreach($decodedObject as $response){
+            $responseDao = new GenericDAO($response);
+            $question = $this->getQuestionById($response->getQuestion_id());
+            if($question->getAnswer_type() == IBCQuestion::$ANSWER_TYPES["MULTIPLE_CHOICE"]){
+                //find and update all relevant responses
+
+                $existingResponses = $this->getSiblingReponses($response);
+                foreach($existingResponses as $r){
+                    $r->setIs_selected(false);
+                    $r = $responseDao->save($r);
+                }
+                $response->setIs_selected(true);
+                $response = $responseDao->save($response);
+            }
+        }
+        $response = $dao->save($response);
+        return $this->getSiblingReponses($response);
+    }
+
+    function saveIBCResponses($decodedObject = null){
+        if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
+        if($decodedObject == NULL)return new ActionError("No input read from stream");
+        foreach($decodedObject as $response){
+            $responseDao = new GenericDAO($response);
+            $question = $this->getIBCQuestionById($response->getQuestion_id());
+            if($question->getAnswer_type() == IBCQuestion::$ANSWER_TYPES["MULTIPLE_CHOICE"]){
+                //find and update all relevant responses
+                $existingResponses = $this->getSiblingReponses($response);
+                foreach($existingResponses as $r){
+                    $r->setIs_selected(false);
+                    $r = $responseDao->save($r);
+                }
+
+				//in the case of multiple choice answers, we send an array of one IBCResponse from the client,
+				//so we can safely set $response's Is_selected to true, knowing that it is the IBCResponse from the client
+                $response->setIs_selected(true);
+                $response = $responseDao->save($response);
+            }else{
+				$response->setText("butt");
+			}
+            $response = $responseDao->save($response);
+        }
+        return $this->getSiblingReponses($decodedObject[0]);
+    }
+
+    private function getSiblingReponses(IBCResponse $r){
+        $responseDao = new GenericDAO($r);
+        $whereClauseGroup = new WhereClauseGroup(
+			array(
+				new WhereClause('question_id','=', $r->getQuestion_id()),
+				new WhereClause('revision_id','=',$r->getRevision_id())
+			)
+        );
+        $responses = $responseDao->getAllWhere($whereClauseGroup);
+        return $responses;
+    }
+
+    public function getAllIBCPIs(){
+        $LOG = Logger::getLogger( 'Action:' . __function__ );
+
+
+        $dao = $this->getDao(new PrincipalInvestigator());
+        $pis = $dao->getAll();
+        /** TODO: Instead of $dao->getAll, we gather PIs which are either active or have rooms associated with them. **/
+        /* $whereClauseGroup = new WhereClauseGroup( array( new WhereClause("is_active","=","1"), new WhereClause("key_id","IN","(SELECT principal_investigator_id FROM principal_investigator_room)") ) );
+        $pis = $dao->getAllWhere($whereClauseGroup, "OR");*/
+
+        $entityMaps = array();
+        $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+        $entityMaps[] = new EntityMap("lazy","getRooms");
+        $entityMaps[] = new EntityMap("lazy","getDepartments");
+        $entityMaps[] = new EntityMap("lazy","getUser");
+        $entityMaps[] = new EntityMap("lazy","getInspections");
+        $entityMaps[] = new EntityMap("lazy","getPi_authorization");
+        $entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+        $entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+        $entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+        $entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+        $entityMaps[] = new EntityMap("lazy", "getPickups");
+        $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+        $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+        $entityMaps[] = new EntityMap("lazy","getOpenInspections");
+        $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+        $entityMaps[] = new EntityMap("lazy","getVerifications");
+        $entityMaps[] = new EntityMap("lazy","getBuidling");
+        $entityMaps[] = new EntityMap("lazy","getWipeTests");
+        $entityMaps[] = new EntityMap("lazy","getCurrentPi_authorization");
+        $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+        $entityMaps[] = new EntityMap("lazy", "getCurrentIsotopeInventories");
+
+        foreach($pis as $pi){
+            $pi->setEntityMaps($entityMaps);
+        }
+        
+        return $pis;
     }
 }
 

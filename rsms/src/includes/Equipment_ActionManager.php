@@ -91,8 +91,7 @@ class Equipment_ActionManager extends ActionManager {
             $cabinet = $dao->save($decodedObject);
             $decodedObject->setKey_id($cabinet->getKey_id());
 
-            $inspection = $cabinet->conditionallyCreateEquipmentInspection($insp);
-            $LOG->fatal($inspection);
+            $inspection = $decodedObject->conditionallyCreateEquipmentInspection($insp);
 
             //if the inspection already exists, remove its PIs first, then add the relevant ones
             if($decodedObject->getSelectedInspection() != null){

@@ -87,20 +87,7 @@ angular.module('HazardInventory')
         }
 
         $scope.getShowRooms = function (hazard, room, building) {
-            var atLeastOne = false;
-            var notAll = false;
-            var i = hazard.InspectionRooms.length;
-            while (i--) {
-                var room = hazard.InspectionRooms[i];
-                if (room.Building_name == building && (room.ContainsHazard || room.OtherLab)) {
-                    atLeastOne = true;
-                } else {
-                    notAll = true;
-                }
-                if (atLeastOne && notAll) return true;
-            }
-            return false;
-
+            return hazard.InspectionRooms.some(function (r) { return r.ContainsHazard || r.OtherLab }) && hazard.InspectionRooms.some(function (r) { return !r.ContainsHazard && !r.OtherLab });
         }
 
         $scope.openSubsModal = function (hazard, parent) {

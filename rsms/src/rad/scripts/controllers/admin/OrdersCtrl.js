@@ -10,7 +10,7 @@
 angular.module('00RsmsAngularOrmApp')
   .controller('AllOrdersCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
         var af = actionFunctionsFactory;
-
+      console.log("orders ctrl")
         $scope.af = af;
         $rootScope.parcelPromise = af.getAllPIs()
                                         .then(function(){

@@ -44,8 +44,9 @@ class IBCProtocol extends GenericCrud {
 
 	private $hazard_id;
 
-    private $revisions;
+    private $IBCProtocolRevisions;
 
+	private $IBCSections;
 
 	public function __construct(){
 
@@ -150,14 +151,25 @@ class IBCProtocol extends GenericCrud {
 		$this->hazard_id = $hazard_id;
 	}
 
-    public function getRevisions(){
+    public function getIBCProtocolRevisions(){
 		if($this->labPersonnel === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->revisions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$REVISIONS_RELATIONSHIP));
+			$this->IBCProtocolRevisions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$REVISIONS_RELATIONSHIP));
 		}
-		return $this->revisions;
+		return $this->IBCProtocolRevisions;
 	}
-	public function setRevisions($revisions){ $this->labPersonnel = $revisions; }
+	public function setIBCProtocolRevisions($revisions){ $this->labPersonnel = $revisions; }
 
+	public function getIBCSections(){
+		if($this->IBCSections == null){
+			$sectionDao= new GenericDAO(new IBCSection());
+			$whereClauseGroup = new WhereClauseGroup(
+				array(new WhereClause("hazard_id","=",$this->hazard_id))
+			);
+			$this->IBCSections = $sectionDao->getAllWhere($whereClauseGroup);
+		}
+		return $this->IBCSections;
+	}
+	public function setIbcSections($sections){$this->IBCSections = $sections;}
 }
 ?>

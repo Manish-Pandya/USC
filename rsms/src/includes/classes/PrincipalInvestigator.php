@@ -186,6 +186,8 @@ class PrincipalInvestigator extends GenericCrud {
 
     private $wipeTests;
 
+    private $name;
+
 	public function __construct(){
 
 		$entityMaps = array();
@@ -405,7 +407,12 @@ class PrincipalInvestigator extends GenericCrud {
 			$thisDAO = new GenericDAO($this);
 			/** quarterly inventories should be sorted by date */
 			$this->quarterly_inventories = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$QUARTERLY_INVENTORIES_RELATIONSHIP), array("date_last_modified"), true);
-		}
+
+            usort($this->quarterly_inventories, function($a, $b)
+            {
+                return strcmp($a->getEnd_date(), $b->getEnd_date());
+            });
+        }
 		return $this->quarterly_inventories;
 	}
 
@@ -467,9 +474,9 @@ class PrincipalInvestigator extends GenericCrud {
 	}
 
     public function getCurrentIsotopeInventories(){
-        if($this->currentIsotopeInventories == null && $this->hasPrimaryKeyValue() && $this->getPi_authorization() != null){
+        if($this->currentIsotopeInventories == null && $this->hasPrimaryKeyValue() && $this->getCurrentPi_authorization() != null){
             $inventoriesDao = new GenericDAO($this);
-            $this->currentIsotopeInventories = $inventoriesDao->getCurrentInvetoriesByPiId($this->key_id);
+            $this->currentIsotopeInventories = $inventoriesDao->getCurrentInvetoriesByPiId($this->key_id, $this->getCurrentPi_authorization()->getKey_id());
         }
         return $this->currentIsotopeInventories;
     }
@@ -485,6 +492,14 @@ class PrincipalInvestigator extends GenericCrud {
 		return $this->wipeTests;
 	}
 	public function setWipeTests($wipeTests){$this->wipeTests = $wipeTests;}
+
+    public function getName(){
+		if( $this->hasPrimaryKeyValue() && $this->getUser() != NULL ) {
+			$this->name = $this->user->getName();
+		}
+		return $this->name;
+	}
+	public function setName($name){$this->name = $name;}
 
 }
 

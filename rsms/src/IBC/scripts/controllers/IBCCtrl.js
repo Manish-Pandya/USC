@@ -12,10 +12,10 @@ angular.module('ng-IBC')
     $scope.protocolStatuses = _.toArray(Constants.IBC_PROTOCOL_REVISION.STATUS);
     console.log($scope.protocolStatuses);
     function getAllProtocols() {
-        $scope.protocols = [];
-        $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap])])
+        $scope.protocols = new ViewModelInstance();
+        return $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap, ibc.IBCProtocol.SectionMap])])
             .then(function (whateverGotReturned) {
-            console.log($scope.protocols);
+            console.log($scope.protocols.data);
             console.log(DataStoreManager._actualModel);
         })
             .catch(function (reason) {
@@ -43,28 +43,34 @@ angular.module('ng-IBC')
     .controller('IBCModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, $q) {
     $scope.constants = Constants;
     $scope.modalData = DataStoreManager.ModalData;
-    $scope.users = [];
-    $scope.reviewers = [];
+    $scope.users = new ViewModelInstance();
+    $scope.reviewers = new ViewModelInstance();
     $scope.loading = $q.all([DataStoreManager.getAll("User", $scope.users), DataStoreManager.resolveCompMaps($scope.modalData.IBCProtocolRevision, true)])
         .then(function (stuff) {
         $scope.modalData.IBCProtocolRevision.doCompose(true);
-        var approvedUsers = $scope.users.filter(function (u) {
+        // loop through and check current PreliminaryReviewers before concactinating final reviewers list.
+        $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.forEach(function (value) {
+            value.isChecked = true;
+        });
+        var approvedUsers = $scope.users.data.filter(function (u) {
             var hasCorrectRole = false;
-            u.Roles.forEach(function (value, index, array) {
-                if (value.Name == Constants.ROLE.NAME.IBC_MEMBER || value.Name == Constants.ROLE.NAME.IBC_CHAIR) {
-                    hasCorrectRole = true;
-                }
-            });
+            if (_.indexOf($scope.modalData.IBCProtocolRevision.PreliminaryReviewers, u) == -1) {
+                u.Roles.forEach(function (value, index, array) {
+                    if (value.Name == Constants.ROLE.NAME.IBC_MEMBER || value.Name == Constants.ROLE.NAME.IBC_CHAIR) {
+                        hasCorrectRole = true;
+                    }
+                });
+            }
             return hasCorrectRole;
         });
-        $scope.reviewers = $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.concat(approvedUsers);
+        $scope.reviewers.data = $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.concat(approvedUsers);
         console.log($scope.reviewers);
     });
     $scope.addRemoveReviewer = function (user, add) {
-        var preliminaryReviewersIndex = $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.indexOf(user);
+        var preliminaryReviewersIndex = _.indexOf($scope.modalData.IBCProtocolRevision.PreliminaryReviewers, user);
         if (add) {
-            if ($scope.reviewers.indexOf(user) == -1) {
-                $scope.reviewers.push(user);
+            if (_.indexOf($scope.reviewers.data, user) == -1) {
+                $scope.reviewers.data.push(user);
             }
             if (user.isChecked && preliminaryReviewersIndex == -1) {
                 $scope.modalData.IBCProtocolRevision.PreliminaryReviewers.push(user);

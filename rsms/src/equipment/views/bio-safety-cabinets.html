@@ -13,7 +13,7 @@
     <h2 ng-if="!cabinets.length">No Cabinets</h2>
     <div ng-include="'views/cabinet-table.html'" ng-init="uncertified = true"></div>
     <!-- ng-show="cabinets.length && completeCabinets.length || selectedBuilding"-->
-    <div ng-repeat="campus in campuses | orderBy: 'Name'" ng-init="uncertified=false">
+    <div ng-repeat="campus in campuses | orderBy: 'Name'" ng-init="uncertified = false">
         <div ng-include="'views/cabinet-table.html'"></div>
     </div>
 </div>
