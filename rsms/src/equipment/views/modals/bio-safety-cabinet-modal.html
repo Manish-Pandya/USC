@@ -9,15 +9,16 @@
             <label class="control-label">Select Building</label>
             <div class="controls" style="display:block">
                 <select  class="span3" ng-model="modalData.selectedBuilding"  ng-change="getBuilding(modalData.BioSafetyCabinet.SelectedInspection.Room_id)" ng-options="b as b.Name for b in Buildings | orderBy:'Name'">
-                    <option value="">--Select Room--</option>
+                    <option value="">--Select Building--</option>
                 </select>
             </div>
         </div>
+
         <div class="control-group">
             <label class="control-label">Select Room</label>
             <div class="controls">
                 <input ng-if="!modalData.selectedBuilding" placeholder="Select a bulding first" disabled="disabled"/>
-                 <ui-select ng-if="modalData.selectedBuilding" ng-model="modalData.selectedRoom" theme="selectize" ng-disabled="disabled" class="span2" on-select="getRoom( $item.UID )" style="margin-left:0; width:269px;">
+                 <ui-select ng-if="modalData.selectedBuilding" ng-model="modalData.selectedRoom" theme="selectize" ng-disabled="disabled" class="span2" on-select="getRoom($item.UID); modalData.BioSafetyCabinet.SelectedInspection.Room_id = $item.Key_id" style="margin-left:0; width:269px;">
                     <ui-select-match placeholder="Select or search for a PI">{{$select.selected.Name}}</ui-select-match>
                     <ui-select-choices repeat="r in  modalData.selectedBuilding.Rooms | activeOnly | nameFilter: $select.search |  orderBy:'Name' ">
                         <div ng-bind-html="r.Name | highlight: $select.search"></div>
@@ -51,23 +52,26 @@
             </div>
         </div>
         <div class="control-group">
-            <label class="control-label">Serial #</label>
-            <div class="controls">
-                <input ng-model="modalData.BioSafetyCabinet.Serial_number" placehold="Label" />
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">Make</label>
+            <label class="control-label">Manufacturer</label>
             <div class="controls">
                 <input ng-model="modalData.BioSafetyCabinet.Make" placehold="Label" />
             </div>
         </div>
+
         <div class="control-group">
             <label class="control-label">Model</label>
             <div class="controls">
                 <input ng-model="modalData.BioSafetyCabinet.Model" placehold="Label" />
             </div>
         </div>
+
+        <div class="control-group">
+            <label class="control-label">Serial #</label>
+            <div class="controls">
+                <input ng-model="modalData.BioSafetyCabinet.Serial_number" placehold="Label" />
+            </div>
+        </div>
+                
         <div class="control-group">
             <label class="control-label">Certification Frequency</label>
             <select ng-model="modalData.BioSafetyCabinet.SelectedInspection.Frequency" ng-options="frequency as frequency for (key,frequency) in Constants.BIOSAFETY_CABINET.FREQUENCY">
@@ -77,7 +81,7 @@
     </div>
 
     <div class="modal-footer">
-        <button ng-disabled="!modalData.BioSafetyCabinet.SelectedInspection.Room_id" class="btn btn-large btn-success left"><i class="icon-checkmark"></i>Save</button>
+        <button ng-disabled="!modalData.BioSafetyCabinet.SelectedInspection.Room_id || !modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length" class="btn btn-large btn-success left"><i class="icon-checkmark"></i>Save</button>
         <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
     </div>
 </form>
