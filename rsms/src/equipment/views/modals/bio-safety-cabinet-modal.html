@@ -8,7 +8,7 @@
         <div class="control-group">
             <label class="control-label">Select Building</label>
             <div class="controls" style="display:block">
-                <select  class="span3" ng-model="modalData.selectedBuilding"  ng-change="getBuilding(modalData.BioSafetyCabinet.SelectedInspection.Room_id)" ng-options="b as b.Name for b in Buildings | orderBy:'Name'">
+                <select  class="span3" ng-model="modalData.selectedBuilding"  ng-change="getBuilding(modalData.BioSafetyCabinet.SelectedInspection.Room_id)" ng-options="b as b.Name for b in Buildings.data | orderBy:'Name'">
                     <option value="">--Select Building--</option>
                 </select>
             </div>

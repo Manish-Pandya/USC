@@ -1,7 +1,7 @@
 ﻿namespace equipment {
     export class PrincipalInvestigator extends FluxCompositerBase {
 
-        static urlMapping: UrlMapping = new UrlMapping("getAllPIs", "getPIById&id=", "savePI");
+        static urlMapping: UrlMapping = new UrlMapping("getAllEquipmentPIs", "getPIById&id=", "savePI");
 
         User: User;
         //static UserMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=", "User", "User_id");

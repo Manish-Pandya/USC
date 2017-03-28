@@ -13,10 +13,9 @@ angular.module('EquipmentModule')
         $scope.constants = Constants;
         $rootScope.modalClosed = true;
         var getAll = function () {
-            $rootScope.cabinets = [];
-            $rootScope.Rooms = [];
-
-            $scope.campuses = [];
+            $rootScope.cabinets = new ViewModelInstance();
+            $rootScope.Rooms = new ViewModelInstance();
+            $scope.campuses =  new ViewModelInstance();
             return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $rootScope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false), DataStoreManager.getAll("Room", $rootScope.Rooms, true)])
                 .then(
                 function (whateverGotReturned) {
@@ -41,7 +40,7 @@ angular.module('EquipmentModule')
                 $rootScope.selectedCertificationDate = "";
                 $rootScope.selectedDueDate = "";
                 var inspections = [];
-                cabs.forEach(function (c) {
+                cabs.data.forEach(function (c) {
                     if (c.EquipmentInspections) inspections = inspections.concat(c.EquipmentInspections);
                 })
                 if (inspections) {
@@ -122,10 +121,17 @@ angular.module('EquipmentModule')
 
             modalInstance.result.then(function (r) {
                 //bandaids for data binding after save
+                //getAll();
+                return;
                 if (!object.Key_id) {
                     if (!Array.isArray(r)) {
                         console.log(r);
-                        $rootScope.cabinets.push(r);
+                        //$rootScope.cabinets.push(r);
+                        var needsPush = true;
+                        $rootScope.cabinets.data.forEach((c) => {
+                            if (c.UID == r.UID)needsPush = false;
+                        });
+                        if (needsPush) $rootScope.cabinets.data.push(r);
                     }
                 }
                 /*
@@ -207,13 +213,13 @@ angular.module('EquipmentModule')
         $rootScope.modalClosed = false;
 
         $scope.getBuilding = function (id :string | number):void {            
-            $rootScope.Buildings.forEach((b) => {
+            $rootScope.Buildings.data.forEach((b) => {
                 if(b.UID == id)$scope.modalData.selectedBuilding = b;
             });
         }
 
         $scope.getRoom = function (id :string | number):void  {
-            $rootScope.Rooms.forEach((r) => {
+            $rootScope.Rooms.data.forEach((r) => {
                 if(r.UID == id){
                     $scope.modalData.selectedRoom = r;
                     console.log(r);
@@ -222,8 +228,8 @@ angular.module('EquipmentModule')
             });
         }
         
-        if(!$rootScope.Buildings){
-            $rootScope.Buildings = [];
+        if (!$rootScope.Buildings) {
+            $rootScope.Buildings = new ViewModelInstance();
             $rootScope.loading = $q.all([DataStoreManager.getAll("Building", $rootScope.Buildings, true)]).then((b)=>{
                 if($scope.modalData.inspection && $scope.modalData.inspection.Room_id) {
                      $scope.getRoom($scope.modalData.inspection.Room_id);
@@ -309,6 +315,8 @@ angular.module('EquipmentModule')
                 // we added an equipmentInspection, so recompose the cabinet.
                 //DataStoreManager.getById("BioSafetyCabinet", inspection.Equipment_id, {}, true);
                 console.log(r);
+                DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"] = null;
+
                 $scope.close(r);
             })
         }
@@ -319,7 +327,7 @@ angular.module('EquipmentModule')
                 return;
             }
             $rootScope.modalClosed = true;
-            $modalInstance.close(r);
+            $modalInstance.close();
             DataStoreManager.ModalData = null;
         }
 

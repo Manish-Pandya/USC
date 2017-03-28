@@ -964,8 +964,6 @@ class GenericDAO {
 			$childColumn  = $relationship->getChildColumn();
 		}
 		$stmt = "SELECT $parentColumn as parentId, $childColumn as childId FROM " . $relationship->getTableName();
-		$this->LOG->fatal($relationship);
-		$this->LOG->fatal($stmt);
 		$stmt = $db->prepare($stmt);
 
 		// Query the db and return an array of $this type of object
