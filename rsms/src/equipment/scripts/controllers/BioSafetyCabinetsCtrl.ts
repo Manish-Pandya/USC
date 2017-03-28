@@ -92,23 +92,26 @@ angular.module('EquipmentModule')
             }
            
            //build new inspection object every time so we can assure we have a good one of proper type
-            var inspection = new equipment.EquipmentInspection();
-            inspection['Is_active'] = true;
-            inspection['Class'] = "EquipmentInspection";
-            inspection.Equipment_class = "BioSafetyCabinet";
-            inspection.Equipment_id = object.Key_id || null;
-            inspection['Key_id'] = insp ? insp.Key_id : null;
-            inspection.Comments = insp ? insp.Comments : null;
-            inspection.Frequency = insp ? insp.Frequency : null;
-            inspection.Room_id = insp ? insp.Room_id : null;
-            inspection.Certification_date = insp ? insp.Certification_date : null;
-            inspection.Due_date = insp ? insp.Due_date : null;
-            inspection.Status = insp ? insp.Status : null;
-            inspection.UID = insp ? insp.Key_id : null;
+            if (!insp) {
+                var inspection = new equipment.EquipmentInspection();
+                inspection['Is_active'] = true;
+                inspection['Class'] = "EquipmentInspection";
+                inspection.Equipment_class = "BioSafetyCabinet";
+                inspection.Equipment_id = object.Key_id || null;
+                inspection['Key_id'] = insp ? insp.Key_id : null;
+                inspection.Comments = insp ? insp.Comments : null;
+                inspection.Frequency = insp ? insp.Frequency : null;
+                inspection.Room_id = insp ? insp.Room_id : null;
+                inspection.Certification_date = insp ? insp.Certification_date : null;
+                inspection.Due_date = insp ? insp.Due_date : null;
+                inspection.Status = insp ? insp.Status : null;
+                inspection.UID = insp ? insp.Key_id : null;
 
-            inspection.PrincipalInvestigators = insp ? insp.PrincipalInvestigators : [];
-            object.SelectedInspection = inspection;
-            
+                inspection.PrincipalInvestigators = insp ? insp.PrincipalInvestigators : [];
+                object.SelectedInspection = inspection;
+            } else {
+                var inspection = insp;
+            }
             modalData[object.Class] = object;
             modalData.inspection = inspection;
             DataStoreManager.ModalData = modalData;
@@ -122,6 +125,8 @@ angular.module('EquipmentModule')
             modalInstance.result.then(function (r) {
                 //bandaids for data binding after save
                 //getAll();
+                //object.doCompose([equipment.BioSafetyCabinet.EquipmentInspectionMap]);
+
                 return;
                 if (!object.Key_id) {
                     if (!Array.isArray(r)) {
@@ -204,6 +209,15 @@ angular.module('EquipmentModule')
 
         });
 
+        $scope.testSave = function (i: equipment.EquipmentInspection) {
+            i["Certification_date"] = "2017-03-28 15:32:56";
+            $scope.saving = $q.all([DataStoreManager.save(i)]).then((c) => {
+                console.log("server return: ", c);
+                console.log("inspection from view as passed to save call: ", i);
+                console.log("DataStoreManger._actualModel", DataStoreManager._actualModel);
+            })
+        }
+
     })
     .controller('BioSafetyCabinetsModalCtrl', function ($scope, $q, $modal, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
         var af = $scope.af = applicationControllerFactory;
@@ -241,7 +255,7 @@ angular.module('EquipmentModule')
                 $scope.getRoom($scope.modalData.inspection.Room_id);
             }
         }
-
+        /*
         if (($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet) && $scope.modalData.BioSafetyCabinet.EquipmentInspections) {
         
             if ($scope.modalData.inspection.Room) {
@@ -277,6 +291,7 @@ angular.module('EquipmentModule')
             }
             
         }
+        */
 
     
         $scope.save = function (cabinet) {
@@ -302,7 +317,7 @@ angular.module('EquipmentModule')
             }
             //clear the relationships between pis and inspections so the view reloads it
             //TODO:actually solve this, you, know?
-            DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"] = null;
+            delete DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"] = null;
             af.save(cabinet).then(function (r) { console.log(r); $scope.close(r) })
         }
 
@@ -315,8 +330,8 @@ angular.module('EquipmentModule')
                 // we added an equipmentInspection, so recompose the cabinet.
                 //DataStoreManager.getById("BioSafetyCabinet", inspection.Equipment_id, {}, true);
                 console.log(r);
-                DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"] = null;
-
+                delete DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"];
+                console.log(DataStoreManager._actualModel);
                 $scope.close(r);
             })
         }
@@ -327,7 +342,7 @@ angular.module('EquipmentModule')
                 return;
             }
             $rootScope.modalClosed = true;
-            $modalInstance.close();
+            $modalInstance.close(r);
             DataStoreManager.ModalData = null;
         }
 

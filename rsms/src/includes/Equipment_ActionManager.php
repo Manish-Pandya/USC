@@ -61,13 +61,26 @@ class Equipment_ActionManager extends ActionManager {
             $n = $equipment->conditionallyCreateEquipmentInspection($decodedObject);
             //force reload of all inspections for relevant equipment by client
 			$is = $equipment->getEquipmentInspections();
+            foreach($is as $i){
+                $i->setCertification_date("2017-01-01 15:32:56");
+            }
             return $is;
         }
     }
 
     public function getAllBioSafetyCabinets(){
     	$bioSafetyCabinetDao = $this->getDao(new BioSafetyCabinet());
-    	return $bioSafetyCabinetDao->getAll();
+        $cabs = $bioSafetyCabinetDao->getAll();
+        foreach($cabs as $cab){
+            $entityMaps = array();
+		    $entityMaps[] = new EntityMap("lazy","getRoom");
+            $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
+            $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+            $entityMaps[] = new EntityMap("lazy","getEquipmentInspections");
+            $cab->setEntityMaps($entityMaps);
+        }
+
+    	return $cabs;
     }
 
   	public function saveBioSafetyCabinet( BioSafetyCabinet $cabinet = NULL ){
