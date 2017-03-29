@@ -6,15 +6,17 @@
         console.log("TestCtrl running");
 
         var getProtocol = function (): Promise<any> {
-            $scope.protocols = [];
-            $scope.protocol = [];
+            $scope.protocols = new ViewModelInstance();
+            $scope.protocol = new ViewModelInstance();
             /*return $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, false)]).then((p) => {
                 $scope.protocol = $scope.protocols[0];*/
-            return $q.all([DataStoreManager.getById("IBCProtocol", $stateParams.id, $scope.protocol, false)]).then((p) => {
-                //$scope.protocol = p[0];
-                console.log($scope.protocol[0]);
-                $scope.protocol[0].Project_title = $scope.protocol[0].Project_title + " updated in controller";
-                console.log(DataStoreManager._actualModel['IBCProtocol']['Data'][0]);
+            return $q.all([DataStoreManager.getById("IBCProtocol", $stateParams.id, $scope.protocol, [ibc.IBCProtocol.RevisionMap])]).then((p) => {
+                //$scope.protocol.data.Project_title = $scope.protocol.data.Project_title + " updated in controller";
+                console.log($scope.protocol.data == DataStoreManager._actualModel['IBCProtocol']['Data'][0].viewModelWatcher);
+                console.log($scope.protocol.data.IBCProtocolRevisions[0] == DataStoreManager._actualModel['IBCProtocolRevision']['Data'][0].viewModelWatcher);
+                DataStoreManager._actualModel['IBCProtocolRevision']['Data'][0].viewModelWatcher.Protocol_type += "... YUP!";
+                console.log($scope.protocol.data);
+                console.log(DataStoreManager._actualModel);
             });
         }
 

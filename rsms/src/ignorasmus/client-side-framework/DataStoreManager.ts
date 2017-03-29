@@ -311,11 +311,12 @@ abstract class DataStoreManager {
      *
      * @param fluxBase
      */
-
     static buildNestedViewModelWatcher(fluxCompBase: FluxCompositerBase): FluxCompositerBase {
         if (fluxCompBase.hasOwnProperty("viewModelWatcher")) {
+            if (!fluxCompBase.viewModelWatcher) fluxCompBase.viewModelWatcher = Object.create(null); // make viewModelWatcher if null
             InstanceFactory.convertToClasses(InstanceFactory.copyProperties(fluxCompBase.viewModelWatcher, fluxCompBase, ["viewModelWatcher"]) );
         }
+
         return _.cloneDeepWith(fluxCompBase, (value) => {
             if (value instanceof FluxCompositerBase) {
                 if (value.viewModelWatcher) {
