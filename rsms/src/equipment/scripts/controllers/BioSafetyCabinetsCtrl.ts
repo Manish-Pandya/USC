@@ -20,7 +20,11 @@ angular.module('EquipmentModule')
                 .then(
                 function (whateverGotReturned) {
                     getYears($rootScope.cabinets);
-                    console.log($scope.campuses);
+                    //console.log($scope.campuses);
+                    var actModCab = DataStoreManager.getActualModelEquivalent($rootScope.cabinets.data[11].EquipmentInspections[0]);
+                    actModCab.viewModelWatcher["test"] = "I WORK!";
+                    console.log($rootScope.cabinets.data[11].EquipmentInspections[0] == actModCab.viewModelWatcher, $rootScope.cabinets.data[11].EquipmentInspections[0], actModCab.viewModelWatcher);
+                    console.log($rootScope.cabinets.data[11]);
                     console.log(DataStoreManager._actualModel);
                     return true;
                 }
@@ -33,7 +37,6 @@ angular.module('EquipmentModule')
         },
             getYears = function (cabs) {
                 console.log(cabs);
-
                 var currentYearString = $rootScope.currentYearString = new Date().getFullYear().toString();
                 var inspections = [];
                 $scope.certYears = [];
@@ -92,8 +95,9 @@ angular.module('EquipmentModule')
             }
            
            //build new inspection object every time so we can assure we have a good one of proper type
+            var inspection: equipment.EquipmentInspection;
             if (!insp) {
-                var inspection = new equipment.EquipmentInspection();
+                inspection = new equipment.EquipmentInspection();
                 inspection['Is_active'] = true;
                 inspection['Class'] = "EquipmentInspection";
                 inspection.Equipment_class = "BioSafetyCabinet";
@@ -110,7 +114,7 @@ angular.module('EquipmentModule')
                 inspection.PrincipalInvestigators = insp ? insp.PrincipalInvestigators : [];
                 object.SelectedInspection = inspection;
             } else {
-                var inspection = insp;
+                inspection = insp;
             }
             modalData[object.Class] = object;
             modalData.inspection = inspection;
@@ -317,7 +321,7 @@ angular.module('EquipmentModule')
             }
             //clear the relationships between pis and inspections so the view reloads it
             //TODO:actually solve this, you, know?
-            delete DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"] = null;
+            delete DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"];
             af.save(cabinet).then(function (r) { console.log(r); $scope.close(r) })
         }
 

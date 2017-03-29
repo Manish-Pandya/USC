@@ -18,7 +18,11 @@ angular.module('EquipmentModule')
         return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $rootScope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false), DataStoreManager.getAll("Room", $rootScope.Rooms, true)])
             .then(function (whateverGotReturned) {
             getYears($rootScope.cabinets);
-            console.log($scope.campuses);
+            //console.log($scope.campuses);
+            var actModCab = DataStoreManager.getActualModelEquivalent($rootScope.cabinets.data[11].EquipmentInspections[0]);
+            actModCab.viewModelWatcher["test"] = "I WORK!";
+            console.log($rootScope.cabinets.data[11].EquipmentInspections[0] == actModCab.viewModelWatcher, $rootScope.cabinets.data[11].EquipmentInspections[0], actModCab.viewModelWatcher);
+            console.log($rootScope.cabinets.data[11]);
             console.log(DataStoreManager._actualModel);
             return true;
         })
@@ -78,8 +82,9 @@ angular.module('EquipmentModule')
             console.log(object);
         }
         //build new inspection object every time so we can assure we have a good one of proper type
+        var inspection;
         if (!insp) {
-            var inspection = new equipment.EquipmentInspection();
+            inspection = new equipment.EquipmentInspection();
             inspection['Is_active'] = true;
             inspection['Class'] = "EquipmentInspection";
             inspection.Equipment_class = "BioSafetyCabinet";
@@ -96,7 +101,7 @@ angular.module('EquipmentModule')
             object.SelectedInspection = inspection;
         }
         else {
-            var inspection = insp;
+            inspection = insp;
         }
         modalData[object.Class] = object;
         modalData.inspection = inspection;
@@ -295,7 +300,6 @@ angular.module('EquipmentModule')
         //clear the relationships between pis and inspections so the view reloads it
         //TODO:actually solve this, you, know?
         delete DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"];
-        null;
         af.save(cabinet).then(function (r) { console.log(r); $scope.close(r); });
     };
     $scope.certify = function (inspection) {

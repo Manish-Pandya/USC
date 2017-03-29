@@ -55,7 +55,10 @@ angular
 
             af.save = function (viewModel: FluxCompositerBase): Promise<FluxCompositerBase> | Promise<FluxCompositerBase[]> {
                 $rootScope.error = null;
-                return $rootScope.saving = DataStoreManager.save(viewModel);
+                return $rootScope.saving = $q.all([DataStoreManager.save(viewModel)])
+                    .then(function (r) {
+                        return r;
+                    });
             }
 
             /********************************************************************
