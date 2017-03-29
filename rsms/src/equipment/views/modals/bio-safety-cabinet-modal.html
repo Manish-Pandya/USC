@@ -8,18 +8,17 @@
         <div class="control-group">
             <label class="control-label">Select Building</label>
             <div class="controls" style="display:block">
-                <select  class="span3" ng-model="modalData.selectedBuilding"  ng-change="getBuilding(modalData.BioSafetyCabinet.SelectedInspection.Room_id)" ng-options="b as b.Name for b in Buildings | orderBy:'Name'">
+                <select  class="span3" ng-model="modalData.selectedBuilding" ng-change="getBuilding(modalData.BioSafetyCabinet.SelectedInspection.Room_id)" ng-options="b as b.Name for b in Buildings.data | orderBy:'Name'">
                     <option value="">--Select Building--</option>
                 </select>
             </div>
         </div>
-
         <div class="control-group">
             <label class="control-label">Select Room</label>
             <div class="controls">
-                <input ng-if="!modalData.selectedBuilding" placeholder="Select a bulding first" disabled="disabled"/>
-                 <ui-select ng-if="modalData.selectedBuilding" ng-model="modalData.selectedRoom" theme="selectize" ng-disabled="disabled" class="span2" on-select="getRoom($item.UID); modalData.BioSafetyCabinet.SelectedInspection.Room_id = $item.Key_id" style="margin-left:0; width:269px;">
-                    <ui-select-match placeholder="Select or search for a PI">{{$select.selected.Name}}</ui-select-match>
+                 <input ng-if="!modalData.selectedBuilding.UID" placeholder="Select a bulding first" disabled="disabled"/>
+                 <ui-select ng-if="modalData.selectedBuilding.UID" ng-model="modalData.selectedRoom" theme="selectize" ng-disabled="disabled" class="span2" on-select="getRoom($item.UID); modalData.BioSafetyCabinet.SelectedInspection.Room_id = $item.Key_id" style="margin-left:0; width:269px;">
+                    <ui-select-match placeholder="Select or search for a Room">{{$select.selected.Name}}</ui-select-match>
                     <ui-select-choices repeat="r in  modalData.selectedBuilding.Rooms | activeOnly | nameFilter: $select.search |  orderBy:'Name' ">
                         <div ng-bind-html="r.Name | highlight: $select.search"></div>
                     </ui-select-choices>
@@ -30,15 +29,20 @@
         <div class="control-group">
             <label class="control-label">Principal Investigator(s)</label>
             <div class="controls" style="display:block">
+                <select class="span3" ng-model="modalData.pi" ng-change="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push(modalData.pi)" ng-options="pi as pi.Name for pi in modalData.selectedRoom.PrincipalInvestigators | orderBy:'Name'">
+                    <option value="" ng-show="!modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length">--Unassigned--</option>
+                </select>
+                <!--
                 <ui-select ng-model="  d" theme="selectize" ng-disabled="disabled" on-select="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push($item)" class="span2" style="margin-left:0; width:269px;">
                     <ui-select-match placeholder="Select or search for a PI">{{$select.selected.Name}}</ui-select-match>
                     <ui-select-choices repeat="pi in modalData.selectedRoom.PrincipalInvestigators | orderBy:'Name' | nameFilter: $select.search">
                         <div ng-bind-html="pi.Name | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>
+                    -->
             </div>
             <ul>
-                <li ng-repeat="pi in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators" style="padding: 3px 0; font-size: 15px;"><i style="margin-right:5px" class="red icon-cancel-2" ng-click="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.splice($index,1)"></i>{{pi.User.Name}}</li>
+                <li ng-repeat="pi in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators" style="padding: 3px 0; font-size: 15px;"><i style="margin-right:5px" class="red icon-cancel-2" ng-click="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.splice($index,1)"></i>{{pi.Name}}</li>
             </ul>
         </div>
 
@@ -81,7 +85,7 @@
     </div>
 
     <div class="modal-footer">
-        <button ng-disabled="!modalData.BioSafetyCabinet.SelectedInspection.Room_id || !modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length" class="btn btn-large btn-success left"><i class="icon-checkmark"></i>Save</button>
+        <button ng-disabled="!modalData.BioSafetyCabinet.SelectedInspection.Room_id" class="btn btn-large btn-success left"><i class="icon-checkmark"></i>Save</button>
         <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
     </div>
 </form>

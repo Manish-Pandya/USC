@@ -791,6 +791,9 @@ tr.notedit, tr.notedit td {
     float:left;
     width: 80%;
 }
+.modal-body table tr th{
+    font-size:1.5em;
+}
 /*******************************************************
 * HAZARD HUB STYLES
 *******************************************************/

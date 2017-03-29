@@ -61,13 +61,33 @@ class Equipment_ActionManager extends ActionManager {
             $n = $equipment->conditionallyCreateEquipmentInspection($decodedObject);
             //force reload of all inspections for relevant equipment by client
 			$is = $equipment->getEquipmentInspections();
+
+            $entityMaps = array();
+		    $entityMaps[] = new EntityMap("eager","getRoom");
+            $entityMaps[] = new EntityMap("eager","getPrincipal_investigator");
+            $entityMaps[] = new EntityMap("eager","getPrincipalInvestigators");
+            foreach($is as $i){
+                //$i->setCertification_date("2017-10-01 15:32:56");
+                $i->setEntityMaps($entityMaps);
+            }
+            
             return $is;
         }
     }
 
     public function getAllBioSafetyCabinets(){
     	$bioSafetyCabinetDao = $this->getDao(new BioSafetyCabinet());
-    	return $bioSafetyCabinetDao->getAll();
+        $cabs = $bioSafetyCabinetDao->getAll();
+        foreach($cabs as $cab){
+            $entityMaps = array();
+		    $entityMaps[] = new EntityMap("lazy","getRoom");
+            $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
+            $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+            $entityMaps[] = new EntityMap("lazy","getEquipmentInspections");
+            $cab->setEntityMaps($entityMaps);
+        }
+
+    	return $cabs;
     }
 
   	public function saveBioSafetyCabinet( BioSafetyCabinet $cabinet = NULL ){
@@ -92,9 +112,10 @@ class Equipment_ActionManager extends ActionManager {
             $decodedObject->setKey_id($cabinet->getKey_id());
 
             $inspection = $decodedObject->conditionallyCreateEquipmentInspection($insp);
-
+            $LOG->fatal($inspection);
             //if the inspection already exists, remove its PIs first, then add the relevant ones
-            if($decodedObject->getSelectedInspection() != null){
+            if($decodedObject->getSelectedInspection() != null && $inspection != null){
+                
                 foreach ($inspection->getPrincipalInvestigators() as $pi){
 					if (is_array($pi)) $pi = JsonManager::assembleObjectFromDecodedArray($pi);
                     $dao->removeRelatedItems($pi->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(EquipmentInspection::$PIS_RELATIONSHIP));
@@ -105,11 +126,20 @@ class Equipment_ActionManager extends ActionManager {
                 }
             }
 
-
+            $cabinet->setEquipmentInspections(null);
             $entityMaps = array();
             $entityMaps[] = new EntityMap("eager","getEquipmentInspections");
             $entityMaps[] = new EntityMap("lazy","getFirstInspection");
             $cabinet->setEntityMaps($entityMaps);
+
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("eager","getRoom");
+            $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
+            $entityMaps[] = new EntityMap("eager","getPrincipalInvestigators");
+            foreach($cabinet->getEquipmentInspections() as $i){
+                $i->setEntityMaps($entityMaps);
+            }
+
             return $cabinet;
         }
     }
@@ -330,6 +360,72 @@ class Equipment_ActionManager extends ActionManager {
 		//return the name of the saved document so that it can be added to the client
 		return $name;
 	}
+
+    public function getAllEquipmentPis(){
+        $LOG = Logger::getLogger( 'Action:' . __function__ );
+
+
+        $dao = $this->getDao(new PrincipalInvestigator());
+        $pis = $dao->getAll();
+        /** TODO: Instead of $dao->getAll, we gather PIs which are either active or have rooms associated with them. **/
+        /* $whereClauseGroup = new WhereClauseGroup( array( new WhereClause("is_active","=","1"), new WhereClause("key_id","IN","(SELECT principal_investigator_id FROM principal_investigator_room)") ) );
+        $pis = $dao->getAllWhere($whereClauseGroup, "OR");*/
+
+        $entityMaps = array();
+        $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+        $entityMaps[] = new EntityMap("lazy","getRooms");
+        $entityMaps[] = new EntityMap("lazy","getDepartments");
+        $entityMaps[] = new EntityMap("eager","getUser");
+        $entityMaps[] = new EntityMap("lazy","getInspections");
+        $entityMaps[] = new EntityMap("lazy","getPi_authorization");
+        $entityMaps[] = new EntityMap("lazy", "getActiveParcels");
+        $entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+        $entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
+        $entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+        $entityMaps[] = new EntityMap("lazy", "getPickups");
+        $entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
+        $entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
+        $entityMaps[] = new EntityMap("lazy","getOpenInspections");
+        $entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
+        $entityMaps[] = new EntityMap("lazy","getVerifications");
+        $entityMaps[] = new EntityMap("lazy","getBuidling");
+        $entityMaps[] = new EntityMap("lazy","getWipeTests");
+        $entityMaps[] = new EntityMap("lazy","getCurrentPi_authorization");
+        $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
+        $entityMaps[] = new EntityMap("lazy", "getCurrentIsotopeInventories");
+
+        foreach($pis as $pi){
+            $pi->setEntityMaps($entityMaps);
+        }
+
+        return $pis;
+    }
+
+    public function getAllEquipmentRooms(){
+        $dao = $this->getDao(new Room());
+
+        $rooms = $dao->getAll();
+
+        // initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
+        $roomMaps = array();       
+	    $roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+	    $roomMaps[] = new EntityMap("lazy","getHazards");
+	    $roomMaps[] = new EntityMap("eager","getBuilding");
+	    $roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
+	    $roomMaps[] = new EntityMap("lazy","getHas_hazards");
+	    $roomMaps[] = new EntityMap("lazy","getSolidsContainers");
+        $roomMaps[] = new EntityMap("lazy","getHasMultiplePIs");
+        $roomMaps[] = new EntityMap("lazy","getHazardTypesArePresent");
+        $roomMaps[] = new EntityMap("lazy","getChem_hazards_present");
+        $roomMaps[] = new EntityMap("lazy","getRad_hazards_present");
+        $roomMaps[] = new EntityMap("lazy","getBio_hazards_present");
+    
+        foreach($rooms as &$room){
+            $room->setEntityMaps($roomMaps);
+        }
+
+        return $rooms;
+    }
 }
 
 ?>

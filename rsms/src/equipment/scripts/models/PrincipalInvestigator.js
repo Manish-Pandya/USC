@@ -25,6 +25,6 @@ var equipment;
         };
         return PrincipalInvestigator;
     }(FluxCompositerBase));
-    PrincipalInvestigator.urlMapping = new UrlMapping("getAllPIs", "getPIById&id=", "savePI");
+    PrincipalInvestigator.urlMapping = new UrlMapping("getAllEquipmentPIs", "getPIById&id=", "savePI");
     equipment.PrincipalInvestigator = PrincipalInvestigator;
 })(equipment || (equipment = {}));

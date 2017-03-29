@@ -28,6 +28,7 @@ var PermissionMap = (function () {
             this.Permissions[className] = {};
             var instance = InstanceFactory.createInstance(className);
             this.Permissions[className].getAll = instance.hasGetAllPermission();
+            //TODO:  this.Permissions[className].save = instance.getHasSavePermissions();
         }
         return this.Permissions[className];
     };
@@ -224,6 +225,7 @@ var DataStoreManager = (function () {
                             }
                         });
                         allComps.push(fluxCompBase[compMap.PropertyName + "Promise"]);
+                        //throw new Error("You don't have permission to call getAll for " + compMap.ChildType);
                     }
                 }
             });
@@ -294,6 +296,8 @@ var DataStoreManager = (function () {
      */
     DataStoreManager.buildNestedViewModelWatcher = function (fluxCompBase) {
         if (fluxCompBase.hasOwnProperty("viewModelWatcher")) {
+            if (!fluxCompBase.viewModelWatcher)
+                fluxCompBase.viewModelWatcher = Object.create(null); // make viewModelWatcher if null
             InstanceFactory.convertToClasses(InstanceFactory.copyProperties(fluxCompBase.viewModelWatcher, fluxCompBase, ["viewModelWatcher"]));
         }
         return _.cloneDeepWith(fluxCompBase, function (value) {
@@ -303,6 +307,7 @@ var DataStoreManager = (function () {
                     delete value.viewModelWatcher.viewModelWatcher;
                     return value.viewModelWatcher;
                 }
+                // otherwise, default deep-cloning happens
             }
         });
     };
