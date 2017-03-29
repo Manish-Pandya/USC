@@ -27,7 +27,7 @@
                     <input ng-model="filter.status" style="width:100%;" placeholder="Filter by Status" />
                 </th>
                 <th>
-                    REPORT
+                    REPORT/<br />Quote
                 </th>
                 <th>COMMENTS</th>
             </tr>
@@ -68,6 +68,7 @@
                 <td style="text-align:center">
                     <div>
                         <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
+                            <!--<a ng-click="testSave(inspection)">come on</a>-->
                             <span><a ng-class="{'btn-success':inspection.Certification_date, 'btn-danger':inspection.Status == 'FAIL','btn-info':inspection.Status != 'FAIL' && !inspection.Certification_date}" ng-click="openModal(cabinet, inspection)" class="btn left"><span ng-if="inspection.Certification_date || inspection.Fail_date">{{inspection.Certification_date || inspection.Fail_date | dateToISO}}</span><i class="icon-calendar-alt-stroke"></i></a></span>
                         </div>
                     </div>
@@ -82,8 +83,9 @@
                 <td>
                     <div>
                         <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | hasMoved:'PrincipalInvestigators' | orderBy:'Due_date':true)">
-                            <span><a ng-click="openPiInfoModal(pi)" ng-repeat="pi in inspection.PrincipalInvestigators">{{pi.User.Name}}<br ng-if="!$last"></a></span>
-                        </div>
+                            <span><a style="display: block;padding: 3px 0;" ng-click="openPiInfoModal(pi)" ng-repeat="pi in inspection.PrincipalInvestigators">{{pi.User.Name}}<br ng-if="!$last"></a></span>
+                            <span ng-if="!inspection.PrincipalInvestigators.length" class="red">Unsassigned</span>
+                         </div>
                     </div>
                 </td>
                 <td>

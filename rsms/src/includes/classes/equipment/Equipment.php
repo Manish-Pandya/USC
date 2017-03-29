@@ -107,7 +107,7 @@ abstract class Equipment extends GenericCrud{
     public function conditionallyCreateEquipmentInspection($selectedInspection = null){
         $l = Logger::getLogger('conditionallyCreateEquipmentInspection?');
         $l->fatal("here we are now");
-
+        if($this->frequency == null)$this->frequency = "Annually";
         //We only create a new inspection for Cabinets that have not yet been saved
         if ($this->frequency != null || ($selectedInspection != null && $selectedInspection->getFrequency() != null)) {
 			if ($this->getEquipmentInspections() == null && $selectedInspection == null) {

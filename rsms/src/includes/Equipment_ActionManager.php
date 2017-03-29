@@ -61,6 +61,15 @@ class Equipment_ActionManager extends ActionManager {
             $n = $equipment->conditionallyCreateEquipmentInspection($decodedObject);
             //force reload of all inspections for relevant equipment by client
 			$is = $equipment->getEquipmentInspections();
+
+            $entityMaps = array();
+		    $entityMaps[] = new EntityMap("eager","getRoom");
+            $entityMaps[] = new EntityMap("eager","getPrincipal_investigator");
+            $entityMaps[] = new EntityMap("eager","getPrincipalInvestigators");
+            foreach($is as $i){
+                //$i->setCertification_date("2017-10-01 15:32:56");
+                $i->setEntityMaps($entityMaps);
+            }
             
             return $is;
         }

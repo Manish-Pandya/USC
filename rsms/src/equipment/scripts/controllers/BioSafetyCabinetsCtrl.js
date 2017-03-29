@@ -19,10 +19,10 @@ angular.module('EquipmentModule')
             .then(function (whateverGotReturned) {
             getYears($rootScope.cabinets);
             //console.log($scope.campuses);
-            var actModCab = DataStoreManager.getActualModelEquivalent($rootScope.cabinets.data[11].EquipmentInspections[0]);
-            actModCab.viewModelWatcher["test"] = "I WORK!";
-            console.log($rootScope.cabinets.data[11].EquipmentInspections[0] == actModCab.viewModelWatcher, $rootScope.cabinets.data[11].EquipmentInspections[0], actModCab.viewModelWatcher);
-            console.log($rootScope.cabinets.data[11]);
+            var actModCab = DataStoreManager.getActualModelEquivalent($rootScope.cabinets.data[1].EquipmentInspections[0]);
+            //actModCab.viewModelWatcher["test"] = "I WORK!";
+            // console.log($rootScope.cabinets.data[1].EquipmentInspections[0] == actModCab.viewModelWatcher, $rootScope.cabinets.data[11].EquipmentInspections[0], actModCab.viewModelWatcher);
+            // console.log($rootScope.cabinets.data[1]);
             console.log(DataStoreManager._actualModel);
             return true;
         })
@@ -196,7 +196,10 @@ angular.module('EquipmentModule')
         };
     });
     $scope.testSave = function (i) {
-        i["Certification_date"] = "2017-03-28 15:32:56";
+        DataStoreManager._actualModel["EquipmentInspection"].Data.forEach(function (i) {
+            i.viewModelWatcher["Certification_date"] = "2017-03-01 15:32:56";
+        });
+        i["Certification_date"] = "2017-01-01 15:32:56";
         $scope.saving = $q.all([DataStoreManager.save(i)]).then(function (c) {
             console.log("server return: ", c);
             console.log("inspection from view as passed to save call: ", i);
@@ -333,6 +336,9 @@ angular.module('EquipmentModule')
         })[0];
         if (thing)
             return thing.Comment || $scope.modalData.BioSafetyCabinet.Comment || "";
+    };
+    $scope.getRoomOptions = function (array) {
+        array.push({ Name: "Unassigned", Key_id: null });
     };
     console.log($scope.modalData);
 })
