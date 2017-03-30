@@ -28,10 +28,10 @@ angular
             return dataSwitchFactory.getAllObjects('Inspector');
         }
 
-        ac.getAllHazardDtos = function(id, roomId){
+        ac.getAllHazardDtos = function(id, roomIds){
             dataStore.HazardDto = null;
             var urlSegment = "getHazardRoomDtosByPIId&id="+id;
-            if(roomId) urlSegment = urlSegment +"&roomId="+roomId;
+            if (roomIds) urlSegment += "&" + $.param({ roomIds: roomIds });
 
             return genericAPIFactory.read( urlSegment )
                     .then(

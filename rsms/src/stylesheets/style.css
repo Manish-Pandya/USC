@@ -1007,6 +1007,12 @@ td.hazard-icons img{
     filter: grayscale(100%);
     opacity: .4;
 }
+.grayed-out{
+  color:#ccc;
+}
+li.grayed-out a{
+  color: rgba(79, 147, 225, 0.51);
+}
 .locationTable td > ul li{
   padding: 10px 8px 3px;
   border-bottom: 1px solid #d7d7d7 !important;

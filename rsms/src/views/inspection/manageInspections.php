@@ -193,9 +193,10 @@ require_once '../top_view.php';
                     <span ng-if="dto.Inspections.Status">
                         <span once-text="dto.Inspections.Status"></span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.SCHEDULED">
+                            <span ng-init="dto = getRoomUrlString(dto)"></span>
                             <br>Scheduled ({{dto.Inspections.Schedule_month | getMonthName}})
                             <br>
-                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png" />Hazard Inventory</a>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}&{{dto.roomUrlParam}}"><img src="../../img/hazard-icon.png" />Hazard Inventory</a>
                         </span>
 
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.PENDING_CLOSEOUT">
@@ -237,7 +238,8 @@ require_once '../top_view.php';
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
                             <span><br>(Scheduled for {{dto.Inspections.Schedule_month | getMonthName}})</span>
                             <br>
-                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png" />Inventory</a>
+                            <span ng-init="dto = getRoomUrlString(dto)"></span>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}&{{dto.roomUrlParam}}"><img src="../../img/hazard-icon.png" />Inventory</a>
                         </span>
                     </span>
                     <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="dto.IsDirty"></i>

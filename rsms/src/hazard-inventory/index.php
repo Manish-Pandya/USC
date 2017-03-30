@@ -233,7 +233,7 @@ echo "</script>";
                     </div>
                     <div class="span8" ng-if="PI || pi">
                         <div class="controls">
-                            <h3 class="span6">Building(s):</h3>
+                            <h3 class="span6">Building(s):<a style="margin-left:10px; margin-top:-3px" class="btn btn-primary btn-mini left" ng-click="filterRooms()"><i class="icon-search" style="margin: 0 4px 0 0 !important; font-size: 13px !important;"></i>Filter</a></h3>
                             <h3 class="span6">Laboratory Rooms:</h3>
                             <span ng-if="!PI.Rooms">
                                 <p ng-if="!noRoomsAssigned" style="display: inline-block; margin-top:5px;">
@@ -246,13 +246,13 @@ echo "</script>";
 
                             <span ng-if="PI.Rooms">
                                <ul class="selectedBuildings">
-                                   <li ng-repeat="(key, building) in PI.Rooms | groupBy: 'Building.Name'">
+                                   <li ng-repeat="(key, building) in PI.Rooms | groupBy: 'Building.Name'" >
                                        <div class="span6">
-                                           <h4 >{{key}}</h4>
+                                           <h4 ng-class="{'grayed-out': getGrayed(building)}">{{key}}</h4>
                                        </div>
                                        <div class="roomsForBuidling span6">
                                            <ul>
-                                               <li ng-repeat="(key, room) in rooms = (building | activeOnly | orderBy: 'Name')"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(null,room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
+                                               <li ng-repeat="(key, room) in rooms = (building | activeOnly | orderBy: 'Name')" ng-class="{'grayed-out': selectedRoomIds.indexOf(room.Key_id) == -1 }"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(null,room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
                                             </ul>
                                         </div>
                                     </li>

@@ -889,11 +889,28 @@ class GenericDAO {
                 bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,
                 year(curdate()) AS `year`,
                 NULL AS `inspection_id` from (((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `principal_investigator_room` `f`)
-                where ((`a`.`is_active` = 1) and (`c`.`is_active` = 1) and (`b`.`key_id` = `a`.`user_id`) and (`f`.`principal_investigator_id` = `a`.`key_id`) and (`f`.`room_id` = `c`.`key_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`) and (not(`a`.`key_id` in (select `inspection`.`principal_investigator_id`
+                where ((`a`.`is_active` = 1) and (`c`.`is_active` = 1) and (`b`.`key_id` = `a`.`user_id`) and (`f`.`principal_investigator_id` = `a`.`key_id`) and (`f`.`room_id` = `c`.`key_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`) and
+
+                (not(`a`.`key_id` in
+                (select `inspection`.`principal_investigator_id`
                 from `inspection`
-                where (coalesce(year(`inspection`.`date_started`) AND (is_rad IS NULL OR is_rad = 0),
-                `inspection`.`schedule_year`) = ?))))) group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,year(curdate()),
-                NULL union select `a`.`key_id` AS `pi_key_id`,
+                where
+                `d`.`key_id` IN (
+					select `building_id` from `room`
+                    where `room`.key_id IN (
+                    select `room_id` from inspection_room where inspection_id IN(
+                    select key_id from inspection where key_id IN (
+						select key_id _id from inspection where principal_investigator_id = a.key_id
+                    )
+                    AND
+					(coalesce(year(`inspection`.`date_started`) AND (is_rad IS NULL OR is_rad = 0),
+					`inspection`.`schedule_year`) = ?))
+                    )
+                ))
+
+                ))) group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,year(curdate()),
+
+				NULL union select `a`.`key_id` AS `pi_key_id`,
                 concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,
                 `d`.`name` AS `building_name`,
                 `d`.`key_id` AS `building_key_id`,
@@ -1122,28 +1139,39 @@ class GenericDAO {
 		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
 	}
 
-	function getHazardRoomDtosByPIId( $pIId, $roomId = null ){
+	function getHazardRoomDtosByPIId( $pIId, $roomIds = null ){
 		$LOG = Logger::getLogger(__CLASS__);
-
+        $LOG->fatal($roomIds);
 		// Get the db connection
 		global $db;
 
 		//get this pi's rooms
-		if($roomId == null){
+		if($roomIds == null){
 			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, COALESCE(NULLIF(b.alias, ''), b.name) as building_name from room a
 								 LEFT JOIN building b on a.building_id = b.key_id
 								 where a.key_id in (select room_id from principal_investigator_room where principal_investigator_id = :id)";
 			$stmt = $db->prepare($roomsQueryString);
 			$stmt->bindParam(':id', $pIId, PDO::PARAM_INT);
 		}else{
+            $inQuery = implode(',', array_fill(0, count($roomIds), '?'));
+            
 			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, COALESCE(NULLIF(b.alias, ''), b.name) as building_name from room a
 								 LEFT JOIN building b on a.building_id = b.key_id
-								 where a.key_id = :roomId";
+								 where a.key_id IN ";
+            $roomsQueryString .= "($inQuery)";
 			$stmt = $db->prepare($roomsQueryString);
-			$stmt->bindParam(':roomId', $roomId, PDO::PARAM_INT);
+            foreach($roomIds as $key=>$id){
+            	$stmt->bindValue($key+1, $id, PDO::PARAM_INT);
+            }
 		}
-		$stmt->execute();
-		$rooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PIHazardRoomDto");
+		if($stmt->execute()){
+            $rooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PIHazardRoomDto");
+        }else{
+			$error = $stmt->errorInfo();
+			$result = new QueryError($error);
+			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());    
+            return $result;
+        }
 
 		$roomIds = array();
 		foreach($rooms as $room){
