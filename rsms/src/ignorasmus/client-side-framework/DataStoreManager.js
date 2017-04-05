@@ -327,7 +327,7 @@ var DataStoreManager = (function () {
     DataStoreManager.buildNestedViewModelWatcher = function (fluxCompBase) {
         if (fluxCompBase.hasOwnProperty("viewModelWatcher")) {
             if (!fluxCompBase.viewModelWatcher)
-                fluxCompBase.viewModelWatcher = Object.create(null); // make viewModelWatcher if null
+                fluxCompBase.viewModelWatcher = {}; // make viewModelWatcher if null
             InstanceFactory.convertToClasses(InstanceFactory.copyProperties(fluxCompBase.viewModelWatcher, fluxCompBase, ["viewModelWatcher"]));
         }
         return _.cloneDeepWith(fluxCompBase, function (value) {

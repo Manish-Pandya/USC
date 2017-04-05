@@ -344,7 +344,7 @@ abstract class DataStoreManager {
      */
     static buildNestedViewModelWatcher(fluxCompBase: FluxCompositerBase): FluxCompositerBase {
         if (fluxCompBase.hasOwnProperty("viewModelWatcher")) {
-            if (!fluxCompBase.viewModelWatcher) fluxCompBase.viewModelWatcher = Object.create(null); // make viewModelWatcher if null
+            if (!fluxCompBase.viewModelWatcher) fluxCompBase.viewModelWatcher = {}; // make viewModelWatcher if null
             InstanceFactory.convertToClasses(InstanceFactory.copyProperties(fluxCompBase.viewModelWatcher, fluxCompBase, ["viewModelWatcher"]) );
         }
 
