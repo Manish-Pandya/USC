@@ -342,10 +342,10 @@ angular
         }
 
         ac.saveInspectionRoomRelationship = function(inspection, room){
-            if(typeof room.checked == 'undefined')room.checked = false;
+            if (typeof room[inspection.Key_id + 'checked'] == 'undefined') room[inspection.Key_id + 'checked'] = false;
                 room.userChecked = room.checked;
                 var deferred = $q.defer();
-                var url = "saveInspectionRoomRelation&roomId="+room.Key_id+"&inspectionId="+inspection.Key_id+"&add="+room.checked;
+                var url = "saveInspectionRoomRelation&roomId=" + room.Key_id + "&inspectionId=" + inspection.Key_id + "&add=" + room[inspection.Key_id + 'checked'];
 
                 $rootScope.RoomSaving = genericAPIFactory.read(url).then(
                                         function(promise){

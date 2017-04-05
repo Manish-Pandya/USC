@@ -91,6 +91,10 @@ angular.module('HazardInventory')
             $scope.hazardPromise = getHazards(pi.Key_id, roomIds);
             $scope.selectPI = false;
             $location.search("pi", pi.Key_id);
+            if (!roomIds && $location.search()["room[]"]) {
+                $location.search("room[]", false);
+                $rootScope.selectedRoomIds = null;
+            }
         }
 
         $scope.getShowRooms = function (hazard, room, building) {
@@ -110,7 +114,6 @@ angular.module('HazardInventory')
         }
 
         $scope.openRoomsModal = function (hazard, masterHazard) {
-            console.log(parent);
             hazard.loadSubHazards();
             var modalData = {};
             modalData.Hazard = hazard;
@@ -159,7 +162,6 @@ angular.module('HazardInventory')
                 .then(function (pHRS) {
                     modalData.pHRS = pHRS;
                     af.setModalData(modalData);
-                    console.log(modalData)
                     var modalInstance = $modal.open({
                         templateUrl: 'views/modals/multiple-PI-hazards-modal.html',
                         controller: 'HazardInventoryModalCtrl'
@@ -246,7 +248,8 @@ angular.module('HazardInventory')
             return false;
         }
 
-        $rootScope.getGrayed = function(arr) {
+        $rootScope.getGrayed = function (arr) {
+            if (!$rootScope.selectedRoomIds) return;
             return arr.every(function (r) {
                 return $rootScope.selectedRoomIds.indexOf(r.Key_id) == -1
             })
@@ -299,7 +302,6 @@ angular.module('HazardInventory')
         }
 
         function openSecondaryModal(modalData) {
-            console.log(modalData);
             $modalInstance.dismiss();
             setTimeout(function () {
                 modalData.inspectorIds = [];
@@ -368,14 +370,17 @@ angular.module('HazardInventory')
 
 
         $scope.processRooms = function (inspection, rooms) {
+            if (inspection.processed) return;
+
             for (var j = 0; j < inspection.Rooms.length; j++) {
-                inspection.Rooms[j].checked = true;
+                inspection.Rooms[j][inspection.Key_id + "checked"] = true;
             }
             for (var k = 0; k < rooms.length; k++) {
                 if (!convenienceMethods.arrayContainsObject(inspection.Rooms, rooms[k])) {
                     inspection.Rooms.push(rooms[k]);
                 }
             }
+            inspection.processed = true;
         }
 
         $scope.close = function () {
@@ -401,11 +406,9 @@ angular.module('HazardInventory')
         $scope.dataStoreManager = dataStoreManager;
         $scope.addInspector = function (int) {
             $scope.modalData.inspectorIds[int] = int;
-            console.log($scope.modalData.inspectorIds);           
         }
         $scope.removeInspector = function (int) {
             $scope.modalData.inspectorIds[int] = null;
-            console.log($scope.modalData.inspectorIds);
         }
         $scope.close = function () {
             af.deleteModalData();
@@ -421,14 +424,12 @@ angular.module('HazardInventory')
         $scope.modalData = af.getModalData();
 
         $scope.getChecked = function (rooms) {
-            console.log(rooms);
             return rooms.every(function (r) {                
                 return $rootScope.selectedRoomIds.indexOf(r.Key_id) != -1;
             })
         }
 
         $scope.handleBuildingSelect = function (bldg, room) {
-            console.log(bldg)
             bldg.forEach(function(r) { r.checked = room.allChecked})
         }
 

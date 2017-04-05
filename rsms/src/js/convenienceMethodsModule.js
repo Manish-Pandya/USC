@@ -207,7 +207,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
         *
         **/
         arrayContainsObject: function (array, obj, props, returnIdx) {
-            console.log(array, obj);
             if(!props) {var props = ["Key_id","Key_id"];}
 
             for (var localI=0;localI<array.length;localI++) {
