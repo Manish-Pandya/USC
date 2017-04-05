@@ -4,7 +4,7 @@
 <div class="right-column">
     <h1 class="card full bio-safety-cabinets">
         <i class="icon-cabinet"></i>Biological Safety Cabinets
-        <select ng-options="certYear as (certYear != 'Not Yet Certified' ? certYear + ' Certifications' : certYear) for certYear in certYears | orderBy:'toString()'" ng-model="selectedCertificationDate">
+        <select ng-options="certYear as (certYear != 'Not Yet Certified' ? certYear + ' Certifications' : certYear) for certYear in certYears | orderBy:'toString()'" ng-model="selectedCertificationDate" ng-change="updateCertDate(selectedCertificationDate)">
             <option value="">-- Select Year --</option>
         </select>
         <a ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>

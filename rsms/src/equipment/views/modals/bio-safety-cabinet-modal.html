@@ -32,14 +32,6 @@
                 <select class="span3" ng-model="modalData.pi" ng-change="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push(modalData.pi)" ng-options="pi as pi.Name for pi in modalData.selectedRoom.PrincipalInvestigators | orderBy:'Name'">
                     <option value="" ng-show="!modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length">--Unassigned--</option>
                 </select>
-                <!--
-                <ui-select ng-model="  d" theme="selectize" ng-disabled="disabled" on-select="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push($item)" class="span2" style="margin-left:0; width:269px;">
-                    <ui-select-match placeholder="Select or search for a PI">{{$select.selected.Name}}</ui-select-match>
-                    <ui-select-choices repeat="pi in modalData.selectedRoom.PrincipalInvestigators | orderBy:'Name' | nameFilter: $select.search">
-                        <div ng-bind-html="pi.Name | highlight: $select.search"></div>
-                    </ui-select-choices>
-                </ui-select>
-                    -->
             </div>
             <ul>
                 <li ng-repeat="pi in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators" style="padding: 3px 0; font-size: 15px;"><i style="margin-right:5px" class="red icon-cancel-2" ng-click="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.splice($index,1)"></i>{{pi.Name}}</li>

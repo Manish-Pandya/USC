@@ -17,7 +17,7 @@
                 <th>MODEL</th>
                 <th>SERIAL #</th>
                 <th>CERT-DATE</th>
-                <td>DUE-DATE</td>
+                <th ng-if="getIsPreviousYear(uncertified)">DUE-DATE</th>
                 <th ng-init="filter">
                     PI / CONTACT
                     <input ng-model="filter.pi" style="width:150px;" placeholder="Filter by PI" />
@@ -73,7 +73,7 @@
                         </div>
                     </div>
                 </td>
-                <td>
+                <td ng-if="getIsPreviousYear(uncertified)">
                     <div>
                         <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
                             <span>{{inspection.Due_date | dateToISO}}</span>
