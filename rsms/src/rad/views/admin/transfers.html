@@ -128,8 +128,8 @@
     </div>
 
     <div class="well full card">
-        <h3><i class="icon-tab"></i>{{transfersIn.length}} Inventory Transfers<a ng-click="openTransferInventoryModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-tab"></i>New Transfer</a></h3>
-        <div class="fake-table bordered" ng-show="transfersIn.length > 0">
+        <h3><i class="icon-tab"></i>{{inventoryTransfers.length}} Inventory Transfers<a ng-click="openTransferInventoryModal()" class="btn btn-success left" style="margin-left:10px"><i class="icon-plus-2"></i><i class="icon-tab"></i>New Transfer</a></h3>
+        <div class="fake-table bordered" ng-show="inventoryTransfers.length > 0">
             <div class="table-header">
                 <h3>Edit</h3>
                 <h3>Transfer #</h3>
@@ -140,7 +140,7 @@
                 <h3>Form</h3>
                 <h3>Notes</h3>
             </div>
-            <div class="table-row" ng-repeat="transfer in transfersIn = (parcels | transferInventoryParcels)">
+            <div class="table-row" ng-repeat="transfer in inventoryTransfers = (parcels | transferInventoryParcels)">
                 <div>
                     <a ng-click="openTransferInventoryModal(transfer)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
                 </div>

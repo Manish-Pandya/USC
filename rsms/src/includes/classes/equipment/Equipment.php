@@ -107,7 +107,7 @@ abstract class Equipment extends GenericCrud{
     public function conditionallyCreateEquipmentInspection($selectedInspection = null){
         $l = Logger::getLogger('conditionallyCreateEquipmentInspection?');
         $l->fatal("here we are now");
-
+        if($this->frequency == null)$this->frequency = "Annually";
         //We only create a new inspection for Cabinets that have not yet been saved
         if ($this->frequency != null || ($selectedInspection != null && $selectedInspection->getFrequency() != null)) {
 			if ($this->getEquipmentInspections() == null && $selectedInspection == null) {
@@ -145,7 +145,6 @@ abstract class Equipment extends GenericCrud{
                 $query->setFetchMode(PDO::FETCH_CLASS, "EquipmentInspection");			// Query the db and return one user
                 if ($query->execute()) {
                     $result = $query->fetchAll();
-                    $l->fatal($result);
                 }
 
                 if($result != null){
@@ -158,19 +157,22 @@ abstract class Equipment extends GenericCrud{
 
                 }
 
-                $parts = explode("-", $this->getCertification_date());
-
                 //a cabinet must be certified either once every year, or once every other year
                 if($this->frequency == "Annually"){
+                    $parts = explode("-", $this->getCertification_date());
+
                     $parts[0] = $parts[0]+1;
                     $l->fatal("DUE DATE OUGHT TO BE:");
-                    $l->fatal($parts);
+                    $l->fatal(implode("-", $parts));
                     $nextInspection->setDue_date(implode("-", $parts));
 
                 }else{
                     $newCertDate = new DateTime('America/New_York');
                     $newCertDate->setTimeStamp(strtotime($this->getCertification_date()));
                     $newCertDate->modify(('+6 months'));
+                    $l->fatal("DUE DATE OUGHT TO BE:");
+                    $date = 
+                    $l->fatal($newCertDate);
                     $nextInspection->setDue_date($newCertDate);
                 }
                 $nextInspection->setEquipment_id($this->key_id);

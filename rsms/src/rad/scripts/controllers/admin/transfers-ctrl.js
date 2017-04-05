@@ -78,6 +78,10 @@ angular.module('00RsmsAngularOrmApp')
             } else {
                 modalData.Parcel = { Class: "Parcel" };
             }
+            modalData.Parcel.Is_active = true;
+            modalData.Parcel.Status = Constants.PARCEL.STATUS.DELIVERED;
+            //all inventory transfers get a date of the end of the year before the system's o
+            console.log(modalData);
             af.setModalData(modalData);
             var modalInstance = $modal.open({
                 templateUrl: 'views/admin/admin-modals/transfer-inventory-modal.html',

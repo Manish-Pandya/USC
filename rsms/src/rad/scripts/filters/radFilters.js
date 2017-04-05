@@ -280,7 +280,7 @@ angular.module('00RsmsAngularOrmApp')
     .filter('parcelsInLab', function () {
         return function (parcels) {
             filteredParcels = parcels.filter(function (p) {
-                return [Constants.PARCEL.STATUS.DELIVERED, Constants.PARCEL.STATUS.DISPOSED].indexOf(p.Status) != -1;
+                return p.Status != Constants.PARCEL.STATUS.DISPOSED;
             })
             return filteredParcels;
         }

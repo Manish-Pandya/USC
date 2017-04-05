@@ -50,7 +50,7 @@ class IBC_ActionMappingFactory extends ActionMappingFactory {
 				"getProtocolById" 				=> new ActionMapping("getProtocolById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"saveProtocol" 					=> new ActionMapping("saveProtocol", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"getAllDepartments" 			=> new ActionMapping("getAllDepartments", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
-				"getAllPIs"	 					=> new ActionMapping("getAllPIs", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+				"getAllIBCPIs"	 				=> new ActionMapping("getAllIBCPIs", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 		);
 	}
 }

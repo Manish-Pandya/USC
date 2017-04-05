@@ -16,6 +16,9 @@ class Equipment_ActionMappingFactory extends ActionMappingFactory {
 	public function getConfig() {
 		return array(
                 "getAllEquipmentInspections" 	=> new ActionMapping("getAllEquipmentInspections", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+                "getAllEquipmentPIs" 	        => new ActionMapping("getAllEquipmentPis", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+                "getAllEquipmentRooms" 	        => new ActionMapping("getAllEquipmentRooms", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+
                 "getEquipmentInspectionById" 	=> new ActionMapping("getEquipmentInspectionById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
                 "saveEquipmentInspection" 		=> new ActionMapping("saveEquipmentInspection", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"getAllAutoclaves" 				=> new ActionMapping("getAllAutoclaves", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),

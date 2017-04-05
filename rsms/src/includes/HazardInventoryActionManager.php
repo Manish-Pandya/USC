@@ -9,22 +9,22 @@
  */
 class HazardInventoryActionManager extends ActionManager {
 
-	public function getHazardRoomDtosByPIId($piId = null, $roomId = null) {
+	public function getHazardRoomDtosByPIId($piId = null, $roomIds = null) {
 
 		if($piId == NULL){
 			$piId = $this->getValueFromRequest('id', $piId);
 		}
 
-		if($roomId == NULL){
-			$roomId = $this->getValueFromRequest('roomId', $roomId);
+		if($roomIds == NULL){
+			$roomIds = $this->getValueFromRequest('roomIds', $roomIds);
 		}
 
 		if( $piId !== NULL ){
 			$dao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation());
-			if($roomId == null){
+			if($roomIds == null){
 				return $dao->getHazardRoomDtosByPIId($piId);
 			}else{
-				return $dao->getHazardRoomDtosByPIId($piId, $roomId);
+				return $dao->getHazardRoomDtosByPIId($piId, $roomIds);
 			}
 		}
 		else{

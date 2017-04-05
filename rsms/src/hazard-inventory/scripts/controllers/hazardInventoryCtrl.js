@@ -8,7 +8,7 @@
  * Controller of the HazardInventory Hazard Hub
  */
 angular.module('HazardInventory')
-    .controller('HazardInventoryCtrl', function ($scope, $q, $http, applicationControllerFactory, $modal, $location) {
+    .controller('HazardInventoryCtrl', function ($scope, $q, $http, applicationControllerFactory, $modal, $location, $rootScope) {
 
         //do we have access to action functions?
         $scope.af = applicationControllerFactory;
@@ -25,10 +25,9 @@ angular.module('HazardInventory')
                         $scope.error = 'There was a problem getting the list of Principal Investigators.  Please check your internet connection.'
                     });
         },
-            getHazards = function (id, roomId) {
-                if (!roomId) roomId = false;
+            getHazards = function (id, roomIds) {
                 return af
-                    .getAllHazardDtos(id, roomId)
+                    .getAllHazardDtos(id, roomIds)
                     .then(
                         function (hazards) {
                             return hazards
@@ -51,7 +50,7 @@ angular.module('HazardInventory')
                         }
 
                     ).then(
-                        af.getBuildings(id, roomId).then(function (rooms) {; $scope.PI.Rooms = rooms; })
+                        af.getBuildings(id).then(function (rooms) {; $scope.PI.Rooms = rooms; })
                     );
 
             }
@@ -61,13 +60,21 @@ angular.module('HazardInventory')
             .then(
                 function (pis) {
                     $scope.pis = pis;
-                    console.log($location);
+                    console.log(window.location.hash);
                     if ($location.search()) {
                         if ($location.search().pi) {
-                            console.log(dataStore);
                             var pi = dataStoreManager.getById("PrincipalInvestigator", $location.search().pi);
-                            if ($location.search().room) {
-                                $scope.onSelectPi(pi, $location.search().room);
+                            if (window.location.hash.indexOf("room") != -1) {
+                                console.log($location.search());
+                                $rootScope.selectedRoomIds = $location.search()["room[]"];
+                                var roomIds =[];
+
+                                if(!Array.isArray($location.search()["room[]"])) {
+                                    roomIds =[$location.search()["room[]"]]
+                                } else {
+                                      roomIds = $location.search()["room[]"];
+                                }   
+                                $scope.onSelectPi(pi, roomIds);
                             } else {
                                 $scope.onSelectPi(pi);
                             }
@@ -77,30 +84,21 @@ angular.module('HazardInventory')
             );
 
 
-        $scope.onSelectPi = function (pi, roomId) {
+        $scope.onSelectPi = function (pi, roomIds) {
             pi.loadInspections();
             $scope.PI = pi;
-            if (!roomId) roomId = false;
-            $scope.hazardPromise = getHazards(pi.Key_id, roomId);
+            if (!roomIds) roomIds = false;
+            $scope.hazardPromise = getHazards(pi.Key_id, roomIds);
             $scope.selectPI = false;
             $location.search("pi", pi.Key_id);
+            if (!roomIds && $location.search()["room[]"]) {
+                $location.search("room[]", false);
+                $rootScope.selectedRoomIds = null;
+            }
         }
 
         $scope.getShowRooms = function (hazard, room, building) {
-            var atLeastOne = false;
-            var notAll = false;
-            var i = hazard.InspectionRooms.length;
-            while (i--) {
-                var room = hazard.InspectionRooms[i];
-                if (room.Building_name == building && (room.ContainsHazard || room.OtherLab)) {
-                    atLeastOne = true;
-                } else {
-                    notAll = true;
-                }
-                if (atLeastOne && notAll) return true;
-            }
-            return false;
-
+            return hazard.InspectionRooms.some(function (r) { return r.ContainsHazard || r.OtherLab }) && hazard.InspectionRooms.some(function (r) { return !r.ContainsHazard && !r.OtherLab });
         }
 
         $scope.openSubsModal = function (hazard, parent) {
@@ -116,7 +114,6 @@ angular.module('HazardInventory')
         }
 
         $scope.openRoomsModal = function (hazard, masterHazard) {
-            console.log(parent);
             hazard.loadSubHazards();
             var modalData = {};
             modalData.Hazard = hazard;
@@ -165,7 +162,6 @@ angular.module('HazardInventory')
                 .then(function (pHRS) {
                     modalData.pHRS = pHRS;
                     af.setModalData(modalData);
-                    console.log(modalData)
                     var modalInstance = $modal.open({
                         templateUrl: 'views/modals/multiple-PI-hazards-modal.html',
                         controller: 'HazardInventoryModalCtrl'
@@ -219,6 +215,7 @@ angular.module('HazardInventory')
         }
 
         $scope.getDisabled = function (hazard) {
+            if(!dataStore.HazardDto)return false;
             var parent = dataStoreManager.getById("HazardDto", hazard.Parent_hazard_id);
             if (Constants.BRANCH_HAZARD_IDS.indexOf(hazard.Parent_hazard_id) < 0 && (parent.Stored_only || parent.BelongsToOtherPI)) {
                 return true;
@@ -251,6 +248,30 @@ angular.module('HazardInventory')
             return false;
         }
 
+        $rootScope.getGrayed = function (arr) {
+            if (!$rootScope.selectedRoomIds) return;
+            return arr.every(function (r) {
+                return $rootScope.selectedRoomIds.indexOf(r.Key_id) == -1
+            })
+        }
+
+        $scope.filterRooms = function () {
+            var modalData = { };
+            modalData.PI = $scope.PI;
+            af.setModalData(modalData);
+            var modalInstance = $modal.open({
+                templateUrl: 'views/modals/room-selection.html',
+                controller: 'RoomFilterController'
+            });
+
+            modalInstance.result.then(function (r) {
+                if (r) {
+                    $location.search()["room[]"] = $rootScope.selectedRoomIds = r;
+                    $scope.onSelectPi($scope.PI, $rootScope.selectedRoomIds);
+                }
+            });
+        }
+
     })
     .controller('HazardInventoryModalCtrl', function ($scope, $rootScope, $q, $http, applicationControllerFactory, $modalInstance, $modal, convenienceMethods, roleBasedFactory) {
         $scope.constants = Constants;
@@ -281,7 +302,6 @@ angular.module('HazardInventory')
         }
 
         function openSecondaryModal(modalData) {
-            console.log(modalData);
             $modalInstance.dismiss();
             setTimeout(function () {
                 modalData.inspectorIds = [];
@@ -350,14 +370,17 @@ angular.module('HazardInventory')
 
 
         $scope.processRooms = function (inspection, rooms) {
+            if (inspection.processed) return;
+
             for (var j = 0; j < inspection.Rooms.length; j++) {
-                inspection.Rooms[j].checked = true;
+                inspection.Rooms[j][inspection.Key_id + "checked"] = true;
             }
             for (var k = 0; k < rooms.length; k++) {
                 if (!convenienceMethods.arrayContainsObject(inspection.Rooms, rooms[k])) {
                     inspection.Rooms.push(rooms[k]);
                 }
             }
+            inspection.processed = true;
         }
 
         $scope.close = function () {
@@ -369,7 +392,8 @@ angular.module('HazardInventory')
             _.sortBy(rooms, ["Building_name", "Room_name"]);
             return rooms;
         }
-   
+
+        
 
 
     })
@@ -382,11 +406,9 @@ angular.module('HazardInventory')
         $scope.dataStoreManager = dataStoreManager;
         $scope.addInspector = function (int) {
             $scope.modalData.inspectorIds[int] = int;
-            console.log($scope.modalData.inspectorIds);           
         }
         $scope.removeInspector = function (int) {
             $scope.modalData.inspectorIds[int] = null;
-            console.log($scope.modalData.inspectorIds);
         }
         $scope.close = function () {
             af.deleteModalData();
@@ -394,19 +416,48 @@ angular.module('HazardInventory')
         }
 
 
+    })
+    .controller('RoomFilterController', function ($scope, applicationControllerFactory, $modalInstance, $rootScope) {
+        $scope.constants = Constants;
+        var af = applicationControllerFactory;
+        $scope.af = af;
+        $scope.modalData = af.getModalData();
+
+        $scope.getChecked = function (rooms) {
+            return rooms.every(function (r) {                
+                return $rootScope.selectedRoomIds.indexOf(r.Key_id) != -1;
+            })
+        }
+
+        $scope.handleBuildingSelect = function (bldg, room) {
+            bldg.forEach(function(r) { r.checked = room.allChecked})
+        }
+
+        $scope.close = function (rooms) {
+            if(rooms) {
+                var roomIds =[];
+                rooms.forEach(function (r) {
+                    if(r.checked) roomIds.push(r.Key_id)
+                })
+                $modalInstance.close(roomIds);
+            } else {
+                $modalInstance.dismiss();
+            }
+        }
+
     });
-function CommentsCtrl($scope, $modalInstance, convenienceMethods, $q, applicationControllerFactory, roleBasedFactory) {
+    function CommentsCtrl($scope, $modalInstance, convenienceMethods, $q, applicationControllerFactory, roleBasedFactory) {
 
     $scope.tinymceOptions = {
-        plugins: 'link lists',
-        toolbar: 'bold | italic | underline | link | lists | bullist | numlist',
+                            plugins: 'link lists',
+                                toolbar: 'bold | italic | underline | link | lists | bullist | numlist',
         menubar: false,
         elementpath: false,
         content_style: "p,ul li, ol li {font-size:14px}"
-    };
+        };
 
     $scope.constants = Constants;
-    var af = applicationControllerFactory;
+        var af = applicationControllerFactory;
     var rbf = roleBasedFactory;
     $scope.af = af;
     $scope.modalData = af.getModalData();
@@ -415,36 +466,36 @@ function CommentsCtrl($scope, $modalInstance, convenienceMethods, $q, applicatio
 
     $scope.pi = $scope.modalData.PI;
     $scope.piCopy = {
-        Key_id: $scope.pi.Key_id,
-        Is_active: $scope.pi.Is_active,
-        User_id: $scope.pi.User_id,
-        Inspection_notes: $scope.pi.Inspection_notes,
-        Class: "PrincipalInvestigator"
-    };
+            Key_id: $scope.pi.Key_id,
+            Is_active: $scope.pi.Is_active,
+            User_id: $scope.pi.User_id,
+            Inspection_notes: $scope.pi.Inspection_notes,
+        Class : "PrincipalInvestigator"
+        };
 
-    $scope.close = function () {
+        $scope.close = function () {
         $modalInstance.dismiss();
-    };
+        };
 
-    $scope.edit = function (state) {
-        $scope.pi.editNote = state;
+            $scope.edit = function (state) {
+    $scope.pi.editNote = state;
     }
 
     $scope.saveNote = function () {
         $scope.savingNote = true;
-        $scope.error = null;
-        $scope.close();
+    $scope.error = null;
+    $scope.close();
 
-        af.savePI($scope.pi, $scope.piCopy)
-          .then(
+    af.savePI($scope.pi, $scope.piCopy)
+      .then(
             function (returnedPi) {
-                $scope.savingNote = false;
-                $scope.pi.editNote = false;
-                $scope.pi.Inspection_notes = returnedPi.Inspection_notes;
+            $scope.savingNote = false;
+            $scope.pi.editNote = false;
+            $scope.pi.Inspection_notes = returnedPi.Inspection_notes;
             },
             function () {
-                $scope.savingNote = false;
-                $scope.error = "The Inspection Comments could not be saved.  Please check your internet connection and try again."
+            $scope.savingNote = false;
+            $scope.error = "The Inspection Comments could not be saved.  Please check your internet connection and try again."
             }
           )
     }

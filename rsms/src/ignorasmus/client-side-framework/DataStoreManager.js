@@ -28,6 +28,7 @@ var PermissionMap = (function () {
             this.Permissions[className] = {};
             var instance = InstanceFactory.createInstance(className);
             this.Permissions[className].getAll = instance.hasGetAllPermission();
+            //TODO:  this.Permissions[className].save = instance.getHasSavePermissions();
         }
         return this.Permissions[className];
     };
@@ -225,6 +226,7 @@ var DataStoreManager = (function () {
                             }
                         });
                         allComps.push(fluxCompBase[compMap.PropertyName + "Promise"]);
+                        //throw new Error("You don't have permission to call getAll for " + compMap.ChildType);
                     }
                 }
             });
@@ -337,6 +339,7 @@ var DataStoreManager = (function () {
                     delete value.viewModelWatcher.viewModelWatcher;
                     return value.viewModelWatcher;
                 }
+                // otherwise, default deep-cloning happens
             }
         });
     };

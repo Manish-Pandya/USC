@@ -21,7 +21,7 @@ class ActionManager {
 			$this->getPropertyByName("PrincipalInvestigator", 1, "rooms" );
 			return $currentRoles;
 		}
-		return [];
+		return array();
 	}
 
     /**
@@ -4141,7 +4141,7 @@ class ActionManager {
             $inspection = $dao->getById($decodedObject->getEntity_id());
 
             //get the client side email text
-            $text = $decodedObject->getText();
+            $text = "*** Please do not reply to this message.  This email address is not checked. *** \n\n " . $decodedObject->getText();
 
             // Init an array of recipient Email addresses and another of inspector email addresses
             $recipientEmails = array();
@@ -4161,7 +4161,6 @@ class ActionManager {
             if (!empty($otherEmails)) {
                 $recipientEmails = array_merge($recipientEmails,$otherEmails);
             }
-
             // Iterate the inspectors and add their email addresses to our array
             foreach ($inspection->getInspectors() as $inspector){
                 $user = $inspector->getUser();
@@ -4170,7 +4169,13 @@ class ActionManager {
 
             $footerText = "\n\n Access the results of this inspection, and document any corrective actions taken, by logging into the RSMS portal located at http://radon.qa.sc.edu/rsms with your university ID and password.";
             // Send the email
-            mail(implode($recipientEmails,","),'EHS Laboratory Safety Inspection Results',$text . $footerText,'From:no-reply@ehs.sc.edu<RSMS Portal>\r\nCc: '. implode($inspectorEmails,","));
+            $LOG->fatal(implode(",", $recipientEmails));
+            $LOG->fatal($text);
+
+            if(!mail(implode(",", $recipientEmails),'EHS Laboratory Safety Inspection Results',$text . $footerText,'From:LabInspectionReports@ehs.sc.edu<RSMS Portal>\r\nCc: '. implode(",", $inspectorEmails))){
+                $LOG->fatal("Couldn't send");
+                return new ActionError("Couldn't send");
+            };
 
             $inspection->setNotification_date(date("Y-m-d H:i:s"));
             $dao->save($inspection);
@@ -4180,7 +4185,7 @@ class ActionManager {
     }
 
     public function makeFancyNames(){
-        $users = getAllUsers();
+        $users = $this->getAllUsers();
         foreach($users as $user){
             if(stristr($user->getName(), ", ")){
                 $nameParts = explode(", ", $user->getName());

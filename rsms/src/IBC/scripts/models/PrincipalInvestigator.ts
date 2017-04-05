@@ -1,7 +1,7 @@
 ﻿namespace ibc {
     export class PrincipalInvestigator extends FluxCompositerBase {
 
-        static urlMapping = new UrlMapping("getAllPIs", "getPIById&id=", "savePI");
+        static urlMapping = new UrlMapping("getAllIBCPIs", "getPIById&id=", "savePI");
 
         User: User;
         static UserMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=", "User", "User_id");

@@ -20,6 +20,8 @@ class PIAuthorization extends RadCrud{
 			"amendment_number"			=> "integer",
             "termination_date"          => "timestamp",
             "termination_notes"         => "text",
+            "new_notes"                 => "text",
+            "update_notes"              => "text",
             "approval_date"             => "timestamp",
 
 			//GenericCrud
@@ -70,6 +72,9 @@ class PIAuthorization extends RadCrud{
 
 	/** Array of Authorizations entities */
 	private $authorizations;
+
+    private $new_notes;
+    private $update_notes;
 
 	public function __construct(){
 		// Define which subentities to load
@@ -149,6 +154,12 @@ class PIAuthorization extends RadCrud{
         }
         return $this->piName;
     }
+
+    public function getNew_notes(){return $this->new_notes;}
+    public function setNew_notes($notes){$this->new_notes = $notes;}
+
+    public function getUpdate_notes(){return $this->update_notes;}
+    public function setUpdate_notes($notes){$this->update_notes = $notes;}
 
 }
 

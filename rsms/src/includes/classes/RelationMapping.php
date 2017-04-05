@@ -15,8 +15,6 @@ class RelationMapping {
 	public function __construct($classA, $classB, $tableName,  $parentColumn, $childColumn, $override = null) {
 
         if($override != null){
-            $log = Logger::getLogger("checking $override");
-            $log->fatal($override);
             $this->override = $override;
         }
 
@@ -28,14 +26,10 @@ class RelationMapping {
 
 	// checks if this relationmapping contains the table name relating to the given class names
 	public function isPresent($classA, $classB, $override = null) {
-        $log = Logger::getLogger("checking classes");
-        $log->fatal($override);
-        $log->fatal($this->override);
 
 		if(($this->override != NULL && $override != null && $this->override == $override) || ($this->override == NULL && in_array($classA, $this->classesToCheck) && in_array($classB, $this->classesToCheck)) ) {
 			//if the first class passed is the second index of our array, we have asked for the $classB->get$classA()
-			$log->fatal($classA);
-			$log->fatal($this->classesToCheck[1]);
+		
 			if($classA == $this->classesToCheck[1]){
 				$this->isReversed = true;
 			}

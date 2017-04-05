@@ -166,6 +166,7 @@ angular
     .filter("status", function () {
         return function (cabs, string) {
             if (!cabs) return;
+
             if (!string) return cabs;
             return cabs.filter(function (c) {
                 return c.EquipmentInspections && c.EquipmentInspections.length && c.EquipmentInspections.some(function (i) {
@@ -237,6 +238,14 @@ angular
             collection.every((i) => {
                 return !Array.isArray(i[prop]) ? _.isEqual(i[prop], collection[0][prop]) : i[prop].every((j) => { return _.isEqual(_.omit(j, "$$hashKey"), _.omit(i[prop][0],  "$$hashKey")) });
             })  ? [collection[0]] : collection;
+        }
+    })
+    .filter("nameFilter", function () {
+        return function (pis, string) {
+            if (!string) return pis;
+            return pis.filter(function (pi) {
+                return !string || ((pi.Name && pi.Name.indexOf(string) != -1) || (pi.User && pi.User.Name && pi.User.Name.indexOf(string) != -1));
+            })
         }
     })
 

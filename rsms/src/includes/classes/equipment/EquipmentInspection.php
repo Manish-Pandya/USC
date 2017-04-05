@@ -45,8 +45,11 @@ class EquipmentInspection extends GenericCrud{
 
 		// Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getRoom");
+		$entityMaps[] = new EntityMap("lazy","getRoom");
         $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
+        $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+
+        
 		$this->setEntityMaps($entityMaps);
 	}
 
