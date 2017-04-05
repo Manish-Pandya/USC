@@ -123,6 +123,7 @@ abstract class FluxCompositerBase {
             console.log( new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server") );
         }
         this.thisClass = (<any>this).constructor;
+        this.TypeName = (<any>this).constructor.name; // default value for TypeName
     }
 
     //----------------------------------------------------------------------
