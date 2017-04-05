@@ -12,8 +12,8 @@ angular.module('ng-IBC')
         console.log("IBCDetailCtrl running");
 
         var getProtocol = function (): Promise<any> {
-            $scope.protocol = new ViewModelInstance();
-            $scope.revision = new ViewModelInstance();
+            $scope.protocol = new ViewModelHolder();
+            $scope.revision = new ViewModelHolder();
             $scope.responsesMapped = <{ [index: string]: ibc.IBCResponse[] }>Object.create(null);
             return $q.all([DataStoreManager.getById("IBCProtocol", $stateParams.id, $scope.protocol, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.SectionMap])])
                 .then(
@@ -24,7 +24,7 @@ angular.module('ng-IBC')
                     DataStoreManager._actualModel['IBCProtocol']['Data'][0].viewModelWatcher.Department_id = DataStoreManager._actualModel['IBCProtocol']['Data'][0].viewModelWatcher.Department_id + " updated in controller";
 
                     return;
-                        DataStoreManager.getById("IBCSection", $scope.protocol.data.IBCSections[0].UID, new ViewModelInstance(), false)
+                        DataStoreManager.getById("IBCSection", $scope.protocol.data.IBCSections[0].UID, new ViewModelHolder(), false)
                             .then(
                             function (someData) {
                                 var pRevision: ibc.IBCProtocolRevision = $scope.protocol.data.IBCProtocolRevisions[$scope.protocol.data.IBCProtocolRevisions.length - 1];
