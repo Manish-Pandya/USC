@@ -193,6 +193,31 @@ angular.module('EquipmentModule')
             return true;
         return new Date().getFullYear() < parseInt($rootScope.selectedCertificationDate);
     };
+    $scope.openAttachtmentModal = function (object, insp) {
+        var modalData = {};
+        modalData[object.Class] = object;
+        object.SelectedInspection = insp;
+        DataStoreManager.ModalData = modalData;
+        var modalInstance = $modal.open({
+            templateUrl: 'views/modals/attachment-modal.html',
+            controller: 'UploadModalCtrl'
+        });
+        modalInstance.result.then(function (r) {
+            if (!object.Key_id) {
+                if (!Array.isArray(r)) {
+                    console.log(r);
+                    //$rootScope.cabinets.push(r);
+                    var needsPush = true;
+                    $rootScope.cabinets.data.forEach(function (c) {
+                        if (c.UID == r.UID)
+                            needsPush = false;
+                    });
+                    if (needsPush)
+                        $rootScope.cabinets.data.push(r);
+                }
+            }
+        });
+    };
 })
     .controller('BioSafetyCabinetsModalCtrl', function ($scope, $q, $modal, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
     var af = $scope.af = applicationControllerFactory;
@@ -294,6 +319,47 @@ angular.module('EquipmentModule')
 })
     .controller('warningModalCtrl', function ($scope, $rootScope, cabinet, $modalInstance) {
     $scope.cabinet = cabinet;
+    $scope.close = function () {
+        $rootScope.modalClosed = true;
+        $modalInstance.dismiss();
+    };
+})
+    .controller('UploadModalCtrl', function ($scope, $rootScope, $modalInstance, $q) {
+    $scope.modalData = DataStoreManager.ModalData;
+    $scope.$on('fileUpload', function (event, data) {
+        var formData = data.formData;
+        data.clickTarget.Is_active = false;
+        var insp = data.clickTarget;
+        insp.reportUploaded = false;
+        insp.reportUploading = true;
+        $scope.$apply();
+        var xhr = new XMLHttpRequest;
+        var url = '../ajaxaction.php?action=' + data.path;
+        if (insp.Key_id)
+            url = url + "&id=" + insp.Key_id;
+        xhr.open('POST', url, true);
+        xhr.send(formData);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState !== XMLHttpRequest.DONE || xhr.status !== 200) {
+                return;
+            }
+            if (xhr.status == 200) {
+                insp.reportUploaded = true;
+                insp.reportUploading = false;
+                if (data.path.toLowerCase().indexOf("quote") == -1) {
+                    insp.Report_path = xhr.responseText.replace(/['"]+/g, '');
+                }
+                else {
+                    insp.Quote_path = xhr.responseText.replace(/['"]+/g, '');
+                }
+                $scope.$apply();
+            }
+        };
+    });
+    $scope.remove = function (inspection, type) {
+        inspection[type] = "testytest";
+        return $rootScope.saving = $q.all([DataStoreManager.save(inspection)]).then(function (i) { console.log(i); return inspection; });
+    };
     $scope.close = function () {
         $rootScope.modalClosed = true;
         $modalInstance.dismiss();

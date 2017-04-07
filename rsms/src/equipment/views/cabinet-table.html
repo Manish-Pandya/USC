@@ -26,7 +26,7 @@
                     STATUS
                     <input ng-model="filter.status" style="width:100%;" placeholder="Filter by Status" />
                 </th>
-                <th>
+                <th ng-if="!uncertified">
                     REPORT/<br />Quote
                 </th>
                 <th>COMMENTS</th>
@@ -97,34 +97,21 @@
                         </div>
                     </div>                             
                 </td>
-                <td>
+                <td ng-if="!uncertified">
                     <div>
                         <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
-                            <span>
-                                <sapn ng-if="inspection.Status == inspection.Status == 'FAIL' || inspection.Status == 'PASS'">
-                                    <span class="btn-group dropup">
-                                        <a ng-if="inspection.Report_path" class="btn btn-success" href="../biosafety-committees/protocol-documents/{{inspection.Report_path}}" target="_blank">Report</a>
-                                        <a ng-if="!inspection.Report_path" class="btn btn-success disabled">Report</a>
-
-                                        <a class="btn dropdown-toggle upload-container" click-target="inspection" url-fragment="uploadReportCertDocument">
-                                            <span class="icon-upload-4"></span>
-                                            <input type="file" name="file" id="file" class="inputfile inputfile-1" />
-                                        </a>
-                                    </span>
-
-                                    <span class="btn-group dropup">
-                                        <a ng-if="inspection.Quote_path" class="btn btn-info" href="../biosafety-committees/protocol-documents/{{inspection.Quote_path}}" target="_blank">Quote</a>
-                                        <a ng-if="!inspection.Quote_path" class="btn btn-info disabled">Quote</a>
-
-                                        <a class="btn dropdown-toggle upload-container" click-target="inspection" url-fragment="uploadReportQuoteDocument">
-                                            <span class="icon-upload-4"></span>
-                                            <input type="file" name="file" id="file" class="inputfile inputfile-1" />
-                                        </a>
-                                    </span>
-                                </sapn>
+                            <span ng-if="inspection.Status == inspection.Status == 'FAIL' || inspection.Status == 'PASS'">
+                                <span class="span8" ng-if="inspection.Report_path || inspection.Quote_path">
+                                    <a ng-if="inspection.Report_path" class="btn btn-success" href="../biosafety-committees/protocol-documents/{{inspection.Report_path}}" target="_blank">Report</a>
+                                    <a ng-if="inspection.Quote_path" class="btn btn-info" href="../biosafety-committees/protocol-documents/{{inspection.Quote_path}}" target="_blank">Quote</a>
+                                </span>
+                                <!--ng-class="{'span4': inspection.Report_path || inspection.Quote_path}"-->
+                                <span class="span4" ng-class="{'center':!inspection.Report_path && !inspection.Quote_path, 'span4 top-some': inspection.Report_path || inspection.Quote_path, 'top-all':inspection.Report_path && inspection.Quote_path}">
+                                    <i class="icon-paperclip" ng-click="openAttachtmentModal(cabinet, inspection)" style="cursor:pointer"></i>
+                                </span>
                             </span>
                         </div>
-                    </div>       
+                    </div>
                 </td>
                 <td>
                     <div>
