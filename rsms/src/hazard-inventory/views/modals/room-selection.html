@@ -1,0 +1,35 @@
+﻿
+<div class="modal-header" style="padding:0;">
+    <h2 style="padding:15px;" class="redBg">
+        Select Room(s)
+    </h2>
+</div>
+<div class="modal-body">
+    <ul>
+        <li ng-repeat="(key, building) in modalData.PI.Rooms | groupBy: 'Building.Name'">
+            <h4>
+                <label class="checkbox inline">
+                    <input type="checkbox" ng-model="building[0].allChecked" ng-change="handleBuildingSelect(building, building[0])" ng-init="building[0].allChecked = getChecked(building)" />
+                    <span class="metro-checkbox">
+                    </span>
+                </label>
+                {{key}}
+            </h4>           
+            
+            <ul style="margin:3px 0 20px 10px">
+                <li ng-repeat="(key, room) in rooms = (building | activeOnly | orderBy: 'Name')">
+                    <label class="checkbox inline">
+                        <input type="checkbox" ng-model="room.checked" ng-init="room.checked = selectedRoomIds.indexOf(room.Key_id) != -1" />
+                        <span class="metro-checkbox">
+                            {{room.Name}}
+                        </span>
+                    </label>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
+<div class="modal-footer">
+    <a class="btn btn-large btn-success left" ng-click="close(modalData.PI.Rooms)"><i class="icon-search"></i>Apply Filter</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Cancel</a>
+</div>

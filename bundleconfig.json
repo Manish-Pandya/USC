@@ -1,0 +1,36 @@
+[
+  {
+    "outputFileName": "rsms/src/js/buildingHub.js",
+    "inputFiles": [
+      "rsms/src/js/buildingHub.js"
+    ]
+  },
+  {
+    "outputFileName": "rsms/src/js/bundle.js",
+    "inputFiles": [
+      "rsms/src/js/buildingHub.js",
+      "rsms/src/js/buildingHub.min.js",
+      "rsms/src/js/checklistHub.js",
+      "rsms/src/js/constants.js",
+      "rsms/src/js/convenienceMethodsModule.js",
+      "rsms/src/js/departmentHub.js",
+      "rsms/src/js/emergencyInfoHub.js",
+      "rsms/src/js/HazardHub.js",
+      "rsms/src/js/homeApp.js",
+      "rsms/src/js/inspectionChecklist.js",
+      "rsms/src/js/locationHub.js",
+      "rsms/src/js/main.js",
+      "rsms/src/js/manageInspections.js",
+      "rsms/src/js/modalPosition.js",
+      "rsms/src/js/pi.js",
+      "rsms/src/js/piHub.js",
+      "rsms/src/js/poptop.js",
+      "rsms/src/js/postInspection.js",
+      "rsms/src/js/questionHub.js",
+      "rsms/src/js/roleBased.js",
+      "rsms/src/js/scrolltable.js",
+      "rsms/src/js/userHub.js",
+      "rsms/src/js/users.js"
+    ]
+  }
+]

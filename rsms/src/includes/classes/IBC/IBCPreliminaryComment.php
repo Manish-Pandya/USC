@@ -8,7 +8,7 @@
  * @version 1.0
  * @author Matt Breeden
  */
-class IBCPreliminaryComment
+class IBCPreliminaryComment extends GenericCrud
 {
 
 	/** Name of the DB Table */
