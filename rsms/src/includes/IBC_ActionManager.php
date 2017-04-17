@@ -356,6 +356,33 @@ class IBC_ActionManager extends ActionManager {
         
         return $pis;
     }
+
+    /**
+     * Summary of getAllIBCPreliminaryComments
+     * @return array
+     */
+    function getAllIBCPreliminaryComments(){
+        //TODO: restrict revisions to only those of protocols that belong to user
+        $dao = $this->getDao(new IBCPreliminaryComment());
+        return $dao->getAll();
+    }
+    /**
+     * @param integer $id
+     * @return GenericCrud | IBCPreliminaryCommentById | ActionError
+     */
+    function getIBCPreliminaryCommentById($id = null){
+        if($id == NULL)$id = $this->getValueFromRequest('id', $id);
+        if($id == NULL)return new ActionError("No request param 'id' provided.");
+        $dao = $this->getDao(new IBCPreliminaryComment());
+        return $dao->getById($id);
+    }
+
+    public function saveIBCPreliminaryComment(IBCPreliminaryComment $comment){
+        if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
+        if($decodedObject == NULL)return new ActionError("No input read from stream");
+        $dao = $this->getDao($decodedObject);
+        return $dao->save($decodedObject);
+    }
 }
 
 ?>
