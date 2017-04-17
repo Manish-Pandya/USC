@@ -82,7 +82,7 @@ angular
             return section;
         });
     };
-    $rootScope.saveReponses = function (responses, revision, thing) {
+    $rootScope.saveReponses = function (responses, revision) {
         return $q.all([$rootScope.save(responses)]).then(function (returnedResponses) {
             revision.getResponsesMapped();
             return revision;

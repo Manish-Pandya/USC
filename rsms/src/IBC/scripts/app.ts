@@ -90,7 +90,7 @@ angular
                 })
         }
 
-        $rootScope.saveReponses = function (responses: ibc.IBCResponse[], revision: ibc.IBCProtocolRevision, thing): Promise<any> {
+        $rootScope.saveReponses = function (responses: ibc.IBCResponse[], revision: ibc.IBCProtocolRevision): Promise<any> {
             return $q.all([$rootScope.save(responses)]).then((returnedResponses: ibc.IBCResponse[]) => {
                 revision.getResponsesMapped();
                 return revision;

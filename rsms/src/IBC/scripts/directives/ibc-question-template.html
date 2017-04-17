@@ -21,17 +21,17 @@
     </ul>
 
     <div ng-if="question.Answer_type == $root.constants.IBC_ANSWER_TYPE.TABLE">
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped" ng-init="tableResponses = []"> <!-- create tableResponses to hold these funky responses for saving -->
             <tr>
                 <th ng-repeat="a in question.IBCPossibleAnswers | orderBy:'Grid_column_index'">{{a.Answer_text}}<br />{{revision.responsesMapped[question.IBCPossibleAnswers].Text}}</th>
             </tr>
             <tr ng-repeat="(key, response) in revision.responsesMapped[question.IBCPossibleAnswers[0].UID]">
                 <td ng-repeat="a in question.IBCPossibleAnswers | orderBy:'Grid_column_index'">
-                    <input ng-model="revision.responsesMapped[a.UID][key].Text"/>
+                    <input ng-model="revision.responsesMapped[a.UID][key].Text" ng-init="tableResponses.push(revision.responsesMapped[a.UID][key])"/> <!-- push each prepared response to tableResponses -->
                 </td>
             </tr>
         </table>
-        <a class="btn btn-small btn-success left" ng-click="$root.saveReponses(revision.responsesMapped[a.UID],revision)"><i class="icon-checkmark"></i>Save</a>
+        <a class="btn btn-small btn-success left" ng-click="$root.saveReponses(tableResponses,revision)"><i class="icon-checkmark"></i>Save</a>
     </div>
 
     <div ng-if="question.Answer_type == $root.constants.IBC_ANSWER_TYPE.FREE_TEXT">
