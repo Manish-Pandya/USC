@@ -20,8 +20,9 @@
                     <span class="help-block" style="">mm/dd/yy</span>
                 </div>
             </div>
+            <a style="margin: 23px 16px;" ng-if="!dueDate || !endDate" class="btn btn-success left disabled"><i class="icon-checkmark"></i>Create</a>
 
-            <a style="margin: 23px 16px;" ng-click="createInventory(endDate, dueDate)" class="btn btn-success left"><i class="icon-checkmark"></i>Create</a>
+            <a style="margin: 23px 16px;" ng-if="dueDate && endDate" ng-click="createInventory(endDate, dueDate)" class="btn btn-success left"><i class="icon-checkmark"></i>Create</a>
         </form>
         <h2 ng-if="inventory"><i class="fa fa-calendar"></i>Most Recent Quarterly Inventory</h2>
         <div ng-if="inventory" class="card full">

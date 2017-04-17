@@ -160,9 +160,12 @@
     text-decoration: none;
 }
 .right-column {
-    margin-left: 210px;
+ 
     padding-bottom: 200px;
     padding-top: 25px;
+}
+.right-column.nav-open {
+    margin-left: 210px;
 }
 .right-column > div{
     padding: 10px 10px 0 5px;
@@ -312,7 +315,7 @@ button.btn:not(.btn-large) {
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(3){
     padding:0;
-    width:8%;
+    width: 4%;
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(4){
     width:7%;
@@ -338,14 +341,21 @@ button.btn:not(.btn-large) {
 
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(10){
-    width:9%;
+    width: 10%;
     padding:0;
-
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(11){
     width:6%;
     padding:0;
 
+}
+.top-some{
+    padding-top: 7px;
+    padding-left: 4px;
+}
+.top-all{
+    padding-top:20px;
+    padding-left:4px
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr td:nth-of-type(12){
     width:6%;

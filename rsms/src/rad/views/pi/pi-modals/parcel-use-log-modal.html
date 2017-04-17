@@ -1,0 +1,143 @@
+﻿<form ng-submit="saveParcelUse(parcel, ParcelUseCopy,use)" class="form use-log-modal-form">
+    <div class="modal-body use-log-modal">        
+        <div class="use-log-form span8">
+            <h2>Usage Information</h2>
+
+            <div class="control-group">
+                <label class="control-label" for="inputEmail">Date Used:</label>
+                <div class="controls">
+                    <input ng-model="ParcelUseCopy.view_Date_used">
+                    <span class="help-block" style="">mm/dd/yy</span>
+                </div>
+            </div>
+
+            <div class="control-group" style="max-width:100%">
+                <label class="control-label" for="experiment-use">Use:</label>
+                <div class="controls">
+                    <textarea style="max-width:100%" rows="3" name="experiment-use" ng-model="ParcelUseCopy.Experiment_use" maxlength="60"></textarea>
+                </div>
+            </div>
+
+            <label class="control-label" for="quantity">Amount:</label>
+            <div class="control-group">
+                <div class="controls input-append">
+                    <input style="max-width:50%;" name="quantity" ng-model="ParcelUseCopy.Quantity">
+                    <span class="help-block">mCi</span>
+                </div>
+            </div>
+            <section class="disposal-info">
+                <h3>Disposal Information</h3>
+                <label class="control-label" for="solid-curies">Solid Disposals: <a ng-click="addAmount('Solids')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
+                <div ng-repeat="solid in solids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SOLID})">
+                    <div class="control-group">
+                        <div class="controls input-append">
+                            <input ng-disabled="solid.IsPickedUp" style="max-width:50%;" name="solid-curies" ng-model="solid.Curie_level">
+                            <span class="add-on">mCi <i title="Picked Up" ng-if="solid.IsPickedUp" class="danger icon-remove"></i></span>
+                        </div>
+                        <label>Select Receptical:</label>
+                        <select ng-disabled="solid.IsPickedUp" ng-model="solid.Waste_bag" ng-selected="selectedBag(solid, pi.WasteBags)" ng-change="selectContainer(solid)"
+                                ng-options="bag.Container_name for bag in pi.WasteBags | availableBags:solid">
+                            <option value="">Select Receptical</option>
+                        </select>
+
+                    </div>
+                </div>
+
+                <label class="control-label" for="liquid-curies">Liquid Disposals: <a ng-click="addAmount('Liquids')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
+                <div ng-repeat="liquid in liquids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.LIQUID})">
+                    <div class="control-group">
+                        <div class="controls input-append">
+                            <input name="liquid-curies" ng-model="liquid.Curie_level" ng-disabled="liquid.IsPickedUp">
+                            <span class="add-on">mCi <i title="Picked Up" ng-if="liquid.IsPickedUp" class="danger icon-remove"></i></span>
+                        </div>
+                        <label>Select Carboy:</label>
+                        <select ng-disabled="liquid.IsPickedUp" ng-init="liquid.Carboy = selectedCarboy(liquid, pi.CarboyUseCycles)" ng-model="liquid.Carboy_id"
+                                ng-options="cycle.Key_id as cycle.Carboy.Carboy_number for cycle in pi.CarboyUseCycles">
+                            <option value="">Select Carboy</option>
+                        </select>
+
+                    </div>
+                </div>
+
+                <label class="control-label" for="vial-curies">Scint Vial Disposals: <a ng-click="addAmount('Vials')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
+                <div ng-repeat="vial in vials = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.VIAL})">
+                    <div class="control-group">
+                        <div class="controls input-append">
+                            <input ng-disabled="vial.IsPickedUp" style="max-width:50%;" name="vial-curies" ng-model="vial.Curie_level">
+                            <span class="help-block ">mCi <i title="Picked Up" ng-if="vial.IsPickedUp" class="danger icon-remove"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <label class="control-label" for="vial-curies">Other Disposals: <a ng-click="addAmount('Others')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
+                <div ng-repeat="other in others = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.OTHER})">
+                    <div class="control-group" style="width:100%;">
+                        <div class="controls input-append">
+                            <input style="max-width:50%;" name="other-curies" ng-model="other.Curie_level">
+                            <span class="add-on">mCi</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <textarea maxlength='60' placeholder="Comments" ng-model="other.Comments"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="pull-left">
+                <button class="btn btn-success left" type="submit"><i class="icon-checkmark"></i>Save Usage</button>
+                <a class="btn btn-danger left" ng-click="close(use, parcel)"><i class="icon-cancel-2"></i>Cancel</a>
+             </div>
+        </div>
+
+        <div class="parcel-info span4">
+            <h2>Package Information</h2>
+            <ul>
+                <li>
+                    <h3>R.S. Number</h3>
+                    <div>
+                        {{parcel.Rs_number}}
+                    </div>
+                </li>
+                <li>
+                    <h3>Isotope</h3>
+                    <div>
+                        {{parcel.Authorization.IsotopeName}}
+                    </div>
+                </li>
+                <li>
+                    <h3>Arrival Date</h3>
+                    <div>
+                        {{parcel.Arrival_date | dateToISO}}
+                    </div>
+                </li>
+                <li>
+                    <h3>R.S. Number</h3>
+                    <div>
+                        {{parcel.Rs_number}}
+                    </div>
+                </li>
+                <li>
+                    <h3>Orginal Activity</h3>
+                    <div>
+                        {{parcel.Quantity}} mCi
+                    </div>
+                </li>
+                <li>
+                    <h3>Usable Activity</h3>
+                    <div>
+                        {{parcel.Remainder}} mCi
+                    </div>
+                </li>
+                <li>
+                    <h3>Amount On Hand</h3>
+                    <div>
+                        {{parcel.AmountOnHand}} mCi
+                    </div>
+                </li>
+            </ul>       
+        </div>
+    </div>
+   
+</form>

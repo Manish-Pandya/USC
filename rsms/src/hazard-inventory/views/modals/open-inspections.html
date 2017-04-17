@@ -1,16 +1,22 @@
 <div class="modal-header wide-modal" style="padding:0;">
     <h2 style="padding:15px;" class="redBg">{{modalData.PI.User.Name}}'s scheduled inspections
-        <a class="btn btn-success left" ng-click="af.initialiseInspection(modalData.PI,[USER.Inspector_id])"><i class="icon-plus-2"></i>New Inspection</a>
-           <button ng-disabled="needsConfirmation" ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.RADIATION)" class="btn btn-primary left" ng-click="checkRad(modalData.PI, [USER.Inspector_id]);"><img src="../img/radiation-large-icon.png">New Radiation Inspection</button>
-           <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
+        <button ng-disabled="confirmer.needsConfirmation" class="btn btn-success left" ng-click="checkSafetyInspector(modalData.PI, [USER.Inspector_id]);"><i class="icon-plus-2"></i>New Inspection</button>
+        <button ng-disabled="confirmer.needsRadConfirmation" ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.RADIATION)" class="btn btn-primary left" ng-click="checkRad(modalData.PI, [USER.Inspector_id]);"><img src="../img/radiation-large-icon.png">New Radiation Inspection</button>
+        <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
     </h2>
 </div>
 <div class="modal-body">
     <span ng-init="openInspections = {}"></span>
     <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
-    <h3 class="alert alert-info" style="box-shadow:0 0 10px rgba(0,0,0,.5)" ng-if="needsConfirmation">You do not have a Radiation Inspector role. Please verify you want to continue this radiation inspection.
+    <h3 class="alert alert-info" style="box-shadow:0 0 10px rgba(0,0,0,.5)" ng-if="confirmer.needsRadConfirmation">You do not have a Radiation Inspector role. Please verify you want to continue this radiation inspection.
         <button class="btn btn-primary left" ng-click="af.initialiseInspection(modalData.PI ,[USER.Inspector_id], false, true);"><img src="../img/radiation-large-icon.png">Continue</button>
-        <button class="btn btn-danger left" ng-click="needsConfirmation = false"><i class="icon-cancel-2"></i>Cancel</button>
+        <button class="btn btn-danger left" ng-click="confirmer.needsRadConfirmation = false"><i class="icon-cancel-2"></i>Cancel</button>
+    </h3>
+
+    <h3 class="alert alert-info" style="box-shadow:0 0 10px rgba(0,0,0,.5)" ng-if="confirmer.needsConfirmation">
+        You do not have a Safety Inspector role. Please verify you want to continue this biochem inspection.
+        <button class="btn btn-primary left" ng-click="af.initialiseInspection(modalData.PI ,[USER.Inspector_id]);">Continue</button>
+        <button class="btn btn-danger left" ng-click="confirmer.needsConfirmation = false"><i class="icon-cancel-2"></i>Cancel</button>
     </h3>
     <!-- process the pis rooms and the inspections rooms so we can make a view model that incorporates all possible room for each inspeciton-->
     <table ng-if="!modalData.inspectionsPendings" ng-show="openInspections.length && modalData.PI.Rooms" class="table table-striped table-bordered">
@@ -33,7 +39,7 @@
                             <ul style="margin:5px;">
                                 <li ng-repeat="(key,room) in building|orderBy:'Name'">
                                     <label class="checkbox inline">
-                                        <input type="checkbox" ng-change="af.saveInspectionRoomRelationship( inspection, room )" ng-model="room.checked"/>
+                                        <input type="checkbox" ng-change="af.saveInspectionRoomRelationship( inspection, room )" ng-model="room[inspection.Key_id+'checked']"/>
                                         <span class="metro-checkbox"><span once-text="room.Name"></span><i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
                                     </label>
                                 </li>
@@ -61,6 +67,7 @@
                 </td>
                 <td>
                     <span ng-if="inspection.Status">
+
                         <span once-text="inspection.Status"></span>
                         <span ng-if="inspection.Status == constants.INSPECTION.STATUS.SCHEDULED">
                             <br>Scheduled ({{inspection.Schedule_month | getMonthName}})

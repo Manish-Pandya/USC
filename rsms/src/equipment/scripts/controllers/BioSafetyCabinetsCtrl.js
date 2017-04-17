@@ -10,12 +10,16 @@ angular.module('EquipmentModule')
     .controller('BioSafetyCabinetsCtrl', function ($scope, applicationControllerFactory, $stateParams, $rootScope, $modal, convenienceMethods, $q) {
     var af = $scope.af = applicationControllerFactory;
     $scope.constants = Constants;
+    $rootScope.modalClosed = true;
     var getAll = function () {
-        $rootScope.cabinets = [];
-        $scope.campuses = [];
-        return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $rootScope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false)])
+        $rootScope.cabinets = new ViewModelInstance();
+        $rootScope.Rooms = new ViewModelInstance();
+        $scope.campuses = new ViewModelInstance();
+        return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $rootScope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false), DataStoreManager.getAll("Room", $rootScope.Rooms, true)])
             .then(function (whateverGotReturned) {
             getYears($rootScope.cabinets);
+            var actModCab = DataStoreManager.getActualModelEquivalent($rootScope.cabinets.data[1].EquipmentInspections[0]);
+            console.log(DataStoreManager._actualModel);
             return true;
         })
             .catch(function (reason) {
@@ -29,7 +33,7 @@ angular.module('EquipmentModule')
         $rootScope.selectedCertificationDate = "";
         $rootScope.selectedDueDate = "";
         var inspections = [];
-        cabs.forEach(function (c) {
+        cabs.data.forEach(function (c) {
             if (c.EquipmentInspections)
                 inspections = inspections.concat(c.EquipmentInspections);
         });
@@ -65,24 +69,37 @@ angular.module('EquipmentModule')
         cabinet.Is_active = !cabinet.Is_active;
         $scope.saving = af.save(cabinet);
     };
-    $scope.openModal = function (object, inspection, isCabinet) {
+    $scope.openModal = function (object, insp, isCabinet) {
         var modalData = { inspection: null };
         if (!object) {
             object = new equipment.BioSafetyCabinet();
             object.Is_active = true;
             object.Class = "BioSafetyCabinet";
+            console.log(object);
         }
-        if (isCabinet && !inspection) {
+        //build new inspection object every time so we can assure we have a good one of proper type
+        var inspection;
+        if (!insp) {
             inspection = new equipment.EquipmentInspection();
-            inspection.Is_active = true;
-            inspection.Class = "EquipmentInspection";
+            inspection['Is_active'] = true;
+            inspection['Class'] = "EquipmentInspection";
             inspection.Equipment_class = "BioSafetyCabinet";
             inspection.Equipment_id = object.Key_id || null;
-            inspection.PrincipalInvestigators = inspection.PrincipalInvestigators || [];
-            object.SelectedInspection = inspection;
+            inspection['Key_id'] = insp ? insp.Key_id : null;
+            inspection.Comments = insp ? insp.Comments : null;
+            inspection.Frequency = insp ? insp.Frequency : null;
+            inspection.Room_id = insp ? insp.Room_id : null;
+            inspection.Certification_date = insp ? insp.Certification_date : null;
+            inspection.Due_date = insp ? insp.Due_date : null;
+            inspection.Status = insp ? insp.Status : null;
+            inspection.UID = insp ? insp.Key_id : null;
+            inspection.PrincipalInvestigators = insp ? insp.PrincipalInvestigators : [];
+        }
+        else {
+            inspection = insp;
         }
         modalData[object.Class] = object;
-        modalData.inspection = inspection;
+        object.SelectedInspection = inspection;
         DataStoreManager.ModalData = modalData;
         modalData["isCabinet"] = isCabinet;
         var modalInstance = $modal.open({
@@ -90,14 +107,19 @@ angular.module('EquipmentModule')
             controller: 'BioSafetyCabinetsModalCtrl'
         });
         modalInstance.result.then(function (r) {
-            //bandaids for data binding after save
             if (!object.Key_id) {
                 if (!Array.isArray(r)) {
                     console.log(r);
-                    $rootScope.cabinets.push(r);
+                    //$rootScope.cabinets.push(r);
+                    var needsPush = true;
+                    $rootScope.cabinets.data.forEach(function (c) {
+                        if (c.UID == r.UID)
+                            needsPush = false;
+                    });
+                    if (needsPush)
+                        $rootScope.cabinets.data.push(r);
                 }
             }
-            object.doCompose([equipment.BioSafetyCabinet.EquipmentInspectionMap]);
         });
     };
     $scope.openPiInfoModal = function (pi) {
@@ -151,82 +173,86 @@ angular.module('EquipmentModule')
             }
         };
     });
+    $scope.testSave = function (i) {
+        DataStoreManager._actualModel["EquipmentInspection"].Data.forEach(function (i) {
+            i.viewModelWatcher["Certification_date"] = "2017-03-01 15:32:56";
+        });
+        i["Certification_date"] = "2017-01-01 15:32:56";
+        $scope.saving = $q.all([DataStoreManager.save(i)]).then(function (c) {
+            console.log("server return: ", c);
+            console.log("inspection from view as passed to save call: ", i);
+            console.log("DataStoreManger._actualModel", DataStoreManager._actualModel);
+        });
+    };
+    $scope.updateCertDate = function (date) {
+        $rootScope.selectedCertificationDate = date;
+    };
+    $scope.getIsPreviousYear = function (uncert) {
+        if (uncert === void 0) { uncert = null; }
+        if (uncert)
+            return true;
+        return new Date().getFullYear() < parseInt($rootScope.selectedCertificationDate);
+    };
+    $scope.openAttachtmentModal = function (object, insp) {
+        var modalData = {};
+        modalData[object.Class] = object;
+        object.SelectedInspection = insp;
+        DataStoreManager.ModalData = modalData;
+        var modalInstance = $modal.open({
+            templateUrl: 'views/modals/attachment-modal.html',
+            controller: 'UploadModalCtrl'
+        });
+        modalInstance.result.then(function (r) {
+            if (!object.Key_id) {
+                if (!Array.isArray(r)) {
+                    console.log(r);
+                    //$rootScope.cabinets.push(r);
+                    var needsPush = true;
+                    $rootScope.cabinets.data.forEach(function (c) {
+                        if (c.UID == r.UID)
+                            needsPush = false;
+                    });
+                    if (needsPush)
+                        $rootScope.cabinets.data.push(r);
+                }
+            }
+        });
+    };
 })
     .controller('BioSafetyCabinetsModalCtrl', function ($scope, $q, $modal, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
     var af = $scope.af = applicationControllerFactory;
     $scope.constants = Constants;
     $scope.modalData = DataStoreManager.ModalData;
-    if (!$rootScope.PIs && ($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet)) {
-        $rootScope.PIs = [];
-        $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $rootScope.PIs, true)]);
+    $rootScope.modalClosed = false;
+    $scope.getBuilding = function (id) {
+        $rootScope.Buildings.data.forEach(function (b) {
+            if (b.UID == id)
+                $scope.modalData.selectedBuilding = b;
+        });
+    };
+    $scope.getRoom = function (id) {
+        $rootScope.Rooms.data.forEach(function (r) {
+            if (r.UID == id) {
+                $scope.modalData.selectedRoom = r;
+                console.log(r);
+                $scope.getBuilding(r.Building_id);
+            }
+        });
+    };
+    if (!$rootScope.Buildings) {
+        $rootScope.Buildings = new ViewModelInstance();
+        $rootScope.loading = $q.all([DataStoreManager.getAll("Building", $rootScope.Buildings, true)]).then(function (b) {
+            if ($scope.modalData.inspection && $scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id) {
+                $scope.getRoom($scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id);
+            }
+        });
     }
-    if (($scope.modalData.isCabinet || $scope.modalData.BioSafetyCabinet) && $scope.modalData.BioSafetyCabinet.EquipmentInspections) {
-        if ($scope.modalData.inspection.Room) {
-            $scope.modalData.BioSafetyCabinet.Room = $scope.modalData.inspection.Room;
-        }
-        if ($scope.modalData.inspection.Frequency) {
-            $scope.modalData.BioSafetyCabinet.Frequency = $scope.modalData.inspection.Frequency;
-        }
-        if ($scope.modalData.inspection.Report_path) {
-            $scope.modalData.BioSafetyCabinet.Report_path = $scope.modalData.inspection.Report_path;
-        }
-        if ($scope.modalData.inspection.Equipment_id) {
-            $scope.modalData.BioSafetyCabinet.Equipment_id = $scope.modalData.inspection.Equipment_id;
-        }
-        if ($scope.modalData.inspection.Certification_date) {
-            $scope.modalData.BioSafetyCabinet.Certification_date = $scope.modalData.inspection.Certification_date;
-        }
-        //set date for calendar widget
-        if ($scope.modalData.inspection.Certification_date) {
-            $scope.modalData.BioSafetyCabinet.viewDate = new Date(convenienceMethods.getDate($scope.modalData.inspection.Certification_date));
-        }
-        else {
-            $scope.modalData.BioSafetyCabinet.viewDate = new Date();
-        }
-        if ($rootScope.selectedCertificationDate) {
-            if (!$scope.modalData.inspection) {
-                $scope.modalData.BioSafetyCabinet.SelectedInspection = $scope.modalData.BioSafetyCabinet.EquipmentInspections.filter(function (i) {
-                    return moment(i.Certification_date).format("YYYY") == $rootScope.selectedCertificationDate;
-                })[0];
-            }
-            else {
-                $scope.modalData.BioSafetyCabinet.SelectedInspection = $scope.modalData.inspection;
-            }
+    else {
+        console.log($scope.modalData.inspection);
+        if ($scope.modalData.inspection && $scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id) {
+            $scope.getRoom($scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id);
         }
     }
-    $scope.getBuilding = function () {
-        if ($scope.modalData.BioSafetyCabinet.EquipmentInspections) {
-            $scope.modalData.selectedBuilding = $scope.modalData.inspection.Room.Building.Name;
-        }
-        else {
-            $scope.modalData.selectedBuilding = $scope.modalData.BioSafetyCabinet.PrincipalInvestigator.Buildings[0];
-        }
-    };
-    $scope.getRoom = function () {
-        if ($scope.modalData.BioSafetyCabinet.RoomId) {
-        }
-        else {
-            for (var i = 0; i < $scope.modalData.BioSafetyCabinet.PrincipalInvestigator.Rooms.length; i++) {
-                var room = $scope.modalData.BioSafetyCabinet.PrincipalInvestigator.Rooms[i];
-                if (room.Building.Name == $scope.modalData.selectedBuilding) {
-                    $scope.modalData.BioSafetyCabinet.Room = room;
-                    $scope.modalData.BioSafetyCabinet.RoomId = room.Key_id;
-                }
-            }
-        }
-    };
-    $scope.onSelectBuilding = function () {
-        $scope.roomFilter = $scope.modalData.SelectedBuilding;
-        $scope.getRoom();
-    };
-    $scope.onSelectRoom = function () {
-        $scope.modalData.BioSafetyCabinet.RoomId = $scope.modalData.BioSafetyCabinet.Room.Key_id;
-    };
-    $scope.$watch('modalData.BioSafetyCabinet.PrincipalInvestigator.Rooms', function () {
-        if ($scope.modalData.BioSafetyCabinet.PrincipalInvestigator) {
-            $scope.modalData.BioSafetyCabinet.PrincipalInvestigator.loadBuildings();
-        }
-    });
     $scope.save = function (cabinet) {
         console.log(cabinet);
         if (!cabinet)
@@ -249,15 +275,22 @@ angular.module('EquipmentModule')
                 return;
             }
         }
-        af.save(cabinet).then(function (r) { console.log(r); $scope.close(r); });
+        //clear the relationships between pis and inspections so the view reloads it
+        //TODO:actually solve this, you, know?
+        delete DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"];
+        af.save(cabinet).then(function (r) { console.log(r[0]); $scope.close(r[0]); });
     };
     $scope.certify = function (inspection) {
+        console.log(inspection);
         $scope.message = null;
         inspection.Certification_date = convenienceMethods.setMysqlTime(inspection.viewDate);
         inspection.Fail_date = convenienceMethods.setMysqlTime(inspection.viewFailDate);
         af.save(inspection).then(function (r) {
             // we added an equipmentInspection, so recompose the cabinet.
             //DataStoreManager.getById("BioSafetyCabinet", inspection.Equipment_id, {}, true);
+            console.log(r);
+            delete DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"];
+            console.log(DataStoreManager._actualModel);
             $scope.close(r);
         });
     };
@@ -266,6 +299,7 @@ angular.module('EquipmentModule')
             $modalInstance.dismiss();
             return;
         }
+        $rootScope.modalClosed = true;
         $modalInstance.close(r);
         DataStoreManager.ModalData = null;
     };
@@ -278,11 +312,56 @@ angular.module('EquipmentModule')
         if (thing)
             return thing.Comment || $scope.modalData.BioSafetyCabinet.Comment || "";
     };
+    $scope.getRoomOptions = function (array) {
+        array.push({ Name: "Unassigned", Key_id: null });
+    };
     console.log($scope.modalData);
 })
-    .controller('warningModalCtrl', function ($scope, cabinet, $modalInstance) {
+    .controller('warningModalCtrl', function ($scope, $rootScope, cabinet, $modalInstance) {
     $scope.cabinet = cabinet;
     $scope.close = function () {
+        $rootScope.modalClosed = true;
+        $modalInstance.dismiss();
+    };
+})
+    .controller('UploadModalCtrl', function ($scope, $rootScope, $modalInstance, $q) {
+    $scope.modalData = DataStoreManager.ModalData;
+    $scope.$on('fileUpload', function (event, data) {
+        var formData = data.formData;
+        data.clickTarget.Is_active = false;
+        var insp = data.clickTarget;
+        insp.reportUploaded = false;
+        insp.reportUploading = true;
+        $scope.$apply();
+        var xhr = new XMLHttpRequest;
+        var url = '../ajaxaction.php?action=' + data.path;
+        if (insp.Key_id)
+            url = url + "&id=" + insp.Key_id;
+        xhr.open('POST', url, true);
+        xhr.send(formData);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState !== XMLHttpRequest.DONE || xhr.status !== 200) {
+                return;
+            }
+            if (xhr.status == 200) {
+                insp.reportUploaded = true;
+                insp.reportUploading = false;
+                if (data.path.toLowerCase().indexOf("quote") == -1) {
+                    insp.Report_path = xhr.responseText.replace(/['"]+/g, '');
+                }
+                else {
+                    insp.Quote_path = xhr.responseText.replace(/['"]+/g, '');
+                }
+                $scope.$apply();
+            }
+        };
+    });
+    $scope.remove = function (inspection, type) {
+        inspection[type] = "testytest";
+        return $rootScope.saving = $q.all([DataStoreManager.save(inspection)]).then(function (i) { console.log(i); return inspection; });
+    };
+    $scope.close = function () {
+        $rootScope.modalClosed = true;
         $modalInstance.dismiss();
     };
 });

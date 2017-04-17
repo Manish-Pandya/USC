@@ -37,16 +37,21 @@ angular
 
           while(i--){
               //looking for closed inspections
-              if(closedOrNot == true){
-                  if(inspections[i].Cap_submitted_date)filteredInspections.push(inspections[i]);
+              if (closedOrNot == true) {
+                  if (inspections[i].Cap_submitted_date
+                      || inspections[i].Date_closed
+                      || (inspections[i].Date_started && inspections[i].Date_started.split(/[- :]/)[0] != thisYear)) {
+                      filteredInspections.push(inspections[i]);
+                  }
               }
               //looking for open inspections
-              else {
-                if(!inspections[i].Cap_submitted_date){
+              else {                
+                var inspectionYear = inspections[i].Cap_submitted_date? inspections[i].Cap_submitted_date.split(/[- :]/)[0] : null;
+                if ((inspectionYear && inspectionYear == thisYear)
+                    || inspections[i].Schedule_year == thisYear
+                    || (inspections[i].Date_started && inspections[i].Date_started.split(/[- :]/)[0] == thisYear)) {
+
                     filteredInspections.push(inspections[i]);
-                } else {
-                  var inspectionYear =  inspections[i].Cap_submitted_date.split(/[- :]/)[0];
-                  if(inspectionYear == thisYear || inspectionYear == lastYear) filteredInspections.push(inspections[i]);
                 }
               }
           }

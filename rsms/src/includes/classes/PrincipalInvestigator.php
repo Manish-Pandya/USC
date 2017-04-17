@@ -206,7 +206,6 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
 		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
 		$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
-        $entityMaps[] = new EntityMap("lazy","getCurrentPi_authorization");
 		$entityMaps[] = new EntityMap("lazy","getVerifications");
 		$entityMaps[] = new EntityMap("lazy","getPi_authorization");
 		$entityMaps[] = new EntityMap("lazy","getWipeTests");
@@ -408,7 +407,12 @@ class PrincipalInvestigator extends GenericCrud {
 			$thisDAO = new GenericDAO($this);
 			/** quarterly inventories should be sorted by date */
 			$this->quarterly_inventories = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$QUARTERLY_INVENTORIES_RELATIONSHIP), array("date_last_modified"), true);
-		}
+
+            usort($this->quarterly_inventories, function($a, $b)
+            {
+                return strcmp($a->getEnd_date(), $b->getEnd_date());
+            });
+        }
 		return $this->quarterly_inventories;
 	}
 
@@ -470,9 +474,9 @@ class PrincipalInvestigator extends GenericCrud {
 	}
 
     public function getCurrentIsotopeInventories(){
-        if($this->currentIsotopeInventories == null && $this->hasPrimaryKeyValue() && $this->getPi_authorization() != null){
+        if($this->currentIsotopeInventories == null && $this->hasPrimaryKeyValue() && $this->getCurrentPi_authorization() != null){
             $inventoriesDao = new GenericDAO($this);
-            $this->currentIsotopeInventories = $inventoriesDao->getCurrentInvetoriesByPiId($this->key_id);
+            $this->currentIsotopeInventories = $inventoriesDao->getCurrentInvetoriesByPiId($this->key_id, $this->getCurrentPi_authorization()->getKey_id());
         }
         return $this->currentIsotopeInventories;
     }
@@ -490,13 +494,12 @@ class PrincipalInvestigator extends GenericCrud {
 	public function setWipeTests($wipeTests){$this->wipeTests = $wipeTests;}
 
     public function getName(){
-        if($this->name == null && $this->hasPrimaryKeyValue() && $this->getUser() != null){
-            $user = $this->getUser();
-            $this->name = $user->getName();
-        }
-        return $this->name;
-    }
-    public function setName($name){$this->name = $name;}
+		if( $this->hasPrimaryKeyValue() && $this->getUser() != NULL ) {
+			$this->name = $this->user->getName();
+		}
+		return $this->name;
+	}
+	public function setName($name){$this->name = $name;}
 
 }
 

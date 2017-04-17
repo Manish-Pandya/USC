@@ -6,31 +6,36 @@
 
     <div class="modal-body">
         <div class="control-group">
-            <label class="control-label">PI / CONTACT</label>
+            <label class="control-label">Select Building</label>
             <div class="controls" style="display:block">
-                <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push($item)" class="span2" style="margin-left:0; width:269px;">
-                    <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
-                    <ui-select-choices repeat="pi in PIs | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
-                        <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                <select  class="span3" ng-model="modalData.selectedBuilding" ng-change="getBuilding(modalData.BioSafetyCabinet.SelectedInspection.Room_id)" ng-options="b as b.Name for b in Buildings.data | orderBy:'Name'">
+                    <option value="">--Select Building--</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Select Room</label>
+            <div class="controls">
+                 <input ng-if="!modalData.selectedBuilding.UID" placeholder="Select a bulding first" disabled="disabled"/>
+                 <ui-select ng-if="modalData.selectedBuilding.UID" ng-model="modalData.selectedRoom" theme="selectize" ng-disabled="disabled" class="span2" on-select="getRoom($item.UID); modalData.BioSafetyCabinet.SelectedInspection.Room_id = $item.Key_id" style="margin-left:0; width:269px;">
+                    <ui-select-match placeholder="Select or search for a Room">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="r in  modalData.selectedBuilding.Rooms | activeOnly | nameFilter: $select.search |  orderBy:'Name' ">
+                        <div ng-bind-html="r.Name | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>
             </div>
-            <ul>
-                <li ng-repeat="pi in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators" style="padding: 3px 0; font-size: 15px;"><i style="margin-right:5px" class="red icon-cancel-2" ng-click="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.splice($index,1)"></i>{{pi.User.Name}}</li>
-            </ul>
         </div>
 
-
-
-        <!-- to do -- concat pis rooms to list of rooms they share-->
-        <span ng-if="modalData.BioSafetyCabinet.PrincipalInvestigator.Rooms" ng-init="modalData.BioSafetyCabinet.PrincipalInvestigator.loadBuildings()" />
         <div class="control-group">
-            <label class="control-label">Building & Room</label>
-            <div class="controls">
-                <select class="span3" ng-model="modalData.BioSafetyCabinet.SelectedInspection.Room_id" ng-change="onSelectRoom()" ng-options="room.Key_id as (room.Building_name + ' ' + room.Name) for room in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators | getSharedRooms">
-                    <option value="">--Select Room--</option>
+            <label class="control-label">Principal Investigator(s)</label>
+            <div class="controls" style="display:block">
+                <select class="span3" ng-model="modalData.pi" ng-change="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push(modalData.pi)" ng-options="pi as pi.Name for pi in modalData.selectedRoom.PrincipalInvestigators | orderBy:'Name'">
+                    <option value="" ng-show="!modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length">--Unassigned--</option>
                 </select>
             </div>
+            <ul>
+                <li ng-repeat="pi in modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators" style="padding: 3px 0; font-size: 15px;"><i style="margin-right:5px" class="red icon-cancel-2" ng-click="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.splice($index,1)"></i>{{pi.Name}}</li>
+            </ul>
         </div>
 
 
@@ -42,25 +47,27 @@
                 </select>
             </div>
         </div>
-       
         <div class="control-group">
             <label class="control-label">Manufacturer</label>
             <div class="controls">
                 <input ng-model="modalData.BioSafetyCabinet.Make" placehold="Label" />
             </div>
         </div>
+
         <div class="control-group">
             <label class="control-label">Model</label>
             <div class="controls">
                 <input ng-model="modalData.BioSafetyCabinet.Model" placehold="Label" />
             </div>
         </div>
-         <div class="control-group">
+
+        <div class="control-group">
             <label class="control-label">Serial #</label>
             <div class="controls">
                 <input ng-model="modalData.BioSafetyCabinet.Serial_number" placehold="Label" />
             </div>
         </div>
+                
         <div class="control-group">
             <label class="control-label">Certification Frequency</label>
             <select ng-model="modalData.BioSafetyCabinet.SelectedInspection.Frequency" ng-options="frequency as frequency for (key,frequency) in Constants.BIOSAFETY_CABINET.FREQUENCY">
