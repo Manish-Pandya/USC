@@ -58,6 +58,10 @@ class IBCProtocolRevision extends GenericCrud
     /* array of responses submitted in this revision */
     private $IBCResponses;
 
+
+    /* array of preliminary comments submitted in this revision */
+    private $IBCPreliminaryComments;
+
     /* array of primary reviewers responsible for reviewing this protocal revision*/
     private $primaryReviewers;
 
@@ -67,15 +71,12 @@ class IBCProtocolRevision extends GenericCrud
     /** array of sections containing questions relevant to this protocol revision's hazard **/
     private $section;
 
-   
-
-    
-
-	public function __construct(){
+    public function __construct(){
 		// Define which subentities to load
 		$entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getPreliminaryReviewers");
         $entityMaps[] = new EntityMap("lazy","getPrimaryReviewers");
+        $entityMaps[] = new EntityMap("lazy","getIBCPreliminaryComments");
 		$entityMaps[] = new EntityMap("lazy","getIBCResponses");
 		$this->setEntityMaps($entityMaps);
 	}
@@ -87,6 +88,13 @@ class IBCProtocolRevision extends GenericCrud
 		"keyName"	=>	"key_id",
 		"foreignKeyName"	=>	"revision_id"
 	);
+
+    public static $PRELIMINARY_COMMENTS_RELATIONSHIP = array(
+        "className"	=>	"IBCPreliminaryComment",
+        "tableName"	=>	"ibc_preliminary_comment",
+        "keyName"	=>	"key_id",
+        "foreignKeyName"	=>	"ibc_revision_id"
+    );
 
     public static $PRIMARY_REVIEWERS_RELATIONSHIP = array(
         "className"	=>	"User",
@@ -200,6 +208,17 @@ class IBCProtocolRevision extends GenericCrud
 	}
 	public function setIBCResponses($IBCResponses){
 		$this->IBCResponses = $IBCResponses;
+	}
+
+    public function getIBCPreliminaryComments(){
+		if($this->IBCPreliminaryComments === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->IBCPreliminaryComments = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PRELIMINARY_COMMENTS_RELATIONSHIP));
+		}
+		return $this->IBCPreliminaryComments;
+	}
+	public function setIBCPreliminaryComments($IBCResponses){
+		$this->IBCPreliminaryComments = $IBCResponses;
 	}
 
     public function getPrimaryReviewers(){
