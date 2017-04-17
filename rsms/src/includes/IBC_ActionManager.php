@@ -299,9 +299,7 @@ class IBC_ActionManager extends ActionManager {
 				//so we can safely set $response's Is_selected to true, knowing that it is the IBCResponse from the client
                 $response->setIs_selected(true);
                 $response = $responseDao->save($response);
-            }else{
-				$response->setText("butt");
-			}
+            }
             $response = $responseDao->save($response);
         }
         return $this->getSiblingReponses($decodedObject[0]);

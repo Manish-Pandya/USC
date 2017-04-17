@@ -14,7 +14,6 @@ angular.module('ng-IBC')
         var getProtocol = function (): Promise<any> {
             $scope.protocol = new ViewModelHolder();
             $scope.revision = new ViewModelHolder();
-            $scope.responsesMapped = <{ [index: string]: ibc.IBCResponse[] }>Object.create(null);
             return $q.all([DataStoreManager.getById("IBCProtocol", $stateParams.id, $scope.protocol, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.SectionMap])])
                 .then(function (p) {
                     console.log($scope.protocol);

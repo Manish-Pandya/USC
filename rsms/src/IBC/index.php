@@ -151,6 +151,7 @@ if(!isset($_SESSION["USER"])){ ?>
     <script src="scripts/models/IBCPossibleAnswer.js"></script>
     <script src="scripts/models/IBCProtocol.js"></script>
     <script src="scripts/models/IBCProtocolRevision.js"></script>
+    <script src="scripts/models/IBCPreliminaryComment.js"></script>
     <script src="scripts/models/IBCQuestion.js"></script>
     <script src="scripts/models/IBCResponse.js"></script>
     <script src="scripts/models/IBCSection.js"></script>
