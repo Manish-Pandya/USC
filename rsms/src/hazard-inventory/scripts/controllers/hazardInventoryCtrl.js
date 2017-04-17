@@ -347,14 +347,27 @@ angular.module('HazardInventory')
         }
 
         $scope.checkRad = function (pi, id) {
-            $scope.needsConfirmation = false;
+            $scope.confirmer = {};
+            $scope.confirmer.needsRadConfirmation = false;
             if (GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.RADIATION_INSPECTOR) > -1) {
                 af.initialiseInspection(pi, id, false, true);
             } else {
-                $scope.needsConfirmation = true;
-            }      
+                $scope.confirmer.needsRadConfirmation = true;
+            }
 
         }
+
+        $scope.checkSafetyInspector = function (pi, id) {
+            $scope.confirmer = {};
+            $scope.confirmer.needsConfirmation = false;
+            if (GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.SAFETY_INSPECTOR) > -1) {
+                af.initialiseInspection(pi, id, false, true);
+            } else {
+                $scope.confirmer.needsConfirmation = true;
+            }
+
+        }
+
 
         var checkInspectors = function (inspection, currentUser) {
             if (!currentUser.Inspector_id) return false;
