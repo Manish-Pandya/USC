@@ -298,7 +298,7 @@ var DataStoreManager = (function () {
                             var cm = fluxClass[instanceProp];
                             // if the CompMap's ChildType is same class-type as viewModelParent...
                             if (cm.ChildType == vmParent.TypeName && vmParent[cm.ChildIdProp]) {
-                                var existingIndex = _.findIndex(DataStoreManager._actualModel[fluxClass.name].Data, function (o) { return o.UID == vmParent[cm.ChildIdProp]; });
+                                var existingIndex = _.findIndex(DataStoreManager._actualModel[fluxClass.name].Data, function (o) { return o[cm.ParentIdProp] == vmParent[cm.ChildIdProp]; });
                                 if (existingIndex > -1) {
                                     // We found actualModel instance that should compose this viewModelParent instance!
                                     var compParent = DataStoreManager._actualModel[fluxClass.name].Data[existingIndex];
