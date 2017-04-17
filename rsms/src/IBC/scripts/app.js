@@ -45,6 +45,11 @@ angular
         url: "/emails",
         templateUrl: "views/emails.html",
         controller: "IBCEmailCtrl"
+    })
+        .state('ibc.test', {
+        url: "/test:id/",
+        templateUrl: "views/test.html",
+        controller: "TestCtrl"
     });
 })
     .controller('AppCtrl', function ($rootScope, $q) {
@@ -71,7 +76,7 @@ angular
         }
     };
     $rootScope.loadQuestionsChain = function (sectionId, revisionId) {
-        return $q.all([DataStoreManager.getById("IBCSection", sectionId, new ViewModelInstance(), true)])
+        return $q.all([DataStoreManager.getById("IBCSection", sectionId, new ViewModelHolder(), true)])
             .then(function (section) {
             console.log(DataStoreManager._actualModel);
             return section;

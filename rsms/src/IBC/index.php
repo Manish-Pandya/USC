@@ -121,7 +121,7 @@ if(!isset($_SESSION["USER"])){ ?>
     <script src="scripts/controllers/IBCAssignCtrl.js"></script>
 	<script src="scripts/controllers/IBCDetailCtrl.js"></script>
 	<script src="scripts/controllers/IBCEmailsCtrl.js"></script>
-
+    <script src="scripts/controllers/TestCtrl.js"></script>
 <!-- directives -->
 <!--script type="text/javascript" src="./scripts/directives/dateInput.js"><script>-->
 
@@ -141,7 +141,7 @@ if(!isset($_SESSION["USER"])){ ?>
 
 <!-- models -->
     <script src="../ignorasmus/client-side-framework/models/FluxCompositerBase.js"></script>
-    <script src="../ignorasmus/client-side-framework/models/ViewModelInstance.js"></script>
+    <script src="../ignorasmus/client-side-framework/models/ViewModelHolder.js"></script>
     <script src="scripts/models/Department.js"></script>
     <script src="scripts/models/Hazard.js"></script>
     <script src="scripts/models/PrincipalInvestigator.js"></script>

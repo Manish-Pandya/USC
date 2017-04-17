@@ -96,7 +96,7 @@ abstract class DataStoreManager {
      * @param compMaps
      */
     //TODO:  Switch of allCompMaps when we hit circular structure in get alls, for instance, a PI can get its Rooms which can get its PIs, but we should stop there.
-    static getAll(type: string, viewModelInst: ViewModelInstance, compMaps: CompositionMapping[] | boolean = null): Promise<ViewModelInstance> {
+    static getAll(type: string, viewModelInst: ViewModelHolder, compMaps: CompositionMapping[] | boolean = null): Promise<ViewModelHolder> {
         if (!PermissionMap.getPermission(type).getAll) {
             throw new Error("You don't have permission to call getAll for " + type);
         }
@@ -123,11 +123,12 @@ abstract class DataStoreManager {
                         .then((whateverGotReturned) => {
                             d.forEach((value: FluxCompositerBase, index: number) => {
                                 d[index].doCompose(compMaps);
-                                d[index].viewModelWatcher = viewModelInst.data[index] = DataStoreManager.buildNestedViewModelWatcher(value);
+                                d[index].viewModelWatcher = DataStoreManager._actualModel[type].ViewModelWatcher[index] = DataStoreManager.buildNestedViewModelWatcher(value);
                             });
                             if (compMaps && typeof compMaps === "boolean") {
                                 DataStoreManager._actualModel[type].fullyComposed = true;
                             }
+                            viewModelInst.data = DataStoreManager._actualModel[type].ViewModelWatcher;
 
                             return viewModelInst;
                         })
@@ -151,7 +152,7 @@ abstract class DataStoreManager {
      * @param viewModelParent
      * @param compMaps
      */
-    static getById(type: string, id: string | number, viewModelInst: ViewModelInstance, compMaps: CompositionMapping[] | boolean = null): Promise<ViewModelInstance> {
+    static getById(type: string, id: string | number, viewModelInst: ViewModelHolder, compMaps: CompositionMapping[] | boolean = null): Promise<ViewModelHolder> {
         if (!InstanceFactory._classNames) InstanceFactory.getClassNames("/models");
         id = id.toString();
 
@@ -168,13 +169,13 @@ abstract class DataStoreManager {
                 if (existingIndex > -1) {
                     DataStoreManager._actualModel[type].Data[existingIndex] = d; // update existing
                 } else {
-                    DataStoreManager._actualModel[type].Data.push(d); // add new
+                    existingIndex = DataStoreManager._actualModel[type].Data.push(d) - 1; // add new
                 }
 
                 return (compMaps ? this.resolveCompMaps(d, compMaps) : this.promisifyData(d))
                     .then((whateverGotReturned) => {
                         d.doCompose(compMaps);
-                        d.viewModelWatcher = viewModelInst.data = DataStoreManager.buildNestedViewModelWatcher(d);
+                        d.viewModelWatcher = viewModelInst.data = DataStoreManager._actualModel[type].ViewModelWatcher[existingIndex] = DataStoreManager.buildNestedViewModelWatcher(d);
                         if (compMaps && typeof compMaps === "boolean") {
                             DataStoreManager._actualModel[type].fullyComposed = true;
                         }
@@ -204,7 +205,7 @@ abstract class DataStoreManager {
                             if (DataStoreManager._actualModel[compMap.ChildType].getAllCalled && !needsNestedComposing) {
                                 allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
                             } else {
-                                allComps.push(DataStoreManager.getAll(compMap.ChildType, new ViewModelInstance(), typeof compMaps === "boolean"));
+                                allComps.push(DataStoreManager.getAll(compMap.ChildType, new ViewModelHolder(), typeof compMaps === "boolean"));
                             }
                         } else {
                             console.log(fluxCompBase.TypeName + " fetching local " + compMap.ChildType);
@@ -250,19 +251,19 @@ abstract class DataStoreManager {
      *
      * @param viewModel
      */
-    static save(viewModel: FluxCompositerBase | FluxCompositerBase[]): Promise<FluxCompositerBase> | Promise<FluxCompositerBase[]> {
+    static save(viewModel: FluxCompositerBase | FluxCompositerBase[], reverseCompose?: boolean): Promise<FluxCompositerBase> | Promise<FluxCompositerBase[]> {
         // if viewModel is array, add 's' to end of save url to differentiate it as plural call on the server
         var urlSave: string = Array.isArray(viewModel) ? viewModel[0].thisClass["urlMapping"].urlSave + "s" : viewModel.thisClass["urlMapping"].urlSave;
         return XHR.POST(urlSave, viewModel)
             .then((d) => {
                 if (Array.isArray(d)) {
                     d.forEach((value: any, index: number) => {
-                        d[index] = DataStoreManager.commitToActualModel(d[index]);
+                        d[index] = DataStoreManager.commitToActualModel(d[index], reverseCompose);
                     });
                     return d;
                 }
 
-                return DataStoreManager.commitToActualModel(d);
+                return DataStoreManager.commitToActualModel(d, reverseCompose);
             });
     }
 
@@ -289,17 +290,47 @@ abstract class DataStoreManager {
      *
      * @param viewModelParent
      */
-    static commitToActualModel(viewModelParent: any): FluxCompositerBase {
+    static commitToActualModel(viewModelParent: any, reverseCompose?: boolean): FluxCompositerBase {
         var vmParent: FluxCompositerBase = InstanceFactory.convertToClasses(viewModelParent);
         if (!(vmParent instanceof FluxCompositerBase)) return;
-        
+
         var actualModelEquivalent: FluxCompositerBase = this.getActualModelEquivalent(vmParent);
         if (!actualModelEquivalent && vmParent.TypeName) {
+            var isNew = true;
             DataStoreManager._actualModel[vmParent.TypeName].Data.push(_.cloneDeep(vmParent));
             actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         }
         vmParent = InstanceFactory.copyProperties(actualModelEquivalent, vmParent, ["viewModelWatcher"]);
         actualModelEquivalent.viewModelWatcher = vmParent.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(actualModelEquivalent);
+        if (isNew) {
+            DataStoreManager._actualModel[vmParent.TypeName].ViewModelWatcher.push(vmParent.viewModelWatcher);
+
+            if (reverseCompose) {
+                // See if any instances in actualModel should compose collections of viewModelParent's class-types and add it to collection //
+                InstanceFactory._classNames.forEach((className) => {
+                    var fluxClass = InstanceFactory._nameSpace[className];
+                    for (var instanceProp in fluxClass) {
+                        if (fluxClass[instanceProp] instanceof CompositionMapping) {
+                            var cm: CompositionMapping = fluxClass[instanceProp];
+                            // if the CompMap's ChildType is same class-type as viewModelParent...
+                            if (cm.ChildType == vmParent.TypeName && vmParent[cm.ChildIdProp]) {
+                                var existingIndex: number = _.findIndex(DataStoreManager._actualModel[fluxClass.name].Data, function (o) { return o[cm.ParentIdProp] == vmParent[cm.ChildIdProp]; });
+                                if (existingIndex > -1) {
+                                    // We found actualModel instance that should compose this viewModelParent instance!
+                                    var compParent = DataStoreManager._actualModel[fluxClass.name].Data[existingIndex];
+                                    if (cm.CompositionType == CompositionMapping.ONE_TO_ONE) {
+                                        compParent[cm.PropertyName] = vmParent.viewModelWatcher;
+                                    } else {
+                                        if (!compParent[cm.PropertyName]) compParent[cm.PropertyName] = [];
+                                        compParent[cm.PropertyName].push(vmParent.viewModelWatcher);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+        }
         
         return vmParent.viewModelWatcher;
     }
@@ -311,11 +342,12 @@ abstract class DataStoreManager {
      *
      * @param fluxBase
      */
-
     static buildNestedViewModelWatcher(fluxCompBase: FluxCompositerBase): FluxCompositerBase {
         if (fluxCompBase.hasOwnProperty("viewModelWatcher")) {
+            if (!fluxCompBase.viewModelWatcher) fluxCompBase.viewModelWatcher = {}; // make viewModelWatcher if null
             InstanceFactory.convertToClasses(InstanceFactory.copyProperties(fluxCompBase.viewModelWatcher, fluxCompBase, ["viewModelWatcher"]) );
         }
+
         return _.cloneDeepWith(fluxCompBase, (value) => {
             if (value instanceof FluxCompositerBase) {
                 if (value.viewModelWatcher) {

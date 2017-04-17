@@ -69,6 +69,7 @@ var FluxCompositerBase = (function () {
             console.log(new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server"));
         }
         this.thisClass = this.constructor;
+        this.TypeName = this.constructor.name; // default value for TypeName
     }
     Object.defineProperty(FluxCompositerBase.prototype, "allCompMaps", {
         get: function () {

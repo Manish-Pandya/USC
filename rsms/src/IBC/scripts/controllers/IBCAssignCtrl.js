@@ -11,9 +11,9 @@ angular.module('ng-IBC')
     console.log("IBCAssignCtrl running");
     $scope.cv = convenienceMethods;
     function getProtocols() {
-        $scope.protocols = new ViewModelInstance();
-        $scope.reviewers = new ViewModelInstance();
-        $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap]), DataStoreManager.getAll("IBCProtocolRevision", new ViewModelInstance(), true), DataStoreManager.getAll("User", $scope.reviewers, true)])
+        $scope.protocols = new ViewModelHolder();
+        $scope.reviewers = new ViewModelHolder();
+        $scope.loading = $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap]), DataStoreManager.getAll("IBCProtocolRevision", new ViewModelHolder(), true), DataStoreManager.getAll("User", $scope.reviewers, true)])
             .then(function (stuff) {
             console.log($scope.protocols.data);
             console.log(DataStoreManager._actualModel);

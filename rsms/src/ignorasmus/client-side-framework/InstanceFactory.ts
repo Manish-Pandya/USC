@@ -61,6 +61,7 @@ abstract class InstanceFactory extends DataStoreManager {
                 //init DataStoreManager holders
                 DataStoreManager._actualModel[className] = {};
                 DataStoreManager._actualModel[className].Data = [];
+                DataStoreManager._actualModel[className].ViewModelWatcher = [];
                 // initting promises below shouldn't actually be necessary, but is here for completion
                 DataStoreManager._actualModel[className].getAllPromise = new Promise<any>(() => { });
                 DataStoreManager._actualModel[className].getByIdPromise = new Promise<any>(() => { });
@@ -171,7 +172,7 @@ abstract class InstanceFactory extends DataStoreManager {
                         console.log(compMap.GerundName + " doesn't exist in actualModel. Running GET to resolve...");
                     }
                 } else {
-                    DataStoreManager.getById(parent.TypeName, parent.UID, new ViewModelInstance(parent), [compMap]);
+                    DataStoreManager.getById(parent.TypeName, parent.UID, new ViewModelHolder(parent), [compMap]);
                     console.log(compMap.GerundName + " doesn't exist in actualModel. Running getById to resolve...");
                 }
             } else {
