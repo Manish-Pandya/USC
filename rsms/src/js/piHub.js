@@ -117,6 +117,13 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
 
     $scope.order='Last_name';
 
+    $scope.getRoomUrlString = function (room) {
+        console.log(room);
+        roomIds = [room.Key_id];        
+        room.roomUrlParam = $.param({ "room": roomIds });
+        return room;
+    }
+
     function init(){
         if($location.search().hasOwnProperty('pi')){
              //getPI if there is a "pi" index in the GET

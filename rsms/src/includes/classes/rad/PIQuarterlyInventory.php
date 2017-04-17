@@ -170,7 +170,6 @@ include_once 'RadCrud.php';
 
 	public function getEnd_date() {
         $this->end_date = $this->getQuarterly_inventory()->getEnd_date();
-
 		return $this->end_date;
 	}
 	public function setEnd_date($end_date) {

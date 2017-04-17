@@ -1,3 +1,5 @@
+<div cg-busy="{promise:saving,message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+
 <div ng-if="pi" class="right-column">
     <h1>
         {{pi.User.Name}} <a class="btn btn-info left" href="{{'#/my-lab' + pi.Key_id}}" target="_blank"><i class="icon-info"></i>Lab View</a>
@@ -29,6 +31,8 @@
                         <h3>Authorization Number</h3>
                         <h3>Rooms</h3>
                         <h3>Departments</h3>
+                        <h3>Comment</h3>
+
                     </div>
                     <div class="table-row">
                         <div>{{piAuth.Authorization_number}} {{piAuth.Amendment_number ? ' Amendment #' + piAuth.Amendment_number : ''}}</div>
@@ -37,6 +41,9 @@
                         </div>
                         <div>
                             <ul><li ng-repeat="dept in piAuth.Departments | orderBy:'Name'">{{dept.Name}}</li></ul>
+                        </div>
+                        <div>
+                            {{piAuth.New_notes || piAuth.Update_notes}}
                         </div>
                     </div>
                 </div>
@@ -162,8 +169,8 @@
                         {{parcel.Authorization.IsotopeName}}
                     </div>
 
-                    <div>
-                        {{parcel.Arrival_date | dateToISO}}
+                    <div ng-init="date = parcel.Arrival_date && parcel.Arrival_date != '0000-00-00 00:00:00' ? parcel.Arrival_date : parcel.Transfer_in_date">
+                        {{date | dateToIso}}
                     </div>
 
                     <div>

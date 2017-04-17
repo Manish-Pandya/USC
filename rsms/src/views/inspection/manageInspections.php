@@ -108,20 +108,7 @@ require_once '../top_view.php';
         </thead>
         <tbody>
             <tr ng-repeat="dto in filtered" ng-class="{inactive: dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_CAP)>-1 || dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION)>-1 ,'pending':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && !dto.Inspections.Cap_complete,'complete':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && dto.Inspections.Cap_complete}" repeat-done="layoutDone()">
-                <td style="width:8.5%"><span once-text="dto.Pi_name + dto.Inspections.Schedule_year"></span></td>
-                <!--
-				<td style="width:9.5%"><span once-text="dto.Campus_name"></span></td>
-				<td style="width:8.5%"><span once-text="dto.Building_name"></span></td>
-				<td style="width:6.5%">
-					<ul ng-if="!dto.Inspection_rooms">
-						<li ng-repeat="room in dto.Building_rooms"><span once-text="room.Name"></span></li>
-					</ul>
-					<ul ng-if="dto.Inspection_rooms">
-						<li ng-repeat="room in dto.Inspection_rooms"><span once-text="room.Name"></span></li>
-					</ul>
-					<pre>{{dto.Campuses | json}}</pre>
-				</td>
-				-->
+                <td style="width:8.5%"><span once-text="dto.Pi_name"></span></td>
                 <td style="width:24.5%" class="triple">
                     <table>
                         <tr ng-repeat="campus in dto.Campuses">
@@ -193,9 +180,10 @@ require_once '../top_view.php';
                     <span ng-if="dto.Inspections.Status">
                         <span once-text="dto.Inspections.Status"></span>
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.SCHEDULED">
+                            <span ng-init="dto = getRoomUrlString(dto)"></span>
                             <br>Scheduled ({{dto.Inspections.Schedule_month | getMonthName}})
                             <br>
-                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png" />Hazard Inventory</a>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}&{{dto.roomUrlParam}}"><img src="../../img/hazard-icon.png" />Hazard Inventory</a>
                         </span>
 
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.PENDING_CLOSEOUT">
@@ -237,7 +225,8 @@ require_once '../top_view.php';
                         <span ng-if="dto.Inspections.Status == constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
                             <span><br>(Scheduled for {{dto.Inspections.Schedule_month | getMonthName}})</span>
                             <br>
-                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}"><img src="../../img/hazard-icon.png" />Inventory</a>
+                            <span ng-init="dto = getRoomUrlString(dto)"></span>
+                            <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}&{{dto.roomUrlParam}}"><img src="../../img/hazard-icon.png" />Inventory</a>
                         </span>
                     </span>
                     <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="dto.IsDirty"></i>

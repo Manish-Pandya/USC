@@ -23,8 +23,22 @@
                 <tr ng-repeat="(key, inspection) in previousInspections = (modalData.PI.Inspections | inspectionClosed:true)">
                     <td>{{inspection.Schedule_year}}</td>
                     <td>{{inspection.Date_started | dateToISO}}</td>
-                    <td>{{inspection.Inspectors[0].User.Name}}</td>
-                    <td>hazards</td>
+                    <td>
+                        <ul>
+                            <li ng-repeat='inspector in inspection.Inspectors' once-text='inspector.Name'></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.BIOLOGICAL)" ng-class="{'grayed-out': inspection.Is_rad}">
+                            <img src="../img/biohazard-largeicon.png" style="width: 41px; max-width:30%" />
+                        </span>
+                        <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.CHEMICAL)" ng-class="{'grayed-out': inspection.Is_rad}">
+                            <img src="../img/chemical-blue-icon.png" style="width: 41px; max-width:30%" />
+                        </span>
+                        <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.RADIATION)" ng-class="{'grayed-out': !inspection.Is_rad}">
+                            <img src="../img/radiation-large-icon.png" style="width: 41px; max-width:30%" />
+                        </span>
+                    </td>
                     <td>
                         <span>{{inspection.Status}}</span>
                         <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.CLOSED_OUT">

@@ -64,6 +64,14 @@ class SolidsContainer extends RadCrud {
 		$entityMaps[] = new EntityMap("lazy", "getWasteBags");
 		$entityMaps[] = new EntityMap("eager", "getCurrentWasteBags");
 		$this->setEntityMaps($entityMaps);
+
+        if($this->hasPrimaryKeyValue() && $this->getWasteBags() == null){
+            $bag = new WasteBag();
+            $bag->setContainer_id($this->key_id);
+            $bag->setDate_added(date('Y-m-d H:i:s'));
+            $bagDao = new GenericDao($bag);
+            $bag = $bagDao->save($bag);
+        }
 	}
 
 	// Required for GenericCrud

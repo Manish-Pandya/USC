@@ -594,6 +594,8 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
     $scope.search = {init:true};
     $scope.run = false;
 
+    
+
     var getDtos = function (year) {
         return manageInspectionsFactory.getInspectionScheduleDtos(year)
             .then(
@@ -825,6 +827,17 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             });
             return;
         }
+    }
+
+    $scope.getRoomUrlString = function (dto) {
+        roomIds = [];
+        //console.log(dto);
+        dto.Inspection_rooms.forEach(function (r) {
+            roomIds.push(r.Key_id);
+        })
+
+        dto.roomUrlParam = $.param({"room":roomIds});
+        return dto;
     }
 
 });

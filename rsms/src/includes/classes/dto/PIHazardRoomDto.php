@@ -14,6 +14,7 @@ class PIHazardRoomDto {
 	private $status;
 	private $hasMultiplePis;
     private $otherLab;
+    private $stored;
 
 	public function getPrincipal_investigator_id(){
 		return $this->principal_investigator_id;
@@ -99,6 +100,9 @@ class PIHazardRoomDto {
 	public function setStatus($status){
 		$this->status = $status;
 	}
+
+    public function getStored(){return $this->stored;}
+    public function setStored($stored){$this->stored = $stored;}
 
 	public function getHasMultiplePis(){
 		return $this->hasMultiplePis;

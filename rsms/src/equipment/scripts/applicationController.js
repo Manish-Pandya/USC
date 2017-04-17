@@ -49,7 +49,10 @@ angular
     };
     af.save = function (viewModel) {
         $rootScope.error = null;
-        return $rootScope.saving = DataStoreManager.save(viewModel);
+        return $rootScope.saving = $q.all([DataStoreManager.save(viewModel)])
+            .then(function (r) {
+            return r;
+        });
     };
     /********************************************************************
     **

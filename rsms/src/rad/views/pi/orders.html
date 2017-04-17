@@ -12,6 +12,7 @@
     <table class="table table-bordered card full" ng-show="undelivered.length">
         <tr>
             <th>Edit</th>
+            <th>R.S. Number</th>
             <th>Status</th>
             <th>Purchase Order</th>
             <th>Vendor</th>
@@ -26,6 +27,7 @@
                 <button disabled="disabled" ng-if="parcel.Status != constants.PARCEL.STATUS.REQUESTED" class="btn btn-primary left" ng-click="openModal(parcel)" title="This order has already been approved.  If you need to make changes, contact the Radiation Safety Office."><i class="icon-pencil"></i>Edit Order</button>
                 <button ng-if="parcel.Status == constants.PARCEL.STATUS.REQUESTED" class="btn btn-primary left"><i class="icon-pencil"></i>Edit Order</button>
              </td>
+            <td once-text="parcel.Rs_number"></td>
             <td once-text="parcel.Status"></td>
             <td once-text="parcel.PurchaseOrder.Purchase_order_number"></td>
             <td once-text="parcel.PurchaseOrder.Vendor"></td>

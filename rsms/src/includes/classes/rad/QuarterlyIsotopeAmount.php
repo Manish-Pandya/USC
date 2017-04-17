@@ -51,6 +51,10 @@ include_once 'RadCrud.php';
 	/** amount of the isotope in inventory at the end of the quarter */
 	private $ending_amount;
 
+    private $pi_authorization_id;
+    private $principal_investigator_id;
+
+
 	private $authorization_id;
 	private $authorization;
 
@@ -74,6 +78,7 @@ include_once 'RadCrud.php';
 
     	// Define which subentities to load
     	$entityMaps = array();
+        $entityMaps[] = new EntityMap("lazy", "getAuthorization");
     	$this->setEntityMaps($entityMaps);
     }
 
@@ -113,6 +118,22 @@ include_once 'RadCrud.php';
 
 		return $this->authorization;
 	}
+    public function setAuthorization($auth){$this->authorization = $auth;}
+
+    public function getPi_authorization_id() {
+		return $this->pi_authorization_id;
+	}
+	public function setPi_authorization_id($authorization_id) {
+		$this->pi_authorization_id = $authorization_id;
+	}
+
+    public function getPrincipal_investigator_id() {
+		return $this->principal_investigator_id;
+	}
+	public function setPrincipal_investigator_id($id) {
+		$this->principal_investigator_id = $id;
+	}
+    
 
 	public function getStarting_amount() {
 		return $this->starting_amount;
