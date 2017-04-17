@@ -17,21 +17,8 @@ angular.module('ng-IBC')
             .then(function (p) {
             console.log($scope.protocol);
             console.log(DataStoreManager._actualModel);
-            DataStoreManager._actualModel['IBCProtocol']['Data'][0].viewModelWatcher.Department_id = DataStoreManager._actualModel['IBCProtocol']['Data'][0].viewModelWatcher.Department_id + " updated in controller";
-            return;
-            DataStoreManager.getById("IBCSection", $scope.protocol.data.IBCSections[0].UID, new ViewModelHolder(), false)
-                .then(function (someData) {
-                var pRevision = $scope.protocol.data.IBCProtocolRevisions[$scope.protocol.data.IBCProtocolRevisions.length - 1];
-                $q.all([DataStoreManager.getById("IBCProtocolRevision", pRevision.UID, $scope.revision, true)])
-                    .then(function (someData) {
-                    /*for (var n = 0; n < $scope.revision.IBCResponses.length; n++) {
-                               var response = $scope.revision.IBCResponses[n];
-                               console.log(response);
-                               if (!$scope.revision.responsesMapped[response.Answer_id]) $scope.revision.responsesMapped[response.Answer_id] = [];
-                               $scope.revision.responsesMapped[response.Answer_id].push(response);
-                           }*/
-                });
-            });
+            var pRevision = $scope.protocol.data.IBCProtocolRevisions[$scope.protocol.data.IBCProtocolRevisions.length - 1];
+            $q.all([DataStoreManager.getById("IBCProtocolRevision", pRevision.UID, $scope.revision, true)]);
         });
     };
     $scope.testSave = function (data) {

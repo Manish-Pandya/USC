@@ -12,6 +12,7 @@ angular.module('ng-IBC')
         },
         link: function (scope, elem, attrs) {
             console.log(scope.question);
+            console.log(scope.revision);
             scope.constants = Constants;
             scope.question.IBCPossibleAnswers.forEach(function (pa) {
                 if (!scope.revision.responsesMapped[pa.UID]) {
