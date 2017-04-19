@@ -14,7 +14,7 @@ angular.module('ng-IBC')
         console.log($scope.protocolStatuses);
 
         function getAllProtocols() {
-            $scope.protocols = new ViewModelInstance();
+            $scope.protocols = new ViewModelHolder();
             return $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap, ibc.IBCProtocol.SectionMap])])
             .then(
                 function (whateverGotReturned) {
@@ -54,8 +54,8 @@ angular.module('ng-IBC')
         $scope.constants = Constants;
         $scope.modalData = DataStoreManager.ModalData;
 
-        $scope.users = new ViewModelInstance();
-        $scope.reviewers = new ViewModelInstance();
+        $scope.users = new ViewModelHolder();
+        $scope.reviewers = new ViewModelHolder();
 
         $scope.loading = $q.all([DataStoreManager.getAll("User", $scope.users), DataStoreManager.resolveCompMaps($scope.modalData.IBCProtocolRevision, true)])
             .then((stuff) => {

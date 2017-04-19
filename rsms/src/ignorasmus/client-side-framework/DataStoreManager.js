@@ -109,11 +109,12 @@ var DataStoreManager = (function () {
                     .then(function (whateverGotReturned) {
                     d.forEach(function (value, index) {
                         d[index].doCompose(compMaps);
-                        d[index].viewModelWatcher = viewModelInst.data[index] = DataStoreManager.buildNestedViewModelWatcher(value);
+                        d[index].viewModelWatcher = DataStoreManager._actualModel[type].ViewModelWatcher[index] = DataStoreManager.buildNestedViewModelWatcher(value);
                     });
                     if (compMaps && typeof compMaps === "boolean") {
                         DataStoreManager._actualModel[type].fullyComposed = true;
                     }
+                    viewModelInst.data = DataStoreManager._actualModel[type].ViewModelWatcher;
                     return viewModelInst;
                 })
                     .catch(function (reason) {
@@ -155,12 +156,12 @@ var DataStoreManager = (function () {
                 DataStoreManager._actualModel[type].Data[existingIndex] = d; // update existing
             }
             else {
-                DataStoreManager._actualModel[type].Data.push(d); // add new
+                existingIndex = DataStoreManager._actualModel[type].Data.push(d) - 1; // add new
             }
             return (compMaps ? _this.resolveCompMaps(d, compMaps) : _this.promisifyData(d))
                 .then(function (whateverGotReturned) {
                 d.doCompose(compMaps);
-                d.viewModelWatcher = viewModelInst.data = DataStoreManager.buildNestedViewModelWatcher(d);
+                d.viewModelWatcher = viewModelInst.data = DataStoreManager._actualModel[type].ViewModelWatcher[existingIndex] = DataStoreManager.buildNestedViewModelWatcher(d);
                 if (compMaps && typeof compMaps === "boolean") {
                     DataStoreManager._actualModel[type].fullyComposed = true;
                 }
@@ -190,7 +191,7 @@ var DataStoreManager = (function () {
                                 allComps.push(DataStoreManager._actualModel[compMap.ChildType].getAllPromise);
                             }
                             else {
-                                allComps.push(DataStoreManager.getAll(compMap.ChildType, new ViewModelInstance(), typeof compMaps === "boolean"));
+                                allComps.push(DataStoreManager.getAll(compMap.ChildType, new ViewModelHolder(), typeof compMaps === "boolean"));
                             }
                         }
                         else {
@@ -237,18 +238,18 @@ var DataStoreManager = (function () {
      *
      * @param viewModel
      */
-    DataStoreManager.save = function (viewModel) {
+    DataStoreManager.save = function (viewModel, reverseCompose) {
         // if viewModel is array, add 's' to end of save url to differentiate it as plural call on the server
         var urlSave = Array.isArray(viewModel) ? viewModel[0].thisClass["urlMapping"].urlSave + "s" : viewModel.thisClass["urlMapping"].urlSave;
         return XHR.POST(urlSave, viewModel)
             .then(function (d) {
             if (Array.isArray(d)) {
                 d.forEach(function (value, index) {
-                    d[index] = DataStoreManager.commitToActualModel(d[index]);
+                    d[index] = DataStoreManager.commitToActualModel(d[index], reverseCompose);
                 });
                 return d;
             }
-            return DataStoreManager.commitToActualModel(d);
+            return DataStoreManager.commitToActualModel(d, reverseCompose);
         });
     };
     /**
@@ -274,17 +275,48 @@ var DataStoreManager = (function () {
      *
      * @param viewModelParent
      */
-    DataStoreManager.commitToActualModel = function (viewModelParent) {
+    DataStoreManager.commitToActualModel = function (viewModelParent, reverseCompose) {
         var vmParent = InstanceFactory.convertToClasses(viewModelParent);
         if (!(vmParent instanceof FluxCompositerBase))
             return;
         var actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         if (!actualModelEquivalent && vmParent.TypeName) {
+            var isNew = true;
             DataStoreManager._actualModel[vmParent.TypeName].Data.push(_.cloneDeep(vmParent));
             actualModelEquivalent = this.getActualModelEquivalent(vmParent);
         }
         vmParent = InstanceFactory.copyProperties(actualModelEquivalent, vmParent, ["viewModelWatcher"]);
         actualModelEquivalent.viewModelWatcher = vmParent.viewModelWatcher = DataStoreManager.buildNestedViewModelWatcher(actualModelEquivalent);
+        if (isNew) {
+            DataStoreManager._actualModel[vmParent.TypeName].ViewModelWatcher.push(vmParent.viewModelWatcher);
+            if (reverseCompose) {
+                // See if any instances in actualModel should compose collections of viewModelParent's class-types and add it to collection //
+                InstanceFactory._classNames.forEach(function (className) {
+                    var fluxClass = InstanceFactory._nameSpace[className];
+                    for (var instanceProp in fluxClass) {
+                        if (fluxClass[instanceProp] instanceof CompositionMapping) {
+                            var cm = fluxClass[instanceProp];
+                            // if the CompMap's ChildType is same class-type as viewModelParent...
+                            if (cm.ChildType == vmParent.TypeName && vmParent[cm.ChildIdProp]) {
+                                var existingIndex = _.findIndex(DataStoreManager._actualModel[fluxClass.name].Data, function (o) { return o[cm.ParentIdProp] == vmParent[cm.ChildIdProp]; });
+                                if (existingIndex > -1) {
+                                    // We found actualModel instance that should compose this viewModelParent instance!
+                                    var compParent = DataStoreManager._actualModel[fluxClass.name].Data[existingIndex];
+                                    if (cm.CompositionType == CompositionMapping.ONE_TO_ONE) {
+                                        compParent[cm.PropertyName] = vmParent.viewModelWatcher;
+                                    }
+                                    else {
+                                        if (!compParent[cm.PropertyName])
+                                            compParent[cm.PropertyName] = [];
+                                        compParent[cm.PropertyName].push(vmParent.viewModelWatcher);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
         return vmParent.viewModelWatcher;
     };
     /**
@@ -297,7 +329,7 @@ var DataStoreManager = (function () {
     DataStoreManager.buildNestedViewModelWatcher = function (fluxCompBase) {
         if (fluxCompBase.hasOwnProperty("viewModelWatcher")) {
             if (!fluxCompBase.viewModelWatcher)
-                fluxCompBase.viewModelWatcher = Object.create(null); // make viewModelWatcher if null
+                fluxCompBase.viewModelWatcher = {}; // make viewModelWatcher if null
             InstanceFactory.convertToClasses(InstanceFactory.copyProperties(fluxCompBase.viewModelWatcher, fluxCompBase, ["viewModelWatcher"]));
         }
         return _.cloneDeepWith(fluxCompBase, function (value) {

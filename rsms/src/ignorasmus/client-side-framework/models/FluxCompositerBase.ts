@@ -88,7 +88,7 @@ abstract class FluxCompositerBase {
 
     UID: number;
     TypeName: string;
-    viewModelWatcher: FluxCompositerBase = null;
+    viewModelWatcher: FluxCompositerBase | any = null;
 
     thisClass: Function; // reference to instance's class for calling static props and methods
 
@@ -123,6 +123,7 @@ abstract class FluxCompositerBase {
             console.log( new Error("You forgot to set URL mappings for this class. The framework can't get instances of it from the server") );
         }
         this.thisClass = (<any>this).constructor;
+        this.TypeName = (<any>this).constructor.name; // default value for TypeName
     }
 
     //----------------------------------------------------------------------
