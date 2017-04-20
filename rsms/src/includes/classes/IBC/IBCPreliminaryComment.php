@@ -16,8 +16,8 @@ class IBCPreliminaryComment extends GenericCrud
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"ibc_question_id"	=> "integer",
-        "ibc_revision_id"	=> "integer",
+		"question_id"	=> "integer",
+        "revision_id"	=> "integer",
 		"text"			=> "text",
 
 		//GenericCrud
@@ -37,8 +37,8 @@ class IBCPreliminaryComment extends GenericCrud
 		"foreignKeyName"	=>	"answer_id"
 	);
 
-    private $ibc_question_id;
-    private $ibc_revision_id;
+    private $question_id;
+    private $revision_id;
     private $text;
 
     /* non-persisted value passed to all questions that are part of an Protocol instance*/
@@ -59,18 +59,18 @@ class IBCPreliminaryComment extends GenericCrud
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 
-    public function getIbc_question_id(){
-		return $this->ibc_question_id;
+    public function getQuestion_id(){
+		return $this->question_id;
 	}
-	public function setIbc_question_id($ibc_question_id){
-		$this->ibc_question_id = $ibc_question_id;
+	public function setQuestion_id($question_id){
+		$this->question_id = $question_id;
 	}
 
-	public function getIbc_revision_id(){
-		return $this->ibc_revision_id;
+	public function getRevision_id(){
+		return $this->revision_id;
 	}
-	public function setIbc_revision_id($ibc_revision_id){
-		$this->ibc_revision_id = $ibc_revision_id;
+	public function setRevision_id($revision_id){
+		$this->revision_id = $revision_id;
 	}
 
 	public function getText(){

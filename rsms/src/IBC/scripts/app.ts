@@ -99,10 +99,22 @@ angular
         
         $rootScope.save = function (copy): Promise<any> {
             return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(
-                function (responses) {
+                function (someReturn) {
                     console.log(DataStoreManager._actualModel);
-                    return responses;
+                    return someReturn;
                 });
+        }
+
+        // returns true if any of passed roles is in CurrentRoles
+        $rootScope.hasRole = function (...roles): boolean {
+            return DataStoreManager.CurrentRoles.some((value) => {
+                for (var n = 0; n < roles.length; n++) {
+                    if (value == roles[n]) {
+                        return true;
+                    }
+                }
+                return false;
+            });
         }
 
     });

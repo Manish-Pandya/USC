@@ -12,20 +12,33 @@
         IBCResponses: IBCResponse[];
         static IBCReponseMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCResponse", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCResponses&id={{UID}}", "IBCResponses", "Revision_id");
 
-        PreliminaryComments: IBCPreliminaryComment[];
-        static PreliminaryCommentMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCPreliminaryComment", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=PreliminaryComments&id={{UID}}", "PreliminaryComments", "Revision_id");
+        IBCPreliminaryComments: IBCPreliminaryComment[];
+        static IBCPreliminaryCommentMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCPreliminaryComment", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCPreliminaryComments&id={{UID}}", "IBCPreliminaryComments", "Revision_id");
 
         responsesMapped: { [index: string]: ibc.IBCResponse[] } = {};
         getResponsesMapped(): { [index: string]: ibc.IBCResponse[] } {
             if (this.IBCResponses) {
                 for (var n = 0; n < this.IBCResponses.length; n++) {
                     var response = this.IBCResponses[n];
-                    console.log(response);
+                    //console.log(response);
                     if (!this.responsesMapped[response.Answer_id]) this.responsesMapped[response.Answer_id] = [];
                     this.responsesMapped[response.Answer_id].push(response);
                 }
             }
             return this.responsesMapped;
+        }
+
+        preliminaryCommentsMapped: { [index: string]: ibc.IBCPreliminaryComment[] } = {};
+        getPreliminaryCommentsMapped(): { [index: string]: ibc.IBCPreliminaryComment[] } {
+            if (this.IBCPreliminaryComments) {
+                for (var n = 0; n < this.IBCPreliminaryComments.length; n++) {
+                    var comment = this.IBCPreliminaryComments[n];
+                    //console.log(coment);
+                    if (!this.preliminaryCommentsMapped[comment.Question_id]) this.preliminaryCommentsMapped[comment.Question_id] = [];
+                    this.preliminaryCommentsMapped[comment.Question_id].push(comment);
+                }
+            }
+            return this.preliminaryCommentsMapped;
         }
 
         constructor() {
@@ -35,6 +48,7 @@
         onFulfill(): void {
             super.onFulfill();
             this.getResponsesMapped();
+            this.getPreliminaryCommentsMapped();
         }
 
         hasGetAllPermission(): boolean {

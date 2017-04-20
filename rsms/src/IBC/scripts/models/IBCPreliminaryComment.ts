@@ -3,6 +3,11 @@
 
         static urlMapping = new UrlMapping("getAllIBCPreliminaryComments", "getIBCPreliminaryCommentById&id=", "saveIBCPreliminaryComment");
 
+        Revision_id: string;
+
+        Question_id: string;
+
+        text: string = "";
 
         constructor() {
             super();

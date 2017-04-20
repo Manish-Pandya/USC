@@ -89,9 +89,24 @@ angular
         });
     };
     $rootScope.save = function (copy) {
-        return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(function (responses) {
+        return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(function (someReturn) {
             console.log(DataStoreManager._actualModel);
-            return responses;
+            return someReturn;
+        });
+    };
+    // returns true if any of passed roles is in CurrentRoles
+    $rootScope.hasRole = function () {
+        var roles = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            roles[_i] = arguments[_i];
+        }
+        return DataStoreManager.CurrentRoles.some(function (value) {
+            for (var n = 0; n < roles.length; n++) {
+                if (value == roles[n]) {
+                    return true;
+                }
+            }
+            return false;
         });
     };
 });

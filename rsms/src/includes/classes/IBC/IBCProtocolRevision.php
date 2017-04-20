@@ -93,7 +93,7 @@ class IBCProtocolRevision extends GenericCrud
         "className"	=>	"IBCPreliminaryComment",
         "tableName"	=>	"ibc_preliminary_comment",
         "keyName"	=>	"key_id",
-        "foreignKeyName"	=>	"ibc_revision_id"
+        "foreignKeyName"	=>	"revision_id"
     );
 
     public static $PRIMARY_REVIEWERS_RELATIONSHIP = array(

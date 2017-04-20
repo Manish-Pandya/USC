@@ -13,8 +13,8 @@
                 revisionId: "@"
             },
             link: (scope, elem, attrs) => {
-                console.log(scope.question);
-                console.log(scope.revision);
+                //console.log(scope.question);
+                //console.log(scope.revision);
                 scope.constants = Constants;
                 scope.question.IBCPossibleAnswers.forEach((pa: ibc.IBCPossibleAnswer) => {
                     if (!scope.revision.responsesMapped[pa.UID]) {
@@ -36,11 +36,32 @@
                 })
                 */
                 scope.responses = scope.revision.responsesMapped;
+
+                scope.preliminaryComment = new ibc.IBCPreliminaryComment();
+                scope.preliminaryComment.Revision_id = scope.revision.UID;
+                scope.preliminaryComment.Question_id = scope.question.UID;
+
+                scope.saveComment = function (): void {
+                    if (!scope.revision.IBCPreliminaryComments) scope.revision.IBCPreliminaryComments = [];
+                    if (!scope.revision.IBCPreliminaryComments.length || scope.revision.IBCPreliminaryComments.slice(-1) != scope.preliminaryComment) {
+                        scope.revision.IBCPreliminaryComments.push(scope.preliminaryComment);
+                    }
+                }
+
+                scope.cancelComment = function (): void {
+                    scope.state.commentShown = false;
+                    scope.preliminaryComment.text = "";
+                    if (scope.revision.IBCPreliminaryComments && scope.revision.IBCPreliminaryComments.slice(-1) == scope.preliminaryComment) {
+                        scope.revision.IBCPreliminaryComments.splice(-1, 1);
+                    }
+                }
+
+                scope.state = { commentShown: false };
             },
             replace: false,
             transclude: true,
             templateUrl: (elem, attrs, scope) => {
-                console.log(elem, attrs);
+                //console.log(elem, attrs);
                 return "./scripts/directives/ibc-question-template.html";
             }
         }
