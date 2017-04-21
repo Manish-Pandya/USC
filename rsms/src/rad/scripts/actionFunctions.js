@@ -27,6 +27,8 @@ angular
 
             af.createCopy = function(obj)
             {
+                if (!dataStore[obj.Class]) dataStore[obj.Class] = [];
+
                 var l = dataStore[obj.Class].length;
                 for (var i = 0 ; i < l; i++) {
                     dataStore[obj.Class][i].edit = false;

@@ -19,7 +19,8 @@ angular.module('EquipmentModule')
             .then(function (whateverGotReturned) {
             getYears($rootScope.cabinets);
             var actModCab = DataStoreManager.getActualModelEquivalent($rootScope.cabinets.data[1].EquipmentInspections[0]);
-            $rootScope.cabinets.data.sort(function (a, b) { return a.EquipmentInspections[0].Room.Building.Name != b.EquipmentInspections[0].Room.Building.Name ? a.EquipmentInspections[0].Room.Building.Name > b.EquipmentInspections[0].Room.Building.Name : a.EquipmentInspections[0].Room.Name > b.EquipmentInspections[0].Room.Name; });
+            //$rootScope.cabinets.data.sort((a, b) => { return a.EquipmentInspections[0].Room.Building.Name != b.EquipmentInspections[0].Room.Building.Name ? a.EquipmentInspections[0].Room.Building.Name > b.EquipmentInspections[0].Room.Building.Name : a.EquipmentInspections[0].Room.Name > b.EquipmentInspections[0].Room.Name; });
+            $rootScope.cabinets.data = _.sortBy($rootScope.cabinets.data, ['EquipmentInspections[0].Room.Building.Name', 'EquipmentInspections[0].Room.Name']);
             return true;
         })
             .catch(function (reason) {
@@ -187,11 +188,12 @@ angular.module('EquipmentModule')
     $scope.updateCertDate = function (date) {
         $rootScope.selectedCertificationDate = date;
     };
+    var d = new Date().getFullYear();
     $scope.getIsPreviousYear = function (uncert) {
         if (uncert === void 0) { uncert = null; }
         if (uncert)
             return true;
-        return parseInt($rootScope.selectedCertificationDate) >= new Date().getFullYear();
+        return parseInt($rootScope.selectedCertificationDate) < d;
     };
     $scope.getIsNextYear = function () {
         return parseInt($rootScope.selectedCertificationDate) == new Date().getFullYear() + 1;

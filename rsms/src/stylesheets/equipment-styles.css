@@ -366,12 +366,12 @@ button.btn:not(.btn-large) {
     padding:0;
 
 }
-.bio-safety-cabinets-container table.current-year:not(.quickdate-calendar) tr td > div{
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td > div{
     padding:5px 0;
     display:table;
     width:100%;
 }
-.bio-safety-cabinets-container table.current-year:not(.quickdate-calendar) tr td > div > div{
+.bio-safety-cabinets-container table:not(.quickdate-calendar) tr td > div > div{
     display:table-row;
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr td > div > div > span{
@@ -379,7 +379,7 @@ button.btn:not(.btn-large) {
     display:table-cell;
     vertical-align:middle;
     height:70px;
-    padding:0 7px;
+    padding: 0 7px;
 }
 .bio-safety-cabinets-container table:not(.quickdate-calendar) tr td > div > div:last-child > span{
     border-bottom:0

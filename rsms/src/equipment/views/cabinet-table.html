@@ -18,7 +18,7 @@
                 <th>MODEL</th>
                 <th>SERIAL #</th>
                 <th ng-if="!getIsNextYear()">CERT-DATE</th>
-                <th ng-if="(!uncertified && !getIsPreviousYear(uncertified)) || getIsNextYear()">
+                <th ng-if="(!uncertified && !getIsPreviousYear(uncertified)) || getIsNextYear()" ng-hide="uncertified">
                     DUE-DATE
                 </th>
                 <th ng-init="filter">
@@ -36,7 +36,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="cabinet in completeCabinets = (cabinets.data | pi:filter.pi | status:filter.status | matchEquipmentBuilding:selectedBuilding | cabinetYear:selectedCertificationDate:uncertified | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive} ) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
+            <!--| orderBy:['EquipmentInspections[0].Room.Building.Name','EquipmentInspections[0].Room.Name']-->
+            <tr ng-repeat="cabinet in completeCabinets = (cabinets.data | pi:filter.pi | status:filter.status | matchEquipmentBuilding:selectedBuilding | cabinetYear:selectedCertificationDate:uncertified | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive}  ) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
                 <td>
                     <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet, inspections[0], true)" class="btn btn-primary btn-mini left"><i class="icon-pencil"></i></button>
                     <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit, 'btn-success':!cabinet.Is_active}" ng-click="deactivate(cabinet)" class="btn btn-danger btn-mini left"><i class="icon-remove" ng-class="{'icon-checkmark':!cabinet.Is_active}"></i></button>
@@ -76,14 +77,14 @@
                         </div>
                     </div>
                 </td>
-                <td ng-if="(!uncertified && !getIsPreviousYear(uncertified)) || getIsNextYear()">
+                <td ng-if="(!uncertified && !getIsPreviousYear(uncertified)) || getIsNextYear()" ng-hide="uncertified">
                     <div>
                         <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
                             <span>{{inspection.Due_date | dateToISO}}</span>
                         </div>
                     </div>
                 </td>
-                <td>
+                <td class="pis">
                     <div>
                         <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | hasMoved:'PrincipalInvestigators' | orderBy:'Due_date':true)">
                             <span><a style="display: block;padding: 3px 0;" ng-click="openPiInfoModal(pi)" ng-repeat="pi in inspection.PrincipalInvestigators">{{pi.User.Name}}<br ng-if="!$last"></a></span>
@@ -91,7 +92,7 @@
                          </div>
                     </div>
                 </td>
-                <td ng-if="!uncertified && !getIsNextYear()">
+                <td ng-if="!uncertified && !getIsNextYear()" class="pis">
                     <div>
                         <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
                             <span><span class="bold" ng-class="{'red': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.OVERDUE,
@@ -116,7 +117,7 @@
                         </div>
                     </div>
                 </td>
-                <td ng-if="!uncertified && !getIsNextYear()">
+                <td ng-if="!uncertified && !getIsNextYear()" class="pis">
                     <div>
                         <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
                             <span>{{inspection.Comment}}</span>

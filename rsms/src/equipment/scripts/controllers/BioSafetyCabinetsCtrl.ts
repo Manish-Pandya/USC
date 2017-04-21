@@ -21,8 +21,8 @@ angular.module('EquipmentModule')
                 function (whateverGotReturned) {
                     getYears($rootScope.cabinets);
                     var actModCab = DataStoreManager.getActualModelEquivalent($rootScope.cabinets.data[1].EquipmentInspections[0]);
-                    $rootScope.cabinets.data.sort((a, b) => { return a.EquipmentInspections[0].Room.Building.Name != b.EquipmentInspections[0].Room.Building.Name ? a.EquipmentInspections[0].Room.Building.Name > b.EquipmentInspections[0].Room.Building.Name : a.EquipmentInspections[0].Room.Name > b.EquipmentInspections[0].Room.Name; });
-
+                    //$rootScope.cabinets.data.sort((a, b) => { return a.EquipmentInspections[0].Room.Building.Name != b.EquipmentInspections[0].Room.Building.Name ? a.EquipmentInspections[0].Room.Building.Name > b.EquipmentInspections[0].Room.Building.Name : a.EquipmentInspections[0].Room.Name > b.EquipmentInspections[0].Room.Name; });
+                    $rootScope.cabinets.data = _.sortBy($rootScope.cabinets.data, ['EquipmentInspections[0].Room.Building.Name', 'EquipmentInspections[0].Room.Name']);
                     return true;
                 }
                 )
@@ -209,9 +209,10 @@ angular.module('EquipmentModule')
             $rootScope.selectedCertificationDate = date;
         }
 
+        var d = new Date().getFullYear();
         $scope.getIsPreviousYear = function (uncert: boolean = null):boolean {
-            if(uncert)return true
-            return parseInt($rootScope.selectedCertificationDate) >= new Date().getFullYear();
+            if (uncert) return true;
+            return parseInt($rootScope.selectedCertificationDate) < d;
         }
 
         $scope.getIsNextYear = function (): boolean {

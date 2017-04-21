@@ -29,9 +29,11 @@
         <div class="control-group">
             <label class="control-label">Principal Investigator(s)</label>
             <div class="controls" style="display:block">
-                <select class="span3" ng-model="modalData.pi" ng-change="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push(modalData.pi)" ng-options="pi as pi.Name for pi in modalData.selectedRoom.PrincipalInvestigators | piSelected:modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators | orderBy:'Name'">
-                    <option value="" ng-if="!modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length">--Unassigned--</option>
-                    <option value="" ng-if="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length">--Select PI--</option>
+                <select class="span3" ng-if="!modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length" ng-model="modalData.pi" ng-change="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push(modalData.pi)" ng-options="pi as pi.Name for pi in modalData.selectedRoom.PrincipalInvestigators | piSelected:modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators | orderBy:'Name'">
+                    <option value="" ng-show="!modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length">--Unassigned--</option>
+                </select>
+                <select class="span3" ng-if="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length" ng-model="modalData.pi" ng-change="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push(modalData.pi)" ng-options="pi as pi.Name for pi in modalData.selectedRoom.PrincipalInvestigators | piSelected:modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators | orderBy:'Name'">
+                    <option value="" ng-show="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length">--Select Investigator--</option>
                 </select>
             </div>
             <ul>
