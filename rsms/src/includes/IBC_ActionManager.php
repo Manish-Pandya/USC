@@ -353,7 +353,7 @@ class IBC_ActionManager extends ActionManager {
         foreach($pis as $pi){
             $pi->setEntityMaps($entityMaps);
         }
-        
+
         return $pis;
     }
 
@@ -377,7 +377,7 @@ class IBC_ActionManager extends ActionManager {
         return $dao->getById($id);
     }
 
-    public function saveIBCPreliminaryComment(IBCPreliminaryComment $comment){
+    public function saveIBCPreliminaryComment(IBCPreliminaryComment $decodedObject){
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         $dao = $this->getDao($decodedObject);

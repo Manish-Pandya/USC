@@ -40,7 +40,7 @@ var XHR = (function () {
             xhr.open(method, fullUrl);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onload = function () {
-                console.log(xhr, location.origin);
+                //console.log(xhr, location.origin);
                 if (_this.SUCCESS_CODES.indexOf(xhr.status) > -1) {
                     resolve(JSON.parse(xhr.responseText));
                 }

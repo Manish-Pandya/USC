@@ -9,7 +9,7 @@ var ibc;
         __extends(IBCPreliminaryComment, _super);
         function IBCPreliminaryComment() {
             var _this = _super.call(this) || this;
-            _this.text = "";
+            _this.Text = "";
             return _this;
         }
         IBCPreliminaryComment.prototype.hasGetAllPermission = function () {

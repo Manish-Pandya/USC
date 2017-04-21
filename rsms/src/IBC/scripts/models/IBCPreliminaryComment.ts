@@ -7,7 +7,7 @@
 
         Question_id: string;
 
-        text: string = "";
+        Text: string = "";
 
         constructor() {
             super();

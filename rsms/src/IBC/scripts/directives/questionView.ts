@@ -37,20 +37,26 @@
                 */
                 scope.responses = scope.revision.responsesMapped;
 
-                scope.preliminaryComment = new ibc.IBCPreliminaryComment();
-                scope.preliminaryComment.Revision_id = scope.revision.UID;
-                scope.preliminaryComment.Question_id = scope.question.UID;
+                scope.addComment = function (): void {
+                    scope.preliminaryComment = new ibc.IBCPreliminaryComment();
+                    scope.preliminaryComment.Revision_id = scope.revision.UID;
+                    scope.preliminaryComment.Question_id = scope.question.UID;
+                    scope.state.commentShown = true;
+                }
 
                 scope.saveComment = function (): void {
+                    scope.state.commentShown = false;
+                    scope.revision.preliminaryCommentsMapped = {}; // reset the object to blank
                     if (!scope.revision.IBCPreliminaryComments) scope.revision.IBCPreliminaryComments = [];
                     if (!scope.revision.IBCPreliminaryComments.length || scope.revision.IBCPreliminaryComments.slice(-1) != scope.preliminaryComment) {
                         scope.revision.IBCPreliminaryComments.push(scope.preliminaryComment);
                     }
+                    scope.revision.getPreliminaryCommentsMapped(); // rebuild mapping
                 }
 
                 scope.cancelComment = function (): void {
                     scope.state.commentShown = false;
-                    scope.preliminaryComment.text = "";
+                    scope.preliminaryComment.Text = "";
                     if (scope.revision.IBCPreliminaryComments && scope.revision.IBCPreliminaryComments.slice(-1) == scope.preliminaryComment) {
                         scope.revision.IBCPreliminaryComments.splice(-1, 1);
                     }

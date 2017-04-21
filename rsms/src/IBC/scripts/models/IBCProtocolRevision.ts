@@ -33,7 +33,6 @@
             if (this.IBCPreliminaryComments) {
                 for (var n = 0; n < this.IBCPreliminaryComments.length; n++) {
                     var comment = this.IBCPreliminaryComments[n];
-                    //console.log(coment);
                     if (!this.preliminaryCommentsMapped[comment.Question_id]) this.preliminaryCommentsMapped[comment.Question_id] = [];
                     this.preliminaryCommentsMapped[comment.Question_id].push(comment);
                 }

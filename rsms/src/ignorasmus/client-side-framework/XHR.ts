@@ -53,8 +53,7 @@ abstract class XHR {
             xhr.open(method, fullUrl);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onload = () => {
-                
-                console.log(xhr, location.origin);
+                //console.log(xhr, location.origin);
                 if (this.SUCCESS_CODES.indexOf(xhr.status) > -1) {
                     resolve(JSON.parse(xhr.responseText));
                 } else {
