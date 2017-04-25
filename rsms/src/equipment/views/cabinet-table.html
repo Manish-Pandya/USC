@@ -120,7 +120,8 @@
                 <td ng-if="!uncertified && !getIsNextYear()" class="pis">
                     <div>
                         <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
-                            <span>{{inspection.Comment}}</span>
+                            <span ng-if="inspection.Certification_date || inspection.Fail_date">{{inspection.Comment}}</span>
+                            <span style="color:#9c9c9c" ng-if="!inspection.Certification_date || !inspection.Fail_date" ng-bind-html="getMostRecentComment(cabinet)"></span>                            
                         </div>
                     </div>
                 </td>

@@ -15,7 +15,7 @@ angular.module('EquipmentModule')
         $rootScope.cabinets = new ViewModelHolder();
         $rootScope.Rooms = new ViewModelHolder();
         $scope.campuses = new ViewModelHolder();
-        return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $rootScope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false), DataStoreManager.getAll("Room", $rootScope.Rooms, true)])
+        return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $rootScope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false), DataStoreManager.getAll("Room", $rootScope.Rooms, [equipment.Room.PIMap])])
             .then(function (whateverGotReturned) {
             getYears($rootScope.cabinets);
             var actModCab = DataStoreManager.getActualModelEquivalent($rootScope.cabinets.data[1].EquipmentInspections[0]);
@@ -68,6 +68,18 @@ angular.module('EquipmentModule')
         cabinet.Retirement_date = convenienceMethods.getUnixDate(new Date());
         cabinet.Is_active = !cabinet.Is_active;
         $scope.saving = af.save(cabinet);
+    };
+    $rootScope.getMostRecentComment = function (cabinet) {
+        var previousInspection = cabinet.EquipmentInspections.filter(function (i) {
+            return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
+        })[0];
+        if (previousInspection && previousInspection["Comment"]) {
+            cabinet["previousComment"] = true;
+            return moment(previousInspection.Certification_date).format("YYYY") + ' Comments:<br>' + previousInspection["Comment"];
+        }
+        ;
+        cabinet["previousComment"] = false;
+        return "";
     };
     $scope.openModal = function (object, insp, isCabinet) {
         var modalData = { inspection: null };
@@ -239,7 +251,6 @@ angular.module('EquipmentModule')
         $rootScope.Rooms.data.forEach(function (r) {
             if (r.UID == id) {
                 $scope.modalData.selectedRoom = r;
-                console.log(r);
                 $scope.getBuilding(r.Building_id);
             }
         });
@@ -247,13 +258,13 @@ angular.module('EquipmentModule')
     if (!$rootScope.Buildings) {
         $rootScope.Buildings = new ViewModelHolder();
         $rootScope.loading = $q.all([DataStoreManager.getAll("Building", $rootScope.Buildings, true)]).then(function (b) {
-            if ($scope.modalData.BioSafetyCabinet.SelectedInspection && $scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id) {
+            if ($scope.modalData.BioSafetyCabinet && $scope.modalData.BioSafetyCabinet.SelectedInspection && $scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id) {
                 $scope.getRoom($scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id);
             }
         });
     }
     else {
-        if ($scope.modalData.BioSafetyCabinet.SelectedInspection && $scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id) {
+        if ($scope.modalData.BioSafetyCabinet && $scope.modalData.BioSafetyCabinet.SelectedInspection && $scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id) {
             $scope.getRoom($scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id);
         }
     }
@@ -307,15 +318,6 @@ angular.module('EquipmentModule')
         $rootScope.modalClosed = true;
         $modalInstance.close(r);
         DataStoreManager.ModalData = null;
-    };
-    $scope.getMostRecentComment = function () {
-        if ($scope.modalData.inspection && $scope.modalData.inspection.Comment)
-            return $scope.modalData.inspection.Comment;
-        var thing = $scope.modalData.BioSafetyCabinet.EquipmentInspections.filter(function (i) {
-            return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
-        })[0];
-        if (thing)
-            return thing.Comment || $scope.modalData.BioSafetyCabinet.Comment || "";
     };
     $scope.getRoomOptions = function (array) {
         array.push({ Name: "Unassigned", Key_id: null });

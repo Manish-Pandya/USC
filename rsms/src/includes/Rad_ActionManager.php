@@ -2000,8 +2000,8 @@ class Rad_ActionManager extends ActionManager {
     public function getPiInventory( $piId = NULL, $inventoryId = NULL ){
         $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
-        $inventoryId = $this->getValueFromRequest('inventoryId', $inventoryId);
-        $piId = $this->getValueFromRequest('piId', $piId);
+        if($piId == null)$inventoryId = $this->getValueFromRequest('inventoryId', $inventoryId);
+        if($inventoryId == null)$piId = $this->getValueFromRequest('piId', $piId);
 
         if( $inventoryId == NULL && $piId == NULL ) {
             return new ActionError("Request parameters 'piId' and 'inventoryId' were not provided");
@@ -2032,8 +2032,6 @@ class Rad_ActionManager extends ActionManager {
                 new WhereClause('quarterly_inventory_id', '=', $inventory->getKey_id())
         );
         $whereClauseGroup->setClauses($clauses);
-
-
 
         $pastPiInventories = $piInventoryDao->getAllWhere($whereClauseGroup);
         if($pastPiInventories != NULL){
@@ -2181,7 +2179,7 @@ class Rad_ActionManager extends ActionManager {
         //$pi->getQuarterly_inventories()'s query is ordered by date_modified column, so the last in the array will be the most recent
         $mostRecentIntentory = end($pi->getQuarterly_inventories());
         $pi_inventory = $this->getPiInventory($piId,$mostRecentIntentory->getQuarterly_inventory_id());
-        foreach($pi_inventory->getQuarterly_isotope_amounts() as &$amt){
+        foreach($pi_inventory->getQuarterly_isotope_amounts() as $amt){
             $entityMaps = array();
             $entityMaps[] = new EntityMap("eager", "getAuthorization");
             $amt->setEntityMaps($entityMaps);

@@ -438,6 +438,8 @@ class GenericDAO {
 	 */
 	public function getTransferAmounts( $startDate, $endDate, $hasTransferDate = null ){
         $l = Logger::getLogger("transfer amounts");
+        $l->fatal($this->modelObject->getAuthorization());
+
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel`
 				where `authorization_id` IN (select key_id from authorization where principal_investigator_id = ? AND original_pi_auth_id = ?)";
