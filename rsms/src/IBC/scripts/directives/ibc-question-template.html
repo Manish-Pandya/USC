@@ -35,7 +35,7 @@
     </div>
 
     <div ng-if="question.Answer_type == $root.constants.IBC_ANSWER_TYPE.FREE_TEXT">
-        <textarea ng-model="revision.responsesMapped[question.IBCPossibleAnswers[0].UID][0].Text"></textarea>
+        <textarea ng-model="revision.responsesMapped[question.IBCPossibleAnswers[0].UID][0].Text" ui-tinymce="$root.tinymceOptions"></textarea>
         <a class="btn btn-small btn-success left" ng-click="$root.saveReponses(revision.responsesMapped[question.IBCPossibleAnswers[0].UID],revision)"><i class="icon-checkmark"></i>Save</a>
     </div>
 
@@ -48,10 +48,9 @@
     <div ng-if="$root.hasRole(constants.ROLE.NAME.ADMIN, constants.ROLE.NAME.IBC_MEMBER, constants.ROLE.NAME.IBC_CHAIR)">
         <a ng-if="!state.commentShown" class="btn btn-small btn-success left" ng-click="addComment();"><i class="icon-plus-2"></i>Add Comment</a>
         <div ng-if="state.commentShown">
-            <textarea ng-model="preliminaryComment.Text"></textarea>
+            <textarea ng-model="preliminaryComment.Text" ui-tinymce="$root.tinymceOptions"></textarea>
             <a class="btn btn-small btn-success left" ng-click="saveComment(); $root.save(preliminaryComment)"><i class="icon-checkmark"></i>Save</a>
             <a class="btn btn-small btn-success left" ng-click="cancelComment();"><i class="icon-cancel-2"></i>Cancel</a>
         </div>
     </div>
-
 </div>

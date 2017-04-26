@@ -57,6 +57,13 @@ angular
     $rootScope._ = _;
     $rootScope.DataStoreManager = DataStoreManager;
     $rootScope.constants = Constants;
+    $rootScope.tinymceOptions = {
+        plugins: 'link lists',
+        toolbar: 'bold | italic | underline | link | lists | bullist | numlist',
+        menubar: false,
+        elementpath: false,
+        content_style: "p,ul li, ol li {font-size:14px}"
+    };
     //register classes with app
     console.log("approved classNames:", InstanceFactory.getClassNames(ibc));
     // method to async fetch current roles
