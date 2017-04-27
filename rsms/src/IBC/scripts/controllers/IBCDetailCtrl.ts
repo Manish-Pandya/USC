@@ -20,7 +20,7 @@ angular.module('ng-IBC')
                     console.log(DataStoreManager._actualModel);
 
                     var pRevision: ibc.IBCProtocolRevision = $scope.protocol.data.IBCProtocolRevisions[$scope.protocol.data.IBCProtocolRevisions.length - 1];
-                    $q.all([DataStoreManager.getById("IBCProtocolRevision", pRevision.UID, $scope.revision, true)])
+                    $q.all([DataStoreManager.getById("IBCProtocolRevision", pRevision.UID, $scope.revision, true)]).then(() => { console.log($scope.revision)})
                 });
         }
 

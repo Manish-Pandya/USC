@@ -89,12 +89,11 @@ class IBC_ActionManager extends ActionManager {
      * @param IBCProtocolRevision
      * @return GenericCrud | ActionError | IBCProtocolRevision
      */
-    function saveProtocolRevision(IBCProtocolRevision $decodedObject = null){
+    function saveProtocolRevision(IBCProtocolRevision $decodedObject = null, $cloneIfReturnedForRevision = true){
 		$l = Logger::getLogger("save revision");
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         //hold Preliminary and Primary reviewers
-
 		$primaryReviewers = $decodedObject->getPrimaryReviewers();
         $preliminaryReviewers = $decodedObject->getPreliminaryReviewers();
         $dao = $this->getDao($decodedObject);
@@ -120,15 +119,72 @@ class IBC_ActionManager extends ActionManager {
             $dao->addRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
         }
 
+		//Protocol's current IBCProtocolRevision has been returned for revision, to be revised for revisions
+		if($revision->getStatus() === IBCProtocolRevision::$STATUSES["RETURNED_FOR_REVISION"] && $cloneIfReturnedForRevision){
+			//revise revisions of revised revision
+			$newRevision = clone($revision);//new IBCProtocolRevision();
+			$this->purgeKeyIds($newRevision);
+			$newRevision = $this->saveProtocolRevision($newRevision, false);
+			$l->fatal($newRevision);
+			return array($newRevision,$revision);
+		}
+
 		$revision->setPreliminaryReviewers(null);
 		$revision->setPrimaryReviewers(null);
-
-        $entityMaps = array();
+		$entityMaps = array();
         $entityMaps[] = new EntityMap("eager","getPreliminaryReviewers");
         $entityMaps[] = new EntityMap("eager","getPrimaryReviewers");
 		$revision->setEntityMaps($entityMaps);
+
         return $revision;
     }
+
+	/*
+	 *
+	 *
+	 */
+	private function purgeKeyIds(GenericCrud $currentObject){
+		$l = Logger::getLogger(__FUNCTION__);
+		$keys = get_class_methods($currentObject);
+		if(count($keys) > 0){
+			if(method_exists($currentObject, "getKey_id") && $currentObject->hasPrimaryKeyValue()){
+				$currentObject->setKey_id(null);
+			}
+
+			foreach($keys as $method){
+				//only call getters
+				if(stristr($method,"get")){
+					if(is_array($currentObject->$method())){
+						foreach($currentObject->$method() as $sub){
+							$this->purgeKeyIds($sub);
+						}
+					}else{
+						$l->fatal($method);
+						$l->fatal($currentObject->$method());
+						$this->purgeKeyIds($currentObject->$method());
+					}
+				}
+			}
+		}
+
+	}
+
+	/*
+	purgeKeyIds(currentObj: any): void {
+		var keys = Object.keys(currentObj);
+		if (keys && keys.length) {
+			if (currentObj["Key_id"]) {
+				currentObj["Key_id"] = null;
+			}
+			keys.forEach((value) => {
+				if(is_array(currentObj[value])){
+					foreach(){}
+				}
+				this.purgeKeyIds(currentObj[value]);
+			})
+		}
+    }
+	*/
 
     public function saveProtocolRevisions(array $decodedObject = null){
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();

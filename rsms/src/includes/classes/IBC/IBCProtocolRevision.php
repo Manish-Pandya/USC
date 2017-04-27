@@ -170,7 +170,7 @@ class IBCProtocolRevision extends GenericCrud
 	}
 
     /** define the possible statuses for revisions **/
-    private static $STATUSES = array(
+    static $STATUSES = array(
             "NOT_SUBMITTED" => "Not Submitted",
             "SUBMITTED" => "Submitted",
             "RETURNED_FOR_REVISION" => "Returned for Revision",
@@ -195,8 +195,23 @@ class IBCProtocolRevision extends GenericCrud
         }
 		return $this->status;
 	}
+
 	public function setStatus($status){
-		$this->status = $status;
+		if(!$this->date_submitted && !$this->date_returned){
+            $this->status = IBCProtocolRevision::$STATUSES["NOT_SUBMITTED"];
+        }
+        elseif($this->date_submitted && !$this->date_to_review && !$this->date_approved && !$this->date_returned){
+            $this->status = IBCProtocolRevision::$STATUSES["SUBMITTED"];
+        }
+        elseif($this->date_to_review && !$this->date_approved && !$this->date_returned){
+            $this->status = IBCProtocolRevision::$STATUSES["IN_REVIEW"];
+        }
+        elseif(!$this->date_approved && $this->date_returned){
+            $this->status = IBCProtocolRevision::$STATUSES["RETURNED_FOR_REVISION"];
+        }
+        elseif($this->date_approved){
+            $this->status = IBCProtocolRevision::$STATUSES["APPROVED"];
+        }
 	}
 
     public function getIBCResponses(){

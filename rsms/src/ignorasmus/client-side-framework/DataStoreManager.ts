@@ -104,13 +104,20 @@ abstract class DataStoreManager {
 
         if (!viewModelInst.data) viewModelInst.data = [];
         (<FluxCompositerBase[]>viewModelInst.data).splice(0, (<FluxCompositerBase[]>viewModelInst.data).length); // clear viewModelParent
+
+        //TODO: revise nasty boolean
         if (!DataStoreManager._actualModel[type].Data || !DataStoreManager._actualModel[type].Data.length) {
             if (!DataStoreManager._actualModel[type].getAllCalled) {
                 DataStoreManager._actualModel[type].getAllCalled = true;
                 DataStoreManager._actualModel[type].getAllPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetAll);
             }
-        } else {       
-            DataStoreManager._actualModel[type].getAllPromise = this.promisifyData( DataStoreManager._actualModel[type].Data );
+        } else {
+            if (!DataStoreManager._actualModel[type].getAllCalled) {
+                DataStoreManager._actualModel[type].getAllCalled = true;
+                DataStoreManager._actualModel[type].getAllPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetAll);
+            } else {
+                DataStoreManager._actualModel[type].getAllPromise = this.promisifyData(DataStoreManager._actualModel[type].Data);
+            }
         }
 
         return DataStoreManager._actualModel[type].getAllPromise

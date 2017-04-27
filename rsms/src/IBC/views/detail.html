@@ -21,6 +21,7 @@
         <h3 ng-if="!closed && !section.IBCQuestions.length"><i class="icon-spinnery-dealie spinner small" style="margin: 3px;"></i>Loading Questions</h3>
     </collapsible-card>
     
+    <a class="btn btn-small btn-success left" ng-click="revision.data.Status = $root.constants.IBC_PROTOCOL_REVISION.STATUS.RETURNED_FOR_REVISION; $root.returnForRevision(revision.data)"><i class="icon-checkmark"></i>Return for revision</a>
 </div>
 
 <pre><a ng-click="testSave(protocol.data)">update it</a></pre>

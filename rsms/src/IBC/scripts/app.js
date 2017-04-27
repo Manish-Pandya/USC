@@ -52,7 +52,7 @@ angular
         controller: "TestCtrl"
     });
 })
-    .controller('AppCtrl', function ($rootScope, $q) {
+    .controller('AppCtrl', function ($rootScope, $q, convenienceMethods, $state) {
     //expose lodash to views
     $rootScope._ = _;
     $rootScope.DataStoreManager = DataStoreManager;
@@ -95,8 +95,14 @@ angular
             return revision;
         });
     };
+    $rootScope.returnForRevision = function (copy) {
+        copy["Date_returned"] = convenienceMethods.setMysqlTime(new Date());
+        console.log(copy, convenienceMethods);
+        return $rootScope.save(copy).then(function () { $state.go("ibc.home"); });
+    };
     $rootScope.save = function (copy) {
         return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(function (someReturn) {
+            console.log("save result:", someReturn);
             console.log(DataStoreManager._actualModel);
             return someReturn;
         });

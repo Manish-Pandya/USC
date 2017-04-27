@@ -16,7 +16,7 @@ abstract class InstanceFactory extends DataStoreManager {
 
     static _classNames: string[];
 
-    static _nameSpace: Object = window;
+    static _nameSpace: any = window;
 
     //----------------------------------------------------------------------
     //

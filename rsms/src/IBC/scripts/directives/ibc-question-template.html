@@ -25,7 +25,7 @@
             <tr>
                 <th ng-repeat="a in question.IBCPossibleAnswers | orderBy:'Grid_column_index'">{{a.Answer_text}}<br />{{revision.responsesMapped[question.IBCPossibleAnswers].Text}}</th>
             </tr>
-            <tr ng-repeat="(key, response) in revision.responsesMapped[question.IBCPossibleAnswers[0].UID]">
+            <tr ng-repeat="(key, response) in revision.responsesMapped[question.IBCPossibleAnswers[0].UID] track by $index">
                 <td ng-repeat="a in question.IBCPossibleAnswers | orderBy:'Grid_column_index'">
                     <input ng-model="revision.responsesMapped[a.UID][key].Text" ng-init="tableResponses.push(revision.responsesMapped[a.UID][key])"/> <!-- push each prepared response to tableResponses -->
                 </td>

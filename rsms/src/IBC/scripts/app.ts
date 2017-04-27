@@ -53,7 +53,7 @@ angular
                 controller: "TestCtrl"
             })
     })
-    .controller('AppCtrl', function ($rootScope, $q) {
+    .controller('AppCtrl', function ($rootScope, $q, convenienceMethods, $state) {
         //expose lodash to views
         $rootScope._ = _;
         $rootScope.DataStoreManager = DataStoreManager;
@@ -104,10 +104,17 @@ angular
                 return revision;
             })
         }
+
+        $rootScope.returnForRevision = (copy: ibc.IBCProtocolRevision): Promise<any> | any => {
+            copy["Date_returned"] = convenienceMethods.setMysqlTime(new Date());
+            console.log(copy, convenienceMethods);
+            return $rootScope.save(copy).then(() => { $state.go("ibc.home")});
+        }
         
         $rootScope.save = function (copy): Promise<any> {
             return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(
                 function (someReturn) {
+                    console.log("save result:", someReturn);
                     console.log(DataStoreManager._actualModel);
                     return someReturn;
                 });

@@ -1017,7 +1017,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
             if (!date && date !== false) return null;
             //console.log(date);
             if (!date) var date = new Date();
-            date = new Date(Date.parse(date));
+            if (!(date instanceof Date)) date = new Date(Date.parse(date));
             date = date.getFullYear() + '-' +
                 ('00' + (date.getMonth()+1)).slice(-2) + '-' +
                 ('00' + date.getDate()).slice(-2) + ' ' +
