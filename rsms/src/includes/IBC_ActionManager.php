@@ -90,12 +90,13 @@ class IBC_ActionManager extends ActionManager {
      * @return GenericCrud | ActionError | IBCProtocolRevision
      */
     function saveProtocolRevision(IBCProtocolRevision $decodedObject = null, $cloneIfReturnedForRevision = true){
-		$l = Logger::getLogger("save revision");
+		$l = Logger::getLogger(__FUNCTION__);
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         //hold Preliminary and Primary reviewers
 		$primaryReviewers = $decodedObject->getPrimaryReviewers();
         $preliminaryReviewers = $decodedObject->getPreliminaryReviewers();
+
         $dao = $this->getDao($decodedObject);
         $revision = $dao->save($decodedObject);
 
@@ -121,11 +122,39 @@ class IBC_ActionManager extends ActionManager {
 
 		//Protocol's current IBCProtocolRevision has been returned for revision, to be revised for revisions
 		if($revision->getStatus() === IBCProtocolRevision::$STATUSES["RETURNED_FOR_REVISION"] && $cloneIfReturnedForRevision){
-			//revise revisions of revised revision
 			$newRevision = clone($revision);//new IBCProtocolRevision();
-			$this->purgeKeyIds($newRevision);
-			$newRevision = $this->saveProtocolRevision($newRevision, false);
 			$l->fatal($newRevision);
+			$newRevision->setPreliminaryReviewers($preliminaryReviewers);
+			$newRevision->setPrimaryReviewers($primaryReviewers);
+
+			$this->purgeKeyIds($newRevision);
+
+			$responses = $revision->getIBCResponses();
+			$preComments = $revision->getIBCPreliminaryComments();
+			$l->fatal($newRevision);
+			//TODO: get our primary comments and save them after we write the other stuff for that thing
+			//$primaryComments = $newRevision->getIBCPriminaryComments();
+
+			$newRevision = $this->saveProtocolRevision($newRevision, false);
+
+			foreach($responses as $response){
+				$response->setRevision_id($newRevision->getKey_id());
+				$response = $this->saveIBCResponses(array($response));
+			}
+
+			foreach($preComments as $comment){
+				$comment->getRevision_id($newRevision->getKey_id());
+				$comment = $this->saveIBCPreliminaryComment($comment);
+			}
+
+			//TODO: get our primary comments and save them after we write the other stuff for that thing
+			/*
+			foreach($primaryComments as $comment){
+				$comment->getRevision_id($newRevision->getKey_id());
+				$comment = $this->saveIBCPiminaryComment($comment);
+			}
+			*/
+
 			return array($newRevision,$revision);
 		}
 
@@ -140,11 +169,11 @@ class IBC_ActionManager extends ActionManager {
     }
 
 	/*
-	 *
+	 * RECURSIVELY PURGE KEY_IDS FROM OBJECT TREE FOR FRESH SAVES
+	 * @param GenericCrud $currentObject
 	 *
 	 */
 	private function purgeKeyIds(GenericCrud $currentObject){
-		$l = Logger::getLogger(__FUNCTION__);
 		$keys = get_class_methods($currentObject);
 		if(count($keys) > 0){
 			if(method_exists($currentObject, "getKey_id") && $currentObject->hasPrimaryKeyValue()){
@@ -159,8 +188,6 @@ class IBC_ActionManager extends ActionManager {
 							$this->purgeKeyIds($sub);
 						}
 					}else{
-						$l->fatal($method);
-						$l->fatal($currentObject->$method());
 						$this->purgeKeyIds($currentObject->$method());
 					}
 				}
@@ -169,24 +196,7 @@ class IBC_ActionManager extends ActionManager {
 
 	}
 
-	/*
-	purgeKeyIds(currentObj: any): void {
-		var keys = Object.keys(currentObj);
-		if (keys && keys.length) {
-			if (currentObj["Key_id"]) {
-				currentObj["Key_id"] = null;
-			}
-			keys.forEach((value) => {
-				if(is_array(currentObj[value])){
-					foreach(){}
-				}
-				this.purgeKeyIds(currentObj[value]);
-			})
-		}
-    }
-	*/
-
-    public function saveProtocolRevisions(array $decodedObject = null){
+	public function saveProtocolRevisions(array $decodedObject = null){
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         if(!is_array($decodedObject))return new ActionError("Not an array");

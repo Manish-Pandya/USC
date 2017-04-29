@@ -13,7 +13,7 @@ angular.module('ng-IBC')
     console.log($scope.protocolStatuses);
     function getAllProtocols() {
         $scope.protocols = new ViewModelHolder();
-        return $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap, ibc.IBCProtocol.SectionMap])])
+        return $q.all([DataStoreManager.getAll("IBCProtocol", $scope.protocols, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap, ibc.IBCProtocol.SectionMap, ibc.IBCProtocol.HazardMap, ibc.IBCProtocol.DepartmentMap])])
             .then(function (whateverGotReturned) {
             console.log($scope.protocols.data);
             console.log(DataStoreManager._actualModel);

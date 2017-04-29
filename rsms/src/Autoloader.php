@@ -109,7 +109,7 @@ class Autoloader {
 			
 			if( !$loaded ){
 				//This is fatal because class-not-found results in a fatal error
-				$LOG->fatal("Unable to autoload class '$class' - no such file '$class.php' found.");
+				$LOG->error("Unable to autoload class '$class' - no such file '$class.php' found.");
 			}
 		});
 	}

@@ -234,7 +234,7 @@ class GenericDAO {
                     if(is_array($clause->getVal())){
                         $values = $clause->getVal();
                         $inQuery = implode(',', array_fill(0, count($values), '?'));
-                        $sql .= "($inQuery)";                       
+                        $sql .= "($inQuery)";
                     }
 				}else{
 					$sql .= " ?";
@@ -410,7 +410,7 @@ class GenericDAO {
         $stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
         $stmt->bindValue(2, $this->modelObject->getAuthorization()->getOriginal_pi_auth_id());
 
-        
+
         if ( $stmt->execute() ) {
 
             $total = $stmt->fetch(PDO::FETCH_NUM);
@@ -447,10 +447,10 @@ class GenericDAO {
 
         }elseif($hasTransferDate != true){
             $sql .= " AND transfer_in_date IS NULL AND `arrival_date` BETWEEN ? AND ?";
-           
+
         }
 
-        
+
 		// Get the db connection
 		global $db;
 		$stmt = $db->prepare($sql);
@@ -527,6 +527,12 @@ class GenericDAO {
 
 		// Add the creation timestamp
 		if ($object->getDate_created() == null) {$object->setDate_created(date("Y-m-d H:i:s"));}
+
+		//set created user and last modified user ids if we can and need to
+		if(isset($_SESSION["USER"]) && $_SESSION["USER"]->getKey_id() != null){
+			$object->setLast_modified_user_id($_SESSION["USER"]->getKey_id());
+			if($object->getCreated_user_id() == null)$object->setCreated_user_id($_SESSION["USER"]->getKey_id());
+		}
 
 		// Get the db connection
 		global $db;
@@ -1154,7 +1160,7 @@ class GenericDAO {
 			$stmt->bindParam(':id', $pIId, PDO::PARAM_INT);
 		}else{
             $inQuery = implode(',', array_fill(0, count($roomIds), '?'));
-            
+
 			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, COALESCE(NULLIF(b.alias, ''), b.name) as building_name from room a
 								 LEFT JOIN building b on a.building_id = b.key_id
 								 where a.key_id IN ";
@@ -1169,7 +1175,7 @@ class GenericDAO {
         }else{
 			$error = $stmt->errorInfo();
 			$result = new QueryError($error);
-			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());    
+			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
             return $result;
         }
 

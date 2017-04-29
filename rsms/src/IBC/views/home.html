@@ -34,7 +34,7 @@
         <tbody>
             <tr ng-repeat="protocol in notSub = (protocols.data | isNotSubmitted | filter:{Is_active:!showInactive})">
                 <td>{{protocol.Protocol_number}}</td>
-                <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
+                <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.Name}}</p> </td>
                 <td>{{protocol.Department.Name}} </td>
                 <td>{{protocol.Project_title}} </td>
                 <td>{{protocol.Date_created | dateToISO}} </td>
@@ -78,7 +78,7 @@
                 <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Protocol_type}} </td>
                 <td>{{protocol.Hazard.Name}} </td>
                 <td><a class="btn btn-primary left" ui-sref="ibc.detail({id:protocol.UID})"><i class="icon-document-alt-fill"></i>View Protocol</a> </td>
-                <td><button ng-click="openModal(protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1])" class="btn btn-mini"><i class="icon-plus"></i>Reviewers</button></td>
+                <td><button ng-click="openModal(protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1])" class="btn btn-success left"><i class="icon-plus-2"></i>Reviewers</button></td>
             </tr>
         </tbody>
     </table>
