@@ -18,6 +18,7 @@ class SolidsContainer extends RadCrud {
 		"principal_investigator_id"		=> "integer",
 		"room_id"						=> "integer",
 		"name"							=> "text",
+        "pickup_id"                     => "integer",
 
 		//GenericCrud
 		"key_id"						=> "integer",

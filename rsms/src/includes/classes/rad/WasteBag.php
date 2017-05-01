@@ -7,14 +7,13 @@ class WasteBag extends RadCrud {
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"container_id" => "integer",
 		"pickup_id"	   => "integer",
 		"drum_id"	   => "integer",
 		"curie_level"  => "float",
 		"date_added"   => "timestamp",
 		"date_removed" => "timestamp",
         "comments"     => "text",
-
+        "principal_investigator_id"		=> "integer",
 
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -33,6 +32,8 @@ class WasteBag extends RadCrud {
 			"foreignKeyName"	=> "waste_bag_id"
 	);
 
+    /** integer key id of the principal investigator this container belongs to. */
+	private $principal_investigator_id;
 
 	/** container this bag went into */
 	private $container;
@@ -81,32 +82,6 @@ class WasteBag extends RadCrud {
 
 	public function getColumnData(){
 		return self::$COLUMN_NAMES_AND_TYPES;
-	}
-
-	public function getContainer() {
-		if($this->container === null && $this->hasPrimaryKeyValue()) {
-			$containerDao = new GenericDAO(new SolidsContainer());
-			$this->container = $containerDao->getById($this->getContainer_id());
-		}
-		return $this->container;
-	}
-	public function setContainer($newContainer) {
-		$this->container = $newContainer;
-	}
-
-	public function getContainer_id() {
-		return $this->container_id;
-	}
-	public function setContainer_id($newId) {
-		$this->container_id = $newId;
-	}
-
-	public function getContainer_name(){
-		if($this->getContainer_id() != NULL && $this->container_name == NULL){
-			$container = $this->getContainer();
-			$this->container_name = $container->getName();
-		}
-		return $this->container_name;
 	}
 
 	public function getCurie_level() {
@@ -184,4 +159,7 @@ class WasteBag extends RadCrud {
 
     public function getComments(){return $this->comments;}
     public function setComments($comments){$this->comments = $comments;}
+
+    public function getPrincipal_investigator_id() { return $this->principal_investigator_id; }
+	public function setPrincipal_investigator_id($newId) { $this->principal_investigator_id = $newId; }
 }

@@ -24,7 +24,7 @@ angular.module('00RsmsAngularOrmApp')
                         pi.loadPurchaseOrders();
                         pi.loadPIAuthorizations();
                         pi.loadCarboyUseCycles();
-                        pi.loadSolidsContainers();
+                        pi.loadWasteBags();
                         $rootScope.pi = pi;
                         //$scope.getHighestAmendmentNumber($scope.mappedAmendments);
                         return pi;

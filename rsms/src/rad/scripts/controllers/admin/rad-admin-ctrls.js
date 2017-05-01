@@ -858,7 +858,7 @@ angular.module('00RsmsAngularOrmApp')
                         pi.loadPurchaseOrders();
                         pi.loadPIAuthorizations();
                         pi.loadCarboyUseCycles();
-                        pi.loadSolidsContainers();
+                        pi.loadWasteBags();
                         $rootScope.pi = pi;
                         //$scope.getHighestAmendmentNumber($scope.mappedAmendments);
                         return pi;
@@ -1169,7 +1169,7 @@ angular.module('00RsmsAngularOrmApp')
             $modalInstance.dismiss();
             var cycleCopy = {
                 Class: "CarboyUseCycle",
-                Room_id: cycle.Room.Key_id,
+                Room_id: cycle.Room ? cycle.Room.Key_id : null,
                 Principal_investigator_id: pi.Key_id,
                 Key_id: cycle.Key_id || null,
                 Carboy_id: cycle.Carboy_id

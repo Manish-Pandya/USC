@@ -343,26 +343,26 @@ angular
                                 piPromise.resolve(pis);
                             }
                         )
-
+                /*
                     this.getAllRooms()
                         .then(
                             function(rooms){
                                 roomsPromise.resolve(rooms);
                             }
                         )
-
+*/
                     return all.then(
                                 function( model ){
                                     var inflatedModel = {}
-                                    store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'User' ) ) );
+                                    store.store( modelInflatorFacRFtory.instateAllObjectsFromJson( store.get( 'User' ) ) );
                                     store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'PrincipalInvestigator' ) ) );
                                     store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'PrincipalInvestigatorRoomRelation' ) ) );
-                                    store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'Room' ) ) );
+                                    //store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'Room' ) ) );
 
                                     inflatedModel.users = modelInflatorFactory.callAccessors( 'Users' );
                                     inflatedModel.pis = modelInflatorFactory.callAccessors( 'PrincipalInvestigators' );
                                     inflatedModel.relations = modelInflatorFactory.callAccessors( 'PrincipalInvestigatorRoomRelations' );
-                                    inflatedModel.rooms = modelInflatorFactory.callAccessors( 'Rooms' );
+                                    //inflatedModel.rooms = modelInflatorFactory.callAccessors( 'Rooms' );
 
                                     return inflatedModel;
                                 }
@@ -1005,7 +1005,7 @@ angular
                             pi.loadActiveParcels();
                             pi.loadPurchaseOrders();
                             pi.loadCarboyUseCycles();
-                            pi.loadSolidsContainers();
+                            pi.loadWasteBags();
                             return pi;
                         });
             }
@@ -1019,7 +1019,8 @@ angular
                 }
                 var segment = "getRadPIById&id="+id+"&rooms=true";
                 return genericAPIFactory.read(segment)
-                    .then( function( returned ) {
+                    .then(function (returned) {
+                        console.log(returned);
                         var pi = returned.data;
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.User ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Pi_authorization ));
@@ -1036,7 +1037,7 @@ angular
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.WipeTests));
 
                         console.log(pi);
-                        
+
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.Pickups));
 
                         var i = pi.ActiveParcels.length;
@@ -1059,12 +1060,11 @@ angular
 
 
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi));
-                       
+
                         pi = dataStoreManager.getById("PrincipalInvestigator", id);
                         pi.loadPIWipeTests();
 
                         if (pi) {
-                            pi.loadSolidsContainers();
                             pi.loadPickups();
                             pi.loadActiveParcels();
                             pi.loadRooms();
@@ -1074,20 +1074,23 @@ angular
                             pi.loadPIAuthorizations();
                             pi.loadUser();
                             pi.loadWasteBags();
+                            //pi.loadCurrentWasteBag();
                             pi.loadCurrentScintVialCollections();
                             pi.loadPIWipeTests();
                             var i = pi.Pickups.length;
                             while (i--) {
                                 pi.Pickups[i].loadCurrentScintVialCollections();
                                 pi.Pickups[i].loadCarboyUseCycles();
+                                //load waste bags, too
                             }
 
+                            /*
                             var i = pi.SolidsContainers.length;
                             while(i--){
                                 pi.SolidsContainers[i].loadCurrentWasteBags();
                                 pi.SolidsContainers[i].loadWasteBagsForPickup();
                             }
-                           
+                           */
                         }
                         return pi;
                     });
@@ -1618,11 +1621,9 @@ angular
                                     store.store(returnedUse.DestinationParcel);
                                     dataStoreManager.addOnSave(returnedUse.DestinationParcel);
                                 }
+                                returnedUse = modelInflatorFactory.instateAllObjectsFromJson(returnedUse);
+                                returnedUse.loadDestinationParcel();
                             }
-
-                            returnedUse = modelInflatorFactory.instateAllObjectsFromJson(returnedUse);
-                            returnedUse.loadDestinationParcel();
-
                             var i = returnedUse.ParcelUseAmounts.length;
                             while(i--){
                                 returnedUse.ParcelUseAmounts[i] = modelInflatorFactory.instateAllObjectsFromJson( returnedUse.ParcelUseAmounts[i] );

@@ -12,8 +12,7 @@ PrincipalInvestigator.prototype = {
     eagerAccessors: [
         {method:"loadUser", boolean:"User_id"},
         {method:"loadCarboys", boolean:true},
-        {method:"loadSolidsContainers", boolean:true},
-        {method:"loadWasteBags", boolean:"SolidsContainers"},
+        {method:"loadWasteBags", boolean:true},
         { method: "loadRooms", boolean: true },
     ],
 
@@ -69,12 +68,21 @@ PrincipalInvestigator.prototype = {
         paramName: 'id'
     },
 
-    SolidsContainersRelationship: {
-        className:    'SolidsContainer',
+    WasteBagsRelationship: {
+        className:    'WasteBag',
         keyReference:  'Principal_investigator_id',
         methodString:  '',
         paramValue: 'Key_id',
         paramName: 'id'
+    },
+
+    CurrentWasteBagRelationship: {
+        className: 'WasteBag',
+        keyReference: 'Principal_investigator_id',
+        methodString: '',
+        paramValue: 'Key_id',
+        paramName: 'id',
+        where: [{ 'Pickup_id': "IS NULL" }]
     },
 
     CurrentScintVialCollectionRelationship: {
@@ -169,20 +177,17 @@ PrincipalInvestigator.prototype = {
     },
 
     loadWasteBags: function () {
-        if((!this.WasteBags || !this.WasteBags.length) && this.SolidsContainers){
-            this.WasteBags = [];
-            var i = this.SolidsContainers.length;
-            while(i--){
-                if(this.SolidsContainers[i].CurrentWasteBags && this.SolidsContainers[i].CurrentWasteBags.length){
-                    this.SolidsContainers[i].CurrentWasteBags[0] = this.inflator.instateAllObjectsFromJson(this.SolidsContainers[i].CurrentWasteBags[0]);
-                    this.WasteBags.push(this.SolidsContainers[i].CurrentWasteBags[0]);
-                }
-            }
-        }
+        return dataLoader.loadOneToManyRelationship(this, 'WasteBags', this.WasteBagsRelationship);
+    },
+
+    loadCurrentWasteBag: function () {
+        //return dataLoader.loadOneToManyRelationship(this, 'CurrentWasteBag', this.CurrentWasteBagRelationship);
     },
 
     loadCurrentScintVialCollections: function () {
-        this.CurrentScintVialCollections = [];
+        // this.CurrentScintVialCollections = [];
+        console.log(this.CurrentScintVialCollections);
+        alert("called");
         dataLoader.loadOneToManyRelationship( this, 'CurrentScintVialCollections', this.CurrentScintVialCollectionRelationship);
     },
     getName: function () {

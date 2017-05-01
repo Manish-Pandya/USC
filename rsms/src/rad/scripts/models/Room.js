@@ -3,7 +3,7 @@
 //constructor
 var Room = function () {
     Room.url = "";
-    Room.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllRooms";
+    Room.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllRadRooms";
 };
 Room.prototype = {
 

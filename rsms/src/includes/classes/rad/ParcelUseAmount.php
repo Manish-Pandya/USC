@@ -66,7 +66,6 @@ include_once 'RadCrud.php';
     /** Id of is use amount's parent parcel use. */
     private $parcel_use_id;
 
-    private $container_name;
 
     //comments field used to describe ParcelUseAmounts with Waste_type "Other"
     private $comments;
@@ -79,6 +78,7 @@ include_once 'RadCrud.php';
 
     /** boolean to indicate if this ParcelUseAmount's container has been picked up **/
     private $isPickedUp;
+    private $datePickedUp;
 
     private $miscellaneous_waste_id;
 
@@ -88,7 +88,6 @@ include_once 'RadCrud.php';
     	$entityMaps = array();
     	$entityMaps[] = new EntityMap("lazy", "getCarboy");
     	$entityMaps[] = new EntityMap("eager", "getWaste_type");
-    	$entityMaps[] = new EntityMap("eager", "getContainer_name");
     	$this->setEntityMaps($entityMaps);
     }
 
@@ -154,17 +153,6 @@ include_once 'RadCrud.php';
 		$this->scint_vial_collection_id = $scint_vial_collection_id;
 	}
 
-    public function getContainer_name(){
-    	if($this->getWaste_bag_id() != NULL && $this->container_name == NULL){
-    		$wasteBagDao = new GenericDAO(new WasteBag());
-    		$wasteBag = $wasteBagDao->getById($this->getWaste_bag_id());
-    		$container = $wasteBag->getContainer();
-            if($container != null){
-                $this->container_name = $container->getName();
-            }
-    	}
-    	return $this->container_name;
-    }
 	public function getComments() {	return $this->comments;	}
 	public function setComments($comments) {$this->comments = $comments;}
 
@@ -206,26 +194,29 @@ include_once 'RadCrud.php';
         $l = Logger::getLogger(__FUNCTION__);
         $this->isPickedUp = false;
         global $db;
-		$queryString = "SELECT * from parcel_use_amount a
-	                            left join waste_bag c
-	                            ON a.waste_bag_id = c.key_id
-	                            left join carboy_use_cycle d
-	                            ON a.carboy_id = d.key_id
-	                            left join scint_vial_collection e
-	                            ON a.scint_vial_collection_id = e.key_id
-	                            INNER join pickup f
-	                            ON c.pickup_id = f.key_id
-	                            OR d.pickup_id = f.key_id
-	                            OR e.pickup_id = f.key_id
-	                            where a.key_id = ?
-	                            AND f.status != 'REQUESTED';";
+		$queryString = "select a.key_id, a.pickup_date, a.requested_date, a.principal_investigator_id from pickup a
+                        left join waste_bag b
+                        on b.pickup_id = a.key_id
+                        left join scint_vial_collection c
+                        on c.pickup_id = a.key_id
+                        left join carboy_use_cycle d
+                        on d.pickup_id = a.key_id
+                        left join parcel_use_amount e
+                        on e.waste_bag_id = b.key_id
+                        OR e.scint_vial_collection_id = c.key_id
+                        OR e.carboy_id = d.key_id
+                        where e.key_id = ?";
 
 		$stmt = $db->prepare($queryString);
-        $stmt->bindParam(1,$this->getKey_id(),PDO::PARAM_INT);
+        $stmt->bindParam(1,$this->key_id,PDO::PARAM_INT);
 		$stmt->execute();
-        $this->isPickedUp = count($stmt->fetchAll(PDO::FETCH_CLASS, "ParcelUseAmount")) != 0;
-        return (boolean) $this->isPickedUp;
+        $pickups = $stmt->fetchAll(PDO::FETCH_CLASS, "Pickup");
+        $this->isPickedUp = $pickups != null ? end($pickups)->getKey_id() : null;
+        $this->datePickedUp = $pickups != null ? end($pickups)->getPickup_date() : null;
+
+        return $this->isPickedUp;
     }
+    public function getDatePickedUp(){return $this->datePickedUp;}
 
     public function getMiscellaneous_waste_id(){return $this->miscellaneous_waste_id;}
 	public function setMiscellaneous_waste_id($miscellaneous_waste_id){$this->miscellaneous_waste_id = $miscellaneous_waste_id;}

@@ -40,8 +40,8 @@ ParcelUse.prototype = {
                 this.IsPickedUp = false;
             }
             for (var i = 0; i < this.ParcelUseAmounts.length; i++){
-                if (!this.ParcelUseAmounts[i].IsPickedUp) {
-                    this.IsPickedUp = false;
+                if (this.ParcelUseAmounts[i].IsPickedUp) {
+                    this.IsPickedUp = this.ParcelUseAmounts[i].IsPickedUp;
                     break;
                 }
             }
