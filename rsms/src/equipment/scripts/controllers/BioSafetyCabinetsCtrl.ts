@@ -87,7 +87,7 @@ angular.module('EquipmentModule')
             })[0];
             if (previousInspection && previousInspection["Comment"]) {
                cabinet["previousComment"] = true;
-               return moment(previousInspection.Certification_date).format("YYYY") + ' Comments:<br>' + previousInspection["Comment"]
+               return "<span class='modal-bold'>" + moment(previousInspection.Certification_date).format("YYYY") + ' Comments:<br></span>' + previousInspection["Comment"];
             };
             cabinet["previousComment"] = false;
             return "";

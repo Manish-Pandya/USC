@@ -265,7 +265,7 @@ class GenericDAO {
 
 		$i = 1;
 		foreach($whereClauses as $clause){
-			if($clause->getVal() != NULL ) {
+			if($clause->getVal() != NULL && strtolower($clause->getVal()) != "null") {
                 if( !is_array( $clause->getVal() ) ){
 				    $stmt->bindValue( $i, $clause->getVal() );
 				    $i++;
@@ -438,7 +438,6 @@ class GenericDAO {
 	 */
 	public function getTransferAmounts( $startDate, $endDate, $hasTransferDate = null ){
         $l = Logger::getLogger("transfer amounts");
-        $l->fatal($this->modelObject->getAuthorization());
 
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel`

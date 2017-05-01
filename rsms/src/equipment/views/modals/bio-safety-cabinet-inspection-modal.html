@@ -16,17 +16,19 @@
             <span class="metro-checkbox">{{constants.BIOSAFETY_CABINET.STATUS.FAIL}}</span>
         </label>
     </div>
-    <div class="control-group" ng-init="modalData.BioSafetyCabinet.SelectedInspectionn.viewDate = modalData.BioSafetyCabinet.SelectedInspection.Certification_date ? modalData.BioSafetyCabinet.SelectedInspection.Certification_date : today()" ng-if="modalData.BioSafetyCabinet.SelectedInspection.Status == constants.BIOSAFETY_CABINET.STATUS.PASS">
+    <div class="control-group" ng-init="modalData.BioSafetyCabinet.SelectedInspection.viewDate = modalData.BioSafetyCabinet.SelectedInspection.Certification_date ? modalData.BioSafetyCabinet.SelectedInspection.Certification_date : today()" ng-if="modalData.BioSafetyCabinet.SelectedInspection.Status == constants.BIOSAFETY_CABINET.STATUS.PASS">
         <label class="control-label">Certification Date</label>
+        <span ng-if="modalData.BioSafetyCabinet.SelectedInspection.viewFailDate">{{modalData.BioSafetyCabinet.SelectedInspection.viewFailDate}}</span>
         <datepicker2 ng-model='modalData.BioSafetyCabinet.SelectedInspection.viewDate' disable-timepicker='true'></datepicker2>
     </div>
     <div class="control-group" ng-init="modalData.BioSafetyCabinet.SelectedInspection.viewFailDate = modalData.BioSafetyCabinet.SelectedInspection.Fail_date ?modalData.BioSafetyCabinet.SelectedInspection.Fail_date : today()" ng-if="modalData.BioSafetyCabinet.SelectedInspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL">
         <label class="control-label">Certification Failed Date</label>
+        <span ng-if="modalData.BioSafetyCabinet.SelectedInspection.viewFailDate">{{modalData.BioSafetyCabinet.SelectedInspection.viewFailDate}}</span>
         <datepicker2 iconStyle="true" ng-model='modalData.BioSafetyCabinet.SelectedInspection.viewFailDate' disable-timepicker='true'></datepicker2>
     </div>
 
     <div class="control-group" ng-if="getMostRecentComment(modalData.BioSafetyCabinet)">
-        <label class="control-label"  ng-bind-html="getMostRecentComment(modalData.BioSafetyCabinet)"></label>
+        <label class="control-label" ng-bind-html="getMostRecentComment(modalData.BioSafetyCabinet)" style="font-weight:normal"></label>
     </div>
 
     <div class="control-group">

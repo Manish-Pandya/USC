@@ -451,17 +451,9 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
 .filter('tel', function () {
     return function (tel) {
         if (!tel) { return ''; }
-
-        var value = tel.toString().trim().replace(/^\+/, '');
-        /*
-        if (value.match(/[^0-9]/)) {
-            console.log(tel);
-            return tel;
-        }
-        */
+        var value = tel.toString().trim().replace(/[^0-9.]/g, '');
         var city = value.slice(0, 3);
         var number = value.slice(3);
-
         number = number.slice(0, 3) + '-' + number.slice(3);
         return ("(" + city + ") " + number).trim();
     }

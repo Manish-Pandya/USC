@@ -169,7 +169,8 @@ class Constants  {
         VIAL: 3,
         OTHER: 4,
         SOLID: 5,
-        TRANSFER: 6
+        TRANSFER: 6,
+        SAMPLE: 7
     }
 
     //these have to be strings instead of ints because the server will return IDS as strings, and we don't want to have to convert them all

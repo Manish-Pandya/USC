@@ -449,7 +449,7 @@ button.btn:not(.btn-large) {
 }
 .bio-safety-cabinets-container table.previous-year:not(.quickdate-calendar) tr td:nth-of-type(3){
     padding:0;
-    width: 7%;
+    width: 4%;
 }
 .bio-safety-cabinets-container table.previous-year:not(.quickdate-calendar) tr td:nth-of-type(4){
     width: 9%;
@@ -541,6 +541,9 @@ button.btn:not(.btn-large) {
     width:6%;
     padding:0;
 
+}
+.modal-body .modal-bold{
+    font-weight:bold;
 }
 .top-some{
     padding-top: 7px;
