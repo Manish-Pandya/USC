@@ -72,6 +72,12 @@ angular
 
             af.save = function( object, saveChildren, seg )
             {
+                for (var prop in object) {
+                    var p = prop.toLowerCase();
+                    if (p.indexOf("view_") != -1 && p.indexOf("date") != -1)
+                        var actualProp = prop.replace("view_", "");
+                        object[actualProp] = convenienceMethods.setMysqlTime(object[prop]);
+                    }
                     if(!saveChildren)saveChildren = false;
                     if (!seg) seg = false;
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
@@ -1039,14 +1045,14 @@ angular
                         console.log(pi);
 
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.Pickups));
-
+                        
                         var i = pi.ActiveParcels.length;
                         while (i--) {
                             if (pi.ActiveParcels[i].ParcelUses && pi.ActiveParcels[i].ParcelUses.length) {
+                                console.log(pi.ActiveParcels[i].ParcelUses)
                                 store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.ActiveParcels[i].ParcelUses.length));
                                 var j = pi.ActiveParcels[i].ParcelUses.length;
                                 while (j--) {
-
                                     if (pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts) {
                                         var k = pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts.length;
                                         while (k--) {
@@ -1311,6 +1317,7 @@ angular
                                 dataStoreManager.addOnSave(returnedParcel);
                                 pi.ActiveParcels.push(returnedParcel);
                             }
+                            return returnedParcel;
                         }
                     )
             }
@@ -1681,26 +1688,12 @@ angular
                             if (saveChildren) {
                                 //set pickup ids for items that are included in pickup
                                 var i = returnedPickup.Waste_bags.length;
-                                while(i--){
-                                        
-                                        //find the cached WasteBag with the same key_id as the one from the server, and update its properties
-                                        //remove this WasteBag from it's containers collection of WasteBags ready to be have a pickup requested.
-                                        var container = dataStoreManager.getById('SolidsContainer', returnedPickup.Waste_bags[i].Container_id);
-                                        console.log(container);
-                                        var j = container.WasteBagsForPickup.length;
-                                        while (j--) {
-                                            if (container.WasteBagsForPickup[j].Key_id == returnedPickup.Waste_bags[i].Key_id) {
-                                                angular.extend(container.WasteBagsForPickup[j], returnedPickup.Waste_bags[i]);
-                                            }
-                                        }
-                                        //if we've added the container's current waste bag, add set its pickup id
-                                        if (container.includeCurrentBag) {
-                                            var bag = dataStoreManager.getById("WasteBag", container.CurrentWasteBags[0].Key_id);
-                                            bag.Pickup_id = returnedPickup.Key_id;
-                                            container.CurrentWasteBags[0].Pickup_id = returnedPickup.Key_id;
-                                        }
+                                while (i--) {
+                                    if (dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id)) {
+                                        //find the cached CarboyUseCycle with the same key_id as the one from the server, and update its properties
+                                        angular.extend(dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id), returnedPickup.Waste_bags[i]);
+                                    }
                                 }
-                              
 
                                 var i = returnedPickup.Carboy_use_cycles.length;
                                 while(i--){
@@ -2471,6 +2464,24 @@ angular
                             var inventory = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
                             store.store(inventory);
                             return inventory;
+                        });
+
+            }
+
+            af.removeWasteFromPickup = function (amt) {
+                var urlSegment = 'removeParcelUseAmountFromPickup';
+                console.log("hey you", urlSegment);
+
+                return af.save(amt, false,urlSegment)
+                        .then(function (returnedPromise) {
+                            var returnedPickup = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise[0]);
+                            console.log(returnedPromise);
+                            var arrayToReturn = [returnedPickup];
+                            if (returnedPromise[1]) {
+                                var returnedBag = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise[1]);
+                                arrayToReturn.push(returnedBag);
+                            }
+                            return arrayToReturn;
                         });
 
             }

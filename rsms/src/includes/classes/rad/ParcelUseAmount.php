@@ -73,12 +73,18 @@ include_once 'RadCrud.php';
     /* The name of the isotope up in this ParcelUseAmount */
     private $isotope_name;
 
+    /* The RSNumber of the parcel up in this ParcelUseAmount */
+    private $rs_number;
+
     /* The key_id of the isotope up in this ParcelUseAmount */
     private $isotope_id;
 
     /** boolean to indicate if this ParcelUseAmount's container has been picked up **/
     private $isPickedUp;
     private $datePickedUp;
+
+    /** convenience prop to display parent ParcelUses' date_used */
+    private $date_used;
 
     private $miscellaneous_waste_id;
 
@@ -121,7 +127,7 @@ include_once 'RadCrud.php';
     public function getCarboy() {
     	//NOTE: may not have a carboy(_id) because not all uses are liquid waste.
     	if($this->carboy == NULL && $this->getCarboy_id() != null) {
-    		$carboyDao = new GenericDAO(new Carboy());
+    		$carboyDao = new GenericDAO(new CarboyUseCycle());
     		$this->carboy = $carboyDao->getById($this->getCarboy_id());
     	}
     	return $this->carboy;
@@ -183,6 +189,7 @@ include_once 'RadCrud.php';
             $useDao = new GenericDAO(new ParcelUse());
             $use = $useDao->getById($this->getParcel_use_id());
             $parcel = $use->getParcel();
+            $this->rs_number = $parcel->getRs_number();
             $isotope = $parcel->getIsotope();
             $this->isotope_id = $isotope->getKey_id();
         }
@@ -221,5 +228,24 @@ include_once 'RadCrud.php';
     public function getMiscellaneous_waste_id(){return $this->miscellaneous_waste_id;}
 	public function setMiscellaneous_waste_id($miscellaneous_waste_id){$this->miscellaneous_waste_id = $miscellaneous_waste_id;}
 
+    public function getDate_used(){
+
+        $use = new ParcelUse();
+        $dao = new GenericDao($use);
+        $use = $dao->getById($this->parcel_use_id);
+        if($use->getDate_used() != null)$this->date_used = $use->getDate_used();
+
+        return $this->date_used;
+    }
+
+    public function getRs_number(){
+        if($this->hasPrimaryKeyValue() && $this->rs_number == null){
+            $useDao = new GenericDAO(new ParcelUse());
+            $use = $useDao->getById($this->getParcel_use_id());
+            $parcel = $use->getParcel();
+            if($parcel != null)$this->rs_number = $parcel->getRs_number();
+        }
+        return $this->rs_number;
+    }
 }
 ?>

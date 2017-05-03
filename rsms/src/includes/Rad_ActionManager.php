@@ -56,7 +56,7 @@ class Rad_ActionManager extends ActionManager {
 	    $roomMaps[] = new EntityMap("lazy","getHas_hazards");
 	    $roomMaps[] = new EntityMap("lazy","getSolidsContainers");
 
-        foreach($rooms as $room){	         
+        foreach($rooms as $room){
             $room->setEntityMaps($roomMaps);
         }
 
@@ -400,13 +400,11 @@ class Rad_ActionManager extends ActionManager {
 
         //all rad pis must have a waste bag for their solid waste
         // || $pi->getCurrentWasteBag() == null
-        if($pi->getWasteBags() == null){
+        if($pi->getWasteBags() == null || $pi->getCurrentWasteBag() == null){
             $bag = new WasteBag();
             $bag->setPrincipal_investigator_id($pi->getKey_id());
             $wasteBagDao = new GenericDAO($bag);
             $bag = $wasteBagDao->save($bag);
-            //$pi->setWasteBags(array($bag));
-            //$pi->setCurrentWasteBag($bag);
         }
 
         $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
@@ -482,7 +480,7 @@ class Rad_ActionManager extends ActionManager {
             $cycle->setEntityMaps(eager);
         }
 
-        
+
 
         $pi->setEntityMaps($entityMaps);
         $LOG = Logger::getLogger(__CLASS__);
@@ -588,8 +586,7 @@ class Rad_ActionManager extends ActionManager {
         $id = $this->getValueFromRequest('id', $id);
 
         if( $id !== NULL ) {
-            $PiDao = $this->getDao(new PrincipalInvestigator());
-            $selectedPi = $PiDao->getById($id);
+            $selectedPi = $this->getRadPIById($id);
             return $selectedPi->getActiveParcels();
         }
         else {
@@ -2644,6 +2641,38 @@ class Rad_ActionManager extends ActionManager {
 		$savedWaste->setEntityMaps($entityMaps);
         return $savedWaste;
     }
-}
 
+    public function removeParcelUseAmountFromPickup(ParcelUseAmount $decodedObject){
+        if($decodedObject == null)$decodedObject = $this->convertInputJson();
+        if($decodedObject == null)return new ActionError("No data read from input stream");
+        //find whatever pickup-able container this ParcelUseAmount is currently in
+        if($decodedObject->getWaste_bag_id() != null){
+            //persevere current bag's id
+            $bag = $this->getWasteBagById($decodedObject->getWaste_bag_id());
+            $pickup = $this->getPickupById($bag->getPickup_id());
+            $pickupAndBag = array($pickup);
+
+            //$currentBag = new WasteBag();
+            $piId = $bag->getPrincipal_investigator_id();
+            $pi = $this->getPIById($piId);
+            if($pi->getCurrentWasteBag() != null){
+                $decodedObject->setWaste_bag_id($pi->getCurrentWasteBag()->getKey_id());
+                array_push($pickupAndBag, $pi->getCurrentWasteBag());
+            }
+            //pi doesn't have a wastebag not already selected for pickup, so make one
+            else{
+                $newBag = new WasteBag();
+                $newBag->setPrincipal_investigator_id($piId);
+                $newBag = $this->saveWasteBag($newBag);
+                $decodedObject->setWaste_bag_id($newBag->getKey_id());
+                array_push($pickupAndBag, $newBag);
+            }
+            $amountDao = new GenericDAO($decodedObject);
+            $decodedObject = $amountDao->save();
+
+            return $pickupAndBag;
+        }
+        return new ActionError("The provided bag was not scheduled for pickup");
+    }
+}
 ?>

@@ -224,7 +224,7 @@ angular.module('00RsmsAngularOrmApp')
         var otherUsageAmount = new window.ParcelUseAmount();
         var sampleUsageAmount = new window.ParcelUseAmount();
         solidUsageAmount.Waste_type_id = Constants.WASTE_TYPE.SOLID;
-        //solidUsageAmount.Waste_bag_id = $rootScope.pi.CurrentWasteBag.Key_id;
+        solidUsageAmount.Waste_bag_id = $rootScope.pi.CurrentWasteBag.Key_id;
         console.log(solidUsageAmount, $rootScope.pi.CurrentWasteBag);
         //return;
         liquidUsageAmount.Waste_type_id = Constants.WASTE_TYPE.LIQUID;
@@ -258,6 +258,8 @@ angular.module('00RsmsAngularOrmApp')
         if (!parcelUseHasUseAmountType($rootScope.ParcelUseCopy, Constants.WASTE_TYPE.SOLID)) {
             var solidUsageAmount = new window.ParcelUseAmount();
             solidUsageAmount.Waste_type_id = Constants.WASTE_TYPE.SOLID;
+            solidUsageAmount.Waste_bag_id = $rootScope.pi.CurrentWasteBag.Key_id;
+            console.log($rootScope.pi.CurrentWasteBag);
             $rootScope.ParcelUseCopy.ParcelUseAmounts.push(solidUsageAmount);
         }
         if (!parcelUseHasUseAmountType($rootScope.ParcelUseCopy, Constants.WASTE_TYPE.LIQUID)) {
@@ -295,6 +297,7 @@ angular.module('00RsmsAngularOrmApp')
         var sum = 0;
         uses.forEach(function (u) {
             u.ParcelUseAmounts.forEach(function (amt) {
+                console.log(amt);
                 if ((!pickupId || pickupId == amt.IsPickedUp) && amt.Waste_type_id == type)
                     sum += parseFloat(amt.Curie_level);
             });
@@ -407,6 +410,7 @@ angular.module('00RsmsAngularOrmApp')
     $rootScope.piPromise = af.getRadPIById($stateParams.pi)
         .then(function (pi) {
         //pi.loadRooms();
+        pi = dataStoreManager.getById("PrincipalInvestigator", $stateParams.pi);
         if (pi.Pickups) {
             var i = pi.Pickups.length;
             $scope.scheduledPickups = [];
@@ -417,6 +421,7 @@ angular.module('00RsmsAngularOrmApp')
                 ;
             }
         }
+        console.log(pi.ActiveParcels[3].ParcelUses);
         $scope.pi = pi;
     }, function () { });
     $scope.solidsContainerHasPickups = function (container) {
@@ -520,6 +525,65 @@ angular.module('00RsmsAngularOrmApp')
                 controller: 'PickupModalCtrl'
             });
         }
+    };
+    $scope.selectWaste = function (waste, pickupId) {
+        $scope.pi.ActiveParcels = [];
+        $scope.pi.loadActiveParcels().then(function () {
+            var modalData = { pi: { ActiveParcels: [] }, waste: {}, amts: [] };
+            modalData.pi = $scope.pi;
+            if (!Array.isArray(waste))
+                waste = [waste];
+            var containerIds = [];
+            waste = waste.forEach(function (w) {
+                containerIds.push(w.Key_id);
+            });
+            modalData.pi.ActiveParcels.forEach(function (p) {
+                console.log(p);
+                if (p.ParcelUses) {
+                    p.ParcelUses.forEach(function (pu) {
+                        pu.ParcelUseAmounts.forEach(function (amt) {
+                            console.log(amt);
+                            if (amt.IsPickedUp == pickupId) {
+                                amt.Date_used = pu.Date_used;
+                                amt.Isotope_name = p.Authorization.IsotopeName;
+                                modalData.amts.push(amt);
+                            }
+                        });
+                    });
+                }
+            });
+            modalData.waste = waste;
+            af.setModalData(modalData);
+            var modalInstance = $modal.open({
+                templateUrl: 'views/pi/pi-modals/select-waste-modal.html',
+                controller: 'SelectWasteCtrl'
+            });
+            modalInstance.result.then(function (arr) {
+                console.log(arr);
+                $scope.CurrentPickup.Waste_bags = [];
+                $scope.CurrentPickup.Waste_bags = arr[0].Waste_bags;
+                if (arr[1])
+                    $scope.pi.CurrentWasteBag = arr[1];
+            });
+        });
+    };
+    $scope.hasContents = function (bags) {
+        return bags.some(function (b) { return b.Contents && b.Contents.length; });
+    };
+})
+    .controller('SelectWasteCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
+    var af = actionFunctionsFactory;
+    $scope.af = af;
+    $scope.modalData = af.getModalData();
+    console.log($scope.modalData);
+    $scope.remove = function (amt) {
+        $rootScope.piPromise = af.removeWasteFromPickup(amt).then(function (returnedArray) {
+            console.log(returnedArray);
+            $modalInstance.close(returnedArray);
+        });
+    };
+    $scope.close = function () {
+        $modalInstance.dismiss();
     };
 })
     .controller('PickupModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {

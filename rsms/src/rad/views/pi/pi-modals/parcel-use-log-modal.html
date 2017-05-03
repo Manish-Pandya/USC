@@ -31,6 +31,7 @@
                 <div ng-repeat="solid in solids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SOLID})">
                     <div class="control-group" ng-init="solid.Waste_bag_id = solid.Waste_bag_id ? solid.Waste_bag_id : pi.CurrentWasteBag.Key_id">
                         <div class="controls input-append">
+                            {{solid.Waste_bag_id}}
                             <input ng-disabled="solid.IsPickedUp" style="max-width:50%;" name="solid-curies" ng-model="solid.Curie_level">
                             <span class="add-on">mCi <i title="Picked Up" ng-if="solid.IsPickedUp" class="danger icon-remove"></i></span>
                         </div>

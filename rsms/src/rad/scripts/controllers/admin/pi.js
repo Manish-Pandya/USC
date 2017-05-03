@@ -53,7 +53,7 @@ angular.module('00RsmsAngularOrmApp')
     }
 
     $scope.openModal = function (templateName, object, isAmendment) {
-
+        console.log("hello")
         var modalData = {};
         modalData.pi = $scope.pi;
         modalData.isAmendment = isAmendment || false;
@@ -297,9 +297,13 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.saveParcel = function(pi, copy, parcel){
-           $modalInstance.dismiss();
            af.deleteModalData();
-           af.saveParcel( pi, copy, parcel )
+           af.saveParcel(pi, copy, parcel).then(function (r) {
+               if (parcel) {
+                   _.assign(parcel, r);
+                   $modalInstance.close(r);
+               }
+           })
         }
 
 

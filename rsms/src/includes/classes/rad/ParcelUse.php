@@ -50,10 +50,7 @@ class ParcelUse extends RadCrud {
 	/** Integer containing the id of the parcel this usage concerns */
 	private $parcel_id;
     private $destinationParcel;
-
-	/** timestamp of the date that this usage took place */
-	private $date_of_use;
-
+    
 	/** Array of waste types and amounts from this use */
 	private $parcelUseAmounts;
 
@@ -111,9 +108,6 @@ class ParcelUse extends RadCrud {
 	public function setParcel($newParcel) {
 		$this->parcel = $newParcel;
 	}
-
-	public function getDate_of_use() { return $this->date_of_use; }
-	public function setDate_of_use($newDate) { $this->date_of_use = $newDate; }
 
 	public function getParcelUseAmounts() {
 		if($this->parcelUseAmounts === NULL && $this->hasPrimaryKeyValue()) {
