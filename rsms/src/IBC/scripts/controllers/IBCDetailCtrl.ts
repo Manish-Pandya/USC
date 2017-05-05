@@ -24,15 +24,6 @@ angular.module('ng-IBC')
                 });
         }
 
-        $scope.testSave = function (data) {
-            return $scope.loading = $q.all([DataStoreManager.save(data)]).then((r) => {
-                console.log(r);
-                console.log($scope.protocol.data);
-                console.log(DataStoreManager._actualModel);
-                return r;
-            });
-        }
-
         $scope.loading = $rootScope.getCurrentRoles().then(getProtocol);
     })
     .controller('IBCDetailModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, roleBasedFactory) {

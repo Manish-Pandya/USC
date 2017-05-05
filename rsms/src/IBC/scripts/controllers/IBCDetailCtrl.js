@@ -20,14 +20,6 @@ angular.module('ng-IBC')
             $q.all([DataStoreManager.getById("IBCProtocolRevision", pRevision.UID, $scope.revision, true)]).then(function () { console.log($scope.revision); });
         });
     };
-    $scope.testSave = function (data) {
-        return $scope.loading = $q.all([DataStoreManager.save(data)]).then(function (r) {
-            console.log(r);
-            console.log($scope.protocol.data);
-            console.log(DataStoreManager._actualModel);
-            return r;
-        });
-    };
     $scope.loading = $rootScope.getCurrentRoles().then(getProtocol);
 })
     .controller('IBCDetailModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, roleBasedFactory) {

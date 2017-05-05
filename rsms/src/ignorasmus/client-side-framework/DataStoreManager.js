@@ -43,13 +43,6 @@ PermissionMap.Permissions = [];
 var DataStoreManager = (function () {
     function DataStoreManager() {
     }
-    Object.defineProperty(DataStoreManager, "ActualModel", {
-        set: function (value) {
-            this._actualModel = InstanceFactory.convertToClasses(value);
-        },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(DataStoreManager, "ModalData", {
         get: function () {
             return this._modalData;
@@ -356,11 +349,11 @@ var DataStoreManager = (function () {
      * @param obj
      * @param propName
      * @param value
+     * @param className
      */
     DataStoreManager.findByPropValue = function (obj, propName, value, className) {
-        //Early return
         if ((!className || className == obj.constructor.name) && obj[propName] === value) {
-            return obj;
+            return obj; //Early return
         }
         var result;
         for (var prop in obj) {
@@ -399,5 +392,4 @@ var DataStoreManager = (function () {
 DataStoreManager.classPropName = "Class";
 DataStoreManager.uidString = "Key_id";
 DataStoreManager.baseUrl = "../ajaxaction.php?action=";
-// NOTE: there's intentionally no getter. Only internal framework classes should have read access of actual model.
 DataStoreManager._actualModel = {};

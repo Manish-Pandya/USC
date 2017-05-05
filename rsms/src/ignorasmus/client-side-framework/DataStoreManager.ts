@@ -59,12 +59,8 @@ abstract class DataStoreManager {
     static baseUrl: string = "../ajaxaction.php?action=";
 
     static CurrentRoles: any[];
-
-    // NOTE: there's intentionally no getter. Only internal framework classes should have read access of actual model.
+    
     public static _actualModel: any = {};
-    static set ActualModel(value: any) {
-        this._actualModel = InstanceFactory.convertToClasses(value);
-    }
 
     private static _modalData: any;
     static get ModalData(): any {
@@ -378,11 +374,11 @@ abstract class DataStoreManager {
      * @param obj
      * @param propName
      * @param value
+	 * @param className
      */
     private static findByPropValue(obj: any, propName: string, value: any, className?: string): any {
-        //Early return
         if ((!className || className == obj.constructor.name) && obj[propName] === value) {
-            return obj;
+            return obj; //Early return
         }
         var result: any;
         for (var prop in obj) {
