@@ -11,6 +11,7 @@ var ibc;
             var _this = _super.call(this) || this;
             _this.responsesMapped = {};
             _this.preliminaryCommentsMapped = {};
+            _this.primaryCommentsMapped = {};
             return _this;
         }
         IBCProtocolRevision.prototype.getResponsesMapped = function () {
@@ -36,10 +37,22 @@ var ibc;
             }
             return this.preliminaryCommentsMapped;
         };
+        IBCProtocolRevision.prototype.getPrimaryCommentsMapped = function () {
+            if (this.IBCPreliminaryComments) {
+                for (var n = 0; n < this.IBCPrimaryComments.length; n++) {
+                    var comment = this.IBCPrimaryComments[n];
+                    if (!this.primaryCommentsMapped[comment.Question_id])
+                        this.primaryCommentsMapped[comment.Question_id] = [];
+                    this.primaryCommentsMapped[comment.Question_id].push(comment);
+                }
+            }
+            return this.primaryCommentsMapped;
+        };
         IBCProtocolRevision.prototype.onFulfill = function () {
             _super.prototype.onFulfill.call(this);
             this.getResponsesMapped();
             this.getPreliminaryCommentsMapped();
+            this.getPrimaryCommentsMapped();
         };
         IBCProtocolRevision.prototype.hasGetAllPermission = function () {
             if (this._hasGetAllPermission == null) {
@@ -55,5 +68,6 @@ var ibc;
     IBCProtocolRevision.PreliminaryReviewersMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "User", "getPropertyByName&id={{this.UID}}&property=PreliminaryReviewers&type=IBCProtocolRevision", "PreliminaryReviewers", "Revision_id", "Reviewer_id", "IBCRevisionPreliminaryReviewer", "getRelationships&class1=IBCProtocolRevision&class2=User&override=PRELIMINARY_REVIEWERS_RELATIONSHIP");
     IBCProtocolRevision.IBCReponseMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCResponse", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCResponses&id={{UID}}", "IBCResponses", "Revision_id");
     IBCProtocolRevision.IBCPreliminaryCommentMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCPreliminaryComment", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCPreliminaryComments&id={{UID}}", "IBCPreliminaryComments", "Revision_id");
+    IBCProtocolRevision.IBCPrimaryCommentMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCPrimaryComment", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCPrimaryComments&id={{UID}}", "IBCPrimaryComments", "Revision_id");
     ibc.IBCProtocolRevision = IBCProtocolRevision;
 })(ibc || (ibc = {}));

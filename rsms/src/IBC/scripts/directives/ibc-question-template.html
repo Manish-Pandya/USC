@@ -1,5 +1,5 @@
 ﻿<div cg-busy="{promise:saving, message:'Saving...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
-<div class="ibc-question" style="margin:10px">
+<div ng-if="showQuestion" class="ibc-question" style="margin:10px">
     <h4>{{question.Text}}</h4>
     <ul ng-if="question.Answer_type == $root.constants.IBC_ANSWER_TYPE.MULTIPLE_CHOICE">
         <li ng-repeat="a in question.IBCPossibleAnswers">

@@ -13,6 +13,17 @@ angular.module('ng-IBC')
         link: function (scope, elem, attrs) {
             //console.log(scope.question);
             //console.log(scope.revision);
+            scope.showQuestion = false;
+            if (scope.revision.Status == Constants.IBC_PROTOCOL_REVISION.STATUS.RETURNED_FOR_REVISION) {
+                var preliminaryCommentsMap = scope.revision.preliminaryCommentsMapped[scope.question.UID];
+                var primaryCommentsMap = scope.revision.primaryCommentsMapped[scope.question.UID];
+                if ((preliminaryCommentsMap && preliminaryCommentsMap.length) || (primaryCommentsMap && primaryCommentsMap.length)) {
+                    scope.showQuestion = true;
+                }
+            }
+            else {
+                scope.showQuestion = true;
+            }
             scope.constants = Constants;
             scope.question.IBCPossibleAnswers.forEach(function (pa) {
                 if (!scope.revision.responsesMapped[pa.UID]) {
