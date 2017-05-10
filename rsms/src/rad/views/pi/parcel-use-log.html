@@ -10,9 +10,9 @@
                     <h3>R.S. Number</h3>
                     <h3>Isotope</h3>
                     <h3>Arrival Date</h3>
-                    <h3>Orginal Activity</h3>
-                    <h3>Usable Activity</h3>
-                    <h3>Amount On Hand</h3>
+                    <h3>Orginal Activity Ordered</h3>
+                    <h3>Amount not used in experiments</h3>
+                    <h3>Total Amount In Lab</h3>
                 </div>
                 <div class="table-row" ng-class="{'inactive': parcel.AmountOnHand == 0}">
                     <div>
@@ -43,15 +43,15 @@
             </div>
         </div>
     </div>
-    <div class="card full parcels" ng-if="pi && (!parcelUses || !parcelUses[0] || !parcelUses[0].pUses || !parcelUses[0].pUses.length)">
+    <!-- ng-if="pi && (!parcelUses || !parcelUses[0] || !parcelUses[0].pUses || !parcelUses[0].pUses.length)"-->
+    <div class="card full parcels">
         <div class="card-content">
-            <h3 class="card-header padding">Package Usages <button ng-click="addUsage(parcel)" ng-disabled="parcel.AmountOnHand == 0" class="btn btn-success left"><i class="icon-plus-2"></i>Add Usage</button></h3>
         </div>
     </div>
-    <div class="card full parcels" ng-if="pi && (uses.pUses.length || uses.pickupId == '0')" ng-show="parcelUses" ng-repeat="uses in parcelUses">
+    <div class="card full parcels" ng-show="parcelUses" >
         <div class="card-content">
-            <h3 ng-if="uses.pickupId == '0'" class="card-header padding">Package Usages <button ng-click="addUsage(parcel)" ng-disabled="parcel.AmountOnHand == 0" class="btn btn-success left"><i class="icon-plus-2"></i>Add Usage</button></h3>
-            <table class="table-bordered table parcel-uses">
+            <h3 class="card-header padding">Package Usages <button ng-click="addUsage(parcel)" ng-disabled="parcel.AmountOnHand == 0" class="btn btn-success left"><i class="icon-plus-2"></i>Add Usage</button></h3>
+            <table class="table-bordered table parcel-uses" style="margin-bottom:0">
                 <tbody>
                     <tr class="table-header">
                         <th>Edit</th>
@@ -64,7 +64,7 @@
                         <th>Other Waste</th>
                         <th class="use-amount vials">Not Disposed</th>
                     </tr>
-                    <tr class="table-row top-align" ng-repeat="(key,use) in uses.pUses track by $index" ng-if="use" ng-class="{'formError': use.error, 'inactive': use.getIsPickedUp()}" table-error="{{use.error}}" obj="use">
+                    <tr class="table-row top-align" ng-repeat="use in parcel.ParcelUses" ng-if="use" ng-class="{'formError': use.error, 'inactive': use.getIsPickedUp()}" table-error="{{use.error}}" obj="use">
                         <td ng-init="use.loadParcelUseAmounts()">
                             <button class="btn btn-primary" ng-click="editUse(use)" ng-disabled="use.Date_transferred || use.getIsPickedUp()"><i class="icon-pencil"></i></button>
                         </td>
@@ -114,29 +114,37 @@
                             </div>
                         </td>
                     </tr>
+                    <!---->
 
-                    <tr ng-if="uses.pickupId != '0'" class="pickup-tab-header">
-                        <td colspan="2"></td>
-                        <td>Pickup Requested</td>
-                        <td>Picked Up</td>
-                        <td class="use-amount solids">Solid Waste</td>
-                        <td>Liquid Waste</td>
-                        <td class="use-amount vials">S/V Waste</td>
-                        <td>Other Waste</td>
-                        <td>Not Disposed</td>
-                    </tr>
-                    <tr ng-init="pickup = getPickup(uses.pickupId)" ng-if="uses.pickupId != '0'" class="pickup-tab">
-                        <td colspan="2"></td>
-                        <td class="use-amount">{{pickup.Date_requested | dateToISO}}</td>
-                        <td class="use-amount">{{pickup.Pickup_date | dateToISO}}</td>
-                        <td class="use-amount solids">{{tabulateWaste(uses.pUses, constants.WASTE_TYPE.SOLID, uses.pickupId)}}</td>
-                        <td class="use-amount">{{tabulateWaste(uses.pUses, constants.WASTE_TYPE.LIQUID, uses.pickupId)}}</td>
-                        <td class="use-amount vials">{{tabulateWaste(uses.pUses, constants.WASTE_TYPE.VIAL, uses.pickupId)}}</td>
-                        <td class="use-amount">{{tabulateWaste(uses.pUses, constants.WASTE_TYPE.OTHER, uses.pickupId)}}</td>
-                        <td class="use-amount vials">{{tabulateWaste(uses.pUses, constants.WASTE_TYPE.SAMPLE)}}</td>
-                    </tr>
+
                 </tbody>
             </table>
         </div>
+
+    </div>
+</div>
+<div class="card full parcels">
+    <div class="card-header">
+        <h2><i class="icon-box-remove"></i>Pickups</h2>
+    </div>
+    <div class="card-content" style="padding-bottom:0">
+        <table class="pickup-table table table-bordered" style="margin-bottom:0;">
+            <tr ng-if="pi.Pickups" class="pickup-tab-header">
+                <td>Pickup Requested</td>
+                <td>Picked Up</td>
+                <td class="use-amount solids">Solid Waste</td>
+                <td>Liquid Waste</td>
+                <td class="use-amount vials">S/V Waste</td>
+                <td>Other Waste</td>
+            </tr>
+            <tr ng-repeat="pickup in pickups" class="pickup-tab">
+                <td class="use-amount">{{pickup.Requested_date | dateToISO}}</td>
+                <td class="use-amount">{{pickup.Pickup_date | dateToISO}}</td>
+                <td class="use-amount solids">{{tabulateWaste(parcel.ParcelUses, constants.WASTE_TYPE.SOLID, pickup.Key_id)}}</td>
+                <td class="use-amount">{{tabulateWaste(parcel.ParcelUses, constants.WASTE_TYPE.LIQUID, pickup.Key_id)}}</td>
+                <td class="use-amount vials">{{tabulateWaste(parcel.ParcelUses, constants.WASTE_TYPE.VIAL, pickup.Key_id)}}</td>
+                <td class="use-amount">{{tabulateWaste(parcel.ParcelUses, constants.WASTE_TYPE.OTHER, pickup.Key_id)}}</td>
+            </tr>
+        </table>
     </div>
 </div>

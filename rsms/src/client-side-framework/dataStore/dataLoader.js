@@ -20,7 +20,6 @@ dataLoader.promiseMatrix = {};
 dataLoader.loadOneToManyRelationship = function (parent, property, relationship, whereClause, recurse) {
     if (!recurse) recurse = false;
     // methodString overrides default behavior for making special server calls.
-    if (!relationship) console.log(parent, property);
     if (relationship.methodString) {
 
         var paramValue = '&' + relationship.paramName + '=' + parent[relationship.paramValue];

@@ -1726,6 +1726,7 @@ angular
                                 originalPickup.Pickup_date = returnedPickup.Pickup_date;
                                 originalPickup.Status = returnedPickup.Status;
                             }
+                            return returnedPickup;
                         },
                         af.setError('The pickup could not be saved')
                     )

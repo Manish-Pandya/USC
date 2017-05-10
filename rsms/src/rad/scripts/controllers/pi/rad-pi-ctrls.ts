@@ -1,4 +1,4 @@
-'use strict';
+    'use strict';
 
 /**
  * @ngdoc function
@@ -203,6 +203,7 @@ angular.module('00RsmsAngularOrmApp')
                               if (parcel) parcel.Authorization = $rootScope.pi.ActiveParcels.Authorization;
                           }
                           console.log($rootScope.pi)
+                          $scope.pickups = $rootScope.pi.Pickups;
                           return $rootScope.pi;
                     },
                     function(){}
@@ -221,7 +222,7 @@ angular.module('00RsmsAngularOrmApp')
             );
           }
 
-      $rootScope.mapUses = (pus: any[]):any => {
+      $rootScope.mapUses = (pus: any[]): any => {
           pus.forEach((pu) => {
               pu.hasPickups = [];
               pu.ParcelUseAmounts.forEach((amt) => {
@@ -245,7 +246,7 @@ angular.module('00RsmsAngularOrmApp')
                               .then(getPi);
 
       $scope.getPickup = (id: string): any => {
-          console.log(id);
+          //console.log(id);
           if (!$rootScope.pi || !$rootScope.pi.Pickups) return false;
           return $rootScope.pi.Pickups.filter((p) => {return p.Key_id == id})[0]
       }
@@ -269,7 +270,7 @@ angular.module('00RsmsAngularOrmApp')
 
           solidUsageAmount.Waste_type_id = Constants.WASTE_TYPE.SOLID;
           solidUsageAmount.Waste_bag_id = $rootScope.pi.CurrentWasteBag.Key_id;
-          console.log(solidUsageAmount, $rootScope.pi.CurrentWasteBag);
+          //console.log(solidUsageAmount, $rootScope.pi.CurrentWasteBag);
           //return;
           liquidUsageAmount.Waste_type_id = Constants.WASTE_TYPE.LIQUID;
           vialUsageAmount.Waste_type_id = Constants.WASTE_TYPE.VIAL;
@@ -532,14 +533,9 @@ angular.module('00RsmsAngularOrmApp')
             $scope.CurrentPickup = !pi.Pickups || !pi.Pickups.length ? null : pi.Pickups.filter(function (p) { return p.Status == Constants.PICKUP.STATUS.REQUESTED })[0];
         }
 
-        $scope.createPickup = function(pi){
+        $scope.createPickup = function(pi, notes){
             //collection of things to be picked up
-            if(pi.Pickups.length){
-                var i = pi.Pickups.length;
-                while(i--){
-                    if(pi.Pickups[i].Status == Constants.PICKUP.STATUS.REQUESTED)var pickup = pi.Pickups[i];
-                }
-            }
+            if ($scope.CurrentPickup) var pickup = $scope.CurrentPickup;
 
             if(!pickup){
                 var pickup = new window.Pickup();
@@ -578,15 +574,52 @@ angular.module('00RsmsAngularOrmApp')
                 while(i--){
                     if( pi.CarboyUseCycles[i].include && !convenienceMethods.arrayContainsObject(pickup.Carboy_use_cycles, pi.CarboyUseCycles[i])  )pickup.Carboy_use_cycles.push( pi.CarboyUseCycles[i] );
                 }
-                var modalData = {};
-                modalData.pi = pi;
-                modalData.pickup = pickup;
+                /*
                 af.setModalData(modalData);
                 var modalInstance = $modal.open({
                   templateUrl: 'views/pi/pi-modals/pickup-modal.html',
                   controller: 'PickupModalCtrl'
                 });
+                */
             }
+            var pickupCopy = {
+                Class: "Pickup",
+                Key_id: pickup.Key_id || null,
+                Scint_vial_collections: pickup.Scint_vial_collections,
+                Waste_bags: pickup.Waste_bags,
+                Bags: pickup.Bags,
+                Status: pickup.Status,
+                Principal_investigator_id: pickup.Principal_investigator_id,
+                Scint_vial_trays: pickup.Scint_vial_trays,
+                Requested_date: convenienceMethods.setMysqlTime(new Date()),
+            }
+
+            pickupCopy.Notes = notes ||$scope.CurrentPickup.Notes;
+
+            pickupCopy.Carboy_use_cycles = [];
+            var i = pickup.Carboy_use_cycles.length;
+            while (i--) {
+                var originalCycle = pickup.Carboy_use_cycles[i];
+                var cycle = new CarboyUseCycle();
+                for (var prop in originalCycle) {
+                    if (typeof originalCycle[prop] != "object" && typeof originalCycle[prop] != "array") {
+                        cycle[prop] = originalCycle[prop];
+                    }
+                }
+                pickupCopy.Carboy_use_cycles[i] = cycle;
+            }
+            console.log(pickupCopy);
+            $rootScope.saving = af.savePickup(pickup, pickupCopy, true).then((newPickup) => {
+                console.log(newPickup);
+                if (!$scope.CurrentPickup || !$scope.CurrentPickup.Key_id) {
+                    $scope.pi.Pickups.push(newPickup);
+                    $scope.CurrentPickup = newPickup;
+                } else {
+                    angular.extend($scope.CurrentPickup, newPickup);
+                }
+                console.log($scope.CurrentPickup);
+
+            });
 
         }
 
