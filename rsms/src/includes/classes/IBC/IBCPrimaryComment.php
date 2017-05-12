@@ -39,6 +39,7 @@ class IBCPrimaryComment extends GenericCrud
 
     private $question_id;
     private $revision_id;
+	private $section_id;
     private $text;
 
     /* non-persisted value passed to all questions that are part of an Protocol instance*/
@@ -71,6 +72,17 @@ class IBCPrimaryComment extends GenericCrud
 	}
 	public function setRevision_id($revision_id){
 		$this->revision_id = $revision_id;
+	}
+
+	public function getSection_id(){
+		$question = new Question();
+		$thisDAO = new GenericDAO($question);
+		//$question = $thisDAO->getById($this->question_id);
+		if ($question != NULL) {
+			$this->section_id = $question->getSection_id();
+		}
+
+		return $this->section_id;
 	}
 
 	public function getText(){
