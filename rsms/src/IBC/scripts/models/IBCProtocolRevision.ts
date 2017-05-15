@@ -45,7 +45,7 @@
 
         primaryCommentsMapped: { [index: string]: ibc.IBCPrimaryComment[] } = {};
         getPrimaryCommentsMapped(): { [index: string]: ibc.IBCPrimaryComment[] } {
-            if (this.IBCPreliminaryComments) {
+            if (this.IBCPrimaryComments) {
                 for (var n = 0; n < this.IBCPrimaryComments.length; n++) {
                     var comment = this.IBCPrimaryComments[n];
                     if (!this.primaryCommentsMapped[comment.Question_id]) this.primaryCommentsMapped[comment.Question_id] = [];

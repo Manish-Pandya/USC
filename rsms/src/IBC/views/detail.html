@@ -14,7 +14,7 @@
             </ul>
     </collapsible-card>
 
-    <collapsible-card open-handler="loadQuestionsChain" id="collapse2" scoped="[section.UID, revision.data.UID]" class="card full protocol-info" header-text="{{section.Label}}" header-icon="icon-info" ng-repeat="section in protocol.data.IBCSections">
+    <collapsible-card open-handler="loadQuestionsChain" id="collapse2" scoped="[section.UID, revision.data.UID]" isopen="hasCommentsBySectionId[section.UID]" class="card full protocol-info" header-text="{{section.Label}}" header-icon="icon-info" ng-repeat="section in protocol.data.IBCSections">
         <ul class="questions" ng-if="!closed && section.IBCQuestions.length">
             <question-view question="question" revision-id="{{revision.data.UID}}" question-type="{{question.Answer_type}}" revision="revision.data" ng-repeat="question in section.IBCQuestions"></question-view>
         </ul>
