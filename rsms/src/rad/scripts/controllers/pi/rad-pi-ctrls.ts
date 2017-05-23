@@ -477,7 +477,6 @@ angular.module('00RsmsAngularOrmApp')
                             };
                           }
                   }
-                      console.log(pi.ActiveParcels[3].ParcelUses);
                       $scope.pi = pi;
                   },
                   function(){}
@@ -552,9 +551,24 @@ angular.module('00RsmsAngularOrmApp')
 
 
             //include proper objects in pickup
+
             if (pi.CurrentWasteBag && pi.CurrentWasteBag.include) {
-                pickup.Waste_bags.push(pi.CurrentWasteBag);
+                console.log($scope.CurrentPickup, pi.CurrentWasteBag);
+
+                //if a pickup has already been created, we are moving the items from the PI's current bag to the one being picked up
+                if ($scope.CurrentPickup && $scope.CurrentPickup.Key_id) {
+                    pi.CurrentWasteBag.ParcelUseAmounts.forEach((amt) => {
+                        amt.Waste_bag_id = $scope.CurrentPickup.Waste_bags[0].Key_id;
+                        if (!$scope.CurrentPickup.Waste_bags[0].ParcelUseAmounts) $scope.CurrentPickup.Waste_bags[0].ParcelUseAmounts = [];
+                        $scope.CurrentPickup.Waste_bags[0].ParcelUseAmounts.push(amt);
+                        amt.markForSplicing = true;
+                    })
+                } else {
+                    pickup.Waste_bags.push(pi.CurrentWasteBag);
+                }
+
                 pickup.Bags = pi.CurrentWasteBag.Bags;
+
             }
 
             if(pi.CurrentScintVialCollections){
@@ -602,13 +616,14 @@ angular.module('00RsmsAngularOrmApp')
                 var originalCycle = pickup.Carboy_use_cycles[i];
                 var cycle = new CarboyUseCycle();
                 for (var prop in originalCycle) {
-                    if (typeof originalCycle[prop] != "object" && typeof originalCycle[prop] != "array") {
+                    if (typeof originalCycle[prop] != "object" && !Array.isArray( originalCycle[prop])) {
                         cycle[prop] = originalCycle[prop];
                     }
                 }
                 pickupCopy.Carboy_use_cycles[i] = cycle;
             }
             console.log(pickupCopy);
+
             $rootScope.saving = af.savePickup(pickup, pickupCopy, true).then((newPickup) => {
                 console.log(newPickup);
                 if (!$scope.CurrentPickup || !$scope.CurrentPickup.Key_id) {
@@ -617,7 +632,12 @@ angular.module('00RsmsAngularOrmApp')
                 } else {
                     angular.extend($scope.CurrentPickup, newPickup);
                 }
+
                 console.log($scope.CurrentPickup);
+
+                pi.CurrentWasteBag.ParcelUseAmounts = pi.CurrentWasteBag.ParcelUseAmounts.filter((amt) => {
+                    return !amt.markForSplicing;
+                })
 
             });
 
@@ -638,12 +658,11 @@ angular.module('00RsmsAngularOrmApp')
                 })
 
                 modalData.pi.ActiveParcels.forEach((p) => {
-                    console.log(p);
                     if (p.ParcelUses) {
                         p.ParcelUses.forEach((pu) => {
                             pu.ParcelUseAmounts.forEach((amt) => {
                                 console.log(amt)
-                                if (amt.IsPickedUp == pickupId) {
+                                if (amt.IsPickedUp == pickupId && amt.Waste_type_id == Constants.WASTE_TYPE.SOLID) {
                                     amt.Date_used = pu.Date_used;
                                     amt.Isotope_name = p.Authorization.IsotopeName;
                                     modalData.amts.push(amt);
@@ -662,9 +681,10 @@ angular.module('00RsmsAngularOrmApp')
                 });
                 modalInstance.result.then((arr) => {
                     console.log(arr);
+                    
+                    if (arr[1]) $scope.pi.CurrentWasteBag = arr[1];
                     $scope.CurrentPickup.Waste_bags = [];
                     $scope.CurrentPickup.Waste_bags = arr[0].Waste_bags;
-                    if (arr[1]) $scope.pi.CurrentWasteBag = arr[1];
                 })
             })
             

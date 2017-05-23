@@ -147,7 +147,8 @@ class GenericDAO {
 		$className = get_class($this);
 
 		//Prepare to query all from the table
-		$stmt = $db->prepare('SELECT * FROM ' . $this->modelObject->getTableName() . ' ' . ($activeOnly ? 'WHERE is_active = 1 ' : '') .  ($sortColumn == NULL ? '' : " ORDER BY $sortColumn " . ($sortDescending ? 'DESC' : 'ASC')) );
+		$stmt = $db->prepare('SELECT * FROM ' . $this->modelObject->getTableName() . ' ' . ($activeOnly ? 'WHERE is_active = 1 ' : '') .
+        ($sortColumn == NULL ? '' : " ORDER BY  CAST($sortColumn AS UNSIGNED), $sortColumn " . ($sortDescending ? 'DESC' : 'ASC')) );
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
@@ -234,7 +235,7 @@ class GenericDAO {
                     if(is_array($clause->getVal())){
                         $values = $clause->getVal();
                         $inQuery = implode(',', array_fill(0, count($values), '?'));
-                        $sql .= "($inQuery)";                       
+                        $sql .= "($inQuery)";
                     }
 				}else{
 					$sql .= " ?";
@@ -410,7 +411,7 @@ class GenericDAO {
         $stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
         $stmt->bindValue(2, $this->modelObject->getAuthorization()->getOriginal_pi_auth_id());
 
-        
+
         if ( $stmt->execute() ) {
 
             $total = $stmt->fetch(PDO::FETCH_NUM);
@@ -448,10 +449,10 @@ class GenericDAO {
 
         }elseif($hasTransferDate != true){
             $sql .= " AND transfer_in_date IS NULL AND `arrival_date` BETWEEN ? AND ?";
-           
+
         }
 
-        
+
 		// Get the db connection
 		global $db;
 		$stmt = $db->prepare($sql);
@@ -901,11 +902,11 @@ class GenericDAO {
                     where `room`.key_id IN (
                     select `room_id` from inspection_room where inspection_id IN(
                     select key_id from inspection where key_id IN (
-						select key_id _id from inspection where principal_investigator_id = a.key_id
+						select key_id from inspection where principal_investigator_id = a.key_id
                     )
                     AND
-					(coalesce(year(`inspection`.`date_started`) AND (is_rad IS NULL OR is_rad = 0),
-					`inspection`.`schedule_year`) = ?))
+					(coalesce(year(`inspection`.`date_started`),
+					`inspection`.`schedule_year`) = ?)) AND (is_rad IS NULL OR is_rad = 0)
                     )
                 ))
 
@@ -1155,7 +1156,7 @@ class GenericDAO {
 			$stmt->bindParam(':id', $pIId, PDO::PARAM_INT);
 		}else{
             $inQuery = implode(',', array_fill(0, count($roomIds), '?'));
-            
+
 			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, COALESCE(NULLIF(b.alias, ''), b.name) as building_name from room a
 								 LEFT JOIN building b on a.building_id = b.key_id
 								 where a.key_id IN ";
@@ -1170,7 +1171,7 @@ class GenericDAO {
         }else{
 			$error = $stmt->errorInfo();
 			$result = new QueryError($error);
-			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());    
+			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
             return $result;
         }
 

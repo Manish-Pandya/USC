@@ -73,6 +73,7 @@ class Room extends GenericCrud {
 	private $building_id;
 	private $building;
     private $building_name;
+    private $campus_name;
 
 	/** Array of PricipalInvestigator entities that manage this Room */
 	private $principalInvestigators;
@@ -182,6 +183,17 @@ class Room extends GenericCrud {
 		}
 		return $this->building_name;
 	}
+
+    public function getCampus_Name(){
+        if($this->campus_name == null && $this->getBuilding_id() != null) {
+			$buildingDAO = new GenericDAO(new Building());
+            $bldg = $buildingDAO->getById($this->building_id);
+            if($bldg->getCampus_id() != null){
+                $this->campus_name = $bldg->getCampus()->getName();
+            }
+		}
+		return $this->campus_name;
+    }
 
 	public function getHazards(){
 		if($this->hazards == null) {

@@ -398,3 +398,14 @@ header('content-type: application/javascript');
 // Output JSON (with possible callback)
 echo $output;
 ?>
+<div class="LI3WP5-b-i row valign-wrapper" style="height: 35vh;">
+    <div class="row valign-wrapper">
+        <div class="col valign">
+            <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNzBweCIgaGVpZ2h0PSI1OXB4IiB2aWV3Qm94PSIwIDAgNzAgNTkiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDQ0ICg0MTQxMSkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+TG9nbzwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSI5LjAtUHJvZmlsZS9GZWVkYmFjay9Mb2dpbi9Mb2dvdXQiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxnIGlkPSI5LjMuMS1NeS1Qcm9maWxlIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNTYzLjAwMDAwMCwgLTE4Ni4wMDAwMDApIj4KICAgICAgICAgICAgPGcgaWQ9IkxvZ28iIHRyYW5zZm9ybT0idHJhbnNsYXRlKDU2My4wMDAwMDAsIDE4Ni4wMDAwMDApIj4KICAgICAgICAgICAgICAgIDxyZWN0IGlkPSJSZWN0YW5nbGUtNyIgZmlsbD0iIzRBNDg0OCIgeD0iMCIgeT0iMCIgd2lkdGg9IjcwIiBoZWlnaHQ9IjU5Ij48L3JlY3Q+CiAgICAgICAgICAgICAgICA8cmVjdCBpZD0iUmVjdGFuZ2xlLTIiIGZpbGw9IiM0MjZFOTkiIHg9IjYiIHk9IjciIHdpZHRoPSIxOCIgaGVpZ2h0PSIyMCIgcng9IjUiPjwvcmVjdD4KICAgICAgICAgICAgICAgIDxyZWN0IGlkPSJSZWN0YW5nbGUtMiIgZmlsbD0iI0E4RDNGRiIgeD0iMzAiIHk9IjciIHdpZHRoPSIzMyIgaGVpZ2h0PSIyMCIgcng9IjUiPjwvcmVjdD4KICAgICAgICAgICAgICAgIDxyZWN0IGlkPSJSZWN0YW5nbGUtMiIgZmlsbD0iI0Y2QkRDNCIgeD0iNiIgeT0iMzMiIHdpZHRoPSIzMyIgaGVpZ2h0PSIyMCIgcng9IjUiPjwvcmVjdD4KICAgICAgICAgICAgICAgIDxyZWN0IGlkPSJSZWN0YW5nbGUtMiIgZmlsbD0iI0Y2N0Y4RSIgeD0iNDUiIHk9IjMzIiB3aWR0aD0iMTgiIGhlaWdodD0iMjAiIHJ4PSI1Ij48L3JlY3Q+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==" class="responsive-img valign" />
+        </div>
+        <div class="col valign">
+            <h4>Bento</h4>
+            <h5>The Benchmarking Tool</h5>
+        </div>
+    </div>
+</div>

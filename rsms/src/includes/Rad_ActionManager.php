@@ -480,6 +480,16 @@ class Rad_ActionManager extends ActionManager {
             $cycle->setEntityMaps(eager);
         }
 
+        if($pi->getCurrentWasteBag() != null){
+            $bagMaps = array();
+            $bagMaps[] = new EntityMap("lazy", "getContainer");
+            $bagMaps[] = new EntityMap("lazy", "getPickup");
+            $bagMaps[] = new EntityMap("lazy", "getDrum");
+            $bagMaps[] = new EntityMap("eager", "getParcelUseAmounts");
+            $bag = $pi->getCurrentWasteBag();
+            $bag->setEntityMaps($bagMaps);
+        }
+
 
 
         $pi->setEntityMaps($entityMaps);
@@ -1104,15 +1114,21 @@ class Rad_ActionManager extends ActionManager {
 
             if($saveChildren != NULL){
                 foreach($wasteBags as $bagArray){
-                    $LOG->debug('bag with key id '+$bagArray['Key_id']);
                     $bagDao = $this->getDao(new WasteBag());
                     $bag = $bagDao->getById($bagArray['Key_id']);
                     $bag->setPickup_id($pickup->getKey_id());
-                    $bagDao->save($bag);
-                    //if this pickup has been picked up, we but a new waste bag in the container that previously held the bag
-                    if($decodedObject->getStatus() == "PICKED UP"){
-                        $this->changeWasteBag($bag);
+                    $amtDao = $this->getDao(new ParcelUseAmount());
+                    foreach($bagArray["ParcelUseAmounts"] as $amt){
+                        $amt = JsonManager::assembleObjectFromDecodedArray($amt);
+                        $LOG->fatal($amt);
+
+                        $amt->setWaste_bag_id($bag->getKey_id());
+                        $amt = $amtDao->save($amt);
+                        $LOG->fatal($amt);
+
                     }
+                    $bagDao->save($bag);
+                    
                 }
 
                 foreach($svCollections as $collectionArray){
@@ -2655,15 +2671,24 @@ class Rad_ActionManager extends ActionManager {
             //$currentBag = new WasteBag();
             $piId = $bag->getPrincipal_investigator_id();
             $pi = $this->getPIById($piId);
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("lazy", "getContainer");
+            $entityMaps[] = new EntityMap("lazy", "getPickup");
+            $entityMaps[] = new EntityMap("lazy", "getDrum");
+            $entityMaps[] = new EntityMap("eager", "getParcelUseAmounts");
             if($pi->getCurrentWasteBag() != null){
                 $decodedObject->setWaste_bag_id($pi->getCurrentWasteBag()->getKey_id());
-                array_push($pickupAndBag, $pi->getCurrentWasteBag());
+                $bag = $pi->getCurrentWasteBag();
+                $bag->setEntityMaps($entityMaps);
+                array_push($pickupAndBag, $bag);
             }
             //pi doesn't have a wastebag not already selected for pickup, so make one
             else{
                 $newBag = new WasteBag();
                 $newBag->setPrincipal_investigator_id($piId);
-                $newBag = $this->saveWasteBag($newBag);
+                $newBag = $this->saveWasteBag($newBag);                
+                $newBag->setEntityMaps($entityMaps);
+
                 $decodedObject->setWaste_bag_id($newBag->getKey_id());
                 array_push($pickupAndBag, $newBag);
             }

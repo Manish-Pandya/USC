@@ -80,6 +80,7 @@ angular
                     }
                     if(!saveChildren)saveChildren = false;
                     if (!seg) seg = false;
+                    console.log('save children in af.save: ',saveChildren);
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
                     return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, seg, saveChildren )
                         .then(

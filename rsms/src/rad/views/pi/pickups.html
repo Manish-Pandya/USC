@@ -12,7 +12,7 @@
                 <h1 class="card-header" ng-if="CurrentPickup"><i class="icon-box-remove"></i>Pickup requsted on {{CurrentPickup.Date_created | dateToISO}}</h1>
                 <div>
                     <h3><i class="icon-remove-2 solids-containers"></i>Solid Waste</h3>
-                    <label ng-show="CurrentPickup.Waste_bags">Solid Waste Scheduled for Pickup (Pickup Requested {{CurrentPickup.Requested_date | dateToISO}})</label>
+                    <label ng-show="CurrentPickup.Waste_bags && hasContents(CurrentPickup.Waste_bags)">Solid Waste Scheduled for Pickup (Pickup Requested {{CurrentPickup.Requested_date | dateToISO}})</label>
                     <label class="checkbox" ng-if="CurrentPickup && hasContents(CurrentPickup.Waste_bags)">
                         <input type="checkbox" ng-true-value="yes" ng-model="CurrentPickup.Waste_bags[0].include" ng-checked="CurrentPickup && CurrentPickup.Waste_bags.length" />
                         <span class="metro-checkbox">
@@ -27,12 +27,13 @@
                             Chooses Usages
                         </button>
                     </label>
-
-                    <label ng-if="pi.CurrentWasteBag.Contents.length && 
-                           ((!CurrentPickup && CurrentPickup.Waste_bags[0]) || (pi.CurrentWasteBag.Key_id != CurrentPickup.Waste_bags[0].Key_id))" style="margin-top:10px; margin-bottom:-2px">Solid Waste Not Scheduled for Pickup:</label>
-                    <label class="checkbox" ng-if="pi.CurrentWasteBag.Contents.length && 
-                           ((!CurrentPickup && CurrentPickup.Waste_bags[0]) || (pi.CurrentWasteBag.Key_id != CurrentPickup.Waste_bags[0].Key_id))" >
-                        <input type="checkbox" ng-true-value="yes" ng-model="pi.CurrentWasteBag.include" ng-checked="CurrentPickup && CurrentPickup.Waste_bags.length" />
+                    <label ng-if="pi.CurrentWasteBag.Contents.length
+                           && pi.CurrentWasteBag.ParcelUseAmounts.length
+                           && (pi.CurrentWasteBag.Key_id != CurrentPickup.Waste_bags[0].Key_id)" style="margin-top:10px; margin-bottom:-2px">Solid Waste Not Scheduled for Pickup:</label>
+                    <label class="checkbox" ng-if="pi.CurrentWasteBag.Contents.length 
+                           && pi.CurrentWasteBag.ParcelUseAmounts.length
+                           && (pi.CurrentWasteBag.Key_id != CurrentPickup.Waste_bags[0].Key_id)" >
+                        <input type="checkbox" ng-true-value="yes" ng-model="pi.CurrentWasteBag.include" ng-init="pi.CurrentWasteBag.include = (CurrentPickup && CurrentPickup.Waste_bags.length)" />
                         <span class="metro-checkbox">
                             <span ng-repeat="amt in pi.CurrentWasteBag.Contents">{{amt.Curie_level}}mCi of {{amt.Isotope_name}}<span ng-if="!$last">,&nbsp;</span></span>
                         </span>
@@ -92,7 +93,7 @@
                 </div>
 
                 <div>
-                    <p>Notes:</p>
+                    <label>Notes:</label>
                     <textarea ng-init="pickupNotes = CurrentPickup.Notes" rows="3" style="width:90%" ng-model="pickupNotes"></textarea>
                 </div>
 
@@ -109,7 +110,4 @@
             </div>
         </div>
     </div>
-</div>
-<div style="width:100%">
-    {{CurrentPickup.Scint_vial_collections}}
 </div>

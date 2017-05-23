@@ -68,20 +68,16 @@ require_once '../top_view.php';
                     Investigator<br>
                     <input class="span2" ng-model="search.pi" placeholder="Filter by PI" blur-it="genericFilter()" /><i ng-if="search.pi" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
                 </th>
-                <th class="triple">
-                    <div>
-                        <span>
-                            Campus<br>
-                            <input class="span2" ng-model="search.campus" placeholder="Filter by Campus " blur-it="genericFilter()" /><i ng-if="search.campus" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
-                        </span>
-                        <span>
-                            Building<br>
-                            <input class="span2" ng-model="search.building" placeholder="Filter by Building" blur-it="genericFilter()" /><i ng-if="search.building" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
-                        </span>
-                        <span>
-                            Lab Room(s)<br>
-                        </span>
-                    </div>
+                <th>                    
+                    Campus<br>
+                    <input class="span2" ng-model="search.campus" placeholder="Filter by Campus " blur-it="genericFilter()" /><i ng-if="search.campus" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
+                 </th>
+                <th>
+                    Building<br>
+                    <input class="span2" ng-model="search.building" placeholder="Filter by Building" blur-it="genericFilter()" /><i ng-if="search.building" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
+                </th>
+                <th>
+                    Lab Room(s)
                 </th>
                 <th>
                     Month Scheduled<br>
@@ -109,6 +105,24 @@ require_once '../top_view.php';
         <tbody>
             <tr ng-repeat="dto in filtered" ng-class="{inactive: dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_CAP)>-1 || dto.Inspections.Status.indexOf(constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION)>-1 ,'pending':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && !dto.Inspections.Cap_complete,'complete':dto.Inspections.Status==constants.INSPECTION.STATUS.CLOSED_OUT && dto.Inspections.Cap_complete}" repeat-done="layoutDone()">
                 <td style="width:8.5%"><span once-text="dto.Pi_name"></span></td>
+                <td class="triple-inner" style="width:8%;vertical-align:top !important;">
+                    <div ng-repeat="campus in dto.Campuses" style="{{getMargin(campus)}}">{{campus.Campus_name}}</div>
+                </td>
+                <td class="triple-inner-inner" style="width:8.5%;vertical-align:top !important;">
+                    <div ng-repeat="campus in dto.Campuses">
+                        <div style="{{getMargin(building)}}" ng-repeat="building in campus.Buildings">{{building.Building_name}}</div>
+                    </div>
+                </td>
+                <td class="triple-inner-inner" style="width:8%">
+                    <div ng-repeat="campus in dto.Campuses">
+                        <div ng-repeat="building in campus.Buildings" style="margin-bottom:10px">
+                            <div ng-class="{'red':room.notInspected}" ng-repeat="room in building.Rooms">
+                                {{room.Name}}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <!--
                 <td style="width:24.5%" class="triple">
                     <table>
                         <tr ng-repeat="campus in dto.Campuses">
@@ -126,6 +140,7 @@ require_once '../top_view.php';
                         </tr>
                     </table>
                 </td>
+                    -->
                 <td style="width:6.5%">
                     <span ng-if="dto.Inspection_id">
                         <span ng-if="dto.Inspections.Date_started">

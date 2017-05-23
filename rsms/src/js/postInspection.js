@@ -774,6 +774,7 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
             Key_id: postInspectionFactory.inspection.Key_id,
             Principal_investigator_id: postInspectionFactory.inspection.Principal_investigator_id,
             Date_started: postInspectionFactory.inspection.Date_started,
+            Is_rad: postInspectionFactory.inspection.Is_rad,
             Notification_date: convenienceMethods.setMysqlTime(Date()),
             Schedule_month: postInspectionFactory.inspection.Schedule_month,
             Schedule_year: postInspectionFactory.inspection.Schedule_year,
@@ -1037,6 +1038,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
             Schedule_year: postInspectionFactory.inspection.Schedule_year,
             Cap_submitted_date: postInspectionFactory.inspection.Cap_submitted_date,
             Cap_complete: postInspectionFactory.inspection.Cap_complete,
+            Is_rad: postInspectionFactory.inspection.Is_rad,
             Class: "Inspection"
         };
         postInspectionFactory.saveInspection(inspection, inspectionDto).then(function () { $scope.handlingInspectionOpen = false; });

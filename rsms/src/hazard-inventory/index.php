@@ -252,7 +252,7 @@ echo "</script>";
                                        </div>
                                        <div class="roomsForBuidling span6">
                                            <ul>
-                                               <li ng-repeat="(key, room) in rooms = (building | activeOnly | orderBy: 'Name')" ng-class="{'grayed-out': selectedRoomIds.indexOf(room.Key_id) == -1 }"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(null,room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
+                                               <li ng-repeat="(key, room) in rooms = (building | activeOnly | orderBy: convenienceMethods.sortAlphaNum('Name'))" ng-class="{'grayed-out': selectedRoomIds.indexOf(room.Key_id) == -1 }"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(null,room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
                                             </ul>
                                         </div>
                                     </li>
@@ -313,7 +313,7 @@ echo "</script>";
                         <ul class="subRooms hazInvSubRooms" ng-if="getShowRooms(child, room, key)" ng-repeat="(key, rooms) in child.InspectionRooms | groupBy: 'Building_name'">
                             <li>
                                 <span ng-show="relevantRooms.length">{{ key }}:</span>
-                                <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms)">
+                                <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms | orderBy: convenienceMethods.sortAlphaNum('Room_name'))">
 
                                     <a ng-click="openMultiplePIHazardsModal(child, room)" ng-class="{'other':room.OtherLab && !room.ContainsHazard, 'shared':room.OtherLab && room.ContainsHazard, 'stored':room.Stored}">
                                         {{ room.Room_name }}

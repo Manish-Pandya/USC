@@ -2,7 +2,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
 .run(function($rootScope) {
     $rootScope.Constants = Constants;
 })
-.factory('convenienceMethods', function($http,$q,$rootScope){
+.factory('convenienceMethods', function ($http, $q, $rootScope, naturalService) {
     var methods =  {
         
         //
@@ -421,11 +421,99 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
             }
             if (t[0] == "0000" && !nullable) return "N/A";
             return input
+        },
+        sortAlphaNum: function (field) {
+            //console.log(property);
+            //if (!property) property = "Name";
+            if (!field) return;
+                return function (item) {
+                return naturalService.naturalValue(item[field]);
+            }
+        },
+        checkHazards: function (room, pis) {
+            urlSegment = "../../ajaxaction.php?action=getRoomHasHazards&id="+room.Key_id;
+            var piIds = pis.map(function (pi) { return pi.Key_id });
+            urlSegment += "&" + $.param({ piIds: piIds });
+            return $http.get(urlSegment).then(function (r) { return r.data; });
         }
         
     }
     return methods;
 })
+    // The core natural service
+.factory("naturalService", ["$locale", function ($locale) {
+    // the cache prevents re-creating the values every time, at the expense of
+    // storing the results forever. Not recommended for highly changing data
+    // on long-term applications.
+    var natCache = {},
+		// amount of extra zeros to padd for sorting
+        padding = function (value) {
+            return '00000000000000000000'.slice(value.length);
+        },
+
+		// Calculate the default out-of-order date format (d/m/yyyy vs m/d/yyyy)
+        natDateMonthFirst = $locale.DATETIME_FORMATS.shortDate.charAt(0) == 'm';
+    // Replaces all suspected dates with a standardized yyyy-m-d, which is fixed below
+    fixDates = function (value) {
+        // first look for dd?-dd?-dddd, where "-" can be one of "-", "/", or "."
+        return value.replace(/(\d\d?)[-\/\.](\d\d?)[-\/\.](\d{4})/, function ($0, $m, $d, $y) {
+            // temporary holder for swapping below
+            var t = $d;
+            // if the month is not first, we'll swap month and day...
+            if (!natDateMonthFirst) {
+                // ...but only if the day value is under 13.
+                if (Number($d) < 13) {
+                    $d = $m;
+                    $m = t;
+                }
+            } else if (Number($m) > 12) {
+                // Otherwise, we might still swap the values if the month value is currently over 12.
+                $d = $m;
+                $m = t;
+            }
+            // return a standardized format.
+            return $y + '-' + $m + '-' + $d;
+        });
+    },
+
+    // Fix numbers to be correctly padded
+    fixNumbers = function (value) {
+        // First, look for anything in the form of d.d or d.d.d...
+        return value.replace(/(\d+)((\.\d+)+)?/g, function ($0, integer, decimal, $3) {
+            // If there's more than 2 sets of numbers...
+            if (decimal !== $3) {
+                // treat as a series of integers, like versioning,
+                // rather than a decimal
+                return $0.replace(/(\d+)/g, function ($d) {
+                    return padding($d) + $d
+                });
+            } else {
+                // add a decimal if necessary to ensure decimal sorting
+                decimal = decimal || ".0";
+                return padding(integer) + integer + decimal + padding(decimal);
+            }
+        });
+    },
+
+    // Finally, this function puts it all together.
+    natValue = function (value) {
+        if (natCache[value]) {
+            return natCache[value];
+        }
+        var newValue = fixNumbers(fixDates(value));
+        return natCache[value] = newValue;
+    };
+
+    // The actual object used by this service
+    return {
+        naturalValue: natValue,
+        naturalSort: function (a, b) {
+            a = natVale(a);
+            b = natValue(b);
+            return (a < b) ? -1 : ((a > b) ? 1 : 0)
+        }
+    };
+}])
 .filter('dateToISO', function (convenienceMethods) {
     return function (input, object, propertyName, setToString) {
         return convenienceMethods.dateToIso(input, object, propertyName, setToString);
@@ -476,8 +564,16 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
              $('body').css({"minHeight":0})
              $(elem[0]).addClass('scrollTable');
              $(elem[0]).find('tbody').css({"marginTop": $(elem[0]).find('thead').height()});
-             var setWidths = function(){
-                var firstRow = elem.find('tbody').find('tr:first');
+             var setWidths = function () {
+                 console.log("fired width setter")
+                 var firstRow;
+                 if (elem.find('tbody').find('tr:nth-child(3)').length) {
+                     firstRow = elem.find('tbody').find('tr:nth-child(3)');
+                 } else {
+                     console.log("here");
+                     firstRow = elem.find('tbody').find('tr:first');
+                 }
+
                 $(elem).find('thead').find("th").each(function(index) {
                     $(this).width( firstRow.children("td").eq(index-1).width() );
                 });
@@ -613,6 +709,34 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
         }
     }
     return contacts;
-  }
+    }
 
-}]);
+
+
+    }])
+    //sorts strings including those that have
+    .filter('sortAlphanumeric', [function () {
+        return function (item, field) {
+            if(item.Building_id && item.Building_id == "15")console.log(naturalService.naturalValue(item[field]))
+            return naturalService.naturalValue(item[field]);
+        }
+    }])
+    .filter("paginationFilter", function () {
+        return function (items, start, limit) {
+            if (!items || !Array.isArray(items)) return;
+            if (limit - start > items.length) return items;
+            console.log(start, limit, start + limit)
+            return items.slice(start, start+limit);
+        }
+    }).controller('WarnRoomRemoveCtrl', function ($scope, $rootScope,room, behavior, $q, $http, $modalInstance, convenienceMethods, room) {
+
+        $scope.room = room;
+        
+        $scope.close = function () {
+            af.deleteModalData();
+            $modalInstance.dismiss();
+        }
+
+
+    });
+

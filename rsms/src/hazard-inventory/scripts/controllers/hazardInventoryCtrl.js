@@ -8,10 +8,12 @@
  * Controller of the HazardInventory Hazard Hub
  */
 angular.module('HazardInventory')
-    .controller('HazardInventoryCtrl', function ($scope, $q, $http, applicationControllerFactory, $modal, $location, $rootScope) {
+    .controller('HazardInventoryCtrl', function ($scope, $q, $http, applicationControllerFactory, $modal, $location, $rootScope, convenienceMethods) {
 
         //do we have access to action functions?
         $scope.af = applicationControllerFactory;
+        $scope.convenienceMethods = convenienceMethods;
+
         var af = applicationControllerFactory;
         var getAllPIs = function () {
             return af
@@ -273,8 +275,9 @@ angular.module('HazardInventory')
         }
 
     })
-    .controller('HazardInventoryModalCtrl', function ($scope, $rootScope, $q, $http, applicationControllerFactory, $modalInstance, $modal, convenienceMethods, roleBasedFactory) {
+    .controller('HazardInventoryModalCtrl', function ($scope, convenienceMethods, $rootScope, $q, $http, applicationControllerFactory, $modalInstance, $modal, roleBasedFactory) {
         $scope.constants = Constants;
+        $scope.convenienceMethods = convenienceMethods;
         var af = applicationControllerFactory;
         var rbf = roleBasedFactory;
         $scope.af = af;

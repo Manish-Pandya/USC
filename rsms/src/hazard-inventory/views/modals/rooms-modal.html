@@ -3,7 +3,7 @@
 </div>
 <div class="modal-body" ng-init="modalData.Hazard.InspectionRooms = sortRooms(modalData.Hazard.InspectionRooms)">
     <ul>
-        <li ng-repeat="(key, room) in modalData.Hazard.InspectionRooms" class="hazard-room">
+        <li ng-repeat="(key, room) in modalData.Hazard.InspectionRooms | orderBy: convenienceMethods.sortAlphaNum('Room_name')" class="hazard-room">
             <label class="checkbox inline">
                 <input type="checkbox" ng-model="room.ContainsHazard" ng-change="af.savePIHazardRoom(room, modalData.Hazard, true, modalData.GrandParent)" ng-disabled="constants.BRANCH_HAZARD_IDS.indexOf(modalData.Hazard.Parent_hazard_id) < 0 && !modalData.Parent.InspectionRooms[$index].ContainsHazard" />
                 <span class="metro-checkbox">
