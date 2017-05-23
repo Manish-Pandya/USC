@@ -94,7 +94,7 @@
                     <td ng-if="(!uncertified && !getIsPreviousYear(uncertified)) || getIsNextYear()" ng-hide="uncertified">
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
-                                <span>{{inspection.Due_date | dateToISO}}</span>
+                                <span ng-class="{'red': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.OVERDUE}">{{inspection.Due_date | dateToISO}}</span>
                             </div>
                         </div>
                     </td>
