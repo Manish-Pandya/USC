@@ -1,11 +1,20 @@
-﻿<accordion-group is-open="checklist.currentlyOpen" close-others="true" id="{{checklist.Key_id}}" ng-if="cabinets.data.length" class="checklist bio-safety-cabinets-container" style="padding:0; margin:5px">
+<accordion-group is-open="checklist.currentlyOpen" close-others="true" id="{{checklist.Key_id}}" ng-if="cabinets.data.length" class="checklist bio-safety-cabinets-container" style="padding:0; margin:5px">
     <accordion-heading>
         <div ng-show="completeCabinets.length || selectedBuilding || filter.pi || filter.status" style="padding:10px">
-            <h2 style="font-weight: bold;" ng-if="!uncertified">{{selectedCertificationDate || 'All'}} Certification Records -- {{campus.Name}}</h2>
-            <h2 style="font-weight: bold;" ng-if="uncertified">Uncertified Cabinets</h2>
+            <h2 style="font-weight: bold;" ng-if="!uncertified">
+                {{selectedCertificationDate || 'All'}} Certification Records -- {{campus.Name}}
+                <span class="pull-right">{{completeCabinets.length || "0"}} Cabinets</span>
+            </h2>
+            <h2 style="font-weight: bold;" ng-if="uncertified">
+                Uncertified Cabinets
+                <span class="pull-right">{{completeCabinets.length || "0"}} Cabinets</span>
+            </h2>
         </div>
     </accordion-heading>
     <div style="padding:10px;">
+        <span>
+            <select style="margin-top:-15px" ng-model="campus" ng-options="c as c.Name for c in campuses.data"><option value="">--Select Campus--</option></select>
+        </span>
         <table ng-show="completeCabinets.length || selectedBuilding || filter.pi || filter.status" class="table table-striped table-bordered" ng-class="{'current-year':!uncertified && getIsPreviousYear(false) && !getIsNextYear(),
            'previous-year':!getIsPreviousYear(false) && !uncertified, 'uncertified':uncertified, 'next-year':getIsNextYear()}">
             <thead>
@@ -42,7 +51,7 @@
             </thead>
             <tbody>
                 <!--| orderBy:['EquipmentInspections[0].Room.Building.Name','EquipmentInspections[0].Room.Name']-->
-                <tr ng-repeat="cabinet in completeCabinets = (cabinets.data | pi:filter.pi | status:filter.status | matchEquipmentBuilding:selectedBuilding | cabinetYear:selectedCertificationDate:uncertified | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive}  ) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
+                <tr ng-repeat="cabinet in completeCabinets = (cabinets.data | pi:filter.pi | status:filter.status | matchEquipmentBuilding:selectedBuilding | cabinetYear:selectedCertificationDate:uncertified | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive} ) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet, inspections[0], true)" class="btn btn-primary btn-mini left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit, 'btn-success':!cabinet.Is_active}" ng-click="deactivate(cabinet)" class="btn btn-danger btn-mini left"><i class="icon-remove" ng-class="{'icon-checkmark':!cabinet.Is_active}"></i></button>

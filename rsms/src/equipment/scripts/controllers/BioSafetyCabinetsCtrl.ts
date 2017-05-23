@@ -12,6 +12,8 @@ angular.module('EquipmentModule')
         var af = $scope.af = applicationControllerFactory;
         $scope.constants = Constants;
         $rootScope.modalClosed = true;
+        $scope.convenienceMethods = convenienceMethods;
+
         var getAll = function () {
             $rootScope.cabinets = new ViewModelHolder();
             $rootScope.Rooms = new ViewModelHolder();
