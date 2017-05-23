@@ -53,19 +53,18 @@ abstract class XHR {
             xhr.open(method, fullUrl);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onload = () => {
-                
-                console.log(xhr, location.origin);
+                //console.log(xhr, location.origin);
                 if (this.SUCCESS_CODES.indexOf(xhr.status) > -1) {
                     resolve(JSON.parse(xhr.responseText));
                 } else {
                     reject(xhr.statusText);
-
-                    var pathArray = location.href.split('/');
-                    var protocol = pathArray[0];
-                    var host = pathArray[2];
-                    var url = protocol + '//';
-                    window.location.href = url+"radon.qa.sc.edu/rsms";
-
+                    if (location.href.indexOf("erasmus") == -1) {
+                        var pathArray = location.href.split('/');
+                        var protocol = pathArray[0];
+                        var host = pathArray[2];
+                        var url = protocol + '//';
+                        window.location.href = url + "radon.qa.sc.edu/rsms";
+                    }
                 }
             }
 
@@ -75,11 +74,13 @@ abstract class XHR {
                     status: xhr.status,
                     statusText: xhr.statusText
                 });
-                var pathArray = location.href.split('/');
-                var protocol = pathArray[0];
-                var host = pathArray[2];
-                var url = protocol + '//' + host;
-                window.location.href = url + "radon.qa.sc.edu/rsms";
+                if (location.href.indexOf("erasmus") == -1) {
+                    var pathArray = location.href.split('/');
+                    var protocol = pathArray[0];
+                    var host = pathArray[2];
+                    var url = protocol + '//';
+                    window.location.href = url + "radon.qa.sc.edu/rsms";
+                }
             };
             
             // handle posted data if needed, removing circular references

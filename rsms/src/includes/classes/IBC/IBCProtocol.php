@@ -152,9 +152,20 @@ class IBCProtocol extends GenericCrud {
 	}
 
     public function getIBCProtocolRevisions(){
-		if($this->labPersonnel === NULL && $this->hasPrimaryKeyValue()) {
+		if($this->IBCProtocolRevisions === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
 			$this->IBCProtocolRevisions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$REVISIONS_RELATIONSHIP));
+
+			//all Protocols must have at least one revision, so we create one if this has none
+			if($this->IBCProtocolRevisions == null){
+				$revision = new IBCProtocolRevision();
+				$revision->setProtocol_id($this->key_id);
+				$revision->setProtocol_type("NEW");
+				$revision->setRevision_number("0");
+				$revision->setIs_active(true);
+				$revisionDao = new GenericDAO($revision);
+				$this->IBCProtocolRevisions = array($revisionDao->save($revision));
+			}
 		}
 		return $this->IBCProtocolRevisions;
 	}

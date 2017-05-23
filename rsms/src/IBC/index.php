@@ -96,6 +96,7 @@ if(!isset($_SESSION["USER"])){ ?>
 	<script type="text/javascript" src="../js/lib/ng-quick-date.js"></script>
 	<script type="text/javascript" src="../js/lib/angular-once.js"></script>
     <script src="../js/lib/angular.filter.js"></script>
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
     <script src="../js/lib/tinymce.js"></script>
 	<script type="text/javascript" src="../js/modalPosition.js"></script>
 	<script type="text/javascript" src="../js/lib/angular-busy.min.js"></script>
@@ -151,6 +152,8 @@ if(!isset($_SESSION["USER"])){ ?>
     <script src="scripts/models/IBCPossibleAnswer.js"></script>
     <script src="scripts/models/IBCProtocol.js"></script>
     <script src="scripts/models/IBCProtocolRevision.js"></script>
+    <script src="scripts/models/IBCPreliminaryComment.js"></script>
+    <script src="scripts/models/IBCPrimaryComment.js"></script>
     <script src="scripts/models/IBCQuestion.js"></script>
     <script src="scripts/models/IBCResponse.js"></script>
     <script src="scripts/models/IBCSection.js"></script>

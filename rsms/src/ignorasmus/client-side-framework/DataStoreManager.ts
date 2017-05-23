@@ -59,12 +59,8 @@ abstract class DataStoreManager {
     static baseUrl: string = "../ajaxaction.php?action=";
 
     static CurrentRoles: any[];
-
-    // NOTE: there's intentionally no getter. Only internal framework classes should have read access of actual model.
+    
     public static _actualModel: any = {};
-    static set ActualModel(value: any) {
-        this._actualModel = InstanceFactory.convertToClasses(value);
-    }
 
     private static _modalData: any;
     static get ModalData(): any {
@@ -104,13 +100,12 @@ abstract class DataStoreManager {
 
         if (!viewModelInst.data) viewModelInst.data = [];
         (<FluxCompositerBase[]>viewModelInst.data).splice(0, (<FluxCompositerBase[]>viewModelInst.data).length); // clear viewModelParent
-        if (!DataStoreManager._actualModel[type].Data || !DataStoreManager._actualModel[type].Data.length) {
-            if (!DataStoreManager._actualModel[type].getAllCalled) {
-                DataStoreManager._actualModel[type].getAllCalled = true;
-                DataStoreManager._actualModel[type].getAllPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetAll);
-            }
-        } else {       
-            DataStoreManager._actualModel[type].getAllPromise = this.promisifyData( DataStoreManager._actualModel[type].Data );
+        
+        if (!DataStoreManager._actualModel[type].getAllCalled) {
+            DataStoreManager._actualModel[type].getAllCalled = true;
+            DataStoreManager._actualModel[type].getAllPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetAll);
+        } else if (DataStoreManager._actualModel[type].Data && DataStoreManager._actualModel[type].Data.length) {
+            DataStoreManager._actualModel[type].getAllPromise = this.promisifyData(DataStoreManager._actualModel[type].Data);
         }
 
         return DataStoreManager._actualModel[type].getAllPromise
@@ -379,11 +374,11 @@ abstract class DataStoreManager {
      * @param obj
      * @param propName
      * @param value
+	 * @param className
      */
     private static findByPropValue(obj: any, propName: string, value: any, className?: string): any {
-        //Early return
         if ((!className || className == obj.constructor.name) && obj[propName] === value) {
-            return obj;
+            return obj; //Early return
         }
         var result: any;
         for (var prop in obj) {

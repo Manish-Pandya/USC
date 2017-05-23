@@ -53,11 +53,19 @@ angular
                 controller: "TestCtrl"
             })
     })
-    .controller('AppCtrl', function ($rootScope, $q) {
+    .controller('AppCtrl', function ($rootScope, $q, convenienceMethods, $state) {
         //expose lodash to views
         $rootScope._ = _;
         $rootScope.DataStoreManager = DataStoreManager;
         $rootScope.constants = Constants;
+
+        $rootScope.tinymceOptions = {
+            plugins: 'link lists',
+            toolbar: 'bold | italic | underline | link | lists | bullist | numlist',
+            menubar: false,
+            elementpath: false,
+            content_style: "p,ul li, ol li {font-size:14px}"
+        };
 
         //register classes with app
         console.log("approved classNames:", InstanceFactory.getClassNames(ibc));
@@ -90,19 +98,38 @@ angular
                 })
         }
 
-        $rootScope.saveReponses = function (responses: ibc.IBCResponse[], revision: ibc.IBCProtocolRevision, thing): Promise<any> {
+        $rootScope.saveReponses = function (responses: ibc.IBCResponse[], revision: ibc.IBCProtocolRevision): Promise<any> {
             return $q.all([$rootScope.save(responses)]).then((returnedResponses: ibc.IBCResponse[]) => {
                 revision.getResponsesMapped();
                 return revision;
             })
         }
+
+        $rootScope.returnForRevision = (copy: ibc.IBCProtocolRevision): Promise<any> | any => {
+            copy["Date_returned"] = convenienceMethods.setMysqlTime(new Date());
+            console.log(copy, convenienceMethods);
+            return $rootScope.save(copy).then(() => { $state.go("ibc.home")});
+        }
         
-        $rootScope.save = function (copy, thing = null): Promise<any> {
+        $rootScope.save = function (copy): Promise<any> {
             return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(
-                function (responses) {
+                function (someReturn) {
+                    console.log("save result:", someReturn);
                     console.log(DataStoreManager._actualModel);
-                    return responses;
+                    return someReturn;
                 });
+        }
+
+        // returns true if any of passed roles is in CurrentRoles
+        $rootScope.hasRole = function (...roles): boolean {
+            return DataStoreManager.CurrentRoles.some((value) => {
+                for (var n = 0; n < roles.length; n++) {
+                    if (value == roles[n]) {
+                        return true;
+                    }
+                }
+                return false;
+            });
         }
 
     });

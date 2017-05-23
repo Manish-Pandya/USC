@@ -530,6 +530,12 @@ class GenericDAO {
 		// Add the creation timestamp
 		if ($object->getDate_created() == null) {$object->setDate_created(date("Y-m-d H:i:s"));}
 
+		//set created user and last modified user ids if we can and need to
+		if(isset($_SESSION["USER"]) && $_SESSION["USER"]->getKey_id() != null){
+			$object->setLast_modified_user_id($_SESSION["USER"]->getKey_id());
+			if($object->getCreated_user_id() == null)$object->setCreated_user_id($_SESSION["USER"]->getKey_id());
+		}
+
 		// Get the db connection
 		global $db;
 		//print_r($db);

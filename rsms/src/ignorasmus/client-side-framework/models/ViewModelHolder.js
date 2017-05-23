@@ -6,13 +6,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 'use strict';
 var ViewModelHolder = (function () {
-    /*public addNeighbor<T extends BaseElement>(baseElement: T) {
-        if (baseElement instanceof NodeElement) {
-            this.nodeNeighbors[baseElement.id] = baseElement;
-        } else if (baseElement instanceof EdgeElement) {
-            this.edgeNeighbors[baseElement.id] = baseElement;
-        }
-    }*/
     //----------------------------------------------------------------------
     //
     //  Constructor
@@ -28,5 +21,23 @@ var ViewModelHolder = (function () {
         this.data = null;
         this.data = data;
     }
+    //----------------------------------------------------------------------
+    //
+    //  Methods
+    //
+    //----------------------------------------------------------------------
+    ViewModelHolder.prototype.save = function () {
+        return DataStoreManager.save(this.data);
+    };
+    ViewModelHolder.prototype.undo = function () {
+        if (Array.isArray(this.data)) {
+            this.data.forEach(function (value) {
+                DataStoreManager.undo(value);
+            });
+        }
+        else {
+            DataStoreManager.undo(this.data);
+        }
+    };
     return ViewModelHolder;
 }());

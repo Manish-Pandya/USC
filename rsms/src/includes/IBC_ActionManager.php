@@ -89,14 +89,14 @@ class IBC_ActionManager extends ActionManager {
      * @param IBCProtocolRevision
      * @return GenericCrud | ActionError | IBCProtocolRevision
      */
-    function saveProtocolRevision(IBCProtocolRevision $decodedObject = null){
-		$l = Logger::getLogger("save revision");
+    function saveProtocolRevision(IBCProtocolRevision $decodedObject = null, $cloneIfReturnedForRevision = true){
+		$l = Logger::getLogger(__FUNCTION__);
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         //hold Preliminary and Primary reviewers
-
 		$primaryReviewers = $decodedObject->getPrimaryReviewers();
         $preliminaryReviewers = $decodedObject->getPreliminaryReviewers();
+
         $dao = $this->getDao($decodedObject);
         $revision = $dao->save($decodedObject);
 
@@ -120,17 +120,84 @@ class IBC_ActionManager extends ActionManager {
             $dao->addRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
         }
 
+		//Protocol's current IBCProtocolRevision has been returned for revision, to be revised for revisions
+		if($revision->getStatus() === IBCProtocolRevision::$STATUSES["RETURNED_FOR_REVISION"] && $cloneIfReturnedForRevision){
+			$newRevision = clone($revision);//new IBCProtocolRevision()
+			$this->purgeKeyIds($newRevision);
+			$newRevision->setPreliminaryReviewers($preliminaryReviewers);
+			$newRevision->setPrimaryReviewers($primaryReviewers);
+			$responses = $revision->getIBCResponses();
+			$preComments = $revision->getIBCPreliminaryComments();
+			$l->fatal($newRevision);
+			//TODO: get our primary comments and save them after we write the other stuff for that thing
+			//$primaryComments = $newRevision->getIBCPriminaryComments();
+			$newRevision->setRevision_number(intval ($revision->getRevision_number()) + 1);
+			$newRevision = $this->saveProtocolRevision($newRevision, false);
+			$l->fatal($newRevision);
+			$l->fatal($responses);
+			foreach($responses as $response){
+				$response->setKey_id(null);
+				$response->setKey_id(null);
+				$response->setRevision_id($newRevision->getKey_id());
+				$response = $this->saveIBCResponses(array($response));
+			}
+
+			foreach($preComments as $comment){
+				$comment->setKey_id(null);
+				$comment->setRevision_id($newRevision->getKey_id());
+				$comment = $this->saveIBCPreliminaryComment($comment);
+			}
+
+			//TODO: get our primary comments and save them after we write the other stuff for that thing
+			/*
+			foreach($primaryComments as $comment){
+				$comment->getRevision_id($newRevision->getKey_id());
+				$comment = $this->saveIBCPiminaryComment($comment);
+			}
+			*/
+
+			return array($newRevision,$revision);
+		}
+
 		$revision->setPreliminaryReviewers(null);
 		$revision->setPrimaryReviewers(null);
-
-        $entityMaps = array();
+		$entityMaps = array();
         $entityMaps[] = new EntityMap("eager","getPreliminaryReviewers");
         $entityMaps[] = new EntityMap("eager","getPrimaryReviewers");
 		$revision->setEntityMaps($entityMaps);
+
         return $revision;
     }
 
-    public function saveProtocolRevisions(array $decodedObject = null){
+	/*
+	 * RECURSIVELY PURGE KEY_IDS FROM OBJECT TREE FOR FRESH SAVES
+	 * @param GenericCrud $currentObject
+	 *
+	 */
+	private function purgeKeyIds(GenericCrud $currentObject){
+		$keys = get_class_methods($currentObject);
+		if(count($keys) > 0){
+			if(method_exists($currentObject, "getKey_id") && $currentObject->hasPrimaryKeyValue()){
+				$currentObject->setKey_id(null);
+			}
+
+			foreach($keys as $method){
+				//only call getters
+				if(stristr($method,"get")){
+					if(is_array($currentObject->$method())){
+						foreach($currentObject->$method() as $sub){
+							$this->purgeKeyIds($sub);
+						}
+					}else{
+						$this->purgeKeyIds($currentObject->$method());
+					}
+				}
+			}
+		}
+
+	}
+
+	public function saveProtocolRevisions(array $decodedObject = null){
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         if(!is_array($decodedObject))return new ActionError("Not an array");
@@ -299,9 +366,7 @@ class IBC_ActionManager extends ActionManager {
 				//so we can safely set $response's Is_selected to true, knowing that it is the IBCResponse from the client
                 $response->setIs_selected(true);
                 $response = $responseDao->save($response);
-            }else{
-				$response->setText("butt");
-			}
+            }
             $response = $responseDao->save($response);
         }
         return $this->getSiblingReponses($decodedObject[0]);
@@ -355,8 +420,62 @@ class IBC_ActionManager extends ActionManager {
         foreach($pis as $pi){
             $pi->setEntityMaps($entityMaps);
         }
-        
+
         return $pis;
+    }
+
+    /**
+     * Summary of getAllIBCPreliminaryComments
+     * @return array
+     */
+    function getAllIBCPreliminaryComments(){
+        //TODO: restrict revisions to only those of protocols that belong to user
+        $dao = $this->getDao(new IBCPreliminaryComment());
+        return $dao->getAll();
+    }
+    /**
+     * @param integer $id
+     * @return GenericCrud | IBCPreliminaryCommentById | ActionError
+     */
+    function getIBCPreliminaryCommentById($id = null){
+        if($id == NULL)$id = $this->getValueFromRequest('id', $id);
+        if($id == NULL)return new ActionError("No request param 'id' provided.");
+        $dao = $this->getDao(new IBCPreliminaryComment());
+        return $dao->getById($id);
+    }
+
+    public function saveIBCPreliminaryComment(IBCPreliminaryComment $decodedObject){
+        if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
+        if($decodedObject == NULL)return new ActionError("No input read from stream");
+        $dao = $this->getDao($decodedObject);
+        return $dao->save($decodedObject);
+    }
+
+	/**
+	 * Summary of getAllIBCPrimaryComments
+	 * @return array
+	 */
+    function getAllIBCPrimaryComments(){
+        //TODO: restrict revisions to only those of protocols that belong to user
+        $dao = $this->getDao(new IBCPrimaryComment());
+        return $dao->getAll();
+    }
+    /**
+	 * @param integer $id
+	 * @return GenericCrud | IBCPrimaryCommentById | ActionError
+	 */
+    function getIBCPrimaryCommentById($id = null){
+        if($id == NULL)$id = $this->getValueFromRequest('id', $id);
+        if($id == NULL)return new ActionError("No request param 'id' provided.");
+        $dao = $this->getDao(new IBCPrimaryComment());
+        return $dao->getById($id);
+    }
+
+    public function saveIBCPrimaryComment(IBCPrimaryComment $decodedObject){
+        if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
+        if($decodedObject == NULL)return new ActionError("No input read from stream");
+        $dao = $this->getDao($decodedObject);
+        return $dao->save($decodedObject);
     }
 }
 

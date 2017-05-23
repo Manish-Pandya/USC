@@ -40,17 +40,19 @@ var XHR = (function () {
             xhr.open(method, fullUrl);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onload = function () {
-                console.log(xhr, location.origin);
+                //console.log(xhr, location.origin);
                 if (_this.SUCCESS_CODES.indexOf(xhr.status) > -1) {
                     resolve(JSON.parse(xhr.responseText));
                 }
                 else {
                     reject(xhr.statusText);
-                    var pathArray = location.href.split('/');
-                    var protocol = pathArray[0];
-                    var host = pathArray[2];
-                    var url = protocol + '//';
-                    window.location.href = url + "radon.qa.sc.edu/rsms";
+                    if (location.href.indexOf("erasmus") == -1) {
+                        var pathArray = location.href.split('/');
+                        var protocol = pathArray[0];
+                        var host = pathArray[2];
+                        var url = protocol + '//';
+                        window.location.href = url + "radon.qa.sc.edu/rsms";
+                    }
                 }
             };
             xhr.onerror = function () {
@@ -59,11 +61,13 @@ var XHR = (function () {
                     status: xhr.status,
                     statusText: xhr.statusText
                 });
-                var pathArray = location.href.split('/');
-                var protocol = pathArray[0];
-                var host = pathArray[2];
-                var url = protocol + '//' + host;
-                window.location.href = url + "radon.qa.sc.edu/rsms";
+                if (location.href.indexOf("erasmus") == -1) {
+                    var pathArray = location.href.split('/');
+                    var protocol = pathArray[0];
+                    var host = pathArray[2];
+                    var url = protocol + '//';
+                    window.location.href = url + "radon.qa.sc.edu/rsms";
+                }
             };
             // handle posted data if needed, removing circular references
             var postBody = body ? _this.stringifyCircularFix(body) : null;

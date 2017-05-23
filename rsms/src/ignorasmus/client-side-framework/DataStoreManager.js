@@ -44,13 +44,6 @@ PermissionMap.Permissions = [];
 var DataStoreManager = (function () {
     function DataStoreManager() {
     }
-    Object.defineProperty(DataStoreManager, "ActualModel", {
-        set: function (value) {
-            this._actualModel = InstanceFactory.convertToClasses(value);
-        },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(DataStoreManager, "ModalData", {
         get: function () {
             return this._modalData;
@@ -91,13 +84,11 @@ var DataStoreManager = (function () {
         if (!viewModelInst.data)
             viewModelInst.data = [];
         viewModelInst.data.splice(0, viewModelInst.data.length); // clear viewModelParent
-        if (!DataStoreManager._actualModel[type].Data || !DataStoreManager._actualModel[type].Data.length) {
-            if (!DataStoreManager._actualModel[type].getAllCalled) {
-                DataStoreManager._actualModel[type].getAllCalled = true;
-                DataStoreManager._actualModel[type].getAllPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetAll);
-            }
+        if (!DataStoreManager._actualModel[type].getAllCalled) {
+            DataStoreManager._actualModel[type].getAllCalled = true;
+            DataStoreManager._actualModel[type].getAllPromise = XHR.GET(InstanceFactory._nameSpace[type].urlMapping.urlGetAll);
         }
-        else {
+        else if (DataStoreManager._actualModel[type].Data && DataStoreManager._actualModel[type].Data.length) {
             DataStoreManager._actualModel[type].getAllPromise = this.promisifyData(DataStoreManager._actualModel[type].Data);
         }
         return DataStoreManager._actualModel[type].getAllPromise
@@ -361,11 +352,11 @@ var DataStoreManager = (function () {
      * @param obj
      * @param propName
      * @param value
+     * @param className
      */
     DataStoreManager.findByPropValue = function (obj, propName, value, className) {
-        //Early return
         if ((!className || className == obj.constructor.name) && obj[propName] === value) {
-            return obj;
+            return obj; //Early return
         }
         var result;
         for (var prop in obj) {
@@ -404,5 +395,4 @@ var DataStoreManager = (function () {
 DataStoreManager.classPropName = "Class";
 DataStoreManager.uidString = "Key_id";
 DataStoreManager.baseUrl = "../ajaxaction.php?action=";
-// NOTE: there's intentionally no getter. Only internal framework classes should have read access of actual model.
 DataStoreManager._actualModel = {};

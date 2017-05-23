@@ -52,11 +52,18 @@ angular
         controller: "TestCtrl"
     });
 })
-    .controller('AppCtrl', function ($rootScope, $q) {
+    .controller('AppCtrl', function ($rootScope, $q, convenienceMethods, $state) {
     //expose lodash to views
     $rootScope._ = _;
     $rootScope.DataStoreManager = DataStoreManager;
     $rootScope.constants = Constants;
+    $rootScope.tinymceOptions = {
+        plugins: 'link lists',
+        toolbar: 'bold | italic | underline | link | lists | bullist | numlist',
+        menubar: false,
+        elementpath: false,
+        content_style: "p,ul li, ol li {font-size:14px}"
+    };
     //register classes with app
     console.log("approved classNames:", InstanceFactory.getClassNames(ibc));
     // method to async fetch current roles
@@ -82,17 +89,37 @@ angular
             return section;
         });
     };
-    $rootScope.saveReponses = function (responses, revision, thing) {
+    $rootScope.saveReponses = function (responses, revision) {
         return $q.all([$rootScope.save(responses)]).then(function (returnedResponses) {
             revision.getResponsesMapped();
             return revision;
         });
     };
-    $rootScope.save = function (copy, thing) {
-        if (thing === void 0) { thing = null; }
-        return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(function (responses) {
+    $rootScope.returnForRevision = function (copy) {
+        copy["Date_returned"] = convenienceMethods.setMysqlTime(new Date());
+        console.log(copy, convenienceMethods);
+        return $rootScope.save(copy).then(function () { $state.go("ibc.home"); });
+    };
+    $rootScope.save = function (copy) {
+        return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(function (someReturn) {
+            console.log("save result:", someReturn);
             console.log(DataStoreManager._actualModel);
-            return responses;
+            return someReturn;
+        });
+    };
+    // returns true if any of passed roles is in CurrentRoles
+    $rootScope.hasRole = function () {
+        var roles = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            roles[_i] = arguments[_i];
+        }
+        return DataStoreManager.CurrentRoles.some(function (value) {
+            for (var n = 0; n < roles.length; n++) {
+                if (value == roles[n]) {
+                    return true;
+                }
+            }
+            return false;
         });
     };
 });

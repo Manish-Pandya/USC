@@ -7,13 +7,16 @@ angular.module('ng-IBC')
             headerIcon: "@",
             scoped: "=",
             openHandler: "&",
+            isopen: "=" // tried camelCase 'isOpen' and 'isClosed', but then it stops working. Maybe those are reserved? Weird.
         },
         replace: false,
         transclude: true,
         templateUrl: "./scripts/directives/collapsible-card.html",
         controller: function ($scope) {
-            if (typeof $scope.closed == 'undefined')
-                $scope.closed = true;
+            $scope.$watch("isopen", function () {
+                $scope.closed = !$scope.isopen;
+                $scope.open();
+            });
             $scope.open = function (param) {
                 if (!$scope.closed)
                     $scope.openHandler().apply(void 0, $scope.scoped);

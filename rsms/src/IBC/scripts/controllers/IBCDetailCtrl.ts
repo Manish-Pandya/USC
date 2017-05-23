@@ -14,45 +14,29 @@ angular.module('ng-IBC')
         var getProtocol = function (): Promise<any> {
             $scope.protocol = new ViewModelHolder();
             $scope.revision = new ViewModelHolder();
-            $scope.responsesMapped = <{ [index: string]: ibc.IBCResponse[] }>Object.create(null);
+            $scope.hasCommentsBySectionId = []; // boolean[] indexed by protocol's section's Key_ids. True if revision has comments for the given section.
             return $q.all([DataStoreManager.getById("IBCProtocol", $stateParams.id, $scope.protocol, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.SectionMap])])
-                .then(
-                function (p) {
+                .then(function (p) {
+                    var pRevision: ibc.IBCProtocolRevision = $scope.protocol.data.IBCProtocolRevisions[$scope.protocol.data.IBCProtocolRevisions.length - 1];
+                    $q.all([DataStoreManager.getById("IBCProtocolRevision", pRevision.UID, $scope.revision, true)]).then(() => {
+                        $scope.protocol.data.IBCSections.forEach((section, index) => {
+                            var commentsSectionMatch: boolean = $scope.revision.data.IBCPreliminaryComments.some((comment) => {
+                                return comment.Section_id == section.UID;
+                            });
+                            if (!commentsSectionMatch) {
+                                commentsSectionMatch = $scope.revision.data.IBCPrimaryComments.some((comment) => {
+                                    return comment.Section_id == section.UID;
+                                });
+                            }
+                            $scope.hasCommentsBySectionId[section.UID] = commentsSectionMatch;
+                        });
+                        console.log($scope.revision);
+                        console.log($scope.hasCommentsBySectionId);
+                    })
 
                     console.log($scope.protocol);
                     console.log(DataStoreManager._actualModel);
-                    DataStoreManager._actualModel['IBCProtocol']['Data'][0].viewModelWatcher.Department_id = DataStoreManager._actualModel['IBCProtocol']['Data'][0].viewModelWatcher.Department_id + " updated in controller";
-
-                    return;
-                        DataStoreManager.getById("IBCSection", $scope.protocol.data.IBCSections[0].UID, new ViewModelHolder(), false)
-                            .then(
-                            function (someData) {
-                                var pRevision: ibc.IBCProtocolRevision = $scope.protocol.data.IBCProtocolRevisions[$scope.protocol.data.IBCProtocolRevisions.length - 1];
-                                $q.all([DataStoreManager.getById("IBCProtocolRevision", pRevision.UID, $scope.revision, true)])
-                                        .then(
-                                    function (someData) {
-                                         /*for (var n = 0; n < $scope.revision.IBCResponses.length; n++) {
-                                                    var response = $scope.revision.IBCResponses[n];
-                                                    console.log(response);
-                                                    if (!$scope.revision.responsesMapped[response.Answer_id]) $scope.revision.responsesMapped[response.Answer_id] = [];
-                                                    $scope.revision.responsesMapped[response.Answer_id].push(response);
-                                                }*/
-                                    }
-                                            
-                                        )
-                                }
-                            )
-                    }
-                );
-        }
-
-        $scope.testSave = function (data) {
-            return $scope.loading = $q.all([DataStoreManager.save(data)]).then((r) => {
-                console.log(r);
-                console.log($scope.protocol.data);
-                console.log(DataStoreManager._actualModel);
-                return r;
-            });
+                });
         }
 
         $scope.loading = $rootScope.getCurrentRoles().then(getProtocol);

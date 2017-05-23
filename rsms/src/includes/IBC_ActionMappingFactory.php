@@ -51,6 +51,15 @@ class IBC_ActionMappingFactory extends ActionMappingFactory {
 				"saveProtocol" 					=> new ActionMapping("saveProtocol", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"getAllDepartments" 			=> new ActionMapping("getAllDepartments", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 				"getAllIBCPIs"	 				=> new ActionMapping("getAllIBCPIs", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+
+                "getAllIBCPreliminaryComments"  => new ActionMapping("getAllIBCPreliminaryComments", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+                "getIBCPreliminaryCommentById"  => new ActionMapping("getIBCPreliminaryCommentById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+                "saveIBCPreliminaryComment"     => new ActionMapping("saveIBCPreliminaryComment", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+
+				"getAllIBCPrimaryComments"  => new ActionMapping("getAllIBCPrimaryComments", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+                "getIBCPrimaryCommentById"  => new ActionMapping("getIBCPrimaryCommentById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+                "saveIBCPrimaryComment"     => new ActionMapping("saveIBCPrimaryComment", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+
 		);
 	}
 }
