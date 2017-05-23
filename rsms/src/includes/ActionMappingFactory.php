@@ -71,6 +71,7 @@ class ActionMappingFactory {
                 "getSupervisorByUserId"=>new ActionMapping("getSupervisorByUserId", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getPIByUserId"=>new ActionMapping("getPIByUserId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
                 "getUsersForUserHub"=>new ActionMapping("getUsersForUserHub", "", "", $this::$ROLE_GROUPS["EHS"]),
+                "getRoomHasHazards"=>new ActionMapping("getRoomHasHazards", "", "",$this::$ROLE_GROUPS["EHS"]),
 
 
 

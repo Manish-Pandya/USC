@@ -194,16 +194,16 @@
     </div>
 
     <div class="card full carboys" ng-click="af.setSelectedView('carboys')">
-        <h3 class="card-header padding " ng-if="pi.CarboyUseCycles.length">
-            <i class="icon-carboy"></i><span class="bold">{{pi.CarboyUseCycles.length}} Carboy<span ng-if="pi.CarboyUseCycles.length != 1">s</span></span>
+        <h3 class="card-header padding" ng-show="cycles.length">
+            <i class="icon-carboy"></i><span class="bold">{{cycles.length}} Carboy<span ng-if="cycles.length != 1">s</span></span>
             <a ng-click="openModal('views/admin/admin-modals/carboy-assignment')" class="btn btn-success left"><i class="icon-carboy"></i>Assign Carboy</a>
         </h3>
-        <h3 class="card-header padding carboys" ng-if="!pi.CarboyUseCycles.length">
+        <h3 class="card-header padding carboys" ng-show="!cycles.length">
             <i class="icon-carboy"></i>{{pi.User.Name}} has no Carboys
             <a ng-click="openModal('views/admin/admin-modals/carboy-assignment')" class="btn btn-success left"><i class="icon-carboy"></i>Assign Carboy</a>
         </h3>
-        <div class="card-content" ng-if="selectedView == 'carboys'">
-            <div class="fake-table striped bordered" ng-if="pi.CarboyUseCycles.length">
+        <div class="card-content" ng-if="selectedView == 'carboys'" ng-show="cycles.length">
+            <div class="fake-table striped bordered">
                 <div class="table-header">
                     <!--<h3>Edit</h3>-->
                     <h3>Carboy Number</h3>
@@ -211,7 +211,7 @@
                     <h3>Lab Date</h3>
                     <h3>mCi</h3>
                 </div>
-                <div class="table-row" ng-repeat="cycle in pi.CarboyUseCycles" ng-if="cycle.Status == 'In Use'">
+                <div class="table-row" ng-repeat="cycle in cycles = (pi.CarboyUseCycles | filter: {'Status':Constants.CARBOY_USE_CYCLE.STATUS.IN_USE})">
                     <div>{{cycle.Carboy.Carboy_number}}</div>
                     <div>{{cycle.Room.Name}}</div>
                     <div>{{cycle.Lab_date | dateToISO}}</div>
@@ -220,7 +220,7 @@
             </div>
         </div>
     </div>
-    <div class="card half solids-containers" ng-click="af.setSelectedView('containers')">
+    <div class="card half solids-containers" ng-click="af.setSelectedView('containers')" style="display:none">
         <h3 class="card-header padding " ng-if="pi.SolidsContainers">
             <i class="icon-remove-2"></i><span class="bold">{{pi.SolidsContainers.length}} Waste Receptical<span ng-if="pi.SolidsContainers.length != 1">s</span></span>
             <a ng-click="openModal('views/admin/admin-modals/containers-modal')" class="btn btn-success left"><i class="icon-remove-2"></i>Assign Container</a>

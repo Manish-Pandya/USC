@@ -1,4 +1,4 @@
-﻿<div style="width: 700px;background: white;margin-left: -40px;">
+﻿<div style="width: 750px;background: white;margin-left: -40px;">
 
     <div class="modal-header" style="padding:0;">
         <h2 style="padding:5px; background:#428642; color:white">{{modalData.PrincipalInvestigator.User.Name}}</h2>
@@ -14,7 +14,9 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>{{modalData.PrincipalInvestigator.User.Office_phone | tel}}</td>
+                    <td>
+                        {{modalData.PrincipalInvestigator.User.Office_phone | tel}}
+                    </td>
                     <td>{{modalData.PrincipalInvestigator.User.Email || "N/A"}}</td>
                     <td>
                         <span ng-repeat="dept in modalData.PrincipalInvestigator.Departments">{{dept.Name}}<span ng-if="!$last">, </span></span>

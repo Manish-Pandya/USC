@@ -1,7 +1,7 @@
 ﻿<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 <form class="form" ng-submit="save(modalData.BioSafetyCabinet)">
     <div class="modal-header" style="padding:0;">
-        <h2 style="padding:5px; background:#428642; color:white"><span ng-if="!modalData.BioSafetyCabinet.Key_id">Create</span><span ng-if="modalData.BioSafetyCabinet.Key_id">Edit</span> Biosafety Cabinet</h2>
+        <h2 style="padding:5px; background:#428642; color:white">Manage Reports and Quotes</h2>
     </div>
 
     <div class="modal-body">
@@ -10,8 +10,8 @@
             <label class="control-label">Manage Report</label>
             <div class="controls" style="display:block">
                 
-                    <a ng-if="modalData.BioSafetyCabinet.SelectedInspection.Report_path" class="btn btn-success" href="../biosafety-committees/protocol-documents/{{modalData.BioSafetyCabinet.SelectedInspection.Report_path}}" target="_blank">Report</a>
-                    <span ng-if="!inspection.Report_path" class="bold">No Report Uploaded</span>
+                    <a ng-if="modalData.BioSafetyCabinet.SelectedInspection.Report_path" class="btn btn-success left" href="../biosafety-committees/protocol-documents/{{modalData.BioSafetyCabinet.SelectedInspection.Report_path}}" target="_blank"><i class="icon-eye"></i>Report</a>
+                    <span ng-if="!modalData.BioSafetyCabinet.SelectedInspection.Report_path" class="bold">No Report Uploaded</span>
                     <a class="btn dropdown-toggle upload-container" click-target="modalData.BioSafetyCabinet.SelectedInspection" url-fragment="uploadReportCertDocument">
                         <span class="icon-upload-4"></span>
                         <input type="file" name="file" id="file" class="inputfile inputfile-1" />
@@ -25,7 +25,7 @@
         <div class="control-group">
             <label class="control-label">Manage Quote</label>
             <div class="controls" style="display:block">
-                <a ng-if="modalData.BioSafetyCabinet.SelectedInspection.Quote_path" class="btn btn-info" href="../biosafety-committees/protocol-documents/{{modalData.BioSafetyCabinet.SelectedInspection.Quote_path}}" target="_blank">Quote</a>
+                <a ng-if="modalData.BioSafetyCabinet.SelectedInspection.Quote_path" class="btn btn-info left" href="../biosafety-committees/protocol-documents/{{modalData.BioSafetyCabinet.SelectedInspection.Quote_path}}" target="_blank"><i class="icon-eye"></i>Quote</a>
                 <span ng-if="!modalData.BioSafetyCabinet.SelectedInspection.Quote_path" class="bold">No Quote Uploaded</span>
                 <a class="btn dropdown-toggle upload-container" click-target="modalData.BioSafetyCabinet.SelectedInspection" url-fragment="uploadReportQuoteDocument">
                     <span class="icon-upload-4"></span>

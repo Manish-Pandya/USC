@@ -191,7 +191,8 @@ dataStoreManager.getChildrenByParentProperty = function(collectionType, property
                                     if (!current[prop]) getIt = false;
                                 }else if(whereClause[j][prop] == "IS NULL"){
                                     //where clause's current property's value is "IS NULL", so we only want this object from the cache if it's property is null
-                                    if(current[prop])getIt = false;
+                                    console.log("DIG: ",current);
+                                    if (current[prop]) getIt = false;
                                 }else{
                                     //the object property is neither "NOT NULL" or "IS NULL"
                                     if(current[prop] != whereClause[j][prop]) getIt = false;

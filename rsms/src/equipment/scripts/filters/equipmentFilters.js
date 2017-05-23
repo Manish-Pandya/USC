@@ -265,4 +265,13 @@ angular
             return !string || ((pi.Name && pi.Name.indexOf(string) != -1) || (pi.User && pi.User.Name && pi.User.Name.indexOf(string) != -1));
         });
     };
+})
+    .filter("piSelected", function () {
+    return function (pis, selectedPis) {
+        if (!pis || !selectedPis)
+            return;
+        return pis.filter(function (pi) {
+            return _.findIndex(selectedPis, function (p) { return pi.UID == p.UID; }) == -1;
+        });
+    };
 });

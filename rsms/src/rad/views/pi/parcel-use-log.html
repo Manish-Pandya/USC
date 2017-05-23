@@ -3,7 +3,6 @@
 
 <h1 class="alert alert-danger fixed-full" ng-if="error">{{error}}</h1>
 <div style="margin-top:70px;" ng-if="pi">
-    <span ng-init="pi.loadWasteBags()" ng-if="pi.SolidsContainers"></span>
     <div class="card full parcels">
         <div class="card-content">
             <div class="fake-table striped">
@@ -11,16 +10,16 @@
                     <h3>R.S. Number</h3>
                     <h3>Isotope</h3>
                     <h3>Arrival Date</h3>
-                    <h3>Orginal Activity</h3>
-                    <h3>Usable Activity</h3>
-                    <h3>Amount On Hand</h3>
+                    <h3>Orginal Activity Ordered</h3>
+                    <h3>Amount not used in experiments</h3>
+                    <h3>Total Amount In Lab</h3>
                 </div>
                 <div class="table-row" ng-class="{'inactive': parcel.AmountOnHand == 0}">
                     <div>
                         {{parcel.Rs_number}}
                     </div>
 
-                    <div ng-init="parcel.loadAuthorization()"> 
+                    <div ng-init="parcel.loadAuthorization()">
                         {{parcel.Authorization.IsotopeName}}
                     </div>
 
@@ -44,70 +43,108 @@
             </div>
         </div>
     </div>
-
-    <div class="card full parcels" ng-if="pi">
-        <h3 class="card-header padding">Package Usages <button ng-click="addUsage(parcel)" ng-disabled="parcel.AmountOnHand == 0" class="btn btn-success left"><i class="icon-plus-2"></i>Add Usage</button></h3>
+    <!-- ng-if="pi && (!parcelUses || !parcelUses[0] || !parcelUses[0].pUses || !parcelUses[0].pUses.length)"-->
+    <div class="card full parcels">
         <div class="card-content">
-            <table class="table-bordered table parcel-uses" ng-show="parcel.ParcelUses">
-                <tr class="table-header">
-                    <th>Edit</th>
-                    <th>Date</th>
-                    <th>Use</th>
-                    <th>Amount</th>
-                    <th>Disposals</th>
-                    <!--<th></th>-->
-                </tr>
-                <tr class="table-row top-align" ng-repeat="use in parcel.ParcelUses" ng-class="{'formError': use.error, 'inactive': use.getIsPickedUp()}" table-error="{{use.error}}" obj="use">
-                    <td ng-init="use.loadParcelUseAmounts()">
-                        <button class="btn btn-primary" ng-click="editUse(use)" ng-disabled="use.Date_transferred || use.getIsPickedUp()"><i class="icon-pencil"></i></button>
-                    </td>
-                    <td>
-                        <span ng-if="use.Date_transferred">Transferred: {{use.Date_transferred | dateToISO}}</span>
-                        <span ng-if="!use.Date_transferred">{{use.Date_used || use.Date_transferred | dateToISO:use:'Date_used':true}}</span>
-                    </td>
-                    
-
-                    <td>
-                        <span ng-if="!use.Date_transferred">{{use.Experiment_use}}</span>
-                        <span ng-if="use.Date_transferred">{{use.Comments || 'Tranfser'}}</span>
-                    </td>
-                    
-
-                    <td>
-                        {{use.Quantity}} mCi
-                    </td>
-
-                    <td class="use-amounts">
-                        <table class="table">
-                            <tr class="table-row row-fluid">
-                                <td class="use-amount solids">
-                                    <div ng-repeat="solid in use.solids = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SOLID})">
-                                        <span class="bold">Sol: </span>{{solid.Curie_level}}mCi in {{solid.Container_name}}<i title="Picked Up" ng-if="solid.IsPickedUp" class="danger icon-remove"></i>
-                                    </div>
-                                    <div ng-if="!use.solids.length">No Solid Disposals</div>
-                                </td>
-                                <td class="use-amount liquids">
-                                    <div ng-repeat="liquid in liquids = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.LIQUID})">
-                                        <span class="bold">Liq:</span> {{liquid.Curie_level}}mCi in Carboy {{liquid.Carboy.Carboy.Carboy_number}} <i title="Picked Up" ng-if="liquid.IsPickedUp" class="danger icon-remove"></i>
-                                    </div>
-                                    <div ng-if="!liquids.length">No Liquid Disposals</div>
-                                </td>
-                                <td class="use-amount vials">
-                                    <div ng-repeat="vial in vials = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.VIAL})">
-                                        <span class="bold">S/V:</span> {{vial.Curie_level}}mCi <i title="Picked Up" ng-if="vial.IsPickedUp" class="danger icon-remove"></i>
-                                    </div>
-                                    <div ng-if="!vials.length">No vial Disposals</div>
-                                </td>
-                                <td class="use-amount others">
-                                    <span class="bold" style="margin-bottom:10px;display:block">Other:<span class="bold" ng-show="!others.length">N/A</span></span>
-                                    <div ng-repeat="other in others = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.OTHER})">
-                                         {{other.Curie_level}} mCi <span ng-if="other.Comments"><br />{{other.Comments}}</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                        
-                    </td>
-            </table>
         </div>
     </div>
+    <div class="card full parcels" ng-show="parcelUses" >
+        <div class="card-content">
+            <h3 class="card-header padding">Package Usages <button ng-click="addUsage(parcel)" ng-disabled="parcel.AmountOnHand == 0" class="btn btn-success left"><i class="icon-plus-2"></i>Add Usage</button></h3>
+            <table class="table-bordered table parcel-uses" style="margin-bottom:0">
+                <tbody>
+                    <tr class="table-header">
+                        <th>Edit</th>
+                        <th>Date</th>
+                        <th>Use</th>
+                        <th>Amount</th>
+                        <th class="use-amount solids">Solid Waste</th>
+                        <th>Liquid Waste</th>
+                        <th class="use-amount vials">S/V Waste</th>
+                        <th>Other Waste</th>
+                        <th class="use-amount vials">Not Disposed</th>
+                    </tr>
+                    <tr class="table-row top-align" ng-repeat="use in parcel.ParcelUses" ng-if="use" ng-class="{'formError': use.error, 'inactive': use.getIsPickedUp()}" table-error="{{use.error}}" obj="use">
+                        <td ng-init="use.loadParcelUseAmounts()">
+                            <button class="btn btn-primary" ng-click="editUse(use)" ng-disabled="use.Date_transferred || use.getIsPickedUp()"><i class="icon-pencil"></i></button>
+                        </td>
+                        <td>
+                            <span ng-if="use.Date_transferred">Transferred: {{use.Date_transferred | dateToISO}}</span>
+                            <span ng-if="!use.Date_transferred">{{use.Date_used || use.Date_transferred | dateToISO:use:'Date_used':true}}</span>
+                        </td>
+
+
+                        <td>
+                            <span ng-if="!use.Date_transferred">{{use.Experiment_use}}</span>
+                            <span ng-if="use.Date_transferred">{{use.Comments || 'Tranfser'}}</span>
+                        </td>
+
+                        <td>
+                            {{use.Quantity}} mCi
+                        </td>
+
+                        <td class="use-amount solids">
+                            <div ng-repeat="solid in use.solids = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SOLID})">
+                                <span>{{solid.Curie_level}}mCi<i title="Picked Up" ng-if="solid.IsPickedUp" class="danger icon-remove"></i></span>
+                            </div>
+                            <div ng-if="!use.solids.length">No Solid Disposals</div>
+                        </td>
+                        <td class="use-amount liquids">
+                            <div ng-repeat="liquid in liquids = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.LIQUID})">
+                                <span>{{liquid.Curie_level}}mCi in Carboy {{liquid.Carboy.CarboyNumber}} <i title="Picked Up" ng-if="liquid.IsPickedUp" class="danger icon-remove"></i></span>
+                            </div>
+                            <div ng-if="!liquids.length">No Liquid Disposals</div>
+                        </td>
+                        <td class="use-amount vials">
+                            <div ng-repeat="vial in vials = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.VIAL})">
+                                <span>{{vial.Curie_level}}mCi <i title="Picked Up" ng-if="vial.IsPickedUp" class="danger icon-remove"></i></span>
+                            </div>
+                            <div ng-if="!vials.length">No vial Disposals</div>
+                        </td>
+                        <td class="use-amount others">
+                            <div ng-show="!others.length">N/A</div>
+                            <div ng-repeat="other in others = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.OTHER})">
+                                {{other.Curie_level}} mCi <span ng-if="other.Comments"><br />{{other.Comments}}</span>
+                            </div>
+                        </td>
+                        <td class="use-amount vials">
+                            <div ng-show="!samples.length">N/A</div>
+                            <div ng-repeat="sample in samples = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SAMPLE})">
+                                {{sample.Curie_level}} mCi <span ng-if="sample.Comments"><br />{{sample.Comments}}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <!---->
+
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+<div class="card full parcels" ng-if="pi.Pickups">
+    <div class="card-header">
+        <h2><i style="margin-top: 12px;margin-left: 3px;" class="icon-box-remove"></i>Pickups</h2>
+    </div>
+    <div class="card-content" style="padding-bottom:0">
+        <table class="pickup-table table table-bordered" style="margin-bottom:0;">
+            <tr ng-if="pi.Pickups" class="pickup-tab-header">
+                <td>Pickup Requested</td>
+                <td>Picked Up</td>
+                <td class="use-amount solids">Solid Waste</td>
+                <td>Liquid Waste</td>
+                <td class="use-amount vials">S/V Waste</td>
+                <td>Other Waste</td>
+            </tr>
+            <tr ng-repeat="pickup in pickups" class="pickup-tab">
+                <td class="use-amount">{{pickup.Requested_date | dateToISO}}</td>
+                <td class="use-amount">{{pickup.Pickup_date | dateToISO}}</td>
+                <td class="use-amount solids">{{tabulateWaste(parcel.ParcelUses, constants.WASTE_TYPE.SOLID, pickup.Key_id)}}</td>
+                <td class="use-amount">{{tabulateWaste(parcel.ParcelUses, constants.WASTE_TYPE.LIQUID, pickup.Key_id)}}</td>
+                <td class="use-amount vials">{{tabulateWaste(parcel.ParcelUses, constants.WASTE_TYPE.VIAL, pickup.Key_id)}}</td>
+                <td class="use-amount">{{tabulateWaste(parcel.ParcelUses, constants.WASTE_TYPE.OTHER, pickup.Key_id)}}</td>
+            </tr>
+        </table>
+    </div>
+</div>

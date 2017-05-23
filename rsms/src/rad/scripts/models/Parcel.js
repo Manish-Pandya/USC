@@ -71,9 +71,9 @@ Parcel.prototype = {
         }
     },
 
-    loadUses: function() {
-        return dataLoader.loadOneToManyRelationship(this, 'ParcelUses', this.ParcelUsesRelationship);
-        
+    loadUses: function () {
+        return;
+        return dataLoader.loadOneToManyRelationship(this, 'ParcelUses', this.ParcelUsesRelationship);        
     },
     loadAuthorization: function() {
         if (!this.Authorization) {

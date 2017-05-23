@@ -1,4 +1,5 @@
 <h3 ng-hide="!PI" class="piHeader" ng-class="{'inactive': !PI.Is_active}">Principle Investigator:  {{PI.User.Name}} <span ng-if="!PI.Is_active">(Inactive)</span></h3>
+<div cg-busy="{promise:loading,message:'Loading',backdrop:true,templateUrl:'../../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
 <div class="container loading" ng-hide="noPiSet" ng-if="!PI || !PI.Rooms">
     <i class="icon-spinnery-dealie spinner large"></i>
@@ -18,7 +19,7 @@
     </tr>
 </thead>
 <tbody>
-    <tr ng-repeat="room in PI.Rooms | orderBy:['Building.Name','Name'] | activeOnly">
+    <tr ng-repeat="room in PI.Rooms | orderBy:['Building.Name',convenienceMethods.sortAlphaNum('Name')] | activeOnly">
         <td><a class="btn btn-danger btn-large removeRow left" ng-click="removeRoom(room)" href="#" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i>Remove</a><img ng-show="room.IsDirty" class="smallLoading" src="../../img/loading.gif" /></td>
         <!--<td width="25%">{{room.Capmus}}</td>-->
         <td width="25%">{{room.Building.Name}}</td>
@@ -73,6 +74,19 @@
                <input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Enter new room number" style="width: 172px;">
                <a style="margin: -2px 0 0 5px;" ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="../../img/loading.gif" />
            </li> 
+           <li ng-show="chosenBuilding">
+               <span ng-init="newRoom.custom = getIsCustom(room.Purpose)"></span>
+               <input ng-model="newRoom.Purpose"
+                      placeholder="Use" style="max-width:172px; margin-top:3px;"
+                      ng-if="newRoom.custom" />
+               <select ng-if="!newRoom.custom"
+                       ng-options="use.Name as use.Name for use in roomUses" ng-model="newRoom.Purpose"
+                       style="max-width:172px; margin:3px 0 0">
+                   <option value="">Select Use</option>
+               </select>
+               <i class="icon-pencil primary" ng-if="!newRoom.custom" ng-click="newRoom.custom = true"></i>
+               <i class="icon-cancel-2 danger" style="margin-top: 6px; margin-left: -1px;" ng-if="newRoom.custom" ng-click="newRoom.custom = false"></i>
+           </li>
            <li style="margin-top:4px" ng-if="error" class="red"><h3>{{error}}</h3></li>
            <li ng-repeat="(key,floor) in chosenBuilding.roomsByFloor" style="margin-top:10px">
                <h3>Floor: {{key}}</h3>
@@ -145,19 +159,5 @@
     </div>
     <div class="modal-footer">
         <a class="btn btn-large" ng-click="close()">Close</a>
-    </div>
-</script>
-
-<script type="text/ng-template" id="roomConfirmation.html">
-    <div class="modal-header" style="padding:0;">
-        <h2 ng-show="!addRoom" style="padding:5px;" class="redBg">Please Confirm</h2>
-    <div class="modal-body">
-    <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
-    <h3>Remove room {{room.Name}} from {{PI.User.Name}}?</h3>
-    </div>
-    <div class="modal-footer">
-        <i class="spinner icon-spinnery-dealie small" ng-show="saving"></i>
-        <a class="btn btn-success left btn-large" ng-click="confirm()"><i class="icon-checkmark"></i>Confirm</a>
-        <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
     </div>
 </script>

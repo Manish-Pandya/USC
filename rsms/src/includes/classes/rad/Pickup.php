@@ -22,6 +22,7 @@ class Pickup extends RadCrud {
 		"status"						=> "text",
 		"notes"							=> "text",
 		"scint_vial_trays"				=> "text",
+		"bags"				            => "text",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -86,9 +87,12 @@ class Pickup extends RadCrud {
 	
 	/**  notes about this pickup added by lab personnel **/
 	private $notes;
-	
+
 	/** number of scint vial trays picked up **/
 	private $scint_vial_trays;
+
+    /** number of bags picked up **/
+	private $bags;
 
 	public function __construct() {
 
@@ -182,6 +186,8 @@ class Pickup extends RadCrud {
 	
 	public function getScint_vial_trays(){ return $this->scint_vial_trays; }
 	public function setScint_vial_trays($trays){ $this->scint_vial_trays = $trays; }
-	
+
+    public function getBags(){return $this->bags;}
+    public function setBags($bags){$this->bags = $bags;}
 }
 ?>

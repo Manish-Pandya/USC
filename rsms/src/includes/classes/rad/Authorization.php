@@ -143,36 +143,38 @@ class Authorization extends GenericCrud {
 	public function setForm($form){$this->form = $form;}
 
     public function makeOriginal_pi_auth_id(){
-        if(($this->original_pi_auth_id || $this->principal_investigator_id == null) && $this->pi_authorization_id != null and  $this->hasPrimaryKeyValue()){
+        if(($this->original_pi_auth_id || $this->principal_investigator_id == null) && $this->pi_authorization_id != null && $this->hasPrimaryKeyValue()){
             $piAuthDao = new GenericDAO(new PIAuthorization());
             $piAuth = $piAuthDao->getById($this->pi_authorization_id);
-            $group = new WhereClauseGroup(array(new WhereClause("principal_investigator_id", "=", $piAuth->getPrincipal_investigator_id() )));
-            $piAuths = $piAuthDao->getAllWhere($group);
-            
-            $piAuthIds = array();
-            foreach($piAuths as $pia){
-                $piAuthIds[] = $pia->getKey_id();
-            }
-
-            $thisDao = new GenericDAO(new Authorization());
-            $group = new WhereClauseGroup(array(
-                new WhereClause("pi_authorization_id", "IN", $piAuthIds),
-                new WhereClause("isotope_id", "=", $this->isotope_id)
-            ));
-            $siblingsInclusive = $thisDao->getAllWhere($group);
-            $siblingMap = array();
-            $LOG = Logger::getLogger(__FUNCTION__);
-            foreach($siblingsInclusive as $key=>$sibling){
-                //we assume that an authorization with a null form is for any form
-                $form = $sibling->getForm() != null ? strtoupper($sibling->getForm()) : "ANY";
-                if(!array_key_exists($form ,$siblingMap )){
-                    $siblingMap[$form] = $sibling->getIsotope_id() . "-" . $form;
+            $l = Logger::getLogger(__FUNCTION__);
+            if($piAuth != null && $piAuth->getPrincipal_investigator_id() != null){
+                $group = new WhereClauseGroup(array(new WhereClause("principal_investigator_id", "=", $piAuth->getPrincipal_investigator_id() )));
+                $piAuths = $piAuthDao->getAllWhere($group);
+                
+                $piAuthIds = array();
+                foreach($piAuths as $pia){
+                    $piAuthIds[] = $pia->getKey_id();
                 }
-                $sibling->setOriginal_pi_auth_id($siblingMap[$form]);
-                $sibling->setPrincipal_investigator_id($piAuth->getPrincipal_investigator_id());
-                if($siblingMap[$form] != null && $sibling->getKey_id() != null)
-                    $sibling = $thisDao->save($sibling);
-            }           
+
+                $thisDao = new GenericDAO(new Authorization());
+                $group = new WhereClauseGroup(array(
+                    new WhereClause("pi_authorization_id", "IN", $piAuthIds),
+                    new WhereClause("isotope_id", "=", $this->isotope_id)
+                ));
+                $siblingsInclusive = $thisDao->getAllWhere($group);
+                $siblingMap = array();
+                foreach($siblingsInclusive as $key=>$sibling){
+                    //we assume that an authorization with a null form is for any form
+                    $form = $sibling->getForm() != null ? strtoupper($sibling->getForm()) : "ANY";
+                    if(!array_key_exists($form ,$siblingMap )){
+                        $siblingMap[$form] = $sibling->getIsotope_id() . "-" . $form;
+                    }
+                    $sibling->setOriginal_pi_auth_id($siblingMap[$form]);
+                    $sibling->setPrincipal_investigator_id($piAuth->getPrincipal_investigator_id());
+                    if($siblingMap[$form] != null && $sibling->getKey_id() != null)
+                        $sibling = $thisDao->save($sibling);
+                }           
+            }
         
         }
         return $this->original_pi_auth_id;

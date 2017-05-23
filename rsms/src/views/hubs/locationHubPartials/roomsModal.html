@@ -20,21 +20,24 @@
                 </div>
             </div>
 
-            <div class="control-group">
+            <div class="control-group" style="width:100%">
                 <label class="control-label" for="inputRoomPurpose">Room Use</label>
                 <div class="controls">
-                    <input type="text" ng-if="departmentsHaveSpecialtyLab" class="span4" id="inputRoomPurpose" ng-model="modalData.Purpose" placeholder="Room Purpose">
-                    <ui-select style="width:300px;display:inline-block" tagging="defaultAddOtherTag" ng-if="!departmentsHaveSpecialtyLab" ng-model="selectedUse" theme="selectize" ng-disabled="disabled" on-select="modalData.Purpose = $select.selected.Name">
-                        <ui-select-match placeholder="Select or input a Room Use">{{$select.selected.Name}}</ui-select-match>
-                        <ui-select-choices repeat="use in roomUses | propsFilter: {Name: $select.search}">
-                            <div once-text="use.Name"></div>
-                        </ui-select-choices>
-                    </ui-select>
-                    <i class="icon-cancel-2 danger ui-select-canceller" ng-if="selectedUse || $select.search" ng-click="selectedUse = ''; $select.search = '';"></i>
+                    <select ng-options="use as use for use in roomUses" ng-model="modalData.Purpose" ng-if="!modalData.editPurpose && !departmentsHaveSpecialtyLab">
+                        <option value="">Select Use</option>
+                    </select>
+                    <input type="text"
+                           class="span4" id="inputRoomPurpose" 
+                           ng-model="modalData.Purpose" placeholder="Room Purpose"
+                           ng-if="departmentsHaveSpecialtyLab || modalData.editPurpose" />
+                    <i class="icon-cancel-2 danger ui-select-canceller" 
+                       ng-if="modalData.Purpose && modalData.editPurpose" ng-click="modalData.editPurpose = false"></i>
+                    <i class="icon-pencil primary ui-select-canceller" 
+                       ng-if="!modalData.modalData.editPurpose" ng-click="modalData.editPurpose = true"></i>
                 </div>
             </div>
 
-            <div class="control-group">
+            <div class="control-group" style="width:100%">
                 <label class="control-label" for="inputEmail">Lab PI</label>
                 <span ng-show="!pis" style="margin-left:5px;">
                     <input class="span4" style="background:white;border-color:#999"  type="text"  placeholder="Getting PIs..." disabled="disabled">
@@ -49,9 +52,9 @@
                     </ui-select>
                 </div>
             </div>
-            <ul style="margin-left:130px; margin-top:-18px;">
+            <ul style="margin-left:130px; margin-top:-18px; width:100%">
                 <li ng-repeat="pi in modalData.PrincipalInvestigators">
-                    <p><a class="btn btn-danger btn-mini" ng-click="handlePI(pi, false)" style="margin-right:3px"><i class="icon-cancel"></i></a>{{pi.User.Name}}</p>
+                    <p><a class="btn btn-danger btn-mini" ng-click="handlePI(pi, false)" style="margin-right:3px"><i class="icon-cancel"></i></a>{{pi.User.Name}}test</p>
                 </li>
             </ul>
 

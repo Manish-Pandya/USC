@@ -248,4 +248,12 @@ angular
             })
         }
     })
+    .filter("piSelected", () => {
+        return (pis: equipment.PrincipalInvestigator[], selectedPis: equipment.PrincipalInvestigator[]) => {
+            if (!pis || !selectedPis) return;
+            return pis.filter((pi) => {
+                return _.findIndex(selectedPis, function (p) { return pi.UID == p.UID; }) == -1;
+            })
+        }
+    })
 

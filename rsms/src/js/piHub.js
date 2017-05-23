@@ -118,7 +118,6 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
     $scope.order='Last_name';
 
     $scope.getRoomUrlString = function (room) {
-        console.log(room);
         roomIds = [room.Key_id];        
         room.roomUrlParam = $.param({ "room": roomIds });
         return room;
@@ -209,7 +208,7 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
 
     $scope.removeRoom = function(room){
         var modalInstance = $modal.open({
-          templateUrl: 'roomConfirmation.html',
+          templateUrl: 'roomConfirmationModal.html',
           controller: roomConfirmationController,
           resolve: {
             PI: function () {
@@ -309,6 +308,7 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
 
 var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding, convenienceMethods, piHubFactory, $q) {
     $scope.PI = PI;
+    $scope.convenienceMethods = convenienceMethods;
     console.log(adding);
 
     if(adding)$scope.addRoom = true;
@@ -410,7 +410,8 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
           Class: "Room",
           Building_id: $scope.chosenBuilding.Key_id,
           Name: newRoom.Name,
-          Is_active:true
+          Is_active: true,
+          Purpose:newRoom.Purpose || null
         }
         $scope.error = "";
 
@@ -471,6 +472,24 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
         $modalInstance.close($scope.PI);
     }
 
+    $scope.roomUses = [
+        { Name: "Chemical Storage" },
+        { Name: "Cold Room" },
+        { Name: "Dark Room" },
+        { Name: "Equipment Room" },
+        { Name: "Greenhouse" },
+        { Name: "Growth Chamber" },
+        { Name: "Rodent Housing" },
+        { Name: "Rodent Surgery" },
+        { Name: "Tissue Culture" }
+    ];
+
+    $scope.getIsCustom = function (purpose) {
+        if (!purpose) return false;
+        return $scope.roomUses.filter(function (p) {
+            return p.Name == purpose;
+        }).length == 0;
+    }
 }
 
 piHubRoomController = function($scope, $location, convenienceMethods){
@@ -687,9 +706,14 @@ piHubPersonnelController = function($scope, $rootScope, $location, convenienceMe
     }
 
 }
-roomConfirmationController = function(PI, room, $scope, piHubFactory, $modalInstance, convenienceMethods, $q){
+roomConfirmationController = function (PI, room, $scope, $rootScope, piHubFactory, $modalInstance, convenienceMethods, $q) {
     $scope.PI = PI;
     $scope.room = room;
+    $rootScope.loading = convenienceMethods.checkHazards(room, [PI]).then(function (r) {
+        room.HasHazards = r;
+        console.log(r, room)
+    })
+
 
     $scope.confirm = function(){
         $scope.saving = true;

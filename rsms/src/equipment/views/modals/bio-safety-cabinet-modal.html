@@ -8,7 +8,7 @@
         <div class="control-group">
             <label class="control-label">Select Building</label>
             <div class="controls" style="display:block">
-                <select  class="span3" ng-model="modalData.selectedBuilding" ng-change="getBuilding(modalData.BioSafetyCabinet.SelectedInspection.Room_id)" ng-options="b as b.Name for b in Buildings.data | orderBy:'Name'">
+                <select class="span3" ng-model="modalData.selectedBuilding" ng-change="getBuilding(modalData.BioSafetyCabinet.SelectedInspection.Room_id)" ng-options="b as b.Name for b in Buildings.data | orderBy:'Name'">
                     <option value="">--Select Building--</option>
                 </select>
             </div>
@@ -16,11 +16,11 @@
         <div class="control-group">
             <label class="control-label">Select Room</label>
             <div class="controls">
-                 <input ng-if="!modalData.selectedBuilding.UID" placeholder="Select a bulding first" disabled="disabled"/>
-                 <ui-select ng-if="modalData.selectedBuilding.UID" ng-model="modalData.selectedRoom" theme="selectize" ng-disabled="disabled" class="span2" on-select="getRoom($item.UID); modalData.BioSafetyCabinet.SelectedInspection.Room_id = $item.Key_id" style="margin-left:0; width:269px;">
+                <input ng-if="!modalData.selectedBuilding.UID" placeholder="Select a bulding first" disabled="disabled" />
+                <ui-select ng-if="modalData.selectedBuilding.UID" ng-model="modalData.selectedRoom" theme="selectize" ng-disabled="disabled" class="span2" on-select="getRoom($item.UID); modalData.BioSafetyCabinet.SelectedInspection.Room_id = $item.Key_id" style="margin-left:0; width:269px;">
                     <ui-select-match placeholder="Select or search for a Room">{{$select.selected.Name}}</ui-select-match>
-                    <ui-select-choices repeat="r in  modalData.selectedBuilding.Rooms | activeOnly | nameFilter: $select.search |  orderBy:'Name' ">
-                        <div ng-bind-html="r.Name | highlight: $select.search"></div>
+                    <ui-select-choices repeat="r in  modalData.selectedBuilding.Rooms | activeOnly | nameFilter: $select.search | orderBy:convenienceMethods.sortAlphanumeric:'Name' ">
+                        <div ng-bind="r.Name | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>
             </div>
@@ -29,8 +29,11 @@
         <div class="control-group">
             <label class="control-label">Principal Investigator(s)</label>
             <div class="controls" style="display:block">
-                <select class="span3" ng-model="modalData.pi" ng-change="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push(modalData.pi)" ng-options="pi as pi.Name for pi in modalData.selectedRoom.PrincipalInvestigators | orderBy:'Name'">
+                <select class="span3" ng-if="!modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length" ng-model="modalData.pi" ng-change="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push(modalData.pi)" ng-options="pi as pi.Name for pi in modalData.selectedRoom.PrincipalInvestigators | piSelected:modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators | activeOnly | orderBy:'Name'">
                     <option value="" ng-show="!modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length">--Unassigned--</option>
+                </select>
+                <select class="span3" ng-if="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length" ng-model="modalData.pi" ng-change="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.push(modalData.pi)" ng-options="pi as pi.Name for pi in modalData.selectedRoom.PrincipalInvestigators | piSelected:modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators | activeOnly | orderBy:'Name'">
+                    <option value="" ng-show="modalData.BioSafetyCabinet.SelectedInspection.PrincipalInvestigators.length">--Select Investigator--</option>
                 </select>
             </div>
             <ul>
@@ -67,7 +70,7 @@
                 <input ng-model="modalData.BioSafetyCabinet.Serial_number" placehold="Label" />
             </div>
         </div>
-                
+
         <div class="control-group">
             <label class="control-label">Certification Frequency</label>
             <select ng-model="modalData.BioSafetyCabinet.SelectedInspection.Frequency" ng-options="frequency as frequency for (key,frequency) in Constants.BIOSAFETY_CABINET.FREQUENCY">
