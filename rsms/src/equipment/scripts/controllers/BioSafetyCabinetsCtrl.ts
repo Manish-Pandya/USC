@@ -13,9 +13,9 @@ angular.module('EquipmentModule')
         $scope.constants = Constants;
         $rootScope.modalClosed = true;
         var getAll = function () {
-            $rootScope.cabinets = new ViewModelInstance();
-            $rootScope.Rooms = new ViewModelInstance();
-            $scope.campuses =  new ViewModelInstance();
+            $rootScope.cabinets = new ViewModelHolder();
+            $rootScope.Rooms = new ViewModelHolder();
+            $scope.campuses = new ViewModelHolder();
             return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $rootScope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false), DataStoreManager.getAll("Room", $rootScope.Rooms, true)])
                 .then(
                 function (whateverGotReturned) {
@@ -264,7 +264,7 @@ angular.module('EquipmentModule')
         }
         
         if (!$rootScope.Buildings) {
-            $rootScope.Buildings = new ViewModelInstance();
+            $rootScope.Buildings = new ViewModelHolder();
             $rootScope.loading = $q.all([DataStoreManager.getAll("Building", $rootScope.Buildings, true)]).then((b)=>{
                 if ($scope.modalData.inspection && $scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id) {
                     $scope.getRoom($scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id);
