@@ -43,7 +43,7 @@
                         STATUS
                         <input ng-model="filter.status" style="width:100%;" placeholder="Filter by Status" />
                     </th>
-                    <th ng-if="!uncertified">
+                    <th>
                         REPORT/<br />Quote
                     </th>
                     <th ng-if="!uncertified && !getIsNextYear()">COMMENTS</th>
@@ -94,7 +94,7 @@
                     <td ng-if="(!uncertified && !getIsPreviousYear(uncertified)) || getIsNextYear()" ng-hide="uncertified">
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
-                                <span ng-class="{'red': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.OVERDUE}">{{inspection.Due_date | dateToISO}}</span>
+                                <span ng-class="{'red': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.OVERDUE || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL}">{{inspection.Due_date | dateToISO}}</span>
                             </div>
                         </div>
                     </td>
@@ -117,7 +117,7 @@
                             </div>
                         </div>
                     </td>
-                    <td ng-if="!uncertified">
+                    <td>
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
                                 <span ng-if="inspection.Status == inspection.Status == 'FAIL' || inspection.Status == 'PASS'">
