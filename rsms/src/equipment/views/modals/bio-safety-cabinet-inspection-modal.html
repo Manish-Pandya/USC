@@ -1,7 +1,7 @@
 <div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
 <div class="modal-header" style="padding:0;">
-    <h2 style="padding:5px; background:#428642; color:white">Certify Cabinet</h2>
+    <h2 style="padding:5px; background:#428642; color:white">Certify Cabinet in Room {{modalData.BioSafetyCabinet.SelectedInspection.Room.Name}}</h2>
 </div>
 
 <div class="modal-body inspections" style="overflow-y:visible !important;">
@@ -18,12 +18,10 @@
     </div>
     <div class="control-group" ng-init="modalData.BioSafetyCabinet.SelectedInspection.viewDate = modalData.BioSafetyCabinet.SelectedInspection.Certification_date ? modalData.BioSafetyCabinet.SelectedInspection.Certification_date : today()" ng-if="modalData.BioSafetyCabinet.SelectedInspection.Status == constants.BIOSAFETY_CABINET.STATUS.PASS">
         <label class="control-label">Certification Date</label>
-        <span ng-if="modalData.BioSafetyCabinet.SelectedInspection.viewFailDate">{{modalData.BioSafetyCabinet.SelectedInspection.viewFailDate}}</span>
         <datepicker2 ng-model='modalData.BioSafetyCabinet.SelectedInspection.viewDate' disable-timepicker='true'></datepicker2>
     </div>
     <div class="control-group" ng-init="modalData.BioSafetyCabinet.SelectedInspection.viewFailDate = modalData.BioSafetyCabinet.SelectedInspection.Fail_date ?modalData.BioSafetyCabinet.SelectedInspection.Fail_date : today()" ng-if="modalData.BioSafetyCabinet.SelectedInspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL">
         <label class="control-label">Certification Failed Date</label>
-        <span ng-if="modalData.BioSafetyCabinet.SelectedInspection.viewFailDate">{{modalData.BioSafetyCabinet.SelectedInspection.viewFailDate}}</span>
         <datepicker2 iconStyle="true" ng-model='modalData.BioSafetyCabinet.SelectedInspection.viewFailDate' disable-timepicker='true'></datepicker2>
     </div>
 
