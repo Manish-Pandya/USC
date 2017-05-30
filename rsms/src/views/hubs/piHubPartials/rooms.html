@@ -1,4 +1,4 @@
-<h3 ng-hide="!PI" class="piHeader" ng-class="{'inactive': !PI.Is_active}">Principle Investigator:  {{PI.User.Name}} <span ng-if="!PI.Is_active">(Inactive)</span></h3>
+ <h3 ng-hide="!PI" class="piHeader" ng-class="{'inactive': !PI.Is_active}">Principle Investigator:  {{PI.User.Name}} <span ng-if="!PI.Is_active">(Inactive)</span></h3>
 <div cg-busy="{promise:loading,message:'Loading',backdrop:true,templateUrl:'../../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
 <div class="container loading" ng-hide="noPiSet" ng-if="!PI || !PI.Rooms">
@@ -42,7 +42,7 @@
     <div class="modal-body">
         <div class="control-group">
          <div class="controls span4">
-             <label class="control-label" for="inputEmail">Select Building</label>
+             <label class="control-label bold" for="inputEmail">Select Building</label>
              <select ng-change="onSelectBuilding(chosenBuilding)" ng-options="building as building.Name for building in buildings | orderBy: 'Name'" ng-model="chosenBuilding">
                  <option style="display:none" value="">Select Building</option>
              </select>
@@ -69,32 +69,35 @@
             </li>
        </ul>
 
-       <ul ng-show="addRoom" style="margin-top:5px">
-           <li>
-               <input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Enter new room number" style="width: 172px;">
-               <a style="margin: -2px 0 0 5px;" ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="../../img/loading.gif" />
-           </li> 
-           <li ng-show="chosenBuilding">
-               <span ng-init="newRoom.custom = getIsCustom(room.Purpose)"></span>
-               <input ng-model="newRoom.Purpose"
-                      placeholder="Use" style="max-width:172px; margin-top:3px;"
-                      ng-if="newRoom.custom" />
-               <select ng-if="!newRoom.custom"
-                       ng-options="use.Name as use.Name for use in roomUses" ng-model="newRoom.Purpose"
-                       style="max-width:172px; margin:3px 0 0">
-                   <option value="">Select Use</option>
-               </select>
-               <i class="icon-pencil primary" ng-if="!newRoom.custom" ng-click="newRoom.custom = true"></i>
-               <i class="icon-cancel-2 danger" style="margin-top: 6px; margin-left: -1px;" ng-if="newRoom.custom" ng-click="newRoom.custom = false"></i>
-           </li>
-           <li style="margin-top:4px" ng-if="error" class="red"><h3>{{error}}</h3></li>
-           <li ng-repeat="(key,floor) in chosenBuilding.roomsByFloor" style="margin-top:10px">
-               <h3>Floor: {{key}}</h3>
-               <ul class="create-room">
-                   <li ng-repeat="room in floor | orderBy:'Name' | activeOnly">
-                       {{room.Name}}<span ng-if="room.Purpose">&nbsp;({{room.Purpose}})</span>
-                   </li>
-               </ul>
+        <ul ng-show="addRoom" style="margin-top:5px">
+            <li>
+                <div class="controls span4">
+                    <label class="control-label bold" for="inputEmail">Room Number:</label>
+                    <input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Enter new room number" style="width: 172px;">
+                    <a style="margin: -2px 0 0 5px;" ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="../../img/loading.gif" />
+                 </div>
+            </li>
+            <li ng-show="chosenBuilding">
+                <span ng-init="newRoom.custom = getIsCustom(room.Purpose)"></span>
+                <input ng-model="newRoom.Purpose"
+                       placeholder="Use" style="max-width:172px; margin-top:3px;"
+                       ng-if="newRoom.custom" />
+                <select ng-if="!newRoom.custom"
+                        ng-options="use.Name as use.Name for use in roomUses" ng-model="newRoom.Purpose"
+                        style="max-width:172px; margin:3px 0 0">
+                    <option value="">Select Use</option>
+                </select>
+                <i class="icon-pencil primary" ng-if="!newRoom.custom" ng-click="newRoom.custom = true"></i>
+                <i class="icon-cancel-2 danger" style="margin-top: 6px; margin-left: -1px;" ng-if="newRoom.custom" ng-click="newRoom.custom = false"></i>
+            </li>
+            <li style="margin-top:4px" ng-if="error" class="red"><h3>{{error}}</h3></li>
+            <li ng-repeat="(key,floor) in chosenBuilding.roomsByFloor" style="margin-top:10px">
+                <h3>Floor: {{key}}</h3>
+                <ul class="create-room">
+                    <li ng-repeat="room in floor | orderBy:'Name' | activeOnly">
+                        {{room.Name}}<span ng-if="room.Purpose">&nbsp;({{room.Purpose}})</span>
+                    </li>
+                </ul>
             </li>
         </ul>
 
