@@ -217,7 +217,7 @@ angular
         if (!dateString)
             return inspections;
         return inspections.filter(function (i) {
-            return uncertified ? !i.Certification_date : (i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1);
+            return uncertified ? !i.Certification_date && !i.Fail_date : (i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1);
         });
     };
 })

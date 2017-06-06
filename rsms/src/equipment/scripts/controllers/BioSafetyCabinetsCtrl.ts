@@ -330,7 +330,10 @@ angular.module('EquipmentModule')
             //clear the relationships between pis and inspections so the view reloads it
             //TODO:actually solve this, you, know?
             delete DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"];
-            af.save(cabinet).then(function (r) { console.log(r[0]); $scope.close(r[0]) })
+            af.save(cabinet).then(function (r) {
+                console.log(r[0]);
+                $scope.close(r[0]);
+            })
         }
 
         $scope.certify = function (inspection) {
