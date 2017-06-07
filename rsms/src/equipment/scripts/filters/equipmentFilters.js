@@ -198,13 +198,13 @@ angular
         }
         else if (uncertified) {
             return cabs.filter(function (e) {
-                return e.EquipmentInspections.every(function (i) { // true if never certified
+                return e.EquipmentInspections.every(function (i) {
                     return !i.Certification_date && !i.Fail_date;
                 });
             });
         }
         return cabs.filter(function (c) {
-            return c.EquipmentInspections.some(function (i) { // true if date matches Certification_date, Due_date, or Fail_date
+            return c.EquipmentInspections.some(function (i) {
                 return (i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1);
             });
         });

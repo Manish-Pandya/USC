@@ -22,7 +22,6 @@ angular.module('EquipmentModule')
                 .then(
                 function (whateverGotReturned) {
                     getYears($rootScope.cabinets);
-                    var actModCab = DataStoreManager.getActualModelEquivalent($rootScope.cabinets.data[1].EquipmentInspections[0]);
                     console.log(DataStoreManager._actualModel);
                     return true;
                 }
@@ -343,7 +342,7 @@ angular.module('EquipmentModule')
             inspection.Fail_date = convenienceMethods.setMysqlTime(inspection.viewFailDate);
             af.save(inspection).then(function (r) {
                 // we added an equipmentInspection, so recompose the cabinet.
-                //DataStoreManager.getById("BioSafetyCabinet", inspection.Equipment_id, {}, true);
+                DataStoreManager.getById("BioSafetyCabinet", inspection.Equipment_id, new ViewModelHolder(), true);
                 console.log(r);
                 delete DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"];
                 console.log(DataStoreManager._actualModel);
