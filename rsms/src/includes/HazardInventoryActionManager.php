@@ -362,4 +362,34 @@ public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $de
         }
         return false;
     }
+
+    public function getCabinetsByPi(){
+        $LOG = Logger::getLogger(__CLASS__);
+		$id = $this->getValueFromRequest("id", $id);
+        if($id == null)return new ActionError("No Id provided");
+        global $db;
+
+		$queryString = "SELECT a.* from biosafety_cabinet a
+                        left join  equipment_inspection b
+                        on a.key_id = b.equipment_id
+                        left join principal_investigator_equipment_inspection c
+                        on c.inspection_id = b.key_id
+                        where b.equipment_class = 'BioSafetyCabinet'
+                        AND c.principal_investigator_id = ?";
+        $stmt = $db->prepare($queryString);
+        $stmt->bindValue(1, $id);
+        $stmt->execute();
+        $cabs = $stmt->fetchAll(PDO::FETCH_CLASS, "BioSafetyCabinet");
+        $entityMaps[] = new EntityMap("eager","getRoom");
+        $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
+        $entityMaps[] = new EntityMap("eager","getPrincipalInvestigators");
+        foreach($cabs as $cab){
+            $cab->setEquipmentInspections(array($cab->grabMostRecentInspection()));
+            foreach($cab->getEquipmentInspections() as $insp){
+                $insp->setEntityMaps($entityMaps);
+            }
+        }
+        return $cabs;
+
+    }
 }

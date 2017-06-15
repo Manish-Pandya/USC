@@ -45,7 +45,7 @@ var getDate = function(time){
             return formattedTime;
         }
 
-var manageInspections = angular.module('manageInspections', ['convenienceMethodWithRoleBasedModule', 'once', 'ui.bootstrap'])
+var manageInspections = angular.module('manageInspections', ['cgBusy','convenienceMethodWithRoleBasedModule', 'once', 'ui.bootstrap'])
 .filter('toArray', function () {
     return function (object) {
         var array = [];
@@ -310,7 +310,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
             Inspectors: inspectors,
             Is_active: true
         }
-
+        console.log(dto.Inspections);
         var url = '../../ajaxaction.php?action=scheduleInspection';
         return convenienceMethods.saveDataAndDefer(url, dto)
             .then(
@@ -593,7 +593,20 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
     $scope.years = [];
     $scope.search = {init:true};
     $scope.run = false;
-
+    $scope.getMargin = function (location) {
+        if (!location) return;
+        var margin = 0;
+        if (location.Buildings) {
+            location.Buildings.forEach(function (b) {
+                b.Rooms.forEach(function (r) {
+                    margin += 10;
+                })
+            })
+        } else if (location.Rooms) {
+            margin = location.Rooms.length * 10;
+        }
+        return "margin-top:"+margin+"px;margin-bottom:"+margin+"px;"
+    }
     
 
     var getDtos = function (year) {
@@ -787,18 +800,20 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
                             matched = false;
                             continue;
                         } else {
+                            var goingToMatch = false;
                             if (item.Inspections && item.Inspections.Date_started) var tempDate = getDate(item.Inspections.Date_started);
-                            if (tempDate && tempDate.formattedString.indexOf(search.date) < 0) {
-                                var goingToMatch = false;
-                            } else {
-                                var goingToMatch = true;
+                            if (tempDate && tempDate.formattedString.indexOf(search.date) != -1) {
+                                goingToMatch = true;
                             }
+                            
                             if (item.Inspections && item.Inspections.Schedule_month) {
                                 //console.log(item.Inspections.Schedule_month);
                                 var j = monthNames2.length
                                 while (j--) {
                                     if (monthNames2[j].val == item.Inspections.Schedule_month) {
-                                        if (monthNames2[j].string.toLowerCase().indexOf(search.date.toLowerCase()) > -1) var goingToMatch = true;
+                                        if (monthNames2[j].string.toLowerCase().indexOf(search.date.toLowerCase()) > -1) {
+                                            goingToMatch = true;
+                                        }
                                     }
                                 }
                             }
@@ -830,6 +845,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
     }
 
     $scope.getRoomUrlString = function (dto) {
+        if (!dto.Inspection_rooms || !dto.Inspection_rooms.length) return;
         roomIds = [];
         //console.log(dto);
         dto.Inspection_rooms.forEach(function (r) {
@@ -839,5 +855,7 @@ var manageInspections = angular.module('manageInspections', ['convenienceMethodW
         dto.roomUrlParam = $.param({"room":roomIds});
         return dto;
     }
+
+
 
 });

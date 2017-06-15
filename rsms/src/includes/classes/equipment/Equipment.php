@@ -97,6 +97,7 @@ abstract class Equipment extends GenericCrud{
             );
             $this->equipmentInspections = $thisDAO->getAllWhere($whereClauseGroup);
         }
+        $l->fatal($this->equipmentInspections);
 		return $this->equipmentInspections;
 	}
 	public function setEquipmentInspections($inspections){ $this->equipmentInspections = $inspections; }
@@ -171,7 +172,7 @@ abstract class Equipment extends GenericCrud{
                     $newCertDate->setTimeStamp(strtotime($this->getCertification_date()));
                     $newCertDate->modify(('+6 months'));
                     $l->fatal("DUE DATE OUGHT TO BE:");
-                    $date = 
+                    $date =
                     $l->fatal($newCertDate);
                     $nextInspection->setDue_date($newCertDate);
                 }

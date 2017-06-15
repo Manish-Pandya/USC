@@ -183,15 +183,15 @@ angular
                 return cabs;
             } else if (uncertified) {
                 return cabs.filter(function (e) {
-                    return e.EquipmentInspections.every(function (i) {
-                        return !i.Certification_date;
+                    return e.EquipmentInspections.every(function (i) { // true if never certified
+                        return !i.Certification_date && !i.Fail_date;
                     })
                 });
             }
 
             return cabs.filter(function (c) {
-                return c.EquipmentInspections.some(function (i) {
-                    return (i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1);
+                return c.EquipmentInspections.some(function (i) { // true if dateString matches Certification_date, Due_date, or Fail_date
+                    return (i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1);
                 })
             })
         }
@@ -203,7 +203,7 @@ angular
             if (!dateString) return inspections;
 
             return inspections.filter(function (i) {
-                return uncertified ? !i.Certification_date : (i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1);
+                return uncertified ? !i.Certification_date && !i.Fail_date : (i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1);
             });
         }
     })
@@ -245,6 +245,14 @@ angular
             if (!string) return pis;
             return pis.filter(function (pi) {
                 return !string || ((pi.Name && pi.Name.indexOf(string) != -1) || (pi.User && pi.User.Name && pi.User.Name.indexOf(string) != -1));
+            })
+        }
+    })
+    .filter("piSelected", () => {
+        return (pis: equipment.PrincipalInvestigator[], selectedPis: equipment.PrincipalInvestigator[]) => {
+            if (!pis || !selectedPis) return;
+            return pis.filter((pi) => {
+                return _.findIndex(selectedPis, function (p) { return pi.UID == p.UID; }) == -1;
             })
         }
     })

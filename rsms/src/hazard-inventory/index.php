@@ -190,6 +190,7 @@ echo "</script>";
         <div cg-busy="{promise:PrincipalInvestigatorSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:RoomSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:InspectionSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+        <div cg-busy="{promise:loading,message:'Loading Cabinets',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
 
         <div class="navbar">
@@ -252,7 +253,7 @@ echo "</script>";
                                        </div>
                                        <div class="roomsForBuidling span6">
                                            <ul>
-                                               <li ng-repeat="(key, room) in rooms = (building | activeOnly | orderBy: 'Name')" ng-class="{'grayed-out': selectedRoomIds.indexOf(room.Key_id) == -1 }"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(null,room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
+                                               <li ng-repeat="(key, room) in rooms = (building | activeOnly | orderBy: convenienceMethods.sortAlphaNum('Name'))" ng-class="{'grayed-out': selectedRoomIds.indexOf(room.Key_id) == -1 }"><a ng-if="room.HasMultiplePIs" ng-click="openMultiplePIsModal(null,room)">{{room.Name}}</a><span ng-if="!room.HasMultiplePIs">{{room.Name}}</span></li>
                                             </ul>
                                         </div>
                                     </li>
@@ -313,7 +314,7 @@ echo "</script>";
                         <ul class="subRooms hazInvSubRooms" ng-if="getShowRooms(child, room, key)" ng-repeat="(key, rooms) in child.InspectionRooms | groupBy: 'Building_name'">
                             <li>
                                 <span ng-show="relevantRooms.length">{{ key }}:</span>
-                                <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms)">
+                                <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms | orderBy: convenienceMethods.sortAlphaNum('Room_name'))">
 
                                     <a ng-click="openMultiplePIHazardsModal(child, room)" ng-class="{'other':room.OtherLab && !room.ContainsHazard, 'shared':room.OtherLab && room.ContainsHazard, 'stored':room.Stored}">
                                         {{ room.Room_name }}
@@ -360,6 +361,11 @@ echo "</script>";
                             <span ng-if="child.Stored_only" ng-class="{'stored':child.IsPresent, 'other':child.BelongsToOtherPI}"><i class="icon-box"></i></span>
                             <span ng-if="child.BelongsToOtherPI || (child.IsPresent && child.HasMultiplePis)" ng-class="{'other':child.BelongsToOtherPI  && !child.IsPresent, 'shared':child.IsPresent && child.HasMultiplePis}">
                                 <i class="icon-users" ng-click="openMultiplePIHazardsModal(child)"></i>
+                            </span>
+                            <span ng-if="child.IsPresent && child.Hazard_name == 'Biosafety Cabinets'" 
+                                  ng-class="{'other':child.BelongsToOtherPI  && !child.IsPresent, 
+                                  'shared':child.IsPresent && child.HasMultiplePis}">
+                                <i class="icon-info" ng-click="openBiosafetyCabinetInfoModal(PI)"></i>
                             </span>
                         </div>
                         <ul class="subRooms hazInvSubRooms" ng-if="getShowRooms(child, room, key)" ng-repeat="(key, rooms) in child.InspectionRooms | groupBy: 'Building_name'">

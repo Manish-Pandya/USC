@@ -332,12 +332,12 @@ angular.module('00RsmsAngularOrmApp')
             )
     }
 
-    getAllWasteBags()
-        .then(getIsotopes)
-        .then(getSVCollections)
-        .then(getAllDrums)
-        .then(getCycles)
-        .then(getMiscWaste);
+    $scope.loading = getAllWasteBags()
+                        .then(getIsotopes)
+                        .then(getSVCollections)
+                        .then(getAllDrums)
+                        .then(getCycles)
+                        .then(getMiscWaste);
 
     $scope.date = new Date();
 
@@ -348,6 +348,22 @@ angular.module('00RsmsAngularOrmApp')
         var modalInstance = $modal.open({
           templateUrl: 'views/admin/admin-modals/drum-assignment.html',
           controller: 'DrumAssignmentCtrl'
+        });
+    }
+
+    $scope.assignWasteBagToDrum = function (wasteBag) {
+        if (!wasteBag.PickupLots || !wasteBag.PickupLots.length) {
+            wasteBag.PickupLots = [{
+                Class: "PickupLot",
+                Currie_level: 0,
+                Waste_bag_id: wasteBag.Key_id,
+                Isotope_id:null
+            }]
+        }
+        af.setModalData({ "WasteBag": wasteBag });
+        var modalInstance = $modal.open({
+            templateUrl: 'views/admin/admin-modals/drum-assignment.html',
+            controller: 'DrumAssignmentCtrl'
         });
     }
 
@@ -858,7 +874,7 @@ angular.module('00RsmsAngularOrmApp')
                         pi.loadPurchaseOrders();
                         pi.loadPIAuthorizations();
                         pi.loadCarboyUseCycles();
-                        pi.loadSolidsContainers();
+                        pi.loadWasteBags();
                         $rootScope.pi = pi;
                         //$scope.getHighestAmendmentNumber($scope.mappedAmendments);
                         return pi;
@@ -887,7 +903,6 @@ angular.module('00RsmsAngularOrmApp')
     }
 
     $scope.openModal = function (templateName, object, isAmendment) {
-
         var modalData = {};
         modalData.pi = $scope.pi;
         modalData.isAmendment = isAmendment || false;
@@ -900,6 +915,20 @@ angular.module('00RsmsAngularOrmApp')
 
         modalInstance.result.then(function (thing) {
             $scope.getHighestAmendmentNumber($rootScope.pi.Pi_authorization);
+            if (object && object.Class == "Parcel") {
+                console.log(object, thing);
+                $scope.selectedView = false;
+                $scope.pi.ActiveParcels.forEach(function (p) {
+                    if (p.Key_id == thing.Key_id) p = thing; 
+                })
+                //$scope.loading = $scope.pi.loadActiveParcels();
+                $scope.reloadParcels = true;
+                setTimeout(function () {
+                    $scope.selectedView = 'parcels';
+                    $scope.reloadParcels = true;
+                    $scope.$apply();
+                },10)
+            }
         })
     }
 
@@ -1132,9 +1161,14 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.saveParcel = function(pi, copy, parcel){
-           $modalInstance.dismiss();
            af.deleteModalData();
-           af.saveParcel( pi, copy, parcel )
+           af.saveParcel(pi, copy, parcel).then(function (r) {
+               if (parcel) {
+                   console.log(r);
+                   _.assign(parcel, r);
+                   $modalInstance.close(r);
+               }
+           })
         }
 
 
@@ -1169,7 +1203,7 @@ angular.module('00RsmsAngularOrmApp')
             $modalInstance.dismiss();
             var cycleCopy = {
                 Class: "CarboyUseCycle",
-                Room_id: cycle.Room.Key_id,
+                Room_id: cycle.Room ? cycle.Room.Key_id : null,
                 Principal_investigator_id: pi.Key_id,
                 Key_id: cycle.Key_id || null,
                 Carboy_id: cycle.Carboy_id

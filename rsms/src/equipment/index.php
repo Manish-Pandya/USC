@@ -104,7 +104,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="../ignorasmus/client-side-framework/UrlMapping.js"></script>
 <script src="../ignorasmus/client-side-framework/XHR.js"></script>
 <script src="../ignorasmus/client-side-framework/models/FluxCompositerBase.js"></script>
-<script src="../ignorasmus/client-side-framework/models/ViewModelInstance.js"></script>
+<script src="../ignorasmus/client-side-framework/models/ViewModelHolder.js"></script>
 
 
 <!-- models -->

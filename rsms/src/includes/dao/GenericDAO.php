@@ -147,7 +147,8 @@ class GenericDAO {
 		$className = get_class($this);
 
 		//Prepare to query all from the table
-		$stmt = $db->prepare('SELECT * FROM ' . $this->modelObject->getTableName() . ' ' . ($activeOnly ? 'WHERE is_active = 1 ' : '') .  ($sortColumn == NULL ? '' : " ORDER BY $sortColumn " . ($sortDescending ? 'DESC' : 'ASC')) );
+		$stmt = $db->prepare('SELECT * FROM ' . $this->modelObject->getTableName() . ' ' . ($activeOnly ? 'WHERE is_active = 1 ' : '') .
+        ($sortColumn == NULL ? '' : " ORDER BY  CAST($sortColumn AS UNSIGNED), $sortColumn " . ($sortDescending ? 'DESC' : 'ASC')) );
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
@@ -265,7 +266,7 @@ class GenericDAO {
 
 		$i = 1;
 		foreach($whereClauses as $clause){
-			if($clause->getVal() != NULL ) {
+			if($clause->getVal() != NULL && strtolower($clause->getVal()) != "null") {
                 if( !is_array( $clause->getVal() ) ){
 				    $stmt->bindValue( $i, $clause->getVal() );
 				    $i++;
@@ -438,6 +439,7 @@ class GenericDAO {
 	 */
 	public function getTransferAmounts( $startDate, $endDate, $hasTransferDate = null ){
         $l = Logger::getLogger("transfer amounts");
+
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel`
 				where `authorization_id` IN (select key_id from authorization where principal_investigator_id = ? AND original_pi_auth_id = ?)";
@@ -906,11 +908,11 @@ class GenericDAO {
                     where `room`.key_id IN (
                     select `room_id` from inspection_room where inspection_id IN(
                     select key_id from inspection where key_id IN (
-						select key_id _id from inspection where principal_investigator_id = a.key_id
+						select key_id from inspection where principal_investigator_id = a.key_id
                     )
                     AND
-					(coalesce(year(`inspection`.`date_started`) AND (is_rad IS NULL OR is_rad = 0),
-					`inspection`.`schedule_year`) = ?))
+					(coalesce(year(`inspection`.`date_started`),
+					`inspection`.`schedule_year`) = ?)) AND (is_rad IS NULL OR is_rad = 0)
                     )
                 ))
 

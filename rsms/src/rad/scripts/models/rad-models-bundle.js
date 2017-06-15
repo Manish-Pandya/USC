@@ -836,6 +836,7 @@ extend(PIWipeTest, GenericModel);
 //generic model to be "extended" by "POJOs"
 
 //constructor
+//constructor
 var PrincipalInvestigator = function () {
     PrincipalInvestigator.url = "";
     PrincipalInvestigator.urlAll = "http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=getAllPIs";
@@ -845,8 +846,7 @@ PrincipalInvestigator.prototype = {
     eagerAccessors: [
         { method: "loadUser", boolean: "User_id" },
         { method: "loadCarboys", boolean: true },
-        { method: "loadSolidsContainers", boolean: true },
-        { method: "loadWasteBags", boolean: "SolidsContainers" },
+        { method: "loadWasteBags", boolean: true },
         { method: "loadRooms", boolean: true },
     ],
 
@@ -902,12 +902,21 @@ PrincipalInvestigator.prototype = {
         paramName: 'id'
     },
 
-    SolidsContainersRelationship: {
-        className: 'SolidsContainer',
+    WasteBagsRelationship: {
+        className: 'WasteBag',
         keyReference: 'Principal_investigator_id',
         methodString: '',
         paramValue: 'Key_id',
         paramName: 'id'
+    },
+
+    CurrentWasteBagRelationship: {
+        className: 'WasteBag',
+        keyReference: 'Principal_investigator_id',
+        methodString: '',
+        paramValue: 'Key_id',
+        paramName: 'id',
+        where: [{ 'Pickup_id': "IS NULL" }]
     },
 
     CurrentScintVialCollectionRelationship: {
@@ -974,11 +983,6 @@ PrincipalInvestigator.prototype = {
     loadPurchaseOrders: function () {
         return dataLoader.loadOneToManyRelationship(this, 'PurchaseOrders', this.PurchaseOrdersRelationship);
     },
-
-    loadSolidsContainers: function () {
-        return dataLoader.loadOneToManyRelationship(this, 'SolidsContainers', this.SolidsContainersRelationship);
-    },
-
     loadCarboyUseCycles: function () {
         return dataLoader.loadOneToManyRelationship(this, 'CarboyUseCycles', this.CarboyUseCyclesRelationship);
     },
@@ -1002,20 +1006,15 @@ PrincipalInvestigator.prototype = {
     },
 
     loadWasteBags: function () {
-        if ((!this.WasteBags || !this.WasteBags.length) && this.SolidsContainers) {
-            this.WasteBags = [];
-            var i = this.SolidsContainers.length;
-            while (i--) {
-                if (this.SolidsContainers[i].CurrentWasteBags && this.SolidsContainers[i].CurrentWasteBags.length) {
-                    this.SolidsContainers[i].CurrentWasteBags[0] = this.inflator.instateAllObjectsFromJson(this.SolidsContainers[i].CurrentWasteBags[0]);
-                    this.WasteBags.push(this.SolidsContainers[i].CurrentWasteBags[0]);
-                }
-            }
-        }
+        return dataLoader.loadOneToManyRelationship(this, 'WasteBags', this.WasteBagsRelationship);
+    },
+
+    loadCurrentWasteBag: function () {
+        //return dataLoader.loadOneToManyRelationship(this, 'CurrentWasteBag', this.CurrentWasteBagRelationship);
     },
 
     loadCurrentScintVialCollections: function () {
-        this.CurrentScintVialCollections = [];
+        //this.CurrentScintVialCollections = [];
         dataLoader.loadOneToManyRelationship(this, 'CurrentScintVialCollections', this.CurrentScintVialCollectionRelationship);
     },
     getName: function () {
@@ -1027,17 +1026,7 @@ PrincipalInvestigator.prototype = {
     }
 
 }
-
-
-//inherit from and extend GenericPrincipalInvestigator
-extend(PrincipalInvestigator, GenericPrincipalInvestigator);
-
-PrincipalInvestigator();
-
-//create an angular module for the model, so it can be injected downstream
-angular
-    .module("principalInvestigator", [])
-    .value("PrincipalInvestigator", PrincipalInvestigator);
+extend(PrincipalInvestigator, GenericModel);
 
 'use strict';
 /* Auto-generated stub file for the PurchaseOrder class. */
@@ -1057,7 +1046,6 @@ PurchaseOrder.prototype = {
 
 // inherit from GenericModel
 extend(PurchaseOrder, GenericModel);
-'use strict';
 /* Auto-generated stub file for the Drum class. */
 
 //constructor
@@ -1117,14 +1105,7 @@ Room.prototype = {
         if (!this.PrincipalInvestigators) {
             dataLoader.loadManyToManyRelationship(this, 'PrincipalInvestigators', this.PIRelationship);
         }
-    },
-
-    loadSolidsContainers: function () {
-        if (!this.SolidsContainers) {
-            dataLoader.loadOneToManyRelationship(this, 'SolidsContainers', this.ContainerRelationship);
-        }
     }
-
 }
 
 extend(Room, GenericModel);

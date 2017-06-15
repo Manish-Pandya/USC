@@ -1,4 +1,5 @@
-var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMethodWithRoleBasedModule','once'])
+var locationHub = angular.module('locationHub', ['ui.bootstrap',
+    'convenienceMethodWithRoleBasedModule', 'once', 'cgBusy'])
 
 .config(function($routeProvider){
     $routeProvider
@@ -28,7 +29,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 })
 .filter('genericFilter', function () {
     return function (items,search) {
-        if(search){
+        if (search) {
             var i = 0;
             if(items)i = items.length;
             var filtered = [];
@@ -42,7 +43,8 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap','convenienceMeth
 
                 //we filter for every set search filter, looping through the collection only once
 
-                var item=items[i];
+                var item = items[i];
+                if (item.isNew) return true;
                 item.matched = true;
 
                 if(search.building){
@@ -421,14 +423,50 @@ routeCtrl = function($scope, $location,$rootScope){
     $rootScope.iterator=0;
 }
 
-roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, locationHubFactory, roleBasedFactory){
+roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $modal, locationHubFactory, roleBasedFactory){
     $rootScope.modal = false;
     $scope.loading = true;
-    $scope.lhf = locationHubFactory;
+    var lhf = $scope.lhf = locationHubFactory;
     $rootScope.rbf = roleBasedFactory;
     $scope.constants = Constants;
+    $scope.convenienceMethods = convenienceMethods;
+    $scope.editRoom = false;
+    $scope.editRoom = function (room) {
 
-    locationHubFactory.getBuildings()
+        if (!room) {
+            var room = {
+                Class: "Room",
+                PrincipalInvestigators: [],
+                Name: "",
+                isNew: true,
+                Is_active: true,
+                edit: true
+            }
+        }
+        $scope.roomCopy = angular.copy(room);
+        room.edit = true;
+        $scope.roomCopy.edit = true;
+        if (!room || !room.Key_id) $scope.rooms.unshift($scope.roomCopy)
+        if (!$scope.pis) {
+            locationHubFactory.getAllPis()
+                .then(
+                    function (pis) {
+                        $scope.pis = pis;
+                        $scope.pis.selected = false;
+                    }
+                )
+        }
+    }
+    $scope.cancelEdit = function (room) {
+        delete $scope.roomCopy;
+        if (!room.Key_id) {
+            $scope.rooms.splice($scope.rooms.indexOf(room), 1);
+        }
+        $scope.editRoom = false;
+        room.edit = false;
+    }
+
+    $scope.loading = locationHubFactory.getBuildings()
         .then(
             function(buildings){
                 locationHubFactory.getRooms()
@@ -440,7 +478,7 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, 
                 )
             }
         )
-
+    
     $scope.openRoomModal = function(room){
 
         if(!room)room = {Is_active: true, Class:'Room', Name:'', Building:{Name:''}, PrincipalInvestigators:[]};
@@ -464,7 +502,166 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $modal, 
         });
 
     }
+    $scope.roomUses = [
+        { Name: "Chemical Storage" },
+        { Name: "Cold Room" },
+        { Name: "Dark Room" },
+        { Name: "Equipment Room" },
+        { Name: "Greenhouse" },
+        { Name: "Growth Chamber" },
+        { Name: "Rodent Housing" },
+        { Name: "Rodent Surgery" },
+        { Name: "Tissue Culture" }
+    ];
 
+    $scope.saveRoom = function (room, originalRoom) {
+        //unset global error, if it exists.
+        $scope.error = null;
+        locationHubFactory['getRooms']().then(
+                function (stuff) {
+                    var collection = stuff;
+                    console.log(room, originalRoom);
+                    $rootScope.saving = $q.all([locationHubFactory.saveRoom(room)]).then(
+                        function (r) {
+                            var returned = r[0];
+                            if (room.Key_id) {
+                                //we are editing an old object
+                                var i = collection.length;
+                                while (i--) {
+                                    //var objectInCollection = collection[i];
+                                    if (collection[i].Key_id == returned.Key_id) {
+                                        collection[i] = returned;
+                                        break;
+                                    }
+                                }
+                                room.IsDirty = false;
+                            } else {
+                                //we are creating an new object
+                                collection.push(returned);
+                                $scope.rooms = collection;
+                            }
+                            room.edit = false;
+                            $scope.editRoom = false;
+                        },
+                    function () {
+                        $scope.error = 'The' + obj.Class + ' could not be saved.  Please check your internet connection and try again.';
+                        obj.IsDirty = false;
+                        $scope.editRoom = false;
+                    }
+                )
+                }
+
+        );
+
+    }
+
+    $scope.handlePI = function (pi, adding, room) {
+        pi.saving = true;
+        $scope.modalError = "";
+        var originalRoom = $scope.roomCopy;
+        if (!room.Key_id) {
+            room.PrincipalInvestigators.push(pi);
+            return;
+        }
+        var roomDto = {
+            Class: "RelationshipDto",
+            relation_id: room.Key_id,
+            master_id: pi.Key_id,
+            add: adding
+        }
+        if (adding) {
+            var url = GLOBAL_WEB_ROOT + 'ajaxaction.php?action=savePIRoomRelation';
+            $rootScope.saving = $q.all([convenienceMethods.saveDataAndDefer(url, roomDto)]).then(
+                function (r) {
+                    var returnedRoom = r[0];
+                    var rooms = locationHubFactory.rooms;
+                    var i = rooms.length;
+                    while (i--) {
+                        if (returnedRoom.Key_id === rooms[i].Key_id) {
+                            console.log(room);
+                            var originalRoom = $scope.roomCopy = room;
+                            break;
+                        }
+                    }
+                    pi.saving = false;
+                    $scope.pis.selected = null;
+                    originalRoom.PrincipalInvestigators = room.PrincipalInvestigators = [];
+                    originalRoom.PrincipalInvestigators = room.PrincipalInvestigators = returnedRoom.PrincipalInvestigators;
+
+                },
+                function () {
+                    pi.saving = false;
+                    var added = adding ? "added" : "removed";
+                    $scope.error = "The PI could not be " + added + ".  Please check your internet connection and try again.";
+                }
+            );
+        } else {
+            $scope.removeRoom(room, pi);
+        }
+
+    }
+    $scope.removeRoom = function (room, pi) {
+        var modalInstance = $modal.open({
+            templateUrl: 'roomConfirmationModal.html',
+            controller: roomConfirmationController,
+            resolve: {
+                PI: function () {
+                    return pi;
+                },
+                room: function () {
+                    room.deactivating = false;
+                    return room;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (room) {
+            var idx = convenienceMethods.arrayContainsObject(room.PrincipalInvestigators, pi, null, true);
+            room.PrincipalInvestigators.splice(idx, 1);
+        }, function () {
+
+            //$log.info('Modal dismissed at: ' + new Date());
+        });
+    }
+
+    $scope.getIsCustom = function (purpose) {
+        if (!purpose) return false;
+        return $scope.roomUses.filter(function (p) {
+            return p.Name == purpose;
+        }).length == 0;
+    }
+
+    //Math class is not exposed in angular lexer, so:
+    $scope.roundDown = function (num, digits) {
+        return Math.floor(num / digits) * digits;
+    }
+
+    $scope.confirmDeactivate = function (room) {
+        if (room.PrincipalInvestigators && room.PrincipalInvestigators.length) {
+            $rootScope.loadingHasHazards = $q.all([convenienceMethods.checkHazards(room, room.PrincipalInvestigators)]).then(function (r) {
+                if (r[0]) {
+                    var modalInstance = $modal.open({
+                        templateUrl: 'roomConfirmationModal.html',
+                        controller: roomConfirmationController,
+                        resolve: {
+                            PI: function () {
+                                return room.PrincipalInvestigators[0];
+                            },
+                            room: function () {
+                                room.deactivating = true;
+                                return room;
+                            }
+                        }
+                    });
+                } else {
+                    return lhf.handleObjectActive(room);
+                }
+            })
+        } else {
+            return lhf.handleObjectActive(room);
+        }
+
+    }
 
 }
 
@@ -709,6 +906,46 @@ modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, con
             }
         );
 
+    }
+
+}
+roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInstance, convenienceMethods, $q) {
+    $scope.PI = PI;
+    $scope.room = room;
+    $rootScope.loadingHasHazards = $q.all([convenienceMethods.checkHazards(room, [PI])]).then(function (r) {
+        room.HasHazards = r[0];
+        console.log(r, room)
+    })
+
+
+    $scope.confirm = function () {
+        $scope.saving = true;
+
+        $scope.error = false;
+
+        roomDto = {
+            Class: "RelationshipDto",
+            relation_id: room.Key_id,
+            master_id: PI.Key_id,
+            add: false
+        }
+        console.log(PI);
+        var url = '../../ajaxaction.php?action=savePIRoomRelation';
+        convenienceMethods.saveDataAndDefer(url, roomDto).then(
+            function () {
+                $scope.saving = false;
+                $modalInstance.dismiss();
+            },
+            function () {
+                $scope.saving = false;
+                $scope.error = "The room could not be removed.  Please check your internet connection and try again."
+            }
+        );
+
+    }
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
     }
 
 }

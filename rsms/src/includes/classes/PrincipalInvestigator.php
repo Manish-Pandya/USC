@@ -91,9 +91,9 @@ class PrincipalInvestigator extends GenericCrud {
 			"foreignKeyName" => "principal_investigator_id"
 	);
 
-	public static $SOLIDS_CONTAINERS_RELATIONSHIP = array(
-			"className" => "SolidsContainer",
-			"tableName" => "solids_container",
+    public static $WASTE_BAG_RELATIONSHIP = array(
+			"className" => "WasteBag",
+			"tableName" => "waste_bag",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "principal_investigator_id"
 	);
@@ -124,7 +124,7 @@ class PrincipalInvestigator extends GenericCrud {
 			"tableName" => "pi_wipe_test",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "principal_investigator_id"
-	);
+	);   
 
 	/** Base User object that this PI represents */
 	private $user_id;
@@ -151,8 +151,9 @@ class PrincipalInvestigator extends GenericCrud {
 	/** Array of PurchaseOrder entities **/
 	private $purchaseOrders;
 
-	/** Array of SolidsContainer entities **/
-	private $solidsContainers;
+	/** Array of WasteBag entities **/
+	private $wasteBags;
+    private $currentWasteBag;
 
 	/** Array of CarboyUseCycle entities **/
 	private $carboyUseCycles;
@@ -197,9 +198,10 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getUser");
 		$entityMaps[] = new EntityMap("lazy","getInspections");
 		$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
-		$entityMaps[] = new EntityMap("lazy", "getCarboyUseCycles");
+		$entityMaps[] = new EntityMap("eager", "getCarboyUseCycles");
 		$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
-		$entityMaps[] = new EntityMap("lazy", "getSolidsContainers");
+		$entityMaps[] = new EntityMap("lazy", "getWasteBags");
+        $entityMaps[] = new EntityMap("lazy", "getCurrentWasteBag");
 		$entityMaps[] = new EntityMap("lazy", "getPickups");
 		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
 		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
@@ -310,30 +312,6 @@ class PrincipalInvestigator extends GenericCrud {
 		return $this->carboyUseCycles;
 	}
 	public function setCarboyUseCycles($carboyUseCycles){$this->carboyUseCycles = $carboyUseCycles;}
-
-	public function getSolidsContainers(){
-		if($this->solidsContainers === NULL && $this->hasPrimaryKeyValue()) {
-
-			// get rooms this PI has
-			$rooms = $this->getRooms();
-
-			// get containers in each room
-			$containers = array();
-			foreach($rooms as $room) {
-				$containers = array_merge($room->getSolidsContainers(), $containers);
-			}
-
-			$this->solidsContainers = $containers;
-			foreach($this->solidsContainers as $container){
-				$container->setPrincipal_investigator_id($this->getKey_id());
-			}
-            $thisDAO = new GenericDAO($this);
-            $pi_containers = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$SOLIDS_CONTAINERS_RELATIONSHIP));
-            $this->solidsContainers = array_unique (array_merge ($containers, $pi_containers));
-		}
-		return $this->solidsContainers;
-	}
-	public function setSolidsContainers($solidsContainers){$this->solidsContainers = $solidsContainers;}
 
 	public function getPickups(){
 		if($this->pickups === NULL && $this->hasPrimaryKeyValue()) {
@@ -500,6 +478,34 @@ class PrincipalInvestigator extends GenericCrud {
 		return $this->name;
 	}
 	public function setName($name){$this->name = $name;}
+
+    public function getWasteBags(){
+
+		if($this->wasteBags === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			$this->wasteBags = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$WASTE_BAG_RELATIONSHIP),
+                    array('date_created')
+			);
+		}
+
+		return $this->wasteBags;
+	}
+    public function setWasteBags($bags){$this->wasteBags = $bags;}
+	public function getCurrentWasteBag(){
+		if(($this->currentWasteBag == null || $this->wasteBags === NULL) && $this->hasPrimaryKeyValue()) {
+			$bagDao = new GenericDAO(new WasteBag());
+            $group = new WhereClauseGroup(array(
+                new WhereClause("principal_investigator_id","=",$this->key_id),
+                new WhereClause("pickup_id","IS","NULL")
+            ));
+            $this->currentWasteBag = end($bagDao->getAllWhere($group));
+		}
+		return $this->currentWasteBag;
+	}
+    public function setCurrentWasteBag($bag){$this->currentWasteBag = $bag;}
+
 
 }
 

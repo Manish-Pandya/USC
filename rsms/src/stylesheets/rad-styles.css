@@ -557,20 +557,36 @@ div.fake-table.inspection-wipe-table {
 table.parcel-uses, table.parcel-uses tr th, table.parcel-uses tr:first-child, table.parcel-uses tr{
     border-top: 0 solid #fff !important;
 }
+table.parcel-uses th{
+    font-weight:500;
+    font-size:18px
+}
 table.parcel-uses  tr:last-child td{
     padding-bottom:0;
     vertical-align:top;
 }
-.use-amount {
+td.use-amount {
     padding: 0 .5% 0 !important;
-    border-bottom:none !important;
     border-left:none !important;
 }
-
+td.use-amount i.icon-remove{
+    margin-top:4px;
+    margin-left:2px
+}
 table.table tr td.use-amounts{
     /* padding-bottom: 0 !important; */
     padding:  0 !important;
     padding-bottom: 0 !important;
+}
+.pickup-tab-header td{
+    border-top:2px solid rgba(0, 68, 204, 0.49);
+    font-weight:400;
+    color:#0088cc;
+}
+.pickup-tab td{
+    font-weight:400;
+    color:#222222;
+    padding:10px !important;
 }
 .use-amounts table{
     margin-bottom: 0;
@@ -584,18 +600,24 @@ table.table tr td.use-amounts{
 .use-amount > div {
     margin-bottom: 15px;
 }
+.use-amount > div:last-child {
+    margin-bottom: 0;
+}
 .use-amount.solids {
-    width: 34%;
+    width: 14%;
 }
 .use-amount.liquids {
-    width: 31%;
+    width: 15%;
+}
+.use-amount.solids,.use-amount.vials {
+    background:rgba(0, 68, 204, 0.08)
 }
 .use-amount.vials {
     width: 11%;
 }
 .use-amount.others {
     border-right: none !Important;
-    width: 20%;
+    /* width: 2%; */
 }
 .use-amount.others div.control-group {
     float: left;
@@ -607,6 +629,7 @@ table.table tr td.use-amounts{
 .use-amount.others div.control-group:nth-of-type(2) {
     width: 80%;
 }
+
 .use-amount input {
     padding-left: 4px;
     border-radius: 0;

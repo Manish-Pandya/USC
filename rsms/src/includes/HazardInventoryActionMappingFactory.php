@@ -31,6 +31,8 @@ class HazardInventoryActionMappingFactory extends ActionMappingFactory {
         		"getBuildingsByPIID"=>new ActionMapping("getBuildingsByPIID", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getPisByRoomIDs"=>new ActionMapping("getPisByRoomIDs", "", "", $this::$ROLE_GROUPS["EHS"]),
         		"getPisByHazardAndRoomIDs"=>new ActionMapping("getPisByHazardAndRoomIDs", "", "", $this::$ROLE_GROUPS["EHS"]),
+        		"getCabinetsByPi"=>new ActionMapping("getCabinetsByPi", "", "", $this::$ROLE_GROUPS["EHS"]),
+
         );
     }
 }

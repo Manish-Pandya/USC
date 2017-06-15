@@ -12,15 +12,16 @@ angular.module('EquipmentModule')
         var af = $scope.af = applicationControllerFactory;
         $scope.constants = Constants;
         $rootScope.modalClosed = true;
+        $scope.convenienceMethods = convenienceMethods;
+
         var getAll = function () {
-            $rootScope.cabinets = new ViewModelInstance();
-            $rootScope.Rooms = new ViewModelInstance();
-            $scope.campuses =  new ViewModelInstance();
+            $rootScope.cabinets = new ViewModelHolder();
+            $rootScope.Rooms = new ViewModelHolder();
+            $scope.campuses = new ViewModelHolder();
             return $q.all([DataStoreManager.getAll("BioSafetyCabinet", $rootScope.cabinets, true), DataStoreManager.getAll("Campus", $scope.campuses, false), DataStoreManager.getAll("Room", $rootScope.Rooms, true)])
                 .then(
                 function (whateverGotReturned) {
                     getYears($rootScope.cabinets);
-                    var actModCab = DataStoreManager.getActualModelEquivalent($rootScope.cabinets.data[1].EquipmentInspections[0]);
                     console.log(DataStoreManager._actualModel);
                     return true;
                 }
@@ -79,6 +80,29 @@ angular.module('EquipmentModule')
             cabinet.Retirement_date = convenienceMethods.getUnixDate(new Date());
             cabinet.Is_active = !cabinet.Is_active;
             $scope.saving = af.save(cabinet);
+        }
+
+        $rootScope.getMostRecentComment = function (cabinet: equipment.BioSafetyCabinet): string {
+            let previousInspection: equipment.EquipmentInspection = cabinet.EquipmentInspections.filter(function (i) {
+                return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
+            })[0];
+            if (previousInspection && previousInspection["Comment"]) {
+                cabinet["previousComment"] = true;
+                var failed: string = previousInspection.Status == Constants.BIOSAFETY_CABINET.STATUS.FAIL ? "Failed: " : "";
+                return "<span class='modal-bold'>" + failed + moment(previousInspection.Certification_date).format("YYYY") + ' Comments:<br></span>' + previousInspection["Comment"];
+            };
+            cabinet["previousComment"] = false;
+            return "";
+        }
+
+        $rootScope.failedMostRecentInspection = function (cabinet: equipment.BioSafetyCabinet): boolean {
+            let previousInspection: equipment.EquipmentInspection = cabinet.EquipmentInspections.filter(function (i) {
+                return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
+            })[0];
+            if (previousInspection) {
+                return previousInspection.Status == Constants.BIOSAFETY_CABINET.STATUS.FAIL;
+            }
+            return false;
         }
 
         $scope.openModal = function (object, insp, isCabinet) {
@@ -208,9 +232,14 @@ angular.module('EquipmentModule')
             $rootScope.selectedCertificationDate = date;
         }
 
-        $scope.getIsPreviousYear = function (uncert: boolean = null):boolean {
-            if(uncert)return true
-            return new Date().getFullYear() < parseInt($rootScope.selectedCertificationDate);
+        var d = new Date().getFullYear();
+        $scope.getIsPreviousYear = function (uncert: boolean = null): boolean {
+            if (uncert) return true;
+            return parseInt($rootScope.selectedCertificationDate) < d;
+        }
+
+        $scope.getIsNextYear = function (): boolean {
+            return parseInt($rootScope.selectedCertificationDate) == new Date().getFullYear() + 1;
         }
 
         $scope.openAttachtmentModal = function (object, insp) {
@@ -264,15 +293,14 @@ angular.module('EquipmentModule')
         }
         
         if (!$rootScope.Buildings) {
-            $rootScope.Buildings = new ViewModelInstance();
-            $rootScope.loading = $q.all([DataStoreManager.getAll("Building", $rootScope.Buildings, true)]).then((b)=>{
-                if ($scope.modalData.inspection && $scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id) {
+            $rootScope.Buildings = new ViewModelHolder();
+            $rootScope.loading = $q.all([DataStoreManager.getAll("Building", $rootScope.Buildings, true)]).then((b) => {
+                if ($scope.modalData.BioSafetyCabinet && $scope.modalData.BioSafetyCabinet.SelectedInspection && $scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id) {
                     $scope.getRoom($scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id);
                 }
             });
-        }else{
-            console.log($scope.modalData.inspection);
-            if ($scope.modalData.inspection && $scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id) {
+        } else {
+            if ($scope.modalData.BioSafetyCabinet && $scope.modalData.BioSafetyCabinet.SelectedInspection && $scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id) {
                 $scope.getRoom($scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id);
             }
         }
@@ -301,7 +329,10 @@ angular.module('EquipmentModule')
             //clear the relationships between pis and inspections so the view reloads it
             //TODO:actually solve this, you, know?
             delete DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"];
-            af.save(cabinet).then(function (r) { console.log(r[0]); $scope.close(r[0]) })
+            af.save(cabinet).then(function (r) {
+                console.log(r[0]);
+                $scope.close(r[0]);
+            })
         }
 
         $scope.certify = function (inspection) {
@@ -311,7 +342,7 @@ angular.module('EquipmentModule')
             inspection.Fail_date = convenienceMethods.setMysqlTime(inspection.viewFailDate);
             af.save(inspection).then(function (r) {
                 // we added an equipmentInspection, so recompose the cabinet.
-                //DataStoreManager.getById("BioSafetyCabinet", inspection.Equipment_id, {}, true);
+                DataStoreManager.getById("BioSafetyCabinet", inspection.Equipment_id, new ViewModelHolder(), true);
                 console.log(r);
                 delete DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"];
                 console.log(DataStoreManager._actualModel);
@@ -327,14 +358,6 @@ angular.module('EquipmentModule')
             $rootScope.modalClosed = true;
             $modalInstance.close(r);
             DataStoreManager.ModalData = null;
-        }
-
-        $scope.getMostRecentComment = function () {
-            if ($scope.modalData.inspection && $scope.modalData.inspection.Comment) return $scope.modalData.inspection.Comment;
-            var thing = $scope.modalData.BioSafetyCabinet.EquipmentInspections.filter(function (i) {
-                return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
-            })[0];
-            if (thing) return thing.Comment || $scope.modalData.BioSafetyCabinet.Comment || "";
         }
 
         $scope.getRoomOptions = function (array) {
@@ -383,8 +406,8 @@ angular.module('EquipmentModule')
             };
         });
 
-        $scope.remove = function (inspection: equipment.EquipmentInspection, type) {
-            inspection[type] = "testytest";
+        $scope.remove = function (inspection: equipment.EquipmentInspection, reportType) {
+            inspection[reportType] = null;
             return $rootScope.saving = $q.all([DataStoreManager.save(inspection)]).then((i) => { console.log(i); return inspection; })
         }
 

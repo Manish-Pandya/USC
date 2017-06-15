@@ -27,6 +27,8 @@ angular
 
             af.createCopy = function(obj)
             {
+                if (!dataStore[obj.Class]) dataStore[obj.Class] = [];
+
                 var l = dataStore[obj.Class].length;
                 for (var i = 0 ; i < l; i++) {
                     dataStore[obj.Class][i].edit = false;
@@ -70,8 +72,15 @@ angular
 
             af.save = function( object, saveChildren, seg )
             {
+                for (var prop in object) {
+                    var p = prop.toLowerCase();
+                    if (p.indexOf("view_") != -1 && p.indexOf("date") != -1)
+                        var actualProp = prop.replace("view_", "");
+                        object[actualProp] = convenienceMethods.setMysqlTime(object[prop]);
+                    }
                     if(!saveChildren)saveChildren = false;
                     if (!seg) seg = false;
+                    console.log('save children in af.save: ',saveChildren);
                     //set a root scope marker as the promise so that we can use angular-busy directives in the view
                     return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, seg, saveChildren )
                         .then(
@@ -341,26 +350,26 @@ angular
                                 piPromise.resolve(pis);
                             }
                         )
-
+                /*
                     this.getAllRooms()
                         .then(
                             function(rooms){
                                 roomsPromise.resolve(rooms);
                             }
                         )
-
+*/
                     return all.then(
                                 function( model ){
                                     var inflatedModel = {}
-                                    store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'User' ) ) );
+                                    store.store( modelInflatorFacRFtory.instateAllObjectsFromJson( store.get( 'User' ) ) );
                                     store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'PrincipalInvestigator' ) ) );
                                     store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'PrincipalInvestigatorRoomRelation' ) ) );
-                                    store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'Room' ) ) );
+                                    //store.store( modelInflatorFactory.instateAllObjectsFromJson( store.get( 'Room' ) ) );
 
                                     inflatedModel.users = modelInflatorFactory.callAccessors( 'Users' );
                                     inflatedModel.pis = modelInflatorFactory.callAccessors( 'PrincipalInvestigators' );
                                     inflatedModel.relations = modelInflatorFactory.callAccessors( 'PrincipalInvestigatorRoomRelations' );
-                                    inflatedModel.rooms = modelInflatorFactory.callAccessors( 'Rooms' );
+                                    //inflatedModel.rooms = modelInflatorFactory.callAccessors( 'Rooms' );
 
                                     return inflatedModel;
                                 }
@@ -1003,7 +1012,7 @@ angular
                             pi.loadActiveParcels();
                             pi.loadPurchaseOrders();
                             pi.loadCarboyUseCycles();
-                            pi.loadSolidsContainers();
+                            pi.loadWasteBags();
                             return pi;
                         });
             }
@@ -1017,7 +1026,8 @@ angular
                 }
                 var segment = "getRadPIById&id="+id+"&rooms=true";
                 return genericAPIFactory.read(segment)
-                    .then( function( returned ) {
+                    .then(function (returned) {
+                        console.log(returned);
                         var pi = returned.data;
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.User ));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Pi_authorization ));
@@ -1034,16 +1044,16 @@ angular
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.WipeTests));
 
                         console.log(pi);
-                        
-                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.Pickups));
 
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.Pickups));
+                        
                         var i = pi.ActiveParcels.length;
                         while (i--) {
                             if (pi.ActiveParcels[i].ParcelUses && pi.ActiveParcels[i].ParcelUses.length) {
+                                console.log(pi.ActiveParcels[i].ParcelUses)
                                 store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.ActiveParcels[i].ParcelUses.length));
                                 var j = pi.ActiveParcels[i].ParcelUses.length;
                                 while (j--) {
-
                                     if (pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts) {
                                         var k = pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts.length;
                                         while (k--) {
@@ -1057,12 +1067,11 @@ angular
 
 
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi));
-                       
+
                         pi = dataStoreManager.getById("PrincipalInvestigator", id);
                         pi.loadPIWipeTests();
 
                         if (pi) {
-                            pi.loadSolidsContainers();
                             pi.loadPickups();
                             pi.loadActiveParcels();
                             pi.loadRooms();
@@ -1072,20 +1081,23 @@ angular
                             pi.loadPIAuthorizations();
                             pi.loadUser();
                             pi.loadWasteBags();
+                            //pi.loadCurrentWasteBag();
                             pi.loadCurrentScintVialCollections();
                             pi.loadPIWipeTests();
                             var i = pi.Pickups.length;
                             while (i--) {
                                 pi.Pickups[i].loadCurrentScintVialCollections();
                                 pi.Pickups[i].loadCarboyUseCycles();
+                                //load waste bags, too
                             }
 
+                            /*
                             var i = pi.SolidsContainers.length;
                             while(i--){
                                 pi.SolidsContainers[i].loadCurrentWasteBags();
                                 pi.SolidsContainers[i].loadWasteBagsForPickup();
                             }
-                           
+                           */
                         }
                         return pi;
                     });
@@ -1306,6 +1318,7 @@ angular
                                 dataStoreManager.addOnSave(returnedParcel);
                                 pi.ActiveParcels.push(returnedParcel);
                             }
+                            return returnedParcel;
                         }
                     )
             }
@@ -1616,11 +1629,9 @@ angular
                                     store.store(returnedUse.DestinationParcel);
                                     dataStoreManager.addOnSave(returnedUse.DestinationParcel);
                                 }
+                                returnedUse = modelInflatorFactory.instateAllObjectsFromJson(returnedUse);
+                                returnedUse.loadDestinationParcel();
                             }
-
-                            returnedUse = modelInflatorFactory.instateAllObjectsFromJson(returnedUse);
-                            returnedUse.loadDestinationParcel();
-
                             var i = returnedUse.ParcelUseAmounts.length;
                             while(i--){
                                 returnedUse.ParcelUseAmounts[i] = modelInflatorFactory.instateAllObjectsFromJson( returnedUse.ParcelUseAmounts[i] );
@@ -1678,26 +1689,12 @@ angular
                             if (saveChildren) {
                                 //set pickup ids for items that are included in pickup
                                 var i = returnedPickup.Waste_bags.length;
-                                while(i--){
-                                        
-                                        //find the cached WasteBag with the same key_id as the one from the server, and update its properties
-                                        //remove this WasteBag from it's containers collection of WasteBags ready to be have a pickup requested.
-                                        var container = dataStoreManager.getById('SolidsContainer', returnedPickup.Waste_bags[i].Container_id);
-                                        console.log(container);
-                                        var j = container.WasteBagsForPickup.length;
-                                        while (j--) {
-                                            if (container.WasteBagsForPickup[j].Key_id == returnedPickup.Waste_bags[i].Key_id) {
-                                                angular.extend(container.WasteBagsForPickup[j], returnedPickup.Waste_bags[i]);
-                                            }
-                                        }
-                                        //if we've added the container's current waste bag, add set its pickup id
-                                        if (container.includeCurrentBag) {
-                                            var bag = dataStoreManager.getById("WasteBag", container.CurrentWasteBags[0].Key_id);
-                                            bag.Pickup_id = returnedPickup.Key_id;
-                                            container.CurrentWasteBags[0].Pickup_id = returnedPickup.Key_id;
-                                        }
+                                while (i--) {
+                                    if (dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id)) {
+                                        //find the cached CarboyUseCycle with the same key_id as the one from the server, and update its properties
+                                        angular.extend(dataStoreManager.getById('WasteBag', returnedPickup.Waste_bags[i].Key_id), returnedPickup.Waste_bags[i]);
+                                    }
                                 }
-                              
 
                                 var i = returnedPickup.Carboy_use_cycles.length;
                                 while(i--){
@@ -1730,6 +1727,7 @@ angular
                                 originalPickup.Pickup_date = returnedPickup.Pickup_date;
                                 originalPickup.Status = returnedPickup.Status;
                             }
+                            return returnedPickup;
                         },
                         af.setError('The pickup could not be saved')
                     )
@@ -2468,6 +2466,24 @@ angular
                             var inventory = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise.data);
                             store.store(inventory);
                             return inventory;
+                        });
+
+            }
+
+            af.removeWasteFromPickup = function (amt) {
+                var urlSegment = 'removeParcelUseAmountFromPickup';
+                console.log("hey you", urlSegment);
+
+                return af.save(amt, false,urlSegment)
+                        .then(function (returnedPromise) {
+                            var returnedPickup = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise[0]);
+                            console.log(returnedPromise);
+                            var arrayToReturn = [returnedPickup];
+                            if (returnedPromise[1]) {
+                                var returnedBag = modelInflatorFactory.instateAllObjectsFromJson(returnedPromise[1]);
+                                arrayToReturn.push(returnedBag);
+                            }
+                            return arrayToReturn;
                         });
 
             }

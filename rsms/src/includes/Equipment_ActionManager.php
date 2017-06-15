@@ -70,7 +70,7 @@ class Equipment_ActionManager extends ActionManager {
                 //$i->setCertification_date("2017-10-01 15:32:56");
                 $i->setEntityMaps($entityMaps);
             }
-            
+
             return $is;
         }
     }
@@ -106,27 +106,30 @@ class Equipment_ActionManager extends ActionManager {
         }
         else{
         	$dao = $this->getDao(new BioSafetyCabinet());
-            $insp = $decodedObject->getSelectedInspection();
-            $pisToAdd = $insp->getPrincipalInvestigators();
             $cabinet = $dao->save($decodedObject);
-            $decodedObject->setKey_id($cabinet->getKey_id());
 
-            $inspection = $decodedObject->conditionallyCreateEquipmentInspection($insp);
-            $LOG->fatal($inspection);
-            //if the inspection already exists, remove its PIs first, then add the relevant ones
-            if($decodedObject->getSelectedInspection() != null && $inspection != null){
-                
-                foreach ($inspection->getPrincipalInvestigators() as $pi){
-					if (is_array($pi)) $pi = JsonManager::assembleObjectFromDecodedArray($pi);
-                    $dao->removeRelatedItems($pi->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(EquipmentInspection::$PIS_RELATIONSHIP));
+            if($decodedObject->getSelectedInspection() != null){
+                $insp = $decodedObject->getSelectedInspection();
+                $pisToAdd = $insp->getPrincipalInvestigators();
+                $decodedObject->setKey_id($cabinet->getKey_id());
+
+                $inspection = $decodedObject->conditionallyCreateEquipmentInspection($insp);
+                $LOG->fatal($inspection);
+                //if the inspection already exists, remove its PIs first, then add the relevant ones
+                if($decodedObject->getSelectedInspection() != null && $inspection != null){
+
+                    foreach ($inspection->getPrincipalInvestigators() as $pi){
+                        if (is_array($pi)) $pi = JsonManager::assembleObjectFromDecodedArray($pi);
+                        $dao->removeRelatedItems($pi->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(EquipmentInspection::$PIS_RELATIONSHIP));
+                    }
+
+                    foreach($pisToAdd as $pi){
+                        $dao->addRelatedItems($pi["Key_id"],$insp->getKey_id(),DataRelationship::fromArray(EquipmentInspection::$PIS_RELATIONSHIP));
+                    }
                 }
 
-                foreach($pisToAdd as $pi){
-                    $dao->addRelatedItems($pi["Key_id"],$insp->getKey_id(),DataRelationship::fromArray(EquipmentInspection::$PIS_RELATIONSHIP));
-                }
+                $cabinet->setEquipmentInspections(null);
             }
-
-            $cabinet->setEquipmentInspections(null);
             $entityMaps = array();
             $entityMaps[] = new EntityMap("eager","getEquipmentInspections");
             $entityMaps[] = new EntityMap("lazy","getFirstInspection");
@@ -374,7 +377,7 @@ class Equipment_ActionManager extends ActionManager {
         $entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
         $entityMaps[] = new EntityMap("lazy","getRooms");
-        $entityMaps[] = new EntityMap("lazy","getDepartments");
+        $entityMaps[] = new EntityMap("eager","getDepartments");
         $entityMaps[] = new EntityMap("eager","getUser");
         $entityMaps[] = new EntityMap("lazy","getInspections");
         $entityMaps[] = new EntityMap("lazy","getPi_authorization");
@@ -393,6 +396,8 @@ class Equipment_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("lazy","getCurrentPi_authorization");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
         $entityMaps[] = new EntityMap("lazy", "getCurrentIsotopeInventories");
+		$entityMaps[] = new EntityMap("lazy", "getWasteBags");
+		$entityMaps[] = new EntityMap("lazy", "getCurrentWasteBag");
 
         foreach($pis as $pi){
             $pi->setEntityMaps($entityMaps);
@@ -407,7 +412,7 @@ class Equipment_ActionManager extends ActionManager {
         $rooms = $dao->getAll();
 
         // initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
-        $roomMaps = array();       
+        $roomMaps = array();
 	    $roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
 	    $roomMaps[] = new EntityMap("lazy","getHazards");
 	    $roomMaps[] = new EntityMap("eager","getBuilding");
@@ -419,7 +424,7 @@ class Equipment_ActionManager extends ActionManager {
         $roomMaps[] = new EntityMap("lazy","getChem_hazards_present");
         $roomMaps[] = new EntityMap("lazy","getRad_hazards_present");
         $roomMaps[] = new EntityMap("lazy","getBio_hazards_present");
-    
+
         foreach($rooms as &$room){
             $room->setEntityMaps($roomMaps);
         }

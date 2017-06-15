@@ -1,126 +1,148 @@
-﻿<div class="full bio-safety-cabinets-container well" style="padding:5px;" ng-if="cabinets.data.length" ng-show="completeCabinets.length || selectedBuilding || filter.pi || filter.status">
-    <h2 ng-if="!uncertified">{{selectedCertificationDate || 'All'}} Certification Records -- {{campus.Name}}</h2>
-    <h2 ng-if="uncertified">Uncertified Cabinets</h2>
-    <table class="table table-striped table-bordered">
-        <thead>
-            <tr class="table-header">
-                <th>EDIT</th>
-                <th>
-                    BUILDING<br>
-                    <input ng-model="selectedBuilding" style="width:150px;" placeholder="Filter by Building" />
-                </th>
-                <th>
-                    ROOM
-                </th>
-                <th>TYPE</th>
-                <th>MANUFACTURER</th>
-                <th>MODEL</th>
-                <th>SERIAL #</th>
-                <th>CERT-DATE</th>
-                <th ng-if="getIsPreviousYear(uncertified)">DUE-DATE</th>
-                <th ng-init="filter">
-                    PI / CONTACT
-                    <input ng-model="filter.pi" style="width:150px;" placeholder="Filter by PI" />
-                </th>
-                <th>
-                    STATUS
-                    <input ng-model="filter.status" style="width:100%;" placeholder="Filter by Status" />
-                </th>
-                <th ng-if="!uncertified">
-                    REPORT/<br />Quote
-                </th>
-                <th>COMMENTS</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="cabinet in completeCabinets = (cabinets.data | pi:filter.pi | status:filter.status | matchEquipmentBuilding:selectedBuilding | cabinetYear:selectedCertificationDate:uncertified | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive}) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
-                <td>
-                    <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet, inspections[0], true)" class="btn btn-primary btn-mini left"><i class="icon-pencil"></i></button>
-                    <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit, 'btn-success':!cabinet.Is_active}" ng-click="deactivate(cabinet)" class="btn btn-danger btn-mini left"><i class="icon-remove" ng-class="{'icon-checkmark':!cabinet.Is_active}"></i></button>
-                </td>
-                <td watch="inspections.length" otherwatch="completeCabinets.length" class="asdful-table-heights">
-                    <div>
-                        <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | hasMoved:'Room' | orderBy:'Due_date':true)">
-                            <span>{{inspection.Room.Building.Alias || inspection.Room.Building.Name}}</span>
+<accordion-group is-open="checklist.currentlyOpen" close-others="true" id="{{checklist.Key_id}}" ng-if="cabinets.data.length" class="checklist bio-safety-cabinets-container" style="padding:0; margin:5px">
+    <accordion-heading>
+        <div ng-show="completeCabinets.length || selectedBuilding || filter.pi || filter.status" style="padding:10px">
+            <h2 style="font-weight: bold;" ng-if="!uncertified">
+                {{selectedCertificationDate || 'All'}} Certification Records -- {{campus.Name}}
+                <span class="pull-right">{{completeCabinets.length || "0"}} Cabinets</span>
+            </h2>
+            <h2 style="font-weight: bold;" ng-if="uncertified">
+                Uncertified Cabinets
+                <span class="pull-right">{{completeCabinets.length || "0"}} Cabinets</span>
+            </h2>
+        </div>
+    </accordion-heading>
+    <div style="padding:10px;">
+        <span>
+            <select style="margin-top:-15px" ng-model="campus" ng-options="c as c.Name for c in campuses.data"><option value="">--Select Campus--</option></select>
+        </span>
+        <table ng-show="completeCabinets.length || selectedBuilding || filter.pi || filter.status" class="table table-striped table-bordered" ng-class="{'current-year':!uncertified && getIsPreviousYear(false) && !getIsNextYear(),
+           'previous-year':!getIsPreviousYear(false) && !uncertified, 'uncertified':uncertified, 'next-year':getIsNextYear()}">
+            <thead>
+                <tr class="table-header">
+                    <th>EDIT</th>
+                    <th>
+                        BUILDING<br>
+                        <input ng-model="selectedBuilding" style="width:150px;" placeholder="Filter by Building" />
+                    </th>
+                    <th>
+                        ROOM
+                    </th>
+                    <th>TYPE</th>
+                    <th>MANUFACTURER</th>
+                    <th>MODEL</th>
+                    <th>SERIAL #</th>
+                    <th ng-if="!getIsNextYear()">CERT-DATE</th>
+                    <th ng-if="(!uncertified && !getIsPreviousYear(uncertified)) || getIsNextYear()" ng-hide="uncertified">
+                        DUE-DATE
+                    </th>
+                    <th ng-init="filter">
+                        PI / CONTACT
+                        <input ng-model="filter.pi" style="width:150px;" placeholder="Filter by PI" />
+                    </th>
+                    <th ng-if="!uncertified && !getIsNextYear()">
+                        STATUS
+                        <input ng-model="filter.status" style="width:100%;" placeholder="Filter by Status" />
+                    </th>
+                    <th>
+                        REPORT/<br />Quote
+                    </th>
+                    <th ng-if="!getIsNextYear()">COMMENTS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--| orderBy:['EquipmentInspections[0].Room.Building.Name','EquipmentInspections[0].Room.Name']-->
+                <tr ng-repeat="cabinet in completeCabinets = (cabinets.data | pi:filter.pi | status:filter.status | matchEquipmentBuilding:selectedBuilding | cabinetYear:selectedCertificationDate:uncertified | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive} ) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
+                    <td>
+                        <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet, inspections[0], true)" class="btn btn-primary btn-mini left"><i class="icon-pencil"></i></button>
+                        <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit, 'btn-success':!cabinet.Is_active}" ng-click="deactivate(cabinet)" class="btn btn-danger btn-mini left"><i class="icon-remove" ng-class="{'icon-checkmark':!cabinet.Is_active}"></i></button>
+                    </td>
+                    <td watch="inspections.length" otherwatch="completeCabinets.length" class="asdful-table-heights">
+                        <div>
+                            <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | hasMoved:'Room' | orderBy:'Due_date':true)">
+                                <span>{{inspection.Room.Building.Alias || inspection.Room.Building.Name}}</span>
+                            </div>
                         </div>
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | hasMoved:'Room' | orderBy:'Due_date':true)">
-                            <span>{{inspection.Room.Name}}</span>
+                    </td>
+                    <td>
+                        <div>
+                            <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | hasMoved:'Room' | orderBy:'Due_date':true)">
+                                <span>{{inspection.Room.Name}}</span>
+                            </div>
                         </div>
-                    </div>
-                </td>
-                <td>
-                    {{cabinet.Type}}
-                </td>
+                    </td>
+                    <td>
+                        {{cabinet.Type}}
+                    </td>
 
-                <td>
-                    {{cabinet.Make}}
-                </td>
-                <td>
-                    {{cabinet.Model}}
-                </td>
-                <td>
-                    {{cabinet.Serial_number}}
-                </td>                
-                <td style="text-align:center">
-                    <div>
-                        <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
-                            <!--<a ng-click="testSave(inspection)">come on</a>-->
-                            <span><a ng-class="{'btn-success':inspection.Certification_date, 'btn-danger':inspection.Status == 'FAIL','btn-info':inspection.Status != 'FAIL' && !inspection.Certification_date}" ng-click="openModal(cabinet, inspection)" class="btn left"><span ng-if="inspection.Certification_date || inspection.Fail_date">{{inspection.Certification_date || inspection.Fail_date | dateToISO}}</span><i class="icon-calendar-alt-stroke"></i></a></span>
+                    <td>
+                        {{cabinet.Make}}
+                    </td>
+                    <td>
+                        {{cabinet.Model}}
+                    </td>
+                    <td>
+                        {{cabinet.Serial_number}}
+                    </td>
+                    <td style="text-align:center" ng-if="!getIsNextYear()">
+                        <div>
+                            <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
+                                <!--<a ng-click="testSave(inspection)">come on</a>-->
+                                <span><a ng-class="{'btn-success':inspection.Certification_date, 'btn-danger':inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL,'btn-info':inspection.Status != constants.BIOSAFETY_CABINET.STATUS.FAIL && !inspection.Certification_date}" ng-click="openModal(cabinet, inspection)" class="btn left"><span ng-if="inspection.Certification_date || inspection.Fail_date">{{inspection.Certification_date || inspection.Fail_date | dateToISO}}</span><i class="icon-calendar-alt-stroke"></i></a></span>
+                            </div>
                         </div>
-                    </div>
-                </td>
-                <td ng-if="getIsPreviousYear(uncertified)">
-                    <div>
-                        <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
-                            <span>{{inspection.Due_date | dateToISO}}</span>
+                    </td>
+                    <td ng-if="(!uncertified && !getIsPreviousYear(uncertified)) || getIsNextYear()" ng-hide="uncertified">
+                        <div>
+                            <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
+                                <span ng-class="{'red': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.OVERDUE || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL}">{{inspection.Due_date | dateToISO}}</span>
+                            </div>
                         </div>
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | hasMoved:'PrincipalInvestigators' | orderBy:'Due_date':true)">
-                            <span><a style="display: block;padding: 3px 0;" ng-click="openPiInfoModal(pi)" ng-repeat="pi in inspection.PrincipalInvestigators">{{pi.User.Name}}<br ng-if="!$last"></a></span>
-                            <span ng-if="!inspection.PrincipalInvestigators.length" class="red">Unsassigned</span>
-                         </div>
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
-                            <span><span class="bold" ng-class="{'red': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.OVERDUE,
+                    </td>
+                    <td class="pis">
+                        <div>
+                            <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | hasMoved:'PrincipalInvestigators' | orderBy:'Due_date':true)">
+                                <span><a style="display: block;padding: 3px 0;" ng-click="openPiInfoModal(pi)" ng-repeat="pi in inspection.PrincipalInvestigators">{{pi.User.Name}}<br ng-if="!$last"></a></span>
+                                <span ng-if="!inspection.PrincipalInvestigators.length" class="red">Unsassigned</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td ng-if="!uncertified && !getIsNextYear()" class="pis">
+                        <div>
+                            <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
+                                <span>
+                                    <span class="bold" ng-class="{'red': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.OVERDUE,
                                         'yellow': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.PENDING || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.NEW_BSC,
-                                        'green': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.PASS }">{{inspection.Status}}</span> </span>
-                        </div>
-                    </div>                             
-                </td>
-                <td ng-if="!uncertified">
-                    <div>
-                        <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
-                            <span ng-if="inspection.Status == inspection.Status == 'FAIL' || inspection.Status == 'PASS'">
-                                <span class="span8" ng-if="inspection.Report_path || inspection.Quote_path">
-                                    <a ng-if="inspection.Report_path" class="btn btn-success" href="../biosafety-committees/protocol-documents/{{inspection.Report_path}}" target="_blank">Report</a>
-                                    <a ng-if="inspection.Quote_path" class="btn btn-info" href="../biosafety-committees/protocol-documents/{{inspection.Quote_path}}" target="_blank">Quote</a>
+                                        'green': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.PASS }">{{inspection.Status}}</span>
                                 </span>
-                                <!--ng-class="{'span4': inspection.Report_path || inspection.Quote_path}"-->
-                                <span class="span4" ng-class="{'center':!inspection.Report_path && !inspection.Quote_path, 'span4 top-some': inspection.Report_path || inspection.Quote_path, 'top-all':inspection.Report_path && inspection.Quote_path}">
-                                    <i class="icon-paperclip" ng-click="openAttachtmentModal(cabinet, inspection)" style="cursor:pointer"></i>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
+                                <span ng-if="inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.PASS">
+                                    <span class="span8" ng-if="inspection.Report_path || inspection.Quote_path">
+                                        <a ng-if="inspection.Report_path" class="btn btn-success" href="../biosafety-committees/protocol-documents/{{inspection.Report_path}}" target="_blank">Report</a>
+                                        <a ng-if="inspection.Quote_path" class="btn btn-info" href="../biosafety-committees/protocol-documents/{{inspection.Quote_path}}" target="_blank">Quote</a>
+                                    </span>
+                                    <!--ng-class="{'span4': inspection.Report_path || inspection.Quote_path}"-->
+                                    <span class="span4" ng-class="{'red': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL, 'center':!inspection.Report_path && !inspection.Quote_path, 'span4 top-some': inspection.Report_path || inspection.Quote_path, 'top-all':inspection.Report_path && inspection.Quote_path}">
+                                        <i class="icon-paperclip" ng-click="openAttachtmentModal(cabinet, inspection)" style="cursor:pointer"></i>
+                                    </span>
                                 </span>
-                            </span>
+                            </div>
                         </div>
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
-                            <span>{{inspection.Comment}}</span>
+                    </td>
+                    <td ng-if="!getIsNextYear()" class="pis">
+                        <div>
+                            <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)" ng-style="failedMostRecentInspection(cabinet) ? {'background-color':'pink'} : {'background-color': 'inherit'}">
+                                <span ng-if="inspection.Certification_date || inspection.Fail_date">{{inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL ? 'Failed:' : ''}} {{inspection.Comment}}</span>
+                                <span style="color:#9c9c9c" ng-if="!inspection.Certification_date || !inspection.Fail_date" ng-bind-html="getMostRecentComment(cabinet)"></span>
+                            </div>
                         </div>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
+</accordion-group>
