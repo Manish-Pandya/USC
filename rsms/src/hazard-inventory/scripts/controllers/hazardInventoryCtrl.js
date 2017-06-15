@@ -274,6 +274,25 @@ angular.module('HazardInventory')
             });
         }
 
+        $scope.openBiosafetyCabinetInfoModal = function (pi) {
+            console.log(pi);
+            var modalInstance = $modal.open({
+                templateUrl: 'views/modals/equipment-info.html',
+                controller: 'EquipmentInfoCtrl',
+                resolve: {
+                    cabs: function () {
+                        var url = '../ajaxaction.php?action=getCabinetsByPi&id=' + pi.Key_id + '&callback=JSON_CALLBACK';
+
+                        return $scope.loading = $q.all([convenienceMethods.getDataAsDeferredPromise(url)]).then(
+                            function (cabs) {
+                                return [pi,cabs[0]];
+                            });
+                    }
+                    
+                }
+            });
+        }
+
     })
     .controller('HazardInventoryModalCtrl', function ($scope, convenienceMethods, $rootScope, $q, $http, applicationControllerFactory, $modalInstance, $modal, roleBasedFactory) {
         $scope.constants = Constants;
@@ -461,7 +480,17 @@ angular.module('HazardInventory')
             }
         }
 
-    });
+    })
+    .controller('EquipmentInfoCtrl', function ($scope, $modalInstance, cabs) {
+        console.log(cabs);
+        $scope.cabs = cabs[1];
+        $scope.pi = cabs[0];
+        console.log($scope.pi);
+        $scope.close = function () {            
+            $modalInstance.dismiss();            
+        }
+
+});
     function CommentsCtrl($scope, $modalInstance, convenienceMethods, $q, applicationControllerFactory, roleBasedFactory) {
 
     $scope.tinymceOptions = {

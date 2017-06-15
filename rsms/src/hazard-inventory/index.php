@@ -190,6 +190,7 @@ echo "</script>";
         <div cg-busy="{promise:PrincipalInvestigatorSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:RoomSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:InspectionSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+        <div cg-busy="{promise:loading,message:'Loading Cabinets',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
 
         <div class="navbar">
@@ -360,6 +361,11 @@ echo "</script>";
                             <span ng-if="child.Stored_only" ng-class="{'stored':child.IsPresent, 'other':child.BelongsToOtherPI}"><i class="icon-box"></i></span>
                             <span ng-if="child.BelongsToOtherPI || (child.IsPresent && child.HasMultiplePis)" ng-class="{'other':child.BelongsToOtherPI  && !child.IsPresent, 'shared':child.IsPresent && child.HasMultiplePis}">
                                 <i class="icon-users" ng-click="openMultiplePIHazardsModal(child)"></i>
+                            </span>
+                            <span ng-if="child.IsPresent && child.Hazard_name == 'Biosafety Cabinets'" 
+                                  ng-class="{'other':child.BelongsToOtherPI  && !child.IsPresent, 
+                                  'shared':child.IsPresent && child.HasMultiplePis}">
+                                <i class="icon-info" ng-click="openBiosafetyCabinetInfoModal(PI)"></i>
                             </span>
                         </div>
                         <ul class="subRooms hazInvSubRooms" ng-if="getShowRooms(child, room, key)" ng-repeat="(key, rooms) in child.InspectionRooms | groupBy: 'Building_name'">
