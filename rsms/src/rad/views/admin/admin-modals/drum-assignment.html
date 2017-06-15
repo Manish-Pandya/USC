@@ -3,22 +3,41 @@
 </div>
 
 <div class="modal-body">
-	<label>Select a drum</label>
-	<select ng-if="modalData.WasteBagCopy" ng-model="modalData.WasteBagCopy.Drum_id">
-		<option ng-repeat="drum in drums" value="{{drum.Key_id}}">{{drum.Label}}</option>
-	</select>	
-	<select ng-if="modalData.ScintVialCollectionCopy" ng-model="modalData.ScintVialCollectionCopy.Drum_id">
-		<option ng-repeat="drum in drums" value="{{drum.Key_id}}">{{drum.Label}}</option>
-	</select>
+    <label>Select a drum</label>
+    <select ng-if="modalData.WasteBagCopy" ng-model="modalData.WasteBagCopy.Drum_id">
+        <option ng-repeat="drum in drums" value="{{drum.Key_id}}">{{drum.Label}}</option>
+    </select>
+    <button class="btn btn-success" 
+            ng-if="modalData.WasteBagCopy" 
+            ng-click="modalData.multipleDrums = true">Place in Multiple Drums</button>
+
+    <select ng-if="modalData.ScintVialCollectionCopy" ng-model="modalData.ScintVialCollectionCopy.Drum_id">
+        <option ng-repeat="drum in drums" value="{{drum.Key_id}}">{{drum.Label}}</option>
+    </select>
     <select ng-if="modalData.CarboyUseCycleCopy" ng-model="modalData.CarboyUseCycleCopy.Drum_id">
         <option ng-repeat="drum in drums" value="{{drum.Key_id}}">{{drum.Label}}</option>
-    </select>	
+    </select>
+    <div ng-if="modalData.multipleDrums">
+        <ul>
+            <li ng-repeat="lot in modalData.WasteBagCopy.PickupLots">
+                <input ng-model="lot.Curie_level"/>
+                <select ng-model="lot.Isotope_id" ng-options="c.Isotope_id as c.Isotope_name for c in modalData.WasteBagCopy.Contents">
+                    <option value="">Select Isotope</option>
+                </select>
+                <select ng-model="lot.Drum_id" ng-options="drum.Key_id as drum.Label for drum in drums">
+                    <option value="">Select Drum</option>
+                </select>
+                <i class="green icon-plus-2"></i>
+                <i class="red icon-minus-2"></i>
+            </li>
+        </ul>
+    </div>
+
 </div>
 
 <div class="modal-footer">
-  <a class="btn btn-success btn-large left" ng-if="modalData.WasteBagCopy" ng-click="saveWasteBag(modalData.WasteBag, modalData.WasteBagCopy)"><i class="icon-checkmark"></i></a>
-  <a class="btn btn-success btn-large left" ng-if="modalData.ScintVialCollectionCopy" ng-click="saveSVCollection(modalData.ScintVialCollection, modalData.ScintVialCollectionCopy)"><i class="icon-checkmark"></i></a>
-  <a class="btn btn-success btn-large left" ng-if="modalData.CarboyUseCycleCopy" ng-click="saveCarboyUseCycle(modalData.CarboyUseCycle, modalData.CarboyUseCycleCopy)"><i class="icon-checkmark"></i></a>
-
-  <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Cancel</a>
+    <a class="btn btn-success btn-large left" ng-if="modalData.WasteBagCopy" ng-click="saveWasteBag(modalData.WasteBag, modalData.WasteBagCopy)"><i class="icon-checkmark"></i></a>
+    <a class="btn btn-success btn-large left" ng-if="modalData.ScintVialCollectionCopy" ng-click="saveSVCollection(modalData.ScintVialCollection, modalData.ScintVialCollectionCopy)"><i class="icon-checkmark"></i></a>
+    <a class="btn btn-success btn-large left" ng-if="modalData.CarboyUseCycleCopy" ng-click="saveCarboyUseCycle(modalData.CarboyUseCycle, modalData.CarboyUseCycleCopy)"><i class="icon-checkmark"></i></a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Cancel</a>
 </div>

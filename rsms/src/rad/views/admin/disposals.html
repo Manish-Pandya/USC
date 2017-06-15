@@ -207,7 +207,7 @@
                         {{bag.Pickup.Requested_date | dateToISO}}
                     </div>
                     <div>
-                        Waste bag from {{bag.Pickup.PrincipalInvestigator.User.Name}}'s lab
+                        Waste from {{bag.Pickup.PrincipalInvestigator.User.Name}}'s lab
                     </div>
                     <div>
                         <p ng-repeat="content in bag.Contents">
@@ -215,7 +215,7 @@
                         </p>
                     </div>
                     <div>
-                        <a class="btn btn-success left" ng-click="assignDrum(bag)"><i class="icon-checkmark"></i>Place in drum</a>
+                        <a class="btn btn-success left" ng-click="assignWasteBagToDrum(bag)"><i class="icon-database"></i>Place in drum(s)</a>
                     </div>
                 </div>
             </div>

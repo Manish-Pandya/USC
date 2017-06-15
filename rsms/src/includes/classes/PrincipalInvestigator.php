@@ -89,7 +89,7 @@ class PrincipalInvestigator extends GenericCrud {
 			"tableName" => "scint_vial_collection",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "principal_investigator_id"
-	);	
+	);
 
     public static $WASTE_BAG_RELATIONSHIP = array(
 			"className" => "WasteBag",
@@ -124,7 +124,7 @@ class PrincipalInvestigator extends GenericCrud {
 			"tableName" => "pi_wipe_test",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "principal_investigator_id"
-	);
+	);   
 
 	/** Base User object that this PI represents */
 	private $user_id;
@@ -489,7 +489,7 @@ class PrincipalInvestigator extends GenericCrud {
                     array('date_created')
 			);
 		}
-        
+
 		return $this->wasteBags;
 	}
     public function setWasteBags($bags){$this->wasteBags = $bags;}

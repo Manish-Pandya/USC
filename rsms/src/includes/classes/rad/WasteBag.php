@@ -32,6 +32,15 @@ class WasteBag extends RadCrud {
 			"foreignKeyName"	=> "waste_bag_id"
 	);
 
+
+    public static $PICKUP_LOT_RELATIONSHIP = array(
+        "className" => "PickupLot",
+        "tableName" => "pickup_lot",
+        "keyName"   => "key_id",
+        "foreignKeyName" => "waste_bag_id"
+    );
+
+
     /** integer key id of the principal investigator this container belongs to. */
 	private $principal_investigator_id;
 
@@ -153,7 +162,15 @@ class WasteBag extends RadCrud {
 	public function getContents(){
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->fatal('getting contents for waste bag');
-		$this->contents = $this->sumUsages($this->getParcelUseAmounts());
+	    $contents = $this->sumUsages($this->getParcelUseAmounts());
+        foreach($contents as $content){
+            foreach($this->getPickupLots() as $lot){
+                if($content->getIsotope_id() == $lot->getIsotope_id()){
+                    $content->setCurie_level($content->getCurie_level() - $lot->getCurie_level());
+                }
+            }
+        }
+        $this->contents = $contents;
 		return $this->contents;
 	}
 
@@ -162,4 +179,14 @@ class WasteBag extends RadCrud {
 
     public function getPrincipal_investigator_id() { return $this->principal_investigator_id; }
 	public function setPrincipal_investigator_id($newId) { $this->principal_investigator_id = $newId; }
+
+    public function getPickupLots($isotope_id = null) {
+		if($this->pickupLots === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			$this->pickupLots = $thisDao->getRelatedItemsById(
+				$this->getKey_id(), DataRelationship::fromArray(self::$PICKUP_LOT_RELATIONSHIP));
+		}
+		return $this->pickupLots;
+	}
+	public function setPickupLots($lots) {$this->pickupLots = $lots;}
 }

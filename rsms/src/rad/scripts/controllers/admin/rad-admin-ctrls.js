@@ -332,12 +332,12 @@ angular.module('00RsmsAngularOrmApp')
             )
     }
 
-    getAllWasteBags()
-        .then(getIsotopes)
-        .then(getSVCollections)
-        .then(getAllDrums)
-        .then(getCycles)
-        .then(getMiscWaste);
+    $scope.loading = getAllWasteBags()
+                        .then(getIsotopes)
+                        .then(getSVCollections)
+                        .then(getAllDrums)
+                        .then(getCycles)
+                        .then(getMiscWaste);
 
     $scope.date = new Date();
 
@@ -348,6 +348,22 @@ angular.module('00RsmsAngularOrmApp')
         var modalInstance = $modal.open({
           templateUrl: 'views/admin/admin-modals/drum-assignment.html',
           controller: 'DrumAssignmentCtrl'
+        });
+    }
+
+    $scope.assignWasteBagToDrum = function (wasteBag) {
+        if (!wasteBag.PickupLots || !wasteBag.PickupLots.length) {
+            wasteBag.PickupLots = [{
+                Class: "PickupLot",
+                Currie_level: 0,
+                Waste_bag_id: wasteBag.Key_id,
+                Isotope_id:null
+            }]
+        }
+        af.setModalData({ "WasteBag": wasteBag });
+        var modalInstance = $modal.open({
+            templateUrl: 'views/admin/admin-modals/drum-assignment.html',
+            controller: 'DrumAssignmentCtrl'
         });
     }
 

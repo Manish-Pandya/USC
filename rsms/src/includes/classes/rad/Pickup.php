@@ -47,14 +47,13 @@ class Pickup extends RadCrud {
 		"keyName"   => "key_id",
 		"foreignKeyName" => "pickup_id"
 	);
-	
+
 	public static $SCINT_VIAL_COLLECTIONS_RELATIONSHIP = array(
 		"className" => "ScintVialCollection",
 		"tableName" => "scint_vial_collection",
 		"keyName"   => "key_id",
 		"foreignKeyName" => "pickup_id"
 	);
-
 	//access information
 
 	/** Date (timestamp) that this pickup occurred. */
@@ -72,7 +71,7 @@ class Pickup extends RadCrud {
 
 	/** Array of Waste Bags picked up */
 	private $waste_bags;
-	
+
 	/** Array of Scint Vial Collections picked up **/
 	private $scint_vial_collections;
 
@@ -81,10 +80,10 @@ class Pickup extends RadCrud {
 
 	/** PI who scheduled this pickup */
 	private $principalInvestigator;
-	
+
 	/** the current status of this pickup, indicated whether it's been Requested, Picked Up, etc. **/
 	private $status;
-	
+
 	/**  notes about this pickup added by lab personnel **/
 	private $notes;
 
@@ -93,6 +92,10 @@ class Pickup extends RadCrud {
 
     /** number of bags picked up **/
 	private $bags;
+
+    private $pickupLots;
+
+    private $solidContents;
 
 	public function __construct() {
 
@@ -142,9 +145,9 @@ class Pickup extends RadCrud {
 		return $this->waste_bags;
 	}
 	public function setWaste_bags($newBags) {$this->waste_bags = $newBags;}
-	
+
 	public function getScint_vial_collections(){
-	
+
 		if($this->scint_vial_collections === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
 			// Note: By default GenericDAO will only return active parcels, which is good - the client probably
@@ -159,7 +162,7 @@ class Pickup extends RadCrud {
 		$LOG->debug('calling pickup get sv collections');
 		return $this->scint_vial_collections;
 	}
-	
+
 	public function setScint_vial_collections($collections){
 		$this->scint_vial_collections = $collections;
 	}
@@ -172,22 +175,23 @@ class Pickup extends RadCrud {
 		$this->principalInvestigator = $piDAO->getById($this->principal_investigator_id);
 		return $this->principalInvestigator;
 	}
-	
+
 	public function setPrincipalInvestigator($principalInvestigator){$this->principalInvestigator = $principalInvestigator;}
 
 	public function getRequested_date() {return $this->requested_date;}
 	public function setRequested_date($requested_date) {$this->requested_date = $requested_date;}
-	
+
 	public function getStatus() { return $this->status;	}
 	public function setStatus($status) { $this->status = $status; }
-	
+
 	public function getNotes(){ return $this->notes; }
 	public function setNotes($notes){$this->notes = $notes;}
-	
+
 	public function getScint_vial_trays(){ return $this->scint_vial_trays; }
 	public function setScint_vial_trays($trays){ $this->scint_vial_trays = $trays; }
 
     public function getBags(){return $this->bags;}
     public function setBags($bags){$this->bags = $bags;}
+
 }
 ?>
