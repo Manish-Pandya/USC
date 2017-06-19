@@ -342,7 +342,7 @@ echo "</script>";
                 <ul ng-if="!hazard.hidden" class="topChildren equipment-list" ng-init="hazard.loadSubhazards()">
                     <li ng-class="{'yellowed': child.Stored_only}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: true} | orderBy: 'Order_index'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
                         <label class="checkbox inline">
-                            <input type="checkbox" ng-model="child.IsPresent" ng-disabled="getDisabled(child)" ng-change="af.handleHazardChecked(child, hazard)" />
+                            <input type="checkbox" ng-model="child.IsPresent" ng-disabled="child.Hazard_name == 'Biosafety Cabinets' || getDisabled(child)" ng-change="af.handleHazardChecked(child, hazard)" />
                             <span class="metro-checkbox"></span>
                         </label>
                         <span style="font-size: 14px;font-weight: normal;line-height: 20px;">

@@ -332,6 +332,12 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
             //console.log(date);
             if (!date) var date = new Date();
             if (!(date instanceof Date)) date = new Date(Date.parse(date));
+
+            //handle the fact that Microsoft's fancy new Edge browser falls victim to Y2K like bug in 2017, when this code was written.
+            if (date.getFullYear() < 2000) {
+                date.setFullYear(date.getFullYear() + 100);
+            }
+
             date = date.getFullYear() + '-' +
                 ('00' + (date.getMonth()+1)).slice(-2) + '-' +
                 ('00' + date.getDate()).slice(-2) + ' ' +

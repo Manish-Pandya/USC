@@ -65,7 +65,7 @@ class HazardInventoryActionManager extends ActionManager {
 	* @ param PIHazardRoomDto decodedObject
 	* @ return PIHazardRoomDto dto
 	*/
-public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $decodedObject = null ){
+    public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $decodedObject = null ){
 		$LOG = Logger::getLogger("asdfaf");
 
 		if($decodedObject == null){

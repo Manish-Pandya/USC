@@ -117,14 +117,38 @@ class Equipment_ActionManager extends ActionManager {
                 $LOG->fatal($inspection);
                 //if the inspection already exists, remove its PIs first, then add the relevant ones
                 if($decodedObject->getSelectedInspection() != null && $inspection != null){
+                    $piHazRoomDao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation());
 
                     foreach ($inspection->getPrincipalInvestigators() as $pi){
                         if (is_array($pi)) $pi = JsonManager::assembleObjectFromDecodedArray($pi);
                         $dao->removeRelatedItems($pi->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(EquipmentInspection::$PIS_RELATIONSHIP));
+
+                        //remove relavent PrincipalInvestigatorHazardRoomRelation so Hazard Inventory stays in sync
+                        $group = new WhereClauseGroup(array(
+                            new WhereClause("principal_investigator_id","=",$pi->getKey_id()),
+                            new WhereClause("equipment_id", "=",$cabinet->getKey_id())
+                        ));
+                        $relations = $piHazRoomDao->getAllWhere($group);
+                        foreach($relations as $r){
+                            $piHazRoomDao->deleteById($r->getKey_id());
+                        }
+
                     }
 
                     foreach($pisToAdd as $pi){
                         $dao->addRelatedItems($pi["Key_id"],$insp->getKey_id(),DataRelationship::fromArray(EquipmentInspection::$PIS_RELATIONSHIP));
+
+                        //add PrincipalInvestigatorHazardRoomRelation so Hazard Inventory stays in sync
+                        $r = new PrincipalInvestigatorHazardRoomRelation();
+                        //Magic number is the key_id for BioSafety Cabinet hazard
+                        $r->setHazard_id(10324);
+                        $r->setPrincipal_investigator_id($pi["Key_id"]);
+                        $r->setEquipment_id($cabinet->getKey_id());
+                        $r->setRoom_id($insp->getRoom_id());
+                        $r->setStatus("In Use");
+                        $r->setIs_active(true);
+                        $r = $piHazRoomDao->save($r);
+
                     }
                 }
 
@@ -142,6 +166,8 @@ class Equipment_ActionManager extends ActionManager {
             foreach($cabinet->getEquipmentInspections() as $i){
                 $i->setEntityMaps($entityMaps);
             }
+
+            //manage PiHazardRoomRelationships for all PIs who could be associated, or could HAVE been associated with the cabinet
 
             return $cabinet;
         }
@@ -431,6 +457,7 @@ class Equipment_ActionManager extends ActionManager {
 
         return $rooms;
     }
+
 }
 
 ?>

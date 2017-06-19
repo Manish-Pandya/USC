@@ -1393,5 +1393,39 @@ class GenericDAO {
         return $currentInspections;
     }
 
+    public function getEquipmentByPi($id, $equipmentClass){
+        global $db;
+        $queryString = 'select * from equipment_inspection a
+                        left join principal_investigator_equipment_inspection b
+                        on a.key_id = b.inspection_id
+                        AND a.equipment_class = :class
+                        where b.principal_investigator_id = :id;';
+
+        $stmt = $db->prepare($queryString);
+        $stmt->bindParam(':class',$equipmentClass, PDO::PARAM_STR);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        $stmt->execute();
+        $currentInspections = $stmt->fetchAll(PDO::FETCH_CLASS, "EquipmentInspection");
+        return $currentInspections;
+    }
+
+    public function getEquipmentRelations($equipmentTypeId, $piId, $roomId){
+        global $db;
+        $queryString = 'select * from principal_investigator_hazard_room a
+                        left join principal_investigator_equipment_inspection b
+                        on a.key_id = b.inspection_id
+                        AND a.equipment_class = :class
+                        where b.principal_investigator_id = :id;';
+
+        $stmt = $db->prepare($queryString);
+        $stmt->bindParam(':class',$equipmentClass, PDO::PARAM_STR);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        $stmt->execute();
+        $currentInspections = $stmt->fetchAll(PDO::FETCH_CLASS, "EquipmentInspection");
+        return $currentInspections;
+    }
+
 }
 ?>

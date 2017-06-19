@@ -21,6 +21,7 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 		"hazard_id" => "status",
 		"room_id"	=> "integer",
 		"principal_investigator_id"	=> "integer",
+		"equipment_id"	=> "integer",
 		"status"	=> "text"
 	);
 
@@ -29,6 +30,7 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 	private $hazard_id;
     private $hazard;
 	private $status;
+    private $equipment_inspection_id;
 	private $hasMultiplePis;
     private $piName;
 
@@ -109,5 +111,12 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
         return $this->piName;
     }
     public function setPiName($name){$this->piName = $name;}
+
+    public function getEquipment_id(){
+		return $this->equipment_id;
+	}
+	public function setEquipment_id($equipment_id){
+		$this->equipment_id = $equipment_id;
+	}
 }
 ?>
