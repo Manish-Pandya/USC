@@ -43,15 +43,15 @@
                         STATUS
                         <input ng-model="filter.status" style="width:100%;" placeholder="Filter by Status" />
                     </th>
-                    <th>
+                    <th ng-if="!uncertified">
                         REPORT/<br />Quote
                     </th>
-                    <th ng-if="!getIsNextYear()">COMMENTS</th>
+                    <th ng-if="!uncertified && !getIsNextYear()">COMMENTS</th>
                 </tr>
             </thead>
             <tbody>
-                <!--| orderBy:['EquipmentInspections[0].Room.Building.Name','EquipmentInspections[0].Room.Name']-->
-                <tr ng-repeat="cabinet in completeCabinets = (cabinets.data | pi:filter.pi | status:filter.status | matchEquipmentBuilding:selectedBuilding | cabinetYear:selectedCertificationDate:uncertified | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive} ) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
+                <!--| -->
+                <tr ng-repeat="cabinet in completeCabinets = (cabinets.data | pi:filter.pi | status:filter.status | matchEquipmentBuilding:selectedBuilding | cabinetYear:selectedCertificationDate:uncertified | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive} | orderBy:['EquipmentInspections[0].Room.Building.Name',convenienceMethods.sortAlphaNum('EquipmentInspections[0].Room.Name')] ) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet, inspections[0], true)" class="btn btn-primary btn-mini left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit, 'btn-success':!cabinet.Is_active}" ng-click="deactivate(cabinet)" class="btn btn-danger btn-mini left"><i class="icon-remove" ng-class="{'icon-checkmark':!cabinet.Is_active}"></i></button>
@@ -117,12 +117,12 @@
                             </div>
                         </div>
                     </td>
-                    <td>
+                    <td ng-if="!uncertified">
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
                                 <span ng-if="inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.PASS">
                                     <span class="span8" ng-if="inspection.Report_path || inspection.Quote_path">
-                                        <a ng-if="inspection.Report_path" class="btn btn-success" href="../biosafety-committees/protocol-documents/{{inspection.Report_path}}" target="_blank">Report</a>
+                                        <a ng-if="inspection.Report_path" class="btn" ng-class="{'btn-danger': inspection.Status ==  constants.BIOSAFETY_CABINET.STATUS.FAIL,'btn-success': inspection.Status ==  constants.BIOSAFETY_CABINET.STATUS.PASS }" href="../biosafety-committees/protocol-documents/{{inspection.Report_path}}" target="_blank">Report</a>
                                         <a ng-if="inspection.Quote_path" class="btn btn-info" href="../biosafety-committees/protocol-documents/{{inspection.Quote_path}}" target="_blank">Quote</a>
                                     </span>
                                     <!--ng-class="{'span4': inspection.Report_path || inspection.Quote_path}"-->
@@ -133,7 +133,7 @@
                             </div>
                         </div>
                     </td>
-                    <td ng-if="!getIsNextYear()" class="pis">
+                    <td ng-if="!uncertified && !getIsNextYear()" class="pis">
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)" ng-style="failedMostRecentInspection(cabinet) ? {'background-color':'pink'} : {'background-color': 'inherit'}">
                                 <span ng-if="inspection.Certification_date || inspection.Fail_date">{{inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL ? 'Failed:' : ''}} {{inspection.Comment}}</span>

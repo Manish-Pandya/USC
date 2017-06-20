@@ -432,8 +432,9 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
             //console.log(property);
             //if (!property) property = "Name";
             if (!field) return;
-                return function (item) {
-                return naturalService.naturalValue(item[field]);
+            return function (item) {
+                var val = field.indexOf(".") != -1 ? _.get(item, field) : item[field];
+                return naturalService.naturalValue(val);
             }
         },
         checkHazards: function (room, pis) {

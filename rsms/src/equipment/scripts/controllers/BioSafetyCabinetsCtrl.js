@@ -248,6 +248,7 @@ angular.module('EquipmentModule')
     .controller('BioSafetyCabinetsModalCtrl', function ($scope, $q, $modal, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
     var af = $scope.af = applicationControllerFactory;
     $scope.constants = Constants;
+    $scope.convenienceMethods = convenienceMethods;
     $scope.modalData = DataStoreManager.ModalData;
     $rootScope.modalClosed = false;
     $scope.getBuilding = function (id) {
