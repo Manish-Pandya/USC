@@ -130,7 +130,6 @@ angular.module('EquipmentModule')
                 inspection.Due_date = insp ? insp.Due_date : null;
                 inspection.Status = insp ? insp.Status : null;
                 inspection.UID = insp ? insp.Key_id : null;
-
                 inspection.PrincipalInvestigators = insp ? insp.PrincipalInvestigators : [];
             } else {
                 inspection = insp;

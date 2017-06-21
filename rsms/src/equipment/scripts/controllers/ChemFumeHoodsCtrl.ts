@@ -47,7 +47,7 @@ angular.module('EquipmentModule')
           if (inspections) {
               var i = inspections.length;
               while (i--) {
-                  if (inspections[i].Equipment_class == Constants.BIOSAFETY_CABINET.EQUIPMENT_CLASS) {
+                  if (inspections[i].Equipment_class == Constants.CHEM_FUME_HOOD.EQUIPMENT_CLASS) {
                       if (inspections[i].Certification_date) {
                           var certYear = inspections[i].Certification_date.split('-')[0];
                           if ($scope.certYears.indexOf(certYear) == -1) {
@@ -82,27 +82,71 @@ angular.module('EquipmentModule')
             af.save(chemFumeHood);
       }
     
-      $scope.openModal = function(object) {
-            var modalData = {};
-            if (!object) {
-                object = new equipment.ChemFumeHood();
-                object.Is_active = true;
-                object.Class = "ChemFumeHood";
-            }
-            modalData[object.Class] = object;
-            DataStoreManager.ModalData = modalData;
-            var modalInstance = $modal.open({
-                templateUrl: 'views/modals/chem-fume-hood-modal.html',
-                controller: 'ChemFumeHoodModalCtrl'
-            });
-        }
+      $scope.openModal = function (object, insp, isHood) {
+          var modalData = { inspection: null };
+          if (!object) {
+              object = new equipment.ChemFumeHood();
+              object.Is_active = true;
+              object.Class = "ChemFumeHood";
+              console.log(object);
+          }
+
+          //build new inspection object every time so we can assure we have a good one of proper type
+          var inspection: equipment.EquipmentInspection;
+          if (!insp) {
+              inspection = new equipment.EquipmentInspection();
+              inspection['Is_active'] = true;
+              inspection['Class'] = "EquipmentInspection";
+              inspection.Equipment_class = "ChemFumeHood";
+              inspection.Equipment_id = object.Key_id || null;
+              inspection['Key_id'] = insp ? insp.Key_id : null;
+              inspection.Comments = insp ? insp.Comments : null;
+              inspection.Frequency = insp ? insp.Frequency : null;
+              inspection.Room_id = insp ? insp.Room_id : null;
+              inspection.Certification_date = insp ? insp.Certification_date : null;
+              inspection.Due_date = insp ? insp.Due_date : null;
+              inspection.Status = insp ? insp.Status : null;
+              inspection.UID = insp ? insp.Key_id : null;
+              inspection.PrincipalInvestigators = insp ? insp.PrincipalInvestigators : [];
+          } else {
+              inspection = insp;
+          }
+
+          modalData[object.Class] = object;
+          object.SelectedInspection = inspection;
+          DataStoreManager.ModalData = modalData;
+
+          modalData["isHood"] = isHood;
+          var modalInstance = $modal.open({
+              templateUrl: isHood ? 'views/modals/chem-fume-hood-modal.html' : 'views/modals/chem-fume-hood-inspection-modal.html',
+              controller: 'ChemFumeHoodModalCtrl'
+          });
+
+          modalInstance.result.then(function (r) {
+              if (!object.Key_id) {
+                  if (!Array.isArray(r)) {
+                      console.log(r);
+                      var needsPush = true;
+                      $scope.hoods.data.forEach((c) => {
+                          if (c.UID == r.UID) needsPush = false;
+                      });
+                      if (needsPush) $scope.hoods.data.push(r);
+                  }
+              }
+          });
+      }
+
+      $scope.updateCertDate = function (date) {
+          $rootScope.selectedCertificationDate = date;
+      }
 
   })
-  .controller('ChemFumeHoodModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
-		var af = $scope.af = actionFunctionsFactory;
+    .controller('ChemFumeHoodModalCtrl', function ($scope, $q, $modal, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
+        var af = $scope.af = applicationControllerFactory;
 
-		$scope.modalData = DataStoreManager.ModalData;
-        console.log($scope.modalData);
+        $scope.modalData = DataStoreManager.ModalData;
+        $rootScope.modalClosed = false;
+        
         $scope.save = function (chemFumeHood) {
             af.save(chemFumeHood)
                 .then($scope.close);

@@ -8,9 +8,9 @@
             <option value="">-- Select Year --</option>
         </select>
         <a ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>
-        <a ng-click="openModal(null, null, true)" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Chemical Fume Hood</a>
+        <a ng-click="openModal(null, null, true)" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Fume Hood</a>
     </h1>
-    <h2 ng-if="!hoods.data.length">No Chemical Fume Hoods</h2>
+    <h2 ng-if="!hoods.data.length">No Fume Hoods</h2>
     <accordion>
         <div ng-include="'views/cabinet-table.html'" ng-init="uncertified = true; campus = {}" style="margin-top:70px"></div>
     </accordion>
