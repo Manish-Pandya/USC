@@ -204,11 +204,21 @@ class Constants  {
         }
     }
 
-    public static BIOSAFETY_CABINET = {
+    public static EQUIPMENT = {
         FREQUENCY: {
             ANNUALLY: "Annually",
             SEMI_ANNUALLY: "Semi-annually"
         },
+        STATUS: {
+            FAIL: "FAIL",
+            PASS: "PASS",
+            NEW_BSC: "NEW",
+            OVERDUE: "OVERDUE",
+            PENDING: "PENDING"
+        }
+    }
+
+    public static BIOSAFETY_CABINET = {
         EQUIPMENT_CLASS: "BioSafetyCabinet",
         TYPE: ["Class I",
                "Class II, Type A1",
@@ -218,14 +228,56 @@ class Constants  {
                "Class II, Type B2",
                "Horizontal Flow Clean Bench",
                "Vertical Flow Clean Bench"
+        ]
+    }
+
+    public static CHEM_FUME_HOOD = {
+        EQUIPMENT_CLASS: "ChemFumeHood",
+        MANUFACTURER: ["Air Master Systems",
+            "ESCO",
+            "Flow Sciences",
+            "Kewaunee Scientific",
+            "Labconco",
+            "Nuaire",
+            "Terra Universal",
+            "The Baker Company",
+            "Other"
         ],
-        STATUS: {
-            FAIL: "FAIL",
-            PASS: "PASS",
-            NEW_BSC: "NEW BSC",
-            OVERDUE: "OVERDUE",
-            PENDING: "PENDING"
-        }
+        TYPE: ["Constant Air Volume (CAV) – Always On",
+            "Constant Air Volume (CAV) + On/Off",
+            "Variable Air Volume (VAV)",
+            "High Performance (Low Flow)"
+        ],
+        USE: ["General",
+            "Radioisotope",
+            "Perchloric Acid",
+            "Polypropylene (Acid Resistant)",
+            "HF Acid",
+            "Chemical Waste",
+            "Storage Only",
+            "Canopy",
+            "Walk-In",
+            "Ductless Filtered",
+            "Long-Term Experiment",
+            "Reactor",
+            "Equipment(list)",
+            "Other"
+        ],
+        FEATURES: ["Horizontal Sash",
+            "Vertical Sash",
+            "Combination Sash",
+            "Digital Air Monitor",
+            "Magnehelic Gauge",
+            "Airflow Alarm",
+            "Zone Sensor",
+            "Plumbing",
+            "Electrical",
+            "Vacuum",
+            "Compressed Air",
+            "Propane",
+            "Natural Gas",
+            "Nitrogen"
+        ]
     }
 
     public static ROOM_HAZARDS = {

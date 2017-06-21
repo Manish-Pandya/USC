@@ -163,12 +163,12 @@ angular
     };
 })
     .filter("pi", function () {
-    return function (cabs, string) {
-        if (!cabs)
+    return function (equips, string) {
+        if (!equips)
             return;
         if (!string)
-            return cabs;
-        return cabs.filter(function (c) {
+            return equips;
+        return equips.filter(function (c) {
             return c.EquipmentInspections && c.EquipmentInspections.length && c.EquipmentInspections.some(function (i) {
                 return i.PrincipalInvestigators.some(function (i) { return i.User.Name.toLowerCase().indexOf(string.toLowerCase()) > -1; });
             });
@@ -176,41 +176,41 @@ angular
     };
 })
     .filter("status", function () {
-    return function (cabs, string) {
-        if (!cabs)
+    return function (equips, string) {
+        if (!equips)
             return;
         if (!string)
-            return cabs;
-        return cabs.filter(function (c) {
+            return equips;
+        return equips.filter(function (c) {
             return c.EquipmentInspections && c.EquipmentInspections.length && c.EquipmentInspections.some(function (i) {
                 return i.Status && i.Status.toLowerCase().indexOf(string.toLowerCase()) > -1;
             });
         });
     };
 })
-    .filter("cabinetYear", function () {
-    return function (cabs, dateString, uncertified) {
-        if (!cabs) {
+    .filter("equipmentYear", function () {
+    return function (equips, dateString, uncertified) {
+        if (!equips) {
             return;
         }
         else if (!dateString) {
-            return cabs;
+            return equips;
         }
         else if (uncertified) {
-            return cabs.filter(function (e) {
+            return equips.filter(function (e) {
                 return e.EquipmentInspections.every(function (i) {
                     return !i.Certification_date && !i.Fail_date;
                 });
             });
         }
-        return cabs.filter(function (c) {
+        return equips.filter(function (c) {
             return c.EquipmentInspections.some(function (i) {
                 return (i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1);
             });
         });
     };
 })
-    .filter("cabinetInspectionYear", function () {
+    .filter("equipmentInspectionYear", function () {
     return function (inspections, dateString, uncertified) {
         if (!inspections)
             return;

@@ -18,7 +18,7 @@ angular.module('EquipmentModule')
           $scope.hoods = new ViewModelHolder();
           $scope.rooms = new ViewModelHolder();
           $scope.campuses = new ViewModelHolder();
-          $q.all([DataStoreManager.getAll("ChemFumeHood", $scope.hoods, false), DataStoreManager.getAll("Campus", $scope.campuses, false), DataStoreManager.getAll("Room", $scope.rooms, true)])
+          $q.all([DataStoreManager.getAll("ChemFumeHood", $scope.hoods, true), DataStoreManager.getAll("Campus", $scope.campuses, false), DataStoreManager.getAll("Room", $scope.rooms, true)])
           .then(
               function (whateverGotReturned) {
                   getYears($scope.hoods);

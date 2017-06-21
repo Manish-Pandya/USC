@@ -88,7 +88,7 @@ angular.module('EquipmentModule')
             })[0];
             if (previousInspection && previousInspection["Comment"]) {
                 cabinet["previousComment"] = true;
-                var failed: string = previousInspection.Status == Constants.BIOSAFETY_CABINET.STATUS.FAIL ? "Failed: " : "";
+                var failed: string = previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL ? "Failed: " : "";
                 return "<span class='modal-bold'>" + failed + moment(previousInspection.Certification_date).format("YYYY") + ' Comments:<br></span>' + previousInspection["Comment"];
             };
             cabinet["previousComment"] = false;
@@ -100,7 +100,7 @@ angular.module('EquipmentModule')
                 return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
             })[0];
             if (previousInspection) {
-                return previousInspection.Status == Constants.BIOSAFETY_CABINET.STATUS.FAIL;
+                return previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL;
             }
             return false;
         }
