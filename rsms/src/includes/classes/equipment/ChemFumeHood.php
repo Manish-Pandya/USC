@@ -21,6 +21,8 @@ class ChemFumeHood extends Equipment {
         "model"     		    		=> "text",
         "comments"                      => "text",
 
+		"id_number"						=> "",
+
 		//GenericCrud
 		"key_id"			    => "integer",
 		"date_created"		    => "timestamp",
@@ -31,6 +33,7 @@ class ChemFumeHood extends Equipment {
 	);
 
     private $selectedInspection;
+	private $id_number;
 
 	public function __construct(){
         parent::__construct();
@@ -52,6 +55,13 @@ class ChemFumeHood extends Equipment {
 
 	public function setSelectedInspection($selectedInspection){
 		$this->selectedInspection = $selectedInspection;
+	}
+
+	public function getId_number(){
+		return $this->id_number;
+	}
+	public function setId_number($id_number){
+		$this->id_number = $id_number;
 	}
 
 }

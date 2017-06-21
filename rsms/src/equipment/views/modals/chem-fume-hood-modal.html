@@ -41,7 +41,6 @@
             </ul>
         </div>
 
-
         <div class="control-group">
             <label class="control-label">Type</label>
             <div class="controls">
@@ -68,6 +67,31 @@
             <label class="control-label">Serial #</label>
             <div class="controls">
                 <input ng-model="modalData.ChemFumeHood.Serial_number" placehold="Label" />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Fume Hood ID</label>
+            <div class="controls">
+                <input ng-model="modalData.ChemFumeHood.Id_number" placehold="Label" />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Uses</label>
+            <div class="controls">
+                <select ng-model="modalData.ChemFumeHood.Uses" ng-options="use as use for (key,use) in Constants.CHEM_FUME_HOOD.USES">
+                    <option value="">--Select Fume Hood Uses--</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Features</label>
+            <div class="controls">
+                <select ng-model="modalData.ChemFumeHood.Features" ng-options="features as features for (key,features) in Constants.CHEM_FUME_HOOD.FEATURES">
+                    <option value="">--Select Fume Hood Features--</option>
+                </select>
             </div>
         </div>
 

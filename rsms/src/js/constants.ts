@@ -243,12 +243,12 @@ class Constants  {
             "The Baker Company",
             "Other"
         ],
-        TYPE: ["Constant Air Volume (CAV) – Always On",
+        TYPE: ["Constant Air Volume (CAV) - Always On",
             "Constant Air Volume (CAV) + On/Off",
             "Variable Air Volume (VAV)",
             "High Performance (Low Flow)"
         ],
-        USE: ["General",
+        USES: ["General",
             "Radioisotope",
             "Perchloric Acid",
             "Polypropylene (Acid Resistant)",
@@ -260,7 +260,7 @@ class Constants  {
             "Ductless Filtered",
             "Long-Term Experiment",
             "Reactor",
-            "Equipment(list)",
+            "Equipment (list)",
             "Other"
         ],
         FEATURES: ["Horizontal Sash",
