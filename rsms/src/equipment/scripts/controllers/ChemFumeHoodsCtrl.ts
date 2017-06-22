@@ -81,6 +81,10 @@ angular.module('EquipmentModule')
             chemFumeHood.Is_active = !chemFumeHood.Is_active;
             af.save(chemFumeHood);
       }
+
+      $scope.updateCertDate = function (date) {
+          $rootScope.selectedCertificationDate = date;
+      }
     
       $scope.openModal = function (object, insp, isHood) {
           var modalData = { inspection: null };
@@ -136,20 +140,67 @@ angular.module('EquipmentModule')
           });
       }
 
-      $scope.updateCertDate = function (date) {
-          $rootScope.selectedCertificationDate = date;
-      }
-
   })
     .controller('ChemFumeHoodModalCtrl', function ($scope, $q, $modal, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
         var af = $scope.af = applicationControllerFactory;
+        $scope.constants = Constants;
 
         $scope.modalData = DataStoreManager.ModalData;
-        $rootScope.modalClosed = false;
+
+        $scope.getBuilding = function (id: string | number): void {
+            $rootScope.Buildings.data.forEach((b) => {
+                if (b.UID == id) $scope.modalData.selectedBuilding = b;
+            });
+        }
+
+        $scope.getRoom = function (id: string | number): void {
+            $rootScope.Rooms.data.forEach((r) => {
+                if (r.UID == id) {
+                    $scope.modalData.selectedRoom = r;
+                    console.log(r);
+                    $scope.getBuilding(r.Building_id);
+                }
+            });
+        }
+
+        if (!$rootScope.Buildings) {
+            $rootScope.Buildings = new ViewModelHolder();
+            $rootScope.loading = $q.all([DataStoreManager.getAll("Building", $rootScope.Buildings, true)]).then((b) => {
+                if ($scope.modalData.ChemFumeHood && $scope.modalData.ChemFumeHood.SelectedInspection && $scope.modalData.ChemFumeHood.SelectedInspection.Room_id) {
+                    $scope.getRoom($scope.modalData.ChemFumeHood.SelectedInspection.Room_id);
+                }
+            });
+        } else {
+            if ($scope.modalData.ChemFumeHood && $scope.modalData.ChemFumeHood.SelectedInspection && $scope.modalData.ChemFumeHood.SelectedInspection.Room_id) {
+                $scope.getRoom($scope.modalData.ChemFumeHood.SelectedInspection.Room_id);
+            }
+        }
         
-        $scope.save = function (chemFumeHood) {
-            af.save(chemFumeHood)
-                .then($scope.close);
+        $scope.save = function (hood) {
+            if (!hood) return;
+            hood.Certification_date = convenienceMethods.setMysqlTime(hood.Certification_date);
+            //clear the relationships between pis and inspections so the view reloads it
+            //TODO:actually solve this, you, know?
+            delete DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"];
+            af.save(hood).then(function (r) {
+                console.log(r[0]);
+                $scope.close(r[0]);
+            })
+        }
+
+        $scope.certify = function (inspection) {
+            console.log(inspection);
+            $scope.message = null;
+            inspection.Certification_date = convenienceMethods.setMysqlTime(inspection.viewDate);
+            inspection.Fail_date = convenienceMethods.setMysqlTime(inspection.viewFailDate);
+            af.save(inspection).then(function (r) {
+                // we added an equipmentInspection, so recompose the cabinet.
+                DataStoreManager.getById("ChemFumeHood", inspection.Equipment_id, new ViewModelHolder(), true);
+                console.log(r);
+                delete DataStoreManager._actualModel["PrincipalInvestigatorEquipmentInspection"];
+                console.log(DataStoreManager._actualModel);
+                $scope.close(r);
+            })
         }
 
 		$scope.close = function(){
