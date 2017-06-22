@@ -6,15 +6,14 @@
                 <span class="pull-right">{{completeCabinets.length || "0"}} Cabinets</span>
             </h2>
             <h2 style="font-weight: bold;" ng-if="uncertified">
-                Uncertified Cabinets
+                {{currentYear}} Uncertified Cabinets -- {{campus.Name || "ALL"}}
+                <select style="margin-top:-15px" ng-model="campus" ng-options="c as c.Name for c in campuses.data"><option value="">--Select Campus--</option></select>
                 <span class="pull-right">{{completeCabinets.length || "0"}} Cabinets</span>
             </h2>
         </div>
     </accordion-heading>
     <div style="padding:10px;">
-        <span>
-            <select style="margin-top:-15px" ng-model="campus" ng-options="c as c.Name for c in campuses.data"><option value="">--Select Campus--</option></select>
-        </span>
+        
         <table ng-show="completeCabinets.length || selectedBuilding || filter.pi || filter.status" class="table table-striped table-bordered" ng-class="{'current-year':!uncertified && getIsPreviousYear(false) && !getIsNextYear(),
            'previous-year':!getIsPreviousYear(false) && !uncertified, 'uncertified':uncertified, 'next-year':getIsNextYear()}">
             <thead>
@@ -32,26 +31,25 @@
                     <th>MODEL</th>
                     <th>SERIAL #</th>
                     <th ng-if="!getIsNextYear()">CERT-DATE</th>
-                    <th ng-if="(!uncertified && !getIsPreviousYear(uncertified)) || getIsNextYear()" ng-hide="uncertified">
+                    <th ng-if="(!getIsPreviousYear(uncertified)) || getIsNextYear()">
                         DUE-DATE
                     </th>
                     <th ng-init="filter">
                         PI / CONTACT
                         <input ng-model="filter.pi" style="width:150px;" placeholder="Filter by PI" />
                     </th>
-                    <th ng-if="!uncertified && !getIsNextYear()">
+                    <th ng-if="!getIsNextYear()">
                         STATUS
                         <input ng-model="filter.status" style="width:100%;" placeholder="Filter by Status" />
                     </th>
-                    <th ng-if="!uncertified">
+                    <th>
                         REPORT/<br />Quote
                     </th>
-                    <th ng-if="!uncertified && !getIsNextYear()">COMMENTS</th>
+                    <th ng-if="!getIsNextYear()">COMMENTS</th>
                 </tr>
             </thead>
             <tbody>
-                <!--| -->
-                <tr ng-repeat="cabinet in completeCabinets = (cabinets.data | pi:filter.pi | status:filter.status | matchEquipmentBuilding:selectedBuilding | cabinetYear:selectedCertificationDate:uncertified | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive} | orderBy:['EquipmentInspections[0].Room.Building.Name',convenienceMethods.sortAlphaNum('EquipmentInspections[0].Room.Name')] ) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
+                <tr ng-repeat="cabinet in completeCabinets = (cabinets.data | pi:filter.pi | status:filter.status | matchEquipmentBuilding:selectedBuilding | matchEquipmentDate:selectedCertificationDate:uncertified:currentYear | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive} | orderBy:['EquipmentInspections[0].Room.Building.Name',convenienceMethods.sortAlphaNum('EquipmentInspections[0].Room.Name')] ) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
                     <td>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit}" ng-click="openModal(cabinet, inspections[0], true)" class="btn btn-primary btn-mini left"><i class="icon-pencil"></i></button>
                         <button ng-disabled="cabinet.edit" ng-class="{'disabled':cabinet.edit, 'btn-success':!cabinet.Is_active}" ng-click="deactivate(cabinet)" class="btn btn-danger btn-mini left"><i class="icon-remove" ng-class="{'icon-checkmark':!cabinet.Is_active}"></i></button>
@@ -91,7 +89,7 @@
                             </div>
                         </div>
                     </td>
-                    <td ng-if="(!uncertified && !getIsPreviousYear(uncertified)) || getIsNextYear()" ng-hide="uncertified">
+                    <td ng-if="(!getIsPreviousYear(uncertified)) || getIsNextYear()">
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
                                 <span ng-class="{'red': inspection.Status == constants.BIOSAFETY_CABINET.STATUS.OVERDUE || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL}">{{inspection.Due_date | dateToISO}}</span>
@@ -106,7 +104,7 @@
                             </div>
                         </div>
                     </td>
-                    <td ng-if="!uncertified && !getIsNextYear()" class="pis">
+                    <td ng-if="!getIsNextYear()" class="pis">
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
                                 <span>
@@ -117,7 +115,7 @@
                             </div>
                         </div>
                     </td>
-                    <td ng-if="!uncertified">
+                    <td>
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
                                 <span ng-if="inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL || inspection.Status == constants.BIOSAFETY_CABINET.STATUS.PASS">
@@ -133,11 +131,10 @@
                             </div>
                         </div>
                     </td>
-                    <td ng-if="!uncertified && !getIsNextYear()" class="pis">
+                    <td ng-if="!getIsNextYear()" class="pis">
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)" ng-style="failedMostRecentInspection(cabinet) ? {'background-color':'pink'} : {'background-color': 'inherit'}">
-                                <span ng-if="inspection.Certification_date || inspection.Fail_date">{{inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL ? 'Failed:' : ''}} {{inspection.Comment}}</span>
-                                <span style="color:#9c9c9c" ng-if="!inspection.Certification_date || !inspection.Fail_date" ng-bind-html="getMostRecentComment(cabinet)"></span>
+                                <span style="color:#9c9c9c" ng-bind-html="getMostRecentComment(cabinet)"></span>
                             </div>
                         </div>
                     </td>

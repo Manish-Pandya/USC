@@ -85,6 +85,17 @@ angular
             return matches;
         }
     })
+    .filter("needsAttention", function () {
+        return (equipments, currentYear) => {
+            return equipments.filter((e) => {
+                return equipments.filter(function (e) {
+                    return e.EquipmentInspections.every(function (i) {
+                        return !i.Certification_date || i.Certification_date.split("-")[0] != currentYear;
+                    })
+                });
+            })
+        }
+    })
     .filter("matchEquipmentDate", function(){
         /*
         Passing '' for dateString will strip inspections where the dateProp value is not set.
@@ -94,62 +105,42 @@ angular
 
         dateProp can optionally be an array to test dateString against multiple props.
         */
-        return function (equipments, dateString, dateProp, currentYear) {
+        return function (equipments, dateString, uncertified, currentYear) {
             if(!equipments) {
                 return;
-            } else if (dateString != '' && (!dateString || !dateProp)) {
+            } else if (dateString == '' || (!dateString)) {
                 return equipments;
-            } else if (dateString == "Not Yet Certified") {
-                
-                return equipments.filter(function (e) {
-                    return e.EquipmentInspections.every(function (i) {
-                        return !i.Certification_date;
-                    })
-                });
-            }
+            }  
             
             var year = dateString.split('-')[0];
-            var matches = [];
-            var i = equipments.length;
-            while (i--) {
-                if (equipments[i].EquipmentInspections) {
-                    var j = equipments[i].EquipmentInspections.length;
-                    var matched = false;
-                    while (j--) {
-                        if (Array.isArray(dateProp)) {
-                            for (var n = 0; n < dateProp.length; n++) {
-                                if (equipments[i].EquipmentInspections[j].hasOwnProperty(dateProp[n])) {
-                                    var inspectionDate = equipments[i].EquipmentInspections[j][dateProp[n]];
-                                    if ((!inspectionDate && dateString == '*') || (inspectionDate && inspectionDate.indexOf(year) > -1)) {
-                                        matched = true;
-                                        continue;
-                                    }
-                                }
-                            }
-                        } else if ( equipments[i].EquipmentInspections[j].hasOwnProperty(dateProp) ) {
-                            var inspectionDate = equipments[i].EquipmentInspections[j][dateProp];
-                            if ( (!inspectionDate && dateString == '*') || (inspectionDate && inspectionDate.indexOf(year) > -1) ) {
-                                matched = true;
-                                continue;
-                            }
-                        }
-                        if (!equipments[i].EquipmentInspections[j].Certification_date && equipments[i].EquipmentInspections[j].Due_date) {
-                            if (parseInt(equipments[i].EquipmentInspections[j].Due_date.split("-")[0]) < parseInt(currentYear)) {
-                                matched = true;
-                            }
-                        } else if (!equipments[i].EquipmentInspections[j].Certification_date && !equipments[i].EquipmentInspections[j].Due_date) {
-                            if (dateString == currentYear) {
-                                matched = true;
-                            }
-                        }
-                    }
-                }
-                //console.log(dateString, currentYear, equipments[i].Key_id, equipments[i].EquipmentInspections.length, matched);
-                if (matched) {
-                    matches.unshift(equipments[i]);
-                }
+
+            // equipment not yet certified in the current  year
+            if (uncertified) {
+                return equipments.filter(function (e) {
+                    return e.EquipmentInspections.every(function (i) {
+                        if (e.UID == 62) console.log(e.UID, e.Serial_number, i.UID, i.Fail_date, i.Certification_date, !i.Certification_date, currentYear,);
+                        return !i.Certification_date || i.Certification_date.split("-")[0] != currentYear;
+                    })
+                });               
             }
-            return matches;
+            //next year years
+            else if (parseInt(currentYear) < parseInt(dateString)) {
+                return equipments.filter(function (e) {
+                    return e.EquipmentInspections.some(function (i) {
+                        return i.Due_date && i.Due_date.split("-")[0] == year;
+                    })
+                });             
+                
+            }
+            //certified or failed in selected year
+            else {
+                return equipments.filter(function (e) {
+                    return e.EquipmentInspections.some(function (i) {
+                        return (i.Certification_date && i.Certification_date.split("-")[0] == year)
+                            || (i.Fail_date && i.Fail_date.split("-")[0] == year);
+                    })
+                });               
+            }
         }
     })
     .filter("pi",function () {
@@ -197,13 +188,15 @@ angular
         }
     })
     .filter("cabinetInspectionYear", function () {
-        return function (inspections, dateString, uncertified) {
+        return function (inspections, dateString, uncertified, currentYear) {
            
             if (!inspections) return;
             if (!dateString) return inspections;
-
+            if (uncertified) return [inspections.sort((a, b) => {
+                a.Date_created > b.Date_created;
+            })[0]] || null;
             return inspections.filter(function (i) {
-                return uncertified ? !i.Certification_date && !i.Fail_date : (i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1);
+                return (i.Certification_date && i.Certification_date.indexOf(dateString) > -1);
             });
         }
     })

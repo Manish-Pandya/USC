@@ -11,7 +11,7 @@
         <a ng-click="openModal(null, null, true)" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Cabinet</a>
     </h1>
     <h2 ng-if="!cabinets.data.length">No Cabinets</h2>
-    <accordion>
+    <accordion ng-if="currentYear == selectedCertificationDate">
         <div ng-include="'views/cabinet-table.html'" ng-init="uncertified = true; campus = {}" style="margin-top:70px"></div>
     </accordion>
     <!-- ng-show="cabinets.length && completeCabinets.length || selectedBuilding"-->
