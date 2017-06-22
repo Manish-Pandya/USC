@@ -3,6 +3,9 @@ namespace equipment {
 
         static urlMapping: UrlMapping = new UrlMapping("getAllChemFumeHoods", "getChemFumeHoodById&id=", "saveChemFumeHood");
 
+        EquipmentInspections: EquipmentInspection[];
+        static EquipmentInspectionMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "EquipmentInspection", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=EquipmentInspections&id={{UID}}", "EquipmentInspections", "Equipment_id");
+
         constructor() {
             super();
         }

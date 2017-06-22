@@ -21,7 +21,7 @@ class ChemFumeHood extends Equipment {
         "model"     		    		=> "text",
         "comments"                      => "text",
 
-		"id_number"						=> "",
+		"id_number"						=> "text",
 
 		//GenericCrud
 		"key_id"			    => "integer",

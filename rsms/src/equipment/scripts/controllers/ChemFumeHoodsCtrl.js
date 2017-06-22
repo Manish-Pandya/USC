@@ -72,6 +72,19 @@ angular.module('EquipmentModule')
     $scope.updateCertDate = function (date) {
         $rootScope.selectedCertificationDate = date;
     };
+    $rootScope.getMostRecentComment = function (hood) {
+        var previousInspection = hood.EquipmentInspections.filter(function (i) {
+            return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
+        })[0];
+        if (previousInspection && previousInspection["Comment"]) {
+            hood["previousComment"] = true;
+            var failed = previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL ? "Failed: " : "";
+            return "<span class='modal-bold'>" + failed + moment(previousInspection.Certification_date).format("YYYY") + ' Comments:<br></span>' + previousInspection["Comment"];
+        }
+        ;
+        hood["previousComment"] = false;
+        return "";
+    };
     $scope.openModal = function (object, insp, isHood) {
         var modalData = { inspection: null };
         if (!object) {

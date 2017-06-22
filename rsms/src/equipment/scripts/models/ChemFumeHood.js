@@ -25,5 +25,6 @@ var equipment;
         return ChemFumeHood;
     }(FluxCompositerBase));
     ChemFumeHood.urlMapping = new UrlMapping("getAllChemFumeHoods", "getChemFumeHoodById&id=", "saveChemFumeHood");
+    ChemFumeHood.EquipmentInspectionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "EquipmentInspection", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=EquipmentInspections&id={{UID}}", "EquipmentInspections", "Equipment_id");
     equipment.ChemFumeHood = ChemFumeHood;
 })(equipment || (equipment = {}));

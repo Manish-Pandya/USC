@@ -1,0 +1,45 @@
+<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+
+<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px; background:#428642; color:white">Certify Fume Hood in Room {{modalData.ChemFumeHood.SelectedInspection.Room.Name}}</h2>
+</div>
+
+<div class="modal-body inspections" style="overflow-y:visible !important;">
+    <div class="control-group">
+        <label class="control-label">Pass/Fail</label>
+        <label class="checkbox inline">
+            <input type="checkbox" ng-model="modalData.ChemFumeHood.SelectedInspection.Status" ng-true-value="{{constants.EQUIPMENT.STATUS.PASS}}"/>
+            <span class="metro-checkbox">{{constants.EQUIPMENT.STATUS.PASS}}</span>
+        </label>
+        <label class="checkbox inline">
+            <input type="checkbox" ng-model="modalData.ChemFumeHood.SelectedInspection.Status"  ng-true-value="{{constants.EQUIPMENT.STATUS.FAIL}}"/>
+            <span class="metro-checkbox">{{constants.EQUIPMENT.STATUS.FAIL}}</span>
+        </label>
+    </div>
+    <div class="control-group" ng-init="modalData.ChemFumeHood.SelectedInspection.viewDate = modalData.ChemFumeHood.SelectedInspection.Certification_date ? modalData.ChemFumeHood.SelectedInspection.Certification_date : today()" ng-if="modalData.ChemFumeHood.SelectedInspection.Status == constants.EQUIPMENT.STATUS.PASS">
+        <label class="control-label">Certification Date</label>
+        <datepicker2 ng-model='modalData.ChemFumeHood.SelectedInspection.viewDate' disable-timepicker='true'></datepicker2>
+    </div>
+    <div class="control-group" ng-init="modalData.ChemFumeHood.SelectedInspection.viewFailDate = modalData.ChemFumeHood.SelectedInspection.Fail_date ?modalData.ChemFumeHood.SelectedInspection.Fail_date : today()" ng-if="modalData.ChemFumeHood.SelectedInspection.Status == constants.EQUIPMENT.STATUS.FAIL">
+        <label class="control-label">Certification Failed Date</label>
+        <datepicker2 iconStyle="true" ng-model='modalData.ChemFumeHood.SelectedInspection.viewFailDate' disable-timepicker='true'></datepicker2>
+    </div>
+
+    <div class="control-group" ng-if="getMostRecentComment(modalData.ChemFumeHood)">
+        <label class="control-label" ng-bind-html="getMostRecentComment(modalData.ChemFumeHood)" style="font-weight:normal"></label>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">{{$rootScope.selectedCertificationDate}} Comments</label>
+        <div class="controls">
+            <textarea ng-model="modalData.ChemFumeHood.SelectedInspection.Comment" ng-init="modalData.ChemFumeHood.SelectedInspection.Comment = modalData.ChemFumeHood.SelectedInspection.Fail_date || modalData.ChemFumeHood.SelectedInspection.Certification_date ? modalData.ChemFumeHood.SelectedInspection.Comment : ''" rows="5" placehold="Label" style="width:90%;"></textarea>
+        </div>
+    </div>
+    
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-large left" ng-class="{'btn-danger':modalData.ChemFumeHood.SelectedInspection.Status == constants.EQUIPMENT.STATUS.FAIL,'btn-success':modalData.ChemFumeHood.SelectedInspection.Status != constants.EQUIPMENT.STATUS.FAIL}" ng-click="certify(modalData.ChemFumeHood.SelectedInspection)"><i class="icon-checkmark"></i>Save</button>
+    <a class="btn btn-large left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+    <br /><span class="red bold" style="margin: 5px 91px;font-size: 15px;display: inline-block;">{{message}}</span>
+</div>
