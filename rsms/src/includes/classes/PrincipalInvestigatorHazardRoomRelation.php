@@ -18,7 +18,7 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 
 		//GenericCrud
 		"key_id"	=> "integer",
-		"hazard_id" => "status",
+		"hazard_id" => "integer",
 		"room_id"	=> "integer",
 		"principal_investigator_id"	=> "integer",
 		"status"	=> "text"

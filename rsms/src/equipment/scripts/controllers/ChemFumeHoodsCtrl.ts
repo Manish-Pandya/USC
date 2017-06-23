@@ -16,7 +16,7 @@ angular.module('EquipmentModule')
       
       function getAll() {
           $scope.hoods = new ViewModelHolder();
-          $scope.rooms = new ViewModelHolder();
+          $rootScope.rooms = new ViewModelHolder();
           $scope.campuses = new ViewModelHolder();
           $q.all([DataStoreManager.getAll("ChemFumeHood", $scope.hoods, true), DataStoreManager.getAll("Campus", $scope.campuses, false), DataStoreManager.getAll("Room", $scope.rooms, true)])
           .then(
@@ -167,7 +167,7 @@ angular.module('EquipmentModule')
         }
 
         $scope.getRoom = function (id: string | number): void {
-            $rootScope.Rooms.data.forEach((r) => {
+            $rootScope.rooms.data.forEach((r) => {
                 if (r.UID == id) {
                     $scope.modalData.selectedRoom = r;
                     console.log(r);

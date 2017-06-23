@@ -22,6 +22,7 @@ class ChemFumeHood extends Equipment {
         "comments"                      => "text",
 
 		"id_number"						=> "text",
+		"manufacturer"						=> "text",
 
 		//GenericCrud
 		"key_id"			    => "integer",
@@ -32,8 +33,27 @@ class ChemFumeHood extends Equipment {
 		"created_user_id"	    => "integer"
 	);
 
+	/** Relationships */
+	protected static $USE_RELATIONSHIP = array(
+		"className"	=>	"ChemFumeHoodUseRelation",
+		"tableName"	=>	"chem_fume_hood_use_relation",
+		"keyName"	=>	"key_id",
+		"foreignKeyName" =>	"chem_fume_hood_id"
+	);
+
+	/** Relationships */
+	protected static $FEATURE_RELATIONSHIP = array(
+		"className"	=>	"ChemFumeHoodFeatureRelation",
+		"tableName"	=>	"chem_fume_hood_feature_relation",
+		"keyName"	=>	"key_id",
+		"foreignKeyName" =>	"chem_fume_hood_id"
+	);
+
     private $selectedInspection;
 	private $id_number;
+	private $manufacturer;
+	private $uses;
+	private $features;
 
 	public function __construct(){
         parent::__construct();
@@ -63,6 +83,31 @@ class ChemFumeHood extends Equipment {
 	public function setId_number($id_number){
 		$this->id_number = $id_number;
 	}
+
+	public function getManufacturer(){
+		return $this->manufacturer;
+	}
+	public function setManufacturer($manufacturer){
+		$this->manufacturer = $manufacturer;
+	}
+
+	public function getUses(){
+		if($this->uses === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->uses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$USE_RELATIONSHIP));
+		}
+		return $this->uses;
+	}
+	public function setUses($uses){ $this->uses = $uses; }
+
+	public function getFeature(){
+		if($this->features === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->features = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$FEATURE_RELATIONSHIP));
+		}
+		return $this->features;
+	}
+	public function setFeatures($features){ $this->features = $features; }
 
 }
 ?>
