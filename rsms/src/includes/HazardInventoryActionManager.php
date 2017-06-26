@@ -375,7 +375,8 @@ class HazardInventoryActionManager extends ActionManager {
                         left join principal_investigator_equipment_inspection c
                         on c.inspection_id = b.key_id
                         where b.equipment_class = 'BioSafetyCabinet'
-                        AND c.principal_investigator_id = ?";
+                        AND c.principal_investigator_id = ?
+                        GROUP BY a.key_id";
         $stmt = $db->prepare($queryString);
         $stmt->bindValue(1, $id);
         $stmt->execute();
