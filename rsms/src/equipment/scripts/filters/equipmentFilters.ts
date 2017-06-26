@@ -118,7 +118,6 @@ angular
             if (uncertified) {
                 return equipments.filter(function (e) {
                     return e.EquipmentInspections.every(function (i) {
-                        if (e.UID == 62) console.log(e.UID, e.Serial_number, i.UID, i.Fail_date, i.Certification_date, !i.Certification_date, currentYear,);
                         return !i.Certification_date || i.Certification_date.split("-")[0] != currentYear;
                     })
                 });               
@@ -192,12 +191,22 @@ angular
            
             if (!inspections) return;
             if (!dateString) return inspections;
-            if (uncertified) return [inspections.sort((a, b) => {
-                a.Date_created > b.Date_created;
-            })[0]] || null;
-            return inspections.filter(function (i) {
-                return (i.Certification_date && i.Certification_date.indexOf(dateString) > -1);
-            });
+            if (uncertified) {
+                return [inspections.sort((a, b) => {
+                    a.Date_created > b.Date_created;
+                })[0]] || null;
+            }
+            //next year years
+            else if (parseInt(currentYear) < parseInt(dateString)) {
+                return inspections.filter(function (i) {
+                    return (i.Due_date && i.Due_date.indexOf(dateString) != -1);
+                });
+            }
+            else {
+                return inspections.filter(function (i) {
+                    return ((i.Certification_date && i.Certification_date.indexOf(dateString) != -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) != -1));
+                });
+            }
         }
     })
      .filter("getSharedRooms", function () {
