@@ -61,7 +61,7 @@
             </th>
             <th>
                 Room Hazards
-                <select ng-model="search.hazards" ng-options="v.value as v.label for (k,v) in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;">
+                <select ng-model="search.hazards" ng-options="v.value as v.label for v in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;">
                     <option value="">Select</option>
                 </select>
             </th>
@@ -123,6 +123,9 @@
                 <span ng-if="room.Bio_hazards_present"><img src="../../img/biohazard-largeicon.png" /></span>
                 <span ng-if="room.Chem_hazards_present"><img src="../../img/chemical-blue-icon.png" /></span>
                 <span ng-if="room.Rad_hazards_present"><img src="../../img/radiation-large-icon.png" /></span>
+                <span ng-if="room.Recombinant_dna_present"><img src="../../img/dna.png" /></span>
+                <span ng-if="room.Lasers_present"><img src="../../img/laser.png" /></span>
+                <span ng-if="room.Xrays_present"><img src="../../img/xray.png" /></span>
             </td>
 
             <td style="width:10%;">

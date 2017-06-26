@@ -59,6 +59,7 @@ angular.module('EquipmentModule')
                 $scope.certYears.push(currentYearString);
             }
             $rootScope.selectedCertificationDate = currentYearString;
+            $scope.currentYear = currentYearString;
             $rootScope.selectedDueDate = currentYearString;
         }
     };
@@ -70,13 +71,14 @@ angular.module('EquipmentModule')
         $scope.saving = af.save(cabinet);
     };
     $rootScope.getMostRecentComment = function (cabinet) {
-        var previousInspection = cabinet.EquipmentInspections.filter(function (i) {
-            return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
+        var previousInspection = cabinet.EquipmentInspections.sort(function (a, b) {
+            return a["Date_created"] > b["Date_created"];
         })[0];
         if (previousInspection && previousInspection["Comment"]) {
             cabinet["previousComment"] = true;
-            var failed = previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL ? "Failed: " : "";
-            return "<span class='modal-bold'>" + failed + moment(previousInspection.Certification_date).format("YYYY") + ' Comments:<br></span>' + previousInspection["Comment"];
+            var failed = previousInspection.Status == Constants.BIOSAFETY_CABINET.STATUS.FAIL ? "<span class='red'>Failed:</span> " : "";
+            var date = parseInt(moment(previousInspection.Certification_date).format("YYYY")) < parseInt($scope.currentYear) ? moment(previousInspection.Certification_date).format("YYYY") : "";
+            return "<span class='modal-bold'>" + date + failed + ' Comments:<br></span>' + previousInspection["Comment"];
         }
         ;
         cabinet["previousComment"] = false;
@@ -87,7 +89,7 @@ angular.module('EquipmentModule')
             return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
         })[0];
         if (previousInspection) {
-            return previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL;
+            return previousInspection.Status == Constants.BIOSAFETY_CABINET.STATUS.FAIL;
         }
         return false;
     };
@@ -248,6 +250,7 @@ angular.module('EquipmentModule')
     .controller('BioSafetyCabinetsModalCtrl', function ($scope, $q, $modal, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
     var af = $scope.af = applicationControllerFactory;
     $scope.constants = Constants;
+    $scope.convenienceMethods = convenienceMethods;
     $scope.modalData = DataStoreManager.ModalData;
     $rootScope.modalClosed = false;
     $scope.getBuilding = function (id) {
