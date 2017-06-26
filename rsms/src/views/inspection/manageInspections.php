@@ -96,7 +96,7 @@ require_once '../top_view.php';
                 </th>
                 <th>
                     Lab Hazards
-                    <select ng-model="search.hazards" ng-options="v.value as v.label for (k,v) in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;" ng-change="genericFilter()">
+                    <select ng-model="search.hazards" ng-options="v.value as v.label for v in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;" ng-change="genericFilter()">
                         <option value="">Select</option>
                     </select>
                 </th>
@@ -250,6 +250,9 @@ require_once '../top_view.php';
                     <span ng-if="dto.Bio_hazards_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/biohazard-largeicon.png" /></span>
                     <span ng-if="dto.Chem_hazards_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/chemical-blue-icon.png" /></span>
                     <span ng-if="dto.Rad_hazards_present" ng-class="{'grayed-out': !dto.Inspections || !dto.Inspections.Is_rad}"><img src="../../img/radiation-large-icon.png" /></span>
+                    <span ng-if="dto.Recombinant_dna_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/dna.png" /></span>                    
+                    <span ng-if="dto.Lasers_present" ng-class="{'grayed-out': !dto.Inspections || !dto.Inspections.Is_rad}"><img src="../../img/laser.png" /></span>
+                    <span ng-if="dto.Xrays_present" ng-class="{'grayed-out': !dto.Inspections || !dto.Inspections.Is_rad}"><img src="../../img/xray.png" /></span>
                 </td>
             </tr>
         </tbody>

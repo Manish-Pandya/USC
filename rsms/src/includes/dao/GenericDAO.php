@@ -892,9 +892,12 @@ class GenericDAO {
                 `d`.`key_id` AS `building_key_id`,
                 `e`.`name` AS `campus_name`,
                 `e`.`key_id` AS `campus_key_id`,
-                bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,
-                bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,
-                bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 1)) AS `bio_hazards_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10009)) AS `chem_hazards_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10010)) AS `rad_hazards_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10016)) AS `lasers_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10015)) AS `xrays_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 2)) AS `recombinant_dna_present`,
                 year(curdate()) AS `year`,
                 NULL AS `inspection_id` from (((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `principal_investigator_room` `f`)
                 where ((`a`.`is_active` = 1) and (`c`.`is_active` = 1) and (`b`.`key_id` = `a`.`user_id`) and (`f`.`principal_investigator_id` = `a`.`key_id`) and (`f`.`room_id` = `c`.`key_id`) and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`) and
@@ -922,9 +925,13 @@ class GenericDAO {
                 concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,
                 `d`.`name` AS `building_name`,
                 `d`.`key_id` AS `building_key_id`,
-                `e`.`name` AS `campus_name`,`e`.`key_id` AS `campus_key_id`,bit_or(`c`.`bio_hazards_present`) AS `bio_hazards_present`,
-                bit_or(`c`.`chem_hazards_present`) AS `chem_hazards_present`,
-                bit_or(`c`.`rad_hazards_present`) AS `rad_hazards_present`,
+                `e`.`name` AS `campus_name`,`e`.`key_id` AS `campus_key_id`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 1)) AS `bio_hazards_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10009)) AS `chem_hazards_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10010)) AS `rad_hazards_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10016)) AS `lasers_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10015)) AS `xrays_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 2)) AS `recombinant_dna_present`,
                 coalesce(year(`g`.`date_started`),`g`.`schedule_year`) AS `year`,`g`.`key_id`
                 AS `inspection_id`
                 from ((((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `inspection_room` `f`) join `inspection` `g`)

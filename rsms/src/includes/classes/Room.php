@@ -19,9 +19,6 @@ class Room extends GenericCrud {
 		"name"		=> "text",
 		"safety_contact_information" 	=> "text",
 		"building_id"		=> "integer",
-		"chem_hazards_present"			=> "boolean",
-		"rad_hazards_present"			=> "boolean",
-		"bio_hazards_present"			=> "boolean",
 		//"chem_hazards_present"			=> "boolean",
 		//"rad_hazards_present"			=> "boolean",
 		//"bio_hazards_present"			=> "boolean",
@@ -92,14 +89,12 @@ class Room extends GenericCrud {
 
 	private $has_hazards;
 
-	/** String containing emergency contact information */
 	private $chem_hazards_present;
-
-	/** String containing emergency contact information */
 	private $rad_hazards_present;
-
-	/** String containing emergency contact information */
 	private $bio_hazards_present;
+	private $lasers_present;
+	private $recombinant_dna_present;
+	private $xrays_present;
 
 	/** Array of solid waste containers present in this room */
 	private $solidsContainers;
@@ -154,12 +149,40 @@ class Room extends GenericCrud {
 	public function setRad_hazards_present($rad_hazards_present){ $this->rad_hazards_present = (boolean) $rad_hazards_present; }
 
 	public function getBio_hazards_present() {
-        if($this->bio_hazards_present == null){
-            $this->getHazardTypesArePresent();
-        }
+        $this->getHazardTypesArePresent();        
         return $this->bio_hazards_present;
     }
 	public function setBio_hazards_present($bio_hazards_present){ $this->bio_hazards_present = (boolean) $bio_hazards_present; }
+
+    public function getLasers_present(){
+        if($this->lasers_present == null){
+            $this->getHazardTypesArePresent();
+        }
+        return $this->lasers_present;
+	}
+	public function setLasers_present($lasers_present){
+		$this->lasers_present = $lasers_present;
+	}
+
+	public function getRecombinant_dna_present(){
+        if($this->recombinant_dna_present == null){
+            $this->getHazardTypesArePresent();
+        }
+		return $this->recombinant_dna_present;
+	}
+	public function setRecombinant_dna_present($recombinant_dna_presen){
+		$this->recombinant_dna_present = $recombinant_dna_presen;
+	}
+
+	public function getXrays_present(){
+        if($this->xrays_present == null){
+            $this->getHazardTypesArePresent();
+        }
+		return $this->xrays_present;
+	}
+	public function setXrays_present($xrays_present){
+		$this->xrays_present = $xrays_present;
+	}
 
 	public function getBuilding_id(){ return $this->building_id; }
 	public function setBuilding_id($building_id){ $this->building_id = $building_id; }
@@ -281,7 +304,8 @@ class Room extends GenericCrud {
     public function getHazardTypesArePresent(){
         $LOG = Logger::getLogger(__CLASS__ );
         //IDS of the direct children of the root hazard, except General Hazards, which are present in all rooms
-        $branchIds = "1, 10009, 10010";
+        //Per EHS request, added constants for Lasers (10016), Recombinant DNA (2), and X-Rays (10015), as displaying icons for these hazard types per room is useful
+        $branchIds = "1, 10009, 10010, 10016, 2, 10015";
 
         // Get the db connection
         global $db;
@@ -303,22 +327,29 @@ class Room extends GenericCrud {
         $stmt = $db->prepare($queryString);
         $stmt->execute();
 
-        $bioPresent = false;
-        $chemPresent = false;
-        $radPresent = false;
+        $this->bio_hazards_present = false;
+        $this->chem_hazards_present = false;
+        $this->rad_hazards_present = false;
+        $this->lasers_present = false;
+        $this->xrays_present = false;
+        $this->recombinant_dna_present = false;
 
         while($id = $stmt->fetchColumn()){
 			if($id == 1){
-                $bioPresent = true;
+                $this->bio_hazards_present = true;
             }elseif($id == 10009){
-                $chemPresent = true;
+                $this->chem_hazards_present = true;
             }elseif($id == 10010){
-                $radPresent = true;
+                $this->rad_hazards_present = true;
+            }elseif($id == 10016){
+                $this->lasers_present = true;
+            }elseif($id == 10015){
+                $this->xrays_present = true;
+            }elseif($id == 2){
+                $this->recombinant_dna_present = true;
+                $this->bio_hazards_present = true;
             }
 		}
-        $this->bio_hazards_present = $bioPresent;
-        $this->chem_hazards_present = $chemPresent;
-        $this->rad_hazards_present = $radPresent;
     }
 
 

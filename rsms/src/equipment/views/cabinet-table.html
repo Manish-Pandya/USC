@@ -1,21 +1,21 @@
 <accordion-group is-open="checklist.currentlyOpen" close-others="true" id="{{checklist.Key_id}}" ng-if="cabinets.data.length" class="checklist bio-safety-cabinets-container" style="padding:0; margin:5px">
     <accordion-heading>
-        <div ng-show="completeCabinets.length || selectedBuilding || filter.pi || filter.status" style="padding:10px">
+        <div ng-show="uncertified || completeCabinets.length || selectedBuilding || filter.pi || filter.status" style="padding:10px">
             <h2 style="font-weight: bold;" ng-if="!uncertified">
                 {{selectedCertificationDate || 'All'}} Certification Records -- {{campus.Name}}
                 <span class="pull-right">{{completeCabinets.length || "0"}} Cabinets</span>
             </h2>
             <h2 style="font-weight: bold;" ng-if="uncertified">
-                {{currentYear}} Uncertified Cabinets -- {{campus.Name || "ALL"}}
-                <select style="margin-top:-15px" ng-model="campus" ng-options="c as c.Name for c in campuses.data"><option value="">--Select Campus--</option></select>
+                {{currentYear}} Uncertified Cabinets
                 <span class="pull-right">{{completeCabinets.length || "0"}} Cabinets</span>
             </h2>
         </div>
     </accordion-heading>
     <div style="padding:10px;">
-        
-        <table ng-show="completeCabinets.length || selectedBuilding || filter.pi || filter.status" class="table table-striped table-bordered" ng-class="{'current-year':!uncertified && getIsPreviousYear(false) && !getIsNextYear(),
-           'previous-year':!getIsPreviousYear(false) && !uncertified, 'uncertified':uncertified, 'next-year':getIsNextYear()}">
+        <select ng-show="uncertified" style="position:absolute; z-index:840; margin-left:350px; margin-top:-49px" ng-model="campus" ng-options="c as c.Name for c in campuses.data"><option value="">--ALL--</option></select>
+
+        <table ng-show="completeCabinets.length || selectedBuilding || filter.pi || filter.status" class="table table-striped table-bordered" ng-class="{'current-year':uncertified || ( getIsPreviousYear(false) && !getIsNextYear() ),
+           'previous-year':!getIsPreviousYear(false) && !uncertified, 'next-year':getIsNextYear()}">
             <thead>
                 <tr class="table-header">
                     <th>EDIT</th>
@@ -85,7 +85,7 @@
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | cabinetInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
                                 <!--<a ng-click="testSave(inspection)">come on</a>-->
-                                <span><a ng-class="{'btn-success':inspection.Certification_date, 'btn-danger':inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL,'btn-info':inspection.Status != constants.BIOSAFETY_CABINET.STATUS.FAIL && !inspection.Certification_date}" ng-click="openModal(cabinet, inspection)" class="btn left"><span ng-if="inspection.Certification_date || inspection.Fail_date">{{inspection.Certification_date || inspection.Fail_date | dateToISO}}</span><i class="icon-calendar-alt-stroke"></i></a></span>
+                                <span><a ng-class="{'btn-success':inspection.Certification_date, 'btn-danger':inspection.Status == constants.BIOSAFETY_CABINET.STATUS.FAIL,'btn-info':inspection.Status != constants.BIOSAFETY_CABINET.STATUS.FAIL && !inspection.Certification_date}" ng-click="openModal(cabinet, inspection, false, uncertified)" class="btn left"><span ng-if="inspection.Certification_date || inspection.Fail_date">{{inspection.Certification_date || inspection.Fail_date | dateToISO}}</span><i class="icon-calendar-alt-stroke"></i></a></span>
                             </div>
                         </div>
                     </td>
