@@ -22,8 +22,8 @@ var equipment;
             }
             return this._hasGetAllPermission;
         };
+        XRay.urlMapping = new UrlMapping("getAllXRays", "getXRayById&id=", "saveXRay");
         return XRay;
     }(FluxCompositerBase));
-    XRay.urlMapping = new UrlMapping("getAllXRays", "getXRayById&id=", "saveXRay");
     equipment.XRay = XRay;
 })(equipment || (equipment = {}));

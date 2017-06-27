@@ -23,8 +23,8 @@ var equipment;
             }
             return this._hasGetAllPermission;
         };
+        PrincipalInvestigator.urlMapping = new UrlMapping("getAllEquipmentPIs", "getPIById&id=", "savePI");
         return PrincipalInvestigator;
     }(FluxCompositerBase));
-    PrincipalInvestigator.urlMapping = new UrlMapping("getAllEquipmentPIs", "getPIById&id=", "savePI");
     equipment.PrincipalInvestigator = PrincipalInvestigator;
 })(equipment || (equipment = {}));

@@ -24,8 +24,8 @@ var ibc;
             }
             return this._hasGetAllPermission;
         };
+        IBCPrimaryComment.urlMapping = new UrlMapping("getAllIBCPrimaryComments", "getIBCPrimaryCommentById&id=", "saveIBCPrimaryComment");
         return IBCPrimaryComment;
     }(FluxCompositerBase));
-    IBCPrimaryComment.urlMapping = new UrlMapping("getAllIBCPrimaryComments", "getIBCPrimaryCommentById&id=", "saveIBCPrimaryComment");
     ibc.IBCPrimaryComment = IBCPrimaryComment;
 })(ibc || (ibc = {}));

@@ -32,16 +32,15 @@
                     <th>MODEL</th>
                     <th>SERIAL #</th>
                     <th ng-if="!getIsNextYear()">CERT-DATE</th>
-                    <th ng-if="(!uncertified && !getIsPreviousYear(uncertified)) || getIsNextYear()" ng-hide="uncertified">
-                        DUE-DATE
-                    </th>
                     <th ng-init="filter">
                         PI / CONTACT
                         <input ng-model="filter.pi" style="width:150px;" placeholder="Filter by PI" />
                     </th>
-                    <th ng-if="!uncertified && !getIsNextYear()">
+                    <th>
                         STATUS
-                        <input ng-model="filter.status" style="width:100%;" placeholder="Filter by Status" />
+                        <span ng-if="!getIsNextYear()">
+                            <select ng-model="filter.status" ng-options="s as s.Label for s in filterStatuses | statusFilterArray:uncertified:getIsCurrentYear():getIsPreviousYear()"><option value="">--Filter by Status--</option></select>
+                        </span>
                     </th>
                     <th>
                         REPORT/<br />Quote
@@ -91,13 +90,6 @@
                             </div>
                         </div>
                     </td>
-                    <td ng-if="(!uncertified && !getIsPreviousYear(uncertified)) || getIsNextYear()" ng-hide="uncertified">
-                        <div>
-                            <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | equipmentInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
-                                <span ng-class="{'red': inspection.Status == constants.EQUIPMENT.STATUS.OVERDUE || inspection.Status == constants.EQUIPMENT.STATUS.FAIL}">{{inspection.Due_date | dateToISO}}</span>
-                            </div>
-                        </div>
-                    </td>
                     <td class="pis">
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | equipmentInspectionYear:selectedCertificationDate:uncertified | hasMoved:'PrincipalInvestigators' | orderBy:'Due_date':true)">
@@ -106,13 +98,17 @@
                             </div>
                         </div>
                     </td>
-                    <td ng-if="!uncertified && !getIsNextYear()" class="pis">
+                    <td class="pis">
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | equipmentInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
-                                <span>
-                                    <span class="bold" ng-class="{'red': inspection.Status == constants.EQUIPMENT.STATUS.FAIL || inspection.Status == constants.EQUIPMENT.STATUS.OVERDUE,
+                                <span ng-class="{'red': inspection.Status == constants.EQUIPMENT.STATUS.FAIL || inspection.Status == constants.EQUIPMENT.STATUS.OVERDUE,
                                         'yellow': inspection.Status == constants.EQUIPMENT.STATUS.PENDING || inspection.Status == constants.EQUIPMENT.STATUS.NEW,
-                                        'green': inspection.Status == constants.EQUIPMENT.STATUS.PASS }">{{inspection.Status}}</span>
+                                        'green': inspection.Status == constants.EQUIPMENT.STATUS.PASS }">
+
+                                    <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.FAIL || inspection.Status == constants.EQUIPMENT.STATUS.PASS">{{inspection.Status}}</span>
+                                    <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.OVERDUE">OVERDUE: {{inspection.Due_date | dateToISO}}</span>
+                                    <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.PENDING">DUE: {{inspection.Due_date | dateToISO}}</span>
+                                    <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.NEW">NO CERTIFICATION RECORD</span>
                                 </span>
                             </div>
                         </div>

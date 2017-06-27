@@ -22,8 +22,8 @@ var equipment;
             }
             return this._hasGetAllPermission;
         };
+        Campus.urlMapping = new UrlMapping("getAllCampuses", "getCampusById&id=", "");
         return Campus;
     }(FluxCompositerBase));
-    Campus.urlMapping = new UrlMapping("getAllCampuses", "getCampusById&id=", "");
     equipment.Campus = Campus;
 })(equipment || (equipment = {}));

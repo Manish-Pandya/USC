@@ -176,15 +176,32 @@ angular
     };
 })
     .filter("status", function () {
-    return function (equips, string) {
+    return function (equips, filterStatus) {
         if (!equips)
             return;
-        if (!string)
+        if (!filterStatus)
             return equips;
         return equips.filter(function (c) {
             return c.EquipmentInspections && c.EquipmentInspections.length && c.EquipmentInspections.some(function (i) {
-                return i.Status && i.Status.toLowerCase().indexOf(string.toLowerCase()) > -1;
+                return i.Status && i.Status.toLowerCase().indexOf(filterStatus.Data.toLowerCase()) > -1;
             });
+        });
+    };
+})
+    .filter("statusFilterArray", function () {
+    return function (objs, uncert, isCurrentYear, isPreviousYear) {
+        if (!objs)
+            return;
+        return objs.filter(function (obj) {
+            if (uncert) {
+                return obj.uncertified == uncert;
+            }
+            else if (isCurrentYear) {
+                return obj.currentYear == isCurrentYear;
+            }
+            else if (isPreviousYear) {
+                return obj.previousYear == isPreviousYear;
+            }
         });
     };
 })

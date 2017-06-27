@@ -22,9 +22,9 @@ var equipment;
             }
             return this._hasGetAllPermission;
         };
+        BioSafetyCabinet.urlMapping = new UrlMapping("getAllBioSafetyCabinets", "getBioSafetyCabinetById&id=", "saveBioSafetyCabinet");
+        BioSafetyCabinet.EquipmentInspectionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "EquipmentInspection", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=EquipmentInspections&id={{UID}}", "EquipmentInspections", "Equipment_id");
         return BioSafetyCabinet;
     }(FluxCompositerBase));
-    BioSafetyCabinet.urlMapping = new UrlMapping("getAllBioSafetyCabinets", "getBioSafetyCabinetById&id=", "saveBioSafetyCabinet");
-    BioSafetyCabinet.EquipmentInspectionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "EquipmentInspection", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=EquipmentInspections&id={{UID}}", "EquipmentInspections", "Equipment_id");
     equipment.BioSafetyCabinet = BioSafetyCabinet;
 })(equipment || (equipment = {}));

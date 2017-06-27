@@ -24,8 +24,8 @@ var ibc;
             }
             return this._hasGetAllPermission;
         };
+        IBCPreliminaryComment.urlMapping = new UrlMapping("getAllIBCPreliminaryComments", "getIBCPreliminaryCommentById&id=", "saveIBCPreliminaryComment");
         return IBCPreliminaryComment;
     }(FluxCompositerBase));
-    IBCPreliminaryComment.urlMapping = new UrlMapping("getAllIBCPreliminaryComments", "getIBCPreliminaryCommentById&id=", "saveIBCPreliminaryComment");
     ibc.IBCPreliminaryComment = IBCPreliminaryComment;
 })(ibc || (ibc = {}));
