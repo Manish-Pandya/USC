@@ -16,6 +16,7 @@ namespace equipment {
         Frequency: string;
         Room_id: string | number;
         Certification_date: string;
+        Fail_date: string;
         Due_date:string;
         Status: string;
 

@@ -194,7 +194,7 @@ Constants.EQUIPMENT = {
     STATUS: {
         FAIL: "FAIL",
         PASS: "PASS",
-        NEW_BSC: "NEW",
+        NEW: "NEW",
         OVERDUE: "OVERDUE",
         PENDING: "PENDING"
     }
