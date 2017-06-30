@@ -100,7 +100,14 @@ angular.module('EquipmentModule')
                 var failed: string = previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL ? "<span class='red'> Failed</span> " : "";
                 var date = previousInspection.Certification_date || previousInspection.Fail_date;
                 var dateStr = moment(date).format("YYYY");
-                return "<span class='modal-bold'>" + dateStr + failed + ' Comments:<br></span>' + previousInspection["Comment"];
+                var colorClass = "grayed-out";
+                if (dateStr == parseInt($rootScope.selectedCertificationDate)) {
+                    colorClass = "black";
+                    dateStr = "";
+                } else {
+                    failed += ' comments:<br>';
+                }
+                return "<span class='" + colorClass + "'>" + dateStr + failed + previousInspection["Comment"] + "</span>";
             };
             cabinet["previousComment"] = false;
             return "";

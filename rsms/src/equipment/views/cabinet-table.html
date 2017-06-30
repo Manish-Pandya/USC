@@ -132,8 +132,7 @@
                     <td ng-if="!getIsNextYear()" class="pis">
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | equipmentInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)" ng-style="failedMostRecentInspection(cabinet) ? {'background-color':'pink'} : {'background-color': 'inherit'}">
-                                <span ng-if="inspection.Certification_date || inspection.Fail_date">{{inspection.Status == constants.EQUIPMENT.STATUS.FAIL ? 'Failed:' : ''}} {{inspection.Comment}}</span>
-                                <span style="color:#9c9c9c" ng-if="!inspection.Certification_date || !inspection.Fail_date" ng-bind-html="getMostRecentComment(cabinet)"></span>
+                                <span ng-bind-html="getMostRecentComment(cabinet)"></span>
                             </div>
                         </div>
                     </td>
