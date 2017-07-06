@@ -747,6 +747,19 @@ angular
                         )
             }
 
+            af.replaceDrums = function(drums){
+                var segment = "getAllDrums";
+                return genericAPIFactory.read(segment)
+                        .then(
+                            function(returnedDrums){
+                                drums.forEach(function(d,k){
+                                 angular.extend(d, returnedDrums.data[k]);
+                                })
+                                return drums;
+                            }
+                        )
+            }
+
 
 
             /********************************************************************

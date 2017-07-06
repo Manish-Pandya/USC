@@ -501,9 +501,9 @@ angular.module('00RsmsAngularOrmApp')
             $rootScope.saving = af.saveWasteBag(bag, copy)
                 .then(function (r) {
                     bag.Contents = r.Contents;
-                    return bag;
+                    console.log(r);
                 })
-                .then(reloadDrum)
+                .then(reloadDrums);
         }
 
         $scope.saveCarboyUseCycle = function (cycle, copy) {
@@ -523,7 +523,18 @@ angular.module('00RsmsAngularOrmApp')
             af.replaceDrum(drum)
                 .then(
                 function (returnedDrum) {
+                    console.log(returnedDrum);
                     return drum.Contents = returnedDrum.Contents;
+                }
+            );
+        }
+
+        var reloadDrums = function(){
+            var drums =  dataStoreManager.get("Drum");
+            af.replaceDrums(drums)
+                .then(
+                function (returnedDrums) {
+                    console.log(returnedDrums);
                 }
             );
         }
