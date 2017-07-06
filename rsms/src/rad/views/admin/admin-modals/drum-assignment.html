@@ -13,7 +13,7 @@
 <div class="modal-body" ng-class="{'multiple-disposal-modal':modalData.multipleDrums}">
     <div ng-if="!modalData.multipleDrums">
         <label>Select a drum</label>
-        <select ng-if="modalData.WasteBagCopy" ng-model="modalData.WasteBagCopy.Drum_id">
+        <select ng-if="modalData.WasteBagCopy.Pickup_lots[0]" ng-model="modalData.WasteBagCopy.Pickup_lots[0].Drum_id">
             <option ng-repeat="drum in drums" value="{{drum.Key_id}}">{{drum.Label}}</option>
         </select>
         

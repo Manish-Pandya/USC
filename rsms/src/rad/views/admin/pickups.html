@@ -84,8 +84,8 @@
                 <div class="fake-table" ng-if="pickup.Scint_vial_collections.length">
                     <div ng-repeat="collection in pickup.Scint_vial_collections" ng-class="{'inactive':collection.removed}" class="table-row">
                         <div class="button-cell no-print">
-                            <a ng-if="!collection.removed" class="btn btn-danger left" ng-click="af.adminRemoveFromPickup(collection)"><i class="icon-remove"></i>Remove</a>
-                            <a ng-if="collection.removed" class="btn btn-success left" ng-click="af.adminAddToPickup(collection, pickup)"><i class="icon-plus-2"></i>Add</a>
+                            <a ng-if="!collection.removed" class="btn btn-danger left" ng-click="af.adminRemoveFromPickup(collection)"><i class="icon-remove"></i>Leave In Lab</a>
+                            <a ng-if="collection.removed" class="btn btn-success left" ng-click="af.adminAddToPickup(collection, pickup)"><i class="icon-plus-2"></i>Pick up</a>
                         </div>
                         <div class="pickup-item-contents">
                             Contents: <span ng-if="!collection.Contents">No Activity</span><span ng-repeat="content in collection.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span>
@@ -110,8 +110,8 @@
                 <div class="fake-table" ng-if="pickup.Carboy_use_cycles.length">
                     <div class="table-row" ng-repeat="cycle in pickup.Carboy_use_cycles" ng-class="{'inactive':cycle.removed}">
                         <div class="button-cell no-print">
-                            <a ng-if="!cycle.removed" class="btn btn-danger left" ng-click="af.adminRemoveFromPickup(cycle)"><i class="icon-remove"></i>Remove</a>
-                            <a ng-if="cycle.removed" class="btn btn-success left" ng-click="af.adminAddToPickup(cycle, pickup)"><i class="icon-plus-2"></i>Add</a>
+                            <a ng-if="!cycle.removed" class="btn btn-danger left" ng-click="af.adminRemoveFromPickup(cycle)"><i class="icon-remove"></i>Leave In Lab</a>
+                            <a ng-if="cycle.removed" class="btn btn-success left" ng-click="af.adminAddToPickup(cycle, pickup)"><i class="icon-plus-2"></i>Pickup</a>
                         </div>
 
                         <div class="pickup-item-contents">

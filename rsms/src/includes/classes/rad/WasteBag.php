@@ -161,7 +161,6 @@ class WasteBag extends RadCrud {
 
 	public function getContents(){
 		$LOG = Logger::getLogger(__CLASS__);
-		$LOG->fatal('getting contents for waste bag');
 	    $contents = $this->sumUsages($this->getParcelUseAmounts());
         foreach($contents as $content){
             foreach($this->getPickupLots() as $lot){

@@ -61,13 +61,13 @@ class Authorization extends GenericCrud {
 	private $form;
 
     /**
-     *  
+     *
      * @var array of parcels ordered under this authorization
      */
     private $parcels;
 
-    /** 
-        Each child authorization of a PI's PIAuthorizations that has the same isotope and same form should have the same UID in this field for audit/inventory calculation purposes 
+    /**
+        Each child authorization of a PI's PIAuthorizations that has the same isotope and same form should have the same UID in this field for audit/inventory calculation purposes
         By default, it should be set to the key_id of the PIAuthorization in which it, or it's ancestors first appeared, with its form appended, assuring uniqueness.
     */
     private $original_pi_auth_id;
@@ -123,10 +123,10 @@ class Authorization extends GenericCrud {
 		}
 		return $this->isotopeName;
 	}
-	
+
     public function getParcels(){}
     public function setParcels($parcels){$this->parcels = $parcels;}
-	
+
 	public function getPi_authorization_id() { return $this->pi_authorization_id; }
 	public function setPi_authorization_id($newId) { $this->pi_authorization_id = $newId; }
 
@@ -150,7 +150,7 @@ class Authorization extends GenericCrud {
             if($piAuth != null && $piAuth->getPrincipal_investigator_id() != null){
                 $group = new WhereClauseGroup(array(new WhereClause("principal_investigator_id", "=", $piAuth->getPrincipal_investigator_id() )));
                 $piAuths = $piAuthDao->getAllWhere($group);
-                
+
                 $piAuthIds = array();
                 foreach($piAuths as $pia){
                     $piAuthIds[] = $pia->getKey_id();
@@ -164,6 +164,7 @@ class Authorization extends GenericCrud {
                 $siblingsInclusive = $thisDao->getAllWhere($group);
                 $siblingMap = array();
                 foreach($siblingsInclusive as $key=>$sibling){
+                    if(!is_object($sibling))$l->fatal($this);
                     //we assume that an authorization with a null form is for any form
                     $form = $sibling->getForm() != null ? strtoupper($sibling->getForm()) : "ANY";
                     if(!array_key_exists($form ,$siblingMap )){
@@ -173,12 +174,12 @@ class Authorization extends GenericCrud {
                     $sibling->setPrincipal_investigator_id($piAuth->getPrincipal_investigator_id());
                     if($siblingMap[$form] != null && $sibling->getKey_id() != null)
                         $sibling = $thisDao->save($sibling);
-                }           
+                }
             }
-        
+
         }
         return $this->original_pi_auth_id;
-    
+
     }
     public function getOriginal_pi_auth_id(){
         return $this->original_pi_auth_id;

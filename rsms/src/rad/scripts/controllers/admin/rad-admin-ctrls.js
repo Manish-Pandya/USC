@@ -497,8 +497,13 @@ angular.module('00RsmsAngularOrmApp')
         $scope.modalData = af.getModalData();
         $scope.saveWasteBag = function(bag, copy){
             $scope.close();
+            
             $rootScope.saving = af.saveWasteBag(bag, copy)
-                                    .then(reloadDrum)
+                .then(function (r) {
+                    bag.Contents = r.Contents;
+                    return bag;
+                })
+                .then(reloadDrum)
         }
 
         $scope.saveCarboyUseCycle = function (cycle, copy) {
@@ -517,9 +522,9 @@ angular.module('00RsmsAngularOrmApp')
             var drum =  dataStoreManager.getById("Drum", obj.Drum_id);
             af.replaceDrum(drum)
                 .then(
-                    function(returnedDrum){
-                        return drum;
-                    }
+                function (returnedDrum) {
+                    return drum.Contents = returnedDrum.Contents;
+                }
             );
         }
 
@@ -1084,7 +1089,7 @@ angular.module('00RsmsAngularOrmApp')
         if(!$scope.modalData.AuthorizationCopy){
             $scope.modalData.AuthorizationCopy = {
                 Class: 'Authorization',
-                Principal_investigator_id: $scope.modalData.pi.Key_id,
+                Principal_investigator_id: $scope.modalData.PIAuthorizationCopy && $scope.modalData.PIAuthorizationCopy.Principal_investigator_id ? $scope.modalData.PIAuthorizationCopy.Principal_investigator_id : null,
                 Isotope:{},
                 Isotope_id: null,
                 Is_active: true,
