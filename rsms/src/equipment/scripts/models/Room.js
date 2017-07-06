@@ -22,9 +22,9 @@ var equipment;
             }
             return this._hasGetAllPermission;
         };
+        Room.urlMapping = new UrlMapping("getAllEquipmentRooms", "getRoomById&id=", "saveRoom");
+        Room.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=PrincipalInvestigators&id={{UID}}", "PrincipalInvestigators", "Principal_investigator_id", "Room_id", "RoomPrincipalInvestigator", "getRelationships&class1=Room&class2=PrincipalInvestigator");
         return Room;
     }(FluxCompositerBase));
-    Room.urlMapping = new UrlMapping("getAllEquipmentRooms", "getRoomById&id=", "saveRoom");
-    Room.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=PrincipalInvestigators&id={{UID}}", "PrincipalInvestigators", "Principal_investigator_id", "Room_id", "RoomPrincipalInvestigator", "getRelationships&class1=Room&class2=PrincipalInvestigator");
     equipment.Room = Room;
 })(equipment || (equipment = {}));

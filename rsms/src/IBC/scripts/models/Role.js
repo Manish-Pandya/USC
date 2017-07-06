@@ -22,8 +22,8 @@ var ibc;
             }
             return this._hasGetAllPermission;
         };
+        Role.urlMapping = new UrlMapping("getAllRoles", "getRoleById&id=", "saveRole");
         return Role;
     }(FluxCompositerBase));
-    Role.urlMapping = new UrlMapping("getAllRoles", "getRoleById&id=", "saveRole");
     ibc.Role = Role;
 })(ibc || (ibc = {}));

@@ -1,54 +1,21 @@
-<!--div cg-busy="{promise:Saving, message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div-->
+<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:saving, message:'Saving...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
 <div class="right-column">
-    <div class="well full">
-        <h1 class="card full chem-fume-hoods"><i class="icon-hood"></i>Chemical Fume Hoods
-            <a ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>
-            <a ng-click="openModal()" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Autoclave</a>
-        </h1>
-        <h3 ng-if="!hoods.length">No Chemical Fume Hoods</h3>
-        <div class="card full chem-fume-hoods" ng-if="hoods.length">
-            <div class="fake-table bordered">
-                <div class="table-header">
-                    <h3>EDIT</h3>
-                    <h3>BUILDING</h3>
-                    <h3>ROOM</h3>
-                    <h3>TYPE</h3>
-                    <h3>SERIAL #</h3>
-                    <h3>CONTRACT STATUS</h3>
-                    <h3>VENDOR CONTACT</h3>
-                    <h3>COMMENTS</h3>
-                </div>
-                <div class="table-row" ng-repeat="hood in hoods | active | filter:{Is_active: !showInactive}">
-                    <div>
-                        <a ng-disabled="hood.edit" ng-class="{'disabled':hood.edit}" ng-click="openModal(hood)" class="btn btn-primary left"><i class="icon-pencil"></i></a>
-                        <a ng-disabled="hood.edit" ng-class="{'disabled':hood.edit}" ng-click="deactivate(hood)" class="btn btn-danger left"><i class="icon-remove"></i></a>
-                    </div>
-                    <div>
-                        {{hood.Building.Name}}
-                    </div>
-                    <div>
-                        {{hood.Room.Name}}
-                    </div>
-                    <div>
-                        {{hood.Type}}
-                    </div>
-                    <div>
-                        {{hood.SerialNum}}
-                    </div>
-                    <div>
-                        {{hood.ContractStatus}}
-                    </div>
-                    <div>
-                        {{hood.VendorContact}}
-                    </div>
-                    <div>
-                        {{hood.Comment}}
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
+    <h1 class="card full bio-safety-cabinets">
+        <i class="icon-cabinet"></i>Chemical Fume Hoods
+        <select ng-options="certYear as (certYear != 'Not Yet Certified' ? certYear + ' Certifications' : certYear) for certYear in certYears | orderBy:'toString()'" ng-model="selectedCertificationDate" ng-change="updateCertDate(selectedCertificationDate)">
+            <option value="">-- Select Year --</option>
+        </select>
+        <a ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>
+        <a ng-click="openModal(null, null, true)" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Fume Hood</a>
+    </h1>
+    <h2 ng-if="!hoods.data.length">No Fume Hoods</h2>
+    <accordion>
+        <div ng-include="'views/cabinet-table.html'" ng-init="uncertified = true; campus = {}" style="margin-top:70px"></div>
+    </accordion>
+    <!-- ng-show="cabinets.length && completeCabinets.length || selectedBuilding"-->
+    <accordion ng-repeat="campus in campuses.data | orderBy: 'Name'" ng-init="uncertified = false">
+        <div ng-include="'views/hood-table.html'"></div>
+    </accordion>
 </div>

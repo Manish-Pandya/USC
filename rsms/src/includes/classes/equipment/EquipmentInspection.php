@@ -178,7 +178,7 @@ class EquipmentInspection extends GenericCrud{
 
             //cabinets that haven't yet been certified, ever, or had a due date assigned are new
             if($this->getDue_date() == NULL && $this->getCertification_date() == null){
-                $this->status = "NOT YET CERTIFIED";
+                $this->status = "NEW";
             }
             //all other cabinets that don't have a persisted status are either Overdue or pending a certification
             else {

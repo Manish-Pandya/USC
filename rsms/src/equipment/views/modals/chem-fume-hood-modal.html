@@ -1,17 +1,112 @@
-<div class="modal-header" style="padding:0;">
-    <h2 style="padding:5px; background:rgb(151, 49, 58); color:white">Create or edit Hood</h2>
-</div>
+<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<form class="form" ng-submit="save(modalData.ChemFumeHood)">
+    <div class="modal-header" style="padding:0;">
+        <h2 style="padding:5px; background:#428642; color:white"><span ng-if="!modalData.ChemFumeHood.Key_id">Create</span><span ng-if="modalData.ChemFumeHood.Key_id">Edit</span> Chemical Fume Hood</h2>
+    </div>
 
-<div class="modal-body">
-    <div class="control-group">
-        <label class="control-label">SERIAL #</label>
-        <div class="controls">
-            <input ng-model="modalData.Hood.SerialNum" placehold="Label"/>
+    <div class="modal-body">
+        <div class="control-group">
+            <label class="control-label">Select Building</label>
+            <div class="controls" style="display:block">
+                <select class="span3" ng-model="modalData.selectedBuilding" ng-change="getBuilding(modalData.ChemFumeHood.SelectedInspection.Room_id)" ng-options="b as b.Name for b in Buildings.data | orderBy:'Name'">
+                    <option value="">--Select Building--</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Select Room</label>
+            <div class="controls">
+                <input ng-if="!modalData.selectedBuilding.UID" placeholder="Select a bulding first" disabled="disabled" />
+                <ui-select ng-if="modalData.selectedBuilding.UID" ng-model="modalData.selectedRoom" theme="selectize" ng-disabled="disabled" class="span2" on-select="getRoom($item.UID); modalData.ChemFumeHood.SelectedInspection.Room_id = $item.Key_id" style="margin-left:0; width:269px;">
+                    <ui-select-match placeholder="Select or search for a Room">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="r in  modalData.selectedBuilding.Rooms | activeOnly | nameFilter: $select.search | orderBy:convenienceMethods.sortAlphanumeric:'Name' ">
+                        <div ng-bind="r.Name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Principal Investigator(s)</label>
+            <div class="controls" style="display:block">
+                <select class="span3" ng-if="!modalData.ChemFumeHood.SelectedInspection.PrincipalInvestigators.length" ng-model="modalData.pi" ng-change="modalData.ChemFumeHood.SelectedInspection.PrincipalInvestigators.push(modalData.pi)" ng-options="pi as pi.Name for pi in modalData.selectedRoom.PrincipalInvestigators | piSelected:modalData.ChemFumeHood.SelectedInspection.PrincipalInvestigators | activeOnly | orderBy:'Name'">
+                    <option value="" ng-show="!modalData.ChemFumeHood.SelectedInspection.PrincipalInvestigators.length">--Unassigned--</option>
+                </select>
+                <select class="span3" ng-if="modalData.ChemFumeHood.SelectedInspection.PrincipalInvestigators.length" ng-model="modalData.pi" ng-change="modalData.ChemFumeHood.SelectedInspection.PrincipalInvestigators.push(modalData.pi)" ng-options="pi as pi.Name for pi in modalData.selectedRoom.PrincipalInvestigators | piSelected:modalData.ChemFumeHood.SelectedInspection.PrincipalInvestigators | activeOnly | orderBy:'Name'">
+                    <option value="" ng-show="modalData.ChemFumeHood.SelectedInspection.PrincipalInvestigators.length">--Select Investigator--</option>
+                </select>
+            </div>
+            <ul>
+                <li ng-repeat="pi in modalData.ChemFumeHood.SelectedInspection.PrincipalInvestigators" style="padding: 3px 0; font-size: 15px;"><i style="margin-right:5px" class="red icon-cancel-2" ng-click="modalData.ChemFumeHood.SelectedInspection.PrincipalInvestigators.splice($index,1)"></i>{{pi.Name}}</li>
+            </ul>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Type</label>
+            <div class="controls">
+                <select ng-model="modalData.ChemFumeHood.Type" ng-options="type as type for (key,type) in Constants.CHEM_FUME_HOOD.TYPE">
+                    <option value="">--Select Fume Hood Type--</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Manufacturer</label>
+            <div class="controls">
+                <select ng-model="modalData.ChemFumeHood.Manufacturer" ng-options="manufacturer as manufacturer for (key,manufacturer) in Constants.CHEM_FUME_HOOD.MANUFACTURER">
+                    <option value="">--Select Fume Hood Manufaturer--</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Model</label>
+            <div class="controls">
+                <input ng-model="modalData.ChemFumeHood.Model" placehold="Label" />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Serial #</label>
+            <div class="controls">
+                <input ng-model="modalData.ChemFumeHood.Serial_number" placehold="Label" />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Fume Hood ID</label>
+            <div class="controls">
+                <input ng-model="modalData.ChemFumeHood.Id_number" placehold="Label" />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Uses</label>
+            <div class="controls">
+                <select ng-model="modalData.ChemFumeHood.Uses" ng-options="use as use for (key,use) in Constants.CHEM_FUME_HOOD.USES">
+                    <option value="">--Select Fume Hood Uses--</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Features</label>
+            <div class="controls">
+                <select ng-model="modalData.ChemFumeHood.Features" ng-options="feature as feature for (key,feature) in Constants.CHEM_FUME_HOOD.FEATURES">
+                    <option value="">--Select Fume Hood Features--</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Certification Frequency</label>
+            <select ng-model="modalData.ChemFumeHood.SelectedInspection.Frequency" ng-options="frequency as frequency for (key,frequency) in Constants.EQUIPMENT.FREQUENCY">
+                <option value="">--Select--</option>
+            </select>
         </div>
     </div>
-</div>
 
-<div class="modal-footer">
-    <a class="btn btn-large btn-success left" ng-click="save(modalData.Hood)"><i class="icon-checkmark"></i>Save</a>
-    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
-</div>
+    <div class="modal-footer">
+        <button ng-disabled="!modalData.ChemFumeHood.SelectedInspection.Room_id" class="btn btn-large btn-success left"><i class="icon-checkmark"></i>Save</button>
+        <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+    </div>
+</form>

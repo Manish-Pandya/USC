@@ -14,6 +14,14 @@ angular.module('EquipmentModule')
         $rootScope.modalClosed = true;
         $scope.convenienceMethods = convenienceMethods;
 
+        $rootScope.filterStatuses = [
+            { Data: "NEW", Label: "No Certification Record", uncertified: true, currentYear: false, previousYear: false },
+            { Data: "PENDING", Label: "Due for Certification", uncertified: true, currentYear: false, previousYear: false },
+            { Data: "OVERDUE", Label: "Overdue for Certification", uncertified: true, currentYear: false, previousYear: true },
+            { Data: "FAIL", Label: "Failed Certification", uncertified: true, currentYear: true, previousYear: true },
+            { Data: "PASS", Label: "Passed Certification", uncertified: false, currentYear: true, previousYear: true }
+        ];
+
         var getAll = function () {
             $rootScope.cabinets = new ViewModelHolder();
             $rootScope.Rooms = new ViewModelHolder();
@@ -84,14 +92,22 @@ angular.module('EquipmentModule')
         }
 
         $rootScope.getMostRecentComment = function (cabinet: equipment.BioSafetyCabinet): string {
-            let previousInspection: equipment.EquipmentInspection = cabinet.EquipmentInspections.sort( (a,b)=> {
-                return a["Date_created"] > b["Date_created"] ;
+            let previousInspection: equipment.EquipmentInspection = cabinet.EquipmentInspections.sort( (a,b) => {
+                return a["Date_created"] > b["Date_created"] ? 1 : 0;
             })[0];
             if (previousInspection && previousInspection["Comment"]) {
                 cabinet["previousComment"] = true;
-                var failed: string = previousInspection.Status == Constants.BIOSAFETY_CABINET.STATUS.FAIL ? "<span class='red'>Failed:</span> " : "";
-                var date = parseInt(moment(previousInspection.Certification_date).format("YYYY")) < parseInt($scope.currentYear) ? moment(previousInspection.Certification_date).format("YYYY") : "";
-                return "<span class='modal-bold'>"  + date + failed + ' Comments:<br></span>' + previousInspection["Comment"];
+                var failed: string = previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL ? "<span class='red'> Failed</span> " : "";
+                var date = previousInspection.Certification_date || previousInspection.Fail_date;
+                var dateStr = moment(date).format("YYYY");
+                var colorClass = "grayed-out";
+                if (dateStr == parseInt($rootScope.selectedCertificationDate)) {
+                    colorClass = "black";
+                    dateStr = "";
+                } else {
+                    failed += ' comments:<br>';
+                }
+                return "<span class='" + colorClass + "'>" + dateStr + failed + previousInspection["Comment"] + "</span>";
             };
             cabinet["previousComment"] = false;
             return "";
@@ -102,7 +118,7 @@ angular.module('EquipmentModule')
                 return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
             })[0];
             if (previousInspection) {
-                return previousInspection.Status == Constants.BIOSAFETY_CABINET.STATUS.FAIL;
+                return previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL;
             }
             return false;
         }
@@ -236,12 +252,16 @@ angular.module('EquipmentModule')
 
         var d = new Date().getFullYear();
         $scope.getIsPreviousYear = function (uncert: boolean = null): boolean {
-            if (uncert) return true;
+            if (uncert) return false;
             return parseInt($rootScope.selectedCertificationDate) < d;
         }
 
+        $scope.getIsCurrentYear = function (): boolean {
+            return parseInt($rootScope.selectedCertificationDate) == d;
+        }
+
         $scope.getIsNextYear = function (): boolean {
-            return parseInt($rootScope.selectedCertificationDate) == new Date().getFullYear() + 1;
+            return parseInt($rootScope.selectedCertificationDate) == d + 1;
         }
 
         $scope.openAttachtmentModal = function (object, insp) {

@@ -22,8 +22,8 @@ var equipment;
             }
             return this._hasGetAllPermission;
         };
+        Role.urlMapping = new UrlMapping("getAllRoles", "getRoleById&id=", "saveRole");
         return Role;
     }(FluxCompositerBase));
-    Role.urlMapping = new UrlMapping("getAllRoles", "getRoleById&id=", "saveRole");
     equipment.Role = Role;
 })(equipment || (equipment = {}));

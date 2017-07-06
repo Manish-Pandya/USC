@@ -22,9 +22,9 @@ var ibc;
             }
             return this._hasGetAllPermission;
         };
+        User.urlMapping = new UrlMapping("getAllUsers", "getUserById&id=", "saveUser");
+        User.RoleMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Role", "getAllRoles", "Roles", "User_id", "Role_id", "UserRole", "getRelationships&class1=User&class2=Role");
         return User;
     }(FluxCompositerBase));
-    User.urlMapping = new UrlMapping("getAllUsers", "getUserById&id=", "saveUser");
-    User.RoleMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Role", "getAllRoles", "Roles", "User_id", "Role_id", "UserRole", "getRelationships&class1=User&class2=Role");
     ibc.User = User;
 })(ibc || (ibc = {}));

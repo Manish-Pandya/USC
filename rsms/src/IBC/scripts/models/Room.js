@@ -23,8 +23,8 @@ var ibc;
             }
             return this._hasGetAllPermission;
         };
+        Room.urlMapping = new UrlMapping("getAllRooms", "getRoomById&id=", "saveRoom");
         return Room;
     }(FluxCompositerBase));
-    Room.urlMapping = new UrlMapping("getAllRooms", "getRoomById&id=", "saveRoom");
     ibc.Room = Room;
 })(ibc || (ibc = {}));

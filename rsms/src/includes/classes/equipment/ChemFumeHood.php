@@ -8,20 +8,21 @@ include_once '../GenericCrud.php';
  *
  * @author David Hamiter
  */
-class ChemFumeHood extends GenericCrud {
+class ChemFumeHood extends Equipment {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "chem_fume_hood";
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-        "type"		                => "text",
-        "serial_number"		        => "text",
-        "room_id"		            => "integer",
-        "make"          	        => "text",
-        "model"     		        => "text",
-        "frequency"		            => "text",
-        "principal_investigator_id" => "integer",
+        "type"		            		=> "text",
+        "serial_number"		        	=> "text",
+        "make"          	   			=> "text",
+        "model"     		    		=> "text",
+        "comments"                      => "text",
+
+		"id_number"						=> "text",
+		"manufacturer"						=> "text",
 
 		//GenericCrud
 		"key_id"			    => "integer",
@@ -32,47 +33,30 @@ class ChemFumeHood extends GenericCrud {
 		"created_user_id"	    => "integer"
 	);
 
-	protected static $ROOM_RELATIONSHIP = array(
-			"className"	        => "Room",
-			"tableName"	        => "room_equipment",
-			"keyName"	        => "key_id",
-			"foreignKeyName"    => "bioSafetyCabinet_id"
-	);
-    
-    protected static $PI_RELATIONSHIP = array(
-			"className"	        => "PrincipalInvestigator",
-			"tableName"	        => "principal_investigator_equipment",
-			"keyName"	        => "key_id",
-			"foreignKeyName"    => "bioSafetyCabinet_id"
+	/** Relationships */
+	protected static $USE_RELATIONSHIP = array(
+		"className"	=>	"ChemFumeHoodUseRelation",
+		"tableName"	=>	"chem_fume_hood_use_relation",
+		"keyName"	=>	"key_id",
+		"foreignKeyName" =>	"chem_fume_hood_id"
 	);
 
+	/** Relationships */
+	protected static $FEATURE_RELATIONSHIP = array(
+		"className"	=>	"ChemFumeHoodFeatureRelation",
+		"tableName"	=>	"chem_fume_hood_feature_relation",
+		"keyName"	=>	"key_id",
+		"foreignKeyName" =>	"chem_fume_hood_id"
+	);
 
-    private $type;
-    
-    private $serial_number;
-    
-    private $make;
-    
-    private $model;
-    
-    private $frequency;
-
-	private $room;
-    
-    private $room_id;
-    
-    private $principal_investigator;
-    
-    private $principal_investigator_id;
-    
+    private $selectedInspection;
+	private $id_number;
+	private $manufacturer;
+	private $uses;
+	private $features;
 
 	public function __construct(){
-		// Define which subentities to load
-		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getRoom");
-        $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
-		$this->setEntityMaps($entityMaps);
-
+        parent::__construct();
 	}
 
 	// Required for GenericCrud
@@ -81,56 +65,49 @@ class ChemFumeHood extends GenericCrud {
 	}
 
 	public function getColumnData(){
+        //return array_merge(parent::$COLUMN_NAMES_AND_TYPES, this:);
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 
-	// Accessors / Mutators
-    public function getType(){ return $this->type; }
-	public function setType($value){ $this->type = $value; }
-    
-    public function getSerial_number(){ return $this->serial_number; }
-	public function setSerial_number($value){ $this->serial_number = $value; }
-    
-    public function getMake(){ return $this->make; }
-	public function setMake($value){ $this->make = $value; }
-    
-    public function getModel(){ return $this->model; }
-	public function setModel($value){ $this->model = $value; }
-    
-    public function getFrequency(){ return $this->frequency; }
-	public function setFrequency($value){ $this->frequency = $value; }
-    
-    public function getRoom_id(){ return $this->room_id; }
-	public function setRoom_id($value){ $this->room_id = $value; }
+    public function getSelectedInspection(){
+		return $this->selectedInspection;
+	}
 
-	public function getRoom(){
-		if($this->buildings == null) {
+	public function setSelectedInspection($selectedInspection){
+		$this->selectedInspection = $selectedInspection;
+	}
+
+	public function getId_number(){
+		return $this->id_number;
+	}
+	public function setId_number($id_number){
+		$this->id_number = $id_number;
+	}
+
+	public function getManufacturer(){
+		return $this->manufacturer;
+	}
+	public function setManufacturer($manufacturer){
+		$this->manufacturer = $manufacturer;
+	}
+
+	public function getUses(){
+		if($this->uses === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->room = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$ROOM_RELATIONSHIP));
+			$this->uses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$USE_RELATIONSHIP));
 		}
-		return $this->room;
+		return $this->uses;
 	}
-	public function setRoom($value){
-		$this->room = $value;
-	}
-    
-    public function getPrincipal_investigator_id(){
-		return $this->principal_investigator_id;
-	}
-	public function setPrincipal_investigator_id($value){
-		$this->principal_investigator_id = $value;
-	}
-    
-    public function getPrincipal_investigator(){
-		if($this->buildings == null) {
+	public function setUses($uses){ $this->uses = $uses; }
+
+	public function getFeature(){
+		if($this->features === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->principal_investigator = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PI_RELATIONSHIP));
+			$this->features = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$FEATURE_RELATIONSHIP));
 		}
-		return $this->principal_investigator;
+		return $this->features;
 	}
-	public function setPrincipal_investigator($value){
-		$this->principal_investigator = $value;
-	}
+	public function setFeatures($features){ $this->features = $features; }
 
 }
 ?>

@@ -22,8 +22,8 @@ var ibc;
             }
             return this._hasGetAllPermission;
         };
+        IBCPossibleAnswer.urlMapping = new UrlMapping("getAllIBCPossibleAnswers", "getIBCPossibleAnswerById&id=", "saveIBCPossibleAnswer");
         return IBCPossibleAnswer;
     }(FluxCompositerBase));
-    IBCPossibleAnswer.urlMapping = new UrlMapping("getAllIBCPossibleAnswers", "getIBCPossibleAnswerById&id=", "saveIBCPossibleAnswer");
     ibc.IBCPossibleAnswer = IBCPossibleAnswer;
 })(ibc || (ibc = {}));
