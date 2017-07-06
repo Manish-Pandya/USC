@@ -22,8 +22,8 @@ var ignorasmus;
             }
             return this._hasGetAllPermission;
         };
+        Department.urlMapping = new UrlMapping("getAllDepartments", "getDepartmentById&id=", "saveDepartment");
         return Department;
     }(FluxCompositerBase));
-    Department.urlMapping = new UrlMapping("getAllDepartments", "getDepartmentById&id=", "saveDepartment");
     ignorasmus.Department = Department;
 })(ignorasmus || (ignorasmus = {}));

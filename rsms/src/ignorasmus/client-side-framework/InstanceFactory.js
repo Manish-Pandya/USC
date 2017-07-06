@@ -229,6 +229,6 @@ var InstanceFactory = (function (_super) {
         }, {}));
         return target;
     };
+    InstanceFactory._nameSpace = window;
     return InstanceFactory;
 }(DataStoreManager));
-InstanceFactory._nameSpace = window;

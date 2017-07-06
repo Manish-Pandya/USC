@@ -22,8 +22,8 @@ var equipment;
             }
             return this._hasGetAllPermission;
         };
+        Autoclave.urlMapping = new UrlMapping("getAllAutoclaves", "getAutoclaveById&id=", "saveAutoclave");
         return Autoclave;
     }(FluxCompositerBase));
-    Autoclave.urlMapping = new UrlMapping("getAllAutoclaves", "getAutoclaveById&id=", "saveAutoclave");
     equipment.Autoclave = Autoclave;
 })(equipment || (equipment = {}));

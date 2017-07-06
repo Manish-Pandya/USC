@@ -32,14 +32,14 @@ var PermissionMap = (function () {
         }
         return this.Permissions[className];
     };
+    //----------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //----------------------------------------------------------------------
+    PermissionMap.Permissions = [];
     return PermissionMap;
 }());
-//----------------------------------------------------------------------
-//
-//  Properties
-//
-//----------------------------------------------------------------------
-PermissionMap.Permissions = [];
 //abstract specifies singleton in ts 1.x (ish)
 var DataStoreManager = (function () {
     function DataStoreManager() {
@@ -386,14 +386,14 @@ var DataStoreManager = (function () {
         });
         return p;
     };
+    //----------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //----------------------------------------------------------------------
+    DataStoreManager.classPropName = "Class";
+    DataStoreManager.uidString = "Key_id";
+    DataStoreManager.baseUrl = "../ajaxaction.php?action=";
+    DataStoreManager._actualModel = {};
     return DataStoreManager;
 }());
-//----------------------------------------------------------------------
-//
-//  Properties
-//
-//----------------------------------------------------------------------
-DataStoreManager.classPropName = "Class";
-DataStoreManager.uidString = "Key_id";
-DataStoreManager.baseUrl = "../ajaxaction.php?action=";
-DataStoreManager._actualModel = {};

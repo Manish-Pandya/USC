@@ -22,9 +22,9 @@ var ibc;
             }
             return this._hasGetAllPermission;
         };
+        IBCSection.urlMapping = new UrlMapping("getAllIBCSections", "getIBCSectionById&id=", "saveIBCSection");
+        IBCSection.QuestionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCQuestion", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCQuestions&id={{UID}}", "IBCQuestions", "Section_id");
         return IBCSection;
     }(FluxCompositerBase));
-    IBCSection.urlMapping = new UrlMapping("getAllIBCSections", "getIBCSectionById&id=", "saveIBCSection");
-    IBCSection.QuestionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCQuestion", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCQuestions&id={{UID}}", "IBCQuestions", "Section_id");
     ibc.IBCSection = IBCSection;
 })(ibc || (ibc = {}));

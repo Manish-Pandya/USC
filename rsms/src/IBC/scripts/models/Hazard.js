@@ -22,8 +22,8 @@ var ibc;
             }
             return this._hasGetAllPermission;
         };
+        Hazard.urlMapping = new UrlMapping("getAllHazards", "getHazardById&id=", "saveHazard");
         return Hazard;
     }(FluxCompositerBase));
-    Hazard.urlMapping = new UrlMapping("getAllHazards", "getHazardById&id=", "saveHazard");
     ibc.Hazard = Hazard;
 })(ibc || (ibc = {}));

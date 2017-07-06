@@ -22,9 +22,9 @@ var ignorasmus;
             }
             return this._hasGetAllPermission;
         };
+        Room.urlMapping = new UrlMapping("getAllRooms", "getRoomById&id=", "saveRoom");
+        Room.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getAllPIs", "PrincipalInvestigators", "Room_id", "Principal_investigator_id", "RoomPrincipalInvestigator", "getRelationships&class1=Room&class2=PrincipalInvestigator");
         return Room;
     }(FluxCompositerBase));
-    Room.urlMapping = new UrlMapping("getAllRooms", "getRoomById&id=", "saveRoom");
-    Room.PIMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "PrincipalInvestigator", "getAllPIs", "PrincipalInvestigators", "Room_id", "Principal_investigator_id", "RoomPrincipalInvestigator", "getRelationships&class1=Room&class2=PrincipalInvestigator");
     ignorasmus.Room = Room;
 })(ignorasmus || (ignorasmus = {}));

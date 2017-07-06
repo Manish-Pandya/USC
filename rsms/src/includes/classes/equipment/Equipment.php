@@ -154,7 +154,7 @@ abstract class Equipment extends GenericCrud{
                     $nextInspection = clone $inspection;
                     $nextInspection->setCertification_date(null);
                     $nextInspection->setKey_id(null);
-                    $nextInspection->setStatus("Pending");
+                    $nextInspection->setStatus("PENDING");
 
                 }
 

@@ -43,16 +43,16 @@ var CompositionMapping = (function () {
             }
         }
     }
+    //----------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //----------------------------------------------------------------------
+    CompositionMapping.ONE_TO_ONE = "ONE_TO_ONE";
+    CompositionMapping.ONE_TO_MANY = "ONE_TO_MANY";
+    CompositionMapping.MANY_TO_MANY = "MANY_TO_MANY";
     return CompositionMapping;
 }());
-//----------------------------------------------------------------------
-//
-//  Properties
-//
-//----------------------------------------------------------------------
-CompositionMapping.ONE_TO_ONE = "ONE_TO_ONE";
-CompositionMapping.ONE_TO_MANY = "ONE_TO_MANY";
-CompositionMapping.MANY_TO_MANY = "MANY_TO_MANY";
 var FluxCompositerBase = (function () {
     //----------------------------------------------------------------------
     //
@@ -184,11 +184,11 @@ var FluxCompositerBase = (function () {
         });
         return str;
     };
+    //----------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //----------------------------------------------------------------------
+    FluxCompositerBase.urlMapping = new UrlMapping("test", "", "");
     return FluxCompositerBase;
 }());
-//----------------------------------------------------------------------
-//
-//  Properties
-//
-//----------------------------------------------------------------------
-FluxCompositerBase.urlMapping = new UrlMapping("test", "", "");
