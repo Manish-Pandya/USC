@@ -1,7 +1,8 @@
 angular.module('00RsmsAngularOrmApp')
 	.filter('activePickups', function () {
-	    return function (pickups) {
-	        if (!pickups) return;
+	    return function (pickups, all) {
+            if (!pickups) return;
+            if (all) return pickups;
 	        var activePickups = pickups.filter(function (pickup) {
 	            var d = moment(pickup.Pickup_date);
 	            return ( (moment(d).add(1, 'day').isAfter() ) ) || (pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.REQUESTED);

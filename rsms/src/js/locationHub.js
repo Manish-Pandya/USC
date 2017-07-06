@@ -272,12 +272,14 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
         return deferred.promise;
     }
 
-    factory.saveRoom = function(roomDto){
+    factory.saveRoom = function (roomDto) {
+        console.log(roomDto);
         $rootScope.validationError='';
         if(!roomDto.Key_id){
             var defer = $q.defer();
             if(this.roomAlreadyExists(roomDto)){
-                $rootScope.validationError="Room "+roomDto.Name+" already exists in "+ this.getBuildingByRoom(roomDto).Name+'.';
+                $rootScope.validationError = "Room " + roomDto.Name + " already exists in " + this.getBuildingByRoom(roomDto).Name + '.';
+                alert($rootScope.validationError);
                 roomDto.IsDirty=false;
                 return
             }
@@ -299,7 +301,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
     {
         var i=this.rooms.length;
         while(i--){
-            if(this.rooms[i].Name.toLowerCase()==room.Name.toLowerCase() && this.rooms[i].Building_id == room.Building_id)return true;
+            if (this.rooms[i].Key_id && this.rooms[i].Name.toLowerCase()==room.Name.toLowerCase() && this.rooms[i].Building_id == room.Building_id)return true;
         }
         return false;
     }
@@ -430,7 +432,6 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
     $rootScope.rbf = roleBasedFactory;
     $scope.constants = Constants;
     $scope.convenienceMethods = convenienceMethods;
-    $scope.editRoom = false;
     $scope.editRoom = function (room) {
 
         if (!room) {
@@ -462,7 +463,6 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
         if (!room.Key_id) {
             $scope.rooms.splice($scope.rooms.indexOf(room), 1);
         }
-        $scope.editRoom = false;
         room.edit = false;
     }
 
@@ -541,12 +541,10 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
                                 $scope.rooms = collection;
                             }
                             room.edit = false;
-                            $scope.editRoom = false;
-                        },
+                    },
                     function () {
                         $scope.error = 'The' + obj.Class + ' could not be saved.  Please check your internet connection and try again.';
                         obj.IsDirty = false;
-                        $scope.editRoom = false;
                     }
                 )
                 }
@@ -555,51 +553,14 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
 
     }
 
-    $scope.handlePI = function (pi, adding, room) {
-        pi.saving = true;
-        $scope.modalError = "";
-        var originalRoom = $scope.roomCopy;
-        if (!room.Key_id) {
-            room.PrincipalInvestigators.push(pi);
-            return;
-        }
-        var roomDto = {
-            Class: "RelationshipDto",
-            relation_id: room.Key_id,
-            master_id: pi.Key_id,
-            add: adding
-        }
-        if (adding) {
-            var url = GLOBAL_WEB_ROOT + 'ajaxaction.php?action=savePIRoomRelation';
-            $rootScope.saving = $q.all([convenienceMethods.saveDataAndDefer(url, roomDto)]).then(
-                function (r) {
-                    var returnedRoom = r[0];
-                    var rooms = locationHubFactory.rooms;
-                    var i = rooms.length;
-                    while (i--) {
-                        if (returnedRoom.Key_id === rooms[i].Key_id) {
-                            console.log(room);
-                            var originalRoom = $scope.roomCopy = room;
-                            break;
-                        }
-                    }
-                    pi.saving = false;
-                    $scope.pis.selected = null;
-                    originalRoom.PrincipalInvestigators = room.PrincipalInvestigators = [];
-                    originalRoom.PrincipalInvestigators = room.PrincipalInvestigators = returnedRoom.PrincipalInvestigators;
-
-                },
-                function () {
-                    pi.saving = false;
-                    var added = adding ? "added" : "removed";
-                    $scope.error = "The PI could not be " + added + ".  Please check your internet connection and try again.";
-                }
-            );
+    $scope.handlePI = function (pi, idx) {
+        if (idx == undefined) {
+            $scope.roomCopy.PrincipalInvestigators.push(pi);
         } else {
-            $scope.removeRoom(room, pi);
+            $scope.roomCopy.PrincipalInvestigators.splice(idx, 1);
         }
-
     }
+
     $scope.removeRoom = function (room, pi) {
         var modalInstance = $modal.open({
             templateUrl: 'roomConfirmationModal.html',

@@ -64,6 +64,17 @@ angular.module('00RsmsAngularOrmApp')
 
         }
 
+        $scope.setPickupDate = function (pickup) {
+
+            var pickupCopy = dataStoreManager.createCopy(pickup);
+
+            pickupCopy.Pickup_date = convenienceMethods.setMysqlTime(pickup.view_Pickup_date);
+            af.savePickup(pickup, pickupCopy, true).then(function (r) {
+                pickup.Pickup_date = r.Pickup_date;
+                pickup.editDate = false;
+            });
+
+        }
 
 
   })
@@ -139,6 +150,7 @@ angular.module('00RsmsAngularOrmApp')
           .then(
               function (piAuths) {
                   $rootScope.piAuths = [];
+                  $rootScope.allAuths = piAuths;
                   var piAuths = _.groupBy(dataStore.PIAuthorization, 'Principal_investigator_id');
                   for (var pi_id in piAuths) {
                       var newest_pi_auth = piAuths[pi_id].sort(function (a, b) {
@@ -157,12 +169,12 @@ angular.module('00RsmsAngularOrmApp')
       }
 
       $rootScope.piAuthsPromise = af.getAllPIs().then(getAllPIAuthorizations);
-      $rootScope.search = function (filterObj,auths) {
+      $rootScope.search = function (filterObj) {
         if (!filterObj.fromDate) return $scope.piAuths;
-        $scope.filtered = auths.filter(function (a) {
-            var d = moment(a.Approval_date);
-            if (d < moment(filterObj.fromDate)) return false;
-            if (filterObj.toDate && d > moment(filterObj.toDate)) return false;
+        $scope.filtered = $rootScope.allAuths.filter(function (a) {
+            var d = a.Approval_date;
+            if (d < convenienceMethods.setMysqlTime(filterObj.fromDate)) return false;
+            if (filterObj.toDate && d > convenienceMethods.setMysqlTime(filterObj.toDate)) return false;
             return true;
         });
         console.log($scope.filtered);
@@ -357,6 +369,7 @@ angular.module('00RsmsAngularOrmApp')
                 Class: "PickupLot",
                 Currie_level: 0,
                 Waste_bag_id: wasteBag.Key_id,
+                Waste_type_id: Constants.WASTE_TYPE.SOLID,
                 Isotope_id:null
             }]
         }
@@ -366,6 +379,7 @@ angular.module('00RsmsAngularOrmApp')
             controller: 'DrumAssignmentCtrl'
         });
     }
+
 
     $scope.drumModal = function(object){
         var modalData = {};
@@ -507,6 +521,19 @@ angular.module('00RsmsAngularOrmApp')
                         return drum;
                     }
             );
+        }
+
+        $scope.addPickupLot = function (wasteBag) {
+            wasteBag.PickupLots.push({
+                Class: "PickupLot",
+                Currie_level: 0,
+                Waste_bag_id: wasteBag.Key_id,
+                Isotope_id: null
+            });
+        }
+
+        $scope.removePickupLot = function (wasteBag, index) {
+            wasteBag.PickupLots.splice(index, 1);
         }
 
         $scope.close = function(){
@@ -1127,6 +1154,18 @@ angular.module('00RsmsAngularOrmApp')
             }
 
             $modalInstance.dismiss();
+        }
+
+        $scope.getHasOriginal = function (auth) {
+            console.log($scope.modalData.pi.Pi_authorization);
+            return $scope.modalData.pi.Pi_authorization.some(function (a) {
+                console.log(a.Amendment_number != null && a.Amendment_number != "0");
+                return !a.Amendment_number || a.Amendment_number == "0";
+            })
+        }
+
+        $scope.evaluateOrignal = function (auth) {
+            if (auth.isOriginal)auth.Amendment_number = null; 
         }
 
         $scope.savePIAuthorization = function (copy, auth, terminated) {

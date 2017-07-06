@@ -12,11 +12,19 @@
             </div>
         </div>
 
-        <div class="control-group">
+        <div class="control-group"  style="width:100%">
             <label class="control-label" for="inputEmail">Amendment Number</label>
             <div class="controls input-append">
-                <input formnovalidate ng-class="{'error': authForm.amendmentNumber.$error && authForm.$submitted}" ng-required="modalData.isAmendment" name="amendmentNumber" ng-model="modalData.PIAuthorizationCopy.Amendment_number" maxlength="35" placeholder="Amendment Number" />
+                <input ng-disabled="modalData.PIAuthorizationCopy.isOriginal" style="width: 40px;border-radius: 0;" formnovalidate ng-class="{'error': authForm.amendmentNumber.$error && authForm.$submitted}" ng-required="modalData.isAmendment" name="amendmentNumber" ng-model="modalData.PIAuthorizationCopy.Amendment_number" maxlength="3" />
                 <span class="red" ng-if="authForm.amendmentNumber.$error && authForm.$submitted">Please provide Amendment Number</span>
+                <label class="checkbox" style="margin-left: 5px;line-height: 27px; display:inline-block">
+                    <input type="checkbox" 
+                           ng-init="modalData.PIAuthorizationCopy.isOriginal = modalData.PIAuthorizationCopy.Key_id && (!modalData.PIAuthorizationCopy.Amendment_number || modalData.PIAuthorizationCopy.Amendment_number == '0')"
+                           ng-disabled="getHasOriginal(modalData.PIAuthorizationCopy)"
+                           ng-model="modalData.PIAuthorizationCopy.isOriginal" ng-change="evaluateOrignal(modalData.PIAuthorizationCopy)" />
+                    <span class="metro-checkbox" ng-if="!getHasOriginal(modalData.PIAuthorizationCopy)">Original Authorization</span>
+                    <span class="metro-checkbox" ng-if="getHasOriginal(modalData.PIAuthorizationCopy)">Orignal Authorization already exists</span>
+                </label>
             </div>
         </div>
 
@@ -26,6 +34,7 @@
                 <input ng-model="modalData.PIAuthorizationCopy.Authorization_number" placeholder="Authorization Number" />
             </div>
         </div>
+
         <div class="control-group">
             <label class="control-label bold">Rooms</label>
             <div class="controls" ng-repeat="room in modalData.pi.Rooms | orderBy:'Building.Name' track by $index">

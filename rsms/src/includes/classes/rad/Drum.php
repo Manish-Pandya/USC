@@ -43,9 +43,9 @@ class Drum extends RadCrud {
 	);
 
 	/** Relationships */
-	protected static $WASTEBAGS_RELATIONSHIP = array(
-			"className" => "WasteBag",
-			"tableName" => "waste_bag",
+	protected static $PICKUP_LOTS_RELATIONSHIP = array(
+			"className" => "PickupLot",
+			"tableName" => "pickup_lot",
 			"keyName"	=> "key_id",
 			"foreignKeyName"	=> "drum_id"
 	);
@@ -92,8 +92,8 @@ class Drum extends RadCrud {
 	/** String of details about this drum's shipping. */
 	private $shipping_info;
 
-	/** Array of Waste Bags that filled this drum*/
-	private $wasteBags;
+	/** Array of Solid Pickup Lots that filled this drum*/
+	private $pickupLots;
 
 	/** Array of Scint Vial collections in this drum */
 	private $scintVialCollections;
@@ -164,15 +164,17 @@ class Drum extends RadCrud {
 	public function getShipping_info() { return $this->shipping_info; }
 	public function setShipping_info($newInfo) { $this->shipping_info = $newInfo; }
 
-	public function getWasteBags() {
-		if($this->wasteBags === NULL) {
+	public function getPickupLots() {
+		if($this->pickupLots === NULL) {
 			$thisDao = new GenericDAO($this);
-			$this->wasteBags = $thisDao->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$WASTEBAGS_RELATIONSHIP));
+			$this->pickupLots = $thisDao->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PICKUP_LOTS_RELATIONSHIP));
 		}
-		return $this->wasteBags;
+        $LOG = Logger::getLogger(__FUNCTION__);
+        $LOG->fatal($this->pickupLots);
+		return $this->pickupLots;
 	}
-	public function setWasteBags($newBags) {
-		$this->wasteBags = $newBags;
+	public function setPickupLots($newBags) {
+		$this->pickupLots = $newBags;
 	}
 
 	public function getScintVialCollections(){
@@ -213,11 +215,11 @@ class Drum extends RadCrud {
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->debug('getting contents for drum');
 		$amounts = array();
-		foreach($this->getWasteBags() as $bag){
-			$LOG->debug($bag);
-			if($bag->getParcelUseAmounts() != NULL){
-				$amounts = array_merge($amounts, $bag->getParcelUseAmounts());
-			}
+		foreach($this->getPickupLots() as $lot){
+			$amt = new ParcelUseAmount();
+            $amt->setIsotope_id($lot->getIsotope_id());
+            $amt->setCurie_level($lot->getCurie_level());
+            array_push($amounts, $amt);
 		}
 		foreach($this->getScintVialCollections() as $collection){
 			if($collection->getParcel_use_amounts() != NULL){

@@ -193,7 +193,7 @@
         </div>
     </div>
 
-    <div class="card full carboys" ng-click="af.setSelectedView('carboys')">
+    <div class="card full carboys" ng-click="af.setSelectedView('carboys')" ng-init="cycles = (pi.CarboyUseCycles | filter: {'Status':Constants.CARBOY_USE_CYCLE.STATUS.IN_USE})">
         <h3 class="card-header padding" ng-show="cycles.length">
             <i class="icon-carboy"></i><span class="bold">{{cycles.length}} Carboy<span ng-if="cycles.length != 1">s</span></span>
             <a ng-click="openModal('views/admin/admin-modals/carboy-assignment')" class="btn btn-success left"><i class="icon-carboy"></i>Assign Carboy</a>
@@ -211,7 +211,7 @@
                     <h3>Lab Date</h3>
                     <h3>mCi</h3>
                 </div>
-                <div class="table-row" ng-repeat="cycle in cycles = (pi.CarboyUseCycles | filter: {'Status':Constants.CARBOY_USE_CYCLE.STATUS.IN_USE})">
+                <div class="table-row" ng-repeat="cycle in cycles">
                     <div>{{cycle.Carboy.Carboy_number}}</div>
                     <div>{{cycle.Room.Name}}</div>
                     <div>{{cycle.Lab_date | dateToISO}}</div>

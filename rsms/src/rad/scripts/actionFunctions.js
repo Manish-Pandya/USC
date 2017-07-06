@@ -74,26 +74,27 @@ angular
             {
                 for (var prop in object) {
                     var p = prop.toLowerCase();
-                    if (p.indexOf("view_") != -1 && p.indexOf("date") != -1)
+                    if (p.indexOf("view_") != -1 && p.indexOf("date") != -1) {
                         var actualProp = prop.replace("view_", "");
                         object[actualProp] = convenienceMethods.setMysqlTime(object[prop]);
                     }
-                    if(!saveChildren)saveChildren = false;
-                    if (!seg) seg = false;
-                    console.log('save children in af.save: ',saveChildren);
-                    //set a root scope marker as the promise so that we can use angular-busy directives in the view
-                    return $rootScope[object.Class+'Saving'] = genericAPIFactory.save( object, seg, saveChildren )
-                        .then(
-                            function( returnedData){
-                                return returnedData.data;
-                            },
-                            function( error )
-                            {
-                                //object.Name = error;
-                               // object.setIs_active( !object.Is_active );
-                                $rootScope.error = 'error';
-                            }
-                        );
+                }
+                if (!saveChildren) saveChildren = false;
+                if (!seg) seg = false;
+                console.log('save children in af.save: ', saveChildren);
+                //set a root scope marker as the promise so that we can use angular-busy directives in the view
+                return $rootScope[object.Class + 'Saving'] = genericAPIFactory.save(object, seg, saveChildren)
+                    .then(
+                    function (returnedData) {
+                        return returnedData.data;
+                    },
+                    function (error) {
+                        //object.Name = error;
+                        // object.setIs_active( !object.Is_active );
+                        $rootScope.error = 'error';
+                    }
+                    );
+                
             }
 
             af.getById = function( objectFlavor, key_id )

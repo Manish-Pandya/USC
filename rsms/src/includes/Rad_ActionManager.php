@@ -107,7 +107,7 @@ class Rad_ActionManager extends ActionManager {
     function getDrumById($id = NULL) {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 
-        $id = $this->getValueFromRequest('id', $id);
+        if($id == null)$id = $this->getValueFromRequest('id', $id);
 
         if( $id !== NULL ) {
             $dao = $this->getDao(new Drum());
@@ -1128,7 +1128,7 @@ class Rad_ActionManager extends ActionManager {
 
                     }
                     $bagDao->save($bag);
-                    
+
                 }
 
                 foreach($svCollections as $collectionArray){
@@ -1216,7 +1216,7 @@ class Rad_ActionManager extends ActionManager {
 
     function saveWasteBag() {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-        $decodedObject = $this->convertInputJson();
+        $decodedObject =  $this->convertInputJson();
         $LOG->debug($decodedObject);
         if( $decodedObject === NULL ) {
             return new ActionError('Error converting input stream to WasteBag', 202);
@@ -1226,8 +1226,15 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new WasteBag());
+            $lots = $decodedObject->getPickupLots();
             $decodedObject = $dao->save($decodedObject);
-            return $decodedObject;
+
+            $lotDao = new GenericDAO(new PickupLot());
+            foreach($lots as $lot){
+                if(is_array($lot))$lot = JsonManager::assembleObjectFromDecodedArray($lot);
+                $lot = $lotDao->save($lot);
+            }
+            return $this->getWasteBagById($decodedObject->getKey_id());
         }
     }
     function changeWasteBag(WasteBag $bag = null) {
@@ -2686,7 +2693,7 @@ class Rad_ActionManager extends ActionManager {
             else{
                 $newBag = new WasteBag();
                 $newBag->setPrincipal_investigator_id($piId);
-                $newBag = $this->saveWasteBag($newBag);                
+                $newBag = $this->saveWasteBag($newBag);
                 $newBag->setEntityMaps($entityMaps);
 
                 $decodedObject->setWaste_bag_id($newBag->getKey_id());

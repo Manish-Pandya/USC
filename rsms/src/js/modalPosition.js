@@ -33,6 +33,13 @@ angular.module('modalPosition', [])
                     var topMargin = $window.innerHeight - element[0].clientHeight;
                     $(element[0]).css({ top: (topMargin / 2) - 20, marginTop: -10 });
                 }
+                if ($('.multiple-disposal-modal').length) {
+                    $(element[0]).width(900);
+                    $(element[0]).css({ 'left': ($window.innerWidth - 900) / 2 + 'px', 'marginLeft': 0, maxHeight: $window.innerHeight * .95 });
+                    $(element[0]).find('.modal-body').css({ maxHeight: $window.innerHeight * .85 });
+                    var topMargin = $window.innerHeight - element[0].clientHeight;
+                    $(element[0]).css({ top: (topMargin / 2) - 20, marginTop: -10 });
+                }
             }
 
 
