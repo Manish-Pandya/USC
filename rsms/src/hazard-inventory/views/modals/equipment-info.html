@@ -1,0 +1,52 @@
+<div class="modal-header footer-present" style="padding:0;">
+    <h2 style="padding:5px;" class="redBg">{{pi.User.Name}}'s Biosafety Cabinets</h2>
+</div>
+<div class="modal-body wide-modal">
+    <table class="table table-bordered">
+        <tr>
+            <th>BUILDING</th>
+            <th>ROOM</th>
+            <th>TYPE</th>
+            <th>MANUFACTURER</th>
+            <th>MODEL</th>
+            <th>SERIAL #</th>
+            <th>CERT-DATE</th>
+            <th>PI(s)</th>
+        </tr>
+        <tr ng-repeat="cab in cabs" ng-class="{'inactive':cab.EquipmentInspections[0].Fail_date}">
+            <td>
+                {{cab.EquipmentInspections[0].Room.Building.Alias || cab.EquipmentInspections[0].Room.Building.Name}}
+            </td>
+            <td>
+                {{cab.EquipmentInspections[0].Room.Name}}
+            </td>
+            <td>
+                {{cab.Type}}
+            </td>
+            <td>
+                {{cab.Make}}
+            </td>
+            <td>
+                {{cab.Model}}
+            </td>
+            <td>
+                {{cab.Serial_number}}
+            </td>
+            <td ng-if="cab.EquipmentInspections[0].Certification_date && !cab.EquipmentInspections[0].Fail_date">
+                {{cab.EquipmentInspections[0].Certification_date | dateToISO}}
+            </td>
+            <td ng-if="cab.EquipmentInspections[0].Fail_date">
+                {{cab.EquipmentInspections[0].Fail_date | dateToISO}}
+            </td>            
+            <td ng-if="!cab.EquipmentInspections[0].Certification_date && !cab.EquipmentInspections[0].Fail_date">
+                Not Yet Certified
+            </td>
+            <td>
+                <p ng-repeat="pi in cab.EquipmentInspections[0].PrincipalInvestigators">{{pi.Name}}</p>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="modal-footer">
+    <a ng-click="close()" class="btn left btn-large"><i class="icon-cancel-2"></i>Close</a>
+</div>

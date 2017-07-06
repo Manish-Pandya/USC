@@ -1223,15 +1223,29 @@ class ActionManager {
         }
         else{
             $dao = $this->getDao(new Room());
-            $room = $dao->save($decodedObject);
-            if($decodedObject->getPrincipalInvestigators() != NULL){
+            $room = $this->getRoomById($decodedObject->getKey_id());
+            if(is_array( $decodedObject->getPrincipalInvestigators() )){
+                $LOG->fatal($decodedObject);
+
+                foreach ($room->getPrincipalInvestigators() as $child){
+                    $dao->removeRelatedItems($child->getKey_id(),$room->getKey_id(),DataRelationship::fromArray(Room::$PIS_RELATIONSHIP));
+                }
+
                 foreach($decodedObject->getPrincipalInvestigators() as $pi){
                     //$LOG->fatal($pi["Key_id"] . ' | room: ' . $room->getKey_id());
                     if(gettype($pi) == "array"){
-                        $this->savePIRoomRelation($pi["Key_id"],$room->getKey_id(),true);
+                        $piId = $pi["Key_id"];
+                    }else{
+                        $piId = $pi->getKey_id();
                     }
+                    $dao->addRelatedItems($piId,$room->getKey_id(),DataRelationship::fromArray(Room::$PIS_RELATIONSHIP));
+
                 }
             }
+
+            $room = $dao->save($decodedObject);
+
+
             $entityMaps = array();
             $entityMaps[] = new EntityMap("eager","getPrincipalInvestigators");
             $entityMaps[] = new EntityMap("lazy","getHazards");

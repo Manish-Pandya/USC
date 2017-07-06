@@ -25,7 +25,9 @@
                 <h3>Principal Investigator:</h3> <p>{{inspection.PrincipalInvestigator.User.Name}}</p>
             </span>
             <span class="span3 pull-right">
-                <h3>Inspection Date:</h3> <p>{{inspection.Date_started | dateToISO:'inspDate'}}</p>
+                <h3>Inspection Date:</h3> 
+                <p ng-if="!inspection.editDate">{{inspection.Date_started | dateToISO:inspection:'Date_started':true}} <i class="icon-pencil primary" ng-click="inspection.editDate = true" style="margin:4px 0px 0 0"></i></p>
+                <p ng-if="inspection.editDate"><input ng-model="inspection.view_Date_started" style="width:90px"/> <i class="icon-checkmark success" ng-click="updateInspectionDate()" style="margin:4px 6px 0 0"></i><i class="icon-cancel-2 red" ng-click="inspection.editDate = false" style="margin:4px 0 0 0"></i></p>
             </span>
         </div>
 
@@ -75,7 +77,6 @@
 </span>
         </div>
     </div>
-
 <h2 class="alert alert-info" ng-if="inspection.Cap_submitted_date && rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_INSPECTOR]])">
     <span ng-if="!inspection.Date_closed">The corrective action plan for this inspection was submitted on {{inspection.Cap_submitted_date | dateToISO}}</span>
     <span ng-if="inspection.Date_closed">This inspection was closed out on {{inspection.Date_closed | dateToISO}}</span>

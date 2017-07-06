@@ -880,7 +880,12 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         }
         return false;
     }
-
+    $scope.updateInspectionDate = function () {
+        var inspectionDto = angular.copy($scope.inspection);
+        inspectionDto.Date_started = convenienceMethods.setMysqlTime($scope.inspection.view_Date_started);
+        console.log(inspectionDto);
+        $scope.saving = postInspectionFactory.saveInspection($scope.inspection, inspectionDto).then(function (i) { $scope.inspection.Date_started = i.Date_started; $scope.inspection.editDate = false; });
+    }
     $scope.todayOrAfter = function (d) {
         var calDate = Date.parse(d);
         //today's date parsed into seconds minus the number of seconds in a day.  We subtract a day so that today's date will return true

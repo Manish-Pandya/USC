@@ -34,7 +34,7 @@ class Room extends GenericCrud {
 							);
 
 
-	protected static $PIS_RELATIONSHIP = array(
+	public static $PIS_RELATIONSHIP = array(
 			"className"	=>	"PrincipalInvestigator",
 			"tableName"	=>	"principal_investigator_room",
 			"keyName"	=>	"principal_investigator_id",
@@ -149,7 +149,7 @@ class Room extends GenericCrud {
 	public function setRad_hazards_present($rad_hazards_present){ $this->rad_hazards_present = (boolean) $rad_hazards_present; }
 
 	public function getBio_hazards_present() {
-        $this->getHazardTypesArePresent();        
+        $this->getHazardTypesArePresent();
         return $this->bio_hazards_present;
     }
 	public function setBio_hazards_present($bio_hazards_present){ $this->bio_hazards_present = (boolean) $bio_hazards_present; }
@@ -242,7 +242,7 @@ class Room extends GenericCrud {
 	public function setHazards($hazards){ $this->hazards = $hazards; }
 
 	public function getPrincipalInvestigators(){
-		if($this->principalInvestigators == null) {
+		if($this->principalInvestigators == null && !is_array($this->principalInvestigators)) {
 			$thisDAO = new GenericDAO($this);
 			$this->principalInvestigators = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PIS_RELATIONSHIP), NULL, NULL, TRUE);
 		}
