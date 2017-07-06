@@ -90,7 +90,7 @@
 
     <tbody>
         <!--ng-if="!room.isNew"<tr ng-if="room.isNew" ng-repeat="room in rooms" ng-class="{'inactive': !room.Is_active, 'new': room.isNew, 'edit':room.edit}">-->
-        <tr ng-repeat="room in (filtered = (rooms | genericFilter:search)) | orderBy:['isNew','Campus_name', 'Building.Name', convenienceMethods.sortAlphaNum('Name')] | paginationFilter:paginationObj.start:100" ng-class="{'inactive': !room.Is_active, 'new': room.isNew, 'edit':room.edit}">
+        <tr ng-repeat="room in (filtered = (rooms | orderBy:['isNew','Campus_name', 'Building_name', convenienceMethods.sortAlphaNum('Name')] | genericFilter:search)) | paginationFilter:paginationObj.start:100" ng-class="{'inactive': !room.Is_active, 'new': room.isNew, 'edit':room.edit}">
             <td style="width:6%;">
                 <button ng-disabled="editingRoom || !rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" ng-if="!room.edit" class="edit btn btn btn-primary" ng-click="editRoom(room)" alt="Edit" title="Edit"><i class="icon-pencil"></i></button>
                 <button ng-disabled="editingRoom || !rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-danger btn DeactivateeRow" ng-click="confirmDeactivate(room)" ng-if="room.Is_active && !room.edit" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
@@ -116,7 +116,7 @@
 
             <td style="width:8%;">
                 <input ng-model="roomCopy.Name" placeholder="Name" ng-if="room.edit" style="max-width:115px" />
-                <span ng-if="!room.edit">{{room.Name}}</span>
+                <span ng-if="!room.edit">{{room.Name}} {{room.Campus_name}}</span>
             </td>
 
             <td style="width:9%" class="hazard-icons">
@@ -147,17 +147,17 @@
                     <li ng-if="room.edit">
                         <div class="control-group" style="width:40%" ng-if="room.edit">
                             <div class="controls">
-                                <input ng-if="!pis" style="background:white;border-color:#999" type="text" placeholder="Getting PIs..." disabled="disabled">
-                                <i ng-if="!pis" class="icon-spinnery-dealie spinner small" style="margin-left:0px;"></i>
-                                <ui-select ng-if="pis" ng-model="pis.selected" theme="selectize" ng-disabled="disabled" on-select="handlePI($item, true, room)">
+                                <input ng-show="!pis" style="background:white;border-color:#999" type="text" placeholder="Getting PIs..." disabled="disabled">
+                                <i ng-show="!pis" class="icon-spinnery-dealie spinner small" style="margin-left: 177px;margin-top: -34px;position:absolute"></i>
+                                <ui-select ng-show="pis" ng-model="pis.selected" theme="selectize" ng-disabled="disabled" on-select="handlePI($item)">
                                     <ui-select-match placeholder="Select A PI">{{$select.selected.User.Name}}</ui-select-match>
                                     <ui-select-choices repeat="pi in pis | propsFilter: {User.Name: $select.search}">
                                         <div once-text="pi.User.Name"></div>
                                     </ui-select-choices>
                                 </ui-select>
                             </div>
-                            <p ng-repeat="pi in room.PrincipalInvestigators" style="margin-bottom:0;margin-top:2px">
-                               {{pi.User.Name}}<i ng-click="handlePI(pi, false, room)" style="margin: 5px;" class="icon-cancel-2 danger"></i>
+                            <p ng-repeat="pi in roomCopy.PrincipalInvestigators" style="margin-bottom:0;margin-top:2px">
+                               {{pi.User.Name}}<i ng-click="handlePI(pi, $index)" style="margin: 5px;" class="icon-cancel-2 danger"></i>
                             </p>
                         </div>
                         <ul>

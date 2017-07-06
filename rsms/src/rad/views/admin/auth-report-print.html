@@ -1,4 +1,4 @@
-﻿<div cg-busy="{promise:piAuthsPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:piAuthsPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div class="auths well card" style="margin:0; padding:0; border:none; box-shadow:none; width:100%">
     <h1 class="hide-print">
         <i class="icon-copy" style="page-break-after:avoid; page-break-before:avoid"></i>Print Authorization Report
@@ -8,64 +8,67 @@
         </a>
         <a class="btn btn-info left" ng-click="print();"><i class="icon-printer"></i>Print</a>
         <span ng-if="filterObj.showNew" style="display:block">
-            from <input placeholder="mm/dd/yy" ng-model="filterObj.fromDate" /> to <input placeholder="mm/dd/yy" ng-model="filterObj.toDate" /><a class="btn btn-success" ng-click="filtered = search(filterObj, piAuths)"><i class="icon-search"></i></a>
+            from <input placeholder="mm/dd/yy" ng-model="filterObj.fromDate" /> to <input placeholder="mm/dd/yy" ng-model="filterObj.toDate" /><a class="btn btn-success" ng-click="filtered = search(filterObj)"><i class="icon-search"></i></a>
         </span>
     </h1>
     <h3 ng-if="!piAuths.length">No Authorizations</h3>
     <span ng-init="filterObj"></span>
     <div class="card full authReports" ng-if="piAuths.length">
-        <div class="fake-table striped print-it">
-            <div class="table-header">
-                <h3 ng-if="filterObj.showNew">Date</h3>
-                <h3>Investigator<br /><input ng-model="filterObj.piName" /></h3>
-                <h3 ng-if="!filterObj.showNew">Department<br /><input ng-model="filterObj.department" /></h3>
-                <h3 ng-if="!filterObj.showNew">
-                    Building<br /><input ng-model="filterObj.building" />
-                </h3>
-                <h3>Room<br /><input ng-model="filterObj.room" /></h3>
-                <h3 ng-if="!filterObj.showNew">Auth #</h3>
+        <table class="table striped">
+            <tr class="table-header">
+                <th ng-if="filterObj.showNew">Date</th>
+                <th>Investigator<br /><input ng-model="filterObj.piName" /></th>
+                <th ng-if="!filterObj.showNew">Department<br /><input ng-model="filterObj.department" /></th>
+                <th ng-if="!filterObj.showNew">
+                    <span class="span6" style="margin-left:0">Building<br /><input ng-model="filterObj.building" /></span>
+                </th>
+                <th ng-if="!filterObj.showNew">
+                    <span class="span6" style="margin-left:0">Room<br /><input ng-model="filterObj.room" /></span>
+                </th>
+                <th ng-if="filterObj.showNew">Amendments</th>
+                <th ng-if="filterObj.showNew">License Authorization</th>
+                <th ng-if="!filterObj.showNew">Auth #</th>
 
-                <h3 ng-if="filterObj.showNew">Amendments</h3>
-                <h3 ng-if="filterObj.showNew">License Authorization</h3>
-            </div>
-            <div class="table-row" ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: 'PiName'">
-                <div ng-if="filterObj.showNew" style="padding:10px !important;">{{piAuth.Approval_date | dateToIso}}</div>
-                <div>
+            </tr>
+            <tr class="table-row" ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: 'PiName'">
+                <td ng-if="filterObj.showNew" style="padding:10px !important;">{{piAuth.Approval_date | dateToIso}}</td>
+                <td>
                     {{piAuth.PiName}}
-                </div>
+                </td>
 
-                <div ng-if="filterObj.showNew">{{piAuth.Update_notes}}</div>
-                <div ng-if="filterObj.showNew">{{piAuth.New_notes}}</div>
+                <td ng-if="filterObj.showNew"><span ng-if="piAuth.Amendment_number && piAuth.Amendment_number != 0">{{piAuth.Update_notes || piAuth.New_notes}}</span></td>
+                <td ng-if="filterObj.showNew"><span ng-if="!piAuth.Amendment_number || piAuth.Amendment_number == 0">{{piAuth.New_notes ||piAuth.Update_notes}}</span></td>
 
-                <div ng-if="!filterObj.showNew">
+                <td ng-if="!filterObj.showNew">
                     <ul>
                         <li ng-repeat="dept in piAuth.Departments">
                             {{dept.Name}}
                         </li>
                     </ul>
 
-                </div>
-                <div ng-if="!filterObj.showNew">
+                </td>
+                <td ng-if="!filterObj.showNew">
                     <ul class="selectedBuildings">
                         <li ng-repeat="(key, r) in piAuth.Rooms | groupBy: 'Building.Name'">
+                            <div>
                                 <h4>{{r[0].Building.Alias || r[0].Building.Name}}</h4>
+                            </div>
                         </li>
                     </ul>
-                </div>
-                <div>
+                </td>
+                <td ng-if="!filterObj.showNew">
                     <ul class="selectedBuildings">
                         <li ng-repeat="(key, r) in piAuth.Rooms | groupBy: 'Building.Name'">
-                                <ul>
-                                    <li ng-repeat="(key, room) in rooms = (r | activeOnly | orderBy: 'Name')">{{room.Name}}</li>
-                                </ul>
+                            <ul>
+                                <li ng-repeat="(key, room) in rooms = (r | activeOnly | orderBy: 'Name')">{{room.Name}}</li>
+                            </ul>
                         </li>
                     </ul>
-                </div>
-                <div ng-if="!filterObj.showNew">
+                </td>
+                <td ng-if="!filterObj.showNew">
                     {{piAuth.Authorization_number}}
-                </div>
-            </div>
-        </div>
-
+                </td>
+            </tr>
+        </table>
     </div>
 </div>

@@ -228,11 +228,14 @@ class Constants  {
         }
     }
 
-    public static ROOM_HAZARDS = {
-        BIO_HAZARDS_PRESENT: { label: "Biological Hazards", value: "Bio_hazards_present" },
-        CHEM_HAZARDS_PRESENT: { label: "Chemical Hazards", value: "Chem_hazards_present" },
-        RAD_HAZARDS_PRESENT: { label: "Radiation Hazards", value: "Rad_hazards_present" }
-    }
+    public static ROOM_HAZARDS = [
+        { label: "Biological Hazards", value: "Bio_hazards_present" },
+        { label: "Chemical Hazards", value: "Chem_hazards_present" },
+        { label: "Radiation Hazards", value: "Rad_hazards_present" }
+        { label: "Recombinant DNA", value: "Recombinant_dna_present" }
+        { label: "Lasers", value: "Lasers_dna_present" }
+        { label: "Xrays", value: "Xrays_present" }
+    ]
 
     public static ROOM_HAZARD_STATUS = {
         IN_USE: { KEY: "IN_USE", LAB_LABEL: "Used by my lab in room", ADMIN_LABEL: "In use in room" },
