@@ -31,6 +31,11 @@ angular
         templateUrl: "views/home.html",
         controller: "IBCCtrl"
     })
+        .state('ibc.my-protocols', {
+        url: "/my-protocols:id/",
+        templateUrl: "views/my-protocols.html",
+        controller: "IBCMyProtocolsCtrl"
+    })
         .state('ibc.assign-protocols-for-review', {
         url: "/assign-protocols-for-review",
         templateUrl: "views/assign-protocols-for-review.html",
