@@ -508,6 +508,10 @@ Constants.ROOM_HAZARDS = [
     { label: "Chemical Hazards", value: "Chem_hazards_present" },
     { label: "Radiation Hazards", value: "Rad_hazards_present" },
     { label: "Recombinant DNA", value: "Recombinant_dna_present" },
+    { label: "Corrosive Gas", value: "Corrosive_gas_present" },
+    { label: "Flammable Gas", value: "Flammable_gas_present" },
+    { label: "Toxic Gas", value: "Toxic_gas_present" },
+    { label: "HF", value: "Hf_present" },
     { label: "Lasers", value: "Lasers_dna_present" },
     { label: "Xrays", value: "Xrays_present" }
 ];

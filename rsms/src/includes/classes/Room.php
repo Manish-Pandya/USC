@@ -95,6 +95,10 @@ class Room extends GenericCrud {
 	private $lasers_present;
 	private $recombinant_dna_present;
 	private $xrays_present;
+    private $flammable_gas_present;
+	private $toxic_gas_present;
+	private $corrosive_gas_present;
+	private $hf_present;
 
 	/** Array of solid waste containers present in this room */
 	private $solidsContainers;
@@ -183,6 +187,47 @@ class Room extends GenericCrud {
 	public function setXrays_present($xrays_present){
 		$this->xrays_present = $xrays_present;
 	}
+
+    public function getCorrosive_gas_present(){
+        if($this->corrosive_gas_present == null){
+            $this->getHazardTypesArePresent();
+        }
+		return $this->corrosive_gas_present;
+	}
+	public function setCorrosive_gas_present($xrays_present){
+		$this->corrosive_gas_present = $xrays_present;
+	}
+
+    public function getFlammable_gas_present(){
+        if($this->flammable_gas_present == null){
+            $this->getHazardTypesArePresent();
+        }
+		return $this->flammable_gas_present;
+	}
+	public function setFlammable_gas_present($xrays_present){
+		$this->flammable_gas_present = $xrays_present;
+	}
+
+    public function getToxic_gas_present(){
+        if($this->toxic_gas_present == null){
+            $this->getHazardTypesArePresent();
+        }
+		return $this->toxic_gas_present;
+	}
+	public function setToxic_gas_present($xrays_present){
+		$this->toxic_gas_present = $xrays_present;
+	}
+
+    public function getHf_present(){
+        if($this->hf_present == null){
+            $this->getHazardTypesArePresent();
+        }
+		return $this->hf_present;
+	}
+	public function setHf_present($xrays_present){
+		$this->hf_present = $xrays_present;
+	}
+
 
 	public function getBuilding_id(){ return $this->building_id; }
 	public function setBuilding_id($building_id){ $this->building_id = $building_id; }
@@ -305,7 +350,7 @@ class Room extends GenericCrud {
         $LOG = Logger::getLogger(__CLASS__ );
         //IDS of the direct children of the root hazard, except General Hazards, which are present in all rooms
         //Per EHS request, added constants for Lasers (10016), Recombinant DNA (2), and X-Rays (10015), as displaying icons for these hazard types per room is useful
-        $branchIds = "1, 10009, 10010, 10016, 2, 10015";
+        $branchIds = "1, 10009, 10010, 10016, 2, 10015, 10675, 10422, 10676";
 
         // Get the db connection
         global $db;
@@ -333,6 +378,10 @@ class Room extends GenericCrud {
         $this->lasers_present = false;
         $this->xrays_present = false;
         $this->recombinant_dna_present = false;
+        $this->flammable_gas_present = false;
+	    $this->toxic_gas_present = false;
+	    $this->corrosive_gas_present = false;
+        $this->hf_present = false;
 
         while($id = $stmt->fetchColumn()){
 			if($id == 1){
@@ -348,6 +397,36 @@ class Room extends GenericCrud {
             }elseif($id == 2){
                 $this->recombinant_dna_present = true;
                 $this->bio_hazards_present = true;
+            }
+
+		}
+
+        $hazIds = "10430, 10433, 10434, 10435, 10677, 10679";
+        $queryString = "SELECT DISTINCT key_id
+                        FROM hazard a
+                        LEFT JOIN principal_investigator_hazard_room b
+                        ON a.key_id = b.hazard_id
+                        LEFT JOIN principal_investigator_room c
+                        ON b.principal_investigator_id = c.principal_investigator_id
+                        LEFT JOIN principal_investigator d
+                        ON b.principal_investigator_id = d.key_id
+                        WHERE a.is_active = true
+                        AND d.is_active = true
+                        AND a.key_id IN ($hazIds)
+                        AND b.room_id = $this->key_id
+                        AND c.room_id = $this->key_id";
+        $stmt = $db->prepare($queryString);
+        $stmt->execute();
+
+        while($id = $stmt->fetchColumn()){			
+            if($id == 10430 || $id == 10433){
+                $this->toxic_gas_present = true;
+            }elseif($id == 10434){
+                $this->corrosive_gas_present = true;
+            }elseif($id == 10435){
+                $this->flammable_gas_present = true;
+            }elseif($id == 10677 || $id == 10679){
+                $this->hf_present = true;
             }
 		}
     }
