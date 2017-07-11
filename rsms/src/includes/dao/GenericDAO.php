@@ -360,9 +360,10 @@ class GenericDAO {
                 OR h.pickup_id = i.key_id
                 AND i.status != 'Requested'
 				WHERE c.authorization_id IN (select key_id from authorization where principal_investigator_id = ? AND original_pi_auth_id = ?)
-				AND b.date_used BETWEEN ? AND ?
-				AND `waste_type_id` = ?
-                AND (f.pickup_id IS NOT NULL OR g.pickup_id IS NOT NULL OR h.pickup_id IS NOT NULL )";
+				AND (((b.date_used BETWEEN ? AND ? AND b.date_used != '0000-00-00 00:00:00')
+                AND (f.pickup_id IS NOT NULL OR g.pickup_id IS NOT NULL OR h.pickup_id IS NOT NULL ))
+				OR (b.date_transferred BETWEEN ? AND ? AND b.date_transferred != '0000-00-00 00:00:00'))
+				AND `waste_type_id` = ?";
 
 		// Get the db connection
 		global $db;
@@ -371,12 +372,14 @@ class GenericDAO {
         $stmt->bindValue(2, $this->modelObject->getAuthorization()->getOriginal_pi_auth_id());
 		$stmt->bindValue(3, $startDate);
 		$stmt->bindValue(4, $endDate);
-		$stmt->bindValue(5, $wasteTypeId);
+        $stmt->bindValue(5, $startDate);
+		$stmt->bindValue(6, $endDate);
+		$stmt->bindValue(7, $wasteTypeId);
         $stmt->execute();
 
 		$total = $stmt->fetch(PDO::FETCH_NUM);
 		$sum = $total[0]; // 0 is the first array. here array is only one.
-		if($sum == NULL)$sum = 0;
+		//if($sum == NULL)$sum = 0;
 		return $sum;
 	}
 
@@ -419,7 +422,46 @@ class GenericDAO {
 
             $sum = $total[0]; // 0 is the first array. here array is only one.
 
+            //get the total waste disposed for this authorization and subtract
+            if($startDate != null){
+                $sql = "SELECT ROUND(SUM(a.curie_level),7)
+                        FROM `parcel_use_amount` a
+                        LEFT JOIN parcel_use b
+                        ON a.parcel_use_id = b.key_id
+                        LEFT JOIN parcel c
+                        ON b.parcel_id = c.key_id
+                        LEFT JOIN waste_bag f
+                        ON a.waste_bag_id = f.key_id
+                        LEFT JOIN carboy_use_cycle g
+                        ON a.carboy_id = g.key_id
+                        LEFT JOIN scint_vial_collection h
+                        ON a.scint_vial_collection_id = h.key_id
+                        LEFT OUTER JOIN pickup i
+                        ON f.pickup_id = i.key_id
+                        OR g.pickup_id = i.key_id
+                        OR h.pickup_id = i.key_id
+                        AND i.status != 'Requested'
+				        WHERE c.authorization_id IN (select key_id from authorization where principal_investigator_id = ? AND original_pi_auth_id = ?)
+				        AND (((b.date_used < ? AND b.date_used != '0000-00-00 00:00:00')
+                        AND (f.pickup_id IS NOT NULL OR g.pickup_id IS NOT NULL OR h.pickup_id IS NOT NULL ))
+				        OR (b.date_transferred < ? AND b.date_transferred != '0000-00-00 00:00:00'))";
+
+                $stmt = $db->prepare($sql);
+                $stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
+                $stmt->bindValue(2, $this->modelObject->getAuthorization()->getOriginal_pi_auth_id());
+                $stmt->bindValue(3, $startDate);
+                $stmt->bindValue(4, $startDate);
+                if ( $stmt->execute() ) {
+                    $totalDisposals = $stmt->fetch(PDO::FETCH_NUM);
+                    $disp = $totalDisposals[0];
+                    $sum = $sum - $disp;
+                }
+            }
+
+
             if($sum == NULL)$sum = 0;
+
+
         }else{
             $error = $stmt->errorInfo();
 			$result = new QueryError($error);
