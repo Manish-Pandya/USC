@@ -124,7 +124,14 @@ class PrincipalInvestigator extends GenericCrud {
 			"tableName" => "pi_wipe_test",
 			"keyName"   => "key_id",
 			"foreignKeyName" => "principal_investigator_id"
-	);   
+	);
+
+	public static $PROTOCOLS_RELATIONSHIP = array(
+			"className" => "IBCProtocol",
+			"tableName" => "protocol_pi",
+			"keyName"   => "key_id",
+			"foreignKeyName" => "protocol_id"
+	);
 
 	/** Base User object that this PI represents */
 	private $user_id;
@@ -187,6 +194,8 @@ class PrincipalInvestigator extends GenericCrud {
 
     private $wipeTests;
 
+	private $protocols;
+
     private $name;
 
 	public function __construct(){
@@ -211,6 +220,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getVerifications");
 		$entityMaps[] = new EntityMap("lazy","getPi_authorization");
 		$entityMaps[] = new EntityMap("lazy","getWipeTests");
+		$entityMaps[] = new EntityMap("lazy","getProtocols");
 
 		$this->setEntityMaps($entityMaps);
 
@@ -470,6 +480,17 @@ class PrincipalInvestigator extends GenericCrud {
 		return $this->wipeTests;
 	}
 	public function setWipeTests($wipeTests){$this->wipeTests = $wipeTests;}
+
+	public function getProtocols(){
+        if($this->protocols === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->protocols = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PROTOCOLS_RELATIONSHIP));
+		}
+		return $this->protocols;
+	}
+	public function setProtocols($protocols){
+		$this->protocols = $protocols;
+	}
 
     public function getName(){
 		if( $this->hasPrimaryKeyValue() && $this->getUser() != NULL ) {
