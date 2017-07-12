@@ -2,8 +2,14 @@
 <div cg-busy="{promise:saving, message:'Saving...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
 <div class="card full">
-    <h1><i class="icon-protocol"></i>Biosafety Protocol Management</h1>
-    <h2><i class="icon-protocol"></i>Principal Investigator: {{pi.data.Name}}</h2>
+    <h1>
+        <i class="icon-protocol"></i>Biosafety Protocol Management
+        <a ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>
+        <a class="btn left btn-primary"  style="margin-left:10px">Prepare a New Biosafety Protocol Application</a>
+    </h1>
+    <h2>
+        <i class="icon-protocol"></i>Principal Investigator: {{pi.data.Name}}
+    </h2>
 </div>
 <br />
 <div class="card full">
