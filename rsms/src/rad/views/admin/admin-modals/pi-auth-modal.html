@@ -20,7 +20,7 @@
                 <label class="checkbox" style="margin-left: 5px;line-height: 27px; display:inline-block">
                     <input type="checkbox" 
                            ng-init="modalData.PIAuthorizationCopy.isOriginal = modalData.PIAuthorizationCopy.Key_id && (!modalData.PIAuthorizationCopy.Amendment_number || modalData.PIAuthorizationCopy.Amendment_number == '0')"
-                           ng-disabled="getHasOriginal(modalData.PIAuthorizationCopy)"
+                           ng-disabled="getHasOriginal(modalData.PIAuthorizationCopy) && (modalData.PIAuthorizationCopy.Amendment_number)"
                            ng-model="modalData.PIAuthorizationCopy.isOriginal" ng-change="evaluateOrignal(modalData.PIAuthorizationCopy)" />
                     <span class="metro-checkbox" ng-if="!getHasOriginal(modalData.PIAuthorizationCopy)">Original Authorization</span>
                     <span class="metro-checkbox" ng-if="getHasOriginal(modalData.PIAuthorizationCopy)">Orignal Authorization already exists</span>

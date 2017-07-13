@@ -267,7 +267,6 @@ class ActionManager {
                 // Make sure they're an Erasmus user by username lookup
                 $dao = $this->getDao(new User());
                 $user = $dao->getUserByUsername($username);
-                $LOG->debug($user);
                 if ($user != null) {
                     // ROLE assignment will be based on username, if it directly matches a role name
                     $roles = array();
@@ -285,10 +284,17 @@ class ActionManager {
                     // return true to indicate success
                     return true;
                 } else {
+                    $LOG->fatal("LOCAL AUTHENTICATION FAILED");
+                    $LOG->fatal($username);
+                    $LOG->fatal($password);
                     // successful LDAP login, but not an authorized Erasmus user, return false
                      $_SESSION['ERROR'] = "The username or password you entered was incorrect.";
                      return false;
                 }
+            }else{
+                $LOG->fatal("LDAP AUTHENTICATION FAILED");
+                $LOG->fatal($username);
+                $LOG->fatal($password);
             }
         }
 
@@ -1795,7 +1801,7 @@ class ActionManager {
             if($user->getPrincipalInvestigator() != null){
                 $pi = $user->getPrincipalInvestigator();
                 $piMaps = array();
-                $piMaps[] = new EntityMap("eager","getLabPersonnel");
+                $piMaps[] = new EntityMap("lazy","getLabPersonnel");
                 $piMaps[] = new EntityMap("eager","getRooms");
                 $piMaps[] = new EntityMap("eager","getDepartments");
                 $piMaps[] = new EntityMap("lazy","getUser");
@@ -2569,13 +2575,15 @@ class ActionManager {
         }
     }
 
-    public function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NULL,$rad = NULL){
+    public function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NULL,$rad = NULL, $roomIds=null){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
 
         $inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
         $piId = $this->getValueFromRequest('piId', $piId);
         $inspectorIds = $this->getValueFromRequest('inspectorIds', $inspectorIds);
         $rad = $this->getValueFromRequest('rad', $rad);
+        $roomIds = $this->getValueFromRequest('roomIds', $roomIds);
+
 
         if( $piId !== NULL && $inspectorIds !== null ){
 
@@ -2606,19 +2614,20 @@ class ActionManager {
             //if($inspection->getDate_started() == null)$inspection->setDate_started(date("Y-m-d H:i:s"));
             // Save (or update) the inspection
             $dao->save($inspection);
-            $pi = $inspection->getPrincipalInvestigator();
 
             // Remove previous rooms and add the default rooms for this PI.
-            $oldRooms = $inspection->getRooms();
-            if (!empty($oldRooms)) {
-                // removeo the old rooms
-                foreach ($oldRooms as $oldRoom) {
-                    $dao->removeRelatedItems($oldRoom->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$ROOMS_RELATIONSHIP));
+            if($roomIds){
+                $oldRooms = $inspection->getRooms();
+                if (!empty($oldRooms)) {
+                    // removeo the old rooms
+                    foreach ($oldRooms as $oldRoom) {
+                        $dao->removeRelatedItems($oldRoom->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$ROOMS_RELATIONSHIP));
+                    }
                 }
-            }
-            // add the default rooms for this PI
-            foreach ($pi->getRooms() as $newRoom) {
-                $dao->addRelatedItems($newRoom->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$ROOMS_RELATIONSHIP));
+                // add the default rooms for this PI
+                foreach ($roomIds as $id) {
+                    $dao->addRelatedItems($id,$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$ROOMS_RELATIONSHIP));
+                }
             }
 
             // Remove previous inspectors and add the submitted inspectors.

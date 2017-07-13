@@ -368,22 +368,22 @@ angular.module('HazardInventory')
             
         }
 
-        $scope.checkRad = function (pi, id) {
+        $scope.checkRad = function (pi, id, inspection) {
             $scope.confirmer = {};
             $scope.confirmer.needsRadConfirmation = false;
             if (GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.RADIATION_INSPECTOR) > -1) {
-                af.initialiseInspection(pi, id, false, true);
+                af.initialiseInspection(pi, id, false, true, inspection.Rooms);
             } else {
                 $scope.confirmer.needsRadConfirmation = true;
             }
 
         }
 
-        $scope.checkSafetyInspector = function (pi, id) {
+        $scope.checkSafetyInspector = function (pi, id, inspection) {
             $scope.confirmer = {};
             $scope.confirmer.needsConfirmation = false;
             if (GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.SAFETY_INSPECTOR) > -1) {
-                af.initialiseInspection(pi, id, false, true);
+                af.initialiseInspection(pi, id, false, true, inspection.Rooms);
             } else {
                 $scope.confirmer.needsConfirmation = true;
             }

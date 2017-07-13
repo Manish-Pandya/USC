@@ -177,10 +177,10 @@ class Constants  {
     public static BRANCH_HAZARD_IDS = ['1', '9999', '10009', '10010'];
 
     public static MASTER_HAZARDS_BY_ID = {
-        1: {Name:'Biological Safety', cssID:'biologicalMaterialsHeader'},
-        9999: {Name:'Chemical Safety', cssID:'chemicalSafetyHeader'},
-        10009: {Name:'Radiation Safety', cssID:'radiationSafetyHeader'},
-        10010: {Name:'General Laboratory Safety', cssID:'generalSafetyHeader'}
+        '1': {Name:'Biological Safety', cssID:'biologicalMaterialsHeader'},
+        '9999': {Name:'Chemical Safety', cssID:'chemicalSafetyHeader'},
+        '10009': {Name:'Radiation Safety', cssID:'radiationSafetyHeader'},
+        '10010': {Name:'General Laboratory Safety', cssID:'generalSafetyHeader'}
     }
 
     public static MASTER_HAZARD_IDS = {
@@ -288,7 +288,7 @@ class Constants  {
         { label: "Corrosive Gas", value: "Corrosive_gas_present" },
         { label: "Flammable Gas", value: "Flammable_gas_present" },
         { label: "Toxic Gas", value: "Toxic_gas_present" },
-        { label: "HF", value: "Hf_present" },
+        { label: "HF", value: "Hf_present"},
         { label: "Lasers", value: "Lasers_dna_present" },
         { label: "Xrays", value: "Xrays_present" }
     ]

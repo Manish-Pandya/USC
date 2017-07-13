@@ -361,7 +361,7 @@ angular
                 return $rootScope.RoomSaving;
         }
 
-        ac.initialiseInspection = function(PI, inspectorIds, inspectionId, rad, inspectors){
+        ac.initialiseInspection = function(PI, inspectorIds, inspectionId, rad, inspectors, rooms){
             //if we don't have a pi, get one from the server
             if (!inspectorIds) inspectorIds = [];
             if (typeof inspectorIds == "object") {
@@ -374,6 +374,7 @@ angular
                 inspectorIds = idsArray;
             }
             var url = 'initiateInspection&piId='+PI.Key_id+'&'+$.param({inspectorIds:inspectorIds});
+            if(roomIds) url = url + '&'+$.param({roomIds:roomIds});
             if(rad)url = url+"&rad=true";
 
             if(inspectionId) url+='&inspectionId='+inspectionId;

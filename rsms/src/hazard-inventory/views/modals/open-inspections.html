@@ -1,6 +1,6 @@
 <div class="modal-header wide-modal" style="padding:0;">
     <h2 style="padding:15px;" class="redBg">{{modalData.PI.User.Name}}'s scheduled inspections
-        <button ng-disabled="confirmer.needsConfirmation" class="btn btn-success left" ng-click="checkSafetyInspector(modalData.PI, [USER.Inspector_id]);"><i class="icon-plus-2"></i>New Inspection</button>
+        <button ng-disabled="confirmer.needsConfirmation" class="btn btn-success left" ng-click="checkSafetyInspector(modalData.PI, [USER.Inspector_id], modalData.inspection);"><i class="icon-plus-2"></i>New Inspection</button>
         <button ng-disabled="confirmer.needsRadConfirmation" ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.RADIATION)" class="btn btn-primary left" ng-click="checkRad(modalData.PI, [USER.Inspector_id]);"><img src="../img/radiation-large-icon.png">New Radiation Inspection</button>
         <i ng-if="creatingInspection" class="icon icon-spinnery-dealie spinner large"></i>
     </h2>

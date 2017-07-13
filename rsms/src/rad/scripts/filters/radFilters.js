@@ -301,4 +301,30 @@ angular.module('00RsmsAngularOrmApp')
             var id = auth.Isotope_id;
             return auths.filter( function (a) { return a.Isotope_id == id; } )
         }
+    })
+    .filter('parcelFilter', function() {
+        return function (parcels, filterObj) {
+        console.log(parcels, filterObj)
+            if (!parcels) return
+            if (!filterObj) return parcels;
+            return parcels.filter(function (p) {
+                let include = true;
+
+                if (filterObj.rs) {
+                    include = p.Rs_number != null && p.Rs_number.toLowerCase().indexOf(filterObj.rs.toLowerCase()) != -1;
+                }
+
+                if (include && filterObj.isotope) {
+                    include = p.Authorization && p.Authorization.IsotopeName && p.Authorization.IsotopeName.toLowerCase().indexOf(filterObj.isotope.toLowerCase()) != -1;
+                }
+
+                /*
+                if (include && filterObj.date) {
+                    include = p.Rs_number && p.Rs_number.indexOf(filterObj.rs) != -1;
+                }
+                */
+
+                return include;
+            })
+        }
     });
