@@ -20,6 +20,8 @@
         Protocols: IBCProtocol[];
         static ProtocolMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCProtocol", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Protocols&id={{UID}}", "Protocols", "Principal_investigator_id", "Protocol_id");
 
+        Name: string;
+
         constructor() {
             super();
         }

@@ -5,7 +5,7 @@
     <h1>
         <i class="icon-protocol"></i>Biosafety Protocol Management
         <a ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>
-        <a class="btn left btn-primary"  style="margin-left:10px">Prepare a New Biosafety Protocol Application</a>
+        <a class="btn left btn-primary" ng-click="openModal()" style="margin-left:10px">Prepare a New Biosafety Protocol Application</a>
     </h1>
     <h2>
         <i class="icon-protocol"></i>Principal Investigator: {{pi.data.Name}}

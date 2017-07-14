@@ -29,24 +29,45 @@ angular.module('ng-IBC')
             $scope.saving = $q.all([DataStoreManager.save(protocol)]);
         }
 
-        $scope.openModal = function (object: FluxCompositerBase) {
+        $scope.openModal = function (object: ibc.IBCProtocol) {
             var modalData = {};
             if (!object) {
                 object = new ibc.IBCProtocol;
+                object.PrincipalInvestigators.push($scope.pi.data);
             }
             modalData[object.thisClass['name']] = object;
             DataStoreManager.ModalData = modalData;
             var modalInstance = $modal.open({
-                templateUrl: 'views/modals/assign-for-review-modal.html',
-                controller: 'IBCModalCtrl'
+                templateUrl: 'views/modals/protocol-modal.html',
+                controller: 'IBCMyProtocolsModalCtrl'
             });
         }
 
     })
-    .controller('IBCMyProtocolsModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, roleBasedFactory, $q) {
+    .controller('IBCMyProtocolsModalCtrl', function ($scope, $rootScope, $modalInstance, convenienceMethods, $q) {
         $scope.constants = Constants;
         $scope.modalData = DataStoreManager.ModalData;
-        var rbf = roleBasedFactory;
+        console.log($scope.modalData);
+
+        $scope.pis = new ViewModelHolder();
+        $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $scope.pis)])
+            .then(function (p) {
+                console.log($scope.pis);
+            });
+
+        /*$scope.addRemovePI = function (pi: ibc.PrincipalInvestigator, add: boolean) {
+            console.log('wtf');
+            var protocol = $scope.modalData.IBCProtocol;
+            var additionalPIsIndex: number = _.findIndex(protocol.PrincipalInvestigators, ["UID", pi.UID]);
+            if (add && additionalPIsIndex == -1) {
+                if (additionalPIsIndex == -1) {
+                    protocol.PrincipalInvestigators.push(pi);
+                }
+            } else if (additionalPIsIndex > -1) {
+                protocol.PrincipalInvestigators.splice(additionalPIsIndex, 1);
+            }
+            console.log(protocol);
+        }*/
 
         $scope.save = function (copy) {
             $scope.saving = $q.all([DataStoreManager.save(copy)]).then($scope.close);

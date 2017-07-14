@@ -1,0 +1,32 @@
+﻿<div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../busy-templates/full-page-busy.html'}"></div>
+<div class="modal-header blueBg" style="padding:0;">
+    <h2 style="padding:5px; color:white">New Biosafety Protocol</h2>
+</div>
+
+<div class="modal-body">
+    <div class="control-group">
+        <label class="control-label">Select Protocol Type</label>
+        <div class="controls" style="display:block">
+            <select class="span3" ng-model="modalData.selectedType" ng-options="type as type for type in ['Recombinant or Synthetic Nucleic Acids', 'Risk Group 2 or Higher Agent(s)', 'Human-Derived Materials', 'Biological Toxins']">
+                <option value="">--Select Protocol Type--</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Principal Investigator(s)</label>
+        <div class="controls" style="display:block">
+            <select class="span3" ng-model="modalData.pi" ng-change="modalData.IBCProtocol.PrincipalInvestigators.push(modalData.pi)" ng-options="pi as pi.Name for pi in pis.data | piSelected:modalData.IBCProtocol.PrincipalInvestigators | activeOnly | orderBy:'Name'">
+                <option value="" ng-show="modalData.IBCProtocol.PrincipalInvestigators.length">--Select Investigator--</option>
+            </select>
+        </div>
+        <ul>
+            <li ng-repeat="pi in modalData.IBCProtocol.PrincipalInvestigators" style="padding: 3px 0; font-size: 15px;"><i style="margin-right:5px" class="red icon-cancel-2" ng-click="modalData.IBCProtocol.PrincipalInvestigators.splice($index,1)"></i>{{pi.Name}}</li>
+        </ul>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <a class="btn btn-large btn-success left" ng-click="save(modalData.IBCProtocol)"><i class="icon-checkmark"></i>Save</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>
