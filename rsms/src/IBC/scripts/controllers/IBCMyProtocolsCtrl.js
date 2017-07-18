@@ -27,6 +27,7 @@ angular.module('ng-IBC')
         var modalData = {};
         if (!object) {
             object = new ibc.IBCProtocol;
+            object.Is_active = true;
             object.PrincipalInvestigators.push($scope.pi.data);
         }
         modalData[object.thisClass['name']] = object;

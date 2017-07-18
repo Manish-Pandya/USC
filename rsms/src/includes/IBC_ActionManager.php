@@ -62,6 +62,15 @@ class IBC_ActionManager extends ActionManager {
 		else{
 			$dao = $this->getDao(new IBCProtocol());
 			$decodedObject = $dao->save($decodedObject);
+			if ($decodedObject->getIBCProtocolRevisions() == null) {
+				$revision = new IBCProtocolRevision();
+				$revision->setProtocol_type("NEW");
+				$revision->setProtocol_id( $decodedObject->getKey_id() );
+				$revision->setRevision_number(0);
+				$revision->setIs_active(true);
+				$dao = $this->getDao($revision);
+				$revision = $dao->save($revision);
+			}
 			$LOG->fatal($decodedObject);
 			return $decodedObject;
 		}
