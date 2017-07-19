@@ -43,6 +43,7 @@ class IBCProtocol extends GenericCrud {
 	private $department;
 
 	private $hazard_id;
+	private $hazard;
 
     private $IBCProtocolRevisions;
 
@@ -149,6 +150,13 @@ class IBCProtocol extends GenericCrud {
 	}
 	public function setHazard_id($hazard_id){
 		$this->hazard_id = $hazard_id;
+	}
+
+	public function getHazard(){
+		return $this->hazard;
+	}
+	public function setHazard($hazard){
+		$this->hazard = $hazard;
 	}
 
     public function getIBCProtocolRevisions(){

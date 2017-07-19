@@ -287,7 +287,7 @@ abstract class DataStoreManager {
      *
      * @param viewModelParent
      */
-    static commitToActualModel(viewModelParent: any, reverseCompose?: boolean): FluxCompositerBase {
+    static commitToActualModel(viewModelParent: any, reverseCompose: boolean = true): FluxCompositerBase {
         var vmParent: FluxCompositerBase = InstanceFactory.convertToClasses(viewModelParent);
         if (!(vmParent instanceof FluxCompositerBase)) return;
 
@@ -303,24 +303,32 @@ abstract class DataStoreManager {
             DataStoreManager._actualModel[vmParent.TypeName].ViewModelWatcher.push(vmParent.viewModelWatcher);
 
             if (reverseCompose) {
-                // See if any instances in actualModel should compose collections of viewModelParent's class-types and add it to collection //
+                // See if any instances in actualModel should compose collections of vmParent's class-types and add it to collection //
                 InstanceFactory._classNames.forEach((className) => {
                     var fluxClass = InstanceFactory._nameSpace[className];
                     for (var instanceProp in fluxClass) {
                         if (fluxClass[instanceProp] instanceof CompositionMapping) {
                             var cm: CompositionMapping = fluxClass[instanceProp];
-                            // if the CompMap's ChildType is same class-type as viewModelParent...
-                            if (cm.ChildType == vmParent.TypeName && vmParent[cm.ChildIdProp]) {
-                                var existingIndex: number = _.findIndex(DataStoreManager._actualModel[fluxClass.name].Data, function (o) { return o[cm.ParentIdProp] == vmParent[cm.ChildIdProp]; });
-                                if (existingIndex > -1) {
-                                    // We found actualModel instance that should compose this viewModelParent instance!
-                                    var compParent = DataStoreManager._actualModel[fluxClass.name].Data[existingIndex];
-                                    if (cm.CompositionType == CompositionMapping.ONE_TO_ONE) {
-                                        compParent[cm.PropertyName] = vmParent.viewModelWatcher;
-                                    } else {
-                                        if (!compParent[cm.PropertyName]) compParent[cm.PropertyName] = [];
-                                        compParent[cm.PropertyName].push(vmParent.viewModelWatcher);
+                            if (InstanceFactory._classNames.indexOf(cm.ChildType) > -1) {
+                                // if the CompMap's ChildType is same class-type as vmParent...
+                                if (cm.ChildType == vmParent.TypeName && vmParent[cm.ChildIdProp]) {
+                                    let existingIndex: number = _.findIndex(DataStoreManager._actualModel[fluxClass.name].Data, function (o) { return o[cm.ParentIdProp] == vmParent[cm.ChildIdProp]; });
+                                    if (existingIndex > -1) {
+                                        // We found actualModel instance that should compose this vmParent instance!
+                                        var compParent = DataStoreManager._actualModel[fluxClass.name].Data[existingIndex];
+                                        if (cm.CompositionType == CompositionMapping.ONE_TO_ONE) {
+                                            compParent[cm.PropertyName] = vmParent.viewModelWatcher;
+                                        } else {
+                                            if (!compParent[cm.PropertyName]) compParent[cm.PropertyName] = [];
+                                            compParent[cm.PropertyName].push(vmParent.viewModelWatcher);
+                                        }
                                     }
+                                // ...else if the compMap belongs to the vmParent and its property is not null...
+                                } else if (fluxClass.name == vmParent.TypeName && vmParent[cm.PropertyName]) {
+                                    var fluxProps = InstanceFactory.convertToClasses(vmParent[cm.PropertyName]);
+                                    fluxProps = Array.isArray(fluxProps) ? fluxProps : [fluxProps];
+                                    // go set the actualModel's data to include fluxCompositer instances from the vmParent's property (vmParent[cm.PropertyName])
+                                    DataStoreManager._actualModel[cm.ChildType].Data = _.unionBy(DataStoreManager._actualModel[cm.ChildType].Data, fluxProps, 'UID');
                                 }
                             }
                         }

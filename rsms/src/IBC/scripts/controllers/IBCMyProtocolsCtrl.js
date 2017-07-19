@@ -14,11 +14,22 @@ angular.module('ng-IBC')
         $scope.pi = new ViewModelHolder();
         return $q.all([DataStoreManager.getById("PrincipalInvestigator", $stateParams.id, $scope.pi, [ibc.PrincipalInvestigator.ProtocolMap])])
             .then(function (p) {
+            var protocols = $scope.pi.data.Protocols;
+            protocols.forEach(function (p) {
+                DataStoreManager.getById("IBCProtocol", p.UID, new ViewModelHolder(), [ibc.IBCProtocol.HazardMap]);
+            });
             console.log($scope.pi);
             console.log(DataStoreManager._actualModel);
         });
     };
-    $scope.loading = $rootScope.getCurrentRoles().then(getPI);
+    var composeProtocols = function () {
+        var promises = [];
+        $scope.pi.data.Protocols.forEach(function (p) {
+            promises.push(DataStoreManager.getById("IBCProtocol", p.UID, new ViewModelHolder(), [ibc.IBCProtocol.HazardMap]));
+        });
+        return $q.all(promises);
+    };
+    $scope.loading = $rootScope.getCurrentRoles().then(getPI).then(composeProtocols);
     $scope.toggleActive = function (protocol) {
         protocol.Is_active = !protocol.Is_active;
         $scope.saving = $q.all([DataStoreManager.save(protocol)]);
@@ -47,19 +58,6 @@ angular.module('ng-IBC')
         .then(function (p) {
         console.log($scope.pis);
     });
-    /*$scope.addRemovePI = function (pi: ibc.PrincipalInvestigator, add: boolean) {
-        console.log('wtf');
-        var protocol = $scope.modalData.IBCProtocol;
-        var additionalPIsIndex: number = _.findIndex(protocol.PrincipalInvestigators, ["UID", pi.UID]);
-        if (add && additionalPIsIndex == -1) {
-            if (additionalPIsIndex == -1) {
-                protocol.PrincipalInvestigators.push(pi);
-            }
-        } else if (additionalPIsIndex > -1) {
-            protocol.PrincipalInvestigators.splice(additionalPIsIndex, 1);
-        }
-        console.log(protocol);
-    }*/
     $scope.save = function (copy) {
         $scope.saving = $q.all([DataStoreManager.save(copy)]).then($scope.close);
     };
