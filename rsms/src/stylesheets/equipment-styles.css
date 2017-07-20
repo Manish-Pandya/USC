@@ -164,6 +164,9 @@
     padding-bottom: 200px;
     padding-top: 25px;
 }
+accordion.ng-hide{'
+    height:0;padding:0
+}
 .right-column.nav-open {
     margin-left: 210px;
 }
@@ -582,4 +585,24 @@ button.btn:not(.btn-large) {
 }
 .modal-body i.icon-cancel.danger {
     margin-top:-5px
+}
+
+.grayed-out {
+    color: #9a9a9a;
+}
+.panel {
+    padding: 0 !important;
+    margin: 0 !important;
+    display:none;
+}
+
+    .panel.has-cabs {
+        margin: 5px !important;
+        display: block;
+    }
+        .first-accordion {
+            margin-top: 70px !important;
+        }
+table.current-year tr td:last-child {
+    min-width:200px;
 }

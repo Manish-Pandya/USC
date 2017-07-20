@@ -11,11 +11,11 @@
         <a ng-click="openModal(null, null, true)" class="btn left" style="margin-left:10px"><i class="icon-plus-2"></i>Add Cabinet</a>
     </h1>
     <h2 ng-if="!cabinets.data.length">No Cabinets</h2>
-    <accordion ng-if="currentYear == selectedCertificationDate">
-        <div ng-include="'views/cabinet-table.html'" ng-init="uncertified = true; campus = {}" style="margin-top:70px"></div>
+    <accordion ng-if="currentYear == selectedCertificationDate" style="margin-top:70px">
+        <div ng-include="'views/cabinet-table.html'" ng-init="uncertified = true; campus = {}" class="first-accordion"></div>
     </accordion>
     <!-- ng-show="cabinets.length && completeCabinets.length || selectedBuilding"-->
     <accordion ng-repeat="campus in campuses.data | orderBy: 'Name'" ng-init="uncertified = false">
-        <div ng-include="'views/cabinet-table.html'"></div>
+        <div ng-include="'views/cabinet-table.html'" ng-class="{'first-accordion':currentYear != selectedCertificationDate && $index == 0}"></div>
     </accordion>
 </div>

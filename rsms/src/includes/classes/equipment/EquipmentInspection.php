@@ -171,23 +171,24 @@ class EquipmentInspection extends GenericCrud{
 
     public function getStatus(){
         if($this->hasPrimaryKeyValue() &&
-            $this->status == NULL &&
             $this->getEquipment_class() == "BioSafetyCabinet"){
             //Cabinets that are certified have non-null status of either "PASS" or "FAIL" persisted in the DB
             //Therefore we can assume that all cabinets that don't have a status saved are either new, overdue, or pending certification
 
             //cabinets that haven't yet been certified, ever, or had a due date assigned are new
-            if($this->getDue_date() == NULL && $this->getCertification_date() == null){
+            if($this->getDue_date() == NULL && $this->getCertification_date() == null && $this->getFail_date() == null){
                 $this->status = "NEW";
             }
             //all other cabinets that don't have a persisted status are either Overdue or pending a certification
-            else {
+            else if($this->fail_date == null && $this->certification_date == null){
                 $startOfToday = strtotime('today midnight');
                 if(strtotime($this->getDue_date()) > $startOfToday){
                     $this->status = "PENDING";
                 }else{
                     $this->status = "OVERDUE";
                 }
+            }else if($this->fail_date != null){
+                $this->status = "FAIL";
             }
         }
 

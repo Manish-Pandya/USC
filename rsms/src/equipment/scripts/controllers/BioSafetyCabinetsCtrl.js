@@ -100,6 +100,22 @@ angular.module('EquipmentModule')
         cabinet["previousComment"] = false;
         return "";
     };
+    $rootScope.getMostRecentCommentForModal = function (cabinet, inspection) {
+        var idx = cabinet.EquipmentInspections.indexOf(inspection);
+        if (idx <= 0)
+            return "";
+        var previousInspection = cabinet.EquipmentInspections[idx - 1];
+        if (previousInspection && previousInspection["Comment"]) {
+            cabinet["previousComment"] = true;
+            var failed = previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL ? "<span class='red'> Failed</span> " : "";
+            var date = previousInspection.Certification_date || previousInspection.Fail_date;
+            var dateStr = date.substring(0, 4);
+            return "<span class='underline black hello'>" + dateStr + failed + "Comments:</span><p>" + previousInspection["Comment"] + "</p>";
+        }
+        ;
+        cabinet["previousComment"] = false;
+        return "";
+    };
     $rootScope.failedMostRecentInspection = function (cabinet) {
         var previousInspection = cabinet.EquipmentInspections.filter(function (i) {
             return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
@@ -115,7 +131,6 @@ angular.module('EquipmentModule')
             object = new equipment.BioSafetyCabinet();
             object.Is_active = true;
             object.Class = "BioSafetyCabinet";
-            console.log(object);
         }
         //build new inspection object every time so we can assure we have a good one of proper type
         var inspection;
@@ -149,7 +164,6 @@ angular.module('EquipmentModule')
         modalInstance.result.then(function (r) {
             if (!object.Key_id) {
                 if (!Array.isArray(r)) {
-                    console.log(r);
                     //$rootScope.cabinets.push(r);
                     var needsPush = true;
                     $rootScope.cabinets.data.forEach(function (c) {

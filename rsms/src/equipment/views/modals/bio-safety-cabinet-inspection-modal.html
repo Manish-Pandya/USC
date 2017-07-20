@@ -25,8 +25,8 @@
         <datepicker2 iconStyle="true" ng-model='modalData.BioSafetyCabinet.SelectedInspection.viewFailDate' disable-timepicker='true'></datepicker2>
     </div>
 
-    <div class="control-group" ng-if="getMostRecentComment(modalData.BioSafetyCabinet)">
-        <label class="control-label" ng-bind-html="getMostRecentComment(modalData.BioSafetyCabinet)" style="font-weight:normal"></label>
+    <div class="control-group" ng-if="getMostRecentCommentForModal(modalData.BioSafetyCabinet,modalData.BioSafetyCabinet.SelectedInspection)">
+        <label class="control-label" ng-bind-html="getMostRecentCommentForModal(modalData.BioSafetyCabinet,modalData.BioSafetyCabinet.SelectedInspection)" style="font-weight:normal"></label>
     </div>
 
     <div class="control-group">

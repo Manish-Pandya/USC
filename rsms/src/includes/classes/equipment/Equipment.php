@@ -126,7 +126,7 @@ abstract class Equipment extends GenericCrud{
             $inspectionDao = new GenericDao($inspection);
             $inspection = $inspectionDao->save($inspection);
             //We only do this if the current inspection is passed
-			if($inspection->getCertification_date() != null && $inspection->getStatus() == "PASS") {
+			if($inspection->getCertification_date() != null || $inspection->getFail_date() != null) {
                 //first, save the current inspection, because it's likely we've just certifiied it.
                 if($this->getRoomId() != null) $inspection->setRoom_id($this->getRoomId());
                 $l->fatal("going to make a new one");
@@ -153,29 +153,42 @@ abstract class Equipment extends GenericCrud{
                 }else{
                     $nextInspection = clone $inspection;
                     $nextInspection->setCertification_date(null);
+                    $nextInspection->setFail_date(null);
                     $nextInspection->setKey_id(null);
                     $nextInspection->setStatus("PENDING");
-
+                    $nextInspection->setComment(null);
+                    $nextInspection->setReport_path(null);
                 }
 
-                //a cabinet must be certified either once every year, or once every other year
-                if($this->frequency == "Annually"){
-                    $parts = explode("-", $this->getCertification_date());
+                if($inspection->getCertification_date() != null){
+                    //a cabinet must be certified either once every year, or once every other year
+                    if($this->frequency == "Annually"){
+                        $parts = explode("-", $this->getCertification_date());
 
-                    $parts[0] = $parts[0]+1;
-                    $l->fatal("DUE DATE OUGHT TO BE:");
-                    $l->fatal(implode("-", $parts));
-                    $nextInspection->setDue_date(implode("-", $parts));
+                        $parts[0] = $parts[0]+1;
+                        $l->fatal("DUE DATE OUGHT TO BE:");
+                        $l->fatal(implode("-", $parts));
+                        $nextInspection->setDue_date(implode("-", $parts));
 
+                    }else{
+                        $newCertDate = new DateTime('America/New_York');
+                        $newCertDate->setTimeStamp(strtotime($this->getCertification_date()));
+                        $newCertDate->modify(('+6 months'));
+                        $l->fatal("DUE DATE OUGHT TO BE:");
+                        $date =
+                        $l->fatal($newCertDate);
+                        $nextInspection->setDue_date($newCertDate);
+                    }
                 }else{
-                    $newCertDate = new DateTime('America/New_York');
-                    $newCertDate->setTimeStamp(strtotime($this->getCertification_date()));
-                    $newCertDate->modify(('+6 months'));
-                    $l->fatal("DUE DATE OUGHT TO BE:");
-                    $date =
-                    $l->fatal($newCertDate);
-                    $nextInspection->setDue_date($newCertDate);
+                    if($inspection->getDue_date() != null){
+                        $newDate = $inspection->getDue_date();
+                    }else{
+                        $newDate = $inspection->getFail_date();
+                    }
+                    $nextInspection->setDue_date($newDate);
                 }
+
+
                 $nextInspection->setEquipment_id($this->key_id);
 
                 if($inspection->getRoom_id() != null) $nextInspection->setRoom_id($inspection->getRoom_id());

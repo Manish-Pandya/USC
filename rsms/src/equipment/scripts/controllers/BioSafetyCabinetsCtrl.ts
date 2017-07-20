@@ -13,7 +13,6 @@ angular.module('EquipmentModule')
         $scope.constants = Constants;
         $rootScope.modalClosed = true;
         $scope.convenienceMethods = convenienceMethods;
-
         $rootScope.filterStatuses = [
             { Data: "NEW", Label: "No Certification Record", uncertified: true, currentYear: false, previousYear: false },
             { Data: "PENDING", Label: "Due for Certification", uncertified: true, currentYear: false, previousYear: false },
@@ -113,6 +112,22 @@ angular.module('EquipmentModule')
             return "";
         }
 
+        $rootScope.getMostRecentCommentForModal = function (cabinet: equipment.BioSafetyCabinet, inspection: equipment.EquipmentInspection): string {
+
+            let idx = cabinet.EquipmentInspections.indexOf(inspection);
+            if (idx <= 0) return "";
+            let previousInspection = cabinet.EquipmentInspections[idx - 1];
+            if (previousInspection && previousInspection["Comment"]) {
+                cabinet["previousComment"] = true;
+                let failed: string = previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL ? "<span class='red'> Failed</span> " : "";
+                let date = previousInspection.Certification_date || previousInspection.Fail_date;
+                let dateStr = date.substring(0, 4);
+                return "<span class='underline black hello'>" + dateStr + failed + "Comments:</span><p>" + previousInspection["Comment"] +"</p>";
+            };
+            cabinet["previousComment"] = false;
+            return "";
+        }
+
         $rootScope.failedMostRecentInspection = function (cabinet: equipment.BioSafetyCabinet): boolean {
             let previousInspection: equipment.EquipmentInspection = cabinet.EquipmentInspections.filter(function (i) {
                 return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
@@ -129,7 +144,6 @@ angular.module('EquipmentModule')
                 object = new equipment.BioSafetyCabinet();
                 object.Is_active = true;
                 object.Class = "BioSafetyCabinet";
-                console.log(object);
             }
            
            //build new inspection object every time so we can assure we have a good one of proper type
@@ -167,7 +181,6 @@ angular.module('EquipmentModule')
             modalInstance.result.then(function (r) {
                 if (!object.Key_id) {
                     if (!Array.isArray(r)) {
-                        console.log(r);
                         //$rootScope.cabinets.push(r);
                         var needsPush = true;
                         $rootScope.cabinets.data.forEach((c) => {
