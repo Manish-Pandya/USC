@@ -62,8 +62,14 @@ angular.module('ng-IBC')
         $scope.save = function (copy) {
             $scope.saving = $q.all([DataStoreManager.save(copy)]).then($scope.close)
                 .then(function (p) {
+                    // recompose PI and its protocols...
                     $q.all([DataStoreManager.getById("PrincipalInvestigator", $scope.modalData.pi_id, $rootScope.pi, [ibc.PrincipalInvestigator.ProtocolMap])])
                         .then(function (p) {
+                            var promises: Promise<any>[] = [];
+                            (<ibc.PrincipalInvestigator>$rootScope.pi.data).Protocols.forEach((p) => {
+                                promises.push(DataStoreManager.getById("IBCProtocol", p.UID, new ViewModelHolder(), [ibc.IBCProtocol.HazardMap, ibc.IBCProtocol.DepartmentMap]));
+                            });
+                            $q.all(promises);
                             console.log(DataStoreManager._actualModel);
                         });
                 });
