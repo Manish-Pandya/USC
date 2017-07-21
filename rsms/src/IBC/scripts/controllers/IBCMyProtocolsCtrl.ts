@@ -17,10 +17,6 @@ angular.module('ng-IBC')
 
             return $q.all([DataStoreManager.getById("PrincipalInvestigator", $stateParams.id, $scope.pi, [ibc.PrincipalInvestigator.ProtocolMap])])
                 .then(function (p) {
-                    var protocols = (<ibc.PrincipalInvestigator>$scope.pi.data).Protocols;
-                    protocols.forEach((p) => {
-                        DataStoreManager.getById("IBCProtocol", p.UID, new ViewModelHolder(), [ibc.IBCProtocol.HazardMap]);
-                    });
                     console.log($scope.pi);
                     console.log(DataStoreManager._actualModel);
                 });
@@ -29,7 +25,7 @@ angular.module('ng-IBC')
         var composeProtocols = function (): Promise<any> {
             var promises: Promise<ViewModelHolder>[] = [];
             (<ibc.PrincipalInvestigator>$scope.pi.data).Protocols.forEach((p) => {
-                promises.push(DataStoreManager.getById("IBCProtocol", p.UID, new ViewModelHolder(), [ibc.IBCProtocol.HazardMap]));
+                promises.push(DataStoreManager.getById("IBCProtocol", p.UID, new ViewModelHolder(), [ibc.IBCProtocol.HazardMap, ibc.IBCProtocol.DepartmentMap]));
             });
             return $q.all(promises);
         }
@@ -69,7 +65,10 @@ angular.module('ng-IBC')
             });
 
         $scope.save = function (copy) {
-            $scope.saving = $q.all([DataStoreManager.save(copy)]).then($scope.close);
+            $scope.saving = $q.all([DataStoreManager.save(copy)]).then($scope.close)
+                .then(function (p) {
+                    console.log(DataStoreManager._actualModel);
+                });
         }
 
         $scope.close = function () {
