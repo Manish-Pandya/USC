@@ -246,7 +246,7 @@ abstract class DataStoreManager {
      *
      * @param viewModel
      */
-    static save(viewModel: FluxCompositerBase | FluxCompositerBase[], reverseCompose?: boolean): Promise<FluxCompositerBase> | Promise<FluxCompositerBase[]> {
+    static save(viewModel: FluxCompositerBase | FluxCompositerBase[], reverseCompose: boolean = true): Promise<FluxCompositerBase> | Promise<FluxCompositerBase[]> {
 
         viewModel = InstanceFactory.convertToClasses(viewModel); // Ensure viewModel is FluxCompositerBase(s).
         // if viewModel is array, add 's' to end of save url to differentiate it as plural call on the server

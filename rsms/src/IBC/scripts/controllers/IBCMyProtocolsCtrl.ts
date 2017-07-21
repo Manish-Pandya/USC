@@ -13,18 +13,19 @@ angular.module('ng-IBC')
         $scope.protocolStatuses = _.toArray(Constants.IBC_PROTOCOL_REVISION.STATUS);
 
         var getPI = function (): Promise<any> {
-            $scope.pi = new ViewModelHolder();
+            $rootScope.pis = new ViewModelHolder();
+            $rootScope.pi = new ViewModelHolder();
 
-            return $q.all([DataStoreManager.getById("PrincipalInvestigator", $stateParams.id, $scope.pi, [ibc.PrincipalInvestigator.ProtocolMap])])
+            return $q.all([DataStoreManager.getAll("PrincipalInvestigator", $rootScope.pis, [ibc.PrincipalInvestigator.ProtocolMap]), DataStoreManager.getById("PrincipalInvestigator", $stateParams.id, $rootScope.pi, [ibc.PrincipalInvestigator.ProtocolMap])])
                 .then(function (p) {
-                    console.log($scope.pi);
+                    console.log($rootScope.pi);
                     console.log(DataStoreManager._actualModel);
                 });
         }
 
         var composeProtocols = function (): Promise<any> {
             var promises: Promise<ViewModelHolder>[] = [];
-            (<ibc.PrincipalInvestigator>$scope.pi.data).Protocols.forEach((p) => {
+            (<ibc.PrincipalInvestigator>$rootScope.pi.data).Protocols.forEach((p) => {
                 promises.push(DataStoreManager.getById("IBCProtocol", p.UID, new ViewModelHolder(), [ibc.IBCProtocol.HazardMap, ibc.IBCProtocol.DepartmentMap]));
             });
             return $q.all(promises);
@@ -38,11 +39,11 @@ angular.module('ng-IBC')
         }
 
         $scope.openModal = function (object: ibc.IBCProtocol) {
-            var modalData = {};
+            var modalData = { pi_id: $stateParams.id };
             if (!object) {
                 object = new ibc.IBCProtocol;
                 object.Is_active = true;
-                object.PrincipalInvestigators.push($scope.pi.data);
+                object.PrincipalInvestigators.push($rootScope.pi.data);
             }
             modalData[object.thisClass['name']] = object;
             DataStoreManager.ModalData = modalData;
@@ -58,16 +59,13 @@ angular.module('ng-IBC')
         $scope.modalData = DataStoreManager.ModalData;
         console.log($scope.modalData);
 
-        $scope.pis = new ViewModelHolder();
-        $scope.loading = $q.all([DataStoreManager.getAll("PrincipalInvestigator", $scope.pis)])
-            .then(function (p) {
-                console.log($scope.pis);
-            });
-
         $scope.save = function (copy) {
             $scope.saving = $q.all([DataStoreManager.save(copy)]).then($scope.close)
                 .then(function (p) {
-                    console.log(DataStoreManager._actualModel);
+                    $q.all([DataStoreManager.getById("PrincipalInvestigator", $scope.modalData.pi_id, $rootScope.pi, [ibc.PrincipalInvestigator.ProtocolMap])])
+                        .then(function (p) {
+                            console.log(DataStoreManager._actualModel);
+                        });
                 });
         }
 
