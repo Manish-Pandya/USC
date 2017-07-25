@@ -1310,13 +1310,15 @@ angular
                     //check the parcel to make sure the Rs_number is unique
                     //we could not have gotten here without first loading the parcels
                     var parcels = store.get("Parcel");
-                    for (var i = 0; i < parcels.length; i++) {
-                        var p = parcels[i];
-                        if (p.Rs_number == copy.Rs_number) {
-                            var pr = $q.defer();
-                            pr.reject(p);
-                            $rootScope.error = copy.Transfer_in_date ? "The transfer number you entered is already in use." : "The RS Number you entered is already in use.";
-                            return pr.promise;
+                    if (parcels && copy.Rs_number) {
+                        for (var i = 0; i < parcels.length; i++) {
+                            var p = parcels[i];
+                            if (p.Rs_number == copy.Rs_number) {
+                                var pr = $q.defer();
+                                pr.reject(p);
+                                $rootScope.error = copy.Transfer_in_date ? "The transfer number you entered is already in use." : "The RS Number you entered is already in use.";
+                                return pr.promise;
+                            }
                         }
                     }
                 }
@@ -2279,8 +2281,9 @@ angular
               af.clearError();
                 return this.save(copy)
                     .then(
-                        function(returnedBag){
-                            returnedBag = modelInflatorFactory.instateAllObjectsFromJson( returnedBag );
+                    function (returnedBag) {
+                            console.log(returnedBag)
+                            returnedBag = modelInflatorFactory.instateAllObjectsFromJson(returnedBag);
                             if(bag.Key_id){
                                 angular.extend(bag, copy);
                                 bag.edit = false;
@@ -2288,6 +2291,7 @@ angular
                                 dataStoreManager.store(returnedBag);
                                 $rootScope.WasteBagCopy = {};
                             }
+                            if (returnedBag.PickupLots) bag.PickupLots = returnedBag.PickupLots
                             return returnedBag;
                         },
                         af.setError('The Drum could not be saved')

@@ -35,7 +35,7 @@
             </tr>
             <tr ng-repeat="lot in modalData.WasteBagCopy.PickupLots">
                 <td>
-                    <input ng-model="lot.Curie_level" />
+                    <input ng-model="lot.Curie_level" /> {{lot.Key_id}}
                 </td>
                 <td>
                     <select ng-model="lot.Isotope_id" ng-options="c.Isotope_id as c.Isotope_name for c in modalData.WasteBagCopy.Contents">

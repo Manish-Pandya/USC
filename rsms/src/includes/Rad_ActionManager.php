@@ -1918,6 +1918,7 @@ class Rad_ActionManager extends ActionManager {
         $userId = $decodedObject->getUser_id();
         $date = $decodedObject->getDate();
         $containers = $decodedObject->getContainers();
+        $cycles = $decodedObject->getCarboy_use_cycles();
 
         if($decodedObject === null) {
             return new ActionError("Error converting input stream to PickupDto", 202);
@@ -1946,6 +1947,11 @@ class Rad_ActionManager extends ActionManager {
         foreach($wasteBags as $bag) {
             $bag->setPickup_id($pickupKeyId);
             $this->saveWasteBag($bag);
+        }
+
+        foreach($cycles as $c){
+            $c->setPickup_id($pickupKeyId);
+            $this->saveCarboyUseCycle($c);
         }
 
         $newPickup->getWasteBags();

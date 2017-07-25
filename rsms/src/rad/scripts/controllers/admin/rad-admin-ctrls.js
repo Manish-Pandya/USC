@@ -144,7 +144,8 @@ angular.module('00RsmsAngularOrmApp')
     })
   .controller('AuthReportCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
       var af = $scope.af = actionFunctionsFactory;
-      if (!$rootScope.filterObj) $rootScope.filterObj = {showNew:false};
+      if (!$rootScope.filterObj) $rootScope.filterObj = { showNew: false };
+      $scope.orderProps = ["PiName"];
       var getAllPIAuthorizations = function () {
           af.getAllPIAuthorizations()
           .then(
@@ -154,7 +155,7 @@ angular.module('00RsmsAngularOrmApp')
                   var piAuths = _.groupBy(dataStore.PIAuthorization, 'Principal_investigator_id');
                   for (var pi_id in piAuths) {
                       var newest_pi_auth = piAuths[pi_id].sort(function (a, b) {
-                          var sortVector = b.Approval_date - a.Approval_date || b.Amendment_number - a.Amendment_number || b.Key_id - a.Key_id;
+                          var sortVector = b.Amendment_number - a.Amendment_number || b.Key_id - a.Key_id || b.Approval_date - a.Approval_date;
                           return sortVector;
                       })[0];
                       $rootScope.piAuths.push(newest_pi_auth);
@@ -905,7 +906,13 @@ angular.module('00RsmsAngularOrmApp')
     //do we have access to action functions?
     var af = actionFunctionsFactory;
     $scope.af = af;
-
+    $scope.activesShown = {
+        showActivePos: false,
+        showActiveParcles :false
+    }
+    $scope.switchShowActive = function (show) {
+        $scope.activesShown[show] = !$scope.activesShown[show];
+    }
     var getRadPi = function(){
         return actionFunctionsFactory.getRadPIById($stateParams.pi)
                 .then(
@@ -946,10 +953,12 @@ angular.module('00RsmsAngularOrmApp')
     }
 
     $scope.openModal = function (templateName, object, isAmendment) {
+        console.log(object);
         var modalData = {};
         modalData.pi = $scope.pi;
         modalData.isAmendment = isAmendment || false;
         if (object) modalData[object.Class] = object;
+        console.log(modalData);
         af.setModalData(modalData);
         var modalInstance = $modal.open({
           templateUrl: templateName+'.html',
@@ -957,12 +966,11 @@ angular.module('00RsmsAngularOrmApp')
         });
 
         modalInstance.result.then(function (thing) {
-            $scope.getHighestAmendmentNumber($rootScope.pi.Pi_authorization);
             if (object && object.Class == "Parcel") {
                 console.log(object, thing);
                 $scope.selectedView = false;
                 $scope.pi.ActiveParcels.forEach(function (p) {
-                    if (p.Key_id == thing.Key_id) p = thing; 
+                    if (p.Key_id == thing.Key_id) p = thing;
                 })
                 //$scope.loading = $scope.pi.loadActiveParcels();
                 $scope.reloadParcels = true;
@@ -970,18 +978,22 @@ angular.module('00RsmsAngularOrmApp')
                     $scope.selectedView = 'parcels';
                     $scope.reloadParcels = true;
                     $scope.$apply();
-                },10)
+                }, 10)
+            } else if (thing.Class == "PIAuthorization") {
+                $scope.getHighestAmendmentNumber($rootScope.pi.Pi_authorization, thing);
+
             }
         })
     }
 
-    $scope.getHighestAmendmentNumber = function (amendments) {
+    $scope.getHighestAmendmentNumber = function (amendments, selected) {
         if (!amendments)  return;
         console.log(amendments);
 
         var highestAuthNumber = 0;
         amendments.sort(function (a, b) {
-            return moment(a.Approval_date).valueOf() - moment(b.Approval_date).valueOf();
+            var sortVector = a.Amendment_number -b.Amendment_number  || a.Key_id - b.Key_id || a.Approval_date - b.Approval_date;
+            return sortVector;
         })
 
         console.log(amendments);
@@ -993,12 +1005,18 @@ angular.module('00RsmsAngularOrmApp')
             amendment.Amendment_label = amendment.Amendment_number ? "Amendment " + amendment.Amendment_number : "Original Authorization";
             amendment.Amendment_label = amendment.Termination_date ? amendment.Amendment_label + " (Terminated " + amendment.view_Termination_date + ")" : amendment.Amendment_label + " (" + amendment.view_Approval_date + ")";
             amendment.weight = i;
+            if (selected && selected.Key_id && selected.Key_id == amendment.Key_id) {
+                //amendment = selected;
+                console.log(selected, amendment);
+                $scope.selectedPiAuth = amendment;
+            }
+
             console.log(i);
         }
 
         $scope.mappedAmendments = amendments;
 
-        $scope.selectedPiAuth = $scope.mappedAmendments[amendments.length - 1];
+        if(!selected)$scope.selectedPiAuth = $scope.mappedAmendments[amendments.length - 1];
         $scope.selectedAmendment = amendments.length - 1;
         return $scope.selectedAmendment;
     }
@@ -1173,7 +1191,6 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.getHasOriginal = function (auth) {
-            console.log($scope.modalData.pi.Pi_authorization);
             return $scope.modalData.pi.Pi_authorization.some(function (a) {
                 console.log(a.Amendment_number != null && a.Amendment_number != "0");
                 return !a.Amendment_number || a.Amendment_number == "0";
@@ -1201,8 +1218,8 @@ angular.module('00RsmsAngularOrmApp')
                     copy.Authorizations[n].Is_active = false;                    
                 }
             }
-            af.savePIAuthorization(copy, auth, pi).then(function () {
-                $modalInstance.close();
+            af.savePIAuthorization(copy, auth, pi).then(function (returnedAuth) {
+                $modalInstance.close(returnedAuth);
                 af.deleteModalData();
             });
             

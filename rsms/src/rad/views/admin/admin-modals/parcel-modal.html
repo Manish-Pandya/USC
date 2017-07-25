@@ -39,7 +39,7 @@
     <div class="control-group">
         <label class="control-label" for="inputEmail">Purchase Order</label>
         <div class="controls">
-            <select data-ng-change="selectPO()" data-ng-options="po.Key_id as po.Purchase_order_number for po in modalData.pi.PurchaseOrders" data-ng-model="modalData.ParcelCopy.Purchase_order_id">
+            <select data-ng-change="selectPO()" data-ng-options="po.Key_id as po.Purchase_order_number for po in modalData.pi.PurchaseOrders | activeOnly" data-ng-model="modalData.ParcelCopy.Purchase_order_id">
                 <option value="">Select a Purchase Order</option>
             </select>
         </div>

@@ -32,22 +32,9 @@
                     <th ng-if="!filterObj.showNew">Auth #</th>
 
                 </tr>
-                <tr class="table-row" ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: 'PiName'">
-                    <td ng-if="filterObj.showNew" style="padding:10px !important;">{{piAuth.Approval_date | dateToIso}}</td>
+                <tr class="table-row" ng-if="!filterObj.showNew" ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: 'PiName'" >
                     <td>
                         {{piAuth.PiName}}
-                    </td>
-
-                    <td ng-if="filterObj.showNew"><span ng-if="piAuth.Amendment_number && piAuth.Amendment_number != 0">{{piAuth.Update_notes || piAuth.New_notes}}</span></td>
-                    <td ng-if="filterObj.showNew"><span ng-if="!piAuth.Amendment_number || piAuth.Amendment_number == 0">{{piAuth.New_notes ||piAuth.Update_notes}}</span></td>
-
-                    <td ng-if="!filterObj.showNew">
-                        <ul>
-                            <li ng-repeat="dept in piAuth.Departments">
-                                {{dept.Name}}
-                            </li>
-                        </ul>
-
                     </td>
                     <td ng-if="!filterObj.showNew">
                         <ul class="selectedBuildings">
@@ -57,6 +44,14 @@
                                 </div>
                             </li>
                         </ul>
+                    </td>
+                    <td ng-if="!filterObj.showNew">
+                        <ul>
+                            <li ng-repeat="dept in piAuth.Departments">
+                                {{dept.Name}}
+                            </li>
+                        </ul>
+
                     </td>
                     <td ng-if="!filterObj.showNew">
                         <ul class="selectedBuildings">
@@ -69,8 +64,22 @@
                     </td>
                     <td ng-if="!filterObj.showNew">
                         {{piAuth.Authorization_number}}
-                    </td>
+                    </td>                   
                 </tr>
+                <tr class="table-row" ng-if="filterObj.showNew" ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: ['Approval_date','PiName']">
+                    <td>
+                        {{piAuth.PiName}}
+                    </td>
+
+                    <td ng-if="filterObj.showNew" style="padding:10px !important;">{{piAuth.Approval_date | dateToIso}}</td>
+                    <td ng-if="filterObj.showNew "style="padding:10px !important;width:30%">
+                        <span ng-if="piAuth.Amendment_number && piAuth.Amendment_number != 0">{{piAuth.Update_notes || piAuth.New_notes}}</span>
+                    </td> 
+                    <td ng-if="filterObj.showNew " style="padding:10px !important;width:30%">
+                        <span ng-if="!piAuth.Amendment_number || piAuth.Amendment_number == 0">{{piAuth.Update_notes || piAuth.New_notes}}</span>
+                    </td> 
+                </tr>
+    
             </table>
 
         </div>

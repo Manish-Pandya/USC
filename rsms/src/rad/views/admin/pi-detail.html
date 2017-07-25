@@ -19,7 +19,7 @@
                 </select>
 
                 <a class="btn btn-primary left" ng-if="!selectedPiAuth.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth)"><i class="icon-pencil"></i><span ng-if="!pi.Pi_authorization">Add</span><span ng-if="pi.Pi_authorization">Edit</span> Authorization</a>
-                <a class="btn btn-success left" ng-if="!selectedPiAuth.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth, true)"><i class="icon-plus-2"></i>Add Amendment</a>
+                <a class="btn btn-success left" ng-if="!selectedAmendment.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth, true)"><i class="icon-plus-2"></i>Add Amendment</a>
                 <a class="btn btn-primary left" ng-if="selectedPiAuth.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-deactivate', selectedPiAuth)"><i class="icon-pencil"></i>Edit Termination</a>
                 <a class="btn btn-danger left" ng-if="!selectedPiAuth.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-deactivate', selectedPiAuth)"><i class="icon-cancel-2"></i>Terminate Authorization</a>
                 <a class="btn btn-info left" ng-if="selectedPiAuth.Termination_date" ng-click="reopenAuth(selectedPiAuth)"><i class="icon-checkmark"></i>Reopen Authorization</a>
@@ -89,7 +89,14 @@
         </div>    
     </div>
     <div class="card full pos" ng-click="af.setSelectedView('orders')">
-        <h3 class="card-header padding" ng-if="pi.PurchaseOrders.length"><i class="fa fa-usd"></i><span class="bold">{{pi.PurchaseOrders.length}} Purchase Order<span ng-if="pi.PurchaseOrders.length != 1">s</span></span>  <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i>Add Purchase Order</a></h3>
+        <h3 class="card-header padding" ng-if="pi.PurchaseOrders.length">
+            <i class="fa fa-usd"></i><span class="bold">{{pi.PurchaseOrders.length}} Purchase Order<span ng-if="pi.PurchaseOrders.length != 1">s</span></span>  
+            <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i>Add Purchase Order</a>
+
+            <button class="btn btn-danger" ng-click="switchShowActive('showActivePos')" ng-if="!activesShown.showActivePos">Show Inactive</button>
+            <button class="btn btn-success" ng-click="switchShowActive('showActivePos')" ng-if="activesShown.showActivePos">Show Active</button>
+
+        </h3>
         <h3 class="card-header padding pos" ng-if="!pi.PurchaseOrders.length"><i class="fa fa-usd"></i>No Purchase Orders <a class="btn btn-success left" ng-click="openModal('views/admin/admin-modals/po-modal')"><i class="fa fa-usd"></i><i class="icon-unlocked-2"></i>Add Purchase Order</a></h3>
         <div class="card-content" ng-if="selectedView == 'orders'">
             <div class="fake-table striped bordered" ng-if="pi.PurchaseOrders.length">
@@ -100,7 +107,7 @@
                     <h3>Start Date</h3>
                     <h3>End Date</h3>
                 </div>
-                <div class="table-row" ng-repeat="order in pi.PurchaseOrders" ng-class="{'inactive':!order.Is_active, 'inactive':af.getIsExpired(order.view_End_date)}">
+                <div class="table-row" ng-repeat="order in pi.PurchaseOrders | activeOnly:activesShown.showActivePos" ng-class="{'inactive':!order.Is_active, 'inactive':af.getIsExpired(order.view_End_date)}">
                     <div>
                         <a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/po-modal', order)"><i class="icon-pencil"></i></a>
                         <a ng-if="order.Is_active" ng-click="af.setObjectActiveState(order)" class="btn btn-danger"><i class="icon-remove"></i></a>
@@ -127,7 +134,12 @@
         </div>
     </div>
     <div class="card full parcels" ng-click="af.setSelectedView('parcels')">
-        <h3 class="card-header padding " ng-if="pi.ActiveParcels"><i class="icon-box"></i><span class="bold">{{pi.ActiveParcels.length}} Package<span ng-if="pi.ActiveParcels.length != 1">s</span></span> <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a></h3>
+        <h3 class="card-header padding " ng-if="pi.ActiveParcels"><i class="icon-box"></i><span class="bold">{{pi.ActiveParcels.length}} Package<span ng-if="pi.ActiveParcels.length != 1">s</span></span> 
+            <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a>
+
+            <a class="btn btn-danger" ng-click="switchShowActive('showActiveParcels')" ng-if="!activesShown.showActiveParcels">Show Inactive</a>
+            <a class="btn btn-success" ng-click="switchShowActive('showActiveParcels')" ng-if="activesShown.showActiveParcels">Show Active</a>
+        </h3>
         <h3 class="card-header padding parcels" ng-if="!pi.ActiveParcels.length"><i class="fa fa-usd"></i>No Packages <a ng-click="openModal('views/admin/admin-modals/parcel-modal')" class="btn btn-success left"><i class="icon-box"></i>Add Package</a></h3>
         <div class="card-content" ng-if="selectedView == 'parcels'">
             <div class="fake-table striped bordered" ng-if="pi.ActiveParcels.length">
@@ -149,7 +161,7 @@
                     <h3>Chemical Compound</h3>
                     <h3>Catalog #</h3>
                 </div>
-                <div class="table-row" ng-repeat="parcel in pi.ActiveParcels | parcelFilter:parcelFilter" ng-class="{'inactive':!parcel.Is_active}">
+                <div class="table-row" ng-repeat="parcel in pi.ActiveParcels | parcelFilter:parcelFilter | activeOnly:activesShown.showActiveParcels" ng-class="{'inactive':!parcel.Is_active}">
                     <div>
                         <a class="btn btn-primary" ng-click="openModal('views/admin/admin-modals/parcel-modal', parcel)"><i class="icon-pencil"></i></a>
                         <a ng-if="parcel.Is_active" ng-click="af.setObjectActiveState(parcel)" class="btn btn-danger"><i class="icon-remove"></i></a>

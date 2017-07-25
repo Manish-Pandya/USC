@@ -169,8 +169,6 @@ class Drum extends RadCrud {
 			$thisDao = new GenericDAO($this);
 			$this->pickupLots = $thisDao->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PICKUP_LOTS_RELATIONSHIP));
 		}
-        $LOG = Logger::getLogger(__FUNCTION__);
-        $LOG->fatal($this->pickupLots);
 		return $this->pickupLots;
 	}
 	public function setPickupLots($newBags) {

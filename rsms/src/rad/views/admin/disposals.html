@@ -29,7 +29,7 @@
                     <h3>Volume</h3>
                     <h3>Contents</h3>
                     <h3>Comments</h3>
-                    <h3 ng-if="!cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE">Pour Date</h3>
+                    <h3 ng-if="cycle.Status != Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE">Pour Date</h3>
                     <h3 ng-if="cycle.edit">Save</h3>
                     <h3 ng-if="!cycle.edit && cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING">Pour/Place In Drum</h3>
                 </div>
@@ -40,6 +40,9 @@
                     || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.HOT_ROOM
                     || (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE && !cycle.Drum_id))">
                         <a ng-click="af.unedit(pourCarboys); af.createCopy(cycle)" class="btn btn-primary left"><i class="icon-pencil primary"></i>Edit</a>
+
+                        <a ng-click="cycle.showReadings = true" ng-if="cycle.Carboy_reading_amounts && !cycle.showReadings" class="btn btn-info left"><i class="icon-full-screen"></i>Show Readings</a>
+                        <a ng-click="cycle.showReadings = false" class="btn btn-info left" ng-if="cycle.showReadings"><i class="icon-collapse"></i>Hide Readings</a>
                     </div>
                     <div>
                         {{cycle.Carboy.Carboy_number}}
@@ -100,8 +103,8 @@
                         </div>
                     </div>
 
-                    <div ng-if="!cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE">
-                        {{cycle.Pour_allowed_date | dateToISO}}asdf
+                    <div ng-if="cycle.Status != Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE">
+                        {{cycle.Pour_allowed_date | dateToISO}}
                     </div>
                     <div ng-if="cycle.edit || (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE)">
                         <button ng-if="!cycle.edit && cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING" ng-click="pour(cycle)" ng-disabled="cycle.edit" class="btn btn-success left"><i class="icon-checkmark"></i>Pour Carboy</button>
@@ -118,9 +121,9 @@
                     </div>
                 </div>
             </div>
-            <h3 class="card-header padding" ng-if="(cycle.edit || showReadings) && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE)">Samples<a style="margin-left:10px;" ng-click="addReading(cycle)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Sample</a></h3>
+            <h3 class="card-header padding" ng-if="(cycle.edit || cycle.showReadings || showReadings) && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE)">Samples<a style="margin-left:10px;" ng-click="addReading(cycle)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Sample</a></h3>
             <!-- this carboy's readings -->
-            <div class="fake-table bordered" style="margin-top:-5px;" ng-if="(cycle.edit || showReadings) && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE)">
+            <div class="fake-table bordered" style="margin-top:-5px;" ng-if="(cycle.edit || cycle.showReadings || showReadings) && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE)">
                 <div class="table-header">
                     <h3 ng-if="!cycle.readingEdit">Edit</h3>
                     <h3>Isotope</h3>

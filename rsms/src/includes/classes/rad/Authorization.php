@@ -164,16 +164,17 @@ class Authorization extends GenericCrud {
                 $siblingsInclusive = $thisDao->getAllWhere($group);
                 $siblingMap = array();
                 foreach($siblingsInclusive as $key=>$sibling){
-                    if(!is_object($sibling))$l->fatal($this);
-                    //we assume that an authorization with a null form is for any form
-                    $form = $sibling->getForm() != null ? strtoupper($sibling->getForm()) : "ANY";
-                    if(!array_key_exists($form ,$siblingMap )){
-                        $siblingMap[$form] = $sibling->getIsotope_id() . "-" . $form;
+                    if(is_object($sibling)){
+                        //we assume that an authorization with a null form is for any form
+                        $form = $sibling->getForm() != null ? strtoupper($sibling->getForm()) : "ANY";
+                        if(!array_key_exists($form ,$siblingMap )){
+                            $siblingMap[$form] = $sibling->getIsotope_id() . "-" . $form;
+                        }
+                        $sibling->setOriginal_pi_auth_id($siblingMap[$form]);
+                        $sibling->setPrincipal_investigator_id($piAuth->getPrincipal_investigator_id());
+                        if($siblingMap[$form] != null && $sibling->getKey_id() != null)
+                            $sibling = $thisDao->save($sibling);
                     }
-                    $sibling->setOriginal_pi_auth_id($siblingMap[$form]);
-                    $sibling->setPrincipal_investigator_id($piAuth->getPrincipal_investigator_id());
-                    if($siblingMap[$form] != null && $sibling->getKey_id() != null)
-                        $sibling = $thisDao->save($sibling);
                 }
             }
 

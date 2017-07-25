@@ -31,7 +31,6 @@ angular.module('00RsmsAngularOrmApp')
             if (!carboys) return;
             var availableCarboys = [];
             var i = carboys.length;
-            console.log(i);
             while (i--) {
                 var carboy = carboys[i];
                 if (carboy.Is_active == true && carboy.Status == Constants.CARBOY_USE_CYCLE.STATUS.AVAILABLE) {
@@ -133,7 +132,6 @@ angular.module('00RsmsAngularOrmApp')
             } else {
                 piInventory.Status = Constants.INVENTORY.STATUS.NA;
             }
-            console.log(piInventory);
         }
         return piInventories;
     };
@@ -281,7 +279,7 @@ angular.module('00RsmsAngularOrmApp')
     .filter('parcelsInLab', function () {
         return function (parcels) {
             filteredParcels = parcels.filter(function (p) {
-                return p.Status != Constants.PARCEL.STATUS.DISPOSED;
+                return p.Status == Constants.PARCEL.STATUS.DELIVERED;
             })
             return filteredParcels;
         }
@@ -304,7 +302,6 @@ angular.module('00RsmsAngularOrmApp')
     })
     .filter('parcelFilter', function() {
         return function (parcels, filterObj) {
-        console.log(parcels, filterObj)
             if (!parcels) return
             if (!filterObj) return parcels;
             return parcels.filter(function (p) {

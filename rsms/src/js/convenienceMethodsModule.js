@@ -329,12 +329,14 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
         */
         setMysqlTime: function (date) {
             if (!date && date !== false) return null;
-            //console.log(date);
+            
+
             if (!date) var date = new Date();
+
             if (!(date instanceof Date)) date = new Date(Date.parse(date));
 
             //handle the fact that Microsoft's fancy new Edge browser falls victim to Y2K like bug in 2017, when this code was written.
-            if (date.getFullYear() < 2000) {
+            if (date.getFullYear() < 1970) {
                 date.setFullYear(date.getFullYear() + 100);
             }
 
@@ -532,13 +534,14 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
     };
 })
 .filter('activeOnly', function() {
-    return function(array) {
-            if(!array)return;
+    return function(array, reverse) {
+            if (!array) return;
+            if ("undefined" === typeof reverse) var reverse = false;
             var activeObjects = [];
 
             var i = array.length;
-            while(i--){
-                if(array[i].Is_active)activeObjects.unshift(array[i]);
+            while (i--) {
+                if (array[i].Is_active == !reverse) activeObjects.unshift(array[i]);
         }
         return activeObjects;
     };

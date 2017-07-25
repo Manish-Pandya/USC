@@ -24,7 +24,7 @@
                         </div>
                         <button ng-if="CurrentPickup" ng-click="selectWaste(CurrentPickup.Waste_bags, CurrentPickup.Key_id)" class="btn btn-primary left">
                             <i class="icon-pencil primary"></i>
-                            Chooses Usages
+                            Choose Usages
                         </button>
                     </label>
                     <label ng-if="pi.CurrentWasteBag.Contents.length
@@ -53,10 +53,6 @@
                         <span class="metro-checkbox">
                             <span ng-if="!collection.Contents.length">No Activity</span><span ng-repeat="amt in collection.Contents">{{amt.Curie_level}}mCi of {{amt.Isotope_name}}<span ng-if="!$last">, </span></span>
                         </span>
-                        <div class="input-append">
-                            <input ng-model="collection.svTrays" type="text" style="width: 10px !important;  min-width: 33px;">
-                            <span class="add-on">Number of trays</span>
-                        </div>
                     </label>
 
                     <label ng-show="CurrentPickup.Scint_vial_collections">Scint Vial Waste Scheduled for Pickup (Pickup Requested {{CurrentPickup.Requested_date | dateToISO}})</label>
@@ -65,11 +61,12 @@
                         <span class="metro-checkbox">
                             <span ng-if="!collection.Contents.length && CurrentPickup" style="margin-top:10px; margin-bottom:-2px">No Activity</span><span ng-repeat="amt in collection.Contents">{{amt.Curie_level}}mCi of {{amt.Isotope_name}}<span ng-if="!$last">, </span></span>
                         </span>
-                        <div class="input-append">
-                            <input ng-model="collection.svTrays" ng-init="collection.svTrays = CurrentPickup.Scint_vial_trays" type="text" style="width: 10px !important;  min-width: 33px;">
-                            <span class="add-on">Number of trays</span>
-                        </div>
+                        
                     </label>
+                    <div class="input-append" style="margin-top:5px;">
+                        <input ng-model="collection.svTrays" ng-init="collection.svTrays = CurrentPickup.Scint_vial_trays" type="text" style="width: 10px !important;  min-width: 33px;">
+                        <span class="add-on">Number of trays</span>
+                    </div>
                 </div>
 
                 <div ng-if="pi.CarboyUseCycles || CurrentPickup.Carboy_use_cycles">
@@ -99,7 +96,7 @@
 
                 <div>
                     <h3>
-                        <button ng-click="createPickup(pi,pickupNotes)" class="btn btn-success btn-large left" ng-disabled="!pi.CurrentWasteBag.Contents.length && !hasPickupItems(pi.CurrentScintVialCollection) && !hasPickupItems(pi.CarboyUseCycles)">
+                        <button ng-click="createPickup(pi,pickupNotes)" class="btn btn-success btn-large left" ng-disabled="!pi.CurrentWasteBag.Contents.length && pi.CurrentScintVialCollection && pi.CarboyUseCycles">
                             <i class="icon-box-remove"></i>
                             <span ng-if="!CurrentPickup"> Request Pickup</span>
                             <span ng-if="CurrentPickup"> Update Pickup</span>
