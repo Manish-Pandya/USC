@@ -69,8 +69,11 @@ angular.module('ng-IBC')
                             (<ibc.PrincipalInvestigator>$rootScope.pi.data).Protocols.forEach((p) => {
                                 promises.push(DataStoreManager.getById("IBCProtocol", p.UID, new ViewModelHolder(), [ibc.IBCProtocol.HazardMap, ibc.IBCProtocol.DepartmentMap]));
                             });
-                            $q.all(promises);
-                            console.log(DataStoreManager._actualModel);
+                            $q.all(promises)
+                                .then(function (p) {
+                                console.log($rootScope.pi);
+                                console.log(DataStoreManager._actualModel);
+                            }
                         });
                 });
         }

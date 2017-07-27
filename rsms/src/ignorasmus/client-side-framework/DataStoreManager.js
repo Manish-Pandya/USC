@@ -320,6 +320,14 @@ var DataStoreManager = (function () {
                 });
             }
         }
+        // loop thru all vmParent's compMaps...
+        vmParent.allCompMaps.forEach(function (compMap) {
+            // if compMap has GerundName AND actualModel has a collection of the same name...
+            if (compMap.GerundName && DataStoreManager._actualModel[compMap.GerundName] && DataStoreManager._actualModel[compMap.GerundName].Data) {
+                // delete that local gerund collection, as we need any subsequent many-to-many calls to come straight from the database, and not local client cache.
+                delete DataStoreManager._actualModel[compMap.GerundName];
+            }
+        });
         return vmParent.viewModelWatcher;
     };
     /**

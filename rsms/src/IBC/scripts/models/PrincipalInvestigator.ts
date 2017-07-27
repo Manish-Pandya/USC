@@ -18,7 +18,7 @@
         static RoomMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Room", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=rooms&id={{UID}}", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=PrincipalInvestigator&class2=Room");
 
         Protocols: IBCProtocol[];
-        static ProtocolMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCProtocol", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Protocols&id={{UID}}", "Protocols", "Principal_investigator_id", "Protocol_id");
+        static ProtocolMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "IBCProtocol", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Protocols&id={{UID}}", "Protocols", "Principal_investigator_id", "Protocol_id", "IBCProtocolPrincipalInvestigator", "getRelationships&class1=PrincipalInvestigator&class2=IBCProtocol");
 
         Name: string;
 

@@ -61,7 +61,16 @@ class IBC_ActionManager extends ActionManager {
 		}
 		else{
 			$dao = $this->getDao(new IBCProtocol());
+
+			if( $decodedObject->getKey_id() != null && $this->getProtocolById($decodedObject->getKey_id()) != null &&  $decodedObject->getPrincipalInvestigators() != null){
+				$oldProtocol = $this->getProtocolById($decodedObject->getKey_id());
+				$oldPis = $oldProtocol->getPrincipalInvestigators();
+			}
+
+			$newPis = $decodedObject->getPrincipalInvestigators();
 			$decodedObject = $dao->save($decodedObject);
+
+
 			if ($decodedObject->getIBCProtocolRevisions() == null) {
 				$revision = new IBCProtocolRevision();
 				$revision->setProtocol_type("NEW");
@@ -72,6 +81,20 @@ class IBC_ActionManager extends ActionManager {
 				$revision = $dao->save($revision);
 			}
 			$LOG->fatal($decodedObject);
+
+			if($oldPis != null){
+				foreach($oldPis as $pi){
+					$dao->removeRelatedItems($pi->getKey_id(), $oldProtocol->getKey_id(), DataRelationship::fromArray(IBCProtocol::$PIS_RELATIONSHIP));
+				}
+			}
+
+			if($newPis != null){
+				foreach($newPis as $pi){
+					if(is_array($pi))$pi = JsonManager::assembleObjectFromDecodedArray($pi);
+					$dao->addRelatedItems($pi->getKey_id(), $decodedObject->getKey_id(), DataRelationship::fromArray(IBCProtocol::$PIS_RELATIONSHIP));
+				}
+			}
+
 			return $decodedObject;
 		}
 	}

@@ -26,7 +26,7 @@ var ibc;
         PrincipalInvestigator.UserMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=", "User", "User_id");
         PrincipalInvestigator.LabPersonnelMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "User", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=LabPersonnel&id={{UID}}", "LabPersonnel", "Supervisor_id");
         PrincipalInvestigator.RoomMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Room", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=rooms&id={{UID}}", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=PrincipalInvestigator&class2=Room");
-        PrincipalInvestigator.ProtocolMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCProtocol", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Protocols&id={{UID}}", "Protocols", "Principal_investigator_id", "Protocol_id");
+        PrincipalInvestigator.ProtocolMap = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "IBCProtocol", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=Protocols&id={{UID}}", "Protocols", "Principal_investigator_id", "Protocol_id", "IBCProtocolPrincipalInvestigator", "getRelationships&class1=PrincipalInvestigator&class2=IBCProtocol");
         return PrincipalInvestigator;
     }(FluxCompositerBase));
     ibc.PrincipalInvestigator = PrincipalInvestigator;
