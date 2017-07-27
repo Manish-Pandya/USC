@@ -20,7 +20,7 @@ abstract class XHR {
         return this._sendRequest('GET', url);
     }
 
-    static POST(url, body): Promise<any> {
+    static POST(url: string, body): Promise<any> {
         return this._sendRequest('POST', url, body);
     }
 
