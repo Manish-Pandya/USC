@@ -133,7 +133,7 @@ abstract class Equipment extends GenericCrud{
 
                 //Next, see if there is already an inspection we can infer to to be the next one.
                 global $db;
-                $query = $db->prepare("select * from equipment_inspection where equipment_id = :id and equipment_class = :class and due_date > :date ORDER BY due_date");
+                $query = $db->prepare("select * from equipment_inspection where equipment_id = :id and equipment_class = :class and (due_date > :date OR is_uncertified = 1) ORDER BY key_id DESC");
                 $id = (int) $this->key_id;
                 $date = date('Y-m-d H:i:s',strtotime($inspection->getCertification_date()));
                 $query->bindParam(":id",$id,PDO::PARAM_INT);
@@ -147,9 +147,11 @@ abstract class Equipment extends GenericCrud{
                 if ($query->execute()) {
                     $result = $query->fetchAll();
                 }
+                $l->fatal($result);
 
                 if($result != null){
                     $nextInspection = $result[0];
+                    $l->fatal($nextInspection);
                 }else{
                     $nextInspection = clone $inspection;
                     $nextInspection->setCertification_date(null);
@@ -159,6 +161,10 @@ abstract class Equipment extends GenericCrud{
                     $nextInspection->setComment(null);
                     $nextInspection->setReport_path(null);
                 }
+
+
+                $nextInspection->setIs_uncertified(false);
+
 
                 if($inspection->getCertification_date() != null){
                     //a cabinet must be certified either once every year, or once every other year
@@ -175,17 +181,46 @@ abstract class Equipment extends GenericCrud{
                         $newCertDate->setTimeStamp(strtotime($this->getCertification_date()));
                         $newCertDate->modify(('+6 months'));
                         $l->fatal("DUE DATE OUGHT TO BE:");
-                        $date =
                         $l->fatal($newCertDate);
                         $nextInspection->setDue_date($newCertDate);
                     }
                 }else{
-                    if($inspection->getDue_date() != null){
-                        $newDate = $inspection->getDue_date();
-                    }else{
-                        $newDate = $inspection->getFail_date();
+
+                    //If this equipment has ever passed an inspection, we set the due date for our re-inspection to 1 year from the date of that inspection
+                    //the results of our query are already ordered by their created dates, so the first we find with a certification_date is the one we're looking for
+                    $lastPassingInspection = null;
+                    foreach($result as $r){
+                        $r = new EquipmentInspection();
+                        if($r->getCertification_date() != null){
+                            $lastPassingInspection = $r;
+                            break;
+                        }
                     }
-                    $nextInspection->setDue_date($newDate);
+
+                    if($lastPassingInspection != null){
+                        if($this->frequency == "Annually"){
+                            $parts = explode("-", $lastPassingInspection->getCertification_date());
+                            $parts[0] = $parts[0]+1;
+                            $l->fatal("DUE DATE OUGHT TO BE:");
+                            $l->fatal(implode("-", $parts));
+                            $nextInspection->setDue_date(implode("-", $parts));
+                        }else{
+                            $newCertDate = new DateTime('America/New_York');
+                            $newCertDate->setTimeStamp(strtotime($lastPassingInspection->getCertification_date()));
+                            $newCertDate->modify(('+6 months'));
+                            $l->fatal("DUE DATE OUGHT TO BE:");
+                            $date =
+                            $l->fatal($newCertDate);
+                            $nextInspection->setDue_date($newCertDate);
+                        }
+                    }else{
+                        $nextInspection->setDue_date(null);
+                        $nextInspection->setReport_path(null);
+                    }
+
+                    //set a flag so the client knows not to group our new inspection with previous year's inspections, even if it seems to be due in a previous year
+                    $nextInspection->setIs_uncertified(true);
+
                 }
 
 

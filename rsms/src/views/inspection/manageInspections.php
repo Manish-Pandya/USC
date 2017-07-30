@@ -252,10 +252,10 @@ require_once '../top_view.php';
                     <span ng-if="dto.Rad_hazards_present" ng-class="{'grayed-out': !dto.Inspections || !dto.Inspections.Is_rad}"><img src="../../img/radiation-large-icon.png" /></span>
                     <span ng-if="dto.Recombinant_dna_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/dna.png" /></span>                    
                     
-                    <span ng-if="room.Corrosive_gas_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/corrosive-gas.png" /></span>
-                    <span ng-if="room.Flammable_gas_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/flammable-gas.png" /></span>
-                    <span ng-if="room.Toxic_gas_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/toxic-gas.png" /></span>
-                    <span ng-if="room.Hf_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/hf.png" /></span>
+                    <span ng-if="dto.Corrosive_gas_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/corrosive-gas.png" /></span>
+                    <span ng-if="dto.Flammable_gas_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/flammable-gas.png" /></span>
+                    <span ng-if="dto.Toxic_gas_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/toxic-gas.png" /></span>
+                    <span ng-if="dto.Hf_present" ng-class="{'grayed-out': !dto.Inspections || dto.Inspections.Is_rad}"><img src="../../img/hf.jpg" /></span>
                     
                     <span ng-if="dto.Lasers_present" ng-class="{'grayed-out': !dto.Inspections || !dto.Inspections.Is_rad}"><img src="../../img/laser.png" /></span>
                     <span ng-if="dto.Xrays_present" ng-class="{'grayed-out': !dto.Inspections || !dto.Inspections.Is_rad}"><img src="../../img/xray.png" /></span>

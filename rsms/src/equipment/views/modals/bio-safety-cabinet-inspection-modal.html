@@ -16,13 +16,19 @@
             <span class="metro-checkbox">{{constants.EQUIPMENT.STATUS.FAIL}}</span>
         </label>
     </div>
-    <div class="control-group" ng-init="modalData.BioSafetyCabinet.SelectedInspection.viewDate = modalData.BioSafetyCabinet.SelectedInspection.Certification_date ? modalData.BioSafetyCabinet.SelectedInspection.Certification_date : today()" ng-if="modalData.BioSafetyCabinet.SelectedInspection.Status == constants.EQUIPMENT.STATUS.PASS">
+    <div class="control-group"
+         ng-init="modalData.BioSafetyCabinet.SelectedInspection.viewDate = modalData.BioSafetyCabinet.SelectedInspection.Certification_date ? modalData.BioSafetyCabinet.SelectedInspection.Certification_date : today()" 
+         ng-if="modalData.BioSafetyCabinet.SelectedInspection.Status == constants.EQUIPMENT.STATUS.PASS">
         <label class="control-label">Certification Date</label>
-        <datepicker2 ng-model='modalData.BioSafetyCabinet.SelectedInspection.viewDate' disable-timepicker='true'></datepicker2>
+        <datepicker2 ng-model='modalData.BioSafetyCabinet.SelectedInspection.viewDate' disable-timepicker='true' 
+                     button-class="buttonClass"></datepicker2>
     </div>
-    <div class="control-group" ng-init="modalData.BioSafetyCabinet.SelectedInspection.viewFailDate = modalData.BioSafetyCabinet.SelectedInspection.Fail_date ?modalData.BioSafetyCabinet.SelectedInspection.Fail_date : today()" ng-if="modalData.BioSafetyCabinet.SelectedInspection.Status == constants.EQUIPMENT.STATUS.FAIL">
+    <div class="control-group" 
+         ng-init="modalData.BioSafetyCabinet.SelectedInspection.viewDate = modalData.BioSafetyCabinet.SelectedInspection.Certification_date ? modalData.BioSafetyCabinet.SelectedInspection.Certification_date : today()" 
+         ng-if="modalData.BioSafetyCabinet.SelectedInspection.Status == constants.EQUIPMENT.STATUS.FAIL">
         <label class="control-label">Certification Failed Date</label>
-        <datepicker2 iconStyle="true" ng-model='modalData.BioSafetyCabinet.SelectedInspection.viewFailDate' disable-timepicker='true'></datepicker2>
+        <datepicker2 iconStyle="true" ng-model='modalData.BioSafetyCabinet.SelectedInspection.viewFailDate' disable-timepicker='true' 
+                     button-class="buttonClass"></datepicker2>
     </div>
 
     <div class="control-group" ng-if="getMostRecentCommentForModal(modalData.BioSafetyCabinet,modalData.BioSafetyCabinet.SelectedInspection)">
@@ -30,7 +36,7 @@
     </div>
 
     <div class="control-group">
-        <label class="control-label">{{$rootScope.selectedCertificationDate}} Comments</label>
+        <label class="control-label">{{selectedCertificationDate}} Comments:</label>
         <div class="controls">
             <textarea ng-model="modalData.BioSafetyCabinet.SelectedInspection.Comment" ng-init="modalData.BioSafetyCabinet.SelectedInspection.Comment = modalData.BioSafetyCabinet.SelectedInspection.Fail_date || modalData.BioSafetyCabinet.SelectedInspection.Certification_date ? modalData.BioSafetyCabinet.SelectedInspection.Comment : ''" rows="5" placehold="Label" style="width:90%;"></textarea>
         </div>

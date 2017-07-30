@@ -5,7 +5,7 @@
  *
  * @author David Hamiter
  */
- 
+
 class EquipmentInspection extends GenericCrud{
 
 	/** Name of the DB Table */
@@ -17,6 +17,7 @@ class EquipmentInspection extends GenericCrud{
         "principal_investigator_id"		=> "principal_investigator_id",
         "certification_date"          	=> "timestamp",
         "fail_date"          	        => "timestamp",
+        "is_uncertified"                => "boolean",
 
         "due_date"     		    		=> "timestamp",
         "report_path"		        	=> "text",
@@ -49,7 +50,7 @@ class EquipmentInspection extends GenericCrud{
         $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
         $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
 
-        
+
 		$this->setEntityMaps($entityMaps);
 	}
 
@@ -68,6 +69,8 @@ class EquipmentInspection extends GenericCrud{
     private $comment;
     private $status;
     private $frequency;
+    private $is_uncertified;
+
 
     // Required for GenericCrud
 	public function getTableName(){
@@ -213,5 +216,8 @@ class EquipmentInspection extends GenericCrud{
 		return $this->principalInvestigators;
 	}
 	public function setPrincipalInvestigators($principalInvestigators){ $this->principalInvestigators = $principalInvestigators; }
+
+    public function getIs_uncertified(){ return $this->is_uncertified; }
+	public function setIs_uncertified( $is_uncertified ){	$this->is_uncertified = $is_uncertified; }
 
 }

@@ -350,7 +350,7 @@ class Room extends GenericCrud {
         $LOG = Logger::getLogger(__CLASS__ );
         //IDS of the direct children of the root hazard, except General Hazards, which are present in all rooms
         //Per EHS request, added constants for Lasers (10016), Recombinant DNA (2), and X-Rays (10015), as displaying icons for these hazard types per room is useful
-        $branchIds = "1, 10009, 10010, 10016, 2, 10015, 10675, 10422, 10676";
+        $branchIds = "1, 10009, 10010, 10016, 2, 10015, 10675, 10422, 10676, 10435";
 
         // Get the db connection
         global $db;
@@ -366,7 +366,8 @@ class Room extends GenericCrud {
                         ON b.principal_investigator_id = d.key_id
                         WHERE a.is_active = true
                         AND d.is_active = true
-                        AND a.parent_hazard_id IN ($branchIds)
+                        AND (a.parent_hazard_id IN($branchIds)
+                        OR a.key_id IN($branchIds) )
                         AND b.room_id = $this->key_id
                         AND c.room_id = $this->key_id";
         $stmt = $db->prepare($queryString);
@@ -402,7 +403,7 @@ class Room extends GenericCrud {
 		}
 
         $hazIds = "10430, 10433, 10434, 10435, 10677, 10679";
-        $queryString = "SELECT DISTINCT key_id
+        $queryString = "SELECT DISTINCT a.key_id
                         FROM hazard a
                         LEFT JOIN principal_investigator_hazard_room b
                         ON a.key_id = b.hazard_id
@@ -418,7 +419,7 @@ class Room extends GenericCrud {
         $stmt = $db->prepare($queryString);
         $stmt->execute();
 
-        while($id = $stmt->fetchColumn()){			
+        while($id = $stmt->fetchColumn()){
             if($id == 10430 || $id == 10433){
                 $this->toxic_gas_present = true;
             }elseif($id == 10434){

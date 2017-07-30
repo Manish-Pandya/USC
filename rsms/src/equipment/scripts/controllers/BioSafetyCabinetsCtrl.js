@@ -83,18 +83,24 @@ angular.module('EquipmentModule')
         })[0];
         if (previousInspection && previousInspection["Comment"]) {
             cabinet["previousComment"] = true;
-            var failed = previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL ? "<span class='red'> Failed</span> " : "";
+            var failed = previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL ? " Failed" : "";
             var date = previousInspection.Certification_date || previousInspection.Fail_date;
             var dateStr = moment(date).format("YYYY");
             var colorClass = "grayed-out";
+            var bodyClass = "grayed-out";
             if (dateStr == parseInt($rootScope.selectedCertificationDate)) {
                 colorClass = "black";
+                bodyClass = "black";
                 dateStr = "";
+                failed += ':<br>';
             }
             else {
-                failed += ' comments:<br>';
+                failed += ' Comments:<br>';
             }
-            return "<span class='" + colorClass + "'>" + dateStr + failed + previousInspection["Comment"] + "</span>";
+            if (failed.indexOf("Failed") != -1) {
+                bodyClass = "red";
+            }
+            return "<span class='" + colorClass + "'>" + dateStr + failed + "</span><span class='" + bodyClass + "'>" + previousInspection["Comment"] + "</span>";
         }
         ;
         cabinet["previousComment"] = false;
@@ -110,7 +116,7 @@ angular.module('EquipmentModule')
             var failed = previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL ? "<span class='red'> Failed</span> " : "";
             var date = previousInspection.Certification_date || previousInspection.Fail_date;
             var dateStr = date.substring(0, 4);
-            return "<span class='underline black hello'>" + dateStr + failed + "Comments:</span><p>" + previousInspection["Comment"] + "</p>";
+            return "<label class='black'>" + dateStr + failed + " Comments:</label><p>" + previousInspection["Comment"] + "</p>";
         }
         ;
         cabinet["previousComment"] = false;
@@ -314,6 +320,16 @@ angular.module('EquipmentModule')
             $scope.getRoom($scope.modalData.BioSafetyCabinet.SelectedInspection.Room_id);
         }
     }
+    $scope.getButtonClass = function (inspection) {
+        if (inspection.Status == Constants.EQUIPMENT.STATUS.FAIL) {
+            return "btn-danger";
+        }
+        else if (inspection.Status == Constants.EQUIPMENT.STATUS.PASS) {
+            return "btn-success";
+        }
+        return "";
+    };
+    $scope.buttonClass = $scope.getButtonClass($scope.modalData.BioSafetyCabinet.SelectedInspection);
     $scope.save = function (cabinet) {
         console.log(cabinet);
         if (!cabinet)

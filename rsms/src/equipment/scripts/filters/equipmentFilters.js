@@ -217,14 +217,14 @@ angular
             var year_1 = new Date().getFullYear().toString();
             return equips.filter(function (e) {
                 return e.EquipmentInspections.every(function (i) {
-                    return !i.Certification_date || i.Certification_date.indexOf(year_1) == -1;
+                    return i.Is_uncertified || !i.Certification_date || i.Certification_date.indexOf(year_1) == -1;
                 });
             });
         }
         return equips.filter(function (c) {
             return c.EquipmentInspections.some(function (i) {
-                return (i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1)
-                    || parseInt(dateString) > new Date().getFullYear() && (i.Due_date.indexOf(dateString) != -1);
+                return !i.Is_uncertified && ((i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1)
+                    || parseInt(dateString) > new Date().getFullYear() && (i.Due_date.indexOf(dateString) != -1));
             });
         });
     };
@@ -236,7 +236,7 @@ angular
         if (!dateString)
             return inspections;
         return inspections.filter(function (i) {
-            return uncertified ? !i.Certification_date && (!i.Fail_date || i.Fail_date.indexOf(dateString) != -1) : (i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1);
+            return uncertified ? i.Is_uncertified || (!i.Certification_date && (!i.Fail_date || i.Fail_date.indexOf(dateString) != -1)) : !i.Is_uncertified && ((i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1));
         });
     };
 })
