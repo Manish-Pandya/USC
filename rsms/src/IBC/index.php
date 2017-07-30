@@ -119,6 +119,7 @@ if(!isset($_SESSION["USER"])){ ?>
 
 <!-- controllers -->
 	<script src="scripts/controllers/IBCCtrl.js"></script>
+    <script src="scripts/controllers/IBCMyProtocolsCtrl.js"></script>
     <script src="scripts/controllers/IBCAssignCtrl.js"></script>
 	<script src="scripts/controllers/IBCDetailCtrl.js"></script>
 	<script src="scripts/controllers/IBCEmailsCtrl.js"></script>

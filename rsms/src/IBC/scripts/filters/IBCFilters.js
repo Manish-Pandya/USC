@@ -70,4 +70,13 @@ angular.module('ng-IBC')
             return;
         return revisions.sort(function (a, b) { return a.Revision_number > b.Revision_number; })[0];
     };
+})
+    .filter("piSelected", function () {
+    return function (pis, selectedPis) {
+        if (!pis || !selectedPis)
+            return;
+        return pis.filter(function (pi) {
+            return _.findIndex(selectedPis, function (p) { return pi.UID == p.UID; }) == -1;
+        });
+    };
 });

@@ -288,8 +288,7 @@ class GenericDAO {
 			$result = new QueryError($error);
 			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
             $this->LOG->fatal($stmt);
-            $this->LOG->fatal($this->modelObject);
-            //return $stmt->debugDumpParams();
+            return $stmt->debugDumpParams();
 
 		}
 

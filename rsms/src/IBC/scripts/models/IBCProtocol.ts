@@ -17,7 +17,8 @@
 
         IBCSections: IBCSection[];
         static SectionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCSection", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCSections&id={{UID}}", "IBCSections", "Hazard_id", "Hazard_id");
-        
+
+        Is_active: boolean;
 
         constructor() {
             super();

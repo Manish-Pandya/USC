@@ -61,6 +61,14 @@
     .filter('getMostRecentRevision', () => {
         return (revisions) => {
             if (!revisions || !revisions.length) return;
-            return revisions.sort((a,b) => { return a.Revision_number > b. Revision_number})[0];
-        }
+            return revisions.sort((a, b) => { return a.Revision_number > b.Revision_number })[0];
+        };
+    })
+    .filter("piSelected", () => {
+        return (pis: ibc.PrincipalInvestigator[], selectedPis: ibc.PrincipalInvestigator[]) => {
+            if (!pis || !selectedPis) return;
+            return pis.filter((pi) => {
+                return _.findIndex(selectedPis, function (p) { return pi.UID == p.UID; }) == -1;
+            })
+        };
     })
