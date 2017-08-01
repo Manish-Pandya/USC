@@ -97,7 +97,11 @@ abstract class GenericCrud {
 
 	public function setEntityMaps($entity_maps){
 		if ($this->entityMaps !== null) {
-			$entity_maps = array_merge($this->entityMaps, $entity_maps);
+            foreach($this->entityMaps as $key=>$map){
+                if(!array_key_exists($key, $entity_maps)){
+                    $entity_maps[$key] = $this->entityMaps[$key];
+                }
+            }
 		}
 		$this->entityMaps = $entity_maps;
 	}

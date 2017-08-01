@@ -1043,42 +1043,50 @@ angular
                     .then(function (returned) {
                         console.log(returned);
                         var pi = returned.data;
-                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.User ));
-                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Pi_authorization ));
-                        pi.Pi_authorization.forEach(function (pia) {
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson(pia.Authorizations));
-                        });
-                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.ActiveParcels ));
-                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.ScintVialCollections ));
-                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.PurchaseOrders ));
-                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.CarboyUseCycles ));
-                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.CurrentScintVialCollections ));
-                        store.store(modelInflatorFactory.instateAllObjectsFromJson( pi.Quarterly_inventories ));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.User));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.Pi_authorization));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.CurrentPi_authorization));
+
+                        if (pi.Pi_authorization) {
+                            pi.Pi_authorization.forEach(function (pia) {
+                                store.store(modelInflatorFactory.instateAllObjectsFromJson(pia.Authorizations));
+                            });
+                        }
+
+                        if (pi.CurrentPi_authorization) {
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.CurrentPi_authorization.Authorizations));
+                        }
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.ActiveParcels));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.ScintVialCollections));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.PurchaseOrders));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.CarboyUseCycles));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.CurrentScintVialCollections));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.Quarterly_inventories));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.SolidsContainers));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.WipeTests));
 
                         console.log(pi);
 
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.Pickups));
-                        
-                        var i = pi.ActiveParcels.length;
-                        while (i--) {
-                            if (pi.ActiveParcels[i].ParcelUses && pi.ActiveParcels[i].ParcelUses.length) {
-                                console.log(pi.ActiveParcels[i].ParcelUses)
-                                store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.ActiveParcels[i].ParcelUses.length));
-                                var j = pi.ActiveParcels[i].ParcelUses.length;
-                                while (j--) {
-                                    if (pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts) {
-                                        var k = pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts.length;
-                                        while (k--) {
-                                            store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts[k]));
+
+                        if (pi.ActiveParcels) {
+                            var i = pi.ActiveParcels.length;
+                            while (i--) {
+                                if (pi.ActiveParcels[i].ParcelUses && pi.ActiveParcels[i].ParcelUses.length) {
+                                    console.log(pi.ActiveParcels[i].ParcelUses)
+                                    store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.ActiveParcels[i].ParcelUses.length));
+                                    var j = pi.ActiveParcels[i].ParcelUses.length;
+                                    while (j--) {
+                                        if (pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts) {
+                                            var k = pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts.length;
+                                            while (k--) {
+                                                store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts[k]));
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-
-
 
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi));
 
@@ -1098,13 +1106,14 @@ angular
                             //pi.loadCurrentWasteBag();
                             pi.loadCurrentScintVialCollections();
                             pi.loadPIWipeTests();
-                            var i = pi.Pickups.length;
-                            while (i--) {
-                                pi.Pickups[i].loadCurrentScintVialCollections();
-                                pi.Pickups[i].loadCarboyUseCycles();
-                                //load waste bags, too
+                            if (pi.Pickups) {
+                                var i = pi.Pickups.length;
+                                while (i--) {
+                                    pi.Pickups[i].loadCurrentScintVialCollections();
+                                    pi.Pickups[i].loadCarboyUseCycles();
+                                    //load waste bags, too
+                                }
                             }
-
                             /*
                             var i = pi.SolidsContainers.length;
                             while(i--){

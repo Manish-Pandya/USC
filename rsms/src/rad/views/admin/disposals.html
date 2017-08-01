@@ -227,7 +227,7 @@
 
     <div class="well two-thirds">
         <h1><i class="icon-lab scint-vials"></i>Scintillation Vial Waste</h1>
-        <h3 ng-show="!collections.length">No solid waste to dispose</h3>
+        <h3 ng-show="!collections.length">No scintillation vial waste to dispose</h3>
         <div class="card full solids-containers" ng-show="collections.length">
             <div class="fake-table bordered disposals">
                 <div class="table-header">
@@ -255,6 +255,7 @@
             </div>
         </div>
     </div>
+
     <div class="well two-thirds">
         <h1><i class="icon-warning scint-vials"></i>Miscellaneous Waste <a class="btn btn-info" ng-click="openModal()">Add Miscellaneous Waste <i class="icon-plus-2"></i><i class="icon-warning"></i></a></h1>
         <h3 ng-show="!miscs.length">No miscellaneous waste to dispose</h3>
@@ -293,6 +294,7 @@
             </div>
         </div>
     </div>
+
     <div class="well two-thirds">
         <h1 class="disposals"><i class="icon-database"></i>Drums <a class="btn btn-success left" ng-click="editDrum(drum)"><i class="icon-plus-2"></i>Create Drum</a></h1>
         <div class="card full">

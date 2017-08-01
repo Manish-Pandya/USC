@@ -156,16 +156,18 @@ angular.module('00RsmsAngularOrmApp')
     var getPi = function () {
         return af.getRadPIById($stateParams.pi)
             .then(function () {
-            $rootScope.pi = dataStoreManager.getById('PrincipalInvestigator', $stateParams.pi);
-            var i = $rootScope.pi.ActiveParcels.length;
-            while (i--) {
-                var parcel = dataStoreManager.getById("Parcel", $rootScope.pi.ActiveParcels.Key_id);
-                if (parcel)
-                    parcel.Authorization = $rootScope.pi.ActiveParcels.Authorization;
-            }
-            console.log($rootScope.pi);
-            $scope.pickups = $rootScope.pi.Pickups;
-            return $rootScope.pi;
+                $rootScope.pi = dataStoreManager.getById('PrincipalInvestigator', $stateParams.pi);
+                if ($rootScope.pi.ActiveParcels) {
+                    var i = $rootScope.pi.ActiveParcels.length;
+                    while (i--) {
+                        var parcel = dataStoreManager.getById("Parcel", $rootScope.pi.ActiveParcels.Key_id);
+                        if (parcel)
+                            parcel.Authorization = $rootScope.pi.ActiveParcels.Authorization;
+                    }
+                }
+                console.log($rootScope.pi);
+                $scope.pickups = $rootScope.pi.Pickups;
+                return $rootScope.pi;
         }, function () { });
     };
     var getParcel = function () {
@@ -178,8 +180,10 @@ angular.module('00RsmsAngularOrmApp')
         });
     };
     $rootScope.mapUses = function (pus) {
+        if (!pus) return;
         pus.forEach(function (pu) {
             pu.hasPickups = [];
+            if (!pu.ParcelUseAmounts)return
             pu.ParcelUseAmounts.forEach(function (amt) {
                 if (amt.IsPickedUp && pu.hasPickups.indexOf(amt.IsPickedUp) == -1)
                     pu.hasPickups.push(amt.IsPickedUp);
@@ -188,6 +192,7 @@ angular.module('00RsmsAngularOrmApp')
                 pu.hasPickups.push("0");
         });
         var mappedUses = $rootScope.parcel.ParcelUses.reduce(function (obj, item) {
+            if (!item.hasPickups) return item;
             item.hasPickups.forEach(function (i) {
                 if (!obj[i])
                     obj[i] = { pUses: [], pickupId: i };
@@ -298,7 +303,6 @@ angular.module('00RsmsAngularOrmApp')
         var sum = 0;
         uses.forEach(function (u) {
             u.ParcelUseAmounts.forEach(function (amt) {
-                console.log(amt);
                 if ((!pickupId || pickupId == amt.IsPickedUp) && amt.Waste_type_id == type)
                     sum += parseFloat(amt.Curie_level);
             });
@@ -307,9 +311,10 @@ angular.module('00RsmsAngularOrmApp')
     };
 });
 angular.module('00RsmsAngularOrmApp')
-    .controller('ModalParcelUseLogCtrl', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory) {
+    .controller('ModalParcelUseLogCtrl', function ( $scope, $rootScope, $modalInstance, actionFunctionsFactory, roleBasedFactory, convenienceMethods ) {
     var af = actionFunctionsFactory;
     $scope.af = af;
+
     $scope.addAmount = function (type) {
         var amt = new window.ParcelUseAmount();
         if (type == "Solids")
@@ -354,6 +359,7 @@ angular.module('00RsmsAngularOrmApp')
         }
         return valid;
     };
+
     $scope.saveParcelUse = function (parcel, copy, use) {
         if ($scope.validateUseAmounts(copy, use) && $scope.validateRemainder(parcel, copy, use)) {
             af.saveParcelUse(parcel, copy, use).then(function (returned) {
@@ -369,9 +375,27 @@ angular.module('00RsmsAngularOrmApp')
     };
     //this is here specifically because form validation seems like it belongs in the controller (VM) layer rather than the CONTROLLER(actionFunctions layer) of this application,
     //which if you think about it, has sort of become an MVCVM
-    $scope.validateUseAmounts = function (use, orig) {
+    $scope.validateUseAmounts = function (use, orig) {        
+
         use.error = null;
+        use.dateError = false;
         use.isValid = false;
+        console.log(use);
+
+        //Make sure the date of this usaged is after the most recent QuarterlyInventory
+        if (!roleBasedFactory.getHasPermission([Constants.ROLE.RADIATION_ADMIN]) && use.view_Date_used) {
+            if ($rootScope.pi && $rootScope.pi.Quarterly_inventories) {
+                var mostRecent = $rootScope.pi.Quarterly_inventories.sort(function (a, b) {
+                    return a.End_date < b.End_date;
+                })[0].End_date;
+
+
+                var current = convenienceMethods.setMysqlTime(use.view_Date_used);
+                use.dateError = true;
+                if (current < mostRecent) use.error = "The date you entered occurred before your most recent quarterly inventory.  Please contact RSO if you need to make changes to inventories before " + convenienceMethods.dateToIso(mostRecent) + "<br>"
+            }
+        }
+
         var total = 0;
         var i = use.ParcelUseAmounts.length;
         while (i--) {
@@ -383,7 +407,7 @@ angular.module('00RsmsAngularOrmApp')
             use.isValid = true;
         }
         else {
-            orig.error = 'Total disposal amount must equal use amount.';
+            use.error += 'Total disposal amount must equal use amount.';
         }
         return use.isValid;
     };

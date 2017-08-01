@@ -560,7 +560,7 @@ class GenericDAO {
 		else if( get_class($object) != $this->modelClassName ){
 			// we have a problem!
 			$this->LOG->fatal("Attempting to save entity of class " . get_class($object) . ", which does not match model object class of $this->modelClassName");
-
+            $this->LOG->fatal($object);
 			return new ModifyError("Entity did not match model object class", $object);
 		}
 		//else use $object as-is!

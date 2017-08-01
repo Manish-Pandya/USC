@@ -494,6 +494,7 @@ class Rad_ActionManager extends ActionManager {
 
         $pi->setEntityMaps($entityMaps);
         $LOG = Logger::getLogger(__CLASS__);
+        $LOG->fatal($pi);
         return $pi;
 
     }

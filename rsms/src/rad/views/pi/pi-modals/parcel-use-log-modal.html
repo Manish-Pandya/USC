@@ -6,7 +6,7 @@
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Date Used:</label>
                 <div class="controls">
-                    <input ng-model="ParcelUseCopy.view_Date_used">
+                    <input ng-model="ParcelUseCopy.view_Date_used" ng-class="{'invalid':ParcelUseCopy.dateError}">
                     <span class="help-block" style="">mm/dd/yy</span>
                 </div>
             </div>
@@ -96,6 +96,7 @@
             </section>
 
             <div class="pull-left">
+                <div class="alert alert-danger" ng-if="ParcelUseCopy.error" ng-bind-html="ParcelUseCopy.error"></div>
                 <button class="btn btn-success left" type="submit"><i class="icon-checkmark"></i>Save Usage</button>
                 <a class="btn btn-danger left" ng-click="close(use, parcel)"><i class="icon-cancel-2"></i>Cancel</a>
             </div>
