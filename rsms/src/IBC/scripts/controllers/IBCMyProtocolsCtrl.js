@@ -38,6 +38,8 @@ angular.module('ng-IBC')
             object.Is_active = true;
             object.PrincipalInvestigators.push($rootScope.pi.data);
         }
+        console.log($rootScope.pi);
+        object["Department_id"] = $rootScope.pi.data["Departments"][0].Key_id;
         modalData[object.thisClass['name']] = object;
         DataStoreManager.ModalData = modalData;
         var modalInstance = $modal.open({

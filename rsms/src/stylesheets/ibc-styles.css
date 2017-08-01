@@ -1,4 +1,4 @@
-﻿/* ADMIN HOME PAGE STYLES*/
+/* ADMIN HOME PAGE STYLES*/
 .ibc table tr:first-child th {
     padding:0;
 }
@@ -149,4 +149,32 @@
     transform-origin: top center;
     transform: rotateX(0deg);
   }
+}
+
+question-view{
+  display: block;
+  padding:10px;
+  background:rgba(235, 238, 238, 0.98);
+  border-bottom:1px solid #b2b2b2;
+  margin-bottom:10px
+
+}
+question-view >  div >  h4{
+  padding:6px;
+  background:white
+}
+question-view >  div ul{
+  padding:5px 0 5px !important;
+  border-bottom:1px solid #b2b2b2 !important;
+  margin-bottom:8px !important;
+}
+question-view >  div ul li{
+  padding:3px 3px 5px !important;
+  background:rgb(246, 246, 246);
+}
+question-view >  div ul li:nth-of-type(odd){
+  background:white
+}
+question-view div div table tr th{
+  padding:10px !important;
 }

@@ -30,7 +30,7 @@ angular.module('ng-IBC')
                             }
                             $scope.hasCommentsBySectionId[section.UID] = commentsSectionMatch;
                         });
-                        console.log($scope.revision);
+                        console.log("REVISION: ",$scope.revision);
                         console.log($scope.hasCommentsBySectionId);
                     })
 

@@ -19,7 +19,7 @@ angular
     'ui.router',
 ])
     .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
-    $urlRouterProvider.otherwise("/home");
+    $urlRouterProvider.otherwise("/my-protocols1");
     $stateProvider
         .state('ibc', {
         abstract: true,
@@ -31,20 +31,20 @@ angular
         templateUrl: "views/home.html",
         controller: "IBCCtrl"
     })
-        .state('ibc.my-protocols', {
-        url: "/my-protocols:id/",
-        templateUrl: "views/my-protocols.html",
-        controller: "IBCMyProtocolsCtrl"
-    })
         .state('ibc.assign-protocols-for-review', {
         url: "/assign-protocols-for-review",
         templateUrl: "views/assign-protocols-for-review.html",
         controller: "IBCAssignCtrl"
     })
         .state('ibc.detail', {
-        url: "/detail:id/",
+        url: "/detail/:id",
         templateUrl: "views/detail.html",
         controller: "IBCDetailCtrl"
+    })
+        .state('ibc.my-protocols', {
+        url: "/my-protocols/:id",
+        templateUrl: "views/my-protocols.html",
+        controller: "IBCMyProtocolsCtrl"
     })
         .state('ibc.emails', {
         url: "/emails",
@@ -52,7 +52,7 @@ angular
         controller: "IBCEmailCtrl"
     })
         .state('ibc.test', {
-        url: "/test:id/",
+        url: "/test/:id",
         templateUrl: "views/test.html",
         controller: "TestCtrl"
     });
@@ -103,7 +103,14 @@ angular
     $rootScope.returnForRevision = function (copy) {
         copy["Date_returned"] = convenienceMethods.setMysqlTime(new Date());
         console.log(copy, convenienceMethods);
-        return $rootScope.save(copy).then(function () { $state.go("ibc.home"); });
+        return $rootScope.saving = $rootScope.save(copy).then(function () { $state.go("ibc.home"); });
+    };
+    $rootScope.submitProtocol = function (copy) {
+        copy["Date_submitted"] = convenienceMethods.setMysqlTime(new Date());
+        console.log(copy, convenienceMethods);
+        return $rootScope.saving = $rootScope.save(copy).then(function () {
+            alert("Thank you for submitting.");
+        });
     };
     $rootScope.save = function (copy) {
         return $rootScope.saving = $q.all([DataStoreManager.save(copy)]).then(function (someReturn) {

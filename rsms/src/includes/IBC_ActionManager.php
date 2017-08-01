@@ -383,6 +383,9 @@ class IBC_ActionManager extends ActionManager {
     function saveIBCResponses($decodedObject = null){
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
+
+        $l = Logger::getLogger(__FUNCTION__);
+
         foreach($decodedObject as $response){
             $responseDao = new GenericDAO($response);
             $question = $this->getIBCQuestionById($response->getQuestion_id());
@@ -429,7 +432,7 @@ class IBC_ActionManager extends ActionManager {
         $entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
         $entityMaps[] = new EntityMap("lazy","getRooms");
-        $entityMaps[] = new EntityMap("lazy","getDepartments");
+        $entityMaps[] = new EntityMap("eager","getDepartments");
         $entityMaps[] = new EntityMap("lazy","getUser");
         $entityMaps[] = new EntityMap("lazy","getInspections");
         $entityMaps[] = new EntityMap("lazy","getPi_authorization");

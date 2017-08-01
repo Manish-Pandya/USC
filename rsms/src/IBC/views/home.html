@@ -71,7 +71,7 @@
         <tbody>
             <tr ng-repeat="protocol in isSubmitted = (protocols.data | isSubmitted)">
                 <td>{{protocol.Protocol_number}}</td>
-                <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
+                <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.Name}}</p> </td>
                 <td>{{protocol.Department.Name}} </td>
                 <td>{{protocol.Project_title}} </td>
                 <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Date_submitted | dateToISO}} </td>
@@ -107,7 +107,7 @@
         <tbody>
             <tr ng-repeat="protocol in isInReview = (protocols.data | isInReview)">
                 <td>{{protocol.Protocol_number}}</td>
-                <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
+                <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.Name}}</p> </td>
                 <td>{{protocol.Department.Name}} </td>
                 <td>{{protocol.Project_title}} </td>
                 <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Date_submitted | dateToISO}} </td>
@@ -148,7 +148,7 @@
         <tbody>
             <tr ng-repeat="protocol in isReturned = (protocols.data | isReturned)">
                 <td>{{protocol.Protocol_number}}</td>
-                <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
+                <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.Name}}</p> </td>
                 <td>{{protocol.Department.Name}} </td>
                 <td>{{protocol.Project_title}} </td>
                 <td>{{protocol.IBCProtocolRevisions[protocol.IBCProtocolRevisions.length - 1].Date_returned | dateToISO}} </td>
@@ -183,7 +183,7 @@
         <tbody>
             <tr ng-repeat="protocol in isApproved = (protocols.data | isApproved | filter:{Is_active:!showInactive})">
                 <td>{{protocol.Protocol_number}}</td>
-                <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.User.Name}}</p> </td>
+                <td><p ng-repeat="pi in protocol.PrincipalInvestigators">{{pi.Name}}</p> </td>
                 <td>{{protocol.Department.Name}} </td>
                 <td>{{protocol.Project_title}} </td>
                 <td>{{protocol.Approval_date | dateToISO}} </td>

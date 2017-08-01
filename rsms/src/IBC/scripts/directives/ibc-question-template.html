@@ -3,7 +3,6 @@
     <h4>{{question.Text}}</h4>
     <ul ng-if="question.Answer_type == $root.constants.IBC_ANSWER_TYPE.MULTIPLE_CHOICE">
         <li ng-repeat="a in question.IBCPossibleAnswers">
-            {{revision.responsesMapped[a.UID]}}
             <label class="checkbox inline">
                 <input type="checkbox" ng-model="revision.responsesMapped[a.UID][0].Is_selected" ng-change="$root.saveReponses(revision.responsesMapped[a.UID], revision, responses)" />
                 <span class="metro-radio">{{a.Answer_text}}</span>
