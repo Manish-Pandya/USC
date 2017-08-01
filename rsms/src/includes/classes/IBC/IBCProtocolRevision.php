@@ -181,10 +181,10 @@ class IBCProtocolRevision extends GenericCrud
         if(!$this->date_submitted && !$this->date_returned){
             $this->status = IBCProtocolRevision::$STATUSES["NOT_SUBMITTED"];
         }
-        elseif($this->date_submitted && !$this->date_to_review && !$this->date_approved && !$this->date_returned){
+        elseif($this->date_submitted && !$this->date_in_review && !$this->date_approved && !$this->date_returned){
             $this->status = IBCProtocolRevision::$STATUSES["SUBMITTED"];
         }
-        elseif($this->date_to_review && !$this->date_approved && !$this->date_returned){
+        elseif($this->date_in_review && !$this->date_approved && !$this->date_returned){
             $this->status = IBCProtocolRevision::$STATUSES["IN_REVIEW"];
         }
         elseif(!$this->date_approved && $this->date_returned){
@@ -200,10 +200,10 @@ class IBCProtocolRevision extends GenericCrud
 		if(!$this->date_submitted && !$this->date_returned){
             $this->status = IBCProtocolRevision::$STATUSES["NOT_SUBMITTED"];
         }
-        elseif($this->date_submitted && !$this->date_to_review && !$this->date_approved && !$this->date_returned){
+        elseif($this->date_submitted && !$this->date_in_review && !$this->date_approved && !$this->date_returned){
             $this->status = IBCProtocolRevision::$STATUSES["SUBMITTED"];
         }
-        elseif($this->date_to_review && !$this->date_approved && !$this->date_returned){
+        elseif($this->date_in_review && !$this->date_approved && !$this->date_returned){
             $this->status = IBCProtocolRevision::$STATUSES["IN_REVIEW"];
         }
         elseif(!$this->date_approved && $this->date_returned){

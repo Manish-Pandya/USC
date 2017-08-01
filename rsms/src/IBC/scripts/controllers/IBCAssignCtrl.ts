@@ -52,6 +52,7 @@ angular.module('ng-IBC')
             protocols.forEach((value) => {
                 if (value.IBCProtocolRevisions) {
                     value.IBCProtocolRevisions[value.IBCProtocolRevisions.length - 1]["Status"] = Constants.IBC_PROTOCOL_REVISION.STATUS.IN_REVIEW;
+                    value.IBCProtocolRevisions[value.IBCProtocolRevisions.length - 1]["Date_in_review"] = convenienceMethods.setMysqlTime(new Date());
                     protocolRevisions.push(value.IBCProtocolRevisions[value.IBCProtocolRevisions.length - 1]);
                 }
             })
