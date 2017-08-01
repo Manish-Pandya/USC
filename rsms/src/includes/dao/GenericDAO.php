@@ -1363,7 +1363,8 @@ class GenericDAO {
                         LEFT OUTER JOIN isotope c
                         ON c.key_id = b.isotope_id
                         LEFT OUTER JOIN parcel d
-                        ON d.principal_investigator_id = ?
+                        ON d.authorization_id = b.key_id
+
                         LEFT OUTER JOIN (
 	                        select sum(a.curie_level) as amount_picked_up, e.name as isotope, e.key_id as isotope_id
 	                        from parcel_use_amount a
@@ -1405,15 +1406,14 @@ class GenericDAO {
 	                        group by e.name, e.key_id
                         ) as total_used
                         ON total_used.isotope_id = b.isotope_id
-                        where a.key_id = ?
-                        group by b.key_id, b.form, b.max_quantity, b.original_pi_auth_id, c.name, c.key_id, a.principal_investigator_id";
+                        where b.pi_authorization_id IN(select key_id from pi_authorization where principal_investigator_id = ?)
+                        group by b.isotope_id, c.name, c.key_id, a.principal_investigator_id";
 
         $stmt = $db->prepare($queryString);
 
         $stmt->bindValue(1, $piId);
         $stmt->bindValue(2, $piId);
         $stmt->bindValue(3, $piId);
-        $stmt->bindValue(4, $authId);
 
         $stmt->execute();
         $inventories = $stmt->fetchAll(PDO::FETCH_CLASS, "CurrentIsotopeInventoryDto");
