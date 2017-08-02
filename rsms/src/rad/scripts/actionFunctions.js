@@ -1245,6 +1245,11 @@ angular
                 return dataSwitchFactory.getObjectById("Room", id);
             }
 
+            af.getAllBuildings = function ()
+            {
+                return dataSwitchFactory.getAllObjects("Building");
+            }
+
             af.test = function(user)
             {
                     dataStoreManager.getById("User", user.Key_id).setName('updated');
@@ -2532,12 +2537,12 @@ angular
 
             af.savePIAuthorization = function (copy, auth, pi) {
                 console.log(copy);
-                copy.Rooms = [];
+                copy.Rooms = copy.Rooms || [];
                 copy.Departments = [];
                 if(pi.Rooms){
                     var i = pi.Rooms.length;
                     while(i--){
-                        if(pi.Rooms[i].isAuthorized)copy.Rooms.push(pi.Rooms[i]);
+                        if (!convenienceMethods.arrayContainsObject(copy.Rooms, pi.Rooms[i]) && pi.Rooms[i].isAuthorized)copy.Rooms.push(pi.Rooms[i]);
                     }
                 }
 

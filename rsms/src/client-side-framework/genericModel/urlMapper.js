@@ -56,5 +56,7 @@
         'Department'            : {getById: "getDepartmentById"            , getAll: "getAllDepartments"            , save: "saveDepartment"             },
         'Campus'                : {getById: "getCampusById"                , getAll: "getAllCampuses"               , save: "saveCampus"                 },
         'Verification'          : {getById: "getVerificationById"          , getAll: "getAllVerifications"          , save: "saveVerification"           },  
-        'RadModelDto'           : {getById: "getVerificationById"          , getAll: "getRadModels"                 , save: "saveVerification"           }
+        'RadModelDto'           : {getById: "getVerificationById"          , getAll: "getRadModels"                 , save: "saveVerification"           },
+        'Building'              : {getById: "getAllBuildings"              , getAll: "getAllBuildings"              , save: "saveBuilding"               }
+
 };

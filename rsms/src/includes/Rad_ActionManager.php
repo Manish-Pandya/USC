@@ -2378,6 +2378,8 @@ class Rad_ActionManager extends ActionManager {
     		return $decodedObject;
     	}
     	else {
+            $rooms = $decodedObject->getRooms();
+
     		//remove all the departments and rooms from the Authorization, if it is an old one
     		if($decodedObject->getKey_id() != NULL){
     			$origDao = $this->getDao(new PIAuthorization());
@@ -2392,7 +2394,6 @@ class Rad_ActionManager extends ActionManager {
     			}
     		}
 
-    		$rooms = $decodedObject->getRooms();
     		$departments = $decodedObject->getDepartments();
 
     		$dao = $this->getDao(new PIAuthorization());

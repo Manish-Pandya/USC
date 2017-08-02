@@ -35,15 +35,41 @@
             </div>
         </div>
 
-        <div class="control-group">
+        <div class="control-group" ng-init="getAuthRooms( modalData.pi.Rooms, modalData.PIAuthorizationCopy)">
             <label class="control-label bold">Rooms</label>
-            <div class="controls" ng-repeat="room in modalData.pi.Rooms | orderBy:'Building.Name' track by $index">
+            <div ng-if="modalData.resultRooms" class="controls" ng-repeat="room in modalData.resultRooms | orderBy:'Building.Name' track by $index">
                 <label class="checkbox">
-                    <input type="checkbox" ng-init="room.isAuthorized = roomIsAuthorized(room, modalData.PIAuthorizationCopy)" ng-model="room.isAuthorized" ng-change="checkboxChange(room, modalData.PIAuthorizationCopy)" />
+                    <input type="checkbox" 
+                           ng-init="room.isAuthorized = roomIsAuthorized(room, modalData.PIAuthorizationCopy)" 
+                           ng-model="room.isAuthorized" ng-change="checkboxChange(room, modalData.PIAuthorizationCopy)" />
                     <span class="metro-checkbox">{{room.Building_name}} room: {{room.Name}}</span>
                 </label>
             </div>
         </div>
+
+        <a class="btn btn-success left" ng-click="getBuildings()" ng-if="!modalData.addRoom">
+            <i class="icon-plus-2"></i>Add Room
+        </a>
+
+        <div ng-if="modalData.addRoom">
+            <div class="control-group">
+                <label class="control-label bold">Select Building</label>
+                <div class="controls">
+                    <select ng-options="b as b.Name for b in modalData.Buildings | orderBy:'Name'" ng-model="modalData.building">
+                        <option value="">--Select Building--</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group" ng-if="modalData.building.Name">
+                <label class="control-label bold">Rooms</label>
+                <select ng-options="r as r.Name for r in modalData.building.Rooms | orderBy:'Name'" ng-model="modalData.room" ng-change="selectRoom(modalData.room)">
+                    <option value="">--Select Room--</option>
+                </select>
+            </div>
+        </div>
+        <hr />
+
         <div class="control-group">
             <label class="control-label bold">Departments</label>
             <div class="controls">

@@ -952,6 +952,16 @@ angular.module('00RsmsAngularOrmApp')
         })
     }
 
+    $scope.getAuthRooms = function (piRooms, auth) {
+        $scope.modalData.resultRooms = piRooms;
+        if (auth.Rooms) {
+            $scope.modalData.resultRooms =
+                $scope.modalData.resultRooms.concat(auth.Rooms.filter(function (r) {
+                    return !convenienceMethods.arrayContainsObject(piRooms, r);
+                }));
+        }
+    }
+
     $scope.openModal = function (templateName, object, isAmendment) {
         console.log(object);
         var modalData = {};
@@ -1071,6 +1081,16 @@ angular.module('00RsmsAngularOrmApp')
         $scope.af = af;
         $scope.modalData = af.getModalData();
         $scope.cm = convenienceMethods;
+
+        $scope.getBuildings = function () {
+            $rootScope.loading = af.getAllBuildings().then(function (b) {
+                console.log(dataStore);
+                $scope.modalData.addRoom = true;
+                console.log(dataStore.Building);
+                $scope.modalData.Buildings = dataStore.Building;
+                $scope.modalData.building = $scope.modalData.building ? $scope.modalData.building : {};
+            })
+        }
 
         
 
@@ -1192,10 +1212,10 @@ angular.module('00RsmsAngularOrmApp')
 
         $scope.getHasOriginal = function (auth) {
             return $scope.modalData.pi.Pi_authorization.some(function (a) {
-                console.log(a.Amendment_number != null && a.Amendment_number != "0");
                 return !a.Amendment_number || a.Amendment_number == "0";
             })
         }
+
 
         $scope.evaluateOrignal = function (auth) {
             if (auth.isOriginal)auth.Amendment_number = null; 
@@ -1293,6 +1313,7 @@ angular.module('00RsmsAngularOrmApp')
                 while(i--){
                     if(authorization.Rooms[i].Key_id == room.Key_id){
                         return true;
+                        console.log("FOUND:", room);
                     }
                 }
                 return false;
@@ -1300,6 +1321,23 @@ angular.module('00RsmsAngularOrmApp')
                 return true;
             }
             return false;
+        }
+
+        $scope.getAuthRooms = function (piRooms, auth) {
+            $scope.modalData.resultRooms = piRooms;
+            if (auth.Rooms) {
+                $scope.modalData.resultRooms =
+                    $scope.modalData.resultRooms.concat(auth.Rooms.filter(function (r) {
+                        return !convenienceMethods.arrayContainsObject(piRooms, r);
+                    }));
+            }
+        }
+
+        $scope.selectRoom = function (room) {
+            console.log(room);
+            $scope.modalData.PIAuthorizationCopy.Rooms.push(room);
+            $scope.getAuthRooms($scope.modalData.pi.Rooms, $scope.modalData.PIAuthorizationCopy);
+            $scope.modalData.addRoom = false;
         }
 
         $scope.departmentIsAuthorized = function(department, authorization){
