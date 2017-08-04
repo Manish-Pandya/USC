@@ -40,6 +40,7 @@
 
     <ul ng-if="revision.preliminaryCommentsMapped[question.UID]">
         <li ng-repeat="(key, comment) in revision.preliminaryCommentsMapped[question.UID] track by $index">
+            <small>{{comment.User.Name}}  {{comment.Date_created | dateToISO}}</small>
             <span ng-bind-html="comment.Text"></span>
         </li>
     </ul>

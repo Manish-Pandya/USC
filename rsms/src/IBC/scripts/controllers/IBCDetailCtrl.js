@@ -30,9 +30,9 @@ angular.module('ng-IBC')
                 });
                 console.log("REVISION: ", $scope.revision);
                 console.log($scope.hasCommentsBySectionId);
+                console.log($scope.protocol);
+                console.log(DataStoreManager._actualModel);
             });
-            console.log($scope.protocol);
-            console.log(DataStoreManager._actualModel);
         });
     };
     $scope.loading = $rootScope.getCurrentRoles().then(getProtocol);

@@ -25,6 +25,7 @@ var ibc;
             return this._hasGetAllPermission;
         };
         IBCPrimaryComment.urlMapping = new UrlMapping("getAllIBCPrimaryComments", "getIBCPrimaryCommentById&id=", "saveIBCPrimaryComment");
+        IBCPrimaryComment.UserMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=", "User", "Created_user_id");
         return IBCPrimaryComment;
     }(FluxCompositerBase));
     ibc.IBCPrimaryComment = IBCPrimaryComment;

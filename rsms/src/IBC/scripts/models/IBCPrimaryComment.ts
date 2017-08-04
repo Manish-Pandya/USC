@@ -3,6 +3,9 @@
 
         static urlMapping = new UrlMapping("getAllIBCPrimaryComments", "getIBCPrimaryCommentById&id=", "saveIBCPrimaryComment");
 
+        User: User;
+        static UserMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "User", "getUserById&id=", "User", "Created_user_id");
+
         Revision_id: string;
 
         Question_id: string;
