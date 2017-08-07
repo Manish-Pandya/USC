@@ -6,7 +6,7 @@ angular.module('ng-IBC')
             headerText: "@",
             headerIcon: "@",
             scoped: "=",
-            openHandler: "&",
+            openHandler: "&?",
             isopen: "=" // tried camelCase 'isOpen' and 'isClosed', but then it stops working. Maybe those are reserved? Weird.
         },
         replace: false,
