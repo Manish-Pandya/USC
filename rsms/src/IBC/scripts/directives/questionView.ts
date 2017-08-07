@@ -9,12 +9,11 @@
             scope: {
                 question: "=",
                 questionType: "@",
-                revision: "=",
-                revisionId: "@"
+                revision: "="
             },
             link: (scope, elem, attrs) => {
-                console.log(scope.question);
-                console.log(scope.revision);
+                //console.log(scope.question);
+                //console.log(scope.revision);
 
                 scope.showQuestion = false;
                 if (scope.revision.Status == Constants.IBC_PROTOCOL_REVISION.STATUS.RETURNED_FOR_REVISION) {
@@ -31,7 +30,7 @@
                     if (!scope.revision.responsesMapped[pa.UID]) {
                         let response = new ibc.IBCResponse();
                         response["Answer_id"] = pa.UID.toString();
-                        response["Revision_id"] = scope.revisionId;
+                        response["Revision_id"] = scope.revision.UID;
                         response["Question_id"] = scope.question.UID;
                         response["Is_selected"] = false;
                         response["Is_active"] = true;

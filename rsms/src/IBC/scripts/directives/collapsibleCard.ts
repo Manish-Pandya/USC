@@ -19,7 +19,7 @@
             });
 
             $scope.open = (param): any => {
-                if (!$scope.closed) $scope.openHandler()(...$scope.scoped);
+                if (!$scope.closed && $scope.openHandler) $scope.openHandler()(...$scope.scoped);
             }
         }
     }

@@ -18,7 +18,7 @@ angular.module('ng-IBC')
                 $scope.open();
             });
             $scope.open = function (param) {
-                if (!$scope.closed)
+                if (!$scope.closed && $scope.openHandler)
                     $scope.openHandler().apply(void 0, $scope.scoped);
             };
         }
