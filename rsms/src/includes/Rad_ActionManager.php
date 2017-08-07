@@ -2597,8 +2597,8 @@ class Rad_ActionManager extends ActionManager {
         $dto->setCarboyReadingAmount($this->getAllCarboyReadingAmounts());
     	$dto->setDrum($this->getAllDrums());
     	$dto->setDepartment($this->getAllDepartments());
-    	$dto->setInspectionWipe($this->getAllInspectionWipes());
-    	$dto->setInspectionWipeTest($this->getAllInspectionWipeTests());
+    	//$dto->setInspectionWipe($this->getAllInspectionWipes());
+    	//$dto->setInspectionWipeTest($this->getAllInspectionWipeTests());
     	$dto->setIsotope($this->getAllIsotopes());
     	$dto->setParcelUseAmount($this->getAllParcelUseAmounts());
     	$dto->setParcelUse($this->getAllParcelUses());
@@ -2613,12 +2613,12 @@ class Rad_ActionManager extends ActionManager {
     	$dto->setScintVialCollection($this->getAllScintVialCollections());
         $dto->setMiscellaneousWaste($this->getAllMiscellaneousWaste());
     	$dto->setWasteBag($this->getAllWasteBags());
-    	$dto->setSolidsContainer($this->getAllSolidsContainers());
+    	//$dto->setSolidsContainer($this->getAllSolidsContainers());
     	$dto->setWasteType($this->getAllWasteTypes());
     	$dto->setRoom($this->getAllRooms(true));
     	$dto->setPrincipalInvestigator($this->getAllRadPis());
-        $dto->setDrumWipe($this->getAllDrumWipes());
-        $dto->setDrumWipeTest($this->getAllDrumWipeTests());
+        //$dto->setDrumWipe($this->getAllDrumWipes());
+       // $dto->setDrumWipeTest($this->getAllDrumWipeTests());
 
     	return $dto;
 
@@ -2676,6 +2676,8 @@ class Rad_ActionManager extends ActionManager {
         if($decodedObject == null)$decodedObject = $this->convertInputJson();
         if($decodedObject == null)return new ActionError("No data read from input stream");
         //find whatever pickup-able container this ParcelUseAmount is currently in
+        $l = Logger::getLogger(_FUNCTION__);
+        $l->fatal($decodedObject);
         if($decodedObject->getWaste_bag_id() != null){
             //persevere current bag's id
             $bag = $this->getWasteBagById($decodedObject->getWaste_bag_id());
