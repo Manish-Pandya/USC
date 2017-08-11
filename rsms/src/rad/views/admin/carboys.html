@@ -24,8 +24,8 @@
                     <div>
                         {{carboy.Current_carboy_use_cycle.Status}}
                     </div>
-                    <div ng-init="carboy.Current_carboy_use_cycle.loadPrincipalInvestigator()">
-                        {{carboy.Current_carboy_use_cycle.Principal_investigator.User.Name}}
+                    <div ng-init="getPiByCycle(carboy)">
+                        {{carboy.PI.Name || "N/A"}}
                     </div>
                 </div>
             </div>
