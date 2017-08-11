@@ -8,7 +8,7 @@
  * Controller of the 00RsmsAngularOrmApp PI waste Pickups view
  */
 angular.module('00RsmsAngularOrmApp')
-  .controller('AdminPickupCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
+    .controller('AdminPickupCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods, modelInflatorFactory) {
           var af = actionFunctionsFactory;
           var getAllPickups = function(){
               af.getAllPickups()
@@ -24,24 +24,27 @@ angular.module('00RsmsAngularOrmApp')
 
           $scope.af = af;
           $rootScope.pickupsPromise = af.getRadModels()
-                                        .then(
-                                            function () {
-                                                var pickups = dataStoreManager.get("Pickup");
-                                                for (var i = 0; i < pickups.length; i++) {
-                                                    if (pickups[i].Status == Constants.PICKUP.STATUS.PICKED_UP
-                                                        || ( pickups[i].Status == Constants.PICKUP.STATUS.REQUESTED && pickups[i].Waste_bags.length )
-                                                        || pickups[i].Scint_vial_collections.length
-                                                        || pickups[i].Carboy_use_cycles.length) {
-                                                            pickups[i].loadCarboyUseCycles();
-                                                            pickups[i].loadWasteBags();
-                                                            pickups[i].loadCurrentScintVialCollections();
-                                                    }
-                                                }
-                                                
-                                                $scope.pickups = dataStoreManager.get("Pickup");
-                                            }
-                                        )
+              .then(getAllPickups)
 
+        function getAllPickups() {
+            af.getAllPickups().then(
+                function () {
+                    var pickups = af.get("Pickup");
+                    for (var i = 0; i < pickups.length; i++) {
+                        if (pickups[i].Status == Constants.PICKUP.STATUS.PICKED_UP
+                            || (pickups[i].Status == Constants.PICKUP.STATUS.REQUESTED && pickups[i].Waste_bags.length)
+                            || pickups[i].Scint_vial_collections.length
+                            || pickups[i].Carboy_use_cycles.length) {
+                            pickups[i].loadCarboyUseCycles();
+                            pickups[i].loadWasteBags();
+                            pickups[i].loadCurrentScintVialCollections();
+                        }
+                    }
+
+                    $scope.pickups = dataStoreManager.get("Pickup");
+                }
+            );
+        }
         $scope.setStatusAndSave = function(pickup, oldStatus, isChecked){
             console.log(status);
             console.log(isChecked);
@@ -63,6 +66,46 @@ angular.module('00RsmsAngularOrmApp')
             af.savePickup(pickup,pickupCopy, true);
 
         }
+
+        $scope.selectWaste = function (waste, pickup, pi) {
+            pi = dataStoreManager.getById("PrincipalInvestigator",pi.Key_id);
+            pi.loadActiveParcels().then(function () {
+                var modalData = {pi: pi, waste: {}, amts: [] };
+                if (!Array.isArray(waste))
+                    waste = [waste];
+                var containerIds = [];
+                waste = waste.forEach(function (w) {
+                    containerIds.push(w.Key_id);
+                });
+                modalData.pi.ActiveParcels.forEach(function (p) {
+                    if (p.ParcelUses) {
+                        p.ParcelUses.forEach(function (pu) {
+                            pu.ParcelUseAmounts.forEach(function (amt) {
+                                console.log(amt.IsPickedUp, pickup.Key_id, amt.Waste_type_id ,Constants.WASTE_TYPE.SOLID);
+                                if (amt.IsPickedUp == pickup.Key_id && amt.Waste_type_id == Constants.WASTE_TYPE.SOLID) {
+                                    amt.Date_used = pu.Date_used;
+                                    amt.Isotope_name = p.Authorization.IsotopeName;
+                                    modalData.amts.push(amt);
+                                }
+                            });
+                        });
+                    }
+                });
+                modalData.waste = waste;
+                af.setModalData(modalData);
+                var modalInstance = $modal.open({
+                    templateUrl: 'views/pi/pi-modals/select-waste-modal.html',
+                    controller: 'SelectWasteCtrl'
+                });
+                modalInstance.result.then(function (arr) {
+                    console.log(arr);
+                    if (arr[1])
+                        pi.CurrentWasteBag = arr[1];
+                        pickup.Waste_bags = [];
+                        pickup.Waste_bags = arr[0].Waste_bags;
+                });
+            });
+        };
 
         $scope.setPickupDate = function (pickup) {
 
@@ -236,6 +279,16 @@ angular.module('00RsmsAngularOrmApp')
             });
         }
 
+        $scope.getPiByCycle = function (carboy) {
+            af.getAllPIs().then(function () {
+                dataStore.PrincipalInvestigator.forEach(function (pi) {
+                    console.log(pi.Key_id == carboy.Current_carboy_use_cycle.Principal_investigator_id);
+                    if (pi.Key_id == carboy.Current_carboy_use_cycle.Principal_investigator_id) {
+                        carboy.PI = pi;
+                    }
+                })[0];
+            })
+        }
   })
   .controller('CarboysModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
 		var af = actionFunctionsFactory;

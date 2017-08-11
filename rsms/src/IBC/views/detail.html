@@ -1,7 +1,7 @@
 ﻿<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:saving, message:'Saving...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 <div class="protocol-document">
-    <collapsible-card class="card full protocol-info" header-text="Protocol Information" header-icon="icon-info" open-handler="loadQuestionsChain">
+    <collapsible-card class="card full protocol-info" header-text="Protocol Information" header-icon="icon-info">
             <h3>Section Heading</h3>
             <ul class="questions" ng-if="!closed">
                 <li>
@@ -14,9 +14,10 @@
             </ul>
     </collapsible-card>
 
-    <collapsible-card open-handler="loadQuestionsChain" id="collapse2" scoped="[section.UID, revision.data.UID]" isopen="hasCommentsBySectionId[section.UID]" class="card full protocol-info" header-text="{{section.Label}}" header-icon="icon-info" ng-repeat="section in protocol.data.IBCSections">
+    <collapsible-card open-handler="loadQuestionsChain" id="collapse2" scoped="[section.UID, revision.data.UID]" isopen="hasCommentsBySectionId[section.UID]"
+                      class="card full protocol-info" header-text="{{section.Label}}" header-icon="icon-info" ng-repeat="section in protocol.data.IBCSections">
         <ul class="questions" ng-if="!closed && section.IBCQuestions.length">
-            <question-view question="question" revision-id="{{revision.data.UID}}" question-type="{{question.Answer_type}}" revision="revision.data" ng-repeat="question in section.IBCQuestions"></question-view>
+            <question-view question="question" question-type="{{question.Answer_type}}" revision="revision.data" ng-repeat="question in section.IBCQuestions"></question-view>
         </ul>
         <h3 ng-if="!closed && !section.IBCQuestions.length"><i class="icon-spinnery-dealie spinner small" style="margin: 3px;"></i>Loading Questions</h3>
     </collapsible-card>

@@ -96,6 +96,7 @@ angular
     };
     $rootScope.saveReponses = function (responses, revision) {
         return $q.all([$rootScope.save(responses)]).then(function (returnedResponses) {
+            revision.responsesMapped = {}; // clear previous mapped responses
             revision.getResponsesMapped();
             return revision;
         });

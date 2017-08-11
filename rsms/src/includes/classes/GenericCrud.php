@@ -96,16 +96,33 @@ abstract class GenericCrud {
 	}
 
 	public function setEntityMaps($entity_maps){
-		if ($this->entityMaps !== null) {
-            foreach($this->entityMaps as $key=>$map){
-                if(!array_key_exists($key, $entity_maps)){
-                    $entity_maps[$key] = $this->entityMaps[$key];
+
+        $mappedMaps = array();
+        foreach($entity_maps as $m){
+            $mappedMaps[$m->getEntityAccessor()] = $m;
+        }
+        $entity_maps = $mappedMaps;
+        $maps = $this->mapEntityMaps();
+		if (!empty($maps)) {
+            foreach($maps as $map){
+                //isset is faster than array_key_exists
+                if( !isset($entity_maps[$map] ) ){
+                    $entity_maps[$map] = $this->entityMaps[$map];
                 }
             }
 		}
 		$this->entityMaps = $entity_maps;
 	}
 
+    protected function mapEntityMaps(){
+        $mapMaps = array();
+        if($this->entityMaps != null){
+            foreach($this->entityMaps as $m){
+                if($m->getLoadingType() != null)$mapMaps[] = $m->getEntityAccessor();
+            }
+        }
+        return $mapMaps;
+    }
 		// CRUD Utilities
 
 	/** Returns TRUE if $this has a value for its primary key */
