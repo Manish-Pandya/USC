@@ -6,7 +6,11 @@
     <div class="control-group">
         <label class="control-label">Status</label>
         <div class="controls">
-            <select data-ng-model="modalData.ParcelCopy.Status" ng-options="status as status for (k,status) in Constants.PARCEL.STATUS">
+            <select data-ng-model="modalData.ParcelCopy.Status" ng-options="status as status for (k,status)
+                    in [Constants.PARCEL.STATUS.REQUESTED,
+                        Constants.PARCEL.STATUS.ARRIVED,
+                        Constants.PARCEL.STATUS.ORDERED,
+                        Constants.PARCEL.STATUS.WIPE_TESTED]">
                 <option value="">Select A Status</option>
             </select>
         </div>
