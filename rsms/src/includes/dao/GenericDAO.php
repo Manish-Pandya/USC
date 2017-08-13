@@ -1355,8 +1355,8 @@ class GenericDAO {
                         ROUND( b.max_quantity - (SUM(d.quantity) - picked_up.amount_picked_up) ) as max_order,
                         ROUND(picked_up.amount_picked_up, 7) as amount_picked_up,
                         ROUND(SUM(d.quantity) - picked_up.amount_picked_up, 7) as amount_on_hand,
-                        ROUND(total_used.amount_picked_up, 7) as amount_disposed,
-                        ROUND(SUM(d.quantity) - total_used.amount_picked_up, 7) as usable_amount
+                        ROUND(total_used.amount_used, 7) as amount_disposed,
+                        ROUND(SUM(d.quantity) - total_used.amount_used, 7) as usable_amount
                         from pi_authorization a
                         LEFT OUTER JOIN authorization b
                         ON b.pi_authorization_id = a.key_id
@@ -1366,7 +1366,10 @@ class GenericDAO {
                         ON d.authorization_id = b.key_id
 
                         LEFT OUTER JOIN (
-	                        select sum(a.curie_level) as amount_picked_up, e.name as isotope, e.key_id as isotope_id
+	                        select sum(a.curie_level) as amount_picked_up,
+                            e.name as isotope,
+                            e.key_id as isotope_id,
+							d.original_pi_auth_id
 	                        from parcel_use_amount a
 	                        join parcel_use b
 	                        on a.parcel_use_id = b.key_id
@@ -1388,11 +1391,16 @@ class GenericDAO {
 	                        OR h.pickup_id = i.key_id
 	                        AND i.status != 'REQUESTED'
                             WHERE i.principal_investigator_id = ?
-	                        group by e.name, e.key_id
+	                        group by e.name, e.key_id, d.original_pi_auth_id
                         ) as picked_up
                         ON picked_up.isotope_id = b.isotope_id
+						AND picked_up.original_pi_auth_id = b.original_pi_auth_id
+
                         LEFT OUTER JOIN (
-	                        select sum(a.curie_level) as amount_picked_up, e.name as isotope, e.key_id as isotope_id
+	                        select sum(a.curie_level) as amount_used,
+                            e.name as isotope,
+                            e.key_id as isotope_id,
+                            d.original_pi_auth_id
 	                        from parcel_use_amount a
 	                        join parcel_use b
 	                        on a.parcel_use_id = b.key_id
@@ -1403,11 +1411,12 @@ class GenericDAO {
 	                        JOIN isotope e
 	                        ON d.isotope_id = e.key_id
                             WHERE c.principal_investigator_id = ?
-	                        group by e.name, e.key_id
+	                        group by e.name, e.key_id, d.original_pi_auth_id
                         ) as total_used
                         ON total_used.isotope_id = b.isotope_id
+                        AND total_used.original_pi_auth_id = b.original_pi_auth_id
                         where b.pi_authorization_id IN(select key_id from pi_authorization where principal_investigator_id = ?)
-                        group by b.isotope_id, c.name, c.key_id, a.principal_investigator_id";
+                        group by b.isotope_id, b.original_pi_auth_id,c.name, c.key_id, a.principal_investigator_id";
 
         $stmt = $db->prepare($queryString);
 
