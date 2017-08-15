@@ -3880,6 +3880,8 @@ class ActionManager {
             $entityMaps[] = new EntityMap("lazy","getResponses");
             $entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
             $entityMaps[] = new EntityMap("eager","getChecklists");
+            $entityMaps[] = new EntityMap("eager","getInspection_wipe_tests");
+
             $inspection->setEntityMaps($entityMaps);
 
             //make sure we get the right rooms for our branch level checklists

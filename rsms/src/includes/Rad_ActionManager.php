@@ -2677,12 +2677,13 @@ class Rad_ActionManager extends ActionManager {
         if($decodedObject == null)return new ActionError("No data read from input stream");
         //find whatever pickup-able container this ParcelUseAmount is currently in
         $l = Logger::getLogger(_FUNCTION__);
-        $l->fatal($decodedObject);
         if($decodedObject->getWaste_bag_id() != null){
             //persevere current bag's id
             $bag = $this->getWasteBagById($decodedObject->getWaste_bag_id());
+            $l->fatal($bag);
             $pickup = $this->getPickupById($bag->getPickup_id());
             $pickupAndBag = array($pickup);
+            $l->fatal($pickup);
 
             //$currentBag = new WasteBag();
             $piId = $bag->getPrincipal_investigator_id();

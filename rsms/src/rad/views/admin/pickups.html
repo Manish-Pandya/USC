@@ -13,7 +13,7 @@
     <h1 class="card-header accordion-header">No PIs have requested pickups at this time.</h1>
 </div>
 <div>
-    <div class="card super pickups pickup-collection admin" ng-repeat="pickup in activePickups = (pickups | activePickups:pickupsFilter.showAll)" >
+    <div class="card super pickups pickup-collection admin" ng-repeat="pickup in activePickups = (pickups | activePickups:pickupsFilter.showAll) track by $index" >
         <div>
             <h1 ng-class="{'no-underline':!pickup.show}" class="card-header accordion-header" ng-click="pickup.show = !pickup.show">
                 <!--<span class="pull-left">-->
@@ -42,6 +42,11 @@
                         <span class="metro-checkbox">At RSO</span>
                     </label>
                 </a>
+
+                <button ng-click="selectWaste(pickup.Waste_bags, pickup, pickup.PrincipalInvestigator )" class="btn btn-primary left">
+                    <i class="icon-pencil primary"></i>
+                    Choose Usages
+                </button>
                 <h2 ng-if="pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO" style="display:inline">
                     Picked up 
                     <span ng-if="!pickup.editDate">{{pickup.Pickup_date | dateToISO:pickup:'Pickup_date':true}} <i class="icon-pencil primary" ng-click="pickup.editDate = true" style="margin:4px 0px 0 0"></i></span>
@@ -59,9 +64,7 @@
                             <a ng-if="bag.removed" class="btn btn-success left" ng-click="af.adminAddToPickup(bag, pickup)"><i class="icon-plus-2"></i>Pickup</a>
                         </div>
                         <div class="pickup-item-contents">
-                            <span class="bag-date" ng-if="bag.Date_removed">Removed from {{bag.Container_name}} on {{bag.Date_removed | dateToISO}}</span>
-                            <span class="bag-date" ng-if="!bag.Date_removed">(Waste Bag still in container)</span>
-                            <p class="pickup-item-contents">Contents: <span ng-if="!bag.Contents">N/A</span><span ng-repeat="content in bag.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span></p>
+                            <p class="pickup-item-contents">Contents: <span ng-if="!bag.Contents.length">No activity in bag</span><span ng-repeat="content in bag.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span></p>
                             <div class="pickup-comments" style="padding:0;">
                                 <span ng-if="bag.Comments && !bag.edit">Comments: {{bag.Comments}}<i ng-click="af.createCopy(bag)" class="icon-pencil primary"></i></span>
                                 <span ng-if="!bag.Comments && !bag.edit">Add Comment:<a class="btn btn-success btn-mini" ng-click="af.createCopy(bag)"><i class="icon-plus-2 success"></i></a></span>
@@ -88,7 +91,7 @@
                             <a ng-if="collection.removed" class="btn btn-success left" ng-click="af.adminAddToPickup(collection, pickup)"><i class="icon-plus-2"></i>Pick up</a>
                         </div>
                         <div class="pickup-item-contents">
-                            Contents: <span ng-if="!collection.Contents">No Activity</span><span ng-repeat="content in collection.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span>
+                            Contents: <span ng-if="!collection.Contents.length">No Activity</span><span ng-repeat="content in collection.Contents">{{content.Curie_level}}mCi of {{content.Isotope_name}}<span ng-if="!$last">, </span></span>
                             <div class="pickup-comments" style="padding:0 !important;">
                                 <span ng-if="collection.Comments && !collection.edit">Comments: {{collection.Comments}}<i ng-click="af.createCopy(collection)" class="icon-pencil primary"></i></span>
                                 <span ng-if="!collection.Comments && !collection.edit">Add Comment:<a class="btn btn-success btn-mini" ng-click="af.createCopy(collection)"><i class="icon-plus-2 success"></i></a></span>
