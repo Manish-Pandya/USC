@@ -105,6 +105,7 @@ if(!isset($_SESSION["USER"])){ ?>
 	<script type="text/javascript" src="../js/lib/select.min.js"></script>
 	<script type="text/javascript" src="../js/lib/angular-sanitize.min.js"></script>
     <script src="../js/roleBased.js"></script>
+    <script src="../js/lib/contextMenu.min.js"></script>
 
 
 <!-- Required for the ORM framework -->
