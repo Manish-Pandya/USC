@@ -495,6 +495,7 @@ class IBC_ActionManager extends ActionManager {
         $dao = $this->getDao(new IBCPrimaryComment());
         return $dao->getAll();
     }
+
     /**
 	 * @param integer $id
 	 * @return GenericCrud | IBCPrimaryCommentById | ActionError
@@ -512,6 +513,14 @@ class IBC_ActionManager extends ActionManager {
         $dao = $this->getDao($decodedObject);
         return $dao->save($decodedObject);
     }
+
+
+
+	public function testEmailGen() {
+		//return EmailGen::doThing();
+		$emailGen = new IBCEmailGen("");
+		return $emailGen->parse();
+	}
 }
 
 ?>
