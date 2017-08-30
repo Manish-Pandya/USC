@@ -12,6 +12,10 @@ angular.module('ng-IBC')
         replace: false,
         transclude: true,
         templateUrl: "./scripts/directives/collapsible-card.html",
+        link: function (scope, element, attrs) {
+            if (!('openHandler' in attrs))
+                scope.openHandler = null;
+        },
         controller: function ($scope) {
             $scope.$watch("isopen", function () {
                 $scope.closed = !$scope.isopen;
