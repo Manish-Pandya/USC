@@ -1,0 +1,27 @@
+﻿<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:saving, message:'Saving...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+
+<h1 class="card full">
+    <i class="icon-protocol"></i>IBC Administrator – Email Management
+</h1>
+<br/>
+<div class="card full">
+    <collapsible-card id="collapse2" isopen="true" class="card full" header-text="Protocol Submitted for IBC Review" header-icon="icon-info">
+        <h3 ng-if="!closed && !recipients.length"><i class="icon-spinnery-dealie spinner small" style="margin: 3px;"></i>Loading Template</h3>
+        <div>
+            <h3>Recipients:</h3>
+            <ul>
+                <li ng-repeat="recipient in recipients">{{recipient}}</li>
+            </ul>
+        </div>
+        <br />
+        <div>
+            <h3>Subject:</h3>
+            <input type="text" ng-model="subject" />
+        </div>
+        <br />
+        <div>
+            <textarea ng-model="corpus" ui-tinymce="$root.tinymceOptions"></textarea>
+        </div>
+    </collapsible-card>
+</div>

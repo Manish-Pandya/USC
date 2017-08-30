@@ -11,7 +11,10 @@
 
 class IBCEmailGen extends EmailGen {
 
-	public function __construct($corpus) {
+	private $revision;
+	private $protocol;
+
+	public function __construct($corpus, IBCProtocolRevision $revision) {
 		if ($corpus == null) {
 			$corpus = "Dear Dr. [PI],
 				The Institutional Biosafety Committee (IBC) has reviewed your IBC Protocol Application titled &quot;[Protocol Title].&quot;
@@ -52,16 +55,34 @@ class IBCEmailGen extends EmailGen {
 				University of South Carolina &amp; USC School of Medicine";
 		}
 		parent::__construct($corpus);
+		$this->revision = $revision;
 	}
 
 	public function swapFish() {
 		return "Flynn the really really fun Fish";
 	}
+	/*
+	 * @return IBCProtocol
+	 */
+	protected function getProtocol(){
+		if($this->protocol == null && $this->revision && $this->revision->getProtocol_id() != null){
+			$protocolDao = new GenericDAO(new IBCProtocol());
+			$this->protocol = $protocolDao->getById($this->revision->getProtocol_id());
+		}
+		return $this->protocol;
+	}
+
+	protected function getPis(){
+		if($this->pis == null && $this->getProtocol() != null){
+			$this->pis = $this->protocol->getPrincipalInvestigators();
+		}
+		return $this->pis;
+	}
 
 	/** Macro key/value replacement map */
 	public function macroMap() {
 		return array(
-			"[PI]"							=>	$this->swapFish(),
+			"[PI]"							=>	"PI Name",
 			"[Protocol Title]"				=>	"Protocol Title",
 			"[Protocol Number]"				=>	"Protocol Number",
 			"[Protocol Approval Date]"		=>	"Protocol Approval Date",
