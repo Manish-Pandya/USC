@@ -15,6 +15,7 @@ class EmailGen extends GenericCrud {
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
+		"subject"				=> "text",
 		"corpus"				=> "text",
 		"title"					=> "text",
 		"module"				=> "text",
@@ -39,13 +40,14 @@ class EmailGen extends GenericCrud {
 	 * Example corpus string
 	 * @var mixed
 	 */
-	private $corpus = "This is a test story about {fish} and how they {toot} underwater.
+	protected $subject;
+	protected $corpus = "This is a test story about {fish} and how they {toot} underwater.
 		More specifically, how do {fish}'s {toot}s look, sound, and smell from the air.
 		Would a low-flying {bird} be able to detect {fish}'s {toot}?
 		Would {bird} be compelled to then {eat} {fish}
 		Inquiring minds want to {know}";
-	private $title;
-	private $module;
+	protected $title;
+	protected $module;
 
 	/**
 	 * Summary of __construct
@@ -69,6 +71,9 @@ class EmailGen extends GenericCrud {
 	}
 
 	// Accessors //
+	public function getSubject(){ return $this->subject; }
+	public function setSubject($subject){ $this->subject = $subject; }
+
 	public function getCorpus(){ return $this->corpus; }
 	public function setCorpus($deadBaby){ $this->corpus = $deadBaby; }
 

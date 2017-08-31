@@ -76,6 +76,7 @@ angular
         if (!DataStoreManager.CurrentRoles) {
             return $q.all([XHR.GET("getCurrentRoles").then(function (roles) {
                     DataStoreManager.CurrentRoles = roles;
+                    console.log("Current Roles:", roles);
                     return roles;
                 })]);
         }

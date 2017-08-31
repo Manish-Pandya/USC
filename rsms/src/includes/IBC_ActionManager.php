@@ -514,11 +514,23 @@ class IBC_ActionManager extends ActionManager {
         return $dao->save($decodedObject);
     }
 
+	// IBC Email Mgmt functions //
+	//////////////////////////////
 
+	public function getAllIBCEmails() {
+		$dao = $this->getDao(new IBCEmailGen());
+        $whereClauseGroup = new WhereClauseGroup(
+			array(
+				new WhereClause('module','=', IBCEmailGen::$MODULE_NAME)
+			)
+        );
+        $responses = $dao->getAllWhere($whereClauseGroup);
+        return $responses;
+	}
 
 	public function testEmailGen() {
 		//return EmailGen::doThing();
-		$emailGen = new IBCEmailGen("");
+		$emailGen = new IBCEmailGen();
 		return $emailGen->parse();
 	}
 }

@@ -13,14 +13,25 @@ angular.module('ng-IBC')
 
         var getRecipients = function (): void {
             $scope.recipients = [];
-            for (var n = 0; n < 10; n++) {
+            for (var n = 0; n < 7; n++) {
                 $scope.recipients.push("test" + n + "@domain.fun");
             }
         }
 
         var getEmailData = function (): void {
-            $scope.subject = "Protocol Approved (Review prior to sending):";
-            $scope.corpus = "Hello World";
+            $scope.emails = new ViewModelHolder();
+            return $q.all([DataStoreManager.getAll("IBCEmailGen", $scope.emails)])
+                .then(
+                    function (whateverGotReturned) {
+                        console.log($scope.emails.data);
+                        console.log(DataStoreManager._actualModel);
+                    }
+                )
+                .catch(
+                    function (reason) {
+                        console.log("bad Promise.all:", reason);
+                    }
+                )
         }
 
         $scope.loading = $rootScope.getCurrentRoles().then(getRecipients).then(getEmailData);

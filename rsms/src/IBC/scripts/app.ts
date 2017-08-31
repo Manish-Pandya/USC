@@ -80,6 +80,7 @@ angular
                 return $q.all(
                     [XHR.GET("getCurrentRoles").then((roles) => {
                         DataStoreManager.CurrentRoles = roles;
+                        console.log("Current Roles:", roles);
                         return roles;
                     })]
                 )
