@@ -528,6 +528,13 @@ class IBC_ActionManager extends ActionManager {
         return $responses;
 	}
 
+	public function saveIBCEmailGen(IBCEmailGen $decodedObject){
+        if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
+        if($decodedObject == NULL)return new ActionError("No input read from stream");
+        $dao = $this->getDao($decodedObject);
+        return $dao->save($decodedObject);
+    }
+
 	public function testEmailGen() {
 		//return EmailGen::doThing();
 		$emailGen = new IBCEmailGen();

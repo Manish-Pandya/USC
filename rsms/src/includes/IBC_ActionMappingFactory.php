@@ -62,6 +62,7 @@ class IBC_ActionMappingFactory extends ActionMappingFactory {
 
 				"testEmailGen"     => new ActionMapping("testEmailGen", "", "" ),
 				"getAllIBCEmails"     => new ActionMapping("getAllIBCEmails", "", "", $this::$ROLE_GROUPS["ADMIN"] ),
+				"saveIBCEmailGen"     => new ActionMapping("saveIBCEmailGen", "", "", $this::$ROLE_GROUPS["ADMIN"] ),
 		);
 	}
 }

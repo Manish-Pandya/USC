@@ -26,6 +26,9 @@ angular.module('ng-IBC')
             console.log("bad Promise.all:", reason);
         });
     };
+    $scope.save = function (copy) {
+        $scope.saving = $q.all([DataStoreManager.save(copy)]).then($scope.close);
+    };
     $scope.loading = $rootScope.getCurrentRoles().then(getRecipients).then(getEmailData);
 })
     .controller('IBCEmailMgmtModalCtrl', function ($scope, $rootScope, $modalInstance, $modal, convenienceMethods, roleBasedFactory) {

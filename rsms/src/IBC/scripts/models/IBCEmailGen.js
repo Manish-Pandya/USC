@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var ibc;
 (function (ibc) {
-    var IBCEmailGen = (function (_super) {
+    var IBCEmailGen = /** @class */ (function (_super) {
         __extends(IBCEmailGen, _super);
         function IBCEmailGen() {
             return _super.call(this) || this;
@@ -22,7 +22,7 @@ var ibc;
             }
             return this._hasGetAllPermission;
         };
-        IBCEmailGen.urlMapping = new UrlMapping("getAllIBCEmails", "getIBCEmailGenById&id=", "saveIBCMailGen");
+        IBCEmailGen.urlMapping = new UrlMapping("getAllIBCEmails", "getIBCEmailGenById&id=", "saveIBCEmailGen");
         return IBCEmailGen;
     }(FluxCompositerBase));
     ibc.IBCEmailGen = IBCEmailGen;

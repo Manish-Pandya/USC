@@ -1,7 +1,7 @@
 ﻿namespace ibc {
     export class IBCEmailGen extends FluxCompositerBase {
 
-        static urlMapping = new UrlMapping("getAllIBCEmails", "getIBCEmailGenById&id=", "saveIBCMailGen");
+        static urlMapping = new UrlMapping("getAllIBCEmails", "getIBCEmailGenById&id=", "saveIBCEmailGen");
 
         Corpus: string;
 
