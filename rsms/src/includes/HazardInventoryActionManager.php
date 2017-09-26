@@ -52,12 +52,12 @@ class HazardInventoryActionManager extends ActionManager {
 		if($decodedObject == null){
 			return new ActionError("No DTO");
 		}
-
+        $rels = array();
 		foreach($decodedObject->getInspectionRooms() as $roomDto){
-			$this->savePrincipalInvestigatorHazardRoomRelation($roomDto);
+			$rels[] = $this->savePrincipalInvestigatorHazardRoomRelation($roomDto);
 		}
 
-		return $decodedObject;
+		return $rels;
 	}
 
 	/*
@@ -131,6 +131,8 @@ class HazardInventoryActionManager extends ActionManager {
 				$relation->setRoom_id($decodedObject->getRoom_id());
 				$relation->setStatus($decodedObject->getStatus());
 				$relation = $piHazardRoomDao->save($relation);
+                $LOG->fatal($relation);
+
 			}
 			//if we have set the status to "STORED_ONLY", we must also set the status to for each child hazard in this room
 			if($decodedObject->getStatus() == "STORED_ONLY"){
@@ -152,11 +154,6 @@ class HazardInventoryActionManager extends ActionManager {
 
 		}
 
-        $room = $this->getRoomById($decodedObject->getRoom_id());
-        $room->getHazardTypesArePresent();
-        if($room != $this->saveRoom($room)){
-            return new ActionError("Failed to update room");
-        }
 
 		return $decodedObject;
 	}

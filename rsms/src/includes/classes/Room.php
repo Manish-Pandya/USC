@@ -137,9 +137,7 @@ class Room extends GenericCrud {
 	public function setPurpose($purpose){ $this->purpose = $purpose; }
 
 	public function getChem_hazards_present() {
-        if($this->chem_hazards_present == null){
-            $this->getHazardTypesArePresent();
-        }
+        $this->getHazardTypesArePresent();        
         return $this->chem_hazards_present;
     }
 	public function setChem_hazards_present($chem_hazards_present){ $this->chem_hazards_present = (boolean) $chem_hazards_present; }
@@ -355,6 +353,19 @@ class Room extends GenericCrud {
         // Get the db connection
         global $db;
 
+        $this->bio_hazards_present = false;
+        $this->chem_hazards_present = false;
+        $this->rad_hazards_present = false;
+        $this->lasers_present = false;
+        $this->xrays_present = false;
+        $this->recombinant_dna_present = false;
+        $this->flammable_gas_present = false;
+	    $this->toxic_gas_present = false;
+	    $this->corrosive_gas_present = false;
+        $this->hf_present = false;
+
+        if($this->getPrincipalInvestigators() == null)return;
+
         //get all the Relationships between this hazard and rooms that this PI has, so we can determine if this PI or ANY PI has the hazard in any of these rooms
         $queryString = "SELECT DISTINCT parent_hazard_id
                         FROM hazard a
@@ -373,16 +384,7 @@ class Room extends GenericCrud {
         $stmt = $db->prepare($queryString);
         $stmt->execute();
 
-        $this->bio_hazards_present = false;
-        $this->chem_hazards_present = false;
-        $this->rad_hazards_present = false;
-        $this->lasers_present = false;
-        $this->xrays_present = false;
-        $this->recombinant_dna_present = false;
-        $this->flammable_gas_present = false;
-	    $this->toxic_gas_present = false;
-	    $this->corrosive_gas_present = false;
-        $this->hf_present = false;
+
 
         while($id = $stmt->fetchColumn()){
 			if($id == 1){

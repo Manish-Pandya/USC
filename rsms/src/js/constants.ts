@@ -173,6 +173,11 @@ class Constants  {
         SAMPLE: 7
     }
 
+    public static CONTAINTER_TYPE = [
+        { Class: "WasteBag", Label: "Solid Waste" },
+        { Class: "ScintVialCollection", Label: "Scintillation Vial" }
+    ]
+
     //these have to be strings instead of ints because the server will return IDS as strings, and we don't want to have to convert them all
     public static BRANCH_HAZARD_IDS = ['1', '9999', '10009', '10010'];
 

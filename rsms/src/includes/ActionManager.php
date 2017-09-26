@@ -4198,7 +4198,7 @@ class ActionManager {
             $LOG->fatal(implode(",", $recipientEmails));
             $LOG->fatal($text);
 
-            if(!mail(implode(",", $recipientEmails),'EHS Laboratory Safety Inspection Results',$text . $footerText,'From:LabInspectionReports@ehs.sc.edu<RSMS Portal>\r\nCc: '. implode(",", $inspectorEmails))){
+            if(!mail(implode(",", $recipientEmails),'EHS Laboratory Safety Inspection Results',$text ,'From:LabInspectionReports@ehs.sc.edu<RSMS Portal>\r\nCc: '. implode(",", $inspectorEmails))){
                 $LOG->fatal("Couldn't send");
                 return new ActionError("Couldn't send");
             };

@@ -22,6 +22,7 @@ class ActionMappingFactory {
 
     protected static $ROLE_GROUPS = array(
             "ADMIN" 				=> array("Admin", "Radiation Admin"),
+            "RADMIN" 				=> array("Radiation Admin"),
             "IBC_COMMITTEE" 		=> array("Admin", "Radiation Admin", "IBC Member"),
             "IBC_AND_LAB" 		    => array("Admin", "Radiation Admin", "IBC Member", "Principal Investigator", "Lab Contact"),
             "EHS"					=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector"),
@@ -60,7 +61,7 @@ class ActionMappingFactory {
         		"getRelationships"=>new ActionMapping("getRelationships", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 
                 // Users Hub
-                "getAllUsers"=>new ActionMapping("getAllUsers", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "getAllUsers"=>new ActionMapping("getAllUsers", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getUserById"=>new ActionMapping("getUserById", "", ""),
                 "saveUser"=>new ActionMapping("saveUser", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getAllRoles"=>new ActionMapping("getAllRoles", "", ""),
