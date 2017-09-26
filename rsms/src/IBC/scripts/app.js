@@ -46,10 +46,10 @@ angular
         templateUrl: "views/my-protocols.html",
         controller: "IBCMyProtocolsCtrl"
     })
-        .state('ibc.emails', {
-        url: "/emails",
-        templateUrl: "views/emails.html",
-        controller: "IBCEmailCtrl"
+        .state('ibc.email-management', {
+        url: "/email-management",
+        templateUrl: "views/email-management.html",
+        controller: "IBCEmailMgmtCtrl"
     })
         .state('ibc.test', {
         url: "/test/:id",
@@ -76,6 +76,7 @@ angular
         if (!DataStoreManager.CurrentRoles) {
             return $q.all([XHR.GET("getCurrentRoles").then(function (roles) {
                     DataStoreManager.CurrentRoles = roles;
+                    console.log("Current Roles:", roles);
                     return roles;
                 })]);
         }

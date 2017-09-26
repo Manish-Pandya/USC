@@ -495,6 +495,7 @@ class IBC_ActionManager extends ActionManager {
         $dao = $this->getDao(new IBCPrimaryComment());
         return $dao->getAll();
     }
+
     /**
 	 * @param integer $id
 	 * @return GenericCrud | IBCPrimaryCommentById | ActionError
@@ -512,6 +513,33 @@ class IBC_ActionManager extends ActionManager {
         $dao = $this->getDao($decodedObject);
         return $dao->save($decodedObject);
     }
+
+	// IBC Email Mgmt functions //
+	//////////////////////////////
+
+	public function getAllIBCEmails() {
+		$dao = $this->getDao(new IBCEmailGen());
+        $whereClauseGroup = new WhereClauseGroup(
+			array(
+				new WhereClause('module','=', IBCEmailGen::$MODULE_NAME)
+			)
+        );
+        $responses = $dao->getAllWhere($whereClauseGroup);
+        return $responses;
+	}
+
+	public function saveIBCEmailGen(IBCEmailGen $decodedObject){
+        if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
+        if($decodedObject == NULL)return new ActionError("No input read from stream");
+        $dao = $this->getDao($decodedObject);
+        return $dao->save($decodedObject);
+    }
+
+	public function testEmailGen() {
+		//return EmailGen::doThing();
+		$emailGen = new IBCEmailGen();
+		return $emailGen->parse();
+	}
 }
 
 ?>

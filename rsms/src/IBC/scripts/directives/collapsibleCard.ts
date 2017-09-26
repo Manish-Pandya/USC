@@ -12,6 +12,9 @@
         replace: false,
         transclude: true,
         templateUrl: "./scripts/directives/collapsible-card.html",
+        link: function (scope, element, attrs) {
+            if (!('openHandler' in attrs)) scope.openHandler = null;
+        },
         controller: ($scope) => {
             $scope.$watch("isopen", () => {
                 $scope.closed = !$scope.isopen;
