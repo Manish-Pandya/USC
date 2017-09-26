@@ -14,6 +14,9 @@ class WasteBag extends RadCrud {
 		"date_removed" => "timestamp",
         "comments"     => "text",
         "principal_investigator_id"		=> "integer",
+        "label"        => "text",
+        "open_date"			            => "timestamp",
+		"close_date"			        => "timestamp",
 
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -70,6 +73,8 @@ class WasteBag extends RadCrud {
 	private $parcel_use_amounts;
 
     private $comments;
+
+    private $label;
 
 	/** IsotopeAmountDTOs in this bag **/
 	private $contents;
@@ -151,7 +156,7 @@ class WasteBag extends RadCrud {
 	public function getParcelUseAmounts() {
 		if($this->parcel_use_amounts === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
-			$this->parcel_use_amounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$USEAMOUNTS_RELATIONSHIP));
+			$this->parcel_use_amounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$USEAMOUNTS_RELATIONSHIP), null, true);
 		}
 		return $this->parcel_use_amounts;
 	}
@@ -188,4 +193,21 @@ class WasteBag extends RadCrud {
 		return $this->pickupLots;
 	}
 	public function setPickupLots($lots) {$this->pickupLots = $lots;}
+
+    public function getLabel(){
+        if($this->label == null && $this->key_id != null && $this->principal_investigator_id != null){
+            $piDao = new GenericDAO(new PrincipalInvestigator());
+            $pi = $piDao->getById($this->principal_investigator_id);
+            $name = $pi->getUser() != null ? strtoupper($pi->getUser()->getLast_name()) : null;
+            if($name) $this->label = $name . "-SLD-" . $this->key_id;
+        }
+        return $this->label;
+    }
+	public function setLabel($label){ $this->label = $label; }
+
+    public function getClose_date(){ return $this->close_date; }
+	public function setClose_date($close_date){ $this->close_date = $close_date; }
+
+	public function getOpen_date(){ return $this->open_date; }
+	public function setOpen_date($open_date){ $this->open_date = $open_date; }
 }

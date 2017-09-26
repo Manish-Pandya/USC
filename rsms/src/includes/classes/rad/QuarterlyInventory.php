@@ -37,26 +37,26 @@ include_once 'RadCrud.php';
     		"keyName"	=> "key_id",
     		"foreignKeyName"	=> "quarterly_inventory_id"
     );
-    
+
 	/** id of the PI who runs the lab(s) this inventory was done on **/
 	private $pi_quarterly_inventories;
-	
+
 	/** Start of date range for this inventory **/
 	private $start_date;
-	
+
 	/** End of date range for this inventory **/
 	private $end_date;
-	
+
 	/** Due date for all PIs for this inventory **/
 	private $due_date;
-	
+
     public function __construct() {
 
     	// Define which subentities to load
     	$entityMaps = array();
     	$entityMaps[] = new EntityMap("eager", "getQuarterly_isotope_amounts");
     	$entityMaps[] = new EntityMap("eager", "getPi_quarterly_inventories");
-    	
+
     	$this->setEntityMaps($entityMaps);
     }
 
@@ -68,7 +68,7 @@ include_once 'RadCrud.php';
     public function getColumnData() {
         return self::$COLUMN_NAMES_AND_TYPES;
     }
-    
+
     //Accessors/Mutators
 	public function getStart_date() {
 		return $this->start_date;
@@ -76,17 +76,23 @@ include_once 'RadCrud.php';
 	public function setStart_date($start_date) {
 		$this->start_date = $start_date;
 	}
-	
+
 	public function getEnd_date() {
 		return $this->end_date;
 	}
 	public function setEnd_date($end_date) {
 		$this->end_date = $end_date;
 	}
-	    
-	public function getDue_date(){return $this->due_date;}
+
+	public function getDue_date(){
+        if($this->end_date != null){
+            //1209600 is the number of seconds in two weeks
+            $this->due_date = date('Y-m-d H:i:s', strtotime($this->end_date) + 1209600);
+        }
+        return $this->due_date;
+    }
 	public function setDue_date($date){$this->due_date = $date;}
-	
+
 	public function getPi_quarterly_inventories(){
 		$LOG = Logger::getLogger(__CLASS__);
 		if($this->pi_quarterly_inventories === NULL && $this->hasPrimaryKeyValue()) {
@@ -95,8 +101,8 @@ include_once 'RadCrud.php';
 		}
 		return $this->pi_quarterly_inventories;
 	}
-	
+
 	public function setPi_quarterly_inventories($inventories){$this->pi_quarterly_inventories = $inventories;}
-	
+
 }
 ?>

@@ -147,9 +147,10 @@ angular.module('00RsmsAngularOrmApp')
  * Controller of the 00RsmsAngularOrmApp PI Use Log
  */
 angular.module('00RsmsAngularOrmApp')
-    .controller('ParcelUseLogCtrl', function (convenienceMethods, $scope, actionFunctionsFactory, $stateParams, $rootScope, $modal) {
+    .controller('ParcelUseLogCtrl', function (convenienceMethods, $scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, roleBasedFactory) {
     var af = actionFunctionsFactory;
     $scope.af = af;
+    $scope.roleBasedFactory = roleBasedFactory;
     $scope.constants = Constants;
     console.log($scope.constants);
     af.clearError();
@@ -164,7 +165,7 @@ angular.module('00RsmsAngularOrmApp')
                     parcel.Authorization = $rootScope.pi.ActiveParcels.Authorization;
             }
             console.log($rootScope.pi);
-            $scope.pickups = $rootScope.pi.Pickups;
+            $rootScope.pickups = $rootScope.pi.Pickups;
             return $rootScope.pi;
         }, function () { });
     };
@@ -207,6 +208,9 @@ angular.module('00RsmsAngularOrmApp')
             return false;
         return $rootScope.pi.Pickups.filter(function (p) { return p.Key_id == id; })[0];
     };
+    $scope.getContainer = function (type, id) {
+        return "<small><br>In Container " + $scope.pi[type + "s"].filter(function (c) { return c.Key_id == id; })[0].Label + "</small>" || null;
+    };
     $scope.addUsage = function (parcel) {
         if (!$scope.parcel.ParcelUses)
             $scope.parcel.ParcelUses = [];
@@ -219,36 +223,16 @@ angular.module('00RsmsAngularOrmApp')
         $rootScope.ParcelUseCopy.Parcel_id = $scope.parcel.Key_id;
         $rootScope.ParcelUseCopy.ParcelUseAmounts = [];
         $rootScope.ParcelUseCopy.Class = "ParcelUse";
-        var solidUsageAmount = new window.ParcelUseAmount();
-        var liquidUsageAmount = new window.ParcelUseAmount();
-        var vialUsageAmount = new window.ParcelUseAmount();
-        var otherUsageAmount = new window.ParcelUseAmount();
-        var sampleUsageAmount = new window.ParcelUseAmount();
-        solidUsageAmount.Waste_type_id = Constants.WASTE_TYPE.SOLID;
-        solidUsageAmount.Waste_bag_id = $rootScope.pi.CurrentWasteBag.Key_id;
-        //console.log(solidUsageAmount, $rootScope.pi.CurrentWasteBag);
-        //return;
-        liquidUsageAmount.Waste_type_id = Constants.WASTE_TYPE.LIQUID;
-        vialUsageAmount.Waste_type_id = Constants.WASTE_TYPE.VIAL;
-        otherUsageAmount.Waste_type_id = Constants.WASTE_TYPE.OTHER;
-        sampleUsageAmount.Waste_type_id = Constants.WASTE_TYPE.SAMPLE;
-        $rootScope.ParcelUseCopy.ParcelUseAmounts.push(solidUsageAmount);
-        $rootScope.ParcelUseCopy.ParcelUseAmounts.push(liquidUsageAmount);
-        $rootScope.ParcelUseCopy.ParcelUseAmounts.push(vialUsageAmount);
-        $rootScope.ParcelUseCopy.ParcelUseAmounts.push(otherUsageAmount);
-        $rootScope.ParcelUseCopy.ParcelUseAmounts.push(sampleUsageAmount);
+        $rootScope.ParcelUseCopy.Is_active = true;
+        var amt = new window.ParcelUseAmount();
+        amt.Waste_type_id = -1;
+        amt.Is_active = true;
+        console.log($rootScope.ParcelUseCopy.ParcelUseAmounts);
+        $rootScope.ParcelUseCopy.ParcelUseAmounts = $rootScope.ParcelUseCopy.ParcelUseAmounts.concat([amt]);
+        $rootScope.ParcelUseCopy.ParcelUseAmounts.forEach(function (pua) { return pua.Is_active = true; });
         $scope.editUse($rootScope.ParcelUseCopy);
     };
     $scope.editUse = function (use) {
-        var parcelUseHasUseAmountType = function (use, typeId) {
-            var i = use.ParcelUseAmounts.length;
-            while (i--) {
-                var amt = use.ParcelUseAmounts[i];
-                if (amt.Waste_type_id == typeId)
-                    return true;
-            }
-            return false;
-        };
         var i = $scope.parcel.ParcelUses.length;
         while (i--) {
             $scope.parcel.ParcelUses[i].edit = false;
@@ -256,38 +240,12 @@ angular.module('00RsmsAngularOrmApp')
         $rootScope.ParcelUseCopy = {};
         $rootScope.use = use;
         af.createCopy(use);
-        if (!parcelUseHasUseAmountType($rootScope.ParcelUseCopy, Constants.WASTE_TYPE.SOLID)) {
-            var solidUsageAmount = new window.ParcelUseAmount();
-            solidUsageAmount.Waste_type_id = Constants.WASTE_TYPE.SOLID;
-            solidUsageAmount.Waste_bag_id = $rootScope.pi.CurrentWasteBag.Key_id;
-            console.log($rootScope.pi.CurrentWasteBag);
-            $rootScope.ParcelUseCopy.ParcelUseAmounts.push(solidUsageAmount);
-        }
-        if (!parcelUseHasUseAmountType($rootScope.ParcelUseCopy, Constants.WASTE_TYPE.LIQUID)) {
-            var liquidUsageAmount = new window.ParcelUseAmount();
-            liquidUsageAmount.Waste_type_id = Constants.WASTE_TYPE.LIQUID;
-            $rootScope.ParcelUseCopy.ParcelUseAmounts.push(liquidUsageAmount);
-        }
-        if (!parcelUseHasUseAmountType($rootScope.ParcelUseCopy, Constants.WASTE_TYPE.VIAL)) {
-            var vialUsageAmount = new window.ParcelUseAmount();
-            vialUsageAmount.Waste_type_id = Constants.WASTE_TYPE.VIAL;
-            $rootScope.ParcelUseCopy.ParcelUseAmounts.push(vialUsageAmount);
-        }
-        if (!parcelUseHasUseAmountType($rootScope.ParcelUseCopy, Constants.WASTE_TYPE.OTHER)) {
-            var otherUsageAmount = new window.ParcelUseAmount();
-            otherUsageAmount.Waste_type_id = Constants.WASTE_TYPE.OTHER;
-            $rootScope.ParcelUseCopy.ParcelUseAmounts.push(otherUsageAmount);
-        }
-        if (!parcelUseHasUseAmountType($rootScope.ParcelUseCopy, Constants.WASTE_TYPE.SAMPLE)) {
+        if ($rootScope.ParcelUseCopy.ParcelUseAmounts.filter(function (pu) {
+            return pu.Waste_type_id == Constants.WASTE_TYPE.SAMPLE;
+        }).length == 0) {
             var sampleUsageAmount = new window.ParcelUseAmount();
             sampleUsageAmount.Waste_type_id = Constants.WASTE_TYPE.SAMPLE;
             $rootScope.ParcelUseCopy.ParcelUseAmounts.push(sampleUsageAmount);
-        }
-        var i = use.ParcelUseAmounts.length;
-        while (i--) {
-            if (use.ParcelUseAmounts[i].Carboy_id)
-                console.log(use.ParcelUseAmounts[i].Carboy);
-            use.ParcelUseAmounts[i].OldQuantity = use.ParcelUseAmounts[i].Curie_level;
         }
         var modalInstance = $modal.open({
             templateUrl: 'views/pi/pi-modals/parcel-use-log-modal.html',
@@ -298,30 +256,79 @@ angular.module('00RsmsAngularOrmApp')
         var sum = 0;
         uses.forEach(function (u) {
             u.ParcelUseAmounts.forEach(function (amt) {
-                console.log(amt);
                 if ((!pickupId || pickupId == amt.IsPickedUp) && amt.Waste_type_id == type)
                     sum += parseFloat(amt.Curie_level);
             });
         });
         return sum.toString() + "mCi";
     };
+    $scope.deactivate = function (pu) {
+        pu.Is_active = !pu.Is_active;
+        console.log(pu);
+        pu.ParcelUseAmounts.forEach(function (pua) { console.log(pua); pua.Is_active = !pua.Is_active; });
+        $scope.saving = af.saveParcelUse($rootScope.parcel, pu, pu).then(function (returned) {
+            if (!$rootScope.parcel.ParcelUses || !$rootScope.parcel.ParcelUses.length) {
+                console.log(returned);
+                $rootScope.parcel.ParcelUses = returned.ParcelUses;
+            }
+            $rootScope.parcelUses = {};
+            $rootScope.parcelUses = $rootScope.mapUses($rootScope.parcel.ParcelUses);
+        });
+    };
 });
 angular.module('00RsmsAngularOrmApp')
-    .controller('ModalParcelUseLogCtrl', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory) {
+    .controller('ModalParcelUseLogCtrl', function ($scope, $rootScope, $modalInstance, $modal, actionFunctionsFactory, convenienceMethods, roleBasedFactory) {
+    $scope.roleBasedFactory = roleBasedFactory;
     var af = actionFunctionsFactory;
     $scope.af = af;
-    $scope.addAmount = function (type) {
+    $scope.getContainers = function (pi) {
+        return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections)
+            .map(function (c, idx) {
+            var container = angular.extend({}, c);
+            container.ViewLabel = c.Label || c.CarboyNumber;
+            //we index at 1 because JS can't tell the difference between false and the number 0 (see return of $scope.getContainer method below)
+            container.idx = idx + 1;
+            switch (c.Class) {
+                case ("WasteBag"):
+                    container.ClassLabel = "Waste Bags";
+                    break;
+                case ("CarboyUseCycle"):
+                    container.ClassLabel = "Carboys";
+                    break;
+                case ("ScintVialCollection"):
+                    container.ClassLabel = "Scint Vial Containers";
+                    break;
+                default:
+                    container.ClassLabel = "";
+            }
+            return container;
+        });
+    };
+    $scope.getContainer = function (amt, pi) {
+        var num = pi.Containers.filter(function (container) {
+            if (container.Class == "ScintVialCollection" && amt.Scint_vial_collection_id && amt.Scint_vial_collection_id == container.Key_id) {
+                return true;
+            }
+            else if (container.Class == "CarboyUseCycle" && amt.Carboy_id && amt.Carboy_id == container.Key_id) {
+                return true;
+            }
+            else if (container.Class == "WasteBag" && amt.Waste_bag_id && amt.Waste_bag_id == container.Key_id) {
+                return true;
+            }
+            return false;
+        }).map(function (c) { if (c.Close_date)
+            amt.PickedUp = true; return c.idx; })[0] || null;
+        return num;
+    };
+    $scope.addAmount = function () {
         var amt = new window.ParcelUseAmount();
-        if (type == "Solids")
-            amt.Waste_type_id = Constants.WASTE_TYPE.SOLID;
-        if (type == "Liquids")
-            amt.Waste_type_id = Constants.WASTE_TYPE.LIQUID;
-        if (type == "Vials")
-            amt.Waste_type_id = Constants.WASTE_TYPE.VIAL;
-        if (type == "Others")
-            amt.Waste_type_id = Constants.WASTE_TYPE.OTHER;
-        $rootScope.ParcelUseCopy.ParcelUseAmounts.push(amt);
-        $rootScope.ParcelUseCopy[type].push(amt);
+        amt.Is_active = true;
+        amt.Waste_type_id = -1;
+        $rootScope.ParcelUseCopy.ParcelUseAmounts.splice($rootScope.ParcelUseCopy.ParcelUseAmounts.length - 1, 0, amt);
+    };
+    $scope.removeAmount = function (idx) {
+        var amt = new window.ParcelUseAmount();
+        $rootScope.ParcelUseCopy.ParcelUseAmounts.splice(idx, 1);
     };
     $scope.close = function (use, parcel) {
         use.edit = false;
@@ -344,6 +351,7 @@ angular.module('00RsmsAngularOrmApp')
             total += parseFloat(uses[i].Quantity);
         }
         total += parseFloat(copy.Quantity);
+        console.log(total);
         //if we are editing, subtract the total from the copied use so that it's total isn't included twice
         if (use.Quantity) {
             total = total - parseFloat(use.Quantity);
@@ -355,7 +363,8 @@ angular.module('00RsmsAngularOrmApp')
         return valid;
     };
     $scope.saveParcelUse = function (parcel, copy, use) {
-        if ($scope.validateUseAmounts(copy, use) && $scope.validateRemainder(parcel, copy, use)) {
+        console.log($scope.validateUseAmounts(copy, use), $scope.validateRemainder(parcel, copy, use));
+        if ($scope.validateUseAmounts(copy, use)) {
             af.saveParcelUse(parcel, copy, use).then(function (returned) {
                 if (!$rootScope.parcel.ParcelUses || !$rootScope.parcel.ParcelUses.length) {
                     console.log(returned);
@@ -383,8 +392,9 @@ angular.module('00RsmsAngularOrmApp')
             use.isValid = true;
         }
         else {
-            orig.error = 'Total disposal amount must equal use amount.';
+            use.error = 'Total disposal amount must equal use amount.';
         }
+        use.isValid = validateUsageDate(use, $rootScope.parcel);
         return use.isValid;
     };
     var parcelUseHasUseAmountType = function (use, typeId) {
@@ -396,6 +406,92 @@ angular.module('00RsmsAngularOrmApp')
         }
         return false;
     };
+    function validateUsageDate(use, parcel) {
+        var valid = true;
+        use.DateError = "";
+        var usageDateString = convenienceMethods.setMysqlTime(use.view_Date_used);
+        if (usageDateString < parcel.Arrival_date || usageDateString < parcel.Transfer_in_date) {
+            use.DateError = "The date you entered is before this package arrived.<br>";
+            valid = false;
+        }
+        //verify that the usage date isn't before the most recent pickup
+        var pu = $rootScope.pi.Pickups.sort(function (a, b) { return a.Pickup_date > b.Pickup_date; })[0];
+        if (pu && pu.Pickup_date > usageDateString) {
+            use.DateError += "The date you entered is before your most recent pickup. If you need to make changes to uses that have already been picked up, please contact RSO.<br>";
+            valid = false;
+            if (roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]])) {
+                var mi = $modal.open({
+                    templateUrl: 'views/pi/pi-modals/parcel-use-log-override-modal.html',
+                    controller: 'ModalParcelUseLogOverrideCtrl'
+                });
+                mi.result.then(function (r) {
+                    console.log(r);
+                    $rootScope.parcelUses = {};
+                    $rootScope.parcelUses = $rootScope.mapUses($rootScope.parcel.ParcelUses);
+                    $modalInstance.close();
+                });
+            }
+        }
+        return use.isValid = valid;
+    }
+    $scope.selectContainer = function (amt, containers) {
+        var container = containers[amt.ContainerIdx - 1];
+        amt.Waste_bag_id = null;
+        amt.Waste_type_id = null;
+        amt.Carboy_id = null;
+        amt.Scint_vial_collection_id = null;
+        switch (container.Class) {
+            case ("WasteBag"):
+                amt.Waste_bag_id = container.Key_id;
+                amt.Waste_type_id = Constants.WASTE_TYPE.SOLID;
+                break;
+            case ("CarboyUseCycle"):
+                amt.Carboy_id = container.Key_id;
+                amt.Waste_type_id = Constants.WASTE_TYPE.LIQUID;
+                break;
+            case ("ScintVialCollection"):
+                amt.Scint_vial_collection_id = container.Key_id;
+                amt.Waste_type_id = Constants.WASTE_TYPE.VIAL;
+                break;
+            default:
+                amt.Waste_bag_id = null;
+                amt.Waste_type_id = null;
+                amt.Carboy_id = null;
+                amt.Scint_vial_collection_id = null;
+        }
+    };
+    $scope.setSampleUse = function (parcelUse) {
+        var max = parseFloat(parcelUse.Quantity);
+        if (isNaN(max))
+            max = 0;
+        var total = 0;
+        parcelUse.error = "";
+        parcelUse.ParcelUseAmounts.sort(function (a, b) { return b.Waste_type_id < a.Waste_type_id; }).forEach(function (amt, idx, arr) {
+            if (amt.Waste_type_id != Constants.WASTE_TYPE.SAMPLE) {
+                if (!isNaN(amt.Curie_level))
+                    total += parseFloat(amt.Curie_level);
+            }
+            else {
+                amt.Curie_level = max - total;
+                amt.Curie_level = Math.round(amt.Curie_level * 10000000000) / 10000000000;
+                console.log();
+                if (max < total)
+                    parcelUse.error = "Total disposal amount must equal use amount.";
+            }
+        });
+    };
+    $scope.orderAmts = function () {
+    };
+})
+    .controller('ModalParcelUseLogOverrideCtrl', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods, roleBasedFactory) {
+    $scope.cm = convenienceMethods;
+    var af = actionFunctionsFactory;
+    $scope.selectPickups = function () {
+        af.updateParcelUse($rootScope.parcel, $rootScope.ParcelUseCopy).then(function (r) {
+            $modalInstance.close(r);
+        });
+    };
+    $scope.cancel = function () { return $modalInstance.dismiss(); };
 });
 /**
  * @ngdoc function
@@ -412,17 +508,16 @@ angular.module('00RsmsAngularOrmApp')
         .then(function (pi) {
         //pi.loadRooms();
         pi = dataStoreManager.getById("PrincipalInvestigator", $stateParams.pi);
-        if (pi.Pickups) {
-            var i = pi.Pickups.length;
-            $scope.scheduledPickups = [];
-            while (i--) {
-                if (!pi.Pickups[i].Pickup_date) {
-                    $scope.scheduledPickups.unshift(pi.Pickups[i]);
-                }
-                ;
-            }
+        if (pi.Pickups && pi.Pickups.length) {
+            $scope.CurrentPickup = pi.Pickups.filter(function (p) {
+                return p.Pickup_date == null;
+            }).sort(function (a, b) {
+                return a.Date_created < b.Date_created;
+            })[0] || null;
+            console.log($scope.CurrentPickup);
         }
         $scope.pi = pi;
+        $scope.containers = $scope.getContainers($scope.pi);
     }, function () { });
     $scope.solidsContainerHasPickups = function (container) {
         if (!container)
@@ -473,7 +568,7 @@ angular.module('00RsmsAngularOrmApp')
     $scope.getCurrentPickup = function (pi) {
         $scope.CurrentPickup = !pi.Pickups || !pi.Pickups.length ? null : pi.Pickups.filter(function (p) { return p.Status == Constants.PICKUP.STATUS.REQUESTED; })[0];
     };
-    $scope.createPickup = function (pi, notes) {
+    $scope.createPickup = function (containers, pi, notes) {
         //collection of things to be picked up
         if ($scope.CurrentPickup)
             var pickup = $scope.CurrentPickup;
@@ -489,49 +584,6 @@ angular.module('00RsmsAngularOrmApp')
             pickup.Status = Constants.PICKUP.STATUS.REQUESTED;
             pickup.Principal_investigator_id = pi.Key_id;
         }
-        //include proper objects in pickup
-        if (pi.CurrentWasteBag && pi.CurrentWasteBag.include) {
-            console.log($scope.CurrentPickup, pi.CurrentWasteBag);
-            //if a pickup has already been created, we are moving the items from the PI's current bag to the one being picked up
-            if ($scope.CurrentPickup && $scope.CurrentPickup.Key_id) {
-                pi.CurrentWasteBag.ParcelUseAmounts.forEach(function (amt) {
-                    amt.Waste_bag_id = $scope.CurrentPickup.Waste_bags[0].Key_id;
-                    if (!$scope.CurrentPickup.Waste_bags[0].ParcelUseAmounts)
-                        $scope.CurrentPickup.Waste_bags[0].ParcelUseAmounts = [];
-                    $scope.CurrentPickup.Waste_bags[0].ParcelUseAmounts.push(amt);
-                    amt.markForSplicing = true;
-                });
-            }
-            else {
-                pickup.Waste_bags.push(pi.CurrentWasteBag);
-            }
-            pickup.Bags = pi.CurrentWasteBag.Bags;
-        }
-        if (pi.CurrentScintVialCollections) {
-            var i = pi.CurrentScintVialCollections.length;
-            pickup.Scint_vial_trays = 0;
-            while (i--) {
-                if (pi.CurrentScintVialCollections[i].include && !convenienceMethods.arrayContainsObject(pickup.Scint_vial_collections, pi.CurrentScintVialCollections[i]))
-                    pickup.Scint_vial_collections.push(pi.CurrentScintVialCollections[i]);
-                if (pi.CurrentScintVialCollections[i].svTrays) {
-                    pickup.Scint_vial_trays = parseInt(pickup.Scint_vial_trays) + parseInt(pi.CurrentScintVialCollections[i].svTrays);
-                }
-            }
-        }
-        if (pi.CarboyUseCycles) {
-            var i = pi.CarboyUseCycles.length;
-            while (i--) {
-                if (pi.CarboyUseCycles[i].include && !convenienceMethods.arrayContainsObject(pickup.Carboy_use_cycles, pi.CarboyUseCycles[i]))
-                    pickup.Carboy_use_cycles.push(pi.CarboyUseCycles[i]);
-            }
-            /*
-            af.setModalData(modalData);
-            var modalInstance = $modal.open({
-              templateUrl: 'views/pi/pi-modals/pickup-modal.html',
-              controller: 'PickupModalCtrl'
-            });
-            */
-        }
         var pickupCopy = {
             Class: "Pickup",
             Key_id: pickup.Key_id || null,
@@ -541,21 +593,29 @@ angular.module('00RsmsAngularOrmApp')
             Status: pickup.Status,
             Principal_investigator_id: pickup.Principal_investigator_id,
             Scint_vial_trays: pickup.Scint_vial_trays,
-            Requested_date: convenienceMethods.setMysqlTime(new Date()),
+            Requested_date: convenienceMethods.setMysqlTime(new Date())
         };
-        pickupCopy.Notes = notes || $scope.CurrentPickup.Notes;
-        pickupCopy.Carboy_use_cycles = [];
-        var i = pickup.Carboy_use_cycles.length;
-        while (i--) {
-            var originalCycle = pickup.Carboy_use_cycles[i];
-            var cycle = new CarboyUseCycle();
-            for (var prop in originalCycle) {
-                if (typeof originalCycle[prop] != "object" && !Array.isArray(originalCycle[prop])) {
-                    cycle[prop] = originalCycle[prop];
-                }
-            }
-            pickupCopy.Carboy_use_cycles[i] = cycle;
+        if ($scope.CurrentPickup) {
+            pickupCopy.Notes = notes || $scope.CurrentPickup.Notes;
         }
+        else {
+            pickupCopy.Notes = notes;
+        }
+        pickupCopy.Carboy_use_cycles = [];
+        containers.forEach(function (c) {
+            var collectionClass = "";
+            switch (c.Class) {
+                case ("WasteBag"):
+                    pickupCopy.Waste_bags.push(c);
+                    break;
+                case ("CarboyUseCycle"):
+                    pickupCopy.Carboy_use_cycles.push(c);
+                    break;
+                case ("ScintVialCollection"):
+                    pickupCopy.Scint_vial_collections.push(c);
+                    break;
+            }
+        });
         console.log(pickupCopy);
         $rootScope.saving = af.savePickup(pickup, pickupCopy, true).then(function (newPickup) {
             console.log(newPickup);
@@ -567,9 +627,6 @@ angular.module('00RsmsAngularOrmApp')
                 angular.extend($scope.CurrentPickup, newPickup);
             }
             console.log($scope.CurrentPickup);
-            pi.CurrentWasteBag.ParcelUseAmounts = pi.CurrentWasteBag.ParcelUseAmounts.filter(function (amt) {
-                return !amt.markForSplicing;
-            });
         });
     };
     $scope.selectWaste = function (waste, pickupId) {
@@ -587,7 +644,6 @@ angular.module('00RsmsAngularOrmApp')
                 if (p.ParcelUses) {
                     p.ParcelUses.forEach(function (pu) {
                         pu.ParcelUseAmounts.forEach(function (amt) {
-                            console.log(amt);
                             if (amt.IsPickedUp == pickupId && amt.Waste_type_id == Constants.WASTE_TYPE.SOLID) {
                                 amt.Date_used = pu.Date_used;
                                 amt.Isotope_name = p.Authorization.IsotopeName;
@@ -614,6 +670,44 @@ angular.module('00RsmsAngularOrmApp')
     };
     $scope.hasContents = function (bags) {
         return bags.some(function (b) { return b.Contents && b.Contents.length; });
+    };
+    $scope.getContainers = function (pi) {
+        return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections)
+            .filter(function (c) {
+            return c.Close_date != null && (($scope.CurrentPickup && $scope.CurrentPickup.Key_id) ? c.Pickup_id == $scope.CurrentPickup.Key_id : !c.Pickup_id);
+        })
+            .map(function (c, idx) {
+            var container = angular.extend({}, c);
+            container.ViewLabel = c.Label || c.CarboyNumber;
+            //we index at 1 because JS can't tell the difference between false and the number 0 (see return of $scope.getContainer method below)
+            container.idx = idx + 1;
+            switch (c.Class) {
+                case ("WasteBag"):
+                    container.ClassLabel = "Solid Waste";
+                    break;
+                case ("CarboyUseCycle"):
+                    container.ClassLabel = "Carboys";
+                    break;
+                case ("ScintVialCollection"):
+                    container.ClassLabel = "Scint Vial Containers";
+                    break;
+                default:
+                    container.ClassLabel = "";
+            }
+            return container;
+        });
+    };
+    $scope.getClassByContainerType = function (container) {
+        var classList = "";
+        if (container.Class == "WasteBag")
+            classList = "icon-remove-2 solids-containers";
+        if (container.Class == "ScintVialCollection")
+            classList = "icon-lab scint-vials";
+        if (container.Class == "CarboyUseCycle")
+            classList = "icon-carboy carboys";
+        if (container.Class == "Other")
+            classList = "other";
+        return classList;
     };
 })
     .controller('SelectWasteCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
@@ -812,6 +906,9 @@ angular.module('00RsmsAngularOrmApp')
     .controller('QuarterlyInventoryCtrl', function (convenienceMethods, $scope, actionFunctionsFactory, $stateParams, $rootScope, $modal) {
     var af = actionFunctionsFactory;
     $scope.af = af;
+    $scope.print = function () {
+        window.print();
+    };
     var getPi = function () {
         return af.getRadPIById($stateParams.pi)
             .then(function (pi) {
@@ -863,33 +960,76 @@ angular.module('00RsmsAngularOrmApp')
  * Controller of the 00RsmsAngularOrmApp PI waste receptical/solids container view
  */
 angular.module('00RsmsAngularOrmApp')
-    .controller('RecepticalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal) {
+    .controller('ContainersCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, roleBasedFactory) {
+    $scope.roleBasedFactory = roleBasedFactory;
+    $scope.stuff = { showClosed: false };
     var af = actionFunctionsFactory;
     $scope.af = af;
     $rootScope.piPromise = af.getRadPIById($stateParams.pi)
         .then(function (pi) {
-        var i = pi.SolidsContainers.length;
-        while (i--) {
-            pi.SolidsContainers[i].loadRoom();
-        }
-        pi.loadRooms();
         $scope.pi = pi;
     }, function () { });
-    $scope.openModal = function (templateName, object) {
-        var modalData = {};
+    $scope.openCloseContainerModal = function (container) {
+        console.log(container);
+        var modalData = { pi: null };
         modalData.pi = $scope.pi;
-        if (object)
-            modalData[object.Class] = object;
+        if (container)
+            modalData['Container'] = container;
         af.setModalData(modalData);
         var modalInstance = $modal.open({
-            templateUrl: templateName + '.html',
+            templateUrl: 'views/pi/pi-modals/confirm-close-container.html',
             controller: 'RecepticalModalCtrl'
         });
     };
+    $scope.openContainerModal = function () {
+        var modalData = { pi: null, Container: { Class: "", Principal_investigator_id: $scope.pi.Key_id } };
+        modalData.pi = $scope.pi;
+        af.setModalData(modalData);
+        var modalInstance = $modal.open({
+            templateUrl: 'views/pi/pi-modals/open-container.html',
+            controller: 'RecepticalModalCtrl'
+        });
+    };
+    $scope.getContainers = function (pi, showClosed) {
+        return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections)
+            .map(function (c, idx) {
+            var container = angular.extend({}, c);
+            container.ViewLabel = c.Label || c.CarboyNumber;
+            //we index at 1 because JS can't tell the difference between false and the number 0 (see return of $scope.getContainer method below)
+            container.idx = idx + 1;
+            switch (c.Class) {
+                case ("WasteBag"):
+                    container.ClassLabel = "Solid Waste";
+                    break;
+                case ("CarboyUseCycle"):
+                    container.ClassLabel = "Carboys";
+                    break;
+                case ("ScintVialCollection"):
+                    container.ClassLabel = "Scint Vial Containers";
+                    break;
+                default:
+                    container.ClassLabel = "";
+            }
+            return container;
+        });
+    };
+    $scope.reopenContainer = function (container) {
+        container.Close_date = null;
+        return $rootScope.saving = af.save(container).then(function (r) {
+            console.log(r, container);
+            angular.extend(container, r);
+            return container;
+        });
+    };
+    $scope.filterFunction = function (container) {
+        var showClosed = $scope.stuff.showClosed;
+        return (container.Close_date == null) != showClosed;
+    };
 })
-    .controller('RecepticalModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
+    .controller('RecepticalModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
     var af = actionFunctionsFactory;
     $scope.af = af;
+    $scope.types = Constants.CONTAINTER_TYPE;
     $scope.modalData = af.getModalData();
     if (!$scope.modalData.SolidsContainerCopy) {
         $scope.modalData.SolidsContainerCopy = {
@@ -898,13 +1038,30 @@ angular.module('00RsmsAngularOrmApp')
             Is_active: true
         };
     }
-    $scope.selectRoom = function () {
-        $scope.modalData.SolidsContainerCopy.Room_id = $scope.modalData.SolidsContainerCopy.Room.Key_id;
+    $scope.getLabel = function (container) {
+        if (container.Class == "WasteBag")
+            return "solid waste container";
+        if (container.Class == "ScintVialCollection")
+            return "scintillation vial container";
+        if (container.Class == "CarboyUseCycle")
+            return "carboy";
+        return false;
     };
-    $scope.saveSolidsContainer = function (pi, copy, container) {
-        $modalInstance.dismiss();
-        af.deleteModalData();
-        af.saveSolidsContainer(pi, copy, container);
+    $scope.confirmCloseContainer = function (container, copy) {
+        container.Close_date = convenienceMethods.setMysqlTime(new Date());
+        return $rootScope.saving = af.save(container).then(function (r) {
+            angular.extend(container, r);
+            $modalInstance.dismiss();
+            af.deleteModalData();
+            return r;
+        });
+    };
+    $scope.newContainer = function (container) {
+        return $rootScope.saving = af.save(container).then(function (r) {
+            $modalInstance.dismiss();
+            af.deleteModalData();
+            $scope.modalData.pi[container.Class + "s"].push(r);
+        });
     };
     $scope.close = function () {
         $modalInstance.dismiss();

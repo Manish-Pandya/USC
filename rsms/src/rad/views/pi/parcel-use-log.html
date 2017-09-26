@@ -24,7 +24,8 @@
                     </div>
 
                     <div>
-                        {{parcel.Arrival_date | dateToISO}}
+                        <span ng-if="parcel.Arrival_date && parcel.Arrival_date != '0000-00-00 00:00:00'">{{parcel.Arrival_date | dateToISO}}</span>
+                        <span ng-if="parcel.Transfer_in_date">{{parcel.Transfer_in_date | dateToISO}}</span>
                     </div>
 
                     <div>
@@ -64,9 +65,29 @@
                         <th>Other Waste</th>
                         <th class="use-amount vials">Not Disposed</th>
                     </tr>
-                    <tr class="table-row top-align" ng-repeat="use in parcel.ParcelUses" ng-if="use" ng-class="{'formError': use.error, 'inactive': use.getIsPickedUp()}" table-error="{{use.error}}" obj="use">
+                    <tr class="table-row top-align" ng-repeat="use in parcel.ParcelUses" ng-if="use" ng-class="{'formError': use.error}" table-error="{{use.error}}" obj="use">
                         <td ng-init="use.loadParcelUseAmounts()">
-                            <button class="btn btn-primary" ng-click="editUse(use)" ng-disabled="use.Date_transferred || use.getIsPickedUp()"><i class="icon-pencil"></i></button>
+                            <button class="btn btn-primary" 
+                                    ng-click="editUse(use)" 
+                                    ng-if="(!use.Date_transferred && !use.getIsPickedUp()) || roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])"><i class="icon-pencil"></i></button>
+                            <button class="btn" 
+                                    ng-click="deactivate(use)" 
+                                    ng-if="(!use.Date_transferred && !use.getIsPickedUp()) || roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])"
+                                    ng-class="{'btn-danger':use.Is_active, 'btn-success':!use.Is_active}">
+                            <i ng-class="{'icon-remove':use.Is_active, 'icon-checkmark-2':!use.Is_active}"></i></button>
+
+                            <button class="btn btn-primary disabled"
+                                    popover-placement="right" popover="Contact RSO if changes are needed." popover-title="This waste has already been picked up"
+                                    ng-if="!use.Date_transferred && use.getIsPickedUp() && !roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])">
+                                <i class="icon-pencil"></i>
+                            </button>
+                            <button class="btn disabled"
+                                    popover-placement="right" popover="Contact RSO if changes are needed." popover-title="This waste has already been picked up"
+                                    ng-if="!use.Date_transferred && use.getIsPickedUp() && !roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])"
+                                    ng-class="{'btn-danger':use.Is_active, 'btn-success':!use.Is_active}">
+                                <i ng-class="{'icon-remove':use.Is_active, 'icon-checkmark-2':!use.Is_active}"></i>
+                            </button>
+
                         </td>
                         <td>
                             <span ng-if="use.Date_transferred">Transferred: {{use.Date_transferred | dateToISO}}</span>
@@ -85,19 +106,19 @@
 
                         <td class="use-amount solids">
                             <div ng-repeat="solid in use.solids = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SOLID})">
-                                <span>{{solid.Curie_level}}mCi<i title="Picked Up" ng-if="solid.IsPickedUp" class="danger icon-remove"></i></span>
+                                <span>{{solid.Curie_level}}mCi</span><span ng-bind-html="getContainer('WasteBag', solid.Waste_bag_id)"></span>
                             </div>
                             <div ng-if="!use.solids.length">No Solid Disposals</div>
                         </td>
                         <td class="use-amount liquids">
                             <div ng-repeat="liquid in liquids = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.LIQUID})">
-                                <span>{{liquid.Curie_level}}mCi in Carboy {{liquid.Carboy.CarboyNumber}} <i title="Picked Up" ng-if="liquid.IsPickedUp" class="danger icon-remove"></i></span>
+                                {{liquid.Curie_level}}mCi <small><br />in Carboy {{liquid.Carboy.CarboyNumber}}</small>
                             </div>
                             <div ng-if="!liquids.length">No Liquid Disposals</div>
                         </td>
                         <td class="use-amount vials">
                             <div ng-repeat="vial in vials = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.VIAL})">
-                                <span>{{vial.Curie_level}}mCi <i title="Picked Up" ng-if="vial.IsPickedUp" class="danger icon-remove"></i></span>
+                                <span>{{vial.Curie_level}}mCi</span><span ng-bind-html="getContainer('ScintVialCollection', vial.Scint_vial_collection_id)"></span>
                             </div>
                             <div ng-if="!vials.length">No vial Disposals</div>
                         </td>
@@ -139,7 +160,7 @@
             </tr>
             <tr ng-repeat="pickup in pickups" class="pickup-tab">
                 <td class="use-amount">{{pickup.Requested_date | dateToISO}}</td>
-                <td class="use-amount">{{pickup.Pickup_date | dateToISO}}</td>
+                <td class="use-amount"><span ng-if="pickup.Pickup_date">{{pickup.Pickup_date | dateToISO}}</span></td>
                 <td class="use-amount solids">{{tabulateWaste(parcel.ParcelUses, constants.WASTE_TYPE.SOLID, pickup.Key_id)}}</td>
                 <td class="use-amount">{{tabulateWaste(parcel.ParcelUses, constants.WASTE_TYPE.LIQUID, pickup.Key_id)}}</td>
                 <td class="use-amount vials">{{tabulateWaste(parcel.ParcelUses, constants.WASTE_TYPE.VIAL, pickup.Key_id)}}</td>

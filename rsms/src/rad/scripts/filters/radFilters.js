@@ -324,4 +324,19 @@ angular.module('00RsmsAngularOrmApp')
                 return include;
             })
         }
-    });
+    }).filter('pickupPi', function () {
+        return function (pickups, pi) {
+            if ('undefined' == typeof pi) return pickups;
+            return pickups && pickups.length ? pickups.filter(function (pu) {
+                console.log(pu, pi)
+                return pu.PrincipalInvestigator && pu.PrincipalInvestigator.Name && pu.PrincipalInvestigator.Name.toLowerCase().indexOf(pi.toLowerCase()) != -1;
+            }) : []
+        }
+    }).filter('openContainers', function () {
+        return function (containers, reverse) {
+            if (!reverse) reverse = false;
+            return typeof containers != "undefined" ? containers.filter(function (c) {
+                return (c.Close_date == null) == reverse;
+            }) : []
+        }
+    })

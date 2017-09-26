@@ -206,6 +206,11 @@ angular
                         Dashboard:true
                     },
                     {
+                        Name: 'containers',
+                        Label: 'Waste Containers',
+                        Dashboard: true
+                    },
+                    {
                         Name:'parcel-use-log',
                         Label: 'Package Use Log',
                         Dashboard: true
@@ -1643,7 +1648,60 @@ angular
                         af.setError('The Carboy could not be removed from the lab.')
                     )
             }
+            af.updateParcelUse = function (parcel, use) {
+                use.Date_used = convenienceMethods.setMysqlTime(af.getDate(use.view_Date_used));
+                return this.save(use, false, "updateParcelUse")
+                    .then(
+                    function (returnedUse) {
 
+                        if (returnedUse.DestinationParcel) {
+                            if (use && use.DestinationParcel) {
+                                angular.extend(use.DestinationParcel, returnedUse.DestinationParcel);
+                            } else {
+                                returnedUse.DestinationParcel = modelInflatorFactory.instateAllObjectsFromJson(returnedUse.DestinationParcel);
+                                store.store(returnedUse.DestinationParcel);
+                                dataStoreManager.addOnSave(returnedUse.DestinationParcel);
+                            }
+                            returnedUse = modelInflatorFactory.instateAllObjectsFromJson(returnedUse);
+                            returnedUse.loadDestinationParcel();
+                        }
+                        var i = returnedUse.ParcelUseAmounts.length;
+                        while (i--) {
+                            returnedUse.ParcelUseAmounts[i] = modelInflatorFactory.instateAllObjectsFromJson(returnedUse.ParcelUseAmounts[i]);
+                            if (returnedUse.ParcelUseAmounts[i].Carboy) {
+                                returnedUse.ParcelUseAmounts[i].Carboy = null;
+                                returnedUse.ParcelUseAmounts[i].loadCarboy();
+                            }
+                        }
+
+                        if (use.Key_id) {
+                            console.log(use);
+                            angular.extend(use, returnedUse);
+                        } else {
+                            dataStoreManager.addOnSave(returnedUse);
+                            parcel.ParcelUses.push(returnedUse);
+                        }
+
+                        $rootScope.ParcelUseCopy = {};
+
+                        parcel.Remainder = returnedUse.ParcelRemainder;
+                        parcel.AmountOnHand = returnedUse.ParcelAmountOnHand;
+
+                        af.clearError();
+                        return parcel;
+                    },
+                    function () {
+                        if (use) {
+                            var i = use.ParcelUseAmounts.length;
+                            while (i--) {
+                                use.ParcelUseAmounts[i].OldQuantity = use.ParcelUseAmounts[i].Curie_level;
+                            }
+                        }
+
+                        af.setError('The usage could not be saved.')
+                    }
+                    )
+            }
             af.saveParcelUse = function(parcel, copy, use){
                 af.clearError();
                 copy.Date_used = convenienceMethods.setMysqlTime(af.getDate(copy.view_Date_used));
@@ -1705,9 +1763,20 @@ angular
 
                 //We can tell the server to save the child objects of this pickup, setting their pickup IDs and pickup date properties, if applicable.
                 if(!saveChildren)saveChildren = false;
+                console.log(editedPickup.Status, editedPickup.Pickup_date);
 
                 //if this Pickup has been picked up by RSO, set it's pickup date.  If it is back at the radiation safety office, but hasn't been marked as picked up, also set the pickup date.
-                if(editedPickup.Status == Constants.PICKUP.STATUS.PICKED_UP || editedPickup.Status == Constants.PICKUP.STATUS.AT_RSO && !editedPickup.Pickup_date)editedPickup.Pickup_date = convenienceMethods.setMysqlTime(new Date());
+                if ((editedPickup.Status == Constants.PICKUP.STATUS.PICKED_UP
+                    || editedPickup.Status == Constants.PICKUP.STATUS.AT_RSO)
+                    && !editedPickup.Pickup_date) {
+                    editedPickup.Status = Constants.PICKUP.STATUS.REQUESTED;
+                    editedPickup.Pickup_date = convenienceMethods.setMysqlTime(new Date());
+
+                } else if (!editedPickup.Status || editedPickup.Status == Constants.PICKUP.STATUS.REQUESTED) {
+                    editedPickup.view_Pickup_date = "";
+                    editedPickup.Pickup_date = "";
+                }
+                console.log("STATUS", editedPickup.Status, editedPickup.Pickup_date)
                 return this.save(editedPickup, saveChildren)
                     .then(
                         function (returnedPickup) {
@@ -2319,7 +2388,7 @@ angular
                     .then(
                         function(returnedCollection){
                             returnedCollection = modelInflatorFactory.instateAllObjectsFromJson( returnedCollection );
-                            if (collection.Key_id) {
+                            if (collection && collection.Key_id) {
                                 angular.extend(collection, copy)
                                 collection.edit = false;
                             }else{
@@ -2400,12 +2469,9 @@ angular
             **      QUARTERLY INVENTORIES
             **
             *********************************************************************************/
-            af.createQuarterlyInventory = function($endDate, $dueDate){
- 
-                var endDate = convenienceMethods.setMysqlTime(af.getDate($endDate));
-                var dueDate = convenienceMethods.setMysqlTime(af.getDate($dueDate));
+            af.createQuarterlyInventory = function(startDate, endDate){            
 
-                var urlSegment = "createQuarterlyInventories&endDate="+endDate+"&dueDate="+dueDate;
+                var urlSegment = "createQuarterlyInventories&startDate=" + startDate + "&endDate=" + endDate;
                 return genericAPIFactory.read( urlSegment )
                         .then(
                             function(returned){

@@ -1,0 +1,42 @@
+﻿<form class="form use-log-modal-form form-horizontal" 
+      style="border: rgba(153, 96, 40, 1) solid 6px; background: white;min-height:250px;"
+      ng-submit="selectPickups(parcel, ParcelUseCopy, use)">
+    <div class="modal-head modal-header">
+        <h1>Has this waste been picked up?</h1>
+    </div>
+    <div class="modal-body multiple-disposal-modal use-log-override" style="overflow:scroll">
+        <h3 ng-show="use.solids.length">Solid Waste</h3>
+        <div ng-repeat="solid in use.solids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SOLID})">
+            {{solid.Curie_level}}mCi of {{parcel.Isotope.Name}} from {{parcel.Rs_number}}
+            <div class="form-group">
+                <label>Select solid waste pickup</label>
+                <select ng-options="p.Waste_bags[0].Key_id as 'Picked up on ' + cm.dateToIso(p.Pickup_date) for p in pickups  | filter:{Waste_bags: '!!'} | filter:{Pickup_date: '!!'}" ng-model="solid.Waste_bag_id">
+                    <option value="">Select Pickup</option>
+                </select>
+            </div>
+        </div>
+        <h3 ng-show="use.liquids.length">Liquid Waste</h3>
+        <div ng-repeat="liquid in use.liquids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.LIQUID})">
+            {{liquid.Curie_level}}mCi of {{parcel.Isotope.Name}} from {{parcel.Rs_number}}
+            <label>Select Carboy</label>
+            <select ng-options="c.Key_id as c.CarboyNumber for c in pi.CarboyUseCycles  | filter:{Pickup_id: '!!'}" ng-model="liquid.Carboy_use_cycle_id">
+                <option value="">Select Carboy</option>
+            </select>
+        </div>
+
+        <h3 ng-show="use.vials.length">Scintillation Vial Waste</h3>
+        <div ng-repeat="vial in use.vials = (ParcelUseCopy.ParcelUseAmounts | filter:{Curie_level: '!!'} | filter:{Waste_type_id:constants.WASTE_TYPE.VIAL})">
+            {{vial.Curie_level}}mCi of {{parcel.Isotope.Name}} from {{parcel.Rs_number}}
+            <label>Select scintillation vial waste pickup</label>
+            <select ng-options="p.Scint_vial_collections[0].Key_id as 'Picked up on ' + cm.dateToIso(p.Pickup_date) for p in pickups  | filter:{Pickup_date: '!!'}" ng-model="solid.Scint_vial_collection_id">
+                <option value="">Select Pickup</option>
+            </select>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success left"><i class="icon-checkmark-2"></i>Save</button>
+        <a class="btn btn-danger left" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
+    </div>
+
+</form>

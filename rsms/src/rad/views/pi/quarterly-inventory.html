@@ -7,13 +7,14 @@
 	<div class="well almost-full">
 		<h2 class="card-header padding parcels">
 			<i class="fa fa-calendar-o"></i>{{pi_inventory.Principal_investigator.User.Name}}'s Quarterly Inventory for {{pi_inventory.Start_date | dateToISO}} - {{pi_inventory.End_date | dateToISO}}
-			<a ng-if="!pi_inventory.Sign_off_date" class="btn btn-success left" ng-click="openModal(pi_inventory)"><i class="icon-checkmark"></i>Confirm Inventory</a>
-			<a class="btn btn-info left" ui-sref="use-log({pi: pi_inventory.Principal_investigator.Key_id})"><i class="icon-list-2"></i>Use Logs</a>
+			<a ng-if="!pi_inventory.Sign_off_date" class="btn btn-success left no-print" ng-click="openModal(pi_inventory)"><i class="icon-checkmark"></i>Confirm Inventory</a>
+            <a class="btn btn-info left no-print" ui-sref="use-log({pi: pi_inventory.Principal_investigator.Key_id})"><i class="icon-list-2"></i>Use Logs</a>
+            <a class="btn left no-print" ng-click="print()"><i class="icon-printer"></i>Print</a>
 		</h2>
 		<h2 ng-if="pi_inventory.Sign_off_date" class="alert almost-full alert-success">Inventory Confirmed {{pi_inventory.Sign_off_date | dateToISO}}</h2>
 		<div class="card almost-full parcels">			
 
-			<div class="fake-table striped bordered">
+			<div class="fake-table striped bordered print-move-left">
 				<div class="table-header">
 					<h3 style="width: 7%;">Authorized Isotopes</h3>
 					<h3>Limits</h3>

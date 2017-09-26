@@ -30,6 +30,7 @@ class CarboyUseCycle extends RadCrud {
         "comments"                      => "text",
         "hot_isotope_id"                => "integer",
         "drum_id"						=> "integer",
+		"close_date"			        => "timestamp",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -105,6 +106,8 @@ class CarboyUseCycle extends RadCrud {
 
     private $comments;
 
+    private $close_date;
+
 	public function __construct() {
 
 		// Define which subentities to load
@@ -113,6 +116,7 @@ class CarboyUseCycle extends RadCrud {
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
 		$entityMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
 		$entityMaps[] = new EntityMap("eager", "getContents");
+		$entityMaps[] = new EntityMap("eager", "getCarboyNumber");
 		$entityMaps[] = new EntityMap("lazy", "getCarboy_reading_amounts");
 		$entityMaps[] = new EntityMap("lazy", "getRoom");
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
@@ -223,7 +227,7 @@ class CarboyUseCycle extends RadCrud {
 	public function getParcelUseAmounts() {
 		if($this->parcel_use_amounts === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
-			$this->parcel_use_amounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$USEAMOUNTS_RELATIONSHIP));
+			$this->parcel_use_amounts = $thisDao->getRelatedItemsById($this->getKey_id(),DataRelationship::fromArray(self::$USEAMOUNTS_RELATIONSHIP), null, true);
 		}
 		return $this->parcel_use_amounts;
 	}
@@ -280,7 +284,7 @@ class CarboyUseCycle extends RadCrud {
 	public function getVolume() {return $this->volume;}
 	public function setVolume($volume) {$this->volume = $volume;}
 
-	public function getCaboyNumber(){
+	public function getCarboyNumber(){
         if($this->getCarboy_id() != null){
             $this->carboyNumber = $this->getCarboy()->getCarboy_number();
         }
@@ -322,5 +326,8 @@ class CarboyUseCycle extends RadCrud {
         }
         return $this->hot_check_date;
     }
+
+    public function getClose_date(){ return $this->close_date; }
+	public function setClose_date($close_date){ $this->close_date = $close_date; }
 }
 ?>

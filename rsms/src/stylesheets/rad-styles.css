@@ -30,6 +30,10 @@
     .hide-print {
         display: none;
     }
+    .print-move-left{
+        margin-left:25px;
+        max-width:95%
+    }
 
 }
 .form-inline .control-group {
@@ -280,9 +284,7 @@ i.solids-containers {
 .card.pickups h2 > i:first-child, .card.pickups h3 > i:first-child {
     margin: 1px 19px 0 5px !important;
 }
-.card.pickup-collection h3 > i:first-child {
-    margin: 1px 19px 0 -3px !important;
-}
+
 .left-nav ul li a.pickups {
     background: rgba(91, 183, 91, .64);
 }
@@ -713,75 +715,6 @@ table.parcel-uses tr.edit td table td .help-inline {
 **
 **********************************************/
 
-.pickup-collection > div {
-    padding: 10px;
-}
-.pickup-collection > div > div {
-    margin: 0 15px;
-    border-bottom: 1px solid #ccc;
-    padding: 15px 0;
-}
-.pickup-collection > div > div:last-child {
-    border: none;
-}
-.pickup-collection > div > div ul {
-    list-style: none;
-}
-.pickup-collection.admin div.fake-table div.button-cell{
-    width:50px;
-}
-.pickup-collection:not(.admin) div.fake-table div.button-cell{
-    min-width: 142px;
-    width: 13%;
-}
-
-.pickup-collection > div > div > h3 {}
-.pickup-collection > div > div > h3 i {
-    margin: 3px 14px 0px 0px !important;
-    font-size: 24px;
-}
-.pickup-collection span.metro-checkbox span {
-    margin-top: 0;
-}
-.pickup-collection ul li {
-    width: 90%;
-    border-bottom: 1px solid #EBEBEB;
-    padding: 5px 0;
-}
-.pickup-collection ul li:last-child {
-    border: none;
-}
-.pickup-collection p, .pickup-collection label{
-    font-weight:bold
-}
-.pickup-collection > div > div p {
-    font-size: 14px;
-    margin: -6px 0 -5px 3px;
-}
-.pickup-collection > div > div p + p{
-    margin-top:5px
-}
-.pickup-collection.admin > div > div p {
-    font-size: 18px;
-    margin: -6px 0 -5px 3px;
-}
-.pickup-collection.admin span.bag-date{
-    font-size: 14px;
-    display:inline-block;
-    margin: 0px 0 5px 3px;
-}
-.pickup-collection.admin > div > div p + p{
-    margin-top:5px
-}
-.pickup-collection span.metro-checkbox {
-    display: block;
-    padding-left: 27px;
-    padding-top: 2px;
-    padding-bottom: 3px;
-}
-.pickup-collection > div .row-fluid {
-    padding: 10px inherit;
-}
 .pickups-modal ul li{
     margin: 2px 0 0 5px;
     font-size:15px;
@@ -856,60 +789,7 @@ div.fake-table .table-row > div div.pickup-comments .btn i {
         padding: 5px 0;
     }
 }
-@media screen and (max-width: 1366px) {
-    /* line 73, ../sass/style.scss */
-    body {
-        padding: 0;
-    }
-    body > div.container-fluid {
-        padding: 0;
-    }
-    div.fake-table .table-row > div {
-        display: table-cell;
-        padding: 1px 3px 4px 4px;
-        font-size: 12px;
-        vertical-align: middle;
-        font-weight: 600 !important;
-    }
-    .pickup-collection > div > div {
-        margin: 0 15px;
-        border-bottom: 1px solid #ccc;
-        padding: 10px 0;
-    }
-    .card h1.card-header {
-        font-size: 20px;
-    }
-    .card h1.card-header i {
-        font-size: 29px !important;
-        margin: 7px 22px 0 0 !important;
-    }
-    .card.pickup-collection h3 {
-        font-size: 13px;
-        float: left;
-    }
-    .card.pickup-collection .pickup-form a.btn {
-        padding: 4px 3px 0;
-        margin: -6px 0 0px 11px;
-    }
-    .table-row > div.card.pickup-collection ul li {
-        margin-left: -5px;
-    }
-    .pickup-item-contents {
-        margin-left: -10px;
-    }
-    .card.pickup-collection ul li,
-    .card.pickup-collection ul li p,
-    .card.pickup-collection ul li span {
-        font-size: 17px;
-        margin-bottom: 7px;
-    }
-    .card.pickup-collection ul li p{
-        font-size: 12px !important;
-    }
-    .dashboard {
-        margin: 0 0px;
-    }
-}
+
 .wipes-modal .selectize-dropdown-content {
     /* margin-top: -10px !important; */
 }
@@ -1014,16 +894,18 @@ div.fake-table .table-row > div div.pickup-comments .btn i {
     margin: 0 !important;
 }
 .use-log-form,.parcel-info{
+    width: 101px;
     box-sizing:border-box;
     padding:10px;
 }
 .use-log-form{
-    width: 390px;
+    width: 480px;
     margin-left: 0;
     border-right:1px solid #d7d7d7;
 }
 .parcel-info{
-    width: 300px;  margin-left: 0;
+    width: 270px;
+    margin-left: 0;
 }
 .parcel-info ul li{
     margin-bottom:10px;
@@ -1055,4 +937,114 @@ div.fake-table .table-row > div div.pickup-comments .btn i {
     }
 .nav-pills ul li.active {
     background: blue;
+}
+.use-log-override > div{
+    border-top:1px solid #ccc;
+    margin:10px;
+    padding:10px;
+}
+.pi-containers .card .card-content > div{
+   border-bottom:1px solid #ccc; 
+   clear:both;
+   padding:6px;
+}
+.pi-containers .clear:after{
+    content:'';
+    display:block;
+    clear:both
+}
+.pi-containers .card .card-content > div h4{
+   padding:6px;
+   max-width: 380px;
+   border-right:1px solid #ccc
+}
+.pi-containers .clear ul{
+    list-style-type:none;
+}
+.pi-containers .clear ul li {
+    font-size:1.2em;
+}
+.pi-containers .clear ul li h5{
+    font-size:1.3em;
+    line-height:1.2em;
+    border-bottom:solid 1px;
+    margin-bottom:6px;
+    font-weight:bold
+}
+
+.pickup-collection > div:first-child{
+    padding:10px;
+}
+.pickup-collection > div{
+    padding: 0;
+    /* margin-top: 10px !important; */
+}
+.containers-list{
+    list-style-type:none;
+    width:100%;
+    margin-left:0px !important;
+    margin-bottom: 40px !important;
+}
+.containers-list ul{
+    margin-left: 9px;
+    width: 100%;
+    list-style-type:none;
+}
+.labels{
+    margin: 10px 0 0;
+    background:white;
+    width:100%
+}
+.containers-list:nth-of-type(even) .labels{
+    background:rgba(204, 204, 204, 0.15);
+}
+.containers-list:nth-of-type(odd){
+    border-top: 1px solid #ccc;
+    background:rgba(204, 204, 204, 0.15);
+}
+.containers-list li.group-header{
+    padding: 10px 0 1px 11px;
+    border-bottom:none;
+}
+.containers-list li{
+    max-width: 1060px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #d9d9d9;
+    padding: 10px;
+    font-size:1.2em;
+    line-height:1.5em;
+}
+.containers-list ul li > h3{
+    width:100%;
+}
+.containers-list ul li > div:first-child{
+    display: inline-block;
+    width: 35%;
+}
+.containers-list ul li > div:last-child{
+    display: inline-block;
+    width: 60%;
+}
+.containers-list li ul li:not(.labels){
+    margin-left:15px;
+}
+.container-label{
+    font-weight:bold;
+}
+.column-header{
+    text-transform:uppercase;
+    font-weight:bold;
+}
+.contents{
+}
+.container-parent{
+    border-bottom: none !important;
+}
+.pickup-collection h3 > i:first-child {
+    margin: 1px 19px 0 -3px !important;
+    font-size:26px
+
+}
+i.scint-vials{
+    color:rgb(91, 183, 91);
 }

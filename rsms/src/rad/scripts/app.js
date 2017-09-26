@@ -16,7 +16,7 @@ angular
     'filtersApp',
     'angular.filter',
     'actionFunctionsModule',
-    'dataSwitchModule',
+    'dataSwitchModule', 
     'cgBusy',
     'ui.bootstrap',
     'once',
@@ -67,11 +67,11 @@ angular
         templateUrl: "views/admin/auth-report.html",
         controller: "AuthReportCtrl"
      })
-    .state('auth-report-print', {
+     .state('auth-report-print', {
         url: "/auth-report-print",
         templateUrl: "views/admin/auth-report-print.html",
         controller: "AuthReportCtrl"
-    })
+      })
       //admin overview for a QuarterlyInventories
       .state('radmin.inventories', {
         url: "/inventories",
@@ -128,11 +128,11 @@ angular
         url:'/my-lab:pi/quarterly-inventory',
         templateUrl: "views/pi/quarterly-inventory.html",
         controller: "QuarterlyInventoryCtrl"
-      })
-      .state('solids', {
-        url:'/my-lab:pi/waste-recepticals',
-        templateUrl: "views/pi/recepticals.html",
-        controller: "RecepticalCtrl"
+       })
+      .state('containers', {
+        url: '/my-lab:pi/containers',
+        templateUrl: "views/pi/containers.html",
+        controller: "ContainersCtrl"
       })
       .state('carboys', {
         url:'/my-lab:pi/carboys',

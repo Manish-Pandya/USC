@@ -175,8 +175,10 @@ class Parcel extends RadCrud {
 
 	public function getIsotope() {
 		if($this->isotope == null && $this->getAuthorization_id() != null) {
+            $authDao = new GenericDAO(new Authorization());
+            $auth = $authDao->getById($this->authorization_id);
 			$isotopeDAO = new GenericDAO(new Isotope());
-			$this->isotope = $isotopeDAO->getById($this->getAuthorization_id());
+			if($auth && $auth->getIsotope_id() != null)$this->isotope = $isotopeDAO->getById($auth->getIsotope_id());
 		}
 		return $this->isotope;
 	}
@@ -198,7 +200,7 @@ class Parcel extends RadCrud {
 	public function getParcelUses() {
 		if($this->parcelUses == null && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->parcelUses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PARCELUSE_RELATIONSHIP));
+			$this->parcelUses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PARCELUSE_RELATIONSHIP), null, true);
 		}
 		return $this->parcelUses;
 	}
@@ -295,7 +297,7 @@ class Parcel extends RadCrud {
                         ON c.pickup_id = f.key_id
                         OR d.pickup_id = f.key_id
                         OR e.pickup_id = f.key_id
-                        where a.parcel_use_id IN(select key_id from parcel_use where parcel_id = ?)
+                        where b.is_active = 1 AND a.parcel_use_id IN(select key_id from parcel_use where parcel_id = ?)
                         AND f.status != 'REQUESTED'";
 
 		$stmt = $db->prepare($queryString);

@@ -30,7 +30,8 @@
                     </div>
 
                     <div>
-                        {{parcel.Arrival_date | dateToISO}}
+                        <span ng-if="parcel.Arrival_date && parcel.Arrival_date != '0000-00-00 00:00:00'">{{parcel.Arrival_date | dateToISO}}</span>
+                        <span ng-if="parcel.Transfer_in_date">{{parcel.Transfer_in_date | dateToISO}}</span>
                     </div>
 
                     <div>

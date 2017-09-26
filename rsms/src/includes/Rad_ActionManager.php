@@ -226,7 +226,16 @@ class Rad_ActionManager extends ActionManager {
 
         if( $id !== NULL ) {
             $dao = $this->getDao(new WasteBag());
-            return $dao->getById($id);
+            $bag = $dao->getById($id);
+
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("lazy", "getContainer");
+            $entityMaps[] = new EntityMap("lazy", "getPickup");
+            $entityMaps[] = new EntityMap("lazy", "getDrum");
+            $entityMaps[] = new EntityMap("eager", "getParcelUseAmounts");
+
+            $bag->setEntityMaps($entityMaps);
+            return $bag;
         }
         else {
             return new ActionError("No request parameter 'id' was provided", 201);
@@ -941,6 +950,17 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
+    function updateParcelUse(){
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ) {
+            return new ActionError('Error converting input stream to ParcelUse', 202);
+        }
+        else if( $decodedObject instanceof ActionError) {
+            return $decodedObject;
+        }
+        return $this->saveParcelUse($decodedObject);
+    }
+
     function saveParcelUse($parcel = NULL) {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 
@@ -1008,6 +1028,8 @@ class Rad_ActionManager extends ActionManager {
                     if($amount['Curie_level'] != NULL && $amount['Curie_level'] > 0){
                         $newAmount->setParcel_use_id($use->getKey_id());
                         $newAmount->setCurie_level($amount['Curie_level']);
+                        $newAmount->setIs_active($amount['Is_active']);
+
                         if($amount['Key_id'] != NULL)$newAmount->setKey_id($amount['Key_id']);
 
                         if($amount['Waste_bag_id'] != NULL){
@@ -1986,17 +2008,16 @@ class Rad_ActionManager extends ActionManager {
      *
      */
 
-    function createQuarterlyInventories( $dueDate = NULL, $endDate = null ){
+    function createQuarterlyInventories( $startDate = NULL, $endDate = null ){
         $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
-        $dueDate = $this->getValueFromRequest('dueDate', $dueDate);
+        $startDate = $this->getValueFromRequest('startDate', $startDate);
         $endDate = $this->getValueFromRequest('endDate', $endDate);
 
-        if( $dueDate == NULL && $endDate == NULL ) {
+
+
+        if( $startDate == NULL && $endDate == NULL ) {
             return new ActionError("Request parameters 'dueDate' and 'endDate' were not provided");
-        }
-        if( $dueDate == NULL ) {
-            return new ActionError("No request parameter 'dueDate' was provided");
         }
         if( $endDate == NULL ) {
             return new ActionError("No request parameter 'endDate' was provided");
@@ -2010,7 +2031,7 @@ class Rad_ActionManager extends ActionManager {
         //make sure we only have one inventory for the given due and end dates
         $whereClauseGroup = new WhereClauseGroup();
         $clauses = array(
-                new WhereClause('due_date','=', $dueDate ),
+                new WhereClause('start_date','=', $startDate ),
                 new WhereClause('end_date', '=', $endDate)
         );
         $whereClauseGroup->setClauses($clauses);
@@ -2025,20 +2046,8 @@ class Rad_ActionManager extends ActionManager {
             $inventory = new QuarterlyInventory();
             //get the last inventory so we can set the start date, if there is one
             $inventoryDao = $this->getDao(new QuarterlyInventory());
-            $previousInventory = end($inventoryDao->getAll());
-            if($previousInventory == NULL){
-                $LOG->debug('was null');
 
-                $inventory->setStart_date('00-00-00 00:00:00');
-            }else{
-                $LOG->debug('was not null');
-                $dateinsec=strtotime($previousInventory->getEnd_date());
-                $newdate=$dateinsec+1;
-                $newdate = date('Y-m-d H:i:s',$newdate);
-                $inventory->setStart_date($newdate);
-            }
-
-            $inventory->setDue_date($dueDate);
+            $inventory->setStart_date($startDate);
             $inventory->setEnd_date($endDate);
             $inventory->setIs_active(true);
             $inventory = $inventoryDao->save($inventory);
@@ -2047,6 +2056,10 @@ class Rad_ActionManager extends ActionManager {
         $piInventories = array();
 
         foreach($pis as $pi){
+            $pi = new PrincipalInvestigator();
+            $auth = $pi->getCurrentPi_authorization();
+            if($auth == null || $auth->getTermination_date() != null)continue;
+            if($pi->get)
             $piInventory = $this->getPiInventory( $pi->getKey_id(), $inventory->getKey_id() );
             if($piInventory != NULL){
                 $piInventories[] = $piInventory;
@@ -2185,6 +2198,7 @@ class Rad_ActionManager extends ActionManager {
      */
     private function calculateQuarterlyAmount($amount, $startDate, $endDate){
         $LOG = Logger::getLogger("calculon");
+
         //get the total ordered since the previous inventory
         $ordersDao = $this->getDao($amount);
 

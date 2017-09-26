@@ -1,0 +1,12 @@
+<div class="modal-header pickups" style="padding:0;">
+    <h2 style="padding:5px; color:white">Please Confirm</h2>
+</div>
+<div class="modal-body">
+    <h3>
+        Are you sure you want to close {{getLabel(modalData.Container)}} {{modalData.Container.Label || modalData.Container.CarboyNumber}}?
+    </h3>
+</div>
+<div class="modal-footer">
+    <a class="btn btn-large btn-success left" ng-click="confirmCloseContainer( modalData.Container )"><i class="icon-checkmark"></i>Confirm</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Cancel</a>
+</div>

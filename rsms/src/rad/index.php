@@ -143,39 +143,11 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="scripts/controllers/pi/rad-pi-ctrls.js"></script>
 <script type="text/javascript" src="./scripts/controllers/inspection/inspectionWipeCtrl.js"></script>
 
-<!-- controllers 
-<script type="text/javascript" src="./scripts/controllers/generic-modal-controller.js"></script>
-<script type="text/javascript" src="./scripts/controllers/main.js"></script>
-<script type="text/javascript" src="./scripts/controllers/about.js"></script>
-<script type="text/javascript" src="./scripts/controllers/users.js"></script>
-<script type="text/javascript" src="./scripts/controllers/hazardHub.js"></script>
-<script type="text/javascript" src="./scripts/controllers/hazardInventory.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/InventoryViewCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/radmin.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/pi.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/admin-pickup-ctrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/wipe-test-ctrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/inventories-ctrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/disposals-ctrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/CarboysCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/OrdersCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/transfers-ctrl.js"></script>
-<script type="text/javascript"  src="scripts/controllers/admin/auth-report-ctrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/OrdersCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/PiRadHomeCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/RecepticalCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/UseLogCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/ParcelUseLogCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/PickupCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/pi/QuarterlyInventoryCtrl.js"></script>
-<script type="text/javascript" src="./scripts/controllers/admin/isotope-ctrl.js"></script>
-<script src="scripts/controllers/pi/PIWipeTestCtrl.js"></script>
-<script src="scripts/controllers/pi/AuthCtrl.js"></script>
-    -->
 <!-- directives -->
 <script type="text/javascript" src="./scripts/directives/dateInput.js"></script>
 <script type="text/javascript" src="./scripts/directives/combobox.js"></script>
 <script type="text/javascript" src="scripts/directives/piAuths.js"></script>
+<script type="text/javascript" src="scripts/directives/container.js"></script>
 
 
 
@@ -246,9 +218,10 @@ if(!isset($_SESSION["USER"])){ ?>
         </div>
         <?php }?>
         <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid" style="margin-top:25px;">
-        <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+            <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+            <div cg-busy="{promise:saving,message:'Saving...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
         <!-- NAVIGATION -->
-        <div class="banner {{bannerClass | splitAtPeriod}} radiation" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
+        <div class="banner {{bannerClass | splitAtPeriod}} radiation no-print" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
             <h1>{{viewLabel}} <a style="float:right;margin: 11px 128px 0 0; color:black" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/safety-programs"><i class="icon-home" style="font-size:40px;"></i></a></h1>
         </div>
         <!-- VIEW NESTING -->

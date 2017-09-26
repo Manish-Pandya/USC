@@ -1,0 +1,24 @@
+<div class="modal-header wide-modal footer-present" style="padding:0;">
+    <h2 style="padding:5px;" class="redBg">Solid Waste Scheduled for Pickup</h2>
+</div>
+<div class="modal-body">
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th>Remove from pickup</th>
+            <th>Date Used</th>
+            <th>Isotope</th>
+            <th>RS Number</th>
+            <th>Amount of Waste</th>
+        </tr>
+        <tr ng-repeat="amt in modalData.amts">
+            <td><button class="btn btn-danger" ng-click="remove(amt)">Remove From Pickup</button></td>
+            <td>{{amt.Date_used | dateToISO}}</td>
+            <td>{{amt.Isotope_name}}</td>
+            <td>{{amt.Rs_number}}</td>
+            <td>{{amt.Curie_level}}mCi</td>
+        </tr>
+    </table>
+</div>
+<div class="modal-footer">
+    <a class="btn btn-large" ng-click="close()">Close</a>
+</div>
