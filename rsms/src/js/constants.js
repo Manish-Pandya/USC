@@ -1,4 +1,4 @@
-var Constants = (function () {
+var Constants = /** @class */ (function () {
     function Constants() {
     }
     Constants.PENDING_CHANGE = {

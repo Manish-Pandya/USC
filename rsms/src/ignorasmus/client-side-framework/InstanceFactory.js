@@ -16,7 +16,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 //abstract specifies singleton in ts 1.x (ish)
-var InstanceFactory = (function (_super) {
+var InstanceFactory = /** @class */ (function (_super) {
     __extends(InstanceFactory, _super);
     //----------------------------------------------------------------------
     //
