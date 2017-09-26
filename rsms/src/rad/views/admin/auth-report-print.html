@@ -16,8 +16,8 @@
     <div class="card full authReports" ng-if="piAuths.length">
         <table class="table striped">
             <tr class="table-header">
-                <th ng-if="filterObj.showNew">Date</th>
                 <th>Investigator<br /><input ng-model="filterObj.piName" /></th>
+                <th ng-if="filterObj.showNew">Date</th>
                 <th ng-if="!filterObj.showNew">Department<br /><input ng-model="filterObj.department" /></th>
                 <th ng-if="!filterObj.showNew">
                     <span class="span6" style="margin-left:0">Building<br /><input ng-model="filterObj.building" /></span>

@@ -374,8 +374,14 @@ angular
                 inspectorIds = idsArray;
             }
             var url = 'initiateInspection&piId='+PI.Key_id+'&'+$.param({inspectorIds:inspectorIds});
-            if(roomIds) url = url + '&'+$.param({roomIds:roomIds});
-            if(rad)url = url+"&rad=true";
+            if (rad) url = url + "&rad=true";
+
+            if (!rooms) {
+                var roomIds = [];
+                PI.Rooms.forEach(function (r) { roomIds.push(r.Key_id)})
+            }
+            if (roomIds) url = url + '&' + $.param({ roomIds: roomIds });
+
 
             if(inspectionId) url+='&inspectionId='+inspectionId;
             var temp = this;

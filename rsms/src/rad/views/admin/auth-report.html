@@ -3,7 +3,7 @@
 <div class="right-column">
     <div class="well full auths">
         <h1 class="auth-report"><i class="icon-copy"></i>Authorization Report
-            <a class="btn btn-primary left" ng-click="filterObj.showNew =! filterObj.showNew; filterObj.toDate = null; filterObj.fromDate = null; filtered = filterObj.showNew ? [] : piAuths;">
+            <a class="btn btn-primary left" ng-click="filterObj.showNew =! filterObj.showNew; filterObj.toDate = null; filterObj.fromDate = null; filtered = filterObj.showNew ? [] : piAuths;filtered = search(filterObj)">
                 <span ng-if="!filterObj.showNew">Show New Authorizations</span>
                 <span ng-if="filterObj.showNew">Show All Authorizations</span>
             </a>
@@ -18,8 +18,8 @@
         <div class="card full authReports" ng-if="piAuths.length">
             <table class="table striped">
                 <tr class="table-header">
-                    <th ng-if="filterObj.showNew">Date</th>
                     <th>Investigator<br /><input ng-model="filterObj.piName" /></th>
+                    <th ng-if="filterObj.showNew">Date</th>
                     <th ng-if="!filterObj.showNew">Department<br /><input ng-model="filterObj.department" /></th>
                     <th ng-if="!filterObj.showNew">
                         <span class="span6" style="margin-left:0">Building<br /><input ng-model="filterObj.building" /></span>

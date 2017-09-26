@@ -51,7 +51,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     var i = users.length
     while(i--){
       if(userHubFactory.hasRole(users[i], Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR)){
-        if(users[i].PrincipalInvestigator){
+          if (users[i].Last_name && users[i].PrincipalInvestigator){
           userHubFactory.getBuildingsByPi(users[i].PrincipalInvestigator);
           pis.unshift(users[i]);
         }else{
