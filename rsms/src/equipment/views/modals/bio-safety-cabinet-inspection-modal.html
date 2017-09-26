@@ -24,15 +24,16 @@
                      button-class="buttonClass"></datepicker2>
     </div>
     <div class="control-group" 
-         ng-init="modalData.BioSafetyCabinet.SelectedInspection.viewDate = modalData.BioSafetyCabinet.SelectedInspection.Certification_date ? modalData.BioSafetyCabinet.SelectedInspection.Certification_date : today()" 
+         ng-init="modalData.BioSafetyCabinet.SelectedInspection.viewFailDate = modalData.BioSafetyCabinet.SelectedInspection.Fail_date ? modalData.BioSafetyCabinet.SelectedInspection.Fail_date : today()" 
          ng-if="modalData.BioSafetyCabinet.SelectedInspection.Status == constants.EQUIPMENT.STATUS.FAIL">
         <label class="control-label">Certification Failed Date</label>
         <datepicker2 iconStyle="true" ng-model='modalData.BioSafetyCabinet.SelectedInspection.viewFailDate' disable-timepicker='true' 
                      button-class="buttonClass"></datepicker2>
     </div>
 
-    <div class="control-group" ng-if="getMostRecentCommentForModal(modalData.BioSafetyCabinet,modalData.BioSafetyCabinet.SelectedInspection)">
-        <label class="control-label" ng-bind-html="getMostRecentCommentForModal(modalData.BioSafetyCabinet,modalData.BioSafetyCabinet.SelectedInspection)" style="font-weight:normal"></label>
+    <div class="control-group" 
+         ng-if="getMostRecentComment(modalData.BioSafetyCabinet,modalData.BioSafetyCabinet.SelectedInspection) && modalData.BioSafetyCabinet.SelectedInspection.HasPrevious">
+        <label class="control-label" ng-bind-html="getMostRecentComment(modalData.BioSafetyCabinet,modalData.BioSafetyCabinet.SelectedInspection)" style="font-weight:normal"></label>
     </div>
 
     <div class="control-group">

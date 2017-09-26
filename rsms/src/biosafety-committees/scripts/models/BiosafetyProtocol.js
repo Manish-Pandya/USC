@@ -3,9 +3,9 @@
 //generic model to be "extended" by "POJOs"
 
 //constructor
-var BiosafetyProtocol = function(){};
+var BioSafetyProtocol = function(){};
 
-BiosafetyProtocol.prototype = {
+BioSafetyProtocol.prototype = {
     eagerAccessors: [
         {method:"loadPI", boolean:"Principal_investigator_id"},
         {method:"loadDepartment", boolean:"Department_id"},
@@ -28,4 +28,4 @@ BiosafetyProtocol.prototype = {
 }
 
 //inherit from and extend GenericPrincipalInvestigator
-extend(BiosafetyProtocol, GenericModel);
+extend(BioSafetyProtocol, GenericModel);

@@ -388,12 +388,17 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
             }
         },
 
-        getDate: function(dateString){
-            var seconds = Date.parse(dateString);
-            //if( !dateString || isNaN(dateString) )return;
-            var t = new Date(1970,0,1);
-            t.setTime(seconds);
-            return t;
+        getDate: function (mysql_string){
+            var t, result = null;
+
+            if (typeof mysql_string === 'string') {
+                t = mysql_string.split(/[- :]/);
+
+                //when t[3], t[4] and t[5] are missing they defaults to zero
+                result = new Date(t[0], t[1] - 1, t[2], t[3] || 0, t[4] || 0, t[5] || 0);
+            }
+
+            return result;  
         },
 
         userLoggedOut: function (data) {
@@ -464,6 +469,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
         natDateMonthFirst = $locale.DATETIME_FORMATS.shortDate.charAt(0) == 'm';
     // Replaces all suspected dates with a standardized yyyy-m-d, which is fixed below
     fixDates = function (value) {
+        if (!value) return false;
         // first look for dd?-dd?-dddd, where "-" can be one of "-", "/", or "."
         return value.replace(/(\d\d?)[-\/\.](\d\d?)[-\/\.](\d{4})/, function ($0, $m, $d, $y) {
             // temporary holder for swapping below
@@ -487,6 +493,8 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
 
     // Fix numbers to be correctly padded
     fixNumbers = function (value) {
+        if (!value) return false;
+
         // First, look for anything in the form of d.d or d.d.d...
         return value.replace(/(\d+)((\.\d+)+)?/g, function ($0, integer, decimal, $3) {
             // If there's more than 2 sets of numbers...

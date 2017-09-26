@@ -277,4 +277,12 @@ angular
             })
         }
     })
+    .filter("activeWhenInspected", () => {
+        return (pis: equipment.PrincipalInvestigator[], insp: equipment.EquipmentInspection) => {
+            if (!pis) return;
+            return pis.filter((pi) => {
+                return pi.Is_active || pi.Date_last_modified <= insp.Date_created;
+            })
+        }
+    })
 

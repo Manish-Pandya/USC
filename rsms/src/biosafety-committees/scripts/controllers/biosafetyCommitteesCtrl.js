@@ -66,7 +66,7 @@ angular.module('BiosafetyCommittees')
             }
         };
     })
-    .controller('BiosafetyCommitteesCtrl', function ($scope, $q, $http, applicationControllerFactory, $modal, $location) {
+    .controller('BiosafetyCommitteesCtrl', function ($scope, $rootScope, $q, $http, applicationControllerFactory, $modal, $location) {
         //do we have access to action functions?
         $scope.af = applicationControllerFactory;
         var af = applicationControllerFactory;
@@ -76,8 +76,8 @@ angular.module('BiosafetyCommittees')
             return af
                 .getAllPIs()
                 .then(function (pis) {
-                        //we have to set this equal to the promise rather than the getter, because the getter will return a promise, and that breaks the typeahead because of a ui-bootstrap bug
-                        $scope.PIs = dataStoreManager.get("PrincipalInvestigator");
+                    //we have to set this equal to the promise rather than the getter, because the getter will return a promise, and that breaks the typeahead because of a ui-bootstrap bug
+                    $scope.PIs = $rootScope.typeAheadPis = dataStoreManager.get("PrincipalInvestigator");
                         return pis;
                     },
                     function () {
@@ -116,7 +116,8 @@ angular.module('BiosafetyCommittees')
                 .getAllProtocols()
                 .then(
                     function (protocols) {
-                        $scope.protocols = dataStoreManager.get('BiosafetyProtocol');
+                        $scope.protocols = dataStore.BioSafetyProtocol;
+                        console.log(dataStore);
                         return protocols
                     },
                     function () {
@@ -134,9 +135,9 @@ angular.module('BiosafetyCommittees')
         $scope.openProtocolModal = function (protocol) {
             var modalData = {};
             if(!protocol){
-                var protocol = new window.BiosafetyProtocol();
+                var protocol = new window.BioSafetyProtocol();
                 protocol.Is_active = true;
-                protocol.Class = "BiosafetyProtocol";
+                protocol.Class = "BioSafetyProtocol";
             }
             modalData.BiosafetyProtocol = protocol;
             af.setModalData(modalData);

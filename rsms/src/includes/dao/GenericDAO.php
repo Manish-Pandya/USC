@@ -359,6 +359,7 @@ class GenericDAO {
                 OR h.pickup_id = i.key_id
                 AND i.status != 'Requested'
 				WHERE c.authorization_id IN (select key_id from authorization where principal_investigator_id = ? AND original_pi_auth_id = ?)
+                AND b.is_active = 1
 				AND (((b.date_used BETWEEN ? AND ? AND b.date_used != '0000-00-00 00:00:00')
                 AND (f.pickup_id IS NOT NULL OR g.pickup_id IS NOT NULL OR h.pickup_id IS NOT NULL ))
 				OR (b.date_transferred BETWEEN ? AND ? AND b.date_transferred != '0000-00-00 00:00:00'))
@@ -441,6 +442,7 @@ class GenericDAO {
                         OR h.pickup_id = i.key_id
                         AND i.status != 'Requested'
 				        WHERE c.authorization_id IN (select key_id from authorization where principal_investigator_id = ? AND original_pi_auth_id = ?)
+                        AND b.is_active = 1
 				        AND (((b.date_used < ? AND b.date_used != '0000-00-00 00:00:00')
                         AND (f.pickup_id IS NOT NULL OR g.pickup_id IS NOT NULL OR h.pickup_id IS NOT NULL ))
 				        OR (b.date_transferred < ? AND b.date_transferred != '0000-00-00 00:00:00'))";
@@ -1391,6 +1393,7 @@ class GenericDAO {
 	                        OR h.pickup_id = i.key_id
 	                        AND i.status != 'REQUESTED'
                             WHERE i.principal_investigator_id = ?
+                            AND b.is_active = 1
 	                        group by e.name, e.key_id, d.original_pi_auth_id
                         ) as picked_up
                         ON picked_up.isotope_id = b.isotope_id
@@ -1411,6 +1414,7 @@ class GenericDAO {
 	                        JOIN isotope e
 	                        ON d.isotope_id = e.key_id
                             WHERE c.principal_investigator_id = ?
+                            AND b.is_active = 1
 	                        group by e.name, e.key_id, d.original_pi_auth_id
                         ) as total_used
                         ON total_used.isotope_id = b.isotope_id

@@ -90,11 +90,13 @@ angular.module('EquipmentModule')
             $scope.saving = af.save(cabinet);
         }
 
-        $rootScope.getMostRecentComment = function (cabinet: equipment.BioSafetyCabinet): string {
+        $rootScope.getMostRecentComment = function (cabinet: equipment.BioSafetyCabinet, insp: equipment.BioSafetyCabinet): string  {
+            insp["HasPrevious"] = true;
             let previousInspection: equipment.EquipmentInspection = cabinet.EquipmentInspections.sort( (a,b) => {
                 return a["Date_created"] > b["Date_created"] ? 1 : 0;
             })[0];
-            if (previousInspection && previousInspection["Comment"]) {
+            if (insp.UID == previousInspection.UID) insp["HasPrevious"] = false;
+            if (previousInspection && previousInspection["Comment"] && previousInspection.UID != cabinet.EquipmentInspections[cabinet.EquipmentInspections.length-1].UID) {
                 cabinet["previousComment"] = true;
                 var failed: string = previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL ? " Failed" : "";
                 var date = previousInspection.Certification_date || previousInspection.Fail_date;
@@ -105,7 +107,7 @@ angular.module('EquipmentModule')
                     colorClass = "black";
                     bodyClass = "black";
                     dateStr = "";
-                    failed += ':<br>';
+                    if(failed.indexOf("Failed") != -1)failed += ':<br>';
                 } else {
                     failed += ' Comments:<br>';
                 }
@@ -119,7 +121,7 @@ angular.module('EquipmentModule')
             cabinet["previousComment"] = false;
             return "";
         }
-
+        /*
         $rootScope.getMostRecentCommentForModal = function (cabinet: equipment.BioSafetyCabinet, inspection: equipment.EquipmentInspection): string {
 
             let idx = cabinet.EquipmentInspections.indexOf(inspection);
@@ -134,7 +136,7 @@ angular.module('EquipmentModule')
             };
             cabinet["previousComment"] = false;
             return "";
-        }
+        }*/
 
         $rootScope.failedMostRecentInspection = function (cabinet: equipment.BioSafetyCabinet): boolean {
             let previousInspection: equipment.EquipmentInspection = cabinet.EquipmentInspections.filter(function (i) {
@@ -145,7 +147,7 @@ angular.module('EquipmentModule')
             }
             return false;
         }
-
+        
         $scope.openModal = function (object, insp, isCabinet) {
             var modalData = { inspection: null };
             if (!object) {
@@ -357,16 +359,18 @@ angular.module('EquipmentModule')
             return "";
         }
 
-        $scope.buttonClass = $scope.getButtonClass($scope.modalData.BioSafetyCabinet.SelectedInspection);
+        if ($scope.modalData.BioSafetyCabinet && $scope.modalData.BioSafetyCabinet.SelectedInspection)$scope.buttonClass = $scope.getButtonClass($scope.modalData.BioSafetyCabinet.SelectedInspection);
 
         $scope.save = function (cabinet) {
-            console.log(cabinet);
+
+            console.log(cabinet, $rootScope.cabinets);
             if (!cabinet) return;
             $scope.error = false;
             cabinet.Certification_date = convenienceMethods.setMysqlTime(cabinet.Certification_date);
-            var l = $rootScope.cabinets.length;
+            var l = $rootScope.cabinets.data.length;
             for (let i = 0; i < l; i++) {
-                var cab = $rootScope.cabinets[i];
+                var cab = $rootScope.cabinets.data[i];
+                console.log(cabinet.Serial_number + " | " + cab.Serial_number);
                 if (cab.Serial_number == cabinet.Serial_number && (!cabinet.UID || cabinet.UID != cab.UID)) {
                     var modalInstance = $modal.open({
                         templateUrl: 'views/modals/bsc-warning-modal.html',
@@ -393,7 +397,7 @@ angular.module('EquipmentModule')
             console.log(inspection);
             $scope.message = null;
             inspection.Certification_date = convenienceMethods.setMysqlTime(inspection.viewDate);
-            inspection.Fail_date = convenienceMethods.setMysqlTime(inspection.viewFailDate);
+            inspection.Fail_date = convenienceMethods.setMysqlTime(inspection.viewFailDate) || inspection.Fail_date;
             af.save(inspection).then(function (r) {
                 // we added an equipmentInspection, so recompose the cabinet.
                 DataStoreManager.getById("BioSafetyCabinet", inspection.Equipment_id, new ViewModelHolder(), true);

@@ -430,9 +430,8 @@ button.btn:not(.btn-large) {
 }
 
 .bio-safety-cabinets-container table.uncertified:not(.quickdate-calendar) tr td:nth-of-type(8){
-    width: 6%;
+    width: 7%;
     padding:0;
-
 }
 .bio-safety-cabinets-container table.uncertified:not(.quickdate-calendar) tr td:nth-of-type(9){
     width: 5%;

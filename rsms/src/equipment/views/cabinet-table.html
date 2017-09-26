@@ -89,26 +89,40 @@
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | equipmentInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
                                 <!--<a ng-click="testSave(inspection)">come on</a>-->
-                                <span><a ng-class="{'btn-success':inspection.Certification_date, 'btn-danger':inspection.Status == constants.EQUIPMENT.STATUS.FAIL,'btn-info':inspection.Status != constants.EQUIPMENT.STATUS.FAIL && !inspection.Certification_date}" ng-click="openModal(cabinet, inspection)" class="btn left"><span ng-if="inspection.Certification_date || inspection.Fail_date">{{inspection.Certification_date || inspection.Fail_date | dateToISO}}</span><i class="icon-calendar-alt-stroke"></i></a></span>
+                                <span>
+                                        <a ng-class="{'btn-success':inspection.Certification_date, 
+                                         'btn-danger':inspection.Status == constants.EQUIPMENT.STATUS.FAIL && !inpsection.Is_uncertified,
+                                         'btn-info':inspection.Is_uncertified || (inspection.Status != constants.EQUIPMENT.STATUS.FAIL && !inspection.Certification_date)}"
+                                         ng-click="openModal(cabinet, inspection)" class="btn">
+                                             <span ng-if="inspection.Certification_date || inspection.Fail_date">
+                                                {{inspection.Certification_date || inspection.Fail_date | dateToISO}}
+                                             </span>
+                                            <span ng-if="!inspection.Certification_date && !inspection.Fail_date && inspections.length > 1 && inspection.Is_uncertified && getIsCurrentYear()">
+                                                Recertify
+                                            </span>                                            
+                                            <i class="icon-calendar-alt-stroke"></i></a>
+                                        <!--<a ng-if="inspection.Status == constants.EQUIPMENT.STATUS.FAIL && getIsCurrentYear()"
+                                           ng-click="openModal(cabinet)" class="btn left">Recertify</a>-->
+                                </span>
                             </div>
                         </div>
                     </td>
                     <td class="pis">
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | equipmentInspectionYear:selectedCertificationDate:uncertified | hasMoved:'PrincipalInvestigators' | orderBy:'Due_date':true)">
-                                <span><a style="display: block;padding: 3px 0;" ng-click="openPiInfoModal(pi)" ng-repeat="pi in inspection.PrincipalInvestigators">{{pi.User.Name}}<br ng-if="!$last"></a></span>
-                                <span ng-if="!inspection.PrincipalInvestigators.length" class="red">Unsassigned</span>
+                                <span><a ng-class="{'red':!pi.Is_active}" style="display: block;padding: 3px 0;" ng-click="openPiInfoModal(pi)" ng-repeat="pi in pis = (inspection.PrincipalInvestigators | activeWhenInspected:inspection)">{{pi.User.Name}}<br ng-if="!$last"></a></span>
+                                <span ng-if="!pis.length" class="red">Unsassigned</span>
                             </div>
                         </div>
                     </td>
                     <td class="pis">
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | equipmentInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)">
-                                <span ng-class="{'red': inspection.Status == constants.EQUIPMENT.STATUS.FAIL || inspection.Status == constants.EQUIPMENT.STATUS.OVERDUE,
+                                <span ng-class="{'red': inspection.Status == constants.EQUIPMENT.STATUS.FAIL || inspection.Status == constants.EQUIPMENT.STATUS.OVERDUE || inspection.Is_uncertified,
                                         'yellow': inspection.Status == constants.EQUIPMENT.STATUS.PENDING || inspection.Status == constants.EQUIPMENT.STATUS.NEW,
                                         'green': inspection.Status == constants.EQUIPMENT.STATUS.PASS }">
                                     <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.FAIL || inspection.Status == constants.EQUIPMENT.STATUS.PASS">{{inspection.Status}}</span>
-                                    <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.OVERDUE">OVERDUE: <br />{{inspection.Due_date | dateToISO}}</span>
+                                    <span class="bold" ng-if="inspection.Is_uncertified && inspection.Status != constants.EQUIPMENT.STATUS.FAIL">FAILED ON:<br />{{inspection.Due_date | dateToISO}}</span>
                                     <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.PENDING">DUE: <br />{{inspection.Due_date | dateToISO}}</span>
                                     <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.NEW">NO CERTIFICATION RECORD</span>
                                 </span>
@@ -134,7 +148,7 @@
                     <td ng-if="!getIsNextYear()" class="pis">
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | equipmentInspectionYear:selectedCertificationDate:uncertified | orderBy:'Due_date':true)" ng-style="failedMostRecentInspection(cabinet) ? {'background-color':'pink'} : {'background-color': 'inherit'}">
-                                <span ng-bind-html="getMostRecentComment(cabinet)"></span>
+                                <span ng-bind-html="getMostRecentComment(cabinet, inspection)"></span>
                             </div>
                         </div>
                     </td>

@@ -293,4 +293,13 @@ angular
             return _.findIndex(selectedPis, function (p) { return pi.UID == p.UID; }) == -1;
         });
     };
+})
+    .filter("activeWhenInspected", function () {
+    return function (pis, insp) {
+        if (!pis)
+            return;
+        return pis.filter(function (pi) {
+            return pi.Is_active || pi.Date_last_modified <= insp.Date_created;
+        });
+    };
 });

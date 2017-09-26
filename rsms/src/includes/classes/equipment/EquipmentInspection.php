@@ -70,6 +70,7 @@ class EquipmentInspection extends GenericCrud{
     private $status;
     private $frequency;
     private $is_uncertified;
+    private $priorStatus;
 
 
     // Required for GenericCrud
@@ -181,17 +182,23 @@ class EquipmentInspection extends GenericCrud{
             //cabinets that haven't yet been certified, ever, or had a due date assigned are new
             if($this->getDue_date() == NULL && $this->getCertification_date() == null && $this->getFail_date() == null){
                 $this->status = "NEW";
+            }else if($this->fail_date != null){
+                $this->status = "FAIL";
+            }
+            //equipment did not fail this year, but did fail it's previous inspection
+            else if($this->is_uncertified){
+                $this->priorStatus = true;
+                $this->status = NULL;
+
             }
             //all other cabinets that don't have a persisted status are either Overdue or pending a certification
-            else if($this->fail_date == null && $this->certification_date == null){
+            else if($this->fail_date == null && $this->certification_date == null && $this->is_uncertified !== true){
                 $startOfToday = strtotime('today midnight');
                 if(strtotime($this->getDue_date()) > $startOfToday){
                     $this->status = "PENDING";
                 }else{
                     $this->status = "OVERDUE";
                 }
-            }else if($this->fail_date != null){
-                $this->status = "FAIL";
             }
         }
 
@@ -211,13 +218,27 @@ class EquipmentInspection extends GenericCrud{
     public function getPrincipalInvestigators(){
 		if($this->principalInvestigators == null) {
 			$thisDAO = new GenericDAO($this);
-			$this->principalInvestigators = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PIS_RELATIONSHIP), NULL, TRUE, TRUE);
-		}
+			$pis = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PIS_RELATIONSHIP));
+
+            $this->principalInvestigators = array();
+            foreach($this->principalInvestigators as $pi){
+                if(!$pi->getIs_active()){
+                    if($pi->getDate_last_modified() >= $this->date_created){
+                        $this->principalInvestigators[] = $pi;
+                    }
+                }else{
+                    $this->principalInvestigators[] = $pi;
+                }
+            }
+        }
 		return $this->principalInvestigators;
 	}
 	public function setPrincipalInvestigators($principalInvestigators){ $this->principalInvestigators = $principalInvestigators; }
 
-    public function getIs_uncertified(){ return $this->is_uncertified; }
+    public function getIs_uncertified(){ return (boolean) $this->is_uncertified; }
 	public function setIs_uncertified( $is_uncertified ){	$this->is_uncertified = $is_uncertified; }
+
+    public function getPriorStatus(){ return (boolean) $this->priorStatus; }
+	public function setPriorStatus( $bool ){	$this->priorStatus = $bool; }
 
 }

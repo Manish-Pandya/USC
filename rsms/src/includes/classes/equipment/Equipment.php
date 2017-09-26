@@ -209,13 +209,13 @@ abstract class Equipment extends GenericCrud{
                             $newCertDate->setTimeStamp(strtotime($lastPassingInspection->getCertification_date()));
                             $newCertDate->modify(('+6 months'));
                             $l->fatal("DUE DATE OUGHT TO BE:");
-                            $date =
                             $l->fatal($newCertDate);
                             $nextInspection->setDue_date($newCertDate);
                         }
                     }else{
                         $nextInspection->setDue_date(null);
                         $nextInspection->setReport_path(null);
+                        if($inspection && $inspection->getFail_date() != null)$nextInspection->setDue_date($inspection->getFail_date());
                     }
 
                     //set a flag so the client knows not to group our new inspection with previous year's inspections, even if it seems to be due in a previous year
