@@ -76,6 +76,7 @@ if(!isset($_SESSION["USER"])){ ?>
     <link type="text/css" rel="stylesheet" href="../stylesheets/style.css" />
 
     <link type="text/css" rel="stylesheet" href="../stylesheets/ibc-styles.css" />
+    <link href="../css/contextMenu.min.css" rel="stylesheet" />
 
 <!-- included fonts
  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
@@ -125,9 +126,6 @@ if(!isset($_SESSION["USER"])){ ?>
 	<script src="scripts/controllers/IBCDetailCtrl.js"></script>
 	<script src="scripts/controllers/IBCEmailMgmtCtrl.js"></script>
     <script src="scripts/controllers/TestCtrl.js"></script>
-<!-- directives -->
-<!--script type="text/javascript" src="./scripts/directives/dateInput.js"><script>-->
-
 
 <!-- filters -->
 <!--script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></!--script>-->
@@ -136,6 +134,8 @@ if(!isset($_SESSION["USER"])){ ?>
 <!-- directives -->
 	<script src="scripts/directives/collapsibleCard.js"></script>
     <script src="scripts/directives/questionView.js"></script>
+    <script src="scripts/directives/emailTemplate.js"></script>
+
 <!-- framework -->
     <script src="../ignorasmus/client-side-framework/DataStoreManager.js"></script>
     <script src="../ignorasmus/client-side-framework/InstanceFactory.js"></script>
