@@ -30,6 +30,8 @@ class CarboyUseCycle extends RadCrud {
         "comments"                      => "text",
         "hot_isotope_id"                => "integer",
         "drum_id"						=> "integer",
+	    "open_date"                     => "timestamp",
+	    "close_date"                    => "timestamp",
 
 		//GenericCrud
 		"key_id"						=> "integer",
@@ -104,6 +106,9 @@ class CarboyUseCycle extends RadCrud {
     private $carboyNumber;
 
     private $comments;
+
+    private $open_date;
+	private $close_date;
 
 	public function __construct() {
 
@@ -322,5 +327,11 @@ class CarboyUseCycle extends RadCrud {
         }
         return $this->hot_check_date;
     }
+
+    public function getOpen_date(){ return $this->open_date; }
+	public function setOpen_date($open_date){ $this->open_date = $open_date; }
+
+	public function getClose_date(){ return $this->close_date; }
+	public function setClose_date($close_date){ $this->close_date = $close_date; }
 }
 ?>

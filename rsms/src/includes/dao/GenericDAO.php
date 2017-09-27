@@ -722,7 +722,7 @@ class GenericDAO {
 
 			// create modify error with human readable error message
 			$result = new ModifyError($error[2]);
-			$this->LOG->error('Returning ModifyError with message: ' . $result->getMessage());
+			$this->LOG->fatal('Returning ModifyError with message: ' . $result->getMessage());
 			return $result;
 		}
 	}

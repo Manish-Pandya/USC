@@ -33,6 +33,8 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
     private $equipment_inspection_id;
 	private $hasMultiplePis;
     private $piName;
+    private $buildingName;
+    private $roomName;
 
 	public function __construct(){
 
@@ -117,6 +119,20 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 	}
 	public function setEquipment_id($equipment_id){
 		$this->equipment_id = $equipment_id;
+	}
+
+    public function getBuildingName(){
+		return $this->buildingName;
+	}
+	public function setBuildingName($buildingName){
+		$this->buildingName = $buildingName;
+	}
+
+	public function getRoomName(){
+		return $this->roomName;
+	}
+	public function setRoomName($roomName){
+		$this->roomName = $roomName;
 	}
 }
 ?>

@@ -75,7 +75,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
                 "getAllPIWipeTests"				=> new ActionMapping("getAllPIWipeTests", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
                 "getAllRadRooms"				=> new ActionMapping("getAllRadRooms", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
                 "removeParcelUseAmountFromPickup"	=> new ActionMapping("removeParcelUseAmountFromPickup", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-                
+
 
                 "saveDrumWipe"                  => new ActionMapping("saveDrumWipe", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "saveDrumWipeTest"              => new ActionMapping("saveDrumWipeTest", "", "", $this::$ROLE_GROUPS["ADMIN"]),
@@ -137,6 +137,13 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getCurrentPIInventory"				 => new ActionMapping("getCurrentPIInventory", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"getInventoriesByPiId"		=> new ActionMapping("getInventoriesByPiId","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"savePIQuarterlyInventory"	=> new ActionMapping("savePIQuarterlyInventory","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+
+                "getAllOtherWasteTypes"	=> new ActionMapping("getAllOtherWasteTypes","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+                "getOtherWateTypeById"	=> new ActionMapping("getOtherWateTypeById","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+                "saveOtherWasteType"	=> new ActionMapping("saveOtherWasteType","","", $this::$ROLE_GROUPS["RSO"]),
+                "clearOtherWaste"	    => new ActionMapping("clearOtherWaste","","", $this::$ROLE_GROUPS["RSO"]),
+                "assignOtherWasteType"	=> new ActionMapping("assignOtherWasteType","","", $this::$ROLE_GROUPS["RSO"]),
+
 
 				"getRadModels"	=> new ActionMapping("getRadModels","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"])
 		);

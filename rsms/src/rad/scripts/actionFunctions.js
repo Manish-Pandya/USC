@@ -130,6 +130,11 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name: 'radmin.other-waste',
+                        Label: 'Other Waste Management',
+                        Dashboard: true
+                    },
+                    {
                         Name:'radmin.pi-detail',
                         Label: 'Radiation Administration',
                         Dashboard: true
@@ -1879,6 +1884,17 @@ angular
                     )
             }
 
+             /****************************************************************************************
+            **
+            **          OTHER WASTE SUB-TYPE MANAGEMENT
+            **
+            ****************************************************************************************/
+
+            af.getAllOtherWasteTypes = function () {
+                return dataSwitchFactory.getAllObjects('OtherWasteType', true);
+            }
+
+
             /****************************************************************************************
             **
             **          WIPE TESTS
@@ -2609,7 +2625,7 @@ angular
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.DrumWipe));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.DrumWipeTest));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.Drum));
-
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.OtherWasteType));
 
                             console.log(dataStore);
                             return dataStore;

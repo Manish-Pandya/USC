@@ -1,0 +1,28 @@
+﻿<div class="pi-containers pickup-collection">
+    <h2 style="margin-top:75px">
+        Open Container
+        <button ng-click="openContainerModal()"
+                class="btn left btn-success">
+            <i class="icon-plus-2"></i>New Container
+        </button>
+        <button class="btn left"
+                ng-if="roleBasedFactory.getHasPermission(
+                    [R[Constants.ROLE.NAME.RADIATION_ADMIN],
+                    R[Constants.ROLE.NAME.RADIATION_INSPECTOR],
+                    R[Constants.ROLE.NAME.ADMIN]])"
+                ng-click="stuff.showClosed = !stuff.showClosed; pi.containers = getContainers(pi, stuff.showClosed)">
+            <span ng-if="stuff.showClosed">Hide</span><span ng-if="!stuff.showClosed">Show</span> Closed Containers
+        </button>
+    </h2>
+    <div class="card two-thirds full">
+        <h3 style="padding:10px;">Containers</h3>
+        <div class="card-content" ng-init="pi.containers = getContainers(pi, stuff.showClosed)" ng-if="pi">
+            <span ng-if="!stuff.showClosed">
+                <containers close="openCloseContainerModal" containers="pi.containers" filter-function="filterFunction"></containers>
+            </span>
+            <span ng-if="stuff.showClosed">
+                <containers close="reopenContainer" button-text="Reopen Container" filter-function="filterFunction" button-class="btn-success" containers="pi.containers"></containers>
+            </span>
+        </div>
+    </div>
+</div>

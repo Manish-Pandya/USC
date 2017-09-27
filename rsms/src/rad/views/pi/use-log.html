@@ -1,3 +1,4 @@
+
 <div style="margin-top:70px;" ng-if="pi">
     <div class="card full parcels">
         <h3 class="card-header  padding" ng-if="pi.ActiveParcels"><i class="icon-box"></i>You have <span class="bold">{{pi.ActiveParcels.length}} Package<span ng-if="pi.ActiveParcels.length != 1">s</span></span></h3>
@@ -30,7 +31,8 @@
                     </div>
 
                     <div>
-                        {{parcel.Arrival_date | dateToISO}}
+                        <span ng-if="parcel.Arrival_date && parcel.Arrival_date != '0000-00-00 00:00:00'">{{parcel.Arrival_date | dateToISO}}</span>
+                        <span ng-if="parcel.Transfer_in_date">{{parcel.Transfer_in_date | dateToISO}}</span>
                     </div>
 
                     <div>

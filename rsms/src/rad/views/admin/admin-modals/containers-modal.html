@@ -1,16 +1,19 @@
 <div class="modal-header" style="padding:0;">
-    <h2 ng-show="!addRoom" style="padding:5px; background:rgb(151, 49, 58); color:white"><span ng-if="!modalData.Authorization">Add</span><span ng-if="modalData.Authorization">Edit</span> an Solids Container for {{modalData.pi.User.Name}}</h2>
+    <h2 style="padding:5px; background:rgb(151, 49, 58); color:white">
+    <span ng-if="!modalData.Authorization">Add</span> Waste Type {{modalData.pi.User.Name}}</h2>
 </div>
 
 <div class="modal-body">
   <div class="control-group">
-     <label class="control-label">Label</label>
+     <label class="control-label">Waste Type</label>
      <div class="controls">
-        <input ng-model="modalData.SolidsContainerCopy.Name" placehold="Label"/>
+        <select ng-options="t.Key_id as t.Name for t in otherWasteTypes | availableTypes: modalData.pi" ng-model="selectedType" ng-change="selectedTypeObj = getType(selectedType)">
+            <option value="">--Select Type--</option>
+        </select>
      </div>
   </div>
 </div>
 <div class="modal-footer">
-  <a class="btn btn-large btn-success left" ng-click="saveContainer(modalData.pi, modalData.SolidsContainerCopy, modalData.SolidsContainer)"><i class="icon-checkmark"></i>Save</a>
+  <a class="btn btn-large btn-success left" ng-click="addWasteType(modalData.pi, selectedTypeObj)"><i class="icon-checkmark"></i>Save</a>
   <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
 </div>

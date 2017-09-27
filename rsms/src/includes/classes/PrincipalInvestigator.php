@@ -98,6 +98,13 @@ class PrincipalInvestigator extends GenericCrud {
 			"foreignKeyName" => "principal_investigator_id"
 	);
 
+    public static $OTHER_WASTE_CONTAINER_RELATIONSHIP = array(
+        "className" => "OtherWasteContainer",
+        "tableName" => "other_waste_container",
+        "keyName"   => "key_id",
+        "foreignKeyName" => "principal_investigator_id"
+    );
+
 	public static $PICKUPS_RELATIONSHIP = array(
 			"className" => "Pickup",
 			"tableName" => "pickup",
@@ -132,6 +139,13 @@ class PrincipalInvestigator extends GenericCrud {
 			"keyName"   => "key_id",
 			"foreignKeyName" => "protocol_id"
 	);
+
+    public static $OTHER_WASTE_TYPES_ALLOWED = array(
+        "className" => "OtherWasteType",
+        "tableName" => "other_waste_type_pi",
+        "keyName"   => "other_waste_type_id",
+        "foreignKeyName" => "principal_investigator_id"
+    );
 
 	/** Base User object that this PI represents */
 	private $user_id;
@@ -198,6 +212,9 @@ class PrincipalInvestigator extends GenericCrud {
 
     private $name;
 
+    private $otherWasteTypes;
+    private $otherWasteContainers;
+
 	public function __construct(){
 
 		$entityMaps = array();
@@ -210,6 +227,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager", "getCarboyUseCycles");
 		$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
 		$entityMaps[] = new EntityMap("lazy", "getWasteBags");
+		$entityMaps[] = new EntityMap("lazy", "getOtherWasteContainers");
         $entityMaps[] = new EntityMap("lazy", "getCurrentWasteBag");
 		$entityMaps[] = new EntityMap("lazy", "getPickups");
 		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
@@ -221,6 +239,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getPi_authorization");
 		$entityMaps[] = new EntityMap("lazy","getWipeTests");
 		$entityMaps[] = new EntityMap("lazy","getProtocols");
+		$entityMaps[] = new EntityMap("lazy","getGetOtherWasteTypes");
 
 		$this->setEntityMaps($entityMaps);
 
@@ -500,6 +519,18 @@ class PrincipalInvestigator extends GenericCrud {
 	}
 	public function setName($name){$this->name = $name;}
 
+    public function getOtherWasteContainers(){
+        if($this->otherWasteContainers === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			$this->otherWasteContainers = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$OTHER_WASTE_CONTAINER_RELATIONSHIP),
+                    array('date_created')
+			);
+		}
+    }
+    public function setOtherWasteContainers($bags){$this->otherWasteContainers = $bags;}
+
     public function getWasteBags(){
 
 		if($this->wasteBags === NULL && $this->hasPrimaryKeyValue()) {
@@ -527,6 +558,17 @@ class PrincipalInvestigator extends GenericCrud {
 	}
     public function setCurrentWasteBag($bag){$this->currentWasteBag = $bag;}
 
+    public function getOtherWasteTypes(){
+		if($this->otherWasteTypes === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			$this->otherWasteTypes = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$OTHER_WASTE_TYPES_ALLOWED)
+			);
+		}
+        return $this->otherWasteTypes;
+	}
+	public function setOtherWasteTypes($otherWasteTypes){ $this->otherWasteTypes = $otherWasteTypes; }
 
 }
 

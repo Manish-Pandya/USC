@@ -1,6 +1,14 @@
 <?php
 
-class WasteBag extends RadCrud {
+/**
+ * OtherWasteContainer short summary.
+ *
+ * OtherWasteContainer description.
+ *
+ * @version 1.0
+ * @author Matt Breeden
+ */
+class OtherWasteContainer extends RadCrud {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "waste_bag";
@@ -16,6 +24,7 @@ class WasteBag extends RadCrud {
         "principal_investigator_id"		=> "integer",
 	    "open_date"                     => "timestamp",
 	    "close_date"                    => "timestamp",
+	    "other_waste_type_id"           => "integer",
 
 		//GenericCrud
 		"key_id"			=> "integer",

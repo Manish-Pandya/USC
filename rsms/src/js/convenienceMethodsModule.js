@@ -106,7 +106,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
 
         getData: function( url, onSuccess, onFail, parentObject, adding ){
             //use jsonp method of the angularjs $http object to request data from service layer
-            $http.jsonp(url)
+            return $http.jsonp(url)
                 .success( function(data) {
                     data.doneLoading = true;
                     onSuccess(data, parentObject, adding);
@@ -127,11 +127,13 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
         getDataAsPromise: function( url, errorCallback ){
             //use jsonp method of the angularjs $http object to request data from service layer
             var promise = $http.jsonp(url)
-                .success( function(data) {
+                .success(function (data) {
+                    console.log(data);
                     data.doneLoading = true;
                     return data;
                 })
-                .error(function(data, status, headers, config){
+                .error(function (data, status, headers, config) {
+                    console.log(data);
                     methods.userLoggedOut(data);
                     errorCallback();
                 });
@@ -142,9 +144,12 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
             //use jsonp method of the angularjs $http object to request data from service layer
             $http.jsonp(url)
                 .success(function (data) {
+                    console.log(data);
                     deferred.resolve(data);
                 })
                 .error(function (data, status, headers, config) {
+                    console.log(data);
+
                     methods.userLoggedOut(data);
                     deferred.reject(data);
                 });
