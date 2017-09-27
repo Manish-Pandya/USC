@@ -4774,5 +4774,41 @@ class ActionManager {
 
 
     }
+
+    public function getPisAndRoomsByHazard($id = null){
+        if($id == null)$id = $this->getValueFromRequest('id', $id);
+        $l = Logger::getLogger(__FUNCTION__);
+
+        $l->fatal('PASSED ID IS: ' . $id);
+
+        $dao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation());
+        $group =  new WhereClauseGroup(array(new WhereClause("hazard_id","=",$id)));
+        $rels = $dao->getAllWhere($group);
+        $entityMaps = array();
+		$entityMaps[] = new EntityMap("eager","getRoom_id");
+		$entityMaps[] = new EntityMap("eager","getPrincipal_investigator_id");
+		$entityMaps[] = new EntityMap("lazy","getHazard");
+        $rDao = new GenericDAO(new Room());
+        /**
+           * @var $relation PrincipalInvestigatorHazardRoomRelation
+           */
+
+        foreach($rels as $relation){
+            $relation->setEntityMaps($entityMaps);
+            if($relation->getRoom_id() != null){
+                /**
+                 * @var $room Room
+                 */
+                $room = $rDao->getById($relation->getRoom_id());
+                if($room != null){
+                    $relation->setRoomName($room->getName());
+                    $relation->setBuildingName($room->getBuilding_name());
+                }
+
+            }
+        }
+
+        return $rels;
+    }
 }
 ?>

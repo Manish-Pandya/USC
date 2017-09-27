@@ -1,4 +1,4 @@
-var hazardHub = angular.module('hazardHub', ['convenienceMethodWithRoleBasedModule','infinite-scroll','once']);
+var hazardHub = angular.module('hazardHub', ['convenienceMethodWithRoleBasedModule','infinite-scroll','once','angular.filter', 'cgBusy']);
 
 hazardHub.filter('makeUppercase', function () {
   return function (item) {
@@ -65,14 +65,29 @@ hazardHub.factory('hazardHubFactory', function(convenienceMethods,$q){
     return factory;
 });
 
-hazardHub.controller('TreeController', function ($scope, $timeout, $location, $anchorScroll, convenienceMethods, hazardHubFactory, roleBasedFactory, $rootScope) {
+hazardHub.controller('TreeController', function ($scope, $modal, $rootScope, $timeout, $location, $anchorScroll, convenienceMethods, hazardHubFactory, roleBasedFactory, $rootScope) {
 
     init();
 
+    $scope.getPisAndRoomsByHazard = function (hazard) {
+        var url = '../../ajaxaction.php?action=getPisAndRoomsByHazard&id=' + hazard.Key_id + "&callback=JSON_CALLBACK";
+        $rootScope.loading = convenienceMethods.getDataAsPromise(url).then(function (data) {
+            $rootScope.selectedHazard = hazard;
+            $rootScope.rels = data;
+            console.log(data.data.length);
+            var modalInstance = $modal.open({
+                templateUrl: './hazard-pi-modal.html',
+                controller: 'HazarPiCtrl'
+            });
+            modalInstance.result.then(function (arr) {
+
+            });
+        }).then
+    }
     //call the method of the factory to get users, pass controller function to set data inot $scope object
     //we do it this way so that we know we get data before we set the $scope object
     //
-    function init(){
+    function init() {
         $rootScope.rbf = roleBasedFactory;
         $scope.doneLoading = false;
         //we pass 10000 as the id to this request because 10000 will always be the key_id of the root hazard
@@ -435,4 +450,9 @@ hazardHub.controller('TreeController', function ($scope, $timeout, $location, $a
     $scope.order = function(hazard){
         return parseFloat(hazard.Order_index);
     }
+
+    
 });
+hazardHub.controller('HazarPiCtrl', function ($scope, $rootScope, $modalInstance) {
+    $scope.cancel = function () { $modalInstance.dismiss() }
+})

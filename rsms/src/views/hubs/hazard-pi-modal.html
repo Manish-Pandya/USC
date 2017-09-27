@@ -1,0 +1,17 @@
+﻿<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px" class="redBg">{{selectedHazard.Name}}</h2>
+</div>
+<div class="modal-body">
+    <table class="table">
+        <tr><th>PI</th><th>Lab Locations</th></tr>
+        <tr ng-repeat="(key,rel) in rels.data | groupBy: 'PiName' | orderBy: 'PiName'">
+            <td>{{key}}</td>
+            <td>
+                <div ng-repeat="r in rel | orderBy:['BuildingName', 'RoomName']" ng-if="r.RoomName"><span class="bold">{{r.BuildingName}}</span>: Room {{r.RoomName}}</div>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="modal-footer">
+    <a class="btn btn-large left" ng-click="cancel()"><i class="icon-cancel-2"></i>Close</a>
+</div>

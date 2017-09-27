@@ -7,7 +7,7 @@
             </span>
         </button>
         <span ng-if="!child.isBeingEdited" class="hazardName">
-            <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}}</h2>
+            <h2><img ng-show="child.IsDirty" class="smallLoading" src="../../img/loading.gif"/>{{child.Name}} <i ng-click="getPisAndRoomsByHazard(child)" class="icon-info red"></i></h2>
         </span>
 
         <span ng-if="child.isBeingEdited">
