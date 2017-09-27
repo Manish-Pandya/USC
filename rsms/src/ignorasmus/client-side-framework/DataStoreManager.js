@@ -5,7 +5,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 'use strict';
-var PermissionMap = (function () {
+var PermissionMap = /** @class */ (function () {
     //----------------------------------------------------------------------
     //
     //  Constructor
@@ -41,7 +41,7 @@ var PermissionMap = (function () {
     return PermissionMap;
 }());
 //abstract specifies singleton in ts 1.x (ish)
-var DataStoreManager = (function () {
+var DataStoreManager = /** @class */ (function () {
     function DataStoreManager() {
     }
     Object.defineProperty(DataStoreManager, "ModalData", {

@@ -64,6 +64,7 @@ angular
     $rootScope.constants = Constants;
     $rootScope.tinymceOptions = {
         plugins: 'link lists',
+        contextmenu_never_use_native: true,
         toolbar: 'bold | italic | underline | link | lists | bullist | numlist',
         menubar: false,
         elementpath: false,

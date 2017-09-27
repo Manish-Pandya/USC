@@ -5,7 +5,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 'use strict';
-var CompositionMapping = (function () {
+var CompositionMapping = /** @class */ (function () {
     //----------------------------------------------------------------------
     //
     //  Constructor
@@ -53,7 +53,7 @@ var CompositionMapping = (function () {
     CompositionMapping.MANY_TO_MANY = "MANY_TO_MANY";
     return CompositionMapping;
 }());
-var FluxCompositerBase = (function () {
+var FluxCompositerBase = /** @class */ (function () {
     //----------------------------------------------------------------------
     //
     //  Constructor

@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var ibc;
 (function (ibc) {
-    var IBCPreliminaryComment = (function (_super) {
+    var IBCPreliminaryComment = /** @class */ (function (_super) {
         __extends(IBCPreliminaryComment, _super);
         function IBCPreliminaryComment() {
             var _this = _super.call(this) || this;

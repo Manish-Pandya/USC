@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var equipment;
 (function (equipment) {
-    var BioSafetyCabinet = (function (_super) {
+    var BioSafetyCabinet = /** @class */ (function (_super) {
         __extends(BioSafetyCabinet, _super);
         function BioSafetyCabinet() {
             return _super.call(this) || this;
