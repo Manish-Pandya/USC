@@ -50,6 +50,7 @@
         'PIQuarterlyInventory'  : {getById: "getCarboyReadingAmountById"   , getAll: "getAllCarboyReadingAmounts"   , save: "savePIQuarterlyInventory"   },
         'PIAuthorization'       : {getById: "getPIAuthorizationByPIId"     , getAll: "getAllPIAuthorizations"       , save: "savePIAuthorization"        },
         'MiscellaneousWaste'    : { getById: "getMiscellaneousWasteById"   , getAll: "getAllMiscellaneousWaste"     , save: "saveMiscellaneousWaste"     },
+        'OtherWasteType'        : { getById: "getOtherWasetTypeById"       , getAll: "getAllOtherWasteTypes"        , save: "saveOtherWasteType"        },
 
         // Forgot to add Base module entities - add as needed.
         'Room'                  : {getById: "getRoomById"                  , getAll: "getAllRooms"                  , save: "saveRoom"                   },

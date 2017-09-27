@@ -1021,12 +1021,39 @@ angular.module('00RsmsAngularOrmApp')
         }
         af.savePIAuthorization(copy, piAuth, $scope.pi);
     };
+    $scope.removeOtherWasteType = function (type, pi) {
+        var id = type.Key_id;
+        var url = "../ajaxaction.php?action=assignOtherWasteType&remove=true&callback=JSON_CALLBACK&piId=" + pi.Key_id + "&owtId=" + id;
+        $scope.saving = convenienceMethods.getDataAsDeferredPromise(url).then(function (type) {
+            pi.OtherWasteTypes.forEach(function (owt, i) {
+                console.log(owt, i, owt.Key_id, id);
+                if (owt.Key_id == id) {
+                    console.log(owt);
+                    pi.OtherWasteTypes.splice(i, 1);
+                }
+            });
+        });
+    };
 })
-    .controller('PiDetailModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
+    .controller('PiDetailModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods, $http) {
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
         $scope.cm = convenienceMethods;
+        console.log($http);
+        $scope.otherWasteTypes = dataStore.OtherWasteType;
+        $scope.getType = function (typeId) {
+            return $scope.otherWasteTypes.filter(function (t) { return t.Key_id == typeId; })[0];
+        };
+        $scope.addWasteType = function (pi, type) {
+            console.log(pi);
+            var url = "../ajaxaction.php?action=assignOtherWasteType&callback=JSON_CALLBACK&piId=" + pi.Key_id + "&owtId=" + type.Key_id;
+            $scope.saving = convenienceMethods.getDataAsDeferredPromise(url).then(function (type) {
+                console.log(pi);
+                pi.OtherWasteTypes.push(type[0]);
+                $modalInstance.close(type[0]);
+            });
+        };
         $scope.getBuildings = function () {
             $rootScope.loading = af.getAllBuildings().then(function (b) {
                 console.log(dataStore);
@@ -1931,4 +1958,59 @@ angular.module('00RsmsAngularOrmApp')
             af.deleteModalData();
             $modalInstance.dismiss();
         };
-    }]);
+    }])
+    .controller('OtherWasteCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal) {
+    var af = actionFunctionsFactory;
+    $scope.loading = af.getAllOtherWasteTypes().then(function () {
+        console.log(dataStore);
+        $scope.otherWasteTypes = dataStore.OtherWasteType;
+    });
+    $rootScope.switchActive = function (owt) {
+        console.log(owt);
+        owt.Is_active = !owt.Is_active;
+        $scope.saving = af.save(owt)
+            .then(function () { });
+    };
+    $scope.openModal = function (object) {
+        console.log(object);
+        var modalData = {};
+        if (!object) {
+            var object = new OtherWasteType();
+            object.Is_active = true;
+        }
+        modalData[object.Class] = object;
+        af.setModalData(modalData);
+        var modalInstance = $modal.open({
+            templateUrl: 'views/admin/admin-modals/other-waste-modal.html',
+            controller: 'OtherWasteModalCtrl'
+        });
+        modalInstance.result.then(function (returned) {
+            console.log(returned);
+            if (object && object.Key_id) {
+                angular.extend(object, returned);
+            }
+            else {
+                $scope.otherWasteTypes.push(returned);
+            }
+        });
+    };
+})
+    .controller('OtherWasteModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
+    var af = actionFunctionsFactory;
+    $scope.af = af;
+    $scope.modalData = af.getModalData();
+    console.log($scope.modalData);
+    $scope.save = function (owt) {
+        console.log(owt);
+        af.save(owt)
+            .then($scope.close);
+    };
+    $scope.close = function (owt) {
+        $modalInstance.close(owt);
+        console.log(owt);
+        af.deleteModalData();
+    };
+    $scope.cancel = function () { return $modalInstance.dismiss(); };
+});
+'use strict';
+'use strict';

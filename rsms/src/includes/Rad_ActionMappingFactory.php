@@ -140,6 +140,13 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"savePIQuarterlyInventory"	=> new ActionMapping("savePIQuarterlyInventory","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"updateParcelUse"	=> new ActionMapping("updateParcelUse","","", $this::$ROLE_GROUPS["RADMIN"]),
 
+                "getAllOtherWasteTypes"	=> new ActionMapping("getAllOtherWasteTypes","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+                "getOtherWateTypeById"	=> new ActionMapping("getOtherWateTypeById","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+                "saveOtherWasteType"	=> new ActionMapping("saveOtherWasteType","","", $this::$ROLE_GROUPS["RSO"]),
+                "clearOtherWaste"	    => new ActionMapping("clearOtherWaste","","", $this::$ROLE_GROUPS["RSO"]),
+                "assignOtherWasteType"	=> new ActionMapping("assignOtherWasteType","","", $this::$ROLE_GROUPS["RSO"]),
+
+
 				"getRadModels"	=> new ActionMapping("getRadModels","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"])
 		);
 	}

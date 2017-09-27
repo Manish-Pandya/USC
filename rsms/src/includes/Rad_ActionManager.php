@@ -435,6 +435,8 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("eager","getWipeTests");
 		$entityMaps[] = new EntityMap("eager", "getWasteBags");
         $entityMaps[] = new EntityMap("eager", "getCurrentWasteBag");
+        $entityMaps[] = new EntityMap("eager","getGetOtherWasteTypes");
+        $entityMaps[] = new EntityMap("eager","getOtherWasteContainers");
 
         $authMaps = array();
         $authMaps[] = new EntityMap("lazy", "getRooms");
@@ -2634,7 +2636,7 @@ class Rad_ActionManager extends ActionManager {
     	$dto->setPrincipalInvestigator($this->getAllRadPis());
         //$dto->setDrumWipe($this->getAllDrumWipes());
        // $dto->setDrumWipeTest($this->getAllDrumWipeTests());
-
+        $dto->setOtherWasteType($this->getAllOtherWasteTypes());
     	return $dto;
 
     }
@@ -2730,6 +2732,67 @@ class Rad_ActionManager extends ActionManager {
             return $pickupAndBag;
         }
         return new ActionError("The provided bag was not scheduled for pickup");
+    }
+
+    public function getAllOtherWasteTypes(){
+        $d = new GenericDAO(new OtherWasteType());
+        $owts = $d->getAll();
+        return $owts;
+    }
+
+    function getOtherWasteTypeById($id = NULL) {
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+
+        if($id == null)$id = $this->getValueFromRequest('id', $id);
+
+        if( $id !== NULL ) {
+            $dao = $this->getDao(new OtherWasteType());
+            return $dao->getById($id);
+        }
+        else {
+            return new ActionError("No request parameter 'id' was provided", 201);
+        }
+    }
+
+    /**
+     * Summary of saveOtherWasteType
+     * @param OtherWasteType $decodedObject
+     * @return ActionError | OtherWasteType
+     */
+    public function saveOtherWasteType($decodedObject = null){
+        if($decodedObject == null) $decodedObject = $this->convertInputJson();
+        if($decodedObject == null)return new ActionError("No data read from input stream");
+
+        $d = new GenericDAO($decodedObject);
+        return $d->save();
+
+    }
+
+    public function assignOtherWasteType( $owtId = null, $piId = null, $remove = null ){
+        if($owtId == null)$owtId = $this->getValueFromRequest('owtId', $owtId);
+        if($piId == null)$piId = $this->getValueFromRequest('piId', $piId);
+        if($remove == null)$remove = $this->getValueFromRequest('remove', $remove);
+        if($owtId == null || $piId == null)return new ActionError("Missing params");
+
+        if($remove == null)$remove = false;
+        $dao = new GenericDAO(new PrincipalInvestigator());
+        if(!$remove){
+            if($dao->addRelatedItems($owtId,$piId,DataRelationship::fromArray(PrincipalInvestigator::$OTHER_WASTE_TYPES_ALLOWED))){
+                return array($this->getOtherWasteTypeById($owtId));
+            }
+        }else{
+            if($dao->removeRelatedItems($owtId,$piId,DataRelationship::fromArray(PrincipalInvestigator::$OTHER_WASTE_TYPES_ALLOWED))){
+                return array($this->getOtherWasteTypeById($owtId));
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param $decodedObject ParcelUseAmount
+     */
+    public function clearOtherWaste($decodedObject){
+        //to do add clearanceDate to parcel_use_amount and class
     }
 }
 ?>

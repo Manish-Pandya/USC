@@ -1,4 +1,5 @@
-﻿<form ng-submit="saveParcelUse(parcel, ParcelUseCopy, use)" class="form use-log-modal-form">
+﻿
+<form ng-submit="saveParcelUse(parcel, ParcelUseCopy,use)" class="form use-log-modal-form">
     <div class="modal-body use-log-modal">
         <div class="use-log-form span8">
             <h2>Usage Information</h2>
@@ -6,9 +7,8 @@
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Date Used:</label>
                 <div class="controls">
-                    <input ng-model="ParcelUseCopy.view_Date_used" ng-class="{'invalid':ParcelUseCopy.DateError}">
+                    <input ng-model="ParcelUseCopy.view_Date_used" ng-class="{'invalid':ParcelUseCopy.dateError}">
                     <span class="help-block" style="">mm/dd/yy</span>
-                    <span ng-if="ParcelUseCopy.DateError" class="red bold" ng-bind-html="ParcelUseCopy.DateError"></span>
                 </div>
             </div>
 
@@ -22,145 +22,83 @@
             <label class="control-label" for="quantity">Amount:</label>
             <div class="control-group">
                 <div class="controls input-append">
-                    <input style="max-width:50%;" 
-                           ng-change="setSampleUse(ParcelUseCopy)"
-                           name="quantity" 
-                           ng-model="ParcelUseCopy.Quantity" 
-                           ng-class="{'invalid':ParcelUseCopy.error}">
+                    <input style="max-width:50%;" name="quantity" ng-model="ParcelUseCopy.Quantity">
                     <span class="help-block">mCi</span>
                 </div>
             </div>
             <section class="disposal-info">
-                <h3>Disposal Information
-                    <a class="btn btn-success btn-small left"                      
-                       style="margin:0 0 0 3px"
-                       ng-click="addAmount(ParcelUseCopy.ParcelUseAmounts)">
-                        <i class="icon-plus-2"></i>
-                    </a>
-                </h3>
-
-                <div ng-repeat="amt in ParcelUseCopy.ParcelUseAmounts | orderBy:'Waste_type_id'">
-                    <div class="control-group" ng-if="amt.Waste_type_id != Constants.WASTE_TYPE.SAMPLE">
-                        <div class="controls input-append span2" style="width:140px" >
-                            <input style="width:100px" 
-                                   ng-change="setSampleUse(ParcelUseCopy)"
-                                   ng-model="amt.Curie_level" 
-                                   ng-disabled="amt.IsPickedUp && !roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])" 
-                                   ng-class="{'invalid':ParcelUseCopy.error}">
-                            <span class="add-on">mCi <i title="Picked Up" ng-if="amt.IsPickedUp" class="danger icon-remove"></i></span>
-                        </div>
-                        <div class="span4" style="margin-left:8px;width:280px">
-                            <select style="width:180px"
-                                    ng-show="!amt.PickedUp || roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])"
-                                    ng-disabled="amt.IsPickedUp && !roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])"
-                                    ng-init="pi.Containers = getContainers(pi); amt.ContainerIdx = getContainer(amt, pi)"
-                                    ng-model="amt.ContainerIdx"
-                                    ng-options="c.idx as c.ViewLabel group by c.ClassLabel for c in pi.Containers | openContainers"
-                                    ng-change="selectContainer( amt, pi.Containers )">
-                                <option value="">Select Container</option>
-                            </select>
-                            <div class="span4" 
-                                 ng-show="amt.PickedUp && !roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])"
-                                 style="margin-left:8px;width:260px">
-                                <h5 style="margin-top:4px;">{{pi.Containers[amt.ContainerIdx-1].ViewLabel}} (closed {{pi.Containers[amt.ContainerIdx-1].Close_date | dateToISO}})</h5>
-                            </div>
-                            <a class="btn btn-danger btn-small left"
-                               ng-if="!amt.Key_id && $index != 0"
-                               style="margin:-9px 0 0 2px"
-                               ng-click="removeAmount($index)">
-                                <i class="icon-cancel-2"></i>
-                            </a>
-                        </div>         
-                    </div>
-                    <div class="control-group" ng-if="amt.Waste_type_id == Constants.WASTE_TYPE.SAMPLE">
-                        <div class="controls input-append span2" style="width:140px">
-                            <input style="width:100px"
-                                   ng-init="setSampleUse(ParcelUseCopy)"
-                                   ng-model="amt.Curie_level"
-                                   disabled="disabled"
-                                   ng-class="{'invalid':ParcelUseCopy.error}">
-                            <span class="add-on">mCi <i title="Picked Up" ng-if="amt.IsPickedUp" class="danger icon-remove"></i></span>
-                        </div>
-                        <div class="span4" style="margin-left:8px;width:240px">
-                            <h5 style="margin-top:4px;">Amount not disposed/still in use.</h5>
+                <h3>Disposal Information</h3>
+                <label class="control-label" for="solid-curies">Solid Disposals: <a ng-click="addAmount('Solids')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
+                <div ng-repeat="solid in solids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SOLID})">
+                    <div class="control-group" ng-init="solid.Waste_bag_id = solid.Waste_bag_id ? solid.Waste_bag_id : pi.CurrentWasteBag.Key_id">
+                        <div class="controls input-append">
+                            {{solid.Waste_bag_id}}
+                            <input ng-disabled="solid.IsPickedUp" style="max-width:50%;" name="solid-curies" ng-model="solid.Curie_level">
+                            <span class="add-on">mCi <i title="Picked Up" ng-if="solid.IsPickedUp" class="danger icon-remove"></i></span>
                         </div>
                     </div>
                 </div>
-                <!--
-        <label class="control-label" for="solid-curies">Solid Disposals: <a ng-click="addAmount('Solids')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
-        <div ng-repeat="solid in solids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SOLID})">
-            <div class="control-group" ng-init="solid.Waste_bag_id = solid.Waste_bag_id ? solid.Waste_bag_id : pi.CurrentWasteBag.Key_id">
-                <div class="controls input-append">
-                    <input ng-disabled="solid.IsPickedUp && !roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])" style="max-width:50%;" name="solid-curies" ng-model="solid.Curie_level" ng-class="{'invalid':ParcelUseCopy.error}">
-                    <span class="add-on">mCi <i title="Picked Up" ng-if="solid.IsPickedUp" class="danger icon-remove"></i></span>
-                </div>
-            </div>
-        </div>
 
-        <label class="control-label" for="liquid-curies">Liquid Disposals: <a ng-click="addAmount('Liquids')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
-        <div ng-repeat="liquid in liquids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.LIQUID})">
-            <div class="control-group">
-                <div class="controls input-append">
-                    <input name="liquid-curies" ng-model="liquid.Curie_level" ng-disabled="liquid.IsPickedUp && !roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])" ng-class="{'invalid':ParcelUseCopy.error}">
-                    <span class="add-on">mCi <i title="Picked Up" ng-if="liquid.IsPickedUp" class="danger icon-remove"></i></span>
-                </div>
-                <label>Select Carboy:</label>
-                <select ng-disabled="liquid.IsPickedUp && !roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])" ng-init="liquid.Carboy = selectedCarboy(liquid, pi.CarboyUseCycles)" ng-model="liquid.Carboy_id"
-                        ng-options="cycle.Key_id as cycle.Carboy.Carboy_number for cycle in pi.CarboyUseCycles">
-                    <option value="">Select Carboy</option>
-                </select>
+                <label class="control-label" for="liquid-curies">Liquid Disposals: <a ng-click="addAmount('Liquids')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
+                <div ng-repeat="liquid in liquids = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.LIQUID})">
+                    <div class="control-group">
+                        <div class="controls input-append">
+                            <input name="liquid-curies" ng-model="liquid.Curie_level" ng-disabled="liquid.IsPickedUp">
+                            <span class="add-on">mCi <i title="Picked Up" ng-if="liquid.IsPickedUp" class="danger icon-remove"></i></span>
+                        </div>
+                        <label>Select Carboy:</label>
+                        <select ng-disabled="liquid.IsPickedUp" ng-init="liquid.Carboy = selectedCarboy(liquid, pi.CarboyUseCycles)" ng-model="liquid.Carboy_id"
+                                ng-options="cycle.Key_id as cycle.Carboy.Carboy_number for cycle in pi.CarboyUseCycles">
+                            <option value="">Select Carboy</option>
+                        </select>
 
-            </div>
-        </div>
+                    </div>
+                </div>
 
-        <label class="control-label" for="vial-curies">Scint Vial Disposals: <a ng-click="addAmount('Vials')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
-        <div ng-repeat="vial in vials = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.VIAL})">
-            <div class="control-group">
-                <div class="controls input-append">
-                    <input ng-disabled="vial.IsPickedUp && !roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])" style="max-width:50%;" name="vial-curies" ng-model="vial.Curie_level" ng-class="{'invalid':ParcelUseCopy.error}">
-                    <span class="help-block ">mCi <i title="Picked Up" ng-if="vial.IsPickedUp" class="danger icon-remove"></i></span>
+                <label class="control-label" for="vial-curies">Scint Vial Disposals: <a ng-click="addAmount('Vials')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
+                <div ng-repeat="vial in vials = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.VIAL})">
+                    <div class="control-group">
+                        <div class="controls input-append">
+                            <input ng-disabled="vial.IsPickedUp" style="max-width:50%;" name="vial-curies" ng-model="vial.Curie_level">
+                            <span class="help-block ">mCi <i title="Picked Up" ng-if="vial.IsPickedUp" class="danger icon-remove"></i></span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <label class="control-label" for="vial-curies">Other Disposals: <a ng-click="addAmount('Others')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
-        <div ng-repeat="other in others = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.OTHER})">
-            <div class="control-group" style="width:100%;">
-                <div class="controls input-append">
-                    <input style="max-width:50%;" name="other-curies" ng-model="other.Curie_level" ng-class="{'invalid':ParcelUseCopy.error}">
-                    <span class="add-on">mCi</span>
+                <label class="control-label" for="vial-curies">Other Disposals: <a ng-click="addAmount('Others')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
+                <div ng-repeat="other in others = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.OTHER})">
+                    <div class="control-group" style="width:100%;">
+                        <div class="controls input-append">
+                            <input style="max-width:50%;" name="other-curies" ng-model="other.Curie_level">
+                            <span class="add-on">mCi</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <textarea maxlength='60' placeholder="Comments" ng-model="other.Comments"></textarea>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="control-group">
-                <div class="controls">
-                    <textarea maxlength='60' placeholder="Comments" ng-model="other.Comments"></textarea>
-                </div>
-            </div>
-        </div>
 
-        <label class="control-label" for="sample-curies">Not disposed: <a ng-click="addAmount('Samples')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
-        <div ng-repeat="sample in sample = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SAMPLE})">
-            <div class="control-group" style="width:100%;">
-                <div class="controls input-append">
-                    <input style="max-width:50%;" name="sample-curies" ng-model="sample.Curie_level" ng-class="{'invalid':ParcelUseCopy.error}">
-                    <span class="add-on">mCi</span>
+                <label class="control-label" for="sample-curies">Not disposed: <a ng-click="addAmount('Samples')" class="btn btn-success btn-mini"><i class="icon-plus-2"></i></a></label>
+                <div ng-repeat="sample in sample = (ParcelUseCopy.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SAMPLE})">
+                    <div class="control-group" style="width:100%;">
+                        <div class="controls input-append">
+                            <input style="max-width:50%;" name="sample-curies" ng-model="sample.Curie_level">
+                            <span class="add-on">mCi</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <textarea maxlength='60' placeholder="Comments" ng-model="sample.Comments"></textarea>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="control-group">
-                <div class="controls">
-                    <textarea maxlength='60' placeholder="Comments" ng-model="sample.Comments"></textarea>
-                </div>
-            </div>
-        </div>
-            -->
             </section>
 
             <div class="pull-left">
                 <div class="alert alert-danger" ng-if="ParcelUseCopy.error" ng-bind-html="ParcelUseCopy.error"></div>
-                <div class="alert alert-danger" ng-if="ParcelUseCopy.DateError" ng-bind-html="ParcelUseCopy.DateError"></div>
-                <button class="btn btn-success left" type="submit">
-                    <i class="icon-checkmark"></i>Save <span ng-if="ParcelUseCopy.IsPickedUp">And Place </span>Usage
-                </button>
+                <button class="btn btn-success left" type="submit"><i class="icon-checkmark"></i>Save Usage</button>
                 <a class="btn btn-danger left" ng-click="close(use, parcel)"><i class="icon-cancel-2"></i>Cancel</a>
             </div>
         </div>
@@ -184,8 +122,7 @@
                     <li>
                         <h3>Arrival Date</h3>
                         <div>
-                            <span ng-if="parcel.Arrival_date && parcel.Arrival_date != '0000-00-00 00:00:00'">{{parcel.Arrival_date | dateToISO}}</span>
-                            <span ng-if="parcel.Transfer_in_date">{{parcel.Transfer_in_date | dateToISO}}</span>
+                            {{parcel.Arrival_date | dateToISO}}
                         </div>
                     </li>
                     <li>

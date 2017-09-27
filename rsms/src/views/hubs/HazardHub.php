@@ -4,6 +4,8 @@
 <!--ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.RADIATION_INSPECTOR] ])" -->
 <script src="../../js/HazardHub.js"></script>
 <span ng-app="hazardHub" ng-controller="TreeController">
+<div cg-busy="{promise:hazardLoading,message:'Loading...',templateUrl:'../../rad/views/busy-templates/full-page-busy.html'}"></div>
+
 <div class="navbar">
 <ul class="nav pageMenu" style="background: #e67e1d;">
     <li class="">

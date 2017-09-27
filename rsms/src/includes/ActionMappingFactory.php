@@ -28,6 +28,7 @@ class ActionMappingFactory {
             "EHS"					=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector"),
             "EHS_AND_LAB"			=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "Lab Contact", "Principal Investigator", "Radiation User"),
             "ALL_RAD_USERS"			=> array("Admin", "Radiation Admin", "Safety User", "Radiation Inspector"),
+            "RSO"			        => array("Admin", "Radiation Admin", "Radiation Inspector"),
             "LAB_PERSONNEL"			=> array("Lab Contact", "Principal Investigator", "Radiation User"),
             "EXCLUDE_READ_ONLY"		=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "Lab Contact", "Principal Investigator", "Radiation User")
     );
@@ -114,6 +115,8 @@ class ActionMappingFactory {
                 "setOrderIndicesForSubHazards"=>new ActionMapping("setOrderIndicesForSubHazards", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "reorderHazards"=>new ActionMapping("reorderHazards", "", "", $this::$ROLE_GROUPS["ADMIN"]),
         		"setMasterHazardIds"=>new ActionMapping("setMasterHazardIds", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "getPisAndRoomsByHazard"=>new ActionMapping("getPisAndRoomsByHazard", "", "",$this::$ROLE_GROUPS["EHS"]),
+
 
 
                 // Question Hub

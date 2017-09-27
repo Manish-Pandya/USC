@@ -1251,3 +1251,13 @@ WasteType.prototype = {
 
 // inherit from GenericModel
 extend(WasteType, GenericModel);
+
+//constructor
+var OtherWasteType = function () { };
+OtherWasteType.prototype = {
+    className: "OtherWasteType",
+    Class: "OtherWasteType"
+}
+
+// inherit from GenericModel
+extend(OtherWasteType, GenericModel);

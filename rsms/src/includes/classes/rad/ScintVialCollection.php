@@ -24,8 +24,6 @@ class ScintVialCollection extends RadCrud{
             "label"                         => "text",
             "open_date"			            => "timestamp",
 			"close_date"			        => "timestamp",
-
-
 			//GenericCrud
 			"key_id"						=> "integer",
 			"is_active"						=> "boolean",
@@ -77,6 +75,8 @@ class ScintVialCollection extends RadCrud{
     private $close_date;
     private $open_date;
 
+    private $open_date;
+	private $close_date;
 
 	// Required for GenericCrud
 	public function getTableName() {
@@ -182,6 +182,7 @@ class ScintVialCollection extends RadCrud{
 
 	public function getOpen_date(){ return $this->open_date; }
 	public function setOpen_date($open_date){ $this->open_date = $open_date; }
+
 }
 
 ?>

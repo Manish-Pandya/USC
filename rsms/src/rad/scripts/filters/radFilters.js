@@ -300,6 +300,13 @@ angular.module('00RsmsAngularOrmApp')
             return auths.filter( function (a) { return a.Isotope_id == id; } )
         }
     })
+    .filter('availableTypes', function (convenienceMethods) {
+        return function (owts, pi) {
+            if (!owts) return;
+            if (!pi) return owts
+            return owts.filter( function( owt ){ return owt.Is_active && !convenienceMethods.arrayContainsObject(pi.OtherWasteTypes, owt); })
+        }
+    })
     .filter('parcelFilter', function() {
         return function (parcels, filterObj) {
             if (!parcels) return

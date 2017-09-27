@@ -34,6 +34,7 @@ class RadModelDto {
     private $drumWipe;
     private $drumWipeTest;
     private $miscellaneousWaste;
+    private $otherWasteType;
 
     public function getAuthorization(){
     	return $this->authorization;
@@ -297,5 +298,7 @@ class RadModelDto {
     public function getDrumWipeTest(){return $this->drumWipeTest;}
     public function setDrumWipeTest($w){$this->drumWipeTest = $w;}
 
+    public function getOtherWasteType(){ return $this->otherWasteType; }
+	public function setOtherWasteType($otherWasteType){ $this->otherWasteType = $otherWasteType; }
 }
 ?>
