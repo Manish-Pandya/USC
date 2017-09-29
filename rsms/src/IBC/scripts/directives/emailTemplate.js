@@ -18,6 +18,7 @@ angular.module('ng-IBC')
                 element.contextMenu(ibc.IBCEmailGen.contextMenuMacros);
                 // locate the iframe tinymce uses
                 var iframe = element.find('iframe').contents();
+                iframe.find('body').attr("title", "Right-click to select and paste macros");
                 // catch right-click and mouseup events in the iframe
                 iframe.contextmenu(function (eData) {
                     console.log(eData);
