@@ -135,6 +135,7 @@ if(!isset($_SESSION["USER"])){ ?>
 	<script src="scripts/directives/collapsibleCard.js"></script>
     <script src="scripts/directives/questionView.js"></script>
     <script src="scripts/directives/emailTemplate.js"></script>
+    <script src="scripts/directives/emailParsed.js"></script>
 
 <!-- framework -->
     <script src="../ignorasmus/client-side-framework/DataStoreManager.js"></script>

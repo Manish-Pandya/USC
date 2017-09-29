@@ -1,5 +1,13 @@
 ﻿<div>
     <div>
+        <h4>Recipients:</h4>
+        <ul>
+            <li ng-repeat="recipient in recipients">
+                <a ng-click="parse(recipient)">{{recipient.email}}</a>
+            </li>
+        </ul>
+    </div>
+    <div>
         <h4>Subject:</h4>
         <input type="text" style="width:500px" ng-model="email.Subject" />
     </div>
