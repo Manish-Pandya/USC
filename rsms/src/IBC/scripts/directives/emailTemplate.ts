@@ -3,15 +3,12 @@
     return {
         restrict: 'E',
         scope: {
-            email: "=",
-            saveHandler: "&?"
+            email: "="
         },
         replace: false,
         transclude: true,
         templateUrl: "./scripts/directives/ibc-email-template.html",
         link: function (scope, element, attrs) {
-            if (!('saveHandler' in attrs)) scope.saveHandler = null;
-
             // hackish but needed 1ms pause for tinymce to fire first
             setTimeout(() => {
                 // establish the context menu
