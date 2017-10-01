@@ -22,7 +22,8 @@ include_once 'RadCrud.php';
     	"waste_bag_id"				=> "integer",
     	"parcel_use_id"				=> "integer",
         "scint_vial_collection_id"  => "integer",
-        "miscellaneous_waste_id"  => "integer",
+        "miscellaneous_waste_id"    => "integer",
+        "other_waste_container_id"  => "integer",
     	"comments"					=> "text",
         "isotope_id"                => "integer",
         "other_waste_type_id"       => "integer",
@@ -90,6 +91,7 @@ include_once 'RadCrud.php';
     private $miscellaneous_waste_id;
 
     private $other_waste_type_id;
+    private $other_waste_container_id;
     private $otherWasteTypeName;
 
     public function __construct() {
@@ -257,7 +259,7 @@ include_once 'RadCrud.php';
 
 	public function getOtherWasteTypeName(){
         if($this->otherWasteTypeName == null && $this->other_waste_type_id != null){
-            $dao = new GenericDAO(OtherWasteType);
+            $dao = new GenericDAO(new OtherWasteType());
             $type = $dao->getById($this->other_waste_type_id);
             $this->otherWasteTypeName = $type->getName();
         }
@@ -265,5 +267,12 @@ include_once 'RadCrud.php';
 	}
 
 	public function setOtherWasteTypeName($otherWasteTypeName){ $this->otherWasteTypeName = $otherWasteTypeName; }
+
+    public function getOther_waste_container_id(){
+		return $this->other_waste_container_id;
+	}
+	public function setOther_waste_container_id($other_waste_container_id){
+		$this->other_waste_container_id = $other_waste_container_id;
+	}
 }
 ?>

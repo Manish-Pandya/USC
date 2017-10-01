@@ -620,8 +620,10 @@ class GenericDAO {
 		} else {
 			//$this->LOG->trace("$this->logprefix Object had a key_id of " . $object->getKey_Id());
 			$errorInfo = $stmt->errorInfo();
+
 			$object = new ModifyError($errorInfo[2], $object);
 			$this->LOG->error('Returning ModifyError with message: ' . $object->getMessage());
+			$this->LOG->fatal($object);
 		}
 
 		// return the updated object

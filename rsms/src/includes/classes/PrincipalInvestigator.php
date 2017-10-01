@@ -193,6 +193,8 @@ class PrincipalInvestigator extends GenericCrud {
 
 	/** isotopes in scint vials that are ready for pickup **/
 	private $scintVialAmounts;
+    private $otherWasteContainers;
+
 
 	/** collections of scint vials that haven't been picked up **/
 	private $currentScintVialCollections;
@@ -213,7 +215,6 @@ class PrincipalInvestigator extends GenericCrud {
     private $name;
 
     private $otherWasteTypes;
-    private $otherWasteContainers;
 
 	public function __construct(){
 
@@ -528,6 +529,7 @@ class PrincipalInvestigator extends GenericCrud {
                     array('date_created')
 			);
 		}
+        return $this->otherWasteContainers;
     }
     public function setOtherWasteContainers($bags){$this->otherWasteContainers = $bags;}
 

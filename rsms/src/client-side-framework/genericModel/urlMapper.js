@@ -58,6 +58,9 @@
         'Campus'                : {getById: "getCampusById"                , getAll: "getAllCampuses"               , save: "saveCampus"                 },
         'Verification'          : {getById: "getVerificationById"          , getAll: "getAllVerifications"          , save: "saveVerification"           },  
         'RadModelDto'           : {getById: "getVerificationById"          , getAll: "getRadModels"                 , save: "saveVerification"           },
-        'Building'              : {getById: "getAllBuildings"              , getAll: "getAllBuildings"              , save: "saveBuilding"               }
+        'Building'              : {getById: "getAllBuildings"              , getAll: "getAllBuildings"              , save: "saveBuilding"               },
+
+        'OtherWasteContainer'  : { getById: "getOtherWasteContainerBiId"   , getAll: "getAllOtherWasteContainers"   , save: "saveOtherWasteContainer" },
+
 
 };

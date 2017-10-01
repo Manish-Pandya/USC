@@ -112,7 +112,7 @@
                         </td>
                         <td class="use-amount liquids">
                             <div ng-repeat="liquid in liquids = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.LIQUID})">
-                                {{liquid.Curie_level}}mCi <small><br />in Carboy {{liquid.Carboy.CarboyNumber}}</small>
+                                {{liquid.Curie_level}}mCi <small><br />Carboy #{{liquid.Carboy.CarboyNumber}}</small>
                             </div>
                             <div ng-if="!liquids.length">No Liquid Disposals</div>
                         </td>
@@ -125,17 +125,15 @@
                         <td class="use-amount others">
                             <div ng-show="!others.length">N/A</div>
                             <div ng-repeat="other in others = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.OTHER})">
-                                {{other.Curie_level}} mCi <span ng-if="other.Comments"><br />{{other.Comments}}</span>
+                                <span>{{other.Curie_level}}mCi</span><span ng-bind-html="getContainer('OtherWasteContainer', other.Other_waste_container_id)"></span>
                             </div>
                         </td>
                         <td class="use-amount vials">
-                            <div ng-show="!samples.length">N/A</div>
-                            <div ng-repeat="sample in samples = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SAMPLE})">
-                                {{sample.Curie_level}} mCi <span ng-if="sample.Comments"><br />{{sample.Comments}}</span>
-                            </div>
+                            <div ng-bind-html="getSampleAmount(use)"></div>
                         </td>
                     </tr>
                     <!---->
+
 
 
                 </tbody>
@@ -144,6 +142,7 @@
 
     </div>
 </div>
+
 <div class="card full parcels" ng-if="pi.Pickups">
     <div class="card-header">
         <h2><i style="margin-top: 12px;margin-left: 3px;" class="icon-box-remove"></i>Pickups</h2>

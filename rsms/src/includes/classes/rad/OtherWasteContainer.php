@@ -11,16 +11,14 @@
 class OtherWasteContainer extends RadCrud {
 
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "waste_bag";
+	protected static $TABLE_NAME = "other_waste_container";
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"pickup_id"	   => "integer",
 		"drum_id"	   => "integer",
-		"curie_level"  => "float",
-		"date_added"   => "timestamp",
-		"date_removed" => "timestamp",
         "comments"     => "text",
+        "description"     => "text",
         "principal_investigator_id"		=> "integer",
 	    "open_date"                     => "timestamp",
 	    "close_date"                    => "timestamp",
@@ -40,7 +38,7 @@ class OtherWasteContainer extends RadCrud {
 			"className" => "ParcelUseAmount",
 			"tableName" => "parcel_use_amount",
 			"keyName"	=> "key_id",
-			"foreignKeyName"	=> "waste_bag_id"
+			"foreignKeyName"	=> "other_waste_type_id"
 	);
 
 
@@ -48,7 +46,7 @@ class OtherWasteContainer extends RadCrud {
         "className" => "PickupLot",
         "tableName" => "pickup_lot",
         "keyName"   => "key_id",
-        "foreignKeyName" => "waste_bag_id"
+        "foreignKeyName" => "other_waste_type_id"
     );
 
 
@@ -87,6 +85,12 @@ class OtherWasteContainer extends RadCrud {
 
     private $open_date;
 	private $close_date;
+
+    private $other_waste_type_id;
+    private $otherWasteTypeName;
+    private $label;
+    private $clearable;
+    private $description;
 
 	public function __construct() {
 		$entityMaps = array();
@@ -161,7 +165,7 @@ class OtherWasteContainer extends RadCrud {
 	{
 	    $this->date_removed = $date_removed;
 	}
-
+    //TODO: these should all be get all where's that check for waste type id
 	public function getParcelUseAmounts() {
 		if($this->parcel_use_amounts === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDao = new GenericDAO($this);
@@ -208,4 +212,46 @@ class OtherWasteContainer extends RadCrud {
 
 	public function getClose_date(){ return $this->close_date; }
 	public function setClose_date($close_date){ $this->close_date = $close_date; }
+
+    public function getOther_waste_type_id(){
+		return $this->other_waste_type_id;
+	}
+	public function setOther_waste_type_id($other_waste_type_id){
+		$this->other_waste_type_id = $other_waste_type_id;
+	}
+
+    public function getLabel(){
+        if($this->label == null && $this->key_id != null && $this->principal_investigator_id != null){
+            $piDao = new GenericDAO(new PrincipalInvestigator());
+            $pi = $piDao->getById($this->principal_investigator_id);
+            $name = $pi->getUser() != null ? strtoupper($pi->getUser()->getLast_name()) : null;
+            if($name) $this->label = $name . "-". strtoupper(str_ireplace(" ", "-", $this->getOtherWasteTypeName())) . "-" . $this->key_id;
+        }
+        return $this->label;
+    }
+	public function setLabel($label){ $this->label = $label; }
+
+	public function getOtherWasteTypeName(){
+        if($this->otherWasteTypeName == null && $this->other_waste_type_id != null){
+            $thisDao = new GenericDAO(new OtherWasteType());
+			$otherWasteType = $thisDao->getById($this->other_waste_type_id);
+            $this->otherWasteTypeName = $otherWasteType->getName();
+        }
+		return $this->otherWasteTypeName;
+	}
+	public function setOtherWasteTypeName($otherWasteTypeName){
+		$this->otherWasteTypeName = $otherWasteTypeName;
+	}
+
+    public function getClearable(){
+        if($this->clearable == null && $this->hasPrimaryKeyValue() && $this->other_waste_type_id != null){
+            $d = new GenericDAO(new OtherWasteType());
+            $type = $d->getById($this->other_waste_type_id);
+            if($type != null)(bool) $this->clearable = $type->getClearable();
+        }
+        return $this->clearable;
+    }
+
+    public function getDescription(){return $this->description;}
+    public function setDescription($d){$this->description = $d;}
 }

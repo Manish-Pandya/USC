@@ -18,11 +18,14 @@
                             <li ng-repeat="c in containersOfType = (group | filter:filterFunction)" class="container-parent">
                                 <ul>
                                     <li class="labels">
-                                        <div class="container-label">{{c.ViewLabel}}</div>
+                                        <div class="container-label">
+                                            {{c.ViewLabel}}
+                                            <p ng-if="c.Description">{{c.Description}}</p>
+                                        </div>
                                         <div>
-                                            <a ng-if="canClose" ng-click="close(c, additionalParam)" class="btn {{buttonClass || 'btn-danger'}}">
-                                                {{buttonText || 'Close Container'}}
-                                            </a>
+                                            <button ng-if="canClose && (!c.Clearable || roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]]))" ng-click="close(c, additionalParam)" class="btn {{buttonClass || 'btn-danger'}}">
+                                                {{buttonText || 'Close Container'}} {{}}
+                                            </button>
                                             <span ng-if="c.Close_date">Closed {{c.Close_date | dateToIso}}</span>
                                         </div>
                                     </li>
@@ -76,7 +79,8 @@
                 }
                 
             },
-            controller: function ($scope, actionFunctionsFactory ) {            
+            controller: function ($scope, actionFunctionsFactory, roleBasedFactory, $rootScope) {  
+                console.log($rootScope);
                 $scope.closeIt = (param): any => {
                     let additionalParam = $scope.additionalParam || null;
                     $scope.close(param, additionalParam).then((container) => {
@@ -84,7 +88,8 @@
                         angular.extend(param, container);
                     });
                 }
-
+                $scope.rbf = roleBasedFactory;
+                $scope.Constants = Constants;
                 if (!$scope.filterFunction) {
                     $scope.filterFunction = (cabinets) => {
                         return (cabinets) => { return cabinets };

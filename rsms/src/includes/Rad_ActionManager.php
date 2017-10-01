@@ -1062,6 +1062,15 @@ class Rad_ActionManager extends ActionManager {
                             $entityMaps[] = new EntityMap("lazy", "getContainer_name");
                             $newAmount->setEntityMaps($entityMaps);
                         }
+                        if($amount['Other_waste_container_id'] != NULL){
+                            $newAmount->setOther_waste_container_id($amount['Other_waste_container_id']);
+                            $newAmount->setOther_waste_type_id($amount['Other_waste_type_id']);
+                            $entityMaps = array();
+                            $entityMaps[] = new EntityMap("eager", "getWasteTypeName");
+                            $entityMaps[] = new EntityMap("lazy", "getWaste_type");
+                            $entityMaps[] = new EntityMap("lazy", "getContainer_name");
+                            $newAmount->setEntityMaps($entityMaps);
+                        }
                         if($amount['Comments'] != NULL)$newAmount->setComments($amount['Comments']);
                         $newAmount->setWaste_type_id($amount['Waste_type_id']);
 
@@ -2793,6 +2802,40 @@ class Rad_ActionManager extends ActionManager {
      */
     public function clearOtherWaste($decodedObject){
         //to do add clearanceDate to parcel_use_amount and class
+    }
+    /*
+     * "getAllOtherWasteContainers"	=> new ActionMapping("getAllOtherWasteContainers","","", $this::$ROLE_GROUPS["RSO"]),
+                "getOtherWasteContainerBiId"	=> new ActionMapping("getOtherWasteContainerBiId","","", $this::$ROLE_GROUPS["RSO"]),
+                "saveOtherWasteContainer"	    => new ActionMapping("saveOtherWasteContainer","","", $this::$ROLE_GROUPS["RSO"]),
+     *
+     * */
+    public function getAllOtherWasteContainers(){
+        $d = new GenericDAO(new OtherWasteContainer());
+        $owts = $d->getAll();
+        return $owts;
+    }
+
+    public function saveOtherWasteContainer($decodedObject = null){
+        if($decodedObject == null) $decodedObject = $this->convertInputJson();
+        if($decodedObject == null)return new ActionError("No data read from input stream");
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+        $LOG->fatal($decodedObject);
+        $d = new GenericDAO($decodedObject);
+        return $d->save();
+    }
+
+    public function getOtherWasteContainerBiId($id = NULL) {
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+
+        if($id == null)$id = $this->getValueFromRequest('id', $id);
+
+        if( $id !== NULL ) {
+            $dao = $this->getDao(new OtherWasteType());
+            return $dao->getById($id);
+        }
+        else {
+            return new ActionError("No request parameter 'id' was provided", 201);
+        }
     }
 }
 ?>

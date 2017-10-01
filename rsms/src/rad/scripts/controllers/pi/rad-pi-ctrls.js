@@ -209,7 +209,17 @@ angular.module('00RsmsAngularOrmApp')
         return $rootScope.pi.Pickups.filter(function (p) { return p.Key_id == id; })[0];
     };
     $scope.getContainer = function (type, id) {
-        return "<small><br>In Container " + $scope.pi[type + "s"].filter(function (c) { return c.Key_id == id; })[0].Label + "</small>" || null;
+        return "<small><br>" + $scope.pi[type + "s"].filter(function (c) { return c.Key_id == id; })[0].Label + "</small>" || null;
+    };
+    $scope.getSampleAmount = function (use) {
+        var total = use.Quantity;
+        use.ParcelUseAmounts.forEach(function (pu) {
+            total -= parseFloat(pu.Curie_level);
+        });
+        total = Math.round(total * 100000) / 100000;
+        if (total > 0)
+            return total + "mCi";
+        return "N/A";
     };
     $scope.addUsage = function (parcel) {
         if (!$scope.parcel.ParcelUses)
@@ -282,7 +292,7 @@ angular.module('00RsmsAngularOrmApp')
     var af = actionFunctionsFactory;
     $scope.af = af;
     $scope.getContainers = function (pi) {
-        return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections)
+        return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections).concat(pi.OtherWasteContainers)
             .map(function (c, idx) {
             var container = angular.extend({}, c);
             container.ViewLabel = c.Label || c.CarboyNumber;
@@ -297,6 +307,9 @@ angular.module('00RsmsAngularOrmApp')
                     break;
                 case ("ScintVialCollection"):
                     container.ClassLabel = "Scint Vial Containers";
+                    break;
+                case ("OtherWasteContainer"):
+                    container.ClassLabel = "Other Waste";
                     break;
                 default:
                     container.ClassLabel = "";
@@ -315,9 +328,15 @@ angular.module('00RsmsAngularOrmApp')
             else if (container.Class == "WasteBag" && amt.Waste_bag_id && amt.Waste_bag_id == container.Key_id) {
                 return true;
             }
+            else if (container.Class == "OtherWasteContainer" && amt.Other_waste_container_id && amt.Other_waste_container_id == container.Key_id) {
+                return true;
+            }
             return false;
-        }).map(function (c) { if (c.Close_date)
-            amt.PickedUp = true; return c.idx; })[0] || null;
+        }).map(function (c) {
+            if (c.Close_date)
+                amt.PickedUp = true;
+            return c.idx;
+        })[0] || null;
         return num;
     };
     $scope.addAmount = function () {
@@ -351,7 +370,6 @@ angular.module('00RsmsAngularOrmApp')
             total += parseFloat(uses[i].Quantity);
         }
         total += parseFloat(copy.Quantity);
-        console.log(total);
         //if we are editing, subtract the total from the copied use so that it's total isn't included twice
         if (use.Quantity) {
             total = total - parseFloat(use.Quantity);
@@ -363,11 +381,10 @@ angular.module('00RsmsAngularOrmApp')
         return valid;
     };
     $scope.saveParcelUse = function (parcel, copy, use) {
-        console.log($scope.validateUseAmounts(copy, use), $scope.validateRemainder(parcel, copy, use));
+        //console.log(copy, use); return;
         if ($scope.validateUseAmounts(copy, use)) {
             af.saveParcelUse(parcel, copy, use).then(function (returned) {
                 if (!$rootScope.parcel.ParcelUses || !$rootScope.parcel.ParcelUses.length) {
-                    console.log(returned);
                     $rootScope.parcel.ParcelUses = returned.ParcelUses;
                 }
                 $rootScope.parcelUses = {};
@@ -425,7 +442,6 @@ angular.module('00RsmsAngularOrmApp')
                     controller: 'ModalParcelUseLogOverrideCtrl'
                 });
                 mi.result.then(function (r) {
-                    console.log(r);
                     $rootScope.parcelUses = {};
                     $rootScope.parcelUses = $rootScope.mapUses($rootScope.parcel.ParcelUses);
                     $modalInstance.close();
@@ -453,6 +469,12 @@ angular.module('00RsmsAngularOrmApp')
                 amt.Scint_vial_collection_id = container.Key_id;
                 amt.Waste_type_id = Constants.WASTE_TYPE.VIAL;
                 break;
+            case ("OtherWasteContainer"):
+                amt.Other_waste_container_id = container.Key_id;
+                amt.Other_waste_type_id = container.Other_waste_type_id;
+                amt.Waste_type_id = Constants.WASTE_TYPE.OTHER;
+                console.log("OTHER WASTE FOUND", container, amt);
+                break;
             default:
                 amt.Waste_bag_id = null;
                 amt.Waste_type_id = null;
@@ -474,7 +496,6 @@ angular.module('00RsmsAngularOrmApp')
             else {
                 amt.Curie_level = max - total;
                 amt.Curie_level = Math.round(amt.Curie_level * 10000000000) / 10000000000;
-                console.log();
                 if (max < total)
                     parcelUse.error = "Total disposal amount must equal use amount.";
             }
@@ -514,7 +535,6 @@ angular.module('00RsmsAngularOrmApp')
             }).sort(function (a, b) {
                 return a.Date_created < b.Date_created;
             })[0] || null;
-            console.log($scope.CurrentPickup);
         }
         $scope.pi = pi;
         $scope.containers = $scope.getContainers($scope.pi);
@@ -549,7 +569,6 @@ angular.module('00RsmsAngularOrmApp')
             collection.Principal_investigator_id = pi.Key_id;
             collection.new = true;
             $scope.CurrentScintVialCollections = [collection];
-            console.log(pi);
         }
         else {
             console.log($scope.CurrentPickup);
@@ -989,9 +1008,10 @@ angular.module('00RsmsAngularOrmApp')
             templateUrl: 'views/pi/pi-modals/open-container.html',
             controller: 'RecepticalModalCtrl'
         });
+        modalInstance.result.then(function () { $scope.pi.containers = $scope.getContainers($scope.pi); });
     };
     $scope.getContainers = function (pi, showClosed) {
-        return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections)
+        return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections).concat(pi.OtherWasteContainers)
             .map(function (c, idx) {
             var container = angular.extend({}, c);
             container.ViewLabel = c.Label || c.CarboyNumber;
@@ -1026,11 +1046,11 @@ angular.module('00RsmsAngularOrmApp')
         return (container.Close_date == null) != showClosed;
     };
 })
-    .controller('RecepticalModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
+    .controller('RecepticalModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods, roleBasedFactory) {
     var af = actionFunctionsFactory;
     $scope.af = af;
-    $scope.types = Constants.CONTAINTER_TYPE;
     $scope.modalData = af.getModalData();
+    $scope.types = Constants.CONTAINTER_TYPE.concat($scope.modalData.pi.OtherWasteTypes.filter(function (c) { return !c.Clearable || roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]]); }).map(function (c) { return { Label: c.Name, Class: "OtherWasteContainer", Other_waste_type_id: c.Key_id }; }));
     if (!$scope.modalData.SolidsContainerCopy) {
         $scope.modalData.SolidsContainerCopy = {
             Class: 'SolidsContainer',
@@ -1045,6 +1065,8 @@ angular.module('00RsmsAngularOrmApp')
             return "scintillation vial container";
         if (container.Class == "CarboyUseCycle")
             return "carboy";
+        if (container.Class == "OtherWasteContainer")
+            return "other";
         return false;
     };
     $scope.confirmCloseContainer = function (container, copy) {
@@ -1057,11 +1079,23 @@ angular.module('00RsmsAngularOrmApp')
         });
     };
     $scope.newContainer = function (container) {
+        console.log(container);
         return $rootScope.saving = af.save(container).then(function (r) {
-            $modalInstance.dismiss();
             af.deleteModalData();
             $scope.modalData.pi[container.Class + "s"].push(r);
+            $modalInstance.close();
         });
+    };
+    $scope.selectContainer = function (container, type) {
+        console.log(type);
+        container.Class = type.Class;
+        if (type.Class == "OtherWasteContainer") {
+            container.Other_waste_type_id = type.Other_waste_type_id;
+        }
+        else {
+            container.Other_waste_type_id = null;
+        }
+        console.log(container);
     };
     $scope.close = function () {
         $modalInstance.dismiss();
