@@ -181,11 +181,18 @@
 </div>
 
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:100%;">
-    <tr><th align="center"># ITEMS INSPECTED</th><th align="center"># COMPLIANT ITEMS</th><th align="center"># DEFICIENCY ITEMS</th><th align="center">COMPLIANCE SCORE</th></tr>
+    <tr>
+        <th align="center"># INSPECTION QUESTIONS</th>
+        <th align="center"># COMPLIANT QUESTIONS</th>
+        <th align="center"># DEFICIENCT QUESTIONS</th>
+        <th align="center"># TOTAL DEFICIENCIES</th>
+        <th align="center">COMPLIANCE SCORE</th>
+    </tr>
     <tr style="background: #c5d8f1;">
         <td style="text-align:center" valign="top" align="center">{{inspection.score.itemsInspected}}</td>
         <td style="text-align:center" valign="top" align="center">{{inspection.score.compliantItems}}</td>
         <td style="text-align:center" valign="top" align="center">{{inspection.score.deficiencyItems}}</td>
+        <td style="text-align:center" valign="top" align="center">{{pf.getIsReadyToSubmit().totals}}</td>
         <td style="text-align:center" valign="top" align="center">{{inspection.score.score}}%</td>
     </tr>
 </table>
