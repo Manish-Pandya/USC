@@ -528,6 +528,13 @@ class IBC_ActionManager extends ActionManager {
         return $responses;
 	}
 
+	public function getIBCEmailGenById($id = null){
+		if($id == NULL)$id = $this->getValueFromRequest('id', $id);
+        if($id == NULL)return new ActionError("No request param 'id' provided.");
+        $dao = $this->getDao(new IBCEmailGen());
+        return $dao->getById($id);
+	}
+
 	public function saveIBCEmailGen(IBCEmailGen $decodedObject){
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
@@ -539,6 +546,11 @@ class IBC_ActionManager extends ActionManager {
 		//return EmailGen::doThing();
 		$emailGen = new IBCEmailGen();
 		return $emailGen->parse();
+	}
+
+	public function getPreviewCorpus($decodedObject = null){
+		if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
+		return $decodedObject->parse($decodedObject->getCorpus());
 	}
 }
 

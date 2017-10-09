@@ -46,6 +46,7 @@ class EmailGen extends GenericCrud {
 		Would a low-flying {bird} be able to detect {fish}'s {toot}?
 		Would {bird} be compelled to then {eat} {fish}
 		Inquiring minds want to {know}";
+	protected $parsedCorpus;
 	protected $title;
 	protected $module;
 
@@ -76,6 +77,8 @@ class EmailGen extends GenericCrud {
 
 	public function getCorpus(){ return $this->corpus; }
 	public function setCorpus($deadBaby){ $this->corpus = $deadBaby; }
+
+	public function getParsedCorpus(){ return $this->parse(); }
 
 	public function getTitle(){ return $this->title; }
 	public function setTitle($thingus){ $this->title = $thingus; }
@@ -108,8 +111,9 @@ class EmailGen extends GenericCrud {
 	 * Runs through the corpus string and replaces all string parts matching macroMap keys with their corrisponding value.
 	 * @return mixed
 	 */
-	public function parse() {
-		return str_replace(array_keys($this->macroMap()), array_values($this->macroMap()), $this->corpus);
+	public function parse($overrideMyDeadCorpus = null) {
+		if($overrideMyDeadCorpus)$overrideMyDeadCorpus = $this->corpus;
+		return str_replace(array_keys($this->macroMap()), array_values($this->macroMap()), $overrideMyDeadCorpus);
 	}
 
 }

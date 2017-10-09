@@ -12,9 +12,7 @@
         <input type="text" style="width:500px" ng-model="email.Subject" />
     </div>
     <div>
-        <textarea ng-model="email.Corpus" ui-tinymce="$root.tinymceOptions"></textarea>
-    </div>
-    <div class="modal-footer">
-        <a class="btn btn-large btn-success left" ng-click="save(email)"><i class="icon-checkmark"></i>Save</a>
+        <textarea ng-model="email.ParsedCorpus" ui-tinymce="$root.tinymceOptions" ng-if="sending"></textarea>
+        <div ng-bind-html="email.ParsedCorpus" ng-if="!sending"></div>
     </div>
 </div>

@@ -52,6 +52,8 @@
 
         Corpus: string;
 
+        ParsedCorpus: string;
+
         Subject: string;
 
         Title: string;

@@ -3,7 +3,8 @@ angular.module('ng-IBC')
     return {
         restrict: 'E',
         scope: {
-            email: "="
+            email: "=",
+            sending: "@?"
         },
         replace: false,
         transclude: true,

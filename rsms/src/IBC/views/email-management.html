@@ -9,5 +9,9 @@
     <collapsible-card ng-repeat="email in emails.data" class="card full" header-text="{{email.Title}}" header-icon="icon-info">
         <h3 ng-if="!closed && !emails.data.length"><i class="icon-spinnery-dealie spinner small" style="margin: 3px;"></i>Loading Template</h3>
         <email-template email="email"></email-template>
+        <div class="modal-footer">
+            <a class="btn btn-large btn-success left" ng-click="save(email)"><i class="icon-checkmark"></i>Save</a>
+            <a class="btn btn-large btn-success left" ng-click="openModal(email)"><i class="icon-checkmark"></i>Preview</a>
+        </div>
     </collapsible-card>
 </div>

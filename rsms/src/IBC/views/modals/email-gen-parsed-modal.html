@@ -1,0 +1,15 @@
+﻿<div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../busy-templates/full-page-busy.html'}"></div>
+<div class="modal-header blueBg" style="padding:0;">
+    <h2 style="padding:5px; color:white">Preview Email</h2>
+</div>
+
+<div class="modal-body wide-modal">
+    <div class="control-group">
+        <email-parsed email="modalData.IBCEmailGen"></email-parsed>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <a class="btn btn-large btn-success left" ng-click="save(modalData.IBCEmailGen)"><i class="icon-checkmark"></i>Save</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>
