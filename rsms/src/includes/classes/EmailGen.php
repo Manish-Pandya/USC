@@ -15,6 +15,7 @@ class EmailGen extends GenericCrud {
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
+		"dependency_type"		=> "text",
 		"subject"				=> "text",
 		"corpus"				=> "text",
 		"title"					=> "text",
@@ -40,6 +41,8 @@ class EmailGen extends GenericCrud {
 	 * Example corpus string
 	 * @var mixed
 	 */
+	protected $dependency_type;
+	protected $dependency;
 	protected $subject;
 	protected $corpus = "This is a test story about {fish} and how they {toot} underwater.
 		More specifically, how do {fish}'s {toot}s look, sound, and smell from the air.
@@ -54,8 +57,8 @@ class EmailGen extends GenericCrud {
 	 * Summary of __construct
 	 * @param mixed $corpus
 	 */
-	public function __construct($corpus) {
-		if ($corpus != null) $this->corpus = $corpus;
+	public function __construct(GenericCrud $dependency = null) {
+		if ($dependency != null) $this->dependency = $dependency;
 
 		// Define which subentities to load
 		$entityMaps = array();
@@ -72,6 +75,9 @@ class EmailGen extends GenericCrud {
 	}
 
 	// Accessors //
+	public function getDependency_type(){ return $this->dependency_type; }
+	public function setDependency_type($dependency_type){ $this->dependency_type = $dependency_type; }
+
 	public function getSubject(){ return $this->subject; }
 	public function setSubject($subject){ $this->subject = $subject; }
 

@@ -18,9 +18,10 @@ class IBCEmailGen extends EmailGen {
 	private $protocol;
 
 	public function __construct(IBCProtocolRevision $revision = null) {
+		if ($revision != null) $this->dependency = $revision;
 
 		parent::__construct($revision);
-		$this->revision = $revision;
+		$this->revision = $this->dependency;
 		$this->module = self::$MODULE_NAME;
 	}
 
