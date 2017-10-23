@@ -32,8 +32,8 @@
     </div>
 
     <div class="control-group" 
-         ng-if="getMostRecentComment(modalData.BioSafetyCabinet,modalData.BioSafetyCabinet.SelectedInspection) && modalData.BioSafetyCabinet.SelectedInspection.HasPrevious">
-        <label class="control-label" ng-bind-html="getMostRecentComment(modalData.BioSafetyCabinet,modalData.BioSafetyCabinet.SelectedInspection)" style="font-weight:normal"></label>
+         ng-if="getMostRecentComment(modalData.BioSafetyCabinet,modalData.BioSafetyCabinet.SelectedInspection, true)">
+        <label class="control-label" ng-bind-html="getMostRecentComment(modalData.BioSafetyCabinet,modalData.BioSafetyCabinet.SelectedInspection, true)" style="font-weight:normal"></label>
     </div>
 
     <div class="control-group">

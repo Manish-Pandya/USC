@@ -195,7 +195,7 @@ angular
         }
     })
     .filter("equipmentYear", function () {
-        return function (equips, dateString, uncertified) {
+        return function (equips, dateString, uncertified, showInactive) {
             if (!equips) {
                 return;
             } else if (!dateString) {
@@ -206,6 +206,10 @@ angular
                     return e.EquipmentInspections.every(function (i) { // true if not certified in current year
                         return i.Is_uncertified || !i.Certification_date || i.Certification_date.indexOf(year) == -1;
                     })
+                });
+            } else if (showInactive) {
+                return equips.filter(function (e) {
+                    return !e.Is_active;
                 });
             }
 
@@ -218,14 +222,21 @@ angular
         }
     })
     .filter("equipmentInspectionYear", function () {
-        return function (inspections, dateString, uncertified) {
+        return function (inspections, dateString, uncertified, showInactive) {
            
             if (!inspections) return;
             if (!dateString) return inspections;
 
-            return inspections.filter(function (i) {
-                return uncertified ? i.Is_uncertified || (!i.Certification_date && (!i.Fail_date || i.Fail_date.indexOf(dateString) != -1)) : !i.Is_uncertified && ((i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1) );
-            });
+            if (!showInactive) {
+                return inspections.filter(function (i) {
+                    return uncertified ? i.Is_uncertified || (!i.Certification_date && (!i.Fail_date || i.Fail_date.indexOf(dateString) != -1)) : !i.Is_uncertified && ((i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1));
+                });
+            } else {
+                //for inactive cabinets, we show in a single grouping, showing only the most recent inspection
+                return inspections.sort( (a, b) => {
+                    return a.Date_created > b.Date_created;
+                })[0];
+            }
         }
     })
      .filter("getSharedRooms", function () {
@@ -255,6 +266,7 @@ angular
      })
     .filter("hasMoved", function () {
         return function (collection, prop) {
+            if (collection && !Array.isArray(collection)) return [collection];
             return collection && collection.length == 1 ? collection :
             collection.every((i) => {
                 return !Array.isArray(i[prop]) ? _.isEqual(i[prop], collection[0][prop]) : i[prop].every((j) => { return _.isEqual(_.omit(j, "$$hashKey"), _.omit(i[prop][0],  "$$hashKey")) });
@@ -281,7 +293,10 @@ angular
         return (pis: equipment.PrincipalInvestigator[], insp: equipment.EquipmentInspection) => {
             if (!pis) return;
             return pis.filter((pi) => {
-                return pi.Is_active || pi.Date_last_modified <= insp.Date_created;
+                if (!pi.Is_active) {
+                    console.log(pi.Date_last_modified, insp.Date_created)
+                }
+                return pi.Is_active || pi.Date_last_modified >= insp.Date_created;
             })
         }
     })

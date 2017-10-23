@@ -7,11 +7,11 @@
     <div class="modal-body">
 
         <div class="control-group">
-            <label class="control-label">Manage Report</label>
+            <label class="control-label">Manage Certification Report</label>
             <div class="controls" style="display:block">
                 
                     <a ng-if="modalData.BioSafetyCabinet.SelectedInspection.Report_path" class="btn btn-success left" href="../biosafety-committees/protocol-documents/{{modalData.BioSafetyCabinet.SelectedInspection.Report_path}}" target="_blank"><i class="icon-eye"></i>Report</a>
-                    <span ng-if="!modalData.BioSafetyCabinet.SelectedInspection.Report_path" class="bold">No Report Uploaded</span>
+                    <span ng-if="!modalData.BioSafetyCabinet.SelectedInspection.Report_path" class="bold">Upload Certification Report</span>
                     <a class="btn dropdown-toggle upload-container" click-target="modalData.BioSafetyCabinet.SelectedInspection" url-fragment="uploadReportCertDocument">
                         <span class="icon-upload-4"></span>
                         <input type="file" name="file" id="file" class="inputfile inputfile-1" />
@@ -23,10 +23,10 @@
         </div>
 
         <div class="control-group">
-            <label class="control-label">Manage Quote</label>
+            <label class="control-label">Manage Maintenance Quote</label>
             <div class="controls" style="display:block">
                 <a ng-if="modalData.BioSafetyCabinet.SelectedInspection.Quote_path" class="btn btn-info left" href="../biosafety-committees/protocol-documents/{{modalData.BioSafetyCabinet.SelectedInspection.Quote_path}}" target="_blank"><i class="icon-eye"></i>Quote</a>
-                <span ng-if="!modalData.BioSafetyCabinet.SelectedInspection.Quote_path" class="bold">No Quote Uploaded</span>
+                <span ng-if="!modalData.BioSafetyCabinet.SelectedInspection.Quote_path" class="bold">Upload Maintenance Quote</span>
                 <a class="btn dropdown-toggle upload-container" click-target="modalData.BioSafetyCabinet.SelectedInspection" url-fragment="uploadReportQuoteDocument">
                     <span class="icon-upload-4"></span>
                     <input type="file" name="file" id="file" class="inputfile inputfile-1" />
@@ -37,6 +37,20 @@
             </div>
         </div>
 
+        <div class="control-group">
+            <label class="control-label">Manage Decontamination Report</label>
+            <div class="controls" style="display:block">
+                <a ng-if="modalData.BioSafetyCabinet.SelectedInspection.Decon_path" class="btn btn-warning left" href="../biosafety-committees/protocol-documents/{{modalData.BioSafetyCabinet.SelectedInspection.Decon_path}}" target="_blank"><i class="icon-eye"></i>Report</a>
+                <span ng-if="!modalData.BioSafetyCabinet.SelectedInspection.Decon_path" class="bold">Upload Decontamination Report</span>
+                <a class="btn dropdown-toggle upload-container" click-target="modalData.BioSafetyCabinet.SelectedInspection" url-fragment="uploadDeconDocument">
+                    <span class="icon-upload-4"></span>
+                    <input type="file" name="file" id="file" class="inputfile inputfile-1" />
+                </a>
+                <a class="btn btn-danger" ng-click="remove(modalData.BioSafetyCabinet.SelectedInspection,'Decon_path')" ng-if="modalData.BioSafetyCabinet.SelectedInspection.Decon_path">
+                    <span class="icon-cancel-2"></span>
+                </a>
+            </div>
+        </div>
 
     </div>
 

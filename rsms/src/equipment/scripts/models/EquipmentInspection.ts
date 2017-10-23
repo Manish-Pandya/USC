@@ -12,12 +12,13 @@ namespace equipment {
         Is_active: boolean;
         Equipment_class: string;
         Equipment_id: string | number;
-        Comments: string;
+        Comment: string;
         Frequency: string;
         Room_id: string | number;
         Certification_date: string;
         Fail_date: string;
-        Due_date:string;
+        Due_date: string;
+        Date_created: string;
         Status: string;
 
         constructor() {

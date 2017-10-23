@@ -50,13 +50,17 @@ angular.module('EquipmentModule')
                 if (inspections[i].Equipment_class == Constants.BIOSAFETY_CABINET.EQUIPMENT_CLASS) {
                     if (inspections[i].Certification_date) {
                         var certYear = inspections[i].Certification_date.split('-')[0];
-                        if ($scope.certYears.indexOf(certYear) == -1) {
+                        if ($scope.certYears.indexOf(certYear) == -1
+                            && parseInt(certYear) != parseInt(currentYearString) + 1
+                            && ~~certYear.indexOf("0000")) {
                             $scope.certYears.push(certYear);
                         }
                     }
                     if (inspections[i].Due_date) {
                         var dueYear = inspections[i].Due_date.split('-')[0];
-                        if ($scope.certYears.indexOf(dueYear) == -1) {
+                        if ($scope.certYears.indexOf(dueYear) == -1
+                            && parseInt(dueYear) != parseInt(currentYearString) + 1
+                            && ~~dueYear.indexOf("0000")) {
                             $scope.certYears.push(dueYear);
                         }
                     }
@@ -77,55 +81,40 @@ angular.module('EquipmentModule')
         cabinet.Is_active = !cabinet.Is_active;
         $scope.saving = af.save(cabinet);
     };
-    $rootScope.getMostRecentComment = function (cabinet, insp) {
-        insp["HasPrevious"] = true;
-        var previousInspection = cabinet.EquipmentInspections.sort(function (a, b) {
+    $rootScope.getMostRecentComment = function (cab, inspection, modalContext) {
+        if (modalContext === void 0) { modalContext = false; }
+        //get the previous inspection, if there is one
+        var previousInspection = cab.EquipmentInspections.sort(function (a, b) {
             return a["Date_created"] > b["Date_created"] ? 1 : 0;
-        })[0];
-        if (insp.UID == previousInspection.UID)
-            insp["HasPrevious"] = false;
-        if (previousInspection && previousInspection["Comment"] && previousInspection.UID != cabinet.EquipmentInspections[cabinet.EquipmentInspections.length - 1].UID) {
-            cabinet["previousComment"] = true;
-            var failed = previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL ? " Failed" : "";
-            var date = previousInspection.Certification_date || previousInspection.Fail_date;
-            var dateStr = moment(date).format("YYYY");
-            var colorClass = "grayed-out";
-            var bodyClass = "grayed-out";
-            if (dateStr == parseInt($rootScope.selectedCertificationDate)) {
-                colorClass = "black";
-                bodyClass = "black";
-                dateStr = "";
-                if (failed.indexOf("Failed") != -1)
-                    failed += ':<br>';
-            }
-            else {
-                failed += ' Comments:<br>';
-            }
-            if (failed.indexOf("Failed") != -1) {
-                bodyClass = "red";
-            }
-            return "<span class='" + colorClass + "'>" + dateStr + failed + "</span><span class='" + bodyClass + "'>" + previousInspection["Comment"] + "</span>";
+        })[cab.EquipmentInspections.indexOf(inspection) - 1];
+        var relevantInspection = previousInspection && !inspection.Certification_date && !inspection.Fail_date ? previousInspection : inspection;
+        var failed = relevantInspection.Fail_date || false;
+        var failClass = failed ? "red" : "";
+        var failString = failed ? " Failed" : "";
+        if ((inspection.Certification_date || inspection.Fail_date) && inspection.Comment) {
+            return "<span class=\"" + failClass + "\">" + inspection.Comment + "</span>";
         }
-        ;
-        cabinet["previousComment"] = false;
-        return "";
+        else if (previousInspection && previousInspection.Comment) {
+            var date = previousInspection.Certification_date || previousInspection.Fail_date;
+            if (inspection.Key_id == "113")
+                console.log("HEY", (inspection.Certification_date || inspection.Fail_date), inspection.Certification_date, inspection.Fail_date);
+            var showPrevious = !inspection.Comment || modalContext;
+            var dateStr;
+            if (showPrevious) {
+                if (previousInspection.Frequency == "Annually") {
+                    dateStr = moment(date).format("YYYY");
+                }
+                else {
+                    dateStr = convenienceMethods.dateToIso(date);
+                }
+                return "<span class=\"bold hey" + failClass + "\">" + dateStr + failString + " Comments:</span><br><span class=\"grayed-out\">" + previousInspection.Comment + "</span>";
+            }
+            else if (inspection.Certification_date || inspection.Fail_date) {
+                return "<span class=\"black " + failClass + "\">" + inspection.Comment + "</span>";
+            }
+        }
+        return modalContext ? "" : "<span class=\"italic\">No Comment</span>";
     };
-    /*
-    $rootScope.getMostRecentCommentForModal = function (cabinet: equipment.BioSafetyCabinet, inspection: equipment.EquipmentInspection): string {
-
-        let idx = cabinet.EquipmentInspections.indexOf(inspection);
-        if (idx <= 0) return "";
-        let previousInspection = cabinet.EquipmentInspections[idx - 1];
-        if (previousInspection && previousInspection["Comment"]) {
-            cabinet["previousComment"] = true;
-            let failed: string = previousInspection.Status == Constants.EQUIPMENT.STATUS.FAIL ? "<span class='red'> Failed</span> " : "";
-            let date = previousInspection.Certification_date || previousInspection.Fail_date;
-            let dateStr = date.substring(0, 4);
-            return "<label class='black'>" + dateStr + failed + " Comments:</label><p>" + previousInspection["Comment"] +"</p>";
-        };
-        cabinet["previousComment"] = false;
-        return "";
-    }*/
     $rootScope.failedMostRecentInspection = function (cabinet) {
         var previousInspection = cabinet.EquipmentInspections.filter(function (i) {
             return parseInt(moment(i.Certification_date).format("YYYY")) + 1 == parseInt($rootScope.selectedCertificationDate);
@@ -186,7 +175,7 @@ angular.module('EquipmentModule')
             }
         });
     };
-    $scope.openPiInfoModal = function (pi) {
+    $rootScope.openPiInfoModal = function (pi) {
         var modalData = {};
         modalData[pi.Class] = pi;
         DataStoreManager.ModalData = modalData;
@@ -289,6 +278,17 @@ angular.module('EquipmentModule')
             }
         });
     };
+    $scope.openHistoryModal = function (cab) {
+        cab.SelectedInspection = cab.EquipmentInspections.sort(function (a, b) {
+            return a.UID < b.UID;
+        })[0];
+        var modalData = { BioSafetyCabinet: cab };
+        DataStoreManager.ModalData = modalData;
+        var modalInstance = $modal.open({
+            templateUrl: 'views/modals/cabinet-history-modal.html',
+            controller: 'BioSafetyCabinetsHistoryModalCtrl'
+        });
+    };
 })
     .controller('BioSafetyCabinetsModalCtrl', function ($scope, $q, $modal, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
     var af = $scope.af = applicationControllerFactory;
@@ -296,6 +296,7 @@ angular.module('EquipmentModule')
     $scope.convenienceMethods = convenienceMethods;
     $scope.modalData = DataStoreManager.ModalData;
     $rootScope.modalClosed = false;
+    console.log($scope.modalData);
     $scope.getBuilding = function (id) {
         $rootScope.Buildings.data.forEach(function (b) {
             if (b.UID == id)
@@ -336,7 +337,6 @@ angular.module('EquipmentModule')
     if ($scope.modalData.BioSafetyCabinet && $scope.modalData.BioSafetyCabinet.SelectedInspection)
         $scope.buttonClass = $scope.getButtonClass($scope.modalData.BioSafetyCabinet.SelectedInspection);
     $scope.save = function (cabinet) {
-        console.log(cabinet, $rootScope.cabinets);
         if (!cabinet)
             return;
         $scope.error = false;
@@ -344,7 +344,6 @@ angular.module('EquipmentModule')
         var l = $rootScope.cabinets.data.length;
         for (var i = 0; i < l; i++) {
             var cab = $rootScope.cabinets.data[i];
-            console.log(cabinet.Serial_number + " | " + cab.Serial_number);
             if (cab.Serial_number == cabinet.Serial_number && (!cabinet.UID || cabinet.UID != cab.UID)) {
                 var modalInstance = $modal.open({
                     templateUrl: 'views/modals/bsc-warning-modal.html',
@@ -369,8 +368,8 @@ angular.module('EquipmentModule')
     $scope.certify = function (inspection) {
         console.log(inspection);
         $scope.message = null;
-        inspection.Certification_date = convenienceMethods.setMysqlTime(inspection.viewDate);
-        inspection.Fail_date = convenienceMethods.setMysqlTime(inspection.viewFailDate) || inspection.Fail_date;
+        inspection.Certification_date = inspection.Status ? convenienceMethods.setMysqlTime(inspection.viewDate) : null;
+        inspection.Fail_date = inspection.Status ? convenienceMethods.setMysqlTime(inspection.viewFailDate) || inspection.Fail_date : null;
         af.save(inspection).then(function (r) {
             // we added an equipmentInspection, so recompose the cabinet.
             DataStoreManager.getById("BioSafetyCabinet", inspection.Equipment_id, new ViewModelHolder(), true);
@@ -423,11 +422,14 @@ angular.module('EquipmentModule')
             if (xhr.status == 200) {
                 insp.reportUploaded = true;
                 insp.reportUploading = false;
-                if (data.path.toLowerCase().indexOf("quote") == -1) {
-                    insp.Report_path = xhr.responseText.replace(/['"]+/g, '');
+                if (data.path.toLowerCase().indexOf("quote") != -1) {
+                    insp.Quote_path = xhr.responseText.replace(/['"]+/g, '');
+                }
+                else if (data.path.toLowerCase().indexOf("decon") != -1) {
+                    insp.Decon_path = xhr.responseText.replace(/['"]+/g, '');
                 }
                 else {
-                    insp.Quote_path = xhr.responseText.replace(/['"]+/g, '');
+                    insp.Report_path = xhr.responseText.replace(/['"]+/g, '');
                 }
                 $scope.$apply();
             }
@@ -437,6 +439,16 @@ angular.module('EquipmentModule')
         inspection[reportType] = null;
         return $rootScope.saving = $q.all([DataStoreManager.save(inspection)]).then(function (i) { console.log(i); return inspection; });
     };
+    $scope.close = function () {
+        $rootScope.modalClosed = true;
+        $modalInstance.dismiss();
+    };
+})
+    .controller('BioSafetyCabinetsHistoryModalCtrl', function ($scope, $q, $modal, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
+    $scope.constants = Constants;
+    $scope.modalData = DataStoreManager.ModalData;
+    $scope.cabinet = $scope.modalData.BioSafetyCabinet;
+    console.log($scope.modalData);
     $scope.close = function () {
         $rootScope.modalClosed = true;
         $modalInstance.dismiss();
