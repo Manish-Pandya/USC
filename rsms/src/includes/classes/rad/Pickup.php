@@ -54,6 +54,13 @@ class Pickup extends RadCrud {
 		"keyName"   => "key_id",
 		"foreignKeyName" => "pickup_id"
 	);
+
+    public static $OTHER_WASTE_CONTAINERS_RELATIONSHIP = array(
+		"className" => "OtherWasteContainer",
+		"tableName" => "other_waste_container",
+		"keyName"   => "key_id",
+		"foreignKeyName" => "pickup_id"
+	);
 	//access information
 
 	/** Date (timestamp) that this pickup occurred. */
@@ -74,6 +81,8 @@ class Pickup extends RadCrud {
 
 	/** Array of Scint Vial Collections picked up **/
 	private $scint_vial_collections;
+
+	private $other_waste_containers;
 
 	/** Key_id of the PI who scheduled this pickup */
 	private $principal_investigator_id;
@@ -162,9 +171,29 @@ class Pickup extends RadCrud {
 		$LOG->debug('calling pickup get sv collections');
 		return $this->scint_vial_collections;
 	}
-
 	public function setScint_vial_collections($collections){
 		$this->scint_vial_collections = $collections;
+	}
+
+
+	public function getOther_waste_containers(){
+
+		if($this->other_waste_containers === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			// Note: By default GenericDAO will only return active parcels, which is good - the client probably
+			// doesn't care about parcels that have already been completely used up. A getAllParcels method can be
+			// added later if necessary.
+			$this->other_waste_containers = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$OTHER_WASTE_CONTAINERS_RELATIONSHIP)
+			);
+		}
+		$LOG = Logger::getLogger(__CLASS__);
+		$LOG->debug('calling pickup get other collections');
+		return $this->scint_vial_collections;
+	}
+	public function setOther_waste_containers($collections){
+		$this->other_waste_containers = $collections;
 	}
 
 	public function getPrincipal_investigator_id(){return $this->principal_investigator_id;}

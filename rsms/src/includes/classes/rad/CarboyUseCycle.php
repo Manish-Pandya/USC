@@ -8,7 +8,7 @@ include_once 'RadCrud.php';
  *
  * @author Perry Cate, GraySail LLC
  */
-class CarboyUseCycle extends RadCrud {
+class CarboyUseCycle extends Container {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "carboy_use_cycle";
@@ -87,7 +87,6 @@ class CarboyUseCycle extends RadCrud {
 
 	/** Reference to the pickup that removed this carboy from the lab. */
 	private $pickup;
-	private $pickup_id;
 
 	/* parcel use amounts currently in the carboy */
 	private $parcel_use_amounts;
@@ -106,10 +105,6 @@ class CarboyUseCycle extends RadCrud {
     private $carboyNumber;
 
     private $comments;
-
-
-    private $open_date;
-	private $close_date;
 
 
 	public function __construct() {

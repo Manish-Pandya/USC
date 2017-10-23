@@ -24,7 +24,7 @@
         'Isotope'               : {getById: "getIsotopeById"               , getAll: "getAllIsotopes"               , save: "saveIsotope"                },
         'Parcel'                : {getById: "getParcelById"                , getAll: "getAllParcels"                , save: "saveParcel"                 },
         'ParcelUse'             : {getById: "getParcelUseById"             , getAll: "getAllParcelUses"             , save: "saveParcelUse"              },
-        'ParcelUseAmount'       : {getById: ""                             , getAll: "getAllParcelUseAmounts"       , save: ""                           }, // parcelUseAmounts not meant to be directly retrieved or saved
+        'ParcelUseAmount'       : {getById: ""                             , getAll: "getAllParcelUseAmounts"       , save: "saveParcelUseAmount"                           }, // parcelUseAmounts not meant to be directly retrieved or saved
         'Pickup'                : {getById: "getPickupById"                , getAll: "getAllPickups"                , save: "savePickup"                 },
         'PrincipalInvestigator' : {getById: "getRadPIById"                 , getAll: "getAllRadPis"                 , save: "savePI"                     },
         'PurchaseOrder'         : {getById: "getPurchaseOrderById"         , getAll: "getAllPurchaseOrders"         , save: "savePurchaseOrder"          },

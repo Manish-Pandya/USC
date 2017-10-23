@@ -91,10 +91,7 @@ angular
                                 var type = typeof instatedObjects == "array" ? instatedObjects[0].Class : instatedObjects.Class;
                                 deferred.resolve(dataStoreManager.get(type));
 
-                            } else {
-
-                                //deferred.resolve();
-                            }
+                            } 
 
                         });
                     }
@@ -143,7 +140,10 @@ angular
                 while(i--){
                     for(var prop in instatedObjects[i]){
 
-                        if( instatedObjects[i][prop] instanceof Array  && instatedObjects[i][prop].length && instatedObjects[i][prop][0].Class && window[instatedObjects[i][prop][0].Class] && !(instatedObjects[i][prop][0] instanceof window[instatedObjects[i][prop][0].Class])){
+                        if (instatedObjects[i][prop] instanceof Array && instatedObjects[i][prop].length && instatedObjects[i][prop][0].Key_id && instatedObjects[i][prop][0].Class && window[instatedObjects[i][prop][0].Class] && !(instatedObjects[i][prop][0] instanceof window[instatedObjects[i][prop][0].Class] )){
+                            if (prop == "Contents") {
+                                console.log("OHHHHHHHHH")
+                            }
                             instatedObjects[i][prop] = modelInflatorFactory.instateAllObjectsFromJson(instatedObjects[i][prop]);
                             dataStoreManager.store(instatedObjects[i][prop]);
                             dataSwitch.recursivelyInstantiate(instatedObjects[i][prop]);

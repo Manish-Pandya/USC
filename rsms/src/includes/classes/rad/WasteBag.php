@@ -1,6 +1,6 @@
 <?php
 
-class WasteBag extends RadCrud {
+class WasteBag extends Container {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "waste_bag";
@@ -56,7 +56,7 @@ class WasteBag extends RadCrud {
 
 	/** Pickup this bag was collected in */
 	private $pickup;
-	private $pickup_id;
+	
 
 	/** Drum this bag went into. */
 	private $drum;
@@ -79,8 +79,6 @@ class WasteBag extends RadCrud {
 	/** IsotopeAmountDTOs in this bag **/
 	private $contents;
 
-    private $open_date;
-	private $close_date;
 
 	public function __construct() {
 		$entityMaps = array();
@@ -107,7 +105,9 @@ class WasteBag extends RadCrud {
 	public function setCurie_level($newLevel) {
 		$this->curie_level = $newLevel;
 	}
-
+    /**
+     * @return Pickup
+     */
 	public function getPickup() {
 		if($this->pickup === null && $this->hasPrimaryKeyValue()) {
 			$pickupDao = new GenericDAO(new Pickup());
@@ -207,10 +207,4 @@ class WasteBag extends RadCrud {
         return $this->label;
     }
 	public function setLabel($label){ $this->label = $label; }
-
-    public function getClose_date(){ return $this->close_date; }
-	public function setClose_date($close_date){ $this->close_date = $close_date; }
-
-	public function getOpen_date(){ return $this->open_date; }
-	public function setOpen_date($open_date){ $this->open_date = $open_date; }
 }

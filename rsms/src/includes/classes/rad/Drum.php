@@ -64,6 +64,20 @@ class Drum extends RadCrud {
         "foreignKeyName" => "drum_id"
     );
 
+    public static $WASTE_BAG_RELATIONSHIP = array(
+        "className" => "WasteBag",
+        "tableName" => "waste_bag",
+        "keyName"   => "key_id",
+        "foreignKeyName" => "drum_id"
+    );
+
+    public static $OTHER_WASTE_CONTAINTER_RELATIONSHIP = array(
+        "className" => "OtherWasteContainer",
+        "tableName" => "other_waste_container",
+        "keyName"   => "key_id",
+        "foreignKeyName" => "drum_id"
+    );
+
     protected static $WIPE_TEST_RELATIONSHIP = array(
         "className" => "DrumWipeTest",
         "tableName" => "drum_wipe_test",
@@ -101,6 +115,12 @@ class Drum extends RadCrud {
     /** Array of CarboyUseCycles in this drum */
 	private $carboyUseCycles;
 
+    /** Array of CarboyUseCycles in this drum */
+	private $wasteBags;
+
+    /** Array of CarboyUseCycles in this drum */
+	private $otherWasteContainers;
+
     /** Is this a drum for scint_vials?  if not it is one for solids */
     private $is_scint_vial;
 
@@ -127,7 +147,12 @@ class Drum extends RadCrud {
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getDisposalLots");
-        $entityMaps[] = new EntityMap("lazy","getWipe_test");
+        $entityMaps[] = new EntityMap("lazy","getWipe_test");        
+
+        $entityMaps[] = new EntityMap("lazy","getCarboyUseCycles");
+        $entityMaps[] = new EntityMap("lazy","getOtherWasteContainers");
+        $entityMaps[] = new EntityMap("lazy","getWasteBags");
+        $entityMaps[] = new EntityMap("lazy","getScintVialCollections");
 
 		$this->setEntityMaps($entityMaps);
 	}
@@ -209,6 +234,40 @@ class Drum extends RadCrud {
 		$this->carboyUseCycles = $cycles;
 	}
 
+    public function getWasteBags(){
+		if($this->wasteBags === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			// Note: By default GenericDAO will only return active parcels, which is good - the client probably
+			// doesn't care about parcels that have already been completely used up. A getAllParcels method can be
+			// added later if necessary.
+			$this->wasteBags = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$WASTE_BAG_RELATIONSHIP)
+			);
+		}
+		return $this->wasteBags;
+	}
+	public function setWasteBags($cycles) {
+		$this->wasteBags = $cycles;
+	}
+
+    public function getOtherWasteContainers(){
+		if($this->otherWasteContainers === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDao = new GenericDAO($this);
+			// Note: By default GenericDAO will only return active parcels, which is good - the client probably
+			// doesn't care about parcels that have already been completely used up. A getAllParcels method can be
+			// added later if necessary.
+			$this->otherWasteContainers = $thisDao->getRelatedItemsById(
+					$this->getKey_id(),
+					DataRelationship::fromArray(self::$OTHER_WASTE_CONTAINTER_RELATIONSHIP)
+			);
+		}
+		return $this->otherWasteContainers;
+	}
+	public function setOtherWasteContainers($cycles) {
+		$this->otherWasteContainers = $cycles;
+	}
+
 	public function getContents(){
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->debug('getting contents for drum');
@@ -219,6 +278,8 @@ class Drum extends RadCrud {
             $amt->setCurie_level($lot->getCurie_level());
             array_push($amounts, $amt);
 		}
+        $amounts = array();
+
 		foreach($this->getScintVialCollections() as $collection){
 			if($collection->getParcel_use_amounts() != NULL){
 				$amounts = array_merge($amounts, $collection->getParcel_use_amounts());
@@ -229,7 +290,19 @@ class Drum extends RadCrud {
 				$amounts = array_merge($amounts, $cycle->getParcelUseAmounts());
 			}
 		}
+        foreach($this->getOtherWasteContainers() as $cycle){
 
+			if($cycle->getParcelUseAmounts() != NULL){
+				$amounts = array_merge($amounts, $cycle->getParcelUseAmounts());
+			}
+		}
+
+        foreach($this->getWasteBags() as $cycle){
+			if($cycle->getParcelUseAmounts() != NULL){
+				$amounts = array_merge($amounts, $cycle->getParcelUseAmounts());
+			}
+		}
+        $LOG->fatal($amounts);
 		$this->contents = $this->sumUsages($amounts);
 		return $this->contents;
 	}

@@ -645,6 +645,14 @@ div.fake-table.inspection-wipe-table {
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'sv';
+    src: url('../font/sv.eot?-5rvjwq');
+    src: url('../font/sv.eot?#iefix-5rvjwq') format('embedded-opentype'), url('../font/sv.woff?-5rvjwq') format('woff'), url('../font/sv.ttf?-5rvjwq') format('truetype'), url('../font/sv.svg?-5rvjwq#carboy') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
 .icon-carboy {
     font-family: 'carboy';
     speak: none;
@@ -660,6 +668,23 @@ div.fake-table.inspection-wipe-table {
 
     .icon-carboy:before {
         content: "\e600";
+    }
+
+.icon-sv {
+    font-family: 'sv';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+    .icon-sv:before {
+        content: "\e800";
     }
 
 .input-inline,
@@ -1297,4 +1322,7 @@ div.fake-table .table-row > div div.pickup-comments {
 
 i.scint-vials {
     color: rgb(91, 183, 91);
+}
+i.solids-containers {
+    margin-right:10px;
 }

@@ -218,7 +218,7 @@ angular.module('00RsmsAngularOrmApp')
         });
         total = Math.round(total * 100000) / 100000;
         if (total > 0)
-            return total + "mCi";
+            return totalf + "mCi";
         return "N/A";
     };
     $scope.addUsage = function (parcel) {
@@ -633,9 +633,13 @@ angular.module('00RsmsAngularOrmApp')
                 case ("ScintVialCollection"):
                     pickupCopy.Scint_vial_collections.push(c);
                     break;
+                case ("OtherWasteContainer"):
+                    pickupCopy.Other_waste_containers.push(c);
+                    break;
             }
         });
         console.log(pickupCopy);
+        return;
         $rootScope.saving = af.savePickup(pickup, pickupCopy, true).then(function (newPickup) {
             console.log(newPickup);
             if (!$scope.CurrentPickup || !$scope.CurrentPickup.Key_id) {
@@ -691,9 +695,10 @@ angular.module('00RsmsAngularOrmApp')
         return bags.some(function (b) { return b.Contents && b.Contents.length; });
     };
     $scope.getContainers = function (pi) {
-        return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections)
+        return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections).concat(pi.OtherWasteContainers)
             .filter(function (c) {
-            return c.Close_date != null && (($scope.CurrentPickup && $scope.CurrentPickup.Key_id) ? c.Pickup_id == $scope.CurrentPickup.Key_id : !c.Pickup_id);
+            return !c.Clearable && c.Close_date != null
+                && (($scope.CurrentPickup && $scope.CurrentPickup.Key_id) ? c.Pickup_id == $scope.CurrentPickup.Key_id : !c.Pickup_id);
         })
             .map(function (c, idx) {
             var container = angular.extend({}, c);
@@ -710,11 +715,14 @@ angular.module('00RsmsAngularOrmApp')
                 case ("ScintVialCollection"):
                     container.ClassLabel = "Scint Vial Containers";
                     break;
+                case ("OtherWasteContainer"):
+                    container.ClassLabel = "Other Waste";
+                    break;
                 default:
                     container.ClassLabel = "";
             }
             return container;
-        });
+        }).sort(function (a, b) { return a.Waste_type_id > b.Waste_type_id; });
     };
     $scope.getClassByContainerType = function (container) {
         var classList = "";
@@ -724,8 +732,8 @@ angular.module('00RsmsAngularOrmApp')
             classList = "icon-lab scint-vials";
         if (container.Class == "CarboyUseCycle")
             classList = "icon-carboy carboys";
-        if (container.Class == "Other")
-            classList = "other";
+        if (container.Class == "OtherWasteContainer")
+            classList = "other icon-beaker-alt";
         return classList;
     };
 })
@@ -1014,6 +1022,7 @@ angular.module('00RsmsAngularOrmApp')
         return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections).concat(pi.OtherWasteContainers)
             .map(function (c, idx) {
             var container = angular.extend({}, c);
+            //console.log(container.Contents, c.Contents);
             container.ViewLabel = c.Label || c.CarboyNumber;
             //we index at 1 because JS can't tell the difference between false and the number 0 (see return of $scope.getContainer method below)
             container.idx = idx + 1;

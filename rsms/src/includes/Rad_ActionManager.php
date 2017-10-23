@@ -963,6 +963,47 @@ class Rad_ActionManager extends ActionManager {
         return $this->saveParcelUse($decodedObject);
     }
 
+
+    function saveParcelUseAmount(ParcelUseAmount $decodedObject = null ){
+
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ) {
+            return new ActionError('Error converting input stream to ParcelUse', 202);
+        }
+        else if( $decodedObject instanceof ActionError) {
+            return $decodedObject;
+        }
+        $dao = new GenericDAO($decodedObject);
+        $l = Logger::getLogger(__FUNCTION__);
+        $container = false;
+        if($decodedObject->getWaste_bag_id() != null){
+            $container = $this->getWasteBagById($decodedObject->getWaste_bag_id());
+        }elseif($decodedObject->getCarboy_id() != null){
+            $container = $this->getCarboyUseCycleById($decodedObject->getCarboy_id());
+        }elseif($decodedObject->getOther_waste_container_id() != null){
+            $container = $this->getOtherWasteContainerBiId($decodedObject->getOther_waste_container_id());
+        }elseif($decodedObject->getScint_vial_collection_id() != null){
+            $container = $this->getScintVial($decodedObject->getScint_vial_collection_id());
+        }
+        $amount = $dao->save();
+
+        return $container;
+    }
+
+    function getScintVialCollectionById($id = NULL) {
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+
+        if($id == null)$id = $this->getValueFromRequest('id', $id);
+
+        if( $id !== NULL ) {
+            $dao = $this->getDao(new ScintVialCollection());
+            return $dao->getById($id);
+        }
+        else {
+            return new ActionError("No request parameter 'id' was provided", 201);
+        }
+    }
+
     function saveParcelUse($parcel = NULL) {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
 
@@ -2830,7 +2871,7 @@ class Rad_ActionManager extends ActionManager {
         if($id == null)$id = $this->getValueFromRequest('id', $id);
 
         if( $id !== NULL ) {
-            $dao = $this->getDao(new OtherWasteType());
+            $dao = $this->getDao(new OtherWasteContainer());
             return $dao->getById($id);
         }
         else {

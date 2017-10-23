@@ -217,7 +217,7 @@ angular.module('00RsmsAngularOrmApp')
                 total -= parseFloat(pu.Curie_level);
             })
             total = Math.round(total * 100000) / 100000
-            if (total > 0) return total + "mCi"
+            if (total > 0) return totalf + "mCi"
             return "N/A"
         }
         $scope.addUsage = function (parcel) {
@@ -626,7 +626,7 @@ angular.module('00RsmsAngularOrmApp')
 
         pickupCopy.Carboy_use_cycles = [];
 
-        containers.forEach((c: { Class: "WasteBag" | "CarboyUseCycle" | "ScintVialCollection" }) => {
+        containers.forEach((c: { Class: "WasteBag" | "CarboyUseCycle" | "ScintVialCollection" | "OtherWasteContainer" }) => {
             let collectionClass = "";
             switch (c.Class) {
                 case ("WasteBag"):
@@ -638,12 +638,16 @@ angular.module('00RsmsAngularOrmApp')
                 case ("ScintVialCollection"):
                     pickupCopy.Scint_vial_collections.push(c);
                     break;
+                case ("OtherWasteContainer"):
+                    pickupCopy.Other_waste_containers.push(c);
+                    break;
             }
                
         })
             
 
         console.log(pickupCopy);
+        return;
         $rootScope.saving = af.savePickup(pickup, pickupCopy, true).then(function (newPickup) {
             console.log(newPickup);
             if (!$scope.CurrentPickup || !$scope.CurrentPickup.Key_id) {
@@ -703,17 +707,18 @@ angular.module('00RsmsAngularOrmApp')
         WasteBags: { Key_id: string | number, Class: "WasteBag", idx: number, ViewLabel: string, Label?: string, CarboyNumber?: string }[],
         ScintVialCollections: { Key_id: string | number, Class: "ScintVialCollection", idx: number, ViewLabel: string, Label?: string, CarboyNumber?: string }[],
         CarboyUseCycles: { Key_id: string | number, Class: "CarboyUseCycle", idx: number, ViewLabel: string, Label?: string, CarboyNumber?: string }[]
+        OtherWasteContainers: { Key_id: string | number, Class: "OtherWasteContainer", idx: number, ViewLabel: string, Label?: string, CarboyNumber?: string, Other_waste_type_id?:string }[]
     }): any[] => {
 
-
-        return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections)
-            .filter((c: { Pickup_id:string, Class: "WasteBag" | "CarboyUseCycle" | "ScintVialCollection", idx: number, ViewLabel: string, Label?: string, CarboyNumber?: string, Close_date?: string }) => {
-                return c.Close_date != null && (($scope.CurrentPickup && $scope.CurrentPickup.Key_id) ? c.Pickup_id == $scope.CurrentPickup.Key_id : !c.Pickup_id);
+        return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections).concat(pi.OtherWasteContainers)
+            .filter((c: { Pickup_id: string, Class: "WasteBag" | "CarboyUseCycle" | "ScintVialCollection" | "OtherWasteContainer", idx: number, ViewLabel: string, Label?: string, CarboyNumber?: string, Close_date?: string }) => {
+                return !c.Clearable && c.Close_date != null
+                    && (($scope.CurrentPickup && $scope.CurrentPickup.Key_id) ? c.Pickup_id == $scope.CurrentPickup.Key_id : !c.Pickup_id);
             })
-            .map((c: { Class: "WasteBag" | "CarboyUseCycle" | "ScintVialCollection", idx: number, ViewLabel: string, Label?: string, CarboyNumber?: string }, idx): any[] => {
+            .map((c: { Class: "WasteBag" | "CarboyUseCycle" | "ScintVialCollection" | "OtherWasteContainer", idx: number, ViewLabel: string, Label?: string, CarboyNumber?: string }, idx): any[] => {
                 let container = angular.extend({}, c);
                 container.ViewLabel = c.Label || c.CarboyNumber;
-
+                
                 //we index at 1 because JS can't tell the difference between false and the number 0 (see return of $scope.getContainer method below)
                 container.idx = idx + 1;
                 switch (c.Class) {
@@ -726,11 +731,14 @@ angular.module('00RsmsAngularOrmApp')
                     case ("ScintVialCollection"):
                         container.ClassLabel = "Scint Vial Containers";
                         break;
+                    case ("OtherWasteContainer"):
+                        container.ClassLabel = "Other Waste";
+                        break;
                     default:
                         container.ClassLabel = "";
                 }
                 return container;
-            });
+            }).sort((a, b) => {return a.Waste_type_id > b.Waste_type_id});
     }
 
     $scope.getClassByContainerType = (container: {
@@ -740,7 +748,7 @@ angular.module('00RsmsAngularOrmApp')
         if (container.Class == "WasteBag") classList =  "icon-remove-2 solids-containers";
         if (container.Class == "ScintVialCollection") classList =  "icon-lab scint-vials"
         if (container.Class == "CarboyUseCycle") classList = "icon-carboy carboys"
-        if (container.Class == "Other") classList = "other"
+        if (container.Class == "OtherWasteContainer") classList = "other icon-beaker-alt"
 
         return classList;
     }
@@ -1043,6 +1051,8 @@ angular.module('00RsmsAngularOrmApp')
                 
                 .map((c: { Class: "WasteBag" | "CarboyUseCycle" | "ScintVialCollection", idx: number, ViewLabel: string, Label?: string, CarboyNumber?: string, Clearable?:boolean, Description?:string }, idx): any[] => {
                     let container = angular.extend({}, c);
+                    //console.log(container.Contents, c.Contents);
+
                     container.ViewLabel = c.Label || c.CarboyNumber;
 
                     //we index at 1 because JS can't tell the difference between false and the number 0 (see return of $scope.getContainer method below)

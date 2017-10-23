@@ -8,7 +8,7 @@
  * @version 1.0
  * @author Matt Breeden
  */
-class OtherWasteContainer extends RadCrud {
+class OtherWasteContainer extends Container {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "other_waste_container";
@@ -38,7 +38,7 @@ class OtherWasteContainer extends RadCrud {
 			"className" => "ParcelUseAmount",
 			"tableName" => "parcel_use_amount",
 			"keyName"	=> "key_id",
-			"foreignKeyName"	=> "other_waste_type_id"
+			"foreignKeyName"	=> "other_waste_container_id"
 	);
 
 
@@ -62,7 +62,6 @@ class OtherWasteContainer extends RadCrud {
 
 	/** Pickup this bag was collected in */
 	private $pickup;
-	private $pickup_id;
 
 	/** Drum this bag went into. */
 	private $drum;
@@ -82,9 +81,6 @@ class OtherWasteContainer extends RadCrud {
 
 	/** IsotopeAmountDTOs in this bag **/
 	private $contents;
-
-    private $open_date;
-	private $close_date;
 
     private $other_waste_type_id;
     private $otherWasteTypeName;

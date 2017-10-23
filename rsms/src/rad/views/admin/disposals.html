@@ -193,108 +193,15 @@
 
         </div>
     </div>
-
     <div class="well two-thirds">
-        <h1><i class="icon-remove-2"></i>Solid Waste</h1>
-        <h3 ng-show="!bags.length">No solid waste to dispose</h3>
-        <div class="card full solids-containers" ng-show="bags.length">
-            <div class="fake-table bordered disposals">
-                <div class="table-header">
-                    <h3>Pickup Date</h3>
-                    <h3>Description</h3>
-                    <h3>Contents</h3>
-                    <h3>Add to Drum</h3>
-                </div>
-                <div class="table-row" ng-repeat="bag in (bags = (wasteBags | disposalSolids))">
-                    <div>
-                        {{bag.Pickup.Requested_date | dateToISO}}
-                    </div>
-                    <div>
-                        Waste from {{bag.Pickup.PrincipalInvestigator.User.Name}}'s lab
-                    </div>
-                    <div>
-                        <p ng-repeat="content in bag.Contents">
-                            {{content.Curie_level}} mCi of {{content.Isotope_name}}
-                        </p>
-                    </div>
-                    <div>
-                        <a class="btn btn-success left" ng-click="assignWasteBagToDrum(bag)"><i class="icon-database"></i>Place in drum(s)</a>
-                    </div>
-                </div>
-            </div>
+        <h1><i class="icon-remove-2"></i>Containers</h1>
+        <h3 ng-show="!drumableContainers.length">No solid waste to dispose</h3>
+        <div class="card full solids-containers" ng-if="drumableContainers.length">
+            <containers add-waste="addWaste" filter-function="nonDrummed" suppress-close-date="true" close="assignWasteBagToDrum" containers="drumableContainers" button-text="Place In Drum" button-class="btn-success"></containers>
         </div>
     </div>
 
-    <div class="well two-thirds">
-        <h1><i class="icon-lab scint-vials"></i>Scintillation Vial Waste</h1>
-        <h3 ng-show="!collections.length">No scintillation vial waste to dispose</h3>
-        <div class="card full solids-containers" ng-show="collections.length">
-            <div class="fake-table bordered disposals">
-                <div class="table-header">
-                    <h3>Pickup Date</h3>
-                    <h3>Description</h3>
-                    <h3>Contents</h3>
-                    <h3>Add to Drum</h3>
-                </div>
-                <div class="table-row" ng-repeat="collection in (collections = (svCollections | disposalSolids))">
-                    <div>
-                        {{collection.Pickup.Requested_date | dateToISO}}
-                    </div>
-                    <div>
-                        {{collection.Pickup.Scint_vial_trays}} scint vial trays from {{collection.Pickup.PrincipalInvestigator.User.Name}}'s lab
-                    </div>
-                    <div>
-                        <p ng-repeat="content in collection.Contents">
-                            {{content.Curie_level}} mCi of {{content.Isotope_name}}
-                        </p>
-                    </div>
-                    <div>
-                        <a class="btn btn-success left" ng-click="assignDrum(collection)"><i class="icon-checkmark"></i>Place in drum</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="well two-thirds">
-        <h1><i class="icon-warning scint-vials"></i>Miscellaneous Waste <a class="btn btn-info" ng-click="openModal()">Add Miscellaneous Waste <i class="icon-plus-2"></i><i class="icon-warning"></i></a></h1>
-        <h3 ng-show="!miscs.length">No miscellaneous waste to dispose</h3>
-        <div class="card full solids-containers" ng-show="miscs.length">
-            <div class="fake-table bordered disposals">
-                <div class="table-header">
-                    <h3>Edit</h3>
-                    <h3>Pickup Date</h3>
-                    <h3>Waste Type</h3>
-                    <h3>Notes</h3>
-                    <h3>Contents</h3>
-                    <h3>Add to Drum</h3>
-                </div>
-                <div class="table-row" ng-repeat="misc in (miscs = (miscWastes | disposalMiscs))">
-                    <div>
-                        <a class="btn btn-primary" ng-click="openModal(misc)"><i class="icon-pencil"></i></a>
-                    </div>
-                    <div>
-                        {{misc.Date_created | dateToISO}}
-                    </div>
-                    <div>
-                        {{misc.Type}}
-                    </div>
-                    <div>
-                        {{misc.Comments}}
-                    </div>
-                    <div>
-                        <p ng-repeat="content in misc.Contents">
-                            {{content.Curie_level}} mCi of {{content.Isotope_name}}
-                        </p>
-                    </div>
-                    <div>
-                        <a class="btn btn-success left" ng-click="assignDrum(misc)"><i class="icon-checkmark"></i>Place in drum</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    
     <div class="well two-thirds">
         <h1 class="disposals"><i class="icon-database"></i>Drums <a class="btn btn-success left" ng-click="editDrum(drum)"><i class="icon-plus-2"></i>Create Drum</a></h1>
         <div class="card full">

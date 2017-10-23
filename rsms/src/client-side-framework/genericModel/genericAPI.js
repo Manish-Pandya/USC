@@ -16,7 +16,6 @@ angular
 
         api.fetchActionString = function( actionName, className, queryParam ) {
             var urlList = urlMapper.list;
-
             if( !urlList[className] ) {
                 console.log("ERROR: No class '" + className + "' found in url mappings!");
                 return false;
@@ -72,7 +71,7 @@ angular
 
         api.save = function( object, urlFragment, saveChildren )
         {
-            console.log(object);
+                console.log(object);
                 //all the client-side classes have className properties.  When we instantiate one to save, we shouldn't need to manually set it's class.
                 if(!object.Class && object.className)object.Class = object.className;
                 if( !urlFragment )var urlFragment = api.fetchActionString( "save", object.Class );

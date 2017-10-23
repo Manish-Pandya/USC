@@ -9,7 +9,7 @@ include_once 'RadCrud.php';
  *
  * @author Matt Breeden, GraySail LLC
  */
-class ScintVialCollection extends RadCrud{
+class ScintVialCollection extends Container{
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "scint_vial_collection";
@@ -60,7 +60,6 @@ class ScintVialCollection extends RadCrud{
 	private $parcel_use_amounts;
 	private $contents;
 
-	private $pickup_id;
 	private $pickup;
 
 	private $drum_id;
@@ -71,9 +70,6 @@ class ScintVialCollection extends RadCrud{
     private $trays;
 
     private $label;
-
-    private $close_date;
-    private $open_date;
 
 	// Required for GenericCrud
 	public function getTableName() {

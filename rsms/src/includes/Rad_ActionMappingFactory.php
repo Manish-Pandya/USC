@@ -94,6 +94,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"saveDrum"					=> new ActionMapping("saveDrum", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 				"saveParcel"				=> new ActionMapping("saveParcel", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"saveParcelUse"				=> new ActionMapping("saveParcelUse", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"saveParcelUseAmount"	    => new ActionMapping("saveParcelUseAmount", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"savePickup"				=> new ActionMapping("savePickup", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"deletePickupById"			=> new ActionMapping("deletePickupById", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"savePurchaseOrder"			=> new ActionMapping("savePurchaseOrder", "", "", $this::$ROLE_GROUPS["ADMIN"]),

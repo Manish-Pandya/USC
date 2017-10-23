@@ -195,9 +195,11 @@ include_once 'RadCrud.php';
             $useDao = new GenericDAO(new ParcelUse());
             $use = $useDao->getById($this->getParcel_use_id());
             $parcel = $use->getParcel();
-            $this->rs_number = $parcel->getRs_number();
-            $isotope = $parcel->getIsotope();
-            $this->isotope_id = $isotope->getKey_id();
+            if($parcel != null){
+                $this->rs_number = $parcel->getRs_number();
+                $isotope = $parcel->getIsotope();
+                $this->isotope_id = $isotope->getKey_id();
+            }
         }
         return $this->isotope_id;
 	}

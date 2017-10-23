@@ -1707,6 +1707,13 @@ angular
                     }
                     )
             }
+
+            af.saveParcelUseAmount = function (copy, amt, container) {
+                return this.save(copy).then(function (c) {
+                    angular.extend(container, c);
+                })
+            }
+
             af.saveParcelUse = function(parcel, copy, use){
                 af.clearError();
                 copy.Date_used = convenienceMethods.setMysqlTime(af.getDate(copy.view_Date_used));
@@ -1968,6 +1975,9 @@ angular
                 return dataSwitchFactory.getAllObjects('OtherWasteType', true);
             }
 
+            af.getAllOtherWasteContainers = function () {
+                return dataSwitchFactory.getAllObjects('OtherWasteContainer', true);
+            }
 
             /****************************************************************************************
             **
@@ -2690,7 +2700,8 @@ angular
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.ScintVialCollection));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.MiscellaneousWaste));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.WasteBag ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.SolidsContainer ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.SolidsContainer));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.OtherWasteContainer));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Room ));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.PrincipalInvestigator));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.DrumWipe));

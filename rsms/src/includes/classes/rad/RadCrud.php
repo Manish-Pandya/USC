@@ -18,6 +18,7 @@ abstract class RadCrud extends GenericCrud {
 	 */
 	public function sumUsages($useAmounts){
 		$LOG = Logger::getLogger(__CLASS__);
+        //$LOG->fatal($useAmounts);
 		$isotopeAmounts = array();
 
 		foreach($useAmounts as $amount){

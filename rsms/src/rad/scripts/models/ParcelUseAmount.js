@@ -18,6 +18,8 @@ ParcelUseAmount.prototype = {
     loadSolidsContainer: function(){
     	dataLoader.loadChildObject(this, "SolidsContainer", "SolidsContainer", this.SolidsContainer_id);
     },
+
+    Class:"ParcelUseAmount"
 }
 
 // inherit from GenericModel
