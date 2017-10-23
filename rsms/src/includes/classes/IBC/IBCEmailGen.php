@@ -14,14 +14,11 @@ class IBCEmailGen extends EmailGen {
 	/** Name of the module this email gen is for */
 	public static $MODULE_NAME = "IBC";
 
-	private $revision;
 	private $protocol;
 
 	public function __construct(IBCProtocolRevision $revision = null) {
-		if ($revision != null) $this->dependency = $revision;
-
+		if ($revision != null) $this->revision = $revision;
 		parent::__construct($revision);
-		$this->revision = $this->dependency;
 		$this->module = self::$MODULE_NAME;
 	}
 
@@ -60,6 +57,32 @@ class IBCEmailGen extends EmailGen {
 			"[Meeting Date]"				=>	"Meeting Date",
 			"[Location]"					=>	"Location"
 		);
+	}
+
+	/**
+	 * Summary of buildRecipients
+	 */
+	public function buildRecipients() {
+		if ($this->revision != null) {
+			switch ($this->key_id) {
+				case 1: /*protocol approved*/
+				case 2: /*protocol noy approved*/
+				case 3: /*protocol returned for revision*/
+				case 4: /*protocol pre-review assignment*/
+					$this->recipients = $this->revision->primaryReviewers;
+					break;
+				case 5: /*committee meeting scheduled*/
+
+					break;
+				case 6: /*protocol submitted for review*/
+				case 7: /*protocol expired*/
+				case 8: /*protocol expiration notice*/
+					$this->recipients = $this->revision->primaryReviewers;
+					break;
+				default:
+					$this->recipients = array();
+			}
+		}
 	}
 
 }

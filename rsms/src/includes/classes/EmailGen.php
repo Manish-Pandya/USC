@@ -43,6 +43,7 @@ class EmailGen extends GenericCrud {
 	 */
 	protected $dependency_type;
 	protected $dependency;
+	protected $recipients = array();
 	protected $subject;
 	protected $corpus = "This is a test story about {fish} and how they {toot} underwater.
 		More specifically, how do {fish}'s {toot}s look, sound, and smell from the air.
@@ -64,6 +65,8 @@ class EmailGen extends GenericCrud {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager","getCorpus");
 		$this->setEntityMaps($entityMaps);
+
+		$this->buildRecipients();
 	}
 
 	// Required for GenericCrud //
@@ -111,6 +114,13 @@ class EmailGen extends GenericCrud {
 			"{bird}"	=>	"Tweety Bird",
 			"{eat}"		=>	"devour"
 		);
+	}
+
+	/**
+	 * Summary of buildRecipients
+	 */
+	public function buildRecipients() {
+
 	}
 
 	/**
