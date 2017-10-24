@@ -69,7 +69,7 @@ class IBCEmailGen extends EmailGen {
 				case 2: /*protocol noy approved*/
 				case 3: /*protocol returned for revision*/
 				case 4: /*protocol pre-review assignment*/
-					$this->recipients = $this->revision->primaryReviewers;
+					$this->recipients = $this->revision->getPrimaryReviewers();
 					break;
 				case 5: /*committee meeting scheduled*/
 
@@ -84,5 +84,7 @@ class IBCEmailGen extends EmailGen {
 			}
 		}
 	}
+
+
 
 }

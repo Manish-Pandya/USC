@@ -38,12 +38,14 @@ class EmailGen extends GenericCrud {
 	);
 
 	/**
-	 * Example corpus string
-	 * @var mixed
+	 * @var string
 	 */
 	protected $dependency_type;
 	protected $dependency;
-	protected $recipients = array();
+	/**
+	 * @var User[]
+	 */
+	protected $recipients;
 	protected $subject;
 	protected $corpus = "This is a test story about {fish} and how they {toot} underwater.
 		More specifically, how do {fish}'s {toot}s look, sound, and smell from the air.
@@ -56,9 +58,10 @@ class EmailGen extends GenericCrud {
 
 	/**
 	 * Summary of __construct
-	 * @param mixed $corpus
+	 * @param GenericCrud $dependency
+	 * @param User[] $recipients
 	 */
-	public function __construct(GenericCrud $dependency = null) {
+	public function __construct(GenericCrud $dependency = null, $recipients = null) {
 		if ($dependency != null) $this->dependency = $dependency;
 
 		// Define which subentities to load
@@ -66,7 +69,11 @@ class EmailGen extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getCorpus");
 		$this->setEntityMaps($entityMaps);
 
-		$this->buildRecipients();
+		if ($recipients != null) {
+			$this->recipients = $recipients;
+		} else {
+			$this->buildRecipients();
+		}
 	}
 
 	// Required for GenericCrud //
