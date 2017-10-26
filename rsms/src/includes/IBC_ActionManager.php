@@ -128,6 +128,7 @@ class IBC_ActionManager extends ActionManager {
         //hold Preliminary and Primary reviewers
 		$primaryReviewers = $decodedObject->getPrimaryReviewers();
         $preliminaryReviewers = $decodedObject->getPreliminaryReviewers();
+        $protocolEditors = $decodedObject->getProtocolFillOutUsers();
 
         $dao = $this->getDao($decodedObject);
         $revision = $dao->save($decodedObject);
@@ -152,21 +153,31 @@ class IBC_ActionManager extends ActionManager {
             $dao->addRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
         }
 
+		foreach($revision->getProtocolFillOutUsers() as $reviewer){
+            if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
+            $dao->removeRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PROTOCOL_FILLOUT_USERS_RELATIONSHIP));
+        }
+
+        foreach($protocolEditors as $reviewer){
+			$l->fatal($reviewer);
+            if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
+            $dao->addRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PROTOCOL_FILLOUT_USERS_RELATIONSHIP));
+        }
+
 		//Protocol's current IBCProtocolRevision has been returned for revision, to be revised for revisions
 		if($revision->getStatus() === IBCProtocolRevision::$STATUSES["RETURNED_FOR_REVISION"] && $cloneIfReturnedForRevision){
 			$newRevision = clone($revision);//new IBCProtocolRevision()
 			$this->purgeKeyIds($newRevision);
 			$newRevision->setPreliminaryReviewers($preliminaryReviewers);
 			$newRevision->setPrimaryReviewers($primaryReviewers);
+			$newRevision->setProtocolFillOutUsers($protocolEditors);
 			$responses = $revision->getIBCResponses();
 			$preComments = $revision->getIBCPreliminaryComments();
-			$l->fatal($newRevision);
 			//TODO: get our primary comments and save them after we write the other stuff for that thing
 			//$primaryComments = $newRevision->getIBCPriminaryComments();
 			$newRevision->setRevision_number(intval ($revision->getRevision_number()) + 1);
 			$newRevision = $this->saveProtocolRevision($newRevision, false);
-			$l->fatal($newRevision);
-			$l->fatal($responses);
+
 			foreach($responses as $response){
 				$response->setKey_id(null);
 				$response->setKey_id(null);
@@ -198,8 +209,22 @@ class IBC_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("eager","getPrimaryReviewers");
 		$revision->setEntityMaps($entityMaps);
 
+		//TODO: use getIbcEmailByStatus to determine if an email, and if so, which, should be sent
+		//if($revision->getStatus() == IBCProtocolRevision::$STATUSES["SUBMITTED"]){
+			$l->fatal($revision);
+
+			$emailGen = $this->getIBCEmailGenById(6);
+			$emailGen->setRevision($revision);
+		//}
+
         return $revision;
     }
+
+	//TODO: write simple factory to get proper IBCEmail gen by status. refactor title column in email_madlib to match status column
+	public function getIbcEmailByStatus($status){
+
+
+	}
 
 	/*
 	 * RECURSIVELY PURGE KEY_IDS FROM OBJECT TREE FOR FRESH SAVES

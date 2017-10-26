@@ -14,6 +14,10 @@ class IBCEmailGen extends EmailGen {
 	/** Name of the module this email gen is for */
 	public static $MODULE_NAME = "IBC";
 
+	/**
+	 * Summary of $protocol
+	 * @var IBCProtocol
+	 */
 	private $protocol;
 
 	public function __construct(IBCProtocolRevision $revision = null) {
@@ -43,6 +47,13 @@ class IBCEmailGen extends EmailGen {
 		return $this->pis;
 	}
 
+	public function setRevision($revision){
+		$this->revision = $revision;
+		if ($this->recipients == null) {
+			$this->buildRecipients();
+		}
+	}
+
 	/** Macro key/value replacement map */
 	public function macroMap() {
 		return array(
@@ -63,6 +74,8 @@ class IBCEmailGen extends EmailGen {
 	 * Summary of buildRecipients
 	 */
 	public function buildRecipients() {
+		$l = Logger::getLogger(__FUNCTION__);
+		$l->fatal($this->key_id);
 		if ($this->revision != null) {
 			switch ($this->key_id) {
 				case 1: /*protocol approved*/
@@ -75,6 +88,24 @@ class IBCEmailGen extends EmailGen {
 
 					break;
 				case 6: /*protocol submitted for review*/
+					$l->fatal('what the shit, doodle!');
+					if($this->recipients == null) $this->recipients = array();
+					$pis = array();
+					foreach($this->getProtocol()->getPrincipalInvestigators() as $pi){
+						$pis[] = $pi->getUser();
+					}
+					$l->fatal($this->getProtocol()->getPrincipalInvestigators());
+					$l->fatal($this->revision->getProtocolFillOutUsers());
+
+					$this->recipients = array_merge(
+						$this->recipients,
+						$this->revision->getProtocolFillOutUsers(),
+						//$this->revision->getProtocolUsers(),
+						$pis
+					);
+
+					$l->fatal('golden earing');
+					break;
 				case 7: /*protocol expired*/
 				case 8: /*protocol expiration notice*/
 					$this->recipients = $this->revision->primaryReviewers;
@@ -83,6 +114,7 @@ class IBCEmailGen extends EmailGen {
 					$this->recipients = array();
 			}
 		}
+
 	}
 
 

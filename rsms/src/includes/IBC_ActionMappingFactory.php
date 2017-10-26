@@ -28,10 +28,6 @@ class IBC_ActionMappingFactory extends ActionMappingFactory {
 				"getIBCSectionById" 			=> new ActionMapping("getIBCSectionById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
 				"saveIBCSection" 				=> new ActionMapping("saveIBCSection", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
 
-                "getAllProtocols" 				=> new ActionMapping("getAllProtocols", "", "", $this::$ROLE_GROUPS["IBC_COMMITTEE"] ),
-				"getProtocolById" 				=> new ActionMapping("getProtocolById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
-				"saveProtocol" 					=> new ActionMapping("saveProtocol", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
-
                 "getAllIBCQuestions" 			=> new ActionMapping("getAllIBCQuestions", "", "", $this::$ROLE_GROUPS["IBC_COMMITTEE"] ),
 				"getIBCQuestionById" 			=> new ActionMapping("getIBCQuestionById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
 				"saveIBCQuestion" 				=> new ActionMapping("saveIBCQuestion", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
