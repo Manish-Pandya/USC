@@ -215,6 +215,7 @@ class IBC_ActionManager extends ActionManager {
 
 			$emailGen = $this->getIBCEmailGenById(6);
 			$emailGen->setRevision($revision);
+			$l->fatal($emailGen);
 		//}
 
         return $revision;
