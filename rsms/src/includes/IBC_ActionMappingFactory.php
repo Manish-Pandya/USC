@@ -56,7 +56,6 @@ class IBC_ActionMappingFactory extends ActionMappingFactory {
                 "getIBCPrimaryCommentById"  => new ActionMapping("getIBCPrimaryCommentById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
                 "saveIBCPrimaryComment"     => new ActionMapping("saveIBCPrimaryComment", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 
-				"testEmailGen"     => new ActionMapping("testEmailGen", "", "" ),
 				"getPreviewCorpus"     => new ActionMapping("getPreviewCorpus", "", "" ),
 				"getAllIBCEmails"     => new ActionMapping("getAllIBCEmails", "", "", $this::$ROLE_GROUPS["ADMIN"] ),
 				"getIBCEmailGenById"     => new ActionMapping("getIBCEmailGenById", "", "", $this::$ROLE_GROUPS["ADMIN"] ),

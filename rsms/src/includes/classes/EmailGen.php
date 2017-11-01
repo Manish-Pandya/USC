@@ -50,6 +50,10 @@ class EmailGen extends GenericCrud {
 	 */
 	protected $recipients;
 	/**
+	 * @var User[]
+	 */
+	protected $remainingRecipients;
+	/**
 	 * @var User
 	 */
 	protected $currentRecipient;
@@ -149,7 +153,7 @@ class EmailGen extends GenericCrud {
 	 * Summary of buildRecipients
 	 */
 	public function buildRecipients() {
-		$this->recipients = array();
+		$this->recipients = $this->remainingRecipients = array();
 	}
 
 	/**
@@ -158,6 +162,7 @@ class EmailGen extends GenericCrud {
 	 */
 	public function parse($overrideMyDeadCorpus = null) {
 		if($overrideMyDeadCorpus)$overrideMyDeadCorpus = $this->corpus;
+		$this->currentRecipient = array_pop($this->remainingRecipients);
 		$this->parsedCorpus = str_replace(array_keys($this->macroMap()), array_values($this->macroMap()), $overrideMyDeadCorpus);
 		return $this->parsedCorpus;
 	}

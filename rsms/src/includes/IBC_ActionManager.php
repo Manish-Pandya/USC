@@ -568,12 +568,6 @@ class IBC_ActionManager extends ActionManager {
         return $dao->save($decodedObject);
     }
 
-	public function testEmailGen() {
-		//return EmailGen::doThing();
-		$emailGen = new IBCEmailGen();
-		return $emailGen->parse();
-	}
-
 	public function getPreviewCorpus($decodedObject = null){
 		if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
 		return $decodedObject->parse($decodedObject->getCorpus());

@@ -33,6 +33,8 @@ class IBCEmailGen extends EmailGen {
 	 * @return IBCProtocol
 	 */
 	protected function getProtocol(){
+		$l = Logger::getLogger(__FUNCTION__);
+		$l->fatal($this->revision);
 		if($this->protocol == null && $this->revision && $this->revision->getProtocol_id() != null){
 			$protocolDao = new GenericDAO(new IBCProtocol());
 			$this->protocol = $protocolDao->getById($this->revision->getProtocol_id());
@@ -56,12 +58,15 @@ class IBCEmailGen extends EmailGen {
 
 	/** Macro key/value replacement map */
 	public function macroMap() {
+		$l = Logger::getLogger(__FUNCTION__);
+		$currentProtocol = $this->getProtocol();
+		$l->fatal($currentProtocol);
 		return array(
 			"[PI]"							=>	"PI Name",
-			"[Protocol Title]"				=>	"Protocol Title",
-			"[Protocol Number]"				=>	"Protocol Number",
-			"[Protocol Approval Date]"		=>	"Protocol Approval Date",
-			"[Expiration Date]"				=>	"Expiration Date",
+			"[Protocol Title]"				=>	!$currentProtocol ? "Protocol Title" : $currentProtocol->getProject_title(),
+			"[Protocol Number]"				=>	!$currentProtocol ? "Protocol Approval Date" : $currentProtocol->getProtocol_number(),
+			"[Protocol Approval Date]"		=>	!$currentProtocol ? "Protocol Title" : $currentProtocol->getApproval_date(),
+			"[Expiration Date]"				=>	!$currentProtocol ? "Expiration Date" : $currentProtocol->getExpiration_date(),
 			"[Reference Number]"			=>	"Reference Number",
 			"[Review Assignment Name]"		=>	"Review Assignment Name",
 			"[Review Assignment Due Date]"	=>	"Review Assignment Due Date",
@@ -109,6 +114,8 @@ class IBCEmailGen extends EmailGen {
 				default:
 					$this->recipients = array();
 			}
+			/* assigning an array to another array in php always makes a copy, not a reference... so this is safe for our use */
+			$this->remainingRecipients = $this->recipients;
 		}
 
 	}
