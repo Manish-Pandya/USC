@@ -41,19 +41,41 @@ class EmailGen extends GenericCrud {
 	 * @var string
 	 */
 	protected $dependency_type;
+	/**
+	 * @var GenericCrud
+	 */
 	protected $dependency;
 	/**
 	 * @var User[]
 	 */
 	protected $recipients;
+	/**
+	 * @var User
+	 */
+	protected $currentRecipient;
+	/**
+	 * @var string
+	 */
 	protected $subject;
+	/**
+	 * @var string
+	 */
 	protected $corpus = "This is a test story about {fish} and how they {toot} underwater.
 		More specifically, how do {fish}'s {toot}s look, sound, and smell from the air.
 		Would a low-flying {bird} be able to detect {fish}'s {toot}?
 		Would {bird} be compelled to then {eat} {fish}
 		Inquiring minds want to {know}";
+	/**
+	 * @var string
+	 */
 	protected $parsedCorpus;
+	/**
+	 * @var string
+	 */
 	protected $title;
+	/**
+	 * @var string
+	 */
 	protected $module;
 
 	/**
@@ -127,16 +149,17 @@ class EmailGen extends GenericCrud {
 	 * Summary of buildRecipients
 	 */
 	public function buildRecipients() {
-
+		$this->recipients = array();
 	}
 
 	/**
 	 * Runs through the corpus string and replaces all string parts matching macroMap keys with their corrisponding value.
-	 * @return mixed
+	 * @return string
 	 */
 	public function parse($overrideMyDeadCorpus = null) {
 		if($overrideMyDeadCorpus)$overrideMyDeadCorpus = $this->corpus;
-		return str_replace(array_keys($this->macroMap()), array_values($this->macroMap()), $overrideMyDeadCorpus);
+		$this->parsedCorpus = str_replace(array_keys($this->macroMap()), array_values($this->macroMap()), $overrideMyDeadCorpus);
+		return $this->parsedCorpus;
 	}
 
 }
