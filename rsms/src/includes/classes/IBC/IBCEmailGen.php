@@ -20,6 +20,12 @@ class IBCEmailGen extends EmailGen {
 	 */
 	private $protocol;
 
+	/**
+	 * Summary of $revision
+	 * @var IBCProtocolRevision
+	 */
+	private $revision;
+
 	public function __construct(IBCProtocolRevision $revision = null) {
 		if ($revision != null) $this->revision = $revision;
 		parent::__construct($revision);
@@ -33,8 +39,6 @@ class IBCEmailGen extends EmailGen {
 	 * @return IBCProtocol
 	 */
 	protected function getProtocol(){
-		$l = Logger::getLogger(__FUNCTION__);
-		$l->fatal($this->revision);
 		if($this->protocol == null && $this->revision && $this->revision->getProtocol_id() != null){
 			$protocolDao = new GenericDAO(new IBCProtocol());
 			$this->protocol = $protocolDao->getById($this->revision->getProtocol_id());
@@ -63,15 +67,15 @@ class IBCEmailGen extends EmailGen {
 		$l->fatal($currentProtocol);
 		return array(
 			"[PI]"							=>	"PI Name",
-			"[Protocol Title]"				=>	!$currentProtocol ? "Protocol Title" : $currentProtocol->getProject_title(),
-			"[Protocol Number]"				=>	!$currentProtocol ? "Protocol Approval Date" : $currentProtocol->getProtocol_number(),
-			"[Protocol Approval Date]"		=>	!$currentProtocol ? "Protocol Title" : $currentProtocol->getApproval_date(),
-			"[Expiration Date]"				=>	!$currentProtocol ? "Expiration Date" : $currentProtocol->getExpiration_date(),
-			"[Reference Number]"			=>	"Reference Number",
-			"[Review Assignment Name]"		=>	"Review Assignment Name",
-			"[Review Assignment Due Date]"	=>	"Review Assignment Due Date",
-			"[Meeting Date]"				=>	"Meeting Date",
-			"[Location]"					=>	"Location"
+			"[Protocol Title]"				=>	!$currentProtocol ? "'Protocol Title'" : $currentProtocol->getProject_title(),
+			"[Protocol Number]"				=>	!$currentProtocol ? "'Protocol Approval Date'" : $currentProtocol->getProtocol_number(),
+			"[Protocol Approval Date]"		=>	!$currentProtocol ? "'Protocol Title'" : $currentProtocol->getApproval_date(),
+			"[Expiration Date]"				=>	!$currentProtocol ? "'Expiration Date'" : $currentProtocol->getExpiration_date(),
+			"[Reference Number]"			=>	"'Reference Number'",
+			"[Review Assignment Name]"		=>	"'Review Assignment Name'",
+			"[Review Assignment Due Date]"	=>	"'Review Assignment Due Date'",
+			"[Meeting Date]"				=>	"'Meeting Date'",
+			"[Location]"					=>	"'Location'"
 		);
 	}
 
@@ -81,6 +85,7 @@ class IBCEmailGen extends EmailGen {
 	public function buildRecipients() {
 		$l = Logger::getLogger(__FUNCTION__);
 		if ($this->revision != null) {
+			if($this->recipients == null) $this->recipients = array();
 			switch ($this->key_id) {
 				case 1: /*protocol approved*/
 				case 2: /*protocol noy approved*/
@@ -92,7 +97,6 @@ class IBCEmailGen extends EmailGen {
 
 					break;
 				case 6: /*protocol submitted for review*/
-					if($this->recipients == null) $this->recipients = array();
 					$pis = array();
 					foreach($this->getProtocol()->getPrincipalInvestigators() as $pi){
 						$pis[] = $pi->getUser();
@@ -105,11 +109,23 @@ class IBCEmailGen extends EmailGen {
 						$pis
 					);
 
-					$l->fatal('golden earing');
+					$l->fatal('protocol submitted for review');
 					break;
 				case 7: /*protocol expired*/
 				case 8: /*protocol expiration notice*/
-					$this->recipients = $this->revision->primaryReviewers;
+					$pis = array();
+					foreach($this->getProtocol()->getPrincipalInvestigators() as $pi){
+						$pis[] = $pi->getUser();
+					}
+
+					$this->recipients = array_merge(
+						$this->recipients,
+						$this->revision->getProtocolFillOutUsers(),
+						//$this->revision->getProtocolUsers(),
+						$pis
+					);
+
+					$l->fatal('protocol expiration notice');
 					break;
 				default:
 					$this->recipients = array();

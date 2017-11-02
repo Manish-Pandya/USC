@@ -20,10 +20,12 @@ angular.module('ng-IBC')
 
         var getEmailData = function (): void {
             $scope.emails = new ViewModelHolder();
-            return $q.all([DataStoreManager.getAll("IBCEmailGen", $scope.emails)])
+            $scope.protocol = new ViewModelHolder();
+            return $q.all([DataStoreManager.getAll("IBCEmailGen", $scope.emails), DataStoreManager.getById("IBCProtocol", 1, $scope.protocol, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap])])
                 .then(
                     function (whateverGotReturned) {
                         console.log($scope.emails.data);
+                        console.log($scope.protocol.data);
                         console.log(DataStoreManager._actualModel);
                     }
                 )
@@ -45,6 +47,7 @@ angular.module('ng-IBC')
             if (!object) {
                 object = new ibc.IBCEmailGen;
             }
+            object.Revision = ($scope.protocol.data as ibc.IBCProtocol).IBCProtocolRevisions[$scope.protocol.data.IBCProtocolRevisions.length - 1];
             modalData[object.thisClass['name']] = object;
             DataStoreManager.ModalData = modalData;
             var modalInstance = $modal.open({

@@ -58,6 +58,8 @@
 
         Title: string;
 
+        Revision: ibc.IBCProtocolRevision;
+
         constructor() {
             super();
         }

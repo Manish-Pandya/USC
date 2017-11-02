@@ -224,7 +224,6 @@ class IBC_ActionManager extends ActionManager {
 	//TODO: write simple factory to get proper IBCEmail gen by status. refactor title column in email_madlib to match status column
 	public function getIbcEmailByStatus($status){
 
-
 	}
 
 	/*
