@@ -64,18 +64,31 @@ class IBCEmailGen extends EmailGen {
 	public function macroMap() {
 		$l = Logger::getLogger(__FUNCTION__);
 		$currentProtocol = $this->getProtocol();
+		$piNames = array();
+		if ($currentProtocol) {
+			foreach($currentProtocol->getPrincipalInvestigators() as $pi){
+				$piNames[] = $pi->getName();
+			}
+		}
+		$listPIs = function($pis) {
+			$title = count($pis) > 1 ? 'Drs. ' : 'Dr. ';
+			$last  = array_slice($pis, -1);
+			$first = join(', ', array_slice($pis, 0, -1));
+			$both  = array_filter(array_merge(array($first), $last), 'strlen');
+			return $title . join(count($pis) > 2 ? ', and ' : ' and ', $both);
+		};
 		$l->fatal($currentProtocol);
 		return array(
-			"[PI]"							=>	"PI Name",
+			"[PI]"							=>	!$currentProtocol ? "'PI Name(s)'" : $listPIs($piNames), // comma-seperated PI names
 			"[Protocol Title]"				=>	!$currentProtocol ? "'Protocol Title'" : $currentProtocol->getProject_title(),
 			"[Protocol Number]"				=>	!$currentProtocol ? "'Protocol Approval Date'" : $currentProtocol->getProtocol_number(),
 			"[Protocol Approval Date]"		=>	!$currentProtocol ? "'Protocol Title'" : $currentProtocol->getApproval_date(),
 			"[Expiration Date]"				=>	!$currentProtocol ? "'Expiration Date'" : $currentProtocol->getExpiration_date(),
-			"[Reference Number]"			=>	"'Reference Number'",
-			"[Review Assignment Name]"		=>	"'Review Assignment Name'",
-			"[Review Assignment Due Date]"	=>	"'Review Assignment Due Date'",
-			"[Meeting Date]"				=>	"'Meeting Date'",
-			"[Location]"					=>	"'Location'"
+			"[Reference Number]"			=>	!$currentProtocol ? "'Reference Number'" : "poo", // ask Mark
+			"[Review Assignment Name]"		=>	!$currentProtocol ? "'Review Assignment Name'" : "poo", // TODO: probably part of 'Meetings', which isn't done
+			"[Review Assignment Due Date]"	=>	!$currentProtocol ? "'Review Assignment Due Date'" : "poo", // TODO: probably part of 'Meetings', which isn't done
+			"[Meeting Date]"				=>	!$currentProtocol ? "'Meeting Date'" : "poo", // TODO: probably part of 'Meetings', which isn't done
+			"[Location]"					=>	!$currentProtocol ? "'Location'" : "poo" // TODO: probably part of 'Meetings', which isn't done
 		);
 	}
 
@@ -88,44 +101,32 @@ class IBCEmailGen extends EmailGen {
 			if($this->recipients == null) $this->recipients = array();
 			switch ($this->key_id) {
 				case 1: /*protocol approved*/
-				case 2: /*protocol noy approved*/
-				case 3: /*protocol returned for revision*/
-				case 4: /*protocol pre-review assignment*/
-					$this->recipients = $this->revision->getPrimaryReviewers();
-					break;
-				case 5: /*committee meeting scheduled*/
-
-					break;
+				case 2: /*protocol not approved*/
 				case 6: /*protocol submitted for review*/
-					$pis = array();
-					foreach($this->getProtocol()->getPrincipalInvestigators() as $pi){
-						$pis[] = $pi->getUser();
-					}
-
-					$this->recipients = array_merge(
-						$this->recipients,
-						$this->revision->getProtocolFillOutUsers(),
-						//$this->revision->getProtocolUsers(),
-						$pis
-					);
-
-					$l->fatal('protocol submitted for review');
-					break;
 				case 7: /*protocol expired*/
 				case 8: /*protocol expiration notice*/
 					$pis = array();
 					foreach($this->getProtocol()->getPrincipalInvestigators() as $pi){
 						$pis[] = $pi->getUser();
 					}
-
 					$this->recipients = array_merge(
 						$this->recipients,
 						$this->revision->getProtocolFillOutUsers(),
 						//$this->revision->getProtocolUsers(),
 						$pis
 					);
-
-					$l->fatal('protocol expiration notice');
+					$l->fatal('protocol notice');
+					break;
+				case 3: /*protocol returned for revision*/
+					$this->recipients = $this->revision->getPrimaryReviewers();
+					$l->fatal('protocol returned for revision');
+					break;
+				case 4: /*protocol pre-review assignment*/
+					$this->recipients = $this->revision->getPreliminaryReviewers();
+					$l->fatal('protocol pre-review assignment');
+					break;
+				case 5: /*committee meeting scheduled*/
+					$l->fatal('committee meeting scheduled');
 					break;
 				default:
 					$this->recipients = array();

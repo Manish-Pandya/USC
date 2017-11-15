@@ -18,7 +18,8 @@ angular.module('ng-IBC')
     var getEmailData = function () {
         $scope.emails = new ViewModelHolder();
         $scope.protocol = new ViewModelHolder();
-        return $q.all([DataStoreManager.getAll("IBCEmailGen", $scope.emails), DataStoreManager.getById("IBCProtocol", 1, $scope.protocol, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap])])
+        // TODO: Remove test protocol fetching
+        return $q.all([DataStoreManager.getAll("IBCEmailGen", $scope.emails), DataStoreManager.getById("IBCProtocol", 2, $scope.protocol, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap])])
             .then(function (whateverGotReturned) {
             console.log($scope.emails.data);
             console.log($scope.protocol.data);
@@ -37,6 +38,7 @@ angular.module('ng-IBC')
         if (!object) {
             object = new ibc.IBCEmailGen;
         }
+        // TODO: Remove test revision setting
         object.Revision = $scope.protocol.data.IBCProtocolRevisions[$scope.protocol.data.IBCProtocolRevisions.length - 1];
         modalData[object.thisClass['name']] = object;
         DataStoreManager.ModalData = modalData;

@@ -159,7 +159,6 @@ class IBC_ActionManager extends ActionManager {
         }
 
         foreach($protocolEditors as $reviewer){
-			$l->fatal($reviewer);
             if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
             $dao->addRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PROTOCOL_FILLOUT_USERS_RELATIONSHIP));
         }
