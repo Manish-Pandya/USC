@@ -32,9 +32,9 @@ class IBC_ActionMappingFactory extends ActionMappingFactory {
 				"getIBCQuestionById" 			=> new ActionMapping("getIBCQuestionById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
 				"saveIBCQuestion" 				=> new ActionMapping("saveIBCQuestion", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
 
-                "getAllIBCPossibleAnswers" 				=> new ActionMapping("getAllIBCPossibleAnswers", "", "", $this::$ROLE_GROUPS["IBC_COMMITTEE"] ),
-				"getIBCPossibleAnswerById" 				=> new ActionMapping("getIBCPossibleAnswerById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
-				"saveIBCPossibleAnswer" 				=> new ActionMapping("saveIBCPossibleAnswer", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
+                "getAllIBCPossibleAnswers" 		=> new ActionMapping("getAllIBCPossibleAnswers", "", "", $this::$ROLE_GROUPS["IBC_COMMITTEE"] ),
+				"getIBCPossibleAnswerById" 		=> new ActionMapping("getIBCPossibleAnswerById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
+				"saveIBCPossibleAnswer" 		=> new ActionMapping("saveIBCPossibleAnswer", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
 
                 "getAllIBCResponses" 			=> new ActionMapping("getAllIBCResponses", "", "", $this::$ROLE_GROUPS["IBC_COMMITTEE"] ),
 				"getIBCResponseById" 			=> new ActionMapping("getIBCResponseById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
@@ -52,14 +52,18 @@ class IBC_ActionMappingFactory extends ActionMappingFactory {
                 "getIBCPreliminaryCommentById"  => new ActionMapping("getIBCPreliminaryCommentById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
                 "saveIBCPreliminaryComment"     => new ActionMapping("saveIBCPreliminaryComment", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 
-				"getAllIBCPrimaryComments"  => new ActionMapping("getAllIBCPrimaryComments", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
-                "getIBCPrimaryCommentById"  => new ActionMapping("getIBCPrimaryCommentById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
-                "saveIBCPrimaryComment"     => new ActionMapping("saveIBCPrimaryComment", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+				"getAllIBCPrimaryComments"		=> new ActionMapping("getAllIBCPrimaryComments", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+                "getIBCPrimaryCommentById"		=> new ActionMapping("getIBCPrimaryCommentById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
+                "saveIBCPrimaryComment"			=> new ActionMapping("saveIBCPrimaryComment", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
 
-				"getPreviewCorpus"     => new ActionMapping("getPreviewCorpus", "", "" ),
-				"getAllIBCEmails"     => new ActionMapping("getAllIBCEmails", "", "", $this::$ROLE_GROUPS["ADMIN"] ),
-				"getIBCEmailGenById"     => new ActionMapping("getIBCEmailGenById", "", "", $this::$ROLE_GROUPS["ADMIN"] ),
-				"saveIBCEmailGen"     => new ActionMapping("saveIBCEmailGen", "", "", $this::$ROLE_GROUPS["ADMIN"] ),
+				"getPreviewCorpus"				=> new ActionMapping("getPreviewCorpus", "", "" ),
+				"getAllIBCEmails"				=> new ActionMapping("getAllIBCEmails", "", "", $this::$ROLE_GROUPS["ADMIN"] ),
+				"getIBCEmailGenById"			=> new ActionMapping("getIBCEmailGenById", "", "", $this::$ROLE_GROUPS["ADMIN"] ),
+				"saveIBCEmailGen"				=> new ActionMapping("saveIBCEmailGen", "", "", $this::$ROLE_GROUPS["ADMIN"] ),
+
+				"getAllIBCMeetings" 			=> new ActionMapping("getAllIBCMeetings", "", "", $this::$ROLE_GROUPS["IBC_COMMITTEE"] ),
+				"getIBCMeetingById" 			=> new ActionMapping("getIBCMeetingById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
+				"saveIBCMeeting" 				=> new ActionMapping("saveIBCMeeting", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
 		);
 	}
 }

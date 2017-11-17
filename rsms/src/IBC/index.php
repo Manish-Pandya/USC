@@ -160,6 +160,7 @@ if(!isset($_SESSION["USER"])){ ?>
     <script src="scripts/models/IBCQuestion.js"></script>
     <script src="scripts/models/IBCResponse.js"></script>
     <script src="scripts/models/IBCSection.js"></script>
+    <script src="scripts/models/IBCMeeting.js"></script>
     <script src="scripts/models/IBCEmailGen.js"></script>
 
 </head>

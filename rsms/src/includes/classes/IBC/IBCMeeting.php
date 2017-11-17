@@ -1,0 +1,107 @@
+<?php
+include_once 'GenericCrud.php';
+
+/**
+ *
+ *
+ * @author David Hamiter
+ */
+class IBCMeeting extends GenericCrud {
+
+	/** Name of the DB Table */
+	protected static $TABLE_NAME = "ibc_meeting";
+
+	/** Key/Value Array listing column names mapped to their types */
+	protected static $COLUMN_NAMES_AND_TYPES = array(
+		"room_id"				=> "integer",
+        "agenda"				=> "text",
+
+		//GenericCrud
+		"key_id"				=> "integer",
+		"date_created"			=> "timestamp",
+		"date_last_modified"	=> "timestamp",
+		"is_active"				=> "boolean",
+		"last_modified_user_id"	=> "integer",
+		"created_user_id"		=> "integer",
+	);
+
+    /** Relationships */
+	public static $ATTENDEES_RELATIONSHIP = array(
+		"className"				=>	"User",
+		"tableName"				=>	"ibc_meeting_attendee",
+		"keyName"				=>	"attendee_id",
+		"foreignKeyName"		=>	"meeting_id"
+	);
+	public static $REVISIONS_RELATIONSHIP = array(
+		"className"				=>	"IBCProtocolRevision",
+		"tableName"				=>	"ibc_meeting_revision",
+		"keyName"				=>	"revision_id",
+		"foreignKeyName"		=>	"meeting_id"
+	);
+
+	/**
+	 * Summary of $room_id
+	 * @var integer
+	 */
+	private $room_id;
+
+    /**
+     * Summary of $attendees
+     * @var User[]
+     */
+    private $attendees;
+
+    /**
+     * Summary of $agenda
+     * @var string
+     */
+    private $agenda;
+
+	/**
+	 * Summary of $protocolRevisions
+	 * @var IBCProtocolRevision[]
+	 */
+	private $protocolRevisions;
+
+	public function __construct(){
+		// Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy", "getAttendees");
+		$this->setEntityMaps($entityMaps);
+	}
+
+	// Required for GenericCrud
+	public function getTableName(){
+		return self::$TABLE_NAME;
+	}
+
+	public function getColumnData(){
+		return self::$COLUMN_NAMES_AND_TYPES;
+	}
+
+	public function getProtocolRevisions(){
+		if($this->protocolRevisions === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->protocolRevisions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$REVISIONS_RELATIONSHIP));
+		}
+		return $this->protocolRevisions;
+	}
+	public function setProtocolRevisions($revisions){$this->protocolRevisions = $revisions;}
+
+	public function getRoom_id(){return $this->room_id;}
+	public function setRoom_id($id){$this->room_id = $id;}
+
+    public function getAttendees(){
+		if($this->attendees === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->attendees = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ATTENDEES_RELATIONSHIP));
+		}
+		return $this->attendees;
+	}
+	public function setAttendees($attendees){ $this->attendees = $attendees; }
+
+	public function getAgenda(){return $this->agenda;}
+	public function setAgenda($agenda){$this->agenda = $agenda;}
+
+}
+?>
