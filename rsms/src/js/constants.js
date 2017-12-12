@@ -37,6 +37,7 @@ var Constants = (function () {
             LAB_PERSONNEL: "Lab Personnel",
             RADIATION_USER: "Radiation User",
             RADIATION_ADMIN: "Radiation Admin",
+            RADIATION_CONTACT: "Radiation Contact",
             EMERGENCY_ACCOUNT: "Emergency Account",
             READ_ONLY: "Read Only",
             OCCUPATIONAL_HEALTH: "Occupational Health",
@@ -66,6 +67,7 @@ var Constants = (function () {
             OVERDUE_CAP: "OVERDUE CAP",
             SUBMITTED_CAP: "SUBMITTED CAP",
             CLOSED_OUT: "CLOSED OUT",
+            INSPECTED: "INSPECTED",
         },
         SCHEDULE_STATUS: {
             NOT_ASSIGNED: "NOT ASSIGNED"
@@ -137,7 +139,8 @@ var Constants = (function () {
         EMITTER_TYPE: {
             ALPHA: "Alpha",
             BETA: "Beta",
-            GAMMA: "Gamma"
+            GAMMA: "Gamma",
+            NEUTRON: "Neutron"
         }
     };
     Constants.WIPE_TEST = {
@@ -270,13 +273,14 @@ var Constants = (function () {
         { label: "Flammable Gas", value: "Flammable_gas_present" },
         { label: "Toxic Gas", value: "Toxic_gas_present" },
         { label: "HF", value: "Hf_present" },
-        { label: "Lasers", value: "Lasers_dna_present" },
-        { label: "Xrays", value: "Xrays_present" }
+        { label: "Lasers", value: "Lasers_present" },
+        { label: "Xrays", value: "Xrays_present" },
+        { label: "DLAR", value: "Animal_facility" }
     ];
     Constants.ROOM_HAZARD_STATUS = {
-        IN_USE: { KEY: "IN_USE", LAB_LABEL: "Used by my lab in room", ADMIN_LABEL: "In use in room" },
-        STORED_ONLY: { KEY: "STORED_ONLY", LAB_LABEL: "Stored in room", ADMIN_LABEL: "Stored only in room" },
-        NOT_USED: { KEY: "NOT_USED", LAB_LABEL: "Not used by my lab in room", ADMIN_LABEL: "Not used in room" }
+        IN_USE: { KEY: "IN_USE", LAB_LABEL: "Used by my lab", ADMIN_LABEL: "In use in room" },
+        STORED_ONLY: { KEY: "STORED_ONLY", LAB_LABEL: "Stored by my lab", ADMIN_LABEL: "Stored only in room" },
+        NOT_USED: { KEY: "NOT_USED", LAB_LABEL: "Not used by my lab", ADMIN_LABEL: "Not used in room" }
     };
     Constants.VERIFICATION = {
         STATUS: {

@@ -159,9 +159,48 @@ class GenericDAO {
 			$result = new QueryError($error);
 			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
 		}
-
+        /*
+        foreach($result as $r){
+            $this->LOG->fatal("hello");
+            $this->cacheIfNeeded($r);
+        }
+        */
 		return $result;
 	}
+
+    function cacheIfNeeded(GenericCrud $target){
+        return;
+        global $db;
+
+        $id = $target->getKey_id();
+        $class = get_class($target);
+        $stmt = $db->prepare("SELECT * FROM dumb_cache WHERE parent_id = '$id' AND parent_class = '$class'");
+        // Query the db and return an array of $this type of object
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
+			// ... otherwise, generate error message to be returned
+		} else {
+			$error = $stmt->errorInfo();
+			$result = new QueryError($error);
+			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
+		}
+        if(count($result) == 0 ){
+
+            $value = json_encode(JsonManager::encode($target));
+            $stmt = $db->prepare("INSERT INTO dumb_cache (parent_id, parent_class, cached_value) VALUES ('$id', '$class', '$value');" );
+            // Query the db and return an array of $this type of object
+            if ($stmt->execute() ) {
+                $this->LOG->fatal('success');
+
+                // ... otherwise, generate error message to be returned
+            } else {
+                $error = $stmt->errorInfo();
+                $result = new QueryError($error);
+                $this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
+            }
+        }
+
+    }
 
 	/**
 	 * Retrieves all entities of this type, ordered by the given field
@@ -326,7 +365,9 @@ class GenericDAO {
 			$result = new QueryError($error);
 			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
 		}
-
+        foreach($result as $r){
+            $this->cacheIfNeeded($r);
+        }
 		return $result;
 	}
 
@@ -943,7 +984,13 @@ class GenericDAO {
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10016)) AS `lasers_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10015)) AS `xrays_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 2)) AS `recombinant_dna_present`,
-
+                bit_or(
+                    c.key_id in(
+                    select room_id from principal_investigator_room q
+				    where q.principal_investigator_id = a.key_id
+                    AND q.principal_investigator_id in
+                    (select principal_investigator_id from principal_investigator_department where department_id = 2)
+			    )) AS `animal_facility`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id IN (10430, 10433))) AS `toxic_gas_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10434)) AS `corrosive_gas_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10435)) AS `flammable_gas_present`,
@@ -983,11 +1030,19 @@ class GenericDAO {
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10016)) AS `lasers_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10015)) AS `xrays_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 2)) AS `recombinant_dna_present`,
+                bit_or(
+                    c.key_id in(
+                    select room_id from principal_investigator_room q
+				    where q.principal_investigator_id = a.key_id
+                    AND q.principal_investigator_id in
+                    (select principal_investigator_id from principal_investigator_department where department_id = 2)
+			    )) AS `animal_facility`,
 
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id IN (10430, 10433))) AS `toxic_gas_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10434)) AS `corrosive_gas_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10435)) AS `flammable_gas_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id IN(10677,10679))) AS `hf_present`,
+
 
                 coalesce(year(`g`.`date_started`),`g`.`schedule_year`) AS `year`,`g`.`key_id`
                 AS `inspection_id`
@@ -1356,11 +1411,12 @@ class GenericDAO {
                         c.name as isotope_name,
                         b.form as authorized_form,
                         ROUND(b.max_quantity, 7) as auth_limit,
-                        ROUND( b.max_quantity - (SUM(d.quantity) - picked_up.amount_picked_up) ) as max_order,
-                        ROUND(picked_up.amount_picked_up, 7) as amount_picked_up,
+                        ROUND( b.max_quantity - (SUM(d.quantity) - picked_up.amount_picked_up-amount_transferred.amount_used) ) as max_order,
+                        ROUND(picked_up.amount_picked_up - amount_transferred.amount_used, 7) as amount_picked_up,
                         ROUND(SUM(d.quantity) - picked_up.amount_picked_up, 7) as amount_on_hand,
                         ROUND(total_used.amount_used, 7) as amount_disposed,
-                        ROUND(SUM(d.quantity) - total_used.amount_used, 7) as usable_amount
+                        ROUND(SUM(d.quantity) - total_used.amount_used, 7) as usable_amount,
+                        amount_transferred.amount_used as amount_transferred
                         from pi_authorization a
                         LEFT OUTER JOIN authorization b
                         ON b.pi_authorization_id = a.key_id
@@ -1368,6 +1424,7 @@ class GenericDAO {
                         ON c.key_id = b.isotope_id
                         LEFT OUTER JOIN parcel d
                         ON d.authorization_id = b.key_id
+
 
                         LEFT OUTER JOIN (
 	                        select sum(a.curie_level) as amount_picked_up,
@@ -1421,6 +1478,29 @@ class GenericDAO {
                         ) as total_used
                         ON total_used.isotope_id = b.isotope_id
                         AND total_used.original_pi_auth_id = b.original_pi_auth_id
+
+
+                        LEFT OUTER JOIN (
+	                        select sum(a.curie_level) as amount_used,
+                            e.name as isotope,
+                            e.key_id as isotope_id,
+                            d.original_pi_auth_id
+	                        from parcel_use_amount a
+	                        join parcel_use b
+	                        on a.parcel_use_id = b.key_id
+	                        JOIN parcel c
+	                        ON b.parcel_id = c.key_id
+	                        JOIN authorization d
+	                        ON c.authorization_id = d.key_id
+	                        JOIN isotope e
+	                        ON d.isotope_id = e.key_id
+                            WHERE c.principal_investigator_id = ?
+                            AND a.waste_type_id = 6
+	                        group by e.name, e.key_id, d.original_pi_auth_id
+                        ) as amount_transferred
+                        ON amount_transferred.isotope_id = b.isotope_id
+                        AND amount_transferred.original_pi_auth_id = b.original_pi_auth_id
+
                         where b.pi_authorization_id IN(select key_id from pi_authorization where principal_investigator_id = ?)
                         group by b.isotope_id, b.original_pi_auth_id,c.name, c.key_id, a.principal_investigator_id";
 
@@ -1429,11 +1509,234 @@ class GenericDAO {
         $stmt->bindValue(1, $piId);
         $stmt->bindValue(2, $piId);
         $stmt->bindValue(3, $piId);
+        $stmt->bindValue(4, $piId);
 
         $stmt->execute();
         $inventories = $stmt->fetchAll(PDO::FETCH_CLASS, "CurrentIsotopeInventoryDto");
         return $inventories;
 
+    }
+
+    public function getIsotopeTotalsReport(){
+        global $db;
+
+        $queryString = "select a.name as isotope_name,
+                        a.key_id as isotope_id,
+                        a.`auth_limit` as auth_limit,
+                        a.is_mass as is_mass,
+                        ROUND(SUM(c.quantity),7) as ordered,
+                        ROUND(SUM(e.curie_level),7) as waste,
+                        ROUND(shipped.amount_picked_up,7) as shipped,
+                        ROUND(poured.amount_picked_up,7) as poured,
+                        ROUND(transferred.amount_picked_up,7) as transferred
+                        from isotope a
+                        LEFT OUTER JOIN authorization b
+                        ON b.isotope_id = a.key_id
+                        LEFT OUTER JOIN parcel c
+                        ON c.authorization_id = b.key_id
+                        LEFT OUTER JOIN parcel_use d
+                        on d.parcel_id = c.key_id
+                        LEFT OUTER JOIN parcel_use_amount e
+                        ON e.parcel_use_id = d.key_id
+
+                        LEFT OUTER JOIN (
+				            select sum(a.curie_level)
+                        as amount_picked_up,
+                        e.name as isotope,
+                        e.key_id as isotope_id
+                        from parcel_use_amount a
+                        join parcel_use b
+                        on a.parcel_use_id = b.key_id
+                        JOIN parcel c
+                        ON b.parcel_id = c.key_id
+                        JOIN authorization d
+                        ON c.authorization_id = d.key_id
+                        JOIN isotope e
+                        ON d.isotope_id = e.key_id
+                        left join waste_bag f
+                        ON a.waste_bag_id = f.key_id
+                        left join carboy_use_cycle g
+                        ON a.carboy_id = g.key_id
+                        left join scint_vial_collection h
+                        ON a.scint_vial_collection_id = h.key_id
+                        left join other_waste_container j
+                        ON a.other_waste_container_id = j.key_id
+                        join drum i
+                        ON f.drum_id = i.key_id
+                        OR g.drum_id = i.key_id
+                        OR h.drum_id = i.key_id
+                        OR j.drum_id = i.key_id
+                        WHERE i.pickup_date IS NOT NULL
+                        AND (f.drum_id IS NOT NULL
+                        OR g.drum_id IS NOT NULL
+                        OR h.drum_id IS NOT NULL
+                        OR j.drum_id IS NOT NULL)
+
+                        group by e.name, e.key_id
+
+                        ) as shipped
+                        on shipped.isotope_id = a.key_id
+
+                        LEFT JOIN (
+                        select sum(a.curie_level)
+                        as amount_picked_up,
+                        e.name as isotope,
+                        e.key_id as isotope_id
+                        from parcel_use_amount a
+                        join parcel_use b
+                        on a.parcel_use_id = b.key_id
+                        JOIN parcel c
+                        ON b.parcel_id = c.key_id
+                        JOIN authorization d
+                        ON c.authorization_id = d.key_id
+                        JOIN isotope e
+                        ON d.isotope_id = e.key_id
+                        left join waste_bag f
+                        ON a.waste_bag_id = f.key_id
+                        left join carboy_use_cycle g
+                        ON a.carboy_id = g.key_id
+
+                        WHERE g.pour_date IS NOT NULL
+
+
+                        group by e.name, e.key_id
+                        )as poured
+                        ON poured.isotope_id = a.key_id
+
+                        LEFT JOIN (
+	                        select sum(a.curie_level)
+	                        as amount_picked_up,
+	                        e.name as isotope,
+	                        e.key_id as isotope_id
+	                        from parcel_use_amount a
+	                        join parcel_use b
+	                        on a.parcel_use_id = b.key_id
+	                        JOIN parcel c
+	                        ON b.parcel_id = c.key_id
+	                        JOIN authorization d
+	                        ON c.authorization_id = d.key_id
+	                        JOIN isotope e
+	                        ON d.isotope_id = e.key_id
+	                        WHERE b.date_transferred IS NOT NULL
+	                        group by e.name, e.key_id
+                        ) as transferred
+                        ON transferred.isotope_id = a.key_id
+
+                        group by a.key_id
+                        order by isotope_name DESC;";
+        //ROUND(SUM(e.curie_level),7) as waste,
+        $queryString = "select a.name as isotope_name,
+                        a.key_id as isotope_id,
+                        a.`auth_limit` as auth_limit,
+                        a.is_mass as is_mass,
+                        ROUND(SUM(c.quantity),7) as ordered,
+                        ROUND(SUM(e.curie_level),7) as waste,
+                        ROUND(shipped.amount_picked_up,7) as shipped,
+                        ROUND(poured.amount_picked_up,7) as poured,
+                        ROUND(transferred.amount_picked_up,7) as transferred
+
+                        from isotope a
+                        LEFT OUTER JOIN authorization b
+                        ON b.isotope_id = a.key_id
+                        LEFT OUTER JOIN parcel c
+                        ON c.authorization_id = b.key_id
+                        LEFT OUTER JOIN parcel_use d
+                        on d.parcel_id = c.key_id
+                        LEFT OUTER JOIN parcel_use_amount e
+                        ON e.parcel_use_id = d.key_id
+
+                        LEFT OUTER JOIN (
+				            select sum(a.curie_level)
+                        as amount_picked_up,
+                        e.name as isotope,
+                        e.key_id as isotope_id
+                        from parcel_use_amount a
+                        join parcel_use b
+                        on a.parcel_use_id = b.key_id
+                        JOIN parcel c
+                        ON b.parcel_id = c.key_id
+                        JOIN authorization d
+                        ON c.authorization_id = d.key_id
+                        JOIN isotope e
+                        ON d.isotope_id = e.key_id
+                        left join waste_bag f
+                        ON a.waste_bag_id = f.key_id
+                        left join carboy_use_cycle g
+                        ON a.carboy_id = g.key_id
+                        left join scint_vial_collection h
+                        ON a.scint_vial_collection_id = h.key_id
+                        left join other_waste_container j
+                        ON a.other_waste_container_id = j.key_id
+                        join drum i
+                        ON f.drum_id = i.key_id
+                        OR g.drum_id = i.key_id
+                        OR h.drum_id = i.key_id
+                        OR j.drum_id = i.key_id
+                        WHERE i.pickup_date IS NOT NULL
+                        AND (f.drum_id IS NOT NULL
+                        OR g.drum_id IS NOT NULL
+                        OR h.drum_id IS NOT NULL
+                        OR j.drum_id IS NOT NULL)
+
+                        group by e.name, e.key_id
+
+                        ) as shipped
+                        on shipped.isotope_id = a.key_id
+
+                        LEFT JOIN (
+                            select sum(a.curie_level)
+                            as amount_picked_up,
+                            e.name as isotope,
+                            e.key_id as isotope_id
+                            from parcel_use_amount a
+                            join parcel_use b
+                            on a.parcel_use_id = b.key_id
+                            JOIN parcel c
+                            ON b.parcel_id = c.key_id
+                            JOIN authorization d
+                            ON c.authorization_id = d.key_id
+                            JOIN isotope e
+                            ON d.isotope_id = e.key_id
+                            left join waste_bag f
+                            ON a.waste_bag_id = f.key_id
+                            left join carboy_use_cycle g
+                            ON a.carboy_id = g.key_id
+
+                            WHERE g.pour_date IS NOT NULL
+
+
+                            group by e.name, e.key_id
+                        )as poured
+                        ON poured.isotope_id = a.key_id
+
+                        LEFT JOIN (
+	                        select sum(a.curie_level)
+	                        as amount_picked_up,
+	                        e.name as isotope,
+	                        e.key_id as isotope_id
+	                        from parcel_use_amount a
+	                        join parcel_use b
+	                        on a.parcel_use_id = b.key_id
+	                        JOIN parcel c
+	                        ON b.parcel_id = c.key_id
+	                        JOIN authorization d
+	                        ON c.authorization_id = d.key_id
+	                        JOIN isotope e
+	                        ON d.isotope_id = e.key_id
+	                        WHERE b.date_transferred IS NOT NULL
+	                        group by e.name, e.key_id
+                        ) as transferred
+                        ON transferred.isotope_id = a.key_id
+
+                        group by a.key_id
+                        ;";
+        $stmt = $db->prepare($queryString);
+
+        $stmt->execute();
+        $inventories = $stmt->fetchAll(PDO::FETCH_CLASS, "RadReportDTO");
+        $l=Logger::getLogger(__FUNCTION__);
+        $l->fatal($inventories);
+        return $inventories;
     }
 
     /*

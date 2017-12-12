@@ -241,6 +241,7 @@ require_once '../top_view.php';
                             <span><br>(Scheduled for {{dto.Inspections.Schedule_month | getMonthName}})</span>
                             <br>
                             <span ng-init="dto = getRoomUrlString(dto)"></span>
+                            <pre>{{dto | json}}</pre>
                             <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}&{{dto.roomUrlParam}}"><img src="../../img/hazard-icon.png" />Inventory</a>
                         </span>
                     </span>

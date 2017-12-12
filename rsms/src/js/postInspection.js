@@ -723,7 +723,7 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
         $scope.emailSent = 'success';
         console.log(data);
         //postInspectionFactory.inspection.Notification_date =
-
+        if (!postInspectionFactory.inspection.Notification_date) postInspectionFactory.inspection.Notification_date = convenienceMethods.setMysqlTime(Date());
         if (evaluateCloseInspection() == true) {
             setInspectionClosed();
         }
@@ -1034,19 +1034,19 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         });
     }
 
-    $scope.handleInspectionOpen = function (inspection) {
+    $scope.handleInspectionOpen = function (inspection, isReopen) {
         $scope.handlingInspectionOpen = true;
         var inspectionDto = {
             Date_created: inspection.Date_created,
-            Date_closed: inspection.Date_closed ? null : convenienceMethods.setMysqlTime(Date()),
+            Date_closed: inspection.Date_closed || isReopen ? null : convenienceMethods.setMysqlTime(Date()),
             Key_id: postInspectionFactory.inspection.Key_id,
             Principal_investigator_id: postInspectionFactory.inspection.Principal_investigator_id,
             Date_started: postInspectionFactory.inspection.Date_started,
-            Notification_date: convenienceMethods.setMysqlTime(Date()),
+            Notification_date: postInspectionFactory.inspection.Notification_date || convenienceMethods.setMysqlTime(Date()),
             Schedule_month: postInspectionFactory.inspection.Schedule_month,
             Schedule_year: postInspectionFactory.inspection.Schedule_year,
-            Cap_submitted_date: postInspectionFactory.inspection.Cap_submitted_date,
-            Cap_complete: postInspectionFactory.inspection.Cap_complete,
+            Cap_submitted_date: isReopen ? null : postInspectionFactory.inspection.Cap_submitted_date,
+            Cap_complete: isReopen ? null : postInspectionFactory.inspection.Cap_complete,
             Is_rad: postInspectionFactory.inspection.Is_rad,
             Class: "Inspection"
         };
