@@ -113,17 +113,36 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     }
     return personnel;
   }
+    }])
+//isRadContact
+.filter('isRadContact', ['userHubFactory', function (userHubFactory) {
+    return function (users, isRad) {
+        console.log(isRad)
+        if (!users) return;
+        if (!isRad) return users;
+        var personnel = [];
+        var i = users.length
+        while (i--) {
+            if (userHubFactory.hasRole(users[i], Constants.ROLE.NAME.RADIATION_CONTACT) == isRad ) {
+                userHubFactory.getSupervisor(users[i]);
+                personnel.unshift(users[i]);
+                if (userHubFactory.hasRole(users[i], Constants.ROLE.NAME.RADIATION_CONTACT)) users[i].isRadContact = true;
+            }
+        }
+        return personnel;
+    }
 }])
 .filter('isLabPersonnel',['userHubFactory', function(userHubFactory){
   return function(users){
     if(!users)return;
     var personnel = [];
     var i = users.length
-    while(i--){
-      if( userHubFactory.hasRole(users[i], Constants.ROLE.NAME.LAB_PERSONNEL) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.LAB_CONTACT) ){
+    while (i--) {
+        if (userHubFactory.hasRole(users[i], Constants.ROLE.NAME.LAB_PERSONNEL) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.LAB_CONTACT) || userHubFactory.hasRole(users[i], Constants.ROLE.NAME.RADIATION_CONTACT)) {
         userHubFactory.getSupervisor(users[i]);
         personnel.unshift(users[i]);
-        if( userHubFactory.hasRole(users[i], Constants.ROLE.NAME.LAB_CONTACT) ) users[i].isContact = true;
+        if (userHubFactory.hasRole(users[i], Constants.ROLE.NAME.LAB_CONTACT)) users[i].isContact = true;
+        if (userHubFactory.hasRole(users[i], Constants.ROLE.NAME.RADIATION_CONTACT)) users[i].isRadContact = true;
       }
     }
     return personnel;
@@ -934,7 +953,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     $scope.order="Last_name";
     $scope.phoneNumberPattern = /^\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}$/;
     $scope.phoneNumberErrorMsg = "E.G. 123-555-5555 or (123) 555-5555";
-    $scope.emailPattern = /^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/i;
+    $scope.emailPattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     $scope.emailErrorMsg = "Invalid email address";
     $scope.pis = userHubFactory.getPIs();
 
