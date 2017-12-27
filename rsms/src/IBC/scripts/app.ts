@@ -52,6 +52,11 @@ angular
               templateUrl: "views/email-management.html",
               controller: "IBCEmailMgmtCtrl"
             })
+            .state('ibc.meetings', {
+                url: "/meetings",
+                templateUrl: "views/meetings.html",
+                controller: "IBCMeetingsCtrl"
+            })
             .state('ibc.test', {
                 url: "/test/:id",
                 templateUrl: "views/test.html",

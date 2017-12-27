@@ -58,92 +58,91 @@ if(!isset($_SESSION["USER"])){ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- stylesheets
-	<link type="text/css" rel="stylesheet" href="../css/bootstrap.css"/>
-	<link type="text/css" rel="stylesheet" href="../css/bootstrap-responsive.css"/>
-	<link type="text/css" rel="stylesheet" href="../css/bootmetro.css"/>
-    <link rel="stylesheet" type="text/css" href="../css/bootmetro-tiles.css" />
-    <link rel="stylesheet" type="text/css" href="../css/bootmetro-charms.css" />
-    <link rel="stylesheet" type="text/css" href="../css/metro-ui-light.css" />
-	<link rel="stylesheet" type="text/css" href="../css/icomoon.css"/>
-	<link rel="stylesheet" type="text/css" href="../css/datepicker.css"/>
-	<link type="text/css" rel="stylesheet" href="../css/font-awesome.min.css"/>
+    <!-- stylesheets
+        <link type="text/css" rel="stylesheet" href="../css/bootstrap.css"/>
+        <link type="text/css" rel="stylesheet" href="../css/bootstrap-responsive.css"/>
+        <link type="text/css" rel="stylesheet" href="../css/bootmetro.css"/>
+        <link rel="stylesheet" type="text/css" href="../css/bootmetro-tiles.css" />
+        <link rel="stylesheet" type="text/css" href="../css/bootmetro-charms.css" />
+        <link rel="stylesheet" type="text/css" href="../css/metro-ui-light.css" />
+        <link rel="stylesheet" type="text/css" href="../css/icomoon.css"/>
+        <link rel="stylesheet" type="text/css" href="../css/datepicker.css"/>
+        <link type="text/css" rel="stylesheet" href="../css/font-awesome.min.css"/>
 
- -->
+     -->
     <link href="../css/10-18-2017-manual-bundle.min.css" rel="stylesheet" />
-	<link type="text/css" rel="stylesheet" href="../css/angular-busy.css">
-	<link type="text/css" rel="stylesheet" href="../css/select.min.css"/>
+    <link type="text/css" rel="stylesheet" href="../css/angular-busy.css">
+    <link type="text/css" rel="stylesheet" href="../css/select.min.css" />
     <link type="text/css" rel="stylesheet" href="../stylesheets/style.css" />
 
     <link type="text/css" rel="stylesheet" href="../stylesheets/ibc-styles.css" />
     <link href="../css/contextMenu.min.css" rel="stylesheet" />
 
-<!-- included fonts
- <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
--->
-<!-- included javascript libraries
--->
-	<script type="text/javascript" src="../js/lib/moment.js"></script>
+    <!-- included fonts
+     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+    -->
+    <!-- included javascript libraries
+    -->
+    <script type="text/javascript" src="../js/lib/moment.js"></script>
     <script src="../js/lib/lodash.4.17.3/content/Scripts/lodash.min.js"></script>
-	<script src="../js/lib/jQuery.3.1.1/Content/Scripts/jquery-3.1.1.min.js"></script>
-	<script src="../js/lib/promise.min.js"></script>
+    <script src="../js/lib/jQuery.3.1.1/Content/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="../js/lib/promise.min.js"></script>
 
-	<script type="text/javascript" src="../js/constants.js"></script>
+    <script type="text/javascript" src="../js/constants.js"></script>
 
-	<script type="text/javascript" src="../js/lib/angular.js"></script>
-	<script src="../js/lib/angular-route.min.js"></script>
-	<script type="text/javascript" src="../js/lib/ui-bootstrap-custom-tpls-0.4.0.js"></script>
-	<script type="text/javascript" src="../js/convenienceMethodsModule.js"></script>
-	<script type="text/javascript" src="../js/lib/ng-quick-date.js"></script>
-	<script type="text/javascript" src="../js/lib/angular-once.js"></script>
+    <script type="text/javascript" src="../js/lib/angular.js"></script>
+    <script src="../js/lib/angular-route.min.js"></script>
+    <script type="text/javascript" src="../js/lib/ui-bootstrap-custom-tpls-0.4.0.js"></script>
+    <script type="text/javascript" src="../js/convenienceMethodsModule.js"></script>
+    <script type="text/javascript" src="../js/lib/ng-quick-date.js"></script>
+    <script type="text/javascript" src="../js/lib/angular-once.js"></script>
     <script src="../js/lib/angular.filter.js"></script>
     <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
     <script src="../js/lib/tinymce.js"></script>
-	<script type="text/javascript" src="../js/modalPosition.js"></script>
-	<script type="text/javascript" src="../js/lib/angular-busy.min.js"></script>
-	<script type="text/javascript" src="../js/lib/angular-ui-router.min.js"></script>
-	<script type="text/javascript" src="../js/lib/cycle.js"></script>
-	<script type="text/javascript" src="../js/lib/select.min.js"></script>
-	<script type="text/javascript" src="../js/lib/angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="../js/modalPosition.js"></script>
+    <script type="text/javascript" src="../js/lib/angular-busy.min.js"></script>
+    <script type="text/javascript" src="../js/lib/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="../js/lib/cycle.js"></script>
+    <script type="text/javascript" src="../js/lib/select.min.js"></script>
+    <script type="text/javascript" src="../js/lib/angular-sanitize.min.js"></script>
     <script src="../js/roleBased.js"></script>
     <script src="../js/lib/contextMenu.min.js"></script>
 
 
-<!-- Required for the ORM framework -->
-<!-- TODO include everything in certain directories by default -->
+    <!-- Required for the ORM framework -->
+    <!-- TODO include everything in certain directories by default -->
+    <!-- app -->
+    <script type="text/javascript" src="scripts/app.js"></script>
 
-<!-- app -->
-	<script type="text/javascript" src="scripts/app.js"></script>
 
-
-<!-- business logic-->
-<!--script type="text/javascript" src="scripts/actionFunctions.js"><script>-->
-
-<!-- controllers -->
-	<script src="scripts/controllers/IBCCtrl.js"></script>
+    <!-- business logic-->
+    <!--script type="text/javascript" src="scripts/actionFunctions.js"><script>-->
+    <!-- controllers -->
+    <script src="scripts/controllers/IBCCtrl.js"></script>
     <script src="scripts/controllers/IBCMyProtocolsCtrl.js"></script>
     <script src="scripts/controllers/IBCAssignCtrl.js"></script>
-	<script src="scripts/controllers/IBCDetailCtrl.js"></script>
-	<script src="scripts/controllers/IBCEmailMgmtCtrl.js"></script>
+    <script src="scripts/controllers/IBCDetailCtrl.js"></script>
+    <script src="scripts/controllers/IBCEmailMgmtCtrl.js"></script>
+    <script src="scripts/controllers/IBCMeetingsCtrl.js"></script>
     <script src="scripts/controllers/TestCtrl.js"></script>
 
-<!-- filters -->
-<!--script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></!--script>-->
-<script src="scripts/filters/IBCFilters.js"></script>
+    <!-- filters -->
+    <!--script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></!--script>-->
+    <script src="scripts/filters/IBCFilters.js"></script>
 
-<!-- directives -->
-	<script src="scripts/directives/collapsibleCard.js"></script>
+    <!-- directives -->
+    <script src="scripts/directives/collapsibleCard.js"></script>
     <script src="scripts/directives/questionView.js"></script>
     <script src="scripts/directives/emailTemplate.js"></script>
     <script src="scripts/directives/emailParsed.js"></script>
 
-<!-- framework -->
+    <!-- framework -->
     <script src="../ignorasmus/client-side-framework/DataStoreManager.js"></script>
     <script src="../ignorasmus/client-side-framework/InstanceFactory.js"></script>
     <script src="../ignorasmus/client-side-framework/UrlMapping.js"></script>
     <script src="../ignorasmus/client-side-framework/XHR.js"></script>
 
-<!-- models -->
+    <!-- models -->
     <script src="../ignorasmus/client-side-framework/models/FluxCompositerBase.js"></script>
     <script src="../ignorasmus/client-side-framework/models/ViewModelHolder.js"></script>
     <script src="scripts/models/Department.js"></script>
