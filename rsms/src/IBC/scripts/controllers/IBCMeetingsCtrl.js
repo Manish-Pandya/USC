@@ -9,10 +9,21 @@
 angular.module('ng-IBC')
     .controller('IBCMeetingsCtrl', function ($rootScope, $scope, $modal, $location, $q) {
     console.log("IBCMeetingsCtrl running");
+    var getMeetings = function () {
+        $scope.meetings = new ViewModelHolder();
+        return $q.all([DataStoreManager.getAll("IBCMeeting", $scope.meetings)])
+            .then(function (whateverGotReturned) {
+            console.log($scope.meetings);
+            console.log(DataStoreManager._actualModel);
+        })
+            .catch(function (reason) {
+            console.log("bad Promise.all:", reason);
+        });
+    };
     $scope.save = function (copy) {
         $scope.saving = $q.all([DataStoreManager.save(copy)]).then($scope.close);
     };
-    $scope.loading = $rootScope.getCurrentRoles();
+    $scope.loading = $rootScope.getCurrentRoles().then(getMeetings);
     $scope.openModal = function (object) {
         var modalData = {};
         if (!object) {
