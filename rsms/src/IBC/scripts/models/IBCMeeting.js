@@ -15,6 +15,7 @@ var ibc;
         function IBCMeeting() {
             var _this = _super.call(this) || this;
             _this.Attendees = [];
+            _this.Meeting_date = "";
             _this.Agenda = "";
             return _this;
         }

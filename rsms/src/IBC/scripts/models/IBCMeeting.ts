@@ -12,6 +12,8 @@
         Room: Room;
         static RoomMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "Room", "getRoomById&id=", "Room", "Room_id");
 
+        Meeting_date: string = "";
+
         Agenda: string = "";
 
         constructor() {

@@ -570,6 +570,28 @@ class IBC_ActionManager extends ActionManager {
 		if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
 		return $decodedObject->parse($decodedObject->getCorpus());
 	}
+
+	// IBC Meetings Mgmt functions //
+	//////////////////////////////
+
+	public function getAllIBCMeetings() {
+		$dao = $this->getDao(new IBCMeeting());
+        return $dao->getAll();
+	}
+
+	public function getIBCMeetingById($id = null){
+		if($id == NULL)$id = $this->getValueFromRequest('id', $id);
+        if($id == NULL)return new ActionError("No request param 'id' provided.");
+        $dao = $this->getDao(new IBCMeeting());
+        return $dao->getById($id);
+	}
+
+	public function saveIBCMeeting(IBCMeeting $decodedObject){
+        if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
+        if($decodedObject == NULL)return new ActionError("No input read from stream");
+        $dao = $this->getDao($decodedObject);
+        return $dao->save($decodedObject);
+    }
 }
 
 ?>

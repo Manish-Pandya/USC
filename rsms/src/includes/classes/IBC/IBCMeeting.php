@@ -15,6 +15,7 @@ class IBCMeeting extends GenericCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"room_id"				=> "integer",
         "agenda"				=> "text",
+		"meeting_date"			=> "timestamp",
 
 		//GenericCrud
 		"key_id"				=> "integer",
@@ -56,6 +57,12 @@ class IBCMeeting extends GenericCrud {
      * @var string
      */
     private $agenda;
+
+	/**
+	 * Summary of $meeting_date
+	 * @var string
+	 */
+    private $meeting_date;
 
 	/**
 	 * Summary of $protocolRevisions
@@ -102,6 +109,9 @@ class IBCMeeting extends GenericCrud {
 
 	public function getAgenda(){return $this->agenda;}
 	public function setAgenda($agenda){$this->agenda = $agenda;}
+
+	public function getMeeting_date(){return $this->meeting_date;}
+	public function setMeeting_date($meeting_date){$this->meeting_date = $meeting_date;}
 
 }
 ?>

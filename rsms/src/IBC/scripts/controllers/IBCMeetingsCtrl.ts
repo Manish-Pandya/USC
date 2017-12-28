@@ -5,18 +5,17 @@
  * @name IBCCtrl.controller:IBCMeetingsCtrl
  * @description
  * # IBCMeetingsCtrl
- * Controller of the IBC protocal Email Management view
+ * Controller of the IBC protocal Meetings view
  */
 angular.module('ng-IBC')
     .controller('IBCMeetingsCtrl', function ($rootScope, $scope, $modal, $location, $q) {
         console.log("IBCMeetingsCtrl running");
 
-        var getMeetings = function (): void {
+        function getMeetings(): void {
             $scope.meetings = new ViewModelHolder();
-            return $q.all([DataStoreManager.getAll("IBCMeeting", $scope.meetings)])
+            return $q.all([DataStoreManager.getAll("IBCMeeting", $scope.meetings, true)])
                 .then(
-                    function (whateverGotReturned) {
-                        console.log($scope.meetings);
+                function (whateverGotReturned) {
                         console.log(DataStoreManager._actualModel);
                     }
                 )
