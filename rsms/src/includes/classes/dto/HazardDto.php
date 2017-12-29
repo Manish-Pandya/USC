@@ -16,7 +16,6 @@ class HazardDto {
     private $order_index;
     private $belongsToOtherPI;
 
-
     public function getPrincipal_investigator_id() { return $this->principal_investigator_id; }
     public function getKey_id() { return $this->key_id; }
     public function getHazard_id() {
@@ -103,7 +102,7 @@ class HazardDto {
                         LEFT JOIN principal_investigator c
                         ON c.key_id = a.principal_investigator_id
 						WHERE (c.is_active = 1 OR c.key_id = $this->principal_investigator_id) AND a.hazard_id = $this->hazard_id AND a.room_id IN ($roomIds) AND b.room_id IN($roomIds)";
-        
+
         $stmt = $db->prepare($queryString);
         $stmt->execute();
         $piHazardRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
@@ -133,6 +132,7 @@ class HazardDto {
         foreach ($rooms as &$room){
         	$room->setContainsHazard(false);
         	$room->setHasMultiplePis(false);
+
             if( isset($relationHashMap[$room->getRoom_id()])) {
             	//see if there's a relation for this room and hazard with this pi id
             	foreach ($relationHashMap[$room->getRoom_id()] as $relation){
@@ -153,6 +153,9 @@ class HazardDto {
                             //array_push($this->inspectionRooms, $room);
                             $room->setOtherLab(true);
                         }
+                        if($relation->getStatus() != "STORED_ONLY"){
+            				$storedOnly = false;
+            			}
             		}
             	}
             }

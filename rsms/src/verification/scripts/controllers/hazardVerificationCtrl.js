@@ -1,6 +1,6 @@
 ﻿angular
     .module('VerificationApp')
-    .controller('HazardVerificationCtrl', function ($scope, $rootScope, applicationControllerFactory, modelInflatorFactory, $modal, $stateParams) {
+    .controller('HazardVerificationCtrl', function ($scope, $rootScope, applicationControllerFactory, modelInflatorFactory, $modal, $stateParams, convenienceMethods) {
         var ac = applicationControllerFactory;
         $scope.ac = ac;
         $scope.dataStoreManager = dataStoreManager;
@@ -45,19 +45,34 @@
 
         }
 
-        $scope.onSelectHazard = function (hazard) {
-            $scope.selectedHazard = hazard;
-            var roomId = $scope.PI.Buildings[$scope.buildingIdx].Rooms[$scope.roomIdx].Key_id;
+        $scope.openModal = function (parentHazard) {
+            var modalData = {};
+            modalData.HazardDto = hazardDto;
+            modalData.PI = $scope.PI;
+            $scope.pisPromise = ac.getPiHazards(hazardDto, room)
+                .then(function (pHRS) {
+                    modalData.pHRS = pHRS;
+                    ac.setModalData(modalData);
+                    var modalInstance = $modal.open({
+                        templateUrl: 'modals/hazard-modal.html',
+                        controller: 'HazardVerificationAddModalCtrl'
+                    });
+                })
 
-            for (var x = 0; x < hazard.InspectionRooms.length; x++) {
-                if (roomId === hazard.InspectionRooms[x].Room_id) {
-                    $scope.roomDto = hazard.InspectionRooms[x];
-                    continue;
-                }
-            }
+        }
+
+        $scope.onSelectHazard = function (hazard) {
+            hazard.Room_id = $scope.PI.Buildings[$scope.buildingIdx].Rooms[$scope.roomIdx].Key_id;
+            hazard.RoomIds = [hazard.Room_id];
+            $scope.selectedHazard = hazard;
+            setHazardChangeDTO($scope.selectedHazard, true);
+
         }
 
         $scope.addNewHazard = function (name) {
+
+            console.log("SELECTED IS", name, event)
+
             var newChange = new PendingHazardDtoChange();
 
             newChange.Class = "PendingHazardDtoChange";
@@ -67,25 +82,21 @@
             newChange.Parent_class = "PrincipalInvestigatorHazardRoomRelation";
             newChange.Verification_id = $scope.verification.Key_id;
             newChange.New_status = null;
-
-            var roomDto = {
-                    Class: "PIHazardRoomDto",
-                    Principal_investigator_id: $scope.PI.Key_id,
-                    Room_id: $scope.PI.Buildings[$scope.buildingIdx].Rooms[$scope.roomIdx].Key_id,
-                    ContainsHazard: true,
-                    PendingHazardDtoChangeCopy: newChange
-            }
-
+            
 
             var newHazard = new HazardDto();
             newHazard.Class = "HazardDto";
             newHazard.Principal_investigator_id = $scope.PI.Key_id;
             newHazard.Hazard_name = name;
-            newHazard.InspectionRooms = [roomDto];
             newHazard.IsPresent = true;
             newHazard.Name = name;
-            newHazard.RoomIds = [roomDto.Room_id];
-            
+
+            //make a copy of some inspection rooms
+            newHazard.InspectionRooms = dataStore.HazardDto[0].InspectionRooms.map(function (r) {
+                return Object.assign({}, r, {ContainsHazard:false, MultiplePis:false})
+            })
+
+            setHazardChangeDTO(newHazard, true);
             return newHazard;
         }
 
@@ -96,8 +107,11 @@
 
         $scope.dsm = dataStoreManager;
 
-        var setHazardChangeDTO = function (hazard) {
-            var roomLen = hazard.InspectionRooms.length;           
+       
+
+        var setHazardChangeDTO = $scope.setHazardChangeDTO = function (hazard, log) {
+            var roomLen = hazard.InspectionRooms.length;  
+            if (log) console.log(hazard);
             for (var x = 0; x < roomLen; x++) {
                 var room = hazard.InspectionRooms[x];
                 //WE DON'T NEED TO CREATE A PendingHazardDtoChange IF THERE IS ALREADY ONE IN THE DATASTORE
@@ -110,7 +124,8 @@
                     room.PendingHazardDtoChange.Principal_investigator_id = $scope.PI.Key_id;
                     room.PendingHazardDtoChange.Parent_class = "PrincipalInvestigatorHazardRoomRelation";
                     room.PendingHazardDtoChange.Class = "PendingHazardDtoChange";
-
+                    room.PendingHazardDtoChange.Parent_id = $scope.hazardCategories[$scope.categoryIdx];
+                    room.PendingHazardDtoChange.Hazard_name = hazard.Hazard_name;
                     //get the proper status
                     room.PendingHazardDtoChange.New_status = getStatus(room);
                 }
@@ -121,8 +136,9 @@
         }
 
         function getStatus(room) {
-            if(room.ContainsHazard){
-                if (room.Status == Constants.HAZARD_PI_ROOM.STATUS.IN_USE.KEY) {
+            //console.log("KEYS",Object.keys(Constants.HAZARD_PI_ROOM.STATUS))
+            if(room.ContainsHazard === true){
+                if (room.Status == Constants.ROOM_HAZARD_STATUS.IN_USE.KEY) {
                     return Constants.ROOM_HAZARD_STATUS.IN_USE.KEY;
                 } else {
                     return Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY;
@@ -138,6 +154,7 @@
                 for (var x = 0; x < changes.length; x++) {
                     var change = changes[x];
                     if (change.Room_id == roomId && change.Hazard_id == hazardId) {
+                        console.log(change);
                         return change;
                     }
                 }
@@ -158,32 +175,43 @@
         function getPI(id) {
             return ac.getPI(id)
                      .then(
-                         function () {
+                function () {
                              $scope.PI = dataStoreManager.getById("PrincipalInvestigator", id);
+                             console.log($scope.PI);
                              return $scope.verification.Principal_investigator_id;
                          }
                      )
         }
+        
 
-        function getAllHazards() {
+        function recurseToLeaves(hazard, leaves) {
+            var leaves = leaves ? leaves : [];
+            hazard.ActiveSubHazards.forEach(function (h) {
+                if (!h.ActiveSubHazards) {
+                    leaves.push(h);
+                } else {
+                    h.ActiveSubHazards.forEach(function (sh) {
+                        recurseToLeaves(sh, leaves);
+                    });
+                }
+            })
+            return leaves;
+        }
+        
+
+        function getAllHazards(id) {
             return ac.getAllHazards(id)
                      .then(
-                         function (hazards) {
+                        function () {
+                            var hazards = $scope.allHazards = dataStore.HazardDto;
                              // get leaf parents
                              var hazard, leafParentHazards = [];
                              var len = hazards.length;
                              for (var n = 0; n < len; n++) {
                                  hazard = hazards[n];
-                                 hazard.loadSubHazards();                                 
-                                
-                                 if (hazard.ActiveSubHazards && !hazard.ActiveSubHazards.length) {
-                                    setHazardChangeDTO(hazard);
-                                    if (leafParentHazards.indexOf(hazard.Parent_hazard_id) == -1) {
-                                        leafParentHazards.push(hazard.Parent_hazard_id);
-                                    }
-                                 }
+                                 hazard.loadSubHazards();
                              }
-                             //http://erasmus.graysail.com/rsms/src/verification/#/inventory
+
                              var categorizedHazards = {};
                              var categorizedLeafHazards = {};
                              categorizedHazards[Constants.MASTER_HAZARD_IDS.BIOLOGICAL] = [];
@@ -193,40 +221,41 @@
                              categorizedHazards[Constants.MASTER_HAZARD_IDS.RADIATION] = [];
                              categorizedLeafHazards[Constants.MASTER_HAZARD_IDS.RADIATION] = [];
 
-                             var idsMap = [];
-
-                             for (var x = 0; x < leafParentHazards.length; x++) {
-                                 recurseUpTree(leafParentHazards[x]);
-                             }
-                             
-                             function recurseUpTree(originalHazardId, hazardId) {
-                                 var hazard;
-                                 if (hazardId) {
-                                     hazard = dataStoreManager.getById("HazardDto", hazardId);
-                                 } else {
-                                     hazard = dataStoreManager.getById("HazardDto", originalHazardId);
-                                 }
-                                 
-                                 if (categorizedHazards.hasOwnProperty(hazard.Key_id) || categorizedHazards.hasOwnProperty(hazard.Parent_hazard_id)) {
-                                     if (idsMap.indexOf(hazard.Key_id) == -1 && categorizedHazards.hasOwnProperty(hazard.Parent_hazard_id)) {
-                                         var leafParent = dataStoreManager.getById("HazardDto", originalHazardId);
-                                         categorizedHazards[hazard.Parent_hazard_id].push(leafParent);
-                                         categorizedLeafHazards[hazard.Parent_hazard_id] = categorizedLeafHazards[hazard.Parent_hazard_id].concat(leafParent.ActiveSubHazards);
-                                         idsMap.push(hazard.Key_id);
-                                         return false;
-                                     }
-                                 } else {
-                                     var p = dataStoreManager.getById("HazardDto", hazard.Parent_hazard_id);
-                                     //why is there a hazard with the same key_id as its parent_id???
-                                     if (!p || hazard.Key_id == hazard.Parent_hazard_id) return false;                                 
-                                     return recurseUpTree(originalHazardId, p.Key_id);
+                             //get all hazards that are present, but don't have children that are parent
+                             $scope.presentHazards = hazards.filter((h) => {
+                                 setHazardChangeDTO(h);
+                                 if ((h.IsPresent || h.InspectionRooms.some( (r) => { return r.PendingHazardDtoChangeCopy && r.PendingHazardDtoChangeCopy.Key_id && r.PendingHazardDtoChangeCopy.New_status != Constants.ROOM_HAZARD_STATUS.NOT_USED }))
+                                     && ((!h.ActiveSubHazards || h.ActiveSubHazards.every((sh) => { return !sh.IsPresent })))
+                                 ) {
+                                     return true;
                                  }
                                  return false;
-                             }
+                             })
+                             var branches = [];
+                             $scope.presentHazards.forEach((h) => {
+                                 var idMap = [];
+
+                                 if ( categorizedHazards.hasOwnProperty(h.Parent_hazard_id) ) {
+                                     branches[h.Parent_hazard_id] = dataStoreManager.getById("HazardDto", h.Parent_hazard_id);
+                                 } else {
+                                     getBranches(h)
+                                 }
+
+                                 function getBranches(parent) {
+                                     if ( categorizedHazards.hasOwnProperty(parent.Parent_hazard_id) ) {
+                                         branches[parent.Hazard_id] = parent;
+                                     } else {
+                                        return (getBranches(dataStoreManager.getById("HazardDto", parent.Parent_hazard_id) ) )
+                                     }
+                                     return false;
+                                 }
+                             })  
+
+                             $scope.branches = branches;
                              
-                             $scope.allHazards = categorizedHazards;
-                             $scope.allLeafHazards = categorizedLeafHazards;
-                             setStepMap($scope.PI);
+                             $scope.categorizedHazards = categorizedHazards;
+                             $scope.currentStep = $scope.maxStep = $scope.categoryIdx = parseInt($scope.verification.Substep || 0);
+                             $scope.stepMap = setStepMap($scope.currentStep);
                          },
                          function () {
                              $scope.error = "Couldn't get the hazards";
@@ -235,145 +264,131 @@
                      );
         }
 
-        $scope.stepMap = [];
-        function setStepMap(pi) {
-            var buildings = pi.Buildings;
-            for (var i = 0;i < buildings.length; i++) {
-                var bldg = buildings[i];
-                var rooms = bldg.Rooms;
-                for (var n = 0; n < rooms.length; n++) {
-                    var room = rooms[n];                   
-                    for (var x = 0; x < $scope.hazardCategories.length; x++) {
-                        var mapping = { BuildingIdx: i, RoomIdx: n, HazardIdx: x, isComplete:false }
-                        if (ac.getCachedVerification().Substep > $scope.stepMap.length) {
-                            mapping.isComplete = true;
-                        }
-                        $scope.stepMap.push(mapping);
-                    }
-                }
 
+        $scope.getPresentLeavesByParent = (parent) => {
+            var children = [];
+            recurseBranch(parent);
+            function recurseBranch(parent) {
+                parent.ActiveSubHazards.forEach((h) => {                    
+                    if (convenienceMethods.arrayContainsObject($scope.presentHazards, h)) {
+                        children.push(h);
+                    } else if ( !$scope.categorizedHazards.hasOwnProperty(parent.Hazard_id) ){
+                        return recurseBranch(h)
+                    }
+                    return false;
+                })
             }
-            if (ac.getCachedVerification().Substep > 0) {
-                var idx = ac.getCachedVerification().Substep;
-                $scope.navigate($scope.stepMap[idx]);
-            }
+            return children;
         }
 
-        $scope.stepIsAllowed = function (step, verification) {
-            if (!verification || !step) return false;
-            var maxStep = parseInt(verification.Substep);
-            for (var i = 0; i < $scope.stepMap.length; i++) {
-                //if (!mapping) return false;
-
-                var mapping = $scope.stepMap[i];
-                
-
-                if (mapping.HazardIdx == step.HazardIdx
-                    && mapping.BuildingIdx == step.BuildingIdx
-                    && mapping.RoomIdx == step.RoomIdx) {
-
-                    if (i != 0) var previousMapping = $scope.stepMap[i - 1];
-                    if (previousMapping && previousMapping.isComplete) {
-                        return i <= maxStep + 1
-                    } else {
-                        return i <= maxStep;
+        $scope.getLeaves = (parent) => {
+            var children = [];
+            recurseBranch(parent);
+            function recurseBranch(parent) {
+                parent.ActiveSubHazards.forEach((h) => {
+                    if (h.ActiveSubHazards && h.ActiveSubHazards.length) {
+                        return recurseBranch(h)
                     }
-                }
+                    children.push(h);
+                    return false;
+                })
             }
+            return children;
+        }
+
+
+        $scope.getSubHazards = function (id, all) {
+            var branches = all ? $scope.allHazards : $scope.branches;
+            return branches.filter((h) => {
+                return all && h.Parent_hazard_id == id || ( !all && (h.Parent_hazard_id == id || h.Hazard_id == id) );
+            })
+        }
+
+        function setStepMap(currentStep) {
+            return Constants.CHECKLIST_CATEGORIES_BY_MASTER_ID.map(function (c, i) { 
+                console.log(i, currentStep)
+                return Object.assign({}, c, {
+                    Step: i, isComplete:  i < currentStep
+                });
+            });
+        }
+
+        $scope.setSubStep = function (v, substep, checked) {
+            substep = checked ? substep : substep-1;
+            console.log(substep, checked);
+            $scope.saving = ac.saveVerification(v, v.Step, substep).then(function () {
+                $scope.verification.Substep = substep;
+                $scope.currentStep = substep;
+                $scope.categoryIdx = substep;
+                $scope.maxStep = substep;
+            });
+        }
+        
+        $scope.navigate = function (hazard) {
+            console.log("NAV RECEIVED",hazard);
+            $scope.categoryIdx = $scope.currentStep = hazard.Step;
+        }
+
+        $scope.getMatchingInspectionRoom = function (room, rooms) {
+            if (!room || !rooms) return;
+            for (var i = 0; i < rooms.length; i++) {
+                if (room.Key_id == rooms[i].Room_id) return i;
+            }
+            return -1;
+        }
+
+        $scope.getCorrespondingNewHazard = function (change) {
+            var hazard = change.Hazard_id ? change : change;
+            console.log(dataStore.HazardDto[change.Hazard_id]);
+        }
+
+        $scope.getUsed = function (hazard) {
+            setHazardChangeDTO(hazard);
+            var notAnswered = hazard.InspectionRooms.every((r) => {
+                return !r.PendingHazardDtoChangeCopy.Key_id;               
+            })
+            var used = hazard.InspectionRooms.some((r) => {
+                //console.log(hazard.Hazard_name, r.PendingHazardDtoChangeCopy.New_status, Constants.ROOM_HAZARD_STATUS.IN_USE.KEY, [Constants.ROOM_HAZARD_STATUS.IN_USE.KEY, Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY].indexOf(r.PendingHazardDtoChangeCopy.New_status) != -1)
+                return [Constants.ROOM_HAZARD_STATUS.IN_USE.KEY, Constants.ROOM_HAZARD_STATUS.STORED_ONLY.KEY].indexOf(r.PendingHazardDtoChangeCopy.New_status) != -1;
+            })
+            console.log(hazard.Hazard_name, notAnswered, used )
+            if (notAnswered) return null;
+            if (used) return true;
             return false;
         }
 
-        $scope.navigate = function (mapObject) {
-            if (!$scope.currentStep) $scope.currentStep = 0;
-            if ($scope.stepIsAllowed(mapObject, ac.getCachedVerification())) {
-                $scope.categoryIdx = mapObject.HazardIdx;
-                $scope.buildingIdx = mapObject.BuildingIdx;
-                $scope.roomIdx = mapObject.RoomIdx;
-
-                //get the index of the current step
-                for (var i = 0; i < $scope.stepMap.length; i++) {
-                    var mapping = $scope.stepMap[i];
-                    if (mapping.HazardIdx == mapObject.HazardIdx
-                        && mapping.BuildingIdx == mapObject.BuildingIdx
-                        && mapping.RoomIdx == mapObject.RoomIdx) {
-                        $scope.currentStep = i;
-                        break;
-                    }
-                }
-            } else {
-                alert('you gotta finish first')
-            }
-        }
-
-        $scope.setSubStep = function (verification, step) {
-            for (var i = 0; i < $scope.stepMap.length; i++) {
-                var mapping = $scope.stepMap[i];
-                if (mapping.HazardIdx == step.HazardIdx
-                    && mapping.BuildingIdx == step.BuildingIdx
-                    && mapping.RoomIdx == step.RoomIdx) {
-                    var verDto = {};
-                    angular.extend(verDto, verification);
-                    verDto.Substep = i;
-                    ac.saveVerification(verDto, verDto.Step).then(function () {
-                        verification.Substep = verDto.Substep;
-                    })
-
-                }
-            }
-        }
-
-        $scope.getNextRoomMapping = function (building) {
-            if (!$scope.currentStep) return false;
-            var step = $scope.stepMap[$scope.currentStep];
-            var roomIdx = step.RoomIdx + 1;
-            //does another room exist in the building?
-            if (building.Rooms.length > roomIdx) {
-                return $scope.nextRoomStep = $scope.stepMap[$scope.currentStep+1] || false;
-            } else {
-                var buildIdx = $scope.stepMap[$scope.currentStep].BuildingIdx;
-                for (var i = $scope.currentStep; i < $scope.stepMap.length; i++) {                    
-                    if (step.BuildingIdx != $scope.stepMap[i].BuildingIdx) {
-                        return $scope.nextRoomStep = $scope.stepMap[i];
-                    }
-                }
-            }
-
-            return false;
-        }
-
-
-        $scope.getPreviousRoomMapping = function (building) {
-            if (!$scope.currentStep) return false;
-            var step = $scope.stepMap[$scope.currentStep];
-            var roomIdx = step.RoomIdx + 1;
-            //does another room exist in the building?
-            console.log(roomIdx, building.Rooms.length)
-            if (building.Rooms.length > roomIdx) {
-                console.log($scope.stepIsAllowed($scope.stepMap[$scope.currentStep + 1]), $scope.stepMap[$scope.currentStep + 1])
-                return $scope.stepMap[$scope.currentStep + 1] || false;
-            } else {
-                var buildIdx = $scope.stepMap[$scope.currentStep].BuildingIdx;
-                var i = $scope.currentStep;
-                while ( i--) {
-                    if (step.BuildingIdx != $scope.stepMap[i].BuildingIdx) {
-                        console.log($scope.stepIsAllowed($scope.stepMap[i]), $scope.stepMap[i])
-                        return $scope.stepMap[i];
-                    }
-                }
-            }
-
-            return false;
-        }
-
-
-        $scope.isCurrentStep = function (step, current) {
-            console.log('hey')
-            return current && current.BuildingIdx == step.BuildingIdx && current.RoomIdx == step.RoomIdx && current.HazardIdx == step.HazardIdx;
+        $scope.conditionallyGetSelectedHazard = function (hazard) {
+            $scope.selectedHazard = false;
+            if (!$scope.getLeaves(hazard).length) $scope.selectedHazard = hazard;
         }
 
     })
 
     .controller('HazardVerificationModalCtrl', function ($scope, $q, $http, applicationControllerFactory, $modalInstance, convenienceMethods) {
+        $scope.constants = Constants;
+        var af = applicationControllerFactory;
+        $scope.af = af;
+        $scope.modalData = af.getModalData();
+        $scope.dataStoreManager = dataStoreManager;
+
+        $scope.processRooms = function (inspection, rooms) {
+            for (var j = 0; j < inspection.Rooms.length; j++) {
+                inspection.Rooms[j].checked = true;
+            }
+            for (var k = 0; k < rooms.length; k++) {
+                if (!convenienceMethods.arrayContainsObject(inspection.Rooms, rooms[k])) {
+                    inspection.Rooms.push(rooms[k]);
+                }
+            }
+        }
+
+        $scope.close = function () {
+            af.deleteModalData();
+            $modalInstance.dismiss();
+        }
+
+    })
+    .controller('HazardVerificationAddModalCtrl', function ($scope, $q, $http, applicationControllerFactory, $modalInstance, convenienceMethods) {
         $scope.constants = Constants;
         var af = applicationControllerFactory;
         $scope.af = af;

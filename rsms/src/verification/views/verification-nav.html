@@ -38,7 +38,7 @@
                 </label>
                 <div class="step-nav">
                     <button ng-if="selectedView.Step != 1" class="btn btn-success pull-left left" ng-click="navigate(selectedView.Step-1)"><i class=" icon-arrow-left"></i>Previous</button>
-                    <button ng-if="selectedView.Step != 5" class="btn btn-success pull-right right" ng-click="navigate(selectedView.Step)" ng-disabled="!selectedView.Done">Next<i class=" icon-arrow-right"></i></button>
+                    <button ng-if="selectedView.Step != 5" class="btn btn-success pull-right right" ng-click="navigate(selectedView.Step+1)" ng-disabled="!selectedView.Done">Next<i class=" icon-arrow-right"></i></button>
                 </div>
             </div>
         </div>

@@ -1366,6 +1366,22 @@ class GenericDAO {
 		return $pis;
 	}
 
+    function getPiHazardRoomsByPiAndHazard($piId, $hazardId){
+        global $db;
+        $query = "SELECT * from principal_investigator_hazard_room WHERE hazard_id = ? AND principal_investigator_id = ?";
+        $stmt = $db->prepare($query);
+        $stmt->bindValue(1, $hazardId);
+        $stmt->bindValue(2, $piId);
+        if($stmt->execute()){
+            $result = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
+        }else{
+            $error = $stmt->errorInfo();
+			$result = new QueryError($error);
+			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
+		}
+
+        return $result;
+    }
 
     function getPIHazardRoomsByRoomAndHazardIds($roomIds, $hazardId, $piIds){
         global $db;
@@ -1398,6 +1414,29 @@ class GenericDAO {
         $piHazRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
 
         return $piHazRooms;
+    }
+
+    function getPendingHazardChangeByVerificationAndHazard($hazardId,  $verificationId){
+        $l = Logger::getLogger(__FUNCTION__);
+        global $db;
+        $l->fatal("CALLED");
+        $l->fatal($hazardId);
+        $l->fatal($verificationId);
+
+        $query = "select * from pending_change where hazard_id = ? AND verification_id = ?";
+        $l->fatal($query);
+        $stmt = $db->prepare($query);
+        $stmt->bindValue(1, $hazardId);
+        $stmt->bindValue(2, $verificationId);
+        if($stmt->execute()){
+            $result = $stmt->fetchAll(PDO::FETCH_CLASS, "PendingHazardDtoChange");
+        }else{
+            $error = $stmt->errorInfo();
+			$result = new QueryError($error);
+			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
+		}
+        $l->fatal($result);
+        return $result;
     }
 
     function getCurrentInvetoriesByPiId($piId, $authId){

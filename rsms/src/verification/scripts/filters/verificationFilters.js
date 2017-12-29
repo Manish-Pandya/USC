@@ -84,13 +84,21 @@ angular.module('filtersApp',[])
         };
     })
     .filter('hazardRoomFilter', function () {
-        return function (hazards, roomId, flip) {
+        return function (hazards, flip) {
             if (!hazards) return;
-            if (!roomId) return hazards;
-            var matchedHazards = [];
-            var len = hazards.length;
             var parent = dataStoreManager.getById("HazardDto", hazards[0].Parent_hazard_id);
             parent.show = false;
+            var matchedHazards = hazards.filter(function (h) {
+                return h.InspectionRooms.some(function (r) {
+                    //console.log(r.Hazard_id, r.ContainsHazard || r.HasMultiplePis || (typeof r.PendingHazardDtoChange != "undefined" && r.PendingHazardDtoChange.Key_id));
+                    return r.ContainsHazard || r.HasMultiplePis || (typeof r.PendingHazardDtoChange != "undefined" && r.PendingHazardDtoChange.Key_id)
+                })
+            });
+
+            if (matchedHazards.length) parent.show = true;
+            return matchedHazards;
+
+
             for (var i = 0; i < len; i++){
                 var hazard = hazards[i];
                 hazard.matchedForOtherPi = false;
@@ -138,7 +146,28 @@ angular.module('filtersApp',[])
                     }
                 }
             }
+
             return matchedHazards;
         }
     })
-    .filter('roomIdMatches', function () { return function (things) { return things; }})
+    .filter('roomIdMatches', function () { return function (things) { return things; } })
+    .filter('newHazards', function () {
+        return function (hazards, id) {
+            if (!hazards || !id) return;
+            return hazards.filter(function (h) {
+                return !h.Hazard_id && h.Parent_id == id;
+            })
+        }
+    })
+    .filter('notPresent', function () {
+        return function (list, exclusions) {
+            if (!list) return;
+            if (!exclusions) return list;
+            return list.filter(function (h) {
+                for (var i = 0; i < exclusions.length; i++) {
+                    if (exclusions[i].Hazard_id == h.Hazard_id) return false;
+                }
+                return true;
+            })
+        }
+    })

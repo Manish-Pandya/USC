@@ -126,7 +126,7 @@ angular
               {
                   Name: 'verification.step3',
                   Label: 'Verify Lab Locations',
-                  Message: 'Please verify the following personnel still work in your lab(s).',
+                  Message: 'Please verify the following locations...',
                   ConfirmationMessage: 'The above list of laboratory rooms accurately includes all locations where my laboratory conducts research experiments (including rooms where my lab members use shared equipment or rooms where my lab uses research animals).',
                   NavLabel: 'Locations',
                   Step: 3
@@ -150,10 +150,10 @@ angular
       ]
 
       $rootScope.navigate = function (int) {
+          if (!int) int = 0;
           if (int < 0) {
               int = 1;
           }
-          console.log(int);
           $rootScope.selectedView = $rootScope.states[int-1];
           $state.go($rootScope.states[int-1].Name);
       }

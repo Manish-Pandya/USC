@@ -54,9 +54,8 @@ angular
             return dataSwitchFactory.getAllObjects('Building', true, true);
         }
 
-        ac.saveVerification = function (verification, step) {
-            var copy = verification;
-            copy.Step = step;
+        ac.saveVerification = function (verification, step, substep) {
+            var copy = Object.assign({}, verification, { Substep: substep, Step:step });
             console.log(copy);
             return ac.save(copy)
                 .then(
@@ -178,8 +177,8 @@ angular
         }
 
         ac.savePendingHazardDtoChange = function (change, copy) {
-
-            if (!copy) {
+            console.log("before save", change, copy);
+             if (!copy) {
                 if (!change.updatedStatus) return false;
                 copy = angular.extend({}, change);
                 copy.New_status = change.updatedStatus;
@@ -187,7 +186,6 @@ angular
 
             ac.clearError();
             copy.Is_active = false;
-            
             var hazard = dataStoreManager.getById("HazardDto", copy.Hazard_id);
             if (hazard) {
                 //copy.Hazard_name = hazard.Hazard_name;
@@ -224,6 +222,36 @@ angular
                     }
                 )
 
+        }
+
+        ac.removeHazard = function (hazard, vid) {
+            console.log(hazard)
+            var pid = hazard.InspectionRooms[0].PendingHazardDtoChangeCopy.Parent_id;
+
+            var urlFragment = "removeHazardFromInventory&id=" + hazard.Hazard_id + "&vid=" + vid + "&pid=" + pid;
+            return ac.save(hazard, false, urlFragment)
+                .then(
+                    function (returnedChanges) {
+                        console.log(returnedChanges);
+                        returnedChanges = modelInflatorFactory.instantiateObjectFromJson(returnedChanges);
+                        hazard.InspectionRooms.forEach((r) => {
+                            returnedChanges.forEach((rc) => {
+                                if (rc.Room_id == r.Room_id) {
+                                    angular.extend(r, rc);
+                                }
+                            })
+                        })
+                    },
+                    function () {
+                        ac.setError('The change could not be saved');
+                        if (change.updatedStatus) {
+                            change.updatedStatus = change.New_status;
+                        }
+                        copy = null;
+                
+                    },
+                    ac.setError('The changed could not be verified.')
+                    )
         }
 
         ac.confirmChange = function (change, phone) {

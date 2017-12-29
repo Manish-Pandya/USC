@@ -2876,7 +2876,8 @@ span.orange {
   padding: 4px 0;
 }
 .hazardLi:not(.topChild){
-  padding-top: 10px;
+  /* padding-bottom: 0px !important; */
+  padding-top: 0;
 }
 
 /* line 737, ../sass/style.scss */
@@ -3094,12 +3095,17 @@ label.smaller {
 
 /* line 2012, ../sass/style.scss */
 .bold {
-  font-weight: bold;
+  font-weight: bold !important;
 }
 
 /* line 2015, ../sass/style.scss */
 .underline {
   text-decoration: underline;
+}
+.italic{
+  font-style:italic;
+  font-size:.9em;
+  color:#999;
 }
 
 /* line 2018, ../sass/style.scss */
@@ -3626,6 +3632,9 @@ div.fake-table.bordered .table-row > div, div.fake-table.bordered .table-header 
 }
 div.fake-table.bordered .table-row > div:first-child, div.fake-table.bordered .table-header > h3:first-child {
   border-left: none;
+}
+div.fake-table:not(.bordered) .table-row > div, div.fake-table:not(.bordered) .table-header > h3 {
+  border:none;
 }
 .well >h1 > i {
   margin-right: 5px;
@@ -4271,4 +4280,7 @@ table.quickdate-calendar td:hover {
     content: '';
     display: block;
     clear: both;
+}
+.clear-float{
+  clear:both;
 }

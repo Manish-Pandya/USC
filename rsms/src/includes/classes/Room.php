@@ -18,6 +18,7 @@ class Room extends GenericCrud {
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"name"		=> "text",
 		"safety_contact_information" 	=> "text",
+		"animal_facility" 	=> "boolean",
 		"building_id"		=> "integer",
 		//"chem_hazards_present"			=> "boolean",
 		//"rad_hazards_present"			=> "boolean",
@@ -99,6 +100,7 @@ class Room extends GenericCrud {
 	private $toxic_gas_present;
 	private $corrosive_gas_present;
 	private $hf_present;
+    private $animal_facility;
 
 	/** Array of solid waste containers present in this room */
 	private $solidsContainers;
@@ -137,7 +139,7 @@ class Room extends GenericCrud {
 	public function setPurpose($purpose){ $this->purpose = $purpose; }
 
 	public function getChem_hazards_present() {
-        $this->getHazardTypesArePresent();        
+        $this->getHazardTypesArePresent();
         return $this->chem_hazards_present;
     }
 	public function setChem_hazards_present($chem_hazards_present){ $this->chem_hazards_present = (boolean) $chem_hazards_present; }
@@ -433,6 +435,25 @@ class Room extends GenericCrud {
             }
 		}
     }
+
+    public function getAnimal_facility(){
+        global $db;
+
+        $queryString = "select count(*)
+                        from room a
+                        where a.key_id in(select room_id from principal_investigator_room
+	                        where principal_investigator_id in (select principal_investigator_id from principal_investigator_department where department_id = 2)
+                        )
+                        AND a.key_id = $this->key_id";
+        $stmt = $db->prepare($queryString);
+        $stmt->execute();
+        $num_rows = $stmt->fetchAll();
+        //$l = Logger::getLogger(__FUNCTION__);
+        //$l->fatal($this->key_id);
+        //$l->fatal($num_rows);
+        return (bool) $this->animal_facility = $num_rows[0][0] > 0;
+    }
+    public function setAnimal_facility($af){$this->animal_facility = $af;}
 
 
 }

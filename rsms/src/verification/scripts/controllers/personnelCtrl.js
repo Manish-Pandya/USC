@@ -37,8 +37,9 @@ angular
         function getAllUsers(){
            return ac.getAllUsers()
                     .then(
-                        function( users ){
-                            $scope.allUsers = users;
+               function (users) {
+                           $scope.allUsers = dataStore.User;
+                           console.log($scope.allUsers, dataStore.User);
                         },
                         function(){
                             $scope.error = "Couldn't get the users";

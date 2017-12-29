@@ -192,6 +192,58 @@ class Verification_ActionManager extends HazardInventoryActionManager {
     		return $decodedObject;
     	}
     }
+    /**
+    * Summary of removeHazardFromInventory
+    * @param int $id
+    * @param int $verificationId
+    * @param int $parentId
+    */
+    public function removeHazardFromInventory($id = null, $verificationId = null, $parentId = null){
+        $l = Logger::getLogger(__FUNCTION__);
+
+        if($id == null)$id = $this->getValueFromRequest("id", $id);
+        if($verificationId == null)$verificationId = $this->getValueFromRequest("vid", $verificationId);
+        if($parentId == null)$parentId = $this->getValueFromRequest("pid", $parentId);
+        $decodedObject = $this->convertInputJson();
+
+        //get all the relationships between the pi and hazard
+        /**
+         * @var $verification Verification
+         */
+        $verification = $this->getVerificationById($verificationId);
+        $piId = $verification->getPrincipal_investigator_id();
+
+        $dao = new GenericDAO($verification);
+        $instances = $dao->getPiHazardRoomsByPiAndHazard($piId, $id);
+        $l->fatal($instances);
+        $changes = array();
+        foreach($instances as $inst){
+            /**
+             *@var $inst PrincipalInvestigatorHazardRoomRelation
+             */
+            //do we already have a relevant pending change?
+
+            $change = new PendingHazardDtoChange();
+
+            $change->setAdding(false);
+            $change->setHazard_id($id);
+            $change->setRoom_id($inst->getRoom_id());
+            $change->setVerification_id($verificationId);
+            $change->setNew_status("NOT USED");
+            $change->setParent_class("PrincipalInvestigatorHazardRoomRelation");
+            $change->setParent_id($parentId);
+            $changes[] = $this->savePendingHazardDtoChange($change);
+        }
+        
+        if(count($instances) == 0){
+            $existingChanges = $dao->getPendingHazardChangeByVerificationAndHazard($id, $verificationId);
+            foreach($existingChanges as $change){
+                $change->setNew_status("NOT USED");
+                $existingChanges[] = $this->savePendingHazardDtoChange($change);
+            }
+        }
+        return $changes;
+    }
 
     public function savePendingHazardDtoChange(PendingHazardDtoChange $pendingHazardChange = NULL){
     	$LOG = Logger::getLogger('Action:' . __function__);
@@ -210,8 +262,11 @@ class Verification_ActionManager extends HazardInventoryActionManager {
     	}
     	else{
     		$dao = $this->getDao(new PendingHazardDtoChange());
-    		$decodedObject = $dao->save($decodedObject);
-    		return $decodedObject;
+            $LOG->fatal($decodedObject);
+    		$dto = $dao->save($decodedObject);
+            $LOG->fatal($dto);
+
+    		return $dto;
     	}
     }
 
