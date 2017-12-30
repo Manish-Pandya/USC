@@ -17,6 +17,7 @@ angular
     'angular.filter',
     'ui.tinymce',
     'ui.router',
+    'angularjs-datetime-picker'
 ])
     .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
     $urlRouterProvider.otherwise("/my-protocols1");
