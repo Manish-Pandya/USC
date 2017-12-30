@@ -1,15 +1,44 @@
 ﻿<div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../busy-templates/full-page-busy.html'}"></div>
 <div class="modal-header blueBg" style="padding:0;">
-    <h2 style="padding:5px; color:white">Meeting Scheduler</h2>
+    <h2 style="padding:5px" ng-show="modalData.IBCMeeting.Key_id" color:white">Editing Meeting</h2>
+    <h2 style="padding:5px" ng-hide="modalData.IBCMeeting.Key_id" color:white">Create a New Meeting</h2>
 </div>
 
-<div class="modal-body wide-modal">
+<div class="modal-body">
     <div class="control-group">
-        Some stuff here.
+        <label class="control-label">Date</label>
+        <input datetime-picker date-format="yyyy-MM-dd HH:mm:ss" ng-model="modalData.IBCMeeting.Meeting_date" />
+    </div>
+    <div class="control-group">
+        <label class="control-label">Location</label>
+        <input type="text" style="width:500px" ng-init="modalData.IBCMeeting.Location = modalData.IBCMeeting.Location.length ? modalData.IBCMeeting.Location : 'Benson School, room 302B'" ng-model="modalData.IBCMeeting.Location" />
+    </div>
+    <div class="control-group">
+        <label class="control-label">Agenda</label>
+        <input type="text" style="width:500px" ng-model="modalData.IBCMeeting.Agenda" />
+    </div>
+    <div class="control-group">
+        <label class="control-label">Add Attendees</label>
+        <div class="controls">
+            <ui-select ng-model="user.selected" theme="selectize" ng-disabled="disabled" on-select="addRemoveAttendee($item, true)" class="span3" style="margin-left:0">
+                <ui-select-match placeholder="Select or search for a attendee">{{$select.selected.Name}}</ui-select-match>
+                <ui-select-choices repeat="user in users.data | orderBy:'Name' | propsFilter: {Name: $select.search}">
+                    <div ng-bind-html="user.Name | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <ul>
+            <li ng-repeat="attendee in modalData.IBCMeeting.Attendees" style="padding: 3px 0; font-size: 15px;">
+                <label class="checkbox inline">
+                    <input type="checkbox" ng-model="attendee.isChecked" ng-change="addRemoveAttendee(attendee, attendee.isChecked)" />
+                    <span class="metro-checkbox" once-text="attendee.Name"></span>
+                </label>
+            </li>
+        </ul>
     </div>
 </div>
 
 <div class="modal-footer">
-    <a class="btn btn-large btn-success left" ng-click="save(modalData.IBCEMeeting)"><i class="icon-checkmark"></i>Save</a>
+    <a class="btn btn-large btn-success left" ng-click="save(modalData.IBCMeeting)"><i class="icon-checkmark"></i>Save</a>
     <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
 </div>

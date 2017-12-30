@@ -9,10 +9,12 @@
         Attendees: User[] = [];
         static AttendeesMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "User", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=User&id={{UID}}", "Attendees", "Meeting_id");
 
-        Room: Room;
-        static RoomMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "Room", "getRoomById&id=", "Room", "Room_id");
+        /*Room: Room;
+        static RoomMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "Room", "getRoomById&id=", "Room", "Room_id");*/
 
         Meeting_date: string = "";
+
+        Location: string = "";
 
         Agenda: string = "";
 

@@ -77,6 +77,7 @@ if(!isset($_SESSION["USER"])){ ?>
 
     <link type="text/css" rel="stylesheet" href="../stylesheets/ibc-styles.css" />
     <link href="../css/contextMenu.min.css" rel="stylesheet" />
+    <link href="../css/angularjs-datetime-picker.css" rel="stylesheet" />
 
     <!-- included fonts
      <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
@@ -107,6 +108,7 @@ if(!isset($_SESSION["USER"])){ ?>
     <script type="text/javascript" src="../js/lib/angular-sanitize.min.js"></script>
     <script src="../js/roleBased.js"></script>
     <script src="../js/lib/contextMenu.min.js"></script>
+    <script src="../js/lib/angularjs-datetime-picker.min.js"></script>
 
 
     <!-- Required for the ORM framework -->

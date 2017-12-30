@@ -17,6 +17,7 @@
                 </th>
             </tr>
             <tr>
+                <th>Edit Meeting</th>
                 <th>Date</th>
                 <th>Location</th>
                 <th>Attendees</th>
@@ -26,6 +27,11 @@
 
         <tbody>
             <tr ng-repeat="meeting in meetings.data  | filter:{Is_active:!showInactive}">
+                <td style="width:8%;">
+                    <button class="edit btn btn-primary" ng-click="openModal(meeting)" alt="Edit" title="Edit"><i class="icon-pencil"></i></button>
+                    <button class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(meeting)" ng-if="meeting.Is_active"><i class="icon-remove"></i></button>
+                    <button class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(meeting)" ng-if="!meeting.Is_active"><i class="icon-checkmark"></i></button>
+                </td>
                 <td>{{meeting.Meeting_date | dateToISO}}</td>
                 <td>{{meeting.Room.Name}}</td>
                 <td><p ng-repeat="user in meeting.Attendees track by $index">{{user.Name}}</p> </td>

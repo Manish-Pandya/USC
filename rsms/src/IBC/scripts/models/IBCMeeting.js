@@ -15,7 +15,10 @@ var ibc;
         function IBCMeeting() {
             var _this = _super.call(this) || this;
             _this.Attendees = [];
+            /*Room: Room;
+            static RoomMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "Room", "getRoomById&id=", "Room", "Room_id");*/
             _this.Meeting_date = "";
+            _this.Location = "";
             _this.Agenda = "";
             return _this;
         }
@@ -29,7 +32,6 @@ var ibc;
         IBCMeeting.urlMapping = new UrlMapping("getAllIBCMeetings", "getIBCMeetingById&id=", "saveIBCMeeting");
         IBCMeeting.IBCProtocolRevisionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCProtocolRevision", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCProtocolRevision&id={{UID}}", "IBCProtocolRevisions", "Meeting_id");
         IBCMeeting.AttendeesMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "User", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=User&id={{UID}}", "Attendees", "Meeting_id");
-        IBCMeeting.RoomMap = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "Room", "getRoomById&id=", "Room", "Room_id");
         return IBCMeeting;
     }(FluxCompositerBase));
     ibc.IBCMeeting = IBCMeeting;
