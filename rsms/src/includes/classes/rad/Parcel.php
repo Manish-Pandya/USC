@@ -57,7 +57,10 @@ class Parcel extends RadCrud {
 
 	//access information
 
-	/** Reference to the principal investigator this parcel belongs to. */
+	/** Reference to the principal investigator this parcel belongs to.
+     * @var PrincipalInvestigator
+     * */
+
 	private $principal_investigator;
 	private $principal_investigator_id;
 
@@ -68,7 +71,9 @@ class Parcel extends RadCrud {
 	/** String containing the status of this parcel. */
 	private $status;
 
-	/** Reference to the isotope this parcel contains */
+	/** Reference to the isotope this parcel contains 
+     * @var Isotope
+     */
 	private $isotope;
 	private $isotope_id;
 
@@ -104,7 +109,7 @@ class Parcel extends RadCrud {
     private $comments;
 
     private $hasTests;
-
+    private $is_mass;
 
     /** Is this parcel a transfer? **/
     private $is_transfer;
@@ -340,6 +345,14 @@ class Parcel extends RadCrud {
 
     public function getTransfer_amount_id(){return $this->transfer_amount_id;}
     public function setTransfer_amount_id($id){$this->transfer_amount_id = $id;}
+
+    public function getIs_mass(){
+        if($this->is_mass === null){
+            $isotope = $this->getIsotope();
+            $this->is_mass = $isotope->getIs_mass();
+        }
+        return $this->is_mass;
+    }
 
 }
 ?>

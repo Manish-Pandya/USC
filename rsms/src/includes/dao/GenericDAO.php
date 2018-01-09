@@ -1337,7 +1337,6 @@ class GenericDAO {
 
         $LOG->fatal($inQuery);
 		if($hazardId != null){
-			$queryString .= " AND hazard_id = $hazardId";
 			//get this pi's rooms
 			$queryString = 'SELECT *
 							FROM principal_investigator

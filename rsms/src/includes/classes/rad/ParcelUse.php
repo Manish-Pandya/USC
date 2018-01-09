@@ -44,13 +44,15 @@ class ParcelUse extends RadCrud {
 	/** Float containing the amount of isotope used */
 	private $quantity;
 
-	/** Reference to the Isotope entity this usage concerns */
+	/** Reference to the Isotope entity this usage concerns
+     * @var Parcel
+     * */
 	private $parcel;
 
 	/** Integer containing the id of the parcel this usage concerns */
 	private $parcel_id;
     private $destinationParcel;
-    
+
 	/** Array of waste types and amounts from this use */
 	private $parcelUseAmounts;
 
@@ -65,13 +67,18 @@ class ParcelUse extends RadCrud {
 
     /** Amount of parent parcel available for use **/
     private $parcelRemainder;
-
+    private $piName;
+    private $rsNumber;
+    private $isotopeName;
 
     /** If this ParcelUse is a transfer, when did the transfer take place **/
     private $date_transferred;
     /** Is this a transfer? **/
     private $is_transfer;
     private $destination_parcel_id;
+
+    private $is_mass;
+
 
 	public function __construct() {
 
@@ -165,6 +172,52 @@ class ParcelUse extends RadCrud {
     }
     public function setDestinationParcel($parcel){
 		$this->destinationParcel = $parcel;
+    }
+
+    public function getPiName(){
+        if($this->getPiName == null){
+            $p = $this->getParcel();
+            if($p->getPrincipal_investigator() != null)
+                $this->piName = $p->getPrincipal_investigator()->getName();
+        }
+		return $this->piName;
+	}
+	public function setPiName($piName){
+		$this->piName = $piName;
+	}
+
+	public function getIsotopeName(){
+        if($this->isotopeName == null){
+            $p = $this->getParcel();
+            if($p->getIsotope() != null)
+                $this->isotopeName = $p->getIsotope()->getName();
+        }
+		return $this->isotopeName;
+	}
+	public function setIsotopeName($isotopeName){
+		$this->isotopeName = $isotopeName;
+	}
+
+    public function getRsNumber(){
+        if($this->rsNumber == null){
+            $p = $this->getParcel();
+            if($p->getRs_number() != null)
+                $this->rsNumber = $p->getRs_number();
+        }
+		return $this->rsNumber;
+	}
+	public function setRsNumber($isotopeName){
+		$this->rsNumber = $isotopeName;
+	}
+
+    public function getIs_mass(){
+        if($this->is_mass === null){
+            $p = $this->getParcel();
+            if($p->getIsotope() != null)
+                $this->is_mass = $p->getIsotope()->getIs_mass();
+
+        }
+        return $this->is_mass;
     }
 }
 ?>

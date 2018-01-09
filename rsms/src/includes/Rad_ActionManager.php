@@ -342,7 +342,7 @@ class Rad_ActionManager extends ActionManager {
 
     public function getAllRadPis(){
         $dao = $this->getDao(new PrincipalInvestigator());
-        $pis = $dao->getAll();
+        $pis = $dao->getAll(null, false, true);
 
         $entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
@@ -439,7 +439,7 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("eager","getOtherWasteContainers");
 
         $authMaps = array();
-        $authMaps[] = new EntityMap("lazy", "getRooms");
+        $authMaps[] = new EntityMap("eager", "getRooms");
         $authMaps[] = new EntityMap("eager", "getAuthorizations");
         $authMaps[] = new EntityMap("lazy", "getDepartments");
 
@@ -449,7 +449,7 @@ class Rad_ActionManager extends ActionManager {
 		$parcelMaps[] = new EntityMap("lazy", "getIsotope");
 		$parcelMaps[] = new EntityMap("eager", "getParcelUses");
 		$parcelMaps[] = new EntityMap("eager", "getRemainder");
-		$parcelMaps[] = new EntityMap("lazy", "getWipe_test");
+		$parcelMaps[] = new EntityMap("eager", "getWipe_test");
 
         $useMaps = array();
         $useMaps[] = new EntityMap("lazy", "getParcel");
@@ -505,7 +505,6 @@ class Rad_ActionManager extends ActionManager {
 
         $pi->setEntityMaps($entityMaps);
         $LOG = Logger::getLogger(__CLASS__);
-        $LOG->fatal($pi);
         return $pi;
 
     }
@@ -983,7 +982,7 @@ class Rad_ActionManager extends ActionManager {
         }elseif($decodedObject->getOther_waste_container_id() != null){
             $container = $this->getOtherWasteContainerBiId($decodedObject->getOther_waste_container_id());
         }elseif($decodedObject->getScint_vial_collection_id() != null){
-            $container = $this->getScintVial($decodedObject->getScint_vial_collection_id());
+            $container = $this->getScintVialCollectionById($decodedObject->getScint_vial_collection_id());
         }
         $amount = $dao->save();
 
@@ -2445,7 +2444,6 @@ class Rad_ActionManager extends ActionManager {
     	}
     	else {
             $rooms = $decodedObject->getRooms();
-
     		//remove all the departments and rooms from the Authorization, if it is an old one
     		if($decodedObject->getKey_id() != NULL){
     			$origDao = $this->getDao(new PIAuthorization());
@@ -2656,30 +2654,30 @@ class Rad_ActionManager extends ActionManager {
 
     public function getRadModels(){
     	$dto = new RadModelDto();
-    	$dto->setUser($this->getAllRadUsers());
-    	$dto->setAuthorization($this->getAllAuthorizations());
-    	$dto->setPIAuthorization($this->getAllPIAuthorizations());
-    	$dto->setCarboy($this->getAllCarboys());
-    	$dto->setCarboyUseCycle($this->getAllCarboyUseCycles());
-        $dto->setCarboyReadingAmount($this->getAllCarboyReadingAmounts());
-    	$dto->setDrum($this->getAllDrums());
-    	$dto->setDepartment($this->getAllDepartments());
+    	//$dto->setUser($this->getAllRadUsers());
+    	//$dto->setAuthorization($this->getAllAuthorizations());
+    	//$dto->setPIAuthorization($this->getAllPIAuthorizations());
+    	//$dto->setCarboy($this->getAllCarboys());
+    	//$dto->setCarboyUseCycle($this->getAllCarboyUseCycles());
+        //$dto->setCarboyReadingAmount($this->getAllCarboyReadingAmounts());
+    	//$dto->setDrum($this->getAllDrums());
+    	//$dto->setDepartment($this->getAllDepartments());
     	//$dto->setInspectionWipe($this->getAllInspectionWipes());
     	//$dto->setInspectionWipeTest($this->getAllInspectionWipeTests());
     	$dto->setIsotope($this->getAllIsotopes());
-    	$dto->setParcelUseAmount($this->getAllParcelUseAmounts());
-    	$dto->setParcelUse($this->getAllParcelUses());
-    	$dto->setParcelWipe($this->getAllParcelWipes());
-    	$dto->setParcelWipeTest($this->getAllParcelWipeTests());
-    	$dto->setParcel($this->getAllParcels());
-    	$dto->setPickup($this->getAllPickups());
-    	$dto->setPurchaseOrder($this->getAllPurchaseOrders());
+    	//$dto->setParcelUseAmount($this->getAllParcelUseAmounts());
+    	//$dto->setParcelUse($this->getAllParcelUses());
+    	//$dto->setParcelWipe($this->getAllParcelWipes());
+    	//$dto->setParcelWipeTest($this->getAllParcelWipeTests());
+    	//$dto->setParcel($this->getAllParcels());
+    	//$dto->setPickup($this->getAllPickups());
+    	//$dto->setPurchaseOrder($this->getAllPurchaseOrders());
     	//$dto->getQuarterlyIsotopeAmount($this->getAllQuarterlyInventories());
     	//$dto->setQuarterlInventory($this->getMostRecentInventory());
     	//$dto->setPIQuarterlyInventory($this->getAllPIQuarterlyInventories());
-    	$dto->setScintVialCollection($this->getAllScintVialCollections());
-        $dto->setMiscellaneousWaste($this->getAllMiscellaneousWaste());
-    	$dto->setWasteBag($this->getAllWasteBags());
+    //	$dto->setScintVialCollection($this->getAllScintVialCollections());
+      //  $dto->setMiscellaneousWaste($this->getAllMiscellaneousWaste());
+    	//$dto->setWasteBag($this->getAllWasteBags());
     	//$dto->setSolidsContainer($this->getAllSolidsContainers());
     	$dto->setWasteType($this->getAllWasteTypes());
     	$dto->setRoom($this->getAllRooms(true));
@@ -2877,6 +2875,23 @@ class Rad_ActionManager extends ActionManager {
         else {
             return new ActionError("No request parameter 'id' was provided", 201);
         }
+    }
+
+    public function getTotalInventories(){
+        $dao = new GenericDAO(new Isotope());
+        return $dao->getIsotopeTotalsReport();
+    }
+
+    public function getRadInventoryReport(){
+        $dao = new GenericDAO(new Isotope());
+        $reports = $dao->getIsotopeTotalsReport();
+        foreach($reports as &$report){
+            /**
+             * @var RadReportDTO $report
+             */
+            $report->calculate();
+        }
+        return $reports;
     }
 }
 ?>

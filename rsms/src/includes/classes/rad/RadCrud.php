@@ -42,10 +42,12 @@ abstract class RadCrud extends GenericCrud {
 
 			$isotopeName = $isotope->getName();
 			$isotopeId   = $isotope->getKey_id();
+			$isMass   = $isotope->getIs_mass();
 			if(!array_key_exists($isotopeName, $isotopeAmounts)){
 				$isotopeAmount = new IsotopeAmountDTO();
 				$isotopeAmount->setIsotope_name($isotopeName);
-				$isotopeAmount->setIsotope_id($isotopeId);
+				$isotopeAmount->setIsotope_name($isotopeName);
+				$isotopeAmount->setIs_mass($isMass);
 				$isotopeAmount->setCurie_level($amount->getCurie_level());
 				$isotopeAmounts[$isotopeName] = $isotopeAmount;
 			}else{

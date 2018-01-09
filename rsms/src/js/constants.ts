@@ -299,7 +299,7 @@ class Constants  {
         { label: "Toxic Gas", value: "Toxic_gas_present" },
         { label: "HF", value: "Hf_present"},
         { label: "Lasers", value: "Lasers_present" },
-        { label: "Xrays", value: "Xrays_present" }
+        { label: "Xrays", value: "Xrays_present" },
         { label: "DLAR", value: "Animal_facility" }
     ]
 

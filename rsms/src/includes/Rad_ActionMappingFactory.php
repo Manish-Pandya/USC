@@ -151,8 +151,10 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
                 "getAllOtherWasteContainers"	=> new ActionMapping("getAllOtherWasteContainers","","", $this::$ROLE_GROUPS["RSO"]),
                 "getOtherWasteContainerBiId"	=> new ActionMapping("getOtherWasteContainerBiId","","", $this::$ROLE_GROUPS["RSO"]),
                 "saveOtherWasteContainer"	    => new ActionMapping("saveOtherWasteContainer","","", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+                "getTotalInventories"	        => new ActionMapping("getTotalInventories","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 
 
+				"getRadInventoryReport"	=> new ActionMapping("getRadInventoryReport","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"getRadModels"	=> new ActionMapping("getRadModels","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"])
 		);
 	}
