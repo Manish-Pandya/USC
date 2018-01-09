@@ -10,6 +10,11 @@
             </select>
         </div>
 
+        <div class="form-group" ng-if="modalData.selectedType.Class == 'ScintVialCollection'">
+            <label for="notes">Number of Trays:</label>
+            <input rows="4" ng-model="modalData.Container.Trays">
+        </div>
+
         <div class="form-group" ng-if="modalData.selectedType.Other_waste_type_id">
             <label for="notes">Description (required):</label>
             <textarea rows="4" ng-model="modalData.Container.Description" style="width:80%"></textarea>
@@ -17,6 +22,10 @@
    </div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-large btn-success left" ng-disabled="!modalData.selectedType || (modalData.selectedType.Other_waste_type_id && !modalData.Container.Description)" ng-click="newContainer( modalData.Container )"><i class="icon-checkmark"></i>Confirm</button>
+    <button class="btn btn-large btn-success left" 
+            ng-disabled="!modalData.selectedType 
+            || (modalData.selectedType.Other_waste_type_id && !modalData.Container.Description) 
+            || (modalData.selectedType.Class == 'ScintVialCollection' && !getValidTrays(modalData.Container.Trays))" ng-click="newContainer( modalData.Container )">
+    <i class="icon-checkmark"></i>Confirm</button>
     <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Cancel</a>
 </div>

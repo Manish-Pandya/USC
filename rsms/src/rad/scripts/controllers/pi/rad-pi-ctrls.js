@@ -1036,6 +1036,9 @@ angular.module('00RsmsAngularOrmApp')
                 case ("ScintVialCollection"):
                     container.ClassLabel = "Scint Vial Containers";
                     break;
+                case ("OtherWasteContainer"):
+                    container.ClassLabel = "Other Waste";
+                    break;
                 default:
                     container.ClassLabel = "";
             }
@@ -1086,6 +1089,9 @@ angular.module('00RsmsAngularOrmApp')
             af.deleteModalData();
             return r;
         });
+    };
+    $scope.getValidTrays = function (num) {
+        return num && num.length && !isNaN(num);
     };
     $scope.newContainer = function (container) {
         console.log(container);

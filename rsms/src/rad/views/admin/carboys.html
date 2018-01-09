@@ -40,7 +40,7 @@
                             </div>
                             <div class="table-row" ng-repeat="amt in carboy.Current_carboy_use_cycle.Contents track by $index">
                                 <div>{{amt.Isotope_name}}</div>
-                                <div>{{amt.Curie_level}}mCi</div>
+                                <div>{{amt.Curie_level | unit:amt}}</div>
                             </div>
                         </div>
                         <p ng-if="!carboy.Current_carboy_use_cycle.Contents.length">

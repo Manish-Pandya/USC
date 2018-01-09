@@ -1,4 +1,4 @@
-<form name="authForm" ng-submit="savePIAuthorization( modalData.PIAuthorizationCopy, modalData.PIAuthorization )">
+<form name="authForm" ng-submit="savePIAuthorization( modalData.PIAuthorizationCopy, modalData.PIAuthorization, false, modalData.resultRooms )">
     <div class="modal-header" style="padding:0;">
         <h2 style="padding:5px; background:rgb(151, 49, 58); color:white" class="blueBg">Create or edit Authorization</h2>
     </div>
@@ -130,7 +130,7 @@
                     <div class="control-group">
                         <label class="control-label" for="inputEmail">Maximum Quantity</label>
                         <div class="controls input-append">
-                            <input data-ng-model="auth.Max_quantity" placeholder="Maximum Quantity" /><span class="add-on">mCi</span>
+                            <input data-ng-model="auth.Max_quantity" placeholder="Maximum Quantity" /><span class="add-on">{{"" | unit:auth.Isotope}}</span>
                         </div>
                     </div>
                 </div>

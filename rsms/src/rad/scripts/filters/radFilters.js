@@ -346,4 +346,16 @@ angular.module('00RsmsAngularOrmApp')
                 return (c.Close_date == null) == reverse;
             }) : []
         }
+    }).filter('unit', function () {
+        return function (str, obj) {
+            if (str == null) return "";
+            return obj.Is_mass ?  str + "g" : str + "mCi";
+        }
+    }).filter('shippedOrNot', function () {
+        return function (drums, showShipped) {
+            if (!drums) return;
+            return drums.filter(function (d) {
+                return showShipped ? d.Pickup_date != null : d.Pickup_date == null;
+            })
+        }
     })

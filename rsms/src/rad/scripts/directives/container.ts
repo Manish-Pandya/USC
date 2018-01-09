@@ -21,7 +21,7 @@
                                 <ul>
                                     <li class="labels">
                                         <div class="container-label" ng-init="c.ViewLabel = c.ViewLabel ? c.ViewLabel : c.Name || c.Label || c.Carboy_number">
-                                            {{c.ViewLabel}}
+                                            {{c.ViewLabel}} <span ng-if="c.Trays">({{c.Trays}} Tray<span ng-if="c.Trays != 1">s</span>)</span>
                                             <p ng-if="c.Description">{{c.Description}}</p>
                                         </div>
                                         <div>
@@ -119,7 +119,7 @@
                 }
 
                 $scope.isAdmin = () => {
-                    return roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]]);
+                    return roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN], $rootScope.R[Constants.ROLE.NAME.ADMIN]]);
                 }
 
                 $scope.af = actionFunctionsFactory;

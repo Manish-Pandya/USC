@@ -94,6 +94,8 @@ include_once 'RadCrud.php';
     private $other_waste_container_id;
     private $otherWasteTypeName;
 
+    private $is_mass;
+
     public function __construct() {
 
     	// Define which subentities to load
@@ -276,5 +278,28 @@ include_once 'RadCrud.php';
 	public function setOther_waste_container_id($other_waste_container_id){
 		$this->other_waste_container_id = $other_waste_container_id;
 	}
+
+    public function getIs_mass(){
+        if($this->is_mass === null){
+            if($this->isotope_id == null){
+                $useDao = new GenericDAO(new ParcelUse());
+                $use = $useDao->getById($this->getParcel_use_id());
+                $parcel = $use->getParcel();
+                $isotope = $parcel->getIsotope();
+                if($isotope != null){
+                    $this->is_mass = $isotope->getIs_mass();
+                }
+            }
+            //this ParcelUseAmount belongs to MiscellaneousWaste as opposed to a parcel
+            else{
+                $isotopeDao = new GenericDAO(new Isotope());
+                $isotope = $isotopeDao->getById($this->isotope_id);
+                if($isotope != null){
+                    $this->is_mass = $isotope->getIs_mass();
+                }
+            }
+        }
+        return $this->is_mass;
+    }
 }
 ?>

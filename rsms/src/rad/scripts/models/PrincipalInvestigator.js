@@ -10,7 +10,7 @@ var PrincipalInvestigator = function () {
 
 PrincipalInvestigator.prototype = {
     eagerAccessors: [
-        {method:"loadUser", boolean:"User_id"},
+        //{method:"loadUser", boolean:"User_id"},
         {method:"loadCarboys", boolean:true},
         {method:"loadWasteBags", boolean:true},
         { method: "loadRooms", boolean: true },
@@ -170,7 +170,8 @@ PrincipalInvestigator.prototype = {
         return dataLoader.loadOneToManyRelationship(this, 'WipeTests', this.WipeTestsRelationship);
     },
 
-    loadUser:  function() {
+    loadUser: function () {
+        return;
         if (!this.User && this.User_id) {
             dataLoader.loadChildObject(this, 'User', 'User', this.User_id);
         }
@@ -187,7 +188,6 @@ PrincipalInvestigator.prototype = {
     loadCurrentScintVialCollections: function () {
         // this.CurrentScintVialCollections = [];
         console.log(this.CurrentScintVialCollections);
-        alert("called");
         dataLoader.loadOneToManyRelationship( this, 'CurrentScintVialCollections', this.CurrentScintVialCollectionRelationship);
     },
     getName: function () {

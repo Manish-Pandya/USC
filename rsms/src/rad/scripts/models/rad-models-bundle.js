@@ -2,6 +2,9 @@
 /* Auto-generated stub file for the Authorization class. */
 
 //constructor
+var RadModelDTO = function () { };
+extend(RadModelDTO, GenericModel);
+
 var Authorization = function () { };
 Authorization.prototype = {
 
@@ -844,7 +847,7 @@ var PrincipalInvestigator = function () {
 
 PrincipalInvestigator.prototype = {
     eagerAccessors: [
-        { method: "loadUser", boolean: "User_id" },
+        //{ method: "loadUser", boolean: "User_id" },
         { method: "loadCarboys", boolean: true },
         { method: "loadWasteBags", boolean: true },
         { method: "loadRooms", boolean: true },

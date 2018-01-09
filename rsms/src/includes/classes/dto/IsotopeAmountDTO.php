@@ -4,7 +4,9 @@ class IsotopeAmountDTO {
 	private $isotope_name;
 	private $isotope_id;
 	private $curie_level;
-	
+	private $waste;
+    private $is_mass;
+
 	public function getIsotope_name() {
 		return $this->isotope_name;
 	}
@@ -27,6 +29,11 @@ class IsotopeAmountDTO {
 		if($this->curie_level == NULL)$this->curie_level = 0;
 		$this->curie_level = $this->curie_level + $moreCuries;
 	}
-	
+
+    public function getWaste(){return $this->waste;}
+    public function setWaste($w){$this->waste = $w;}
+
+    public function getIs_mass(){return (boolean) $this->is_mass;}
+    public function setIs_mass($is){ $this->is_mass = $is; }
 }
 ?>

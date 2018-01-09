@@ -87,7 +87,7 @@
 
                     <div>
                         <p ng-repeat="content in cycle.Contents">
-                            {{content.Curie_level}} mCi of {{content.Isotope_name}}
+                            {{content.Curie_level | unit:content}} of {{content.Isotope_name}}
                         </p>
                     </div>
 
@@ -203,7 +203,12 @@
 
     
     <div class="well two-thirds">
-        <h1 class="disposals"><i class="icon-database"></i>Drums <a class="btn btn-success left" ng-click="editDrum(drum)"><i class="icon-plus-2"></i>Create Drum</a></h1>
+        <h1 class="disposals">
+            <i class="icon-database"></i>Drums <a class="btn btn-success left" ng-click="editDrum(drum)"><i class="icon-plus-2"></i>Create Drum</a>
+            <button ng-click="showGoneDrums = !showGoneDrums" class="btn btn-primary">
+                <i class="icon-out-2"></i> Show <span ng-if="!showGoneDrums">Shipped</span><span ng-if="showGoneDrums">Present</span> Drums
+            </button>
+        </h1>
         <div class="card full">
             <div class="fake-table bordered">
                 <div class="table-header">
@@ -213,7 +218,7 @@
                     <h3>Wipe Test</h3>
                     <h3>Shipment Info</h3>
                 </div>
-                <div class="table-row" ng-repeat="drum in drums">
+                <div class="table-row" ng-repeat="drum in drums | shippedOrNot:showGoneDrums">
                     <div>
                         <button ng-click="editDrum(drum)" ng-disabled="drum.edit" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                     </div>
@@ -226,7 +231,7 @@
                     </div>
 
                     <div>
-                        <p ng-repeat="isotope in drum.Contents">{{isotope.Curie_level}}mCi of {{isotope.Isotope_name}}</p>
+                        <p ng-repeat="isotope in drum.Contents">{{isotope.Curie_level | unit:isotope}} of {{isotope.Isotope_name}}</p>
                     </div>
 
                     <div>

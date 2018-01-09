@@ -69,7 +69,7 @@
                         </div>
 
                         <div>
-                            {{auth.Isotope.Display_half_life}} {{auth.Isotope.Unit}}
+                            {{auth.Isotope.Display_half_life | unit:auth.Isotope}}
                         </div>
 
                         <div>
@@ -77,7 +77,7 @@
                         </div>
 
                         <div>
-                            {{auth.Max_quantity}} mCi
+                            {{auth.Max_quantity | unit:auth.Isotope}}
                         </div>
 
                         <div>
@@ -194,11 +194,11 @@
                     </div>
 
                     <div>
-                        {{parcel.Quantity}} mCi
+                        {{parcel.Quantity | unit:parcel}}
                     </div>
 
                     <div>
-                        {{parcel.Remainder}} mCi
+                        {{parcel.Remainder | unit:parcel}}
                     </div>
 
                     <div>

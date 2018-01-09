@@ -165,6 +165,11 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name: 'radmin.isotope-report',
+                        Label: 'Radiation Administration -- Total Inventory Report',
+                        Dashboard: true
+                    },
+                    {
                         Name: 'radmin.auth-report',
                         Label: 'Radiation Administration -- Auth Report',
                         Dashboard: true
@@ -329,6 +334,10 @@ angular
             af.getAllUsers = function()
             {
                 return dataSwitchFactory.getAllObjects('User');
+            }
+
+            af.getInventoryReport = function () {
+                return dataSwitchFactory.getAllObjects('RadReportDTO');
             }
 
             af.getUsersViewModel = function()
@@ -566,13 +575,7 @@ angular
 
             af.getAllPIs= function()
             {
-                return this.getAllUsers()
-                    .then(
-                        function(){
-                            return dataSwitchFactory.getAllObjects('PrincipalInvestigator');
-                        }
-                    )
-
+                return dataSwitchFactory.getAllObjects('PrincipalInvestigator');
             }
 
             af.getAllPIRoomRelations = function()
@@ -1020,10 +1023,12 @@ angular
             {
                     var segment = "getRadPIById&id="+pi.Key_id+"&rooms=true";
                     return genericAPIFactory.read(segment)
-                        .then( function( returnedPromise) {
+                        .then(function (returnedPromise) {
+                            console.log("DATA:",returnedPromise.data);
                             var tempPI = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data, null, true );
                             //pi.loadRooms();
                             tempPi.Pi_authorization.forEach(function (pia) {
+                                console.log(pia);
                                 store.store(pia);
                                 pia.Authorizations.forEach(function (a) {
                                     store.store(a);
@@ -1043,11 +1048,13 @@ angular
 
             af.getRadPIById = function(id)
             {
+            /*
                 if(dataStoreManager.getById("PrincipalInvestigator", id)){
                     var defer = $q.defer();
                     defer.resolve(dataStoreManager.getById("PrincipalInvestigator", id));
                     return defer.promise;
                 }
+                */
                 var segment = "getRadPIById&id="+id+"&rooms=true";
                 return genericAPIFactory.read(segment)
                     .then(function (returned) {
@@ -2627,24 +2634,12 @@ angular
                     )
             }
 
-            af.savePIAuthorization = function (copy, auth, pi) {
+            af.savePIAuthorization = function (copy, auth, pi, rooms) {
+              
+                copy = Object.assign({}, copy);
+                copy.Rooms = rooms.filter(r => r.isAuthorized);
+                copy.Departments = pi.Departments.filter(r => r.isAuthorized);               
                 console.log(copy);
-                copy.Rooms = copy.Rooms || [];
-                copy.Departments = [];
-                if(pi.Rooms){
-                    var i = pi.Rooms.length;
-                    while(i--){
-                        if (!convenienceMethods.arrayContainsObject(copy.Rooms, pi.Rooms[i]) && pi.Rooms[i].isAuthorized)copy.Rooms.push(pi.Rooms[i]);
-                    }
-                }
-
-                if(pi.Departments){
-                    var i = pi.Departments.length;
-                    while(i--){
-                        if(pi.Departments[i].isAuthorized)copy.Departments.push(pi.Departments[i]);
-                    }
-                }
-
                 af.clearError();
                 return this.save(copy)
                     .then(

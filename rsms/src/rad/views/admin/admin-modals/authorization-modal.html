@@ -1,5 +1,5 @@
 <div class="modal-header" style="padding:0;">
-    <h2 ng-show="!addRoom" style="padding:5px;" class="blueBg"><span ng-if="!modalData.Authorization">Add</span><span ng-if="modalData.Authorization">Edit</span> an authorization for {{modalData.pi.User.Name}}</h2>
+    <h2 ng-show="!addRoom" style="padding:5px;" class="blueBg"><span ng-if="!modalData.Authorization">Add</span><span ng-if="modalData.Authorization">Edit</span> an authorization for {{modalData.pi.Name}}</h2>
 </div>
 <div class="modal-body">
 	<div class="control-group">
@@ -14,7 +14,7 @@
   <div class="control-group">
      <label class="control-label" for="inputEmail">Maximum Quantity</label>
      <div class="controls input-append">
-        <input data-ng-model="modalData.AuthorizationCopy.Max_quantity" placeholder="Maximum Quantity"/><span class="add-on">mCi</span>
+        <input data-ng-model="modalData.AuthorizationCopy.Max_quantity" placeholder="Maximum Quantity"/><span class="add-on">mCi/g</span>
      </div>
   </div>
 

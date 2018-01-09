@@ -31,7 +31,7 @@
             <label class="control-label">Activity</label>
             <div class="input-append">
                 <input class="span2" type="text" name="activity" id="inputEmail" ng-model="modalData.MiscellaneousWasteCopy.Parcel_use_amounts[0].Curie_level" required>
-                <span class="add-on">mCi</span>
+                <span class="add-on">{{"" | unit:modalData.MiscellaneousWasteCopy.Parcel_use_amounts[0]}}</span>
             </div>
         </div>
     </div>

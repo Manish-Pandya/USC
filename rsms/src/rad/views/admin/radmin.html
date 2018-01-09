@@ -23,6 +23,7 @@
                 <li><a class="transfers" ui-sref="radmin.transfers"><i class="icon-tab"></i>Transfers</a></li>
                 <li><a class="auth-report" ui-sref="radmin.auth-report"><i class="icon-copy"></i>Auth Report</a></li>
                 <li><a class="inventories" ui-sref="radmin.other-waste"><i class="icon-beaker-alt"></i>Other Waste</a></li>
+                <li><a class="auth-report" ui-sref="radmin.isotope-report"><i class="icon-copy"></i>Total Inventories</a></li>
             </ul>
             
             <!--
@@ -43,9 +44,9 @@
             </span>
             <span ng-if="typeAheadPis" style="max-width:300px;">
                 <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)" class="span4" style="max-width:300px">
-                    <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
-                    <ui-select-choices repeat="pi in typeAheadPis | orderBy: 'User.Name' | propsFilter: {User.Name: $select.search} track by $index">
-                        <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                    <ui-select-match placeholder="Select or search for a PI">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="pi in typeAheadPis | orderBy: 'Name' | propsFilter: {Name: $select.search} track by $index">
+                        <div ng-bind-html="pi.Name | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>
             </span>

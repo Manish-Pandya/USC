@@ -240,7 +240,7 @@ angular.module('00RsmsAngularOrmApp')
             console.log("dang!");
         });
     };
-    $rootScope.piAuthsPromise = af.getAllPIs().then(getAllPIAuthorizations);
+    $rootScope.radPromise = af.getRadModels().then(getAllPIAuthorizations);
     $rootScope.search = function (filterObj) {
         if (!filterObj.fromDate)
             return $scope.piAuths;
@@ -441,7 +441,7 @@ angular.module('00RsmsAngularOrmApp')
     $scope.hasClosedNotPickedUp = function (containers) {
         return containers.some(function (c) { return c.Pickup_id == null; });
     };
-    $scope.loading = getAllWasteBags()
+    $rootScope.radPromise = getAllWasteBags()
         .then(getIsotopes)
         .then(getSVCollections)
         .then(getAllDrums)
@@ -987,6 +987,7 @@ angular.module('00RsmsAngularOrmApp')
     var getRadPi = function () {
         return actionFunctionsFactory.getRadPIById($stateParams.pi)
             .then(function (pi) {
+            console.log("PI:", pi);
             // pi = new window.PrincipalInvestigator();
             pi.loadUser();
             pi.loadRooms();
@@ -1001,6 +1002,10 @@ angular.module('00RsmsAngularOrmApp')
         }, function () {
         });
     };
+    $rootScope.$watch("pi", function (oldPi, newPi) {
+        console.log("WACHTED", oldPi, newPi, $rootScope.pi);
+        $scope.getHighestAmendmentNumber($rootScope.pi.Pi_authorization);
+    });
     $rootScope.radPromise = af.getRadModels()
         .then(getRadPi);
     $scope.onSelectPi = function (pi) {
@@ -1038,6 +1043,7 @@ angular.module('00RsmsAngularOrmApp')
             controller: 'PiDetailModalCtrl'
         });
         modalInstance.result.then(function (thing) {
+            console.log("thing returned", thing);
             if (object && object.Class == "Parcel") {
                 console.log(object, thing);
                 $scope.selectedView = false;
@@ -1054,6 +1060,9 @@ angular.module('00RsmsAngularOrmApp')
                 }, 10);
             }
             else if (thing.Class == "PIAuthorization") {
+                $rootScope.pi.Pi_authorization = $rootScope.pi.Pi_authorization.map(function (piAuth) {
+                    return piAuth.Key_id == thing.Key_id ? angular.extend(piAuth, thing) : piAuth;
+                });
                 $scope.getHighestAmendmentNumber($rootScope.pi.Pi_authorization, thing);
             }
         });
@@ -1102,7 +1111,7 @@ angular.module('00RsmsAngularOrmApp')
         });
     };
     $scope.openWipeTestModal = function (parcel) {
-        var modalData = {};
+        var modalData = { pi: null, Parcel: null };
         modalData.pi = $scope.pi;
         modalData.Parcel = parcel;
         af.setModalData(modalData);
@@ -1281,7 +1290,8 @@ angular.module('00RsmsAngularOrmApp')
             if (auth.isOriginal)
                 auth.Amendment_number = null;
         };
-        $scope.savePIAuthorization = function (copy, auth, terminated) {
+        $scope.savePIAuthorization = function (copy, auth, terminated, rooms) {
+            console.log(rooms);
             var pi = $scope.modalData.pi;
             if ($scope.modalData.isAmendment)
                 copy.Key_id = null;
@@ -1300,7 +1310,7 @@ angular.module('00RsmsAngularOrmApp')
                     copy.Authorizations[n].Is_active = false;
                 }
             }
-            af.savePIAuthorization(copy, auth, pi).then(function (returnedAuth) {
+            af.savePIAuthorization(copy, auth, pi, rooms).then(function (returnedAuth) {
                 $modalInstance.close(returnedAuth);
                 af.deleteModalData();
             });
@@ -1452,20 +1462,8 @@ angular.module('00RsmsAngularOrmApp')
         .then(function (models) {
         var pis = dataStoreManager.get('PrincipalInvestigator');
         console.log(dataStore);
-        $scope.typeAheadPis = [];
-        var i = pis.length;
-        while (i--) {
-            if (pis[i].User) {
-                var pi = {
-                    Key_id: pis[i].Key_id,
-                    User: {
-                        Name: pis[i].User.Name,
-                        Key_id: pis[i].Key_id
-                    }
-                };
-            }
-            $scope.typeAheadPis.push(pi);
-        }
+        $scope.typeAheadPis = pis;
+        return;
     });
     $scope.onSelectPi = function (pi) {
         $state.go('radmin.pi-detail', {
@@ -2117,6 +2115,9 @@ angular.module('00RsmsAngularOrmApp')
         af.deleteModalData();
     };
     $scope.cancel = function () { return $modalInstance.dismiss(); };
+})
+    .controller('IsotopeReportCtrl', function ($scope, actionFunctionsFactory, $rootScope) {
+    $rootScope.loading = actionFunctionsFactory.getInventoryReport().then(function () {
+        $scope.reports = dataStore.RadReportDTO;
+    });
 });
-'use strict';
-'use strict';

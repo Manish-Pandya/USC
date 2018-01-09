@@ -72,6 +72,11 @@ angular
         templateUrl: "views/admin/auth-report.html",
         controller: "AuthReportCtrl"
      })
+     .state('radmin.isotope-report', {
+        url: "/isotope-report",
+        templateUrl: "views/admin/isotope-report.html",
+        controller: "IsotopeReportCtrl"
+     })
      .state('auth-report-print', {
         url: "/auth-report-print",
         templateUrl: "views/admin/auth-report-print.html",

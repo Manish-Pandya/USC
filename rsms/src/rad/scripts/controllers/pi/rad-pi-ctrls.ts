@@ -1049,7 +1049,7 @@ angular.module('00RsmsAngularOrmApp')
 
             return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections).concat(pi.OtherWasteContainers)
                 
-                .map((c: { Class: "WasteBag" | "CarboyUseCycle" | "ScintVialCollection", idx: number, ViewLabel: string, Label?: string, CarboyNumber?: string, Clearable?:boolean, Description?:string }, idx): any[] => {
+                .map((c: { Class: "WasteBag" | "OtherWasteContainer" | "CarboyUseCycle" | "ScintVialCollection", idx: number, ViewLabel: string, Label?: string, CarboyNumber?: string, Clearable?:boolean, Description?:string }, idx): any[] => {
                     let container = angular.extend({}, c);
                     //console.log(container.Contents, c.Contents);
 
@@ -1066,6 +1066,9 @@ angular.module('00RsmsAngularOrmApp')
                             break;
                         case ("ScintVialCollection"):
                             container.ClassLabel = "Scint Vial Containers";
+                            break;
+                        case ("OtherWasteContainer"):
+                            container.ClassLabel = "Other Waste";
                             break;
                         default:
                             container.ClassLabel = "";
@@ -1094,6 +1097,7 @@ angular.module('00RsmsAngularOrmApp')
     var af = actionFunctionsFactory;
     $scope.af = af;
     $scope.modalData = af.getModalData();
+   
     $scope.types = Constants.CONTAINTER_TYPE.concat($scope.modalData.pi.OtherWasteTypes.filter((c) => { return !c.Clearable || roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]]) }).map((c) => { return { Label: c.Name, Class: "OtherWasteContainer", Other_waste_type_id: c.Key_id }}));
 
     if (!$scope.modalData.SolidsContainerCopy) {
@@ -1124,6 +1128,10 @@ angular.module('00RsmsAngularOrmApp')
             return r;
         });        
     };
+
+    $scope.getValidTrays = (num) => {
+        return num && num.length && !isNaN(num)
+    }
 
     $scope.newContainer = (container: { Class: string }): Promise<{ Key_id: string | number, Close_date: string }> => {
         console.log(container);

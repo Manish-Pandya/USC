@@ -80,7 +80,7 @@
                     {{transfer.DestinationParcel.ReceivingPiName || destPi.User.Name}}
                 </div>
                 <div>
-                    {{transfer.Quantity}} mCi
+                    {{transfer.Quantity | unit:transfer}}
                 </div>
                 <div>
                     {{transfer.Date_transferred | dateToIso:transfer:'Date_transferred':true}}
@@ -103,21 +103,21 @@
                 <h3>Date Transferred</h3>
                 <h3>Notes</h3>
             </div>
-            <div class="table-row" ng-repeat="transfer in transfersOut = (uses | transferOutUses)" ng-init="parcel = dsm.getById('Parcel', transfer.Parcel_id)">
+            <div class="table-row" ng-repeat="transfer in transfersOut = (uses | transferOutUses)">
                 <div>
                     <a ng-disabled="transfer.edit" ng-class="{'disabled':carboy.edit}" ng-click="openTransferOutModal(transfer)" class="btn btn-primary"><i class="icon-pencil"></i></a>
                 </div>
                 <div>
-                    {{parcel.Rs_number}}
+                    {{transfer.RsNumber}}
                 </div>
                 <div>
-                    {{parcel.Authorization.IsotopeName}}
-                </div>
-                <div ng-init="piAuth = dsm.getById('PIAuthorization', parcel.Authorization.Pi_authorization_id); pi = dsm.getById('PrincipalInvestigator',piAuth.Principal_investigator_id)">
-                    {{pi.User.Name}}
+                    {{transfer.IsotopeName}}
                 </div>
                 <div>
-                    {{transfer.Quantity}} mCi
+                    {{transfer.PiName}}
+                </div>
+                <div>
+                    {{transfer.Quantity | unit:transfer}}
                 </div>
                 <div>
                     {{transfer.Date_transferred | dateToIso:transfer:'Date_transferred':true}}

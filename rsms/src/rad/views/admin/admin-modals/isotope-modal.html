@@ -9,6 +9,15 @@
         </div>
     </div>
     <div class="control-group">
+        <label class="control-label" for="inputEmail">Limit</label>
+        <div class="controls">
+            <input data-ng-model="modalData.IsotopeCopy.Auth_limit" placeholder="Limit" />
+            <span class="help-block under" style="">{{"" | unit:modalData.IsotopeCopy}}</span>
+
+        </div>
+    </div>
+
+    <div class="control-group">
         <label class="control-label" for="vendor">Half Life</label>
         <div class="controls input-append use-amount">
             <input id="vendor" data-ng-model="modalData.IsotopeCopy.Display_half_life" placeholder="Half Life" />              
@@ -22,6 +31,13 @@
         <select ng-model="modalData.IsotopeCopy.Emitter_type" style="width:258px;" ng-options="type for type in [Constants.ISOTOPE.EMITTER_TYPE.ALPHA,Constants.ISOTOPE.EMITTER_TYPE.BETA,Constants.ISOTOPE.EMITTER_TYPE.GAMMA]">
             <option value="">Select an Emitter Type</option>
         </select>
+    </div>
+
+    <div class="control-group">
+        <label class="checkbox inline full">
+            <input type="checkbox" ng-model="modalData.IsotopeCopy.Is_mass" />
+            <span class="metro-checkbox">Calculated By Mass</span>
+        </label>
     </div>
 
 </div>

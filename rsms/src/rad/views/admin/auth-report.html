@@ -37,6 +37,14 @@
                         {{piAuth.PiName}}
                     </td>
                     <td ng-if="!filterObj.showNew">
+                        <ul>
+                            <li ng-repeat="dept in piAuth.Departments">
+                                {{dept.Name}}
+                            </li>
+                        </ul>
+
+                    </td>
+                    <td ng-if="!filterObj.showNew">
                         <ul class="selectedBuildings">
                             <li ng-repeat="(key, r) in piAuth.Rooms | groupBy: 'Building.Name'">
                                 <div>
@@ -44,14 +52,6 @@
                                 </div>
                             </li>
                         </ul>
-                    </td>
-                    <td ng-if="!filterObj.showNew">
-                        <ul>
-                            <li ng-repeat="dept in piAuth.Departments">
-                                {{dept.Name}}
-                            </li>
-                        </ul>
-
                     </td>
                     <td ng-if="!filterObj.showNew">
                         <ul class="selectedBuildings">

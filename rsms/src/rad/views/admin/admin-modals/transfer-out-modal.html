@@ -7,16 +7,16 @@
             <label class="control-label">Originating PI</label>
             <div class="controls">
                 <ui-select ng-model="modalData.pi" theme="selectize" ng-disabled="disabled" on-select="parcels = $item.loadActiveParcels()">
-                    <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
-                    <ui-select-choices repeat="pi in dataStore.PrincipalInvestigator | orderBy:'User.Name' |propsFilter: {User.Name: $select.search}">
-                        <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                    <ui-select-match placeholder="Select or search for a PI">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="pi in dataStore.PrincipalInvestigator | orderBy:'Name' |propsFilter: {Name: $select.search}">
+                        <div ng-bind-html="pi.Name | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>
             </div>
         </div>
 
 
-        <h4 class="control-group" ng-if="(modalData.pi && !modalData.pi.ActiveParcels.length)">{{modalData.pi.User.Name}} doesn't have any packages.</h4>
+        <h4 class="control-group" ng-if="(modalData.pi && !modalData.pi.ActiveParcels.length)">{{modalData.pi.Name}} doesn't have any packages.</h4>
         
         <div ng-if="(modalData.pi && modalData.pi.ActiveParcels.length)">
             <div class="control-group parcel-list" ng-if="!modalData.selectedParcel || modalData.forceSelectParcel">
@@ -35,14 +35,14 @@
                     <h3><i class="primary icon-pencil redo-select-parcel" ng-click="modalData.forceSelectParcel = true;"></i>Selected Package:</h3>
                     <p><span class="bold">RS/Transfer Number: </span>{{modalData.selectedParcel.Rs_number}}</p>
                     <p><span class="bold">Isotope </span>{{modalData.selectedParcel.Authorization.IsotopeName}}</p>
-                    <p><span class="bold">Unused Amount: </span>{{modalData.selectedParcel.Remainder}}mCi</p>
+                    <p><span class="bold">Unused Amount: </span>{{modalData.selectedParcel.Remainder | unit:modalData.selectedParcel}}</p>
                 </div>
 
                 <div class="control-group">
                     <label>Transfer Quantity</label>
                     <div class="controls input-append">
                         <input style="max-width:50%;" name="quantity" ng-model="modalData.ParcelUseCopy.Quantity">
-                        <span class="add-on" style="">mCi</span>
+                        <span class="add-on" style="">{{"" | unit:modalData.ParcelUseCopy}}</span>
                         <span ng-if="modalData.tooMuch" class="red error too-much">{{modalData.tooMuch}}</span>
                     </div>
                 </div>

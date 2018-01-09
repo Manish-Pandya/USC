@@ -10,6 +10,8 @@
 					<h3>Name</h3>
 					<h3>Half Life</h3>
                     <h3>Emitter Type</h3>
+                    <h3>Calculted By Mass</h3>
+                    <h3>Limit</h3>
 				</div>
 				<div class="table-row" ng-repeat="isotope in isotopes ">
                     <div>
@@ -25,6 +27,12 @@
                     <div>
 						{{isotope.Emitter_type}}
 					</div>
+                    <div>
+                        <i class="icon-checkmark success" ng-if="isotope.Is_mass"></i>
+                    </div>
+                    <div>
+                        {{isotope.Auth_limit | unit:isotope}}
+                    </div>
 				</div>
 			</div>
 
