@@ -42,6 +42,9 @@ angular.module('ng-IBC')
     $rootScope.loading = $q.all([XHR.POST("getSchedulerData", $scope.modalData.IBCMeeting)]).then(function (r) {
         console.log($scope.modalData.IBCMeeting, r);
     });
+    $scope.save = function (copy) {
+        $scope.saving = $q.all([DataStoreManager.save(copy)]).then($scope.close);
+    };
     $scope.close = function () {
         $modalInstance.dismiss();
     };
