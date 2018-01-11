@@ -16,6 +16,7 @@ class IBCMeeting extends GenericCrud {
 		"room_id"				=> "integer",
         "agenda"				=> "text",
 		"meeting_date"			=> "timestamp",
+		"location"				=> "text",
 
 		//GenericCrud
 		"key_id"				=> "integer",
@@ -65,6 +66,12 @@ class IBCMeeting extends GenericCrud {
     private $meeting_date;
 
 	/**
+	 * Summary of $location
+	 * @var string
+	 */
+    private $location;
+
+	/**
 	 * Summary of $protocolRevisions
 	 * @var IBCProtocolRevision[]
 	 */
@@ -112,6 +119,9 @@ class IBCMeeting extends GenericCrud {
 
 	public function getMeeting_date(){return $this->meeting_date;}
 	public function setMeeting_date($meeting_date){$this->meeting_date = $meeting_date;}
+
+	public function getLocation(){return $this->location;}
+	public function setLocation($location){$this->location = $location;}
 
 }
 ?>

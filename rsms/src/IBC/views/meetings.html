@@ -32,8 +32,8 @@
                     <button class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(meeting)" ng-if="meeting.Is_active"><i class="icon-remove"></i></button>
                     <button class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(meeting)" ng-if="!meeting.Is_active"><i class="icon-checkmark"></i></button>
                 </td>
-                <td>{{meeting.Meeting_date | dateToISO}}</td>
-                <td>{{meeting.Room.Name}}</td>
+                <td>{{meeting.Meeting_date | dateToIsoTime}}</td>
+                <td>{{meeting.Location}}</td>
                 <td><p ng-repeat="user in meeting.Attendees track by $index">{{user.Name}}</p> </td>
                 <td>{{meeting.Agenda}}</td>
             </tr>

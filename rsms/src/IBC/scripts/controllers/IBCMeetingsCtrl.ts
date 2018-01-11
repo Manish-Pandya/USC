@@ -27,6 +27,7 @@ angular.module('ng-IBC')
         }
 
         $scope.save = function (copy) {
+            console.log("saving:", copy);
             $scope.saving = $q.all([DataStoreManager.save(copy)]).then($scope.close);
         }
 
@@ -36,6 +37,7 @@ angular.module('ng-IBC')
             var modalData = {};
             if (!object) {
                 object = new ibc.IBCMeeting;
+                object['Is_active'] = 1;
             }
             
             modalData[object.thisClass['name']] = object;
@@ -55,6 +57,7 @@ angular.module('ng-IBC')
         })
 
         $scope.save = function (copy) {
+            copy.Meeting_date = convenienceMethods.setMysqlTime(copy.Meeting_date);
             $scope.saving = $q.all([DataStoreManager.save(copy)]).then($scope.close);
         }
         
