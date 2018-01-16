@@ -13,7 +13,6 @@ class IBCMeeting extends GenericCrud {
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
-		"room_id"				=> "integer",
         "agenda"				=> "text",
 		"meeting_date"			=> "timestamp",
 		"location"				=> "text",
@@ -40,12 +39,6 @@ class IBCMeeting extends GenericCrud {
 		"keyName"				=>	"revision_id",
 		"foreignKeyName"		=>	"meeting_id"
 	);
-
-	/**
-	 * Summary of $room_id
-	 * @var integer
-	 */
-	private $room_id;
 
     /**
      * Summary of $attendees
@@ -101,9 +94,6 @@ class IBCMeeting extends GenericCrud {
 		return $this->protocolRevisions;
 	}
 	public function setProtocolRevisions($revisions){$this->protocolRevisions = $revisions;}
-
-	public function getRoom_id(){return $this->room_id;}
-	public function setRoom_id($id){$this->room_id = $id;}
 
     public function getAttendees(){
 		if($this->attendees === NULL && $this->hasPrimaryKeyValue()) {

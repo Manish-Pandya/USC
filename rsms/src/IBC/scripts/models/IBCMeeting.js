@@ -15,8 +15,6 @@ var ibc;
         function IBCMeeting() {
             var _this = _super.call(this) || this;
             _this.Attendees = [];
-            /*Room: Room;
-            static RoomMap: CompositionMapping = new CompositionMapping(CompositionMapping.ONE_TO_ONE, "Room", "getRoomById&id=", "Room", "Room_id");*/
             _this.Meeting_date = "";
             _this.Location = "";
             _this.Agenda = "";
