@@ -41,8 +41,9 @@ angular.module('ng-IBC')
     .controller('IBCMeetingsModalCtrl', function ($scope, $rootScope, $modalInstance, $modal, convenienceMethods, $q) {
     $scope.constants = Constants;
     $scope.modalData = DataStoreManager.ModalData;
-    $rootScope.loading = $q.all([XHR.POST("getSchedulerData", $scope.modalData.IBCMeeting)]).then(function (r) {
-        console.log($scope.modalData.IBCMeeting, r);
+    $rootScope.loading = $q.all([XHR.POST("getIBCPossibleMeetingAttendees", $scope.modalData.possibleAttendees)]).then(function (r) {
+        $scope.modalData.possibleAttendees = r[0];
+        console.log($scope.modalData.possibleAttendees);
     });
     $scope.save = function (copy) {
         copy.Meeting_date = convenienceMethods.setMysqlTime(copy.Meeting_date);

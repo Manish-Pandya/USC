@@ -592,6 +592,25 @@ class IBC_ActionManager extends ActionManager {
         $dao = $this->getDao($decodedObject);
         return $dao->save($decodedObject);
     }
+
+	public function getIBCPossibleMeetingAttendees(){
+		$users = $this->getAllUsers();
+
+		$users = array_filter($users,
+			/**
+			  * @var User
+			  */
+			function($user) {
+				//$user = new User();
+				foreach($user->getRoles() as $role) {
+					if (stristr($role->getName(), "ibc")) {
+						return true;
+					}
+				}
+				return false;
+			});
+		return $users;
+	}
 }
 
 ?>

@@ -64,6 +64,8 @@ class IBC_ActionMappingFactory extends ActionMappingFactory {
 				"getAllIBCMeetings" 			=> new ActionMapping("getAllIBCMeetings", "", "", $this::$ROLE_GROUPS["IBC_COMMITTEE"] ),
 				"getIBCMeetingById" 			=> new ActionMapping("getIBCMeetingById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
 				"saveIBCMeeting" 				=> new ActionMapping("saveIBCMeeting", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
+
+				"getIBCPossibleMeetingAttendees" 				=> new ActionMapping("getIBCPossibleMeetingAttendees", "", "", $this::$ROLE_GROUPS["IBC_COMMITTEE"] ),
 		);
 	}
 }
