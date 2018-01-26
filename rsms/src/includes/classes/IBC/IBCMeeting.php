@@ -72,9 +72,9 @@ class IBCMeeting extends GenericCrud {
 
 	public function __construct(){
 		// Define which subentities to load
-		$entityMaps = array();
+		/*$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getAttendees");
-		$this->setEntityMaps($entityMaps);
+		$this->setEntityMaps($entityMaps);*/
 	}
 
 	// Required for GenericCrud
@@ -96,9 +96,11 @@ class IBCMeeting extends GenericCrud {
 	public function setProtocolRevisions($revisions){$this->protocolRevisions = $revisions;}
 
     public function getAttendees(){
+		//$log = Logger::getLogger(__FUNCTION__);
 		if($this->attendees === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
 			$this->attendees = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ATTENDEES_RELATIONSHIP));
+			//$log->fatal($this->attendees);
 		}
 		return $this->attendees;
 	}

@@ -165,7 +165,7 @@ abstract class FluxCompositerBase {
     }
 
     /**
-     * Builds shild instances for all or a given array of CompositionMappings.
+     * Builds child instances for all or a given array of CompositionMappings.
      *
      * @param compMaps
      */
@@ -187,7 +187,7 @@ abstract class FluxCompositerBase {
                 InstanceFactory.getChildInstances(this.allCompMaps[i], this);
             }
         }
-
+        
         return this;
     }
 

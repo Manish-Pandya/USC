@@ -14,7 +14,6 @@ var ibc;
         __extends(IBCMeeting, _super);
         function IBCMeeting() {
             var _this = _super.call(this) || this;
-            _this.Attendees = [];
             _this.Meeting_date = "";
             _this.Location = "";
             _this.Agenda = "";

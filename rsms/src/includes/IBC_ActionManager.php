@@ -590,6 +590,32 @@ class IBC_ActionManager extends ActionManager {
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
         $dao = $this->getDao($decodedObject);
+
+		$oldMeeting = $this->getIBCMeetingById($decodedObject->getKey_id());
+		if($oldMeeting != null){
+			$oldAttendees = $oldMeeting->getAttendees();
+			foreach($oldAttendees as $attendee){
+				$dao->removeRelatedItems($attendee->getKey_id(), $oldMeeting->getKey_id(), DataRelationship::fromArray(IBCMeeting::$ATTENDEES_RELATIONSHIP));
+			}
+		}
+
+		$newAttendees = $decodedObject->getAttendees();
+		$decodedObject = $dao->save($decodedObject);
+		foreach($newAttendees as $attendee){
+			if(is_array($attendee))$attendee = JsonManager::assembleObjectFromDecodedArray($attendee);
+			$dao->addRelatedItems($attendee->getKey_id(), $decodedObject->getKey_id(), DataRelationship::fromArray(IBCMeeting::$ATTENDEES_RELATIONSHIP));
+		}
+
+		if ($decodedObject->getProtocolRevisions() == null) {
+			$revision = new IBCProtocolRevision();
+			$revision->setProtocol_type("NEW");
+			$revision->setProtocol_id( $decodedObject->getKey_id() );
+			$revision->setRevision_number(0);
+			$revision->setIs_active(true);
+			$dao = $this->getDao($revision);
+			$revision = $dao->save($revision);
+		}
+
         return $dao->save($decodedObject);
     }
 
@@ -601,11 +627,8 @@ class IBC_ActionManager extends ActionManager {
 			  * @var User
 			  */
 			function($user) {
-				//$user = new User();
 				foreach($user->getRoles() as $role) {
-					if (stristr($role->getName(), "ibc")) {
-						return true;
-					}
+					if (stristr($role->getName(), "ibc")) return true;
 				}
 				return false;
 			});

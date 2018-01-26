@@ -6,7 +6,7 @@
         IBCProtocolRevisions: IBCProtocolRevision[];
         static IBCProtocolRevisionMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "IBCProtocolRevision", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=IBCProtocolRevision&id={{UID}}", "IBCProtocolRevisions", "Meeting_id");
 
-        Attendees: User[] = [];
+        Attendees: User[];
         static AttendeesMap = new CompositionMapping(CompositionMapping.ONE_TO_MANY, "User", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=User&id={{UID}}", "Attendees", "Meeting_id");
 
         Meeting_date: string = "";

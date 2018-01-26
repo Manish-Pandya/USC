@@ -125,7 +125,7 @@ var FluxCompositerBase = /** @class */ (function () {
         }
     };
     /**
-     * Builds shild instances for all or a given array of CompositionMappings.
+     * Builds child instances for all or a given array of CompositionMappings.
      *
      * @param compMaps
      */

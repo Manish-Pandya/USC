@@ -15,7 +15,8 @@ angular.module('ng-IBC')
             $scope.meetings = new ViewModelHolder();
             return $q.all([DataStoreManager.getAll("IBCMeeting", $scope.meetings, true)])
                 .then(
-                function (whateverGotReturned) {
+                    function (whateverGotReturned) {
+                        console.log($scope.meetings.data);
                         console.log(DataStoreManager._actualModel);
                     }
                 )
@@ -54,11 +55,16 @@ angular.module('ng-IBC')
 
         $rootScope.loading = $q.all([XHR.POST("getIBCPossibleMeetingAttendees", $scope.modalData.possibleAttendees)]).then((r) => {
             $scope.modalData.possibleAttendees = r[0];
-            console.log($scope.modalData.possibleAttendees);
+            //console.log($scope.modalData.possibleAttendees);
         })
 
-        $scope.save = function (copy) {
+        $scope.save = function (copy: ibc.IBCMeeting) {
             copy.Meeting_date = convenienceMethods.setMysqlTime(copy.Meeting_date);
+            // gather all attendees
+            for (var n in $scope.modalData.possibleAttendees) {
+                var attendee: ibc.User = $scope.modalData.possibleAttendees[n];
+                if (attendee["isChecked"]) copy.Attendees.push(attendee);
+            }
             $scope.saving = $q.all([DataStoreManager.save(copy)]).then($scope.close);
         }
         
