@@ -19,8 +19,9 @@ class Isotope extends GenericCrud {
 		"emitter_type"			=> "text",
 		"display_half_life"		=> "float",
 		"unit"					=> "text",
-		"auth_limit"                 => "float",
+		"auth_limit"            => "float",
         "is_mass"               => "boolean",
+        "license_line_item"     => "string",
 		//GenericCrud
 		"key_id"				=> "integer",
 		"is_active"				=> "boolean",
@@ -47,6 +48,8 @@ class Isotope extends GenericCrud {
 
     private $auth_limit;
     private $is_mass;
+
+    private $license_line_item;
 
 	// Required for GenericCrud
 	public function getTableName() {
@@ -87,6 +90,13 @@ class Isotope extends GenericCrud {
 		$this->is_mass = $is_mass;
 	}
 
+    public function getLicense_line_item(){
+		return (string) $this->license_line_item;
+	}
+
+	public function setLicense_line_item($license_line_item){
+		$this->license_line_item = $license_line_item;
+	}
 }
 
 ?>

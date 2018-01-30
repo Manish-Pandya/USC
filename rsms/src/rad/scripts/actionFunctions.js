@@ -140,6 +140,11 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name: 'radmin.conditions',
+                        Label: 'Radiation Administration -- Authorization Conditions',
+                        Dashboard: true
+                    },
+                    {
                         Name:'radmin.wipe-tests',
                         Label: 'Radiation Administration -- Wipe Tests',
                         Dashboard: true
@@ -183,6 +188,11 @@ angular
                     {
                         Name: 'radmin.drum-detail',
                         Label: 'Radiation Administration -- Drum Detail',
+                        Dashboard: true
+                    },
+                    {
+                        Name: 'radmin.zap',
+                        Label: 'Radiation Administration -- Remove Test Data',
                         Dashboard: true
                     },
                     {
@@ -331,9 +341,10 @@ angular
                     return user;
             }
 
-            af.getAllUsers = function()
+            af.getAllUsers = function(force)
             {
-                return dataSwitchFactory.getAllObjects('User');
+                if (!force) force = false;
+                return dataSwitchFactory.getAllObjects('User', false, force);
             }
 
             af.getInventoryReport = function () {
@@ -1038,9 +1049,11 @@ angular
                             pi.Rooms = tempPI.Rooms;
                             pi.Departments = tempPI.Departments;
                             pi.loadPIAuthorizations();
+                            pi.loadPIAuthorizations();
                             pi.loadActiveParcels();
                             pi.loadPurchaseOrders();
                             pi.loadCarboyUseCycles();
+                            pi.loadWasteBags();
                             pi.loadWasteBags();
                             return pi;
                         });
@@ -1081,8 +1094,9 @@ angular
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.Quarterly_inventories));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.SolidsContainers));
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.WipeTests));
+                        store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.LabPersonnel));
 
-                        console.log(pi);
+                        console.log("HELLO",pi);
 
                         store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.Pickups));
 
@@ -1091,7 +1105,7 @@ angular
                             while (i--) {
                                 if (pi.ActiveParcels[i].ParcelUses && pi.ActiveParcels[i].ParcelUses.length) {
                                     console.log(pi.ActiveParcels[i].ParcelUses)
-                                    store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.ActiveParcels[i].ParcelUses.length));
+                                    store.store(modelInflatorFactory.instateAllObjectsFromJson(pi.ActiveParcels[i].ParcelUses));
                                     var j = pi.ActiveParcels[i].ParcelUses.length;
                                     while (j--) {
                                         if (pi.ActiveParcels[i].ParcelUses[j].ParcelUseAmounts) {
@@ -1119,6 +1133,7 @@ angular
                             pi.loadPickups();
                             pi.loadPIAuthorizations();
                             pi.loadUser();
+                            pi.loadLabPersonnel();
                             pi.loadWasteBags();
                             //pi.loadCurrentWasteBag();
                             pi.loadCurrentScintVialCollections();
@@ -1294,6 +1309,7 @@ angular
                                 if (!piAuth.Authorizations) piAuth.Authorizations = [];
                                 piAuth.Authorizations.push(returnedAuth);
                             }
+                            return returnedAuth;
                         },
                         af.setError('The authorization could not be saved')
                     )
@@ -2634,11 +2650,12 @@ angular
                     )
             }
 
-            af.savePIAuthorization = function (copy, auth, pi, rooms) {
+            af.savePIAuthorization = function (copy, auth, pi, rooms, users) {
               
                 copy = Object.assign({}, copy);
                 copy.Rooms = rooms.filter(r => r.isAuthorized);
                 copy.Departments = pi.Departments.filter(r => r.isAuthorized);               
+                copy.Users = users.filter(r => r.isAuthorized);               
                 console.log(copy);
                 af.clearError();
                 return this.save(copy)

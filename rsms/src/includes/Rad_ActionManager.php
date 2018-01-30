@@ -400,7 +400,7 @@ class Rad_ActionManager extends ActionManager {
         $dao = $this->getDao(new PrincipalInvestigator());
         $pi = $dao->getById($id);
         $entityMaps = array();
-        $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+        $entityMaps[] = new EntityMap("eager","getLabPersonnel");
         if($rooms == null){
             $entityMaps[] = new EntityMap("lazy","getRooms");
         }else{
@@ -416,7 +416,7 @@ class Rad_ActionManager extends ActionManager {
             $bag = $wasteBagDao->save($bag);
         }
 
-        $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
+        $entityMaps[] = new EntityMap("eager","getLabPersonnel");
         $entityMaps[] = new EntityMap("eager","getDepartments");
         $entityMaps[] = new EntityMap("eager","getUser");
         $entityMaps[] = new EntityMap("lazy","getInspections");
@@ -2444,6 +2444,10 @@ class Rad_ActionManager extends ActionManager {
     	}
     	else {
             $rooms = $decodedObject->getRooms();
+            $users = $decodedObject->getUsers();
+            $conditions = $decodedObject->getConditions();
+            $departments = $decodedObject->getDepartments();
+
     		//remove all the departments and rooms from the Authorization, if it is an old one
     		if($decodedObject->getKey_id() != NULL){
     			$origDao = $this->getDao(new PIAuthorization());
@@ -2456,9 +2460,16 @@ class Rad_ActionManager extends ActionManager {
     			foreach($origAuth->getDepartments() as $dept){
     				$origDao->removeRelatedItems($dept->getKey_id(),$origAuth->getKey_id(),DataRelationship::fromArray(PIAuthorization::$DEPARTMENTS_RELATIONSHIP));
     			}
+
+                foreach($origAuth->getUsers() as $user){
+    				$origDao->removeRelatedItems($user->getKey_id(),$origAuth->getKey_id(),DataRelationship::fromArray(PIAuthorization::$USERS_RELATIONSHIP));
+    			}
+
+                foreach($origAuth->getConditions() as $condition){
+    				$origDao->removeRelatedItems($condition->getKey_id(),$origAuth->getKey_id(),DataRelationship::fromArray(PIAuthorization::$CONDITIONS_RELATIONSHIP));
+    			}
     		}
 
-    		$departments = $decodedObject->getDepartments();
 
     		$dao = $this->getDao(new PIAuthorization());
 
@@ -2475,6 +2486,17 @@ class Rad_ActionManager extends ActionManager {
 
     		foreach($departments as $dept){
     			$dao->addRelatedItems($dept["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$DEPARTMENTS_RELATIONSHIP));
+    		}
+
+
+    		foreach($users as $user){
+    			$dao->addRelatedItems($user["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$USERS_RELATIONSHIP));
+    		}
+            $l= Logger::getLogger(__FUNCTION__);
+
+    		foreach($conditions as $condition){
+                $l->fatal($condition);
+    			$dao->addRelatedItems($condition["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$CONDITIONS_RELATIONSHIP), $condition["Order_index"]);
     		}
 
 
@@ -2892,6 +2914,31 @@ class Rad_ActionManager extends ActionManager {
             $report->calculate();
         }
         return $reports;
+    }
+
+    public function resetRadData(){
+        $dao = new GenericDAO(new User());
+        if($dao->deleteRadData()){
+            return true;
+        }
+        return new ActionError('Failed to delete data');
+    }
+
+    public function getAllRadConditions() {
+        $dao = $this->getDao(new RadCondition());
+        $conditions = $dao->getAll();
+        if(is_array($conditions))return $conditions;
+        return new ActionError("No request parameter 'id' was provided", 201);
+    }
+
+    /**
+     * @param RadCondition $condition
+     * */
+    public function saveRadCondition(RadCondition $decodedObject = null){
+        if($decodedObject == null)$decodedObject = $this->convertInputJson();
+        if($decodedObject == null)return new ActionError("No data read from input stream");
+        $dao = $this->getDao($decodedObject);
+        return $dao->save();
     }
 }
 ?>

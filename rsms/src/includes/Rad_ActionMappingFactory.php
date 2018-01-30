@@ -46,7 +46,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getActiveParcelsFromPIById"	=> new ActionMapping("getActiveParcelsFromPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getSolidsContainersByRoomId"	=> new ActionMapping("getSolidsContainersByRoomId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getPIAuthorizationByPIId"		=> new ActionMapping("getPIAuthorizationByPIId", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-                "getAllCarboyReadingAmounts"		=> new ActionMapping("getAllCarboyReadingAmounts", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "getAllCarboyReadingAmounts"	=> new ActionMapping("getAllCarboyReadingAmounts", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "getRadConditionById"		    => new ActionMapping("getRadConditionById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
 
 				// getAll functions
@@ -76,6 +77,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
                 "getAllPIWipeTests"				=> new ActionMapping("getAllPIWipeTests", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
                 "getAllRadRooms"				=> new ActionMapping("getAllRadRooms", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
                 "removeParcelUseAmountFromPickup"	=> new ActionMapping("removeParcelUseAmountFromPickup", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+                "getAllRadConditions"		    => new ActionMapping("getAllRadConditions", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
 
                 "saveDrumWipe"                  => new ActionMapping("saveDrumWipe", "", "", $this::$ROLE_GROUPS["ADMIN"]),
@@ -121,6 +123,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getAllPIAuthorizations"	=> new ActionMapping("getAllPIAuthorizations", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "saveMiscellaneousWaste"	=> new ActionMapping("saveMiscellaneousWaste", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getAllMiscellaneousWaste"	=> new ActionMapping("getAllMiscellaneousWaste", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "saveRadCondition"		    => new ActionMapping("saveRadCondition", "", "", $this::$ROLE_GROUPS["RADMIN"]),
 
 				// other functions
 				"getParcelRemainder"			 => new ActionMapping("getParcelRemainder", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
@@ -155,7 +158,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 
 
 				"getRadInventoryReport"	=> new ActionMapping("getRadInventoryReport","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"getRadModels"	=> new ActionMapping("getRadModels","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"])
+				"getRadModels"	=> new ActionMapping("getRadModels","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"resetRadData"	=> new ActionMapping("resetRadData","","", $this::$ROLE_GROUPS["RADMIN"])
 		);
 	}
 }

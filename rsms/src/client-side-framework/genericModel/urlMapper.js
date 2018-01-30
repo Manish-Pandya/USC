@@ -60,8 +60,11 @@
         'RadModelDto'           : {getById: "getVerificationById"          , getAll: "getRadModels"                 , save: "saveVerification"           },
         'Building'              : {getById: "getAllBuildings"              , getAll: "getAllBuildings"              , save: "saveBuilding"               },
 
-        'OtherWasteContainer'   : { getById: "getOtherWasteContainerBiId", getAll: "getAllOtherWasteContainers", save: "saveOtherWasteContainer" },
-        'RadReportDTO'          : { getAll:  "getRadInventoryReport" }   ,
+        'OtherWasteContainer'   : { getById: "getOtherWasteContainerBiId"  , getAll: "getAllOtherWasteContainers", save: "saveOtherWasteContainer"       },
+        'RadReportDTO'          : { getAll:  "getRadInventoryReport"    },
+
+        'RadCondition'          : { getById: "getRadConditionById"         , getAll: "getAllRadConditions",        save: "saveRadCondition"              },
+
 //RadModelDTO
 
 };

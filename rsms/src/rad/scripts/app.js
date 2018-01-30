@@ -21,6 +21,8 @@ angular
     'ui.bootstrap',
     'once',
     'ui.router',
+    'ui.tinymce',
+
     'modalPosition',
     'convenienceMethodWithRoleBasedModule',
     //'ngMockE2E'
@@ -98,6 +100,16 @@ angular
         url: "/carboys",
         templateUrl: "views/admin/carboys.html",
         controller: "CarboysCtrl"
+      })
+      .state('radmin.conditions', {
+            url: "/conditions",
+            templateUrl: "views/admin/conditions.html",
+            controller: "ConditionsCtrl"
+      })
+      .state('radmin.zap', {
+           url: "/zap",
+           templateUrl: "views/admin/zap.html",
+           controller: "ZapCtrl"
       })
       .state('admin-pickups', {
         url: "/admin/pickups",
@@ -202,7 +214,8 @@ angular
       $rootScope.loading = true;
     });
     $rootScope.$on('$stateChangeSuccess',
-        function(event, toState, toParams, fromState, fromParams){
+        function (event, toState, toParams, fromState, fromParams) {
+            $rootScope.state = $state;
             $rootScope.loading = false;
             var viewMap = actionFunctionsFactory.getViewMap($state.current);
             $rootScope.viewLabel = viewMap.Label;
