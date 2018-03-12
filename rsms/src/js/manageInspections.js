@@ -787,11 +787,27 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
                     }
 
                     if (matched && search.status) {
+                        /*
+                        ,
+                        INSPECTED: "INSPECTED",*/
+
                         if (item.Inspections) var status = item.Inspections.Status;
                         if (!item.Inspections) var status = Constants.INSPECTION.STATUS.NOT_SCHEDULED;
-                        if (status.toLowerCase() != search.status.toLowerCase()) {
-                            matched = false;
-                            continue;
+                        if (search.status != Constants.INSPECTION.STATUS.INSPECTED) {
+                            if (status.toLowerCase() != search.status.toLowerCase()) {
+                                matched = false;
+                                continue;
+                            }
+                        } else {
+                            const inspectedStatues = [
+                                Constants.INSPECTION.STATUS.INCOMPLETE_INSPECTION,
+                                Constants.INSPECTION.STATUS.INCOMPLETE_CAP,
+                                Constants.INSPECTION.STATUS.OVERDUE_CAP,
+                                Constants.INSPECTION.STATUS.SUBMITTED_CAP,
+                                Constants.INSPECTION.STATUS.CLOSED_OUT
+                            ];
+                            matched = inspectedStatues.indexOf(status.toUpperCase()) != -1;
+                            if (!matched) continue;
                         }
                     }
 

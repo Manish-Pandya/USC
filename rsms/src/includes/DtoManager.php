@@ -51,7 +51,7 @@ class DtoManager {
 			$prefixName = DtoManager::getDefaultPrefixNameForObject($baseObject);
 		}
 		
-		$LOG->trace("Collecting information from array for object of class " . get_class($baseObject) . " using prefix '$prefixName'");
+		//$LOG->trace("Collecting information from array for object of class " . get_class($baseObject) . " using prefix '$prefixName'");
 		
 		// Get the field names that are prefixed as keys from the array
 		$fieldNamesAndValues = DtoManager::getPrefixedFieldNamesAndValuesFromArray($prefixName, $array);

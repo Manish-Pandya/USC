@@ -1,9 +1,9 @@
 ﻿<div class="modal-header" style="padding:0;">
     <h2 style="padding:5px" class="redBg">{{selectedHazard.Name}}</h2>
 </div>
-<div class="modal-body">
-    <table class="table">
-        <tr><th>PI</th><th>Lab Locations</th></tr>
+<div class="modal-body use-log-modal max-height" style="max-height:74vh !important;">
+    <table class="table table-striped table-bordered" ng-show="rels.data.length">
+        <tr><th style="color:white; background:#cc0000">PI <span>({{calculatePis(rels.data)}})</span></th><th style="color:white; background:#cc0000">Lab Locations ({{calculateRooms(rels.data)}})</th></tr>
         <tr ng-repeat="(key,rel) in rels.data | groupBy: 'PiName' | orderBy: 'PiName'">
             <td>{{key}}</td>
             <td>
@@ -11,6 +11,7 @@
             </td>
         </tr>
     </table>
+    <h3 ng-show="!rels.data.length">No investigators currently use or store this hazard.</h3>
 </div>
 <div class="modal-footer">
     <a class="btn btn-large left" ng-click="cancel()"><i class="icon-cancel-2"></i>Close</a>

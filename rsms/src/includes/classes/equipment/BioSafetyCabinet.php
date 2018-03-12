@@ -30,6 +30,10 @@ class BioSafetyCabinet extends Equipment {
 		"created_user_id"	    => "integer"
 	);
 
+    /**
+     * Summary of $selectedInspection
+     * @var EquipmentInspection
+     */
     private $selectedInspection;
 
 	public function __construct(){

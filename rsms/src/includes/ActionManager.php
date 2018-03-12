@@ -4195,15 +4195,15 @@ class ActionManager {
 
             $footerText = "\n\n Access the results of this inspection, and document any corrective actions taken, by logging into the RSMS portal located at http://radon.qa.sc.edu/rsms with your university ID and password.";
             // Send the email
-            $LOG->fatal(implode(",", $recipientEmails));
-            $LOG->fatal($text);
-
-            if(!mail(implode(",", $recipientEmails),'EHS Laboratory Safety Inspection Results',$text ,'From:LabInspectionReports@ehs.sc.edu<RSMS Portal>\r\nCc: '. implode(",", $inspectorEmails))){
+            $LOG->fatal("'".implode("','", $recipientEmails)."'");
+            $LOG->fatal($inspectorEmails);
+            //"'".implode("','", $recipientEmails)."'"
+            if(!mail(implode(",", $recipientEmails),'EHS Laboratory Safety Inspection Results',$text ,'From:LabInspectionReports@ehs.sc.edu<RSMS Portal>' . "\r\nCc:" . implode(",", $inspectorEmails),"Return-path: breeden@gnuidea.net")){
                 $LOG->fatal("Couldn't send");
                 return new ActionError("Couldn't send");
             };
 
-            $inspection->setNotification_date(date("Y-m-d H:i:s"));
+            if($inspection->getNotification_date() == null)$inspection->setNotification_date(date("Y-m-d H:i:s"));
             $dao->save($inspection);
             return true;
         }
@@ -4582,7 +4582,22 @@ class ActionManager {
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
         $entityMaps[] = new EntityMap("lazy","getWipeTests");
 
+
         $principalInvestigator->setEntityMaps($entityMaps);
+
+        $entityMaps = array();
+        $entityMaps[] = new EntityMap("eager","getInspectors");
+        $entityMaps[] = new EntityMap("lazy","getRooms");
+        $entityMaps[] = new EntityMap("lazy","getResponses");
+        $entityMaps[] = new EntityMap("lazy","getDeficiency_selections");
+        $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+        $entityMaps[] = new EntityMap("eager","getStatus");
+        $entityMaps[] = new EntityMap("lazy","getChecklists");
+        $entityMaps[] = new EntityMap("lazy","getInspection_wipe_tests");
+
+        foreach($principalInvestigator->getInspections() as $inspection){
+            $inspection->setEntityMaps($entityMaps);
+        }
 
         return $principalInvestigator;
     }
@@ -4793,7 +4808,9 @@ class ActionManager {
            * @var $relation PrincipalInvestigatorHazardRoomRelation
            */
 
+        $relations = array();
         foreach($rels as $relation){
+
             $relation->setEntityMaps($entityMaps);
             if($relation->getRoom_id() != null){
                 /**
@@ -4806,9 +4823,11 @@ class ActionManager {
                 }
 
             }
+            $pi = $this->getPIById($relation->getPrincipal_investigator_id());
+            if($pi != null && $pi->getIs_active() && $relation->getRoomName() != null)$relations[] = $relation;
         }
 
-        return $rels;
+        return $relations;
     }
 }
 ?>

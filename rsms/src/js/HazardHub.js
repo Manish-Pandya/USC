@@ -65,13 +65,13 @@ hazardHub.factory('hazardHubFactory', function(convenienceMethods,$q){
     return factory;
 });
 
-hazardHub.controller('TreeController', function ($scope, $modal, $rootScope, $timeout, $location, $anchorScroll, convenienceMethods, hazardHubFactory, roleBasedFactory, $rootScope) {
+hazardHub.controller('TreeController', function ($scope, $q, $modal, $rootScope, $timeout, $location, $anchorScroll, convenienceMethods, hazardHubFactory, roleBasedFactory, $rootScope, $http) {
 
     init();
 
     $scope.getPisAndRoomsByHazard = function (hazard) {
         var url = '../../ajaxaction.php?action=getPisAndRoomsByHazard&id=' + hazard.Key_id + "&callback=JSON_CALLBACK";
-        $rootScope.loading = convenienceMethods.getDataAsPromise(url).then(function (data) {
+        $http.jsonp(url).then(function (data) {
             $rootScope.selectedHazard = hazard;
             $rootScope.rels = data;
             console.log(data.data.length);
@@ -435,7 +435,7 @@ hazardHub.controller('TreeController', function ($scope, $modal, $rootScope, $ti
         var url = '../../ajaxaction.php?action=reorderHazards&hazardId='+hazardId+'&beforeHazardId='+beforeHazardId+'&afterHazardId='+afterHazardId;
 
         //make the call
-        convenienceMethods.saveDataAndDefer(url, clickedHazard).then(
+        $scope.loading = convenienceMethods.saveDataAndDefer(url, clickedHazard).then(
             function(promise){
                 filteredSubHazards[idx].IsDirty = false;
                 filteredSubHazards[idx].Order_index = promise.Order_index;
@@ -455,4 +455,12 @@ hazardHub.controller('TreeController', function ($scope, $modal, $rootScope, $ti
 });
 hazardHub.controller('HazarPiCtrl', function ($scope, $rootScope, $modalInstance) {
     $scope.cancel = function () { $modalInstance.dismiss() }
+    console.log(_);
+    $scope.calculatePis = function(pis) {
+        //pis.filt
+        return _.uniqBy(pis, "Principal_investigator_id").length;
+    }
+    $scope.calculateRooms = function (rooms) {
+        return _.uniqBy(rooms, "Room_id").length;
+    }
 })

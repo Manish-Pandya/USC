@@ -26,6 +26,10 @@ angular.module('modalPosition', [])
                         $(element[0]).css({ 'left': $window.innerWidth * .005 + 'px', 'marginLeft': 0 });
                     }
                 }
+                if ($('.very-wide-modal').length) {
+                    $(element[0]).width($window.innerWidth * .98);
+                    $(element[0]).css({ 'left': $window.innerWidth * .005 + 'px', 'marginLeft': 0 });
+                }
                 if ($('.use-log-modal').length) {
                     $(element[0]).width(800);
                     $(element[0]).css({ 'left': ($window.innerWidth - 800) / 2 + 'px', 'marginLeft': 0, maxHeight: $window.innerHeight * .95 });

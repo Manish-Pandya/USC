@@ -2,6 +2,7 @@
     require_once '../top_view.php';
 ?>
 <!--ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.RADIATION_INSPECTOR] ])" -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.6/lodash.min.js"></script>
 <script src="../../js/HazardHub.js"></script>
 <span ng-app="hazardHub" ng-controller="TreeController">
 <div cg-busy="{promise:hazardLoading,message:'Loading...',templateUrl:'../../rad/views/busy-templates/full-page-busy.html'}"></div>

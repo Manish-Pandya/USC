@@ -18,7 +18,7 @@ if(isProduction()){
 	
 }else{
 	define('WEB_ROOT', '/rsms/src/');
-	define('LOGIN_PAGE', 'http://erasmus.graysail.com:9080/rsms/');
+	define('LOGIN_PAGE', 'http://erasmus.graysail.com/rsms/');
 	define('BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR', 'D:/git/00_rsms/rsms/src/biosafety-committees/protocol-documents/');
 	
 }

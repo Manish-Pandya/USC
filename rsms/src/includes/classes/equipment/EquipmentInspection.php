@@ -18,7 +18,7 @@ class EquipmentInspection extends GenericCrud{
         "certification_date"          	=> "timestamp",
         "fail_date"          	        => "timestamp",
         "is_uncertified"                => "boolean",
-
+        "decon_path"                    => "text",
         "due_date"     		    		=> "timestamp",
         "report_path"		        	=> "text",
         "quote_path"		        	=> "text",
@@ -64,6 +64,7 @@ class EquipmentInspection extends GenericCrud{
     private $due_date;
     private $report_path;
     private $quote_path;
+    private $decon_path;
     private $equipment_id;
     private $equipment_class;
     private $comment;
@@ -215,13 +216,17 @@ class EquipmentInspection extends GenericCrud{
 		$this->frequency = $frequency;
 	}
 
+    /**
+     * Summary of getPrincipalInvestigators
+     * @return PrincipalInvestigator[]
+     */
     public function getPrincipalInvestigators(){
-		if($this->principalInvestigators == null) {
+		if($this->principalInvestigators == null && !is_array($this->principalInvestigators)) {
 			$thisDAO = new GenericDAO($this);
 			$pis = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PIS_RELATIONSHIP));
 
             $this->principalInvestigators = array();
-            foreach($this->principalInvestigators as $pi){
+            foreach($pis as $pi){
                 if(!$pi->getIs_active()){
                     if($pi->getDate_last_modified() >= $this->date_created){
                         $this->principalInvestigators[] = $pi;
@@ -241,4 +246,6 @@ class EquipmentInspection extends GenericCrud{
     public function getPriorStatus(){ return (boolean) $this->priorStatus; }
 	public function setPriorStatus( $bool ){	$this->priorStatus = $bool; }
 
+    public function getDecon_path(){ return $this->decon_path; }
+	public function setDecon_path($decon_path){ $this->decon_path = $decon_path; }
 }

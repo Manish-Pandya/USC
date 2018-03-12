@@ -238,7 +238,8 @@ class ActionMappingFactory {
 
                 // GENERIC
                 "getPIsByClassInstance"=>new ActionMapping("getPIsByClassInstance", "", ""),
-        		"prepareRedirect"=>new ActionMapping("prepareRedirect", "", "")
+        		"prepareRedirect"=>new ActionMapping("prepareRedirect", "", ""),
+        		"sendTestEmail"=>new ActionMapping("sendTestEmail", "", "")
 
         );
     }
