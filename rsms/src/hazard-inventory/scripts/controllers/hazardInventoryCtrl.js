@@ -89,6 +89,7 @@ angular.module('HazardInventory')
         $scope.onSelectPi = function (pi, roomIds) {
             pi.loadInspections();
             $scope.PI = pi;
+            console.log("PI Selected: ",pi)
             if (!roomIds) roomIds = false;
             $scope.hazardPromise = getHazards(pi.Key_id, roomIds);
             $scope.selectPI = false;
@@ -283,7 +284,7 @@ angular.module('HazardInventory')
                     cabs: function () {
                         var url = '../ajaxaction.php?action=getCabinetsByPi&id=' + pi.Key_id + '&callback=JSON_CALLBACK';
 
-                        return $scope.loading = $q.all([convenienceMethods.getDataAsDeferredPromise(url)]).then(
+                        return $scope.loadingCabs = $q.all([convenienceMethods.getDataAsDeferredPromise(url)]).then(
                             function (cabs) {
                                 return [pi,cabs[0]];
                             });

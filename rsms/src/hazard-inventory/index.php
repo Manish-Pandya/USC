@@ -190,7 +190,7 @@ echo "</script>";
         <div cg-busy="{promise:PrincipalInvestigatorSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:RoomSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:InspectionSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
-        <div cg-busy="{promise:loading,message:'Loading Cabinets',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+        <div cg-busy="{promise:loadingCabs, message:'Loading Cabinets',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
 
         <div class="navbar">
@@ -217,7 +217,7 @@ echo "</script>";
             <i class="icon-spinnery-dealie spinner small" style="margin:-6px 0 0 -30px"></i>
        </span>
         <span ng-if="PIs">
-            <ui-select ng-if="!PI || af.selectPI" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="af.selectPI = false;onSelectPi($item)" class="span8" >
+            <ui-select ng-if="!PI || af.selectPI" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="af.selectPI = false; onSelectPi(pi.selected)" class="span8" >
                 <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
                 <ui-select-choices repeat="pi in PIs | orderBy:'User.Name' | propsFilter: {User.Name: $select.search}">
                   <div ng-class="{'red':!pi.Is_active}" ng-bind-html="pi.User.Name | highlight: $select.search"></div>

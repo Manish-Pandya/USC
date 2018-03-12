@@ -373,6 +373,7 @@ class HazardInventoryActionManager extends ActionManager {
                         on c.inspection_id = b.key_id
                         where b.equipment_class = 'BioSafetyCabinet'
                         AND c.principal_investigator_id = ?
+                        AND a.Is_active = 1
                         GROUP BY a.key_id";
         $stmt = $db->prepare($queryString);
         $stmt->bindValue(1, $id);

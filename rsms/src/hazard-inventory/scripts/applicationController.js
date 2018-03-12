@@ -361,7 +361,7 @@ angular
                 return $rootScope.RoomSaving;
         }
 
-        ac.initialiseInspection = function(PI, inspectorIds, inspectionId, rad, inspectors, rooms){
+        ac.initialiseInspection = function(PI, inspectorIds, inspectionId, rad, rooms){
             //if we don't have a pi, get one from the server
             if (!inspectorIds) inspectorIds = [];
             if (typeof inspectorIds == "object") {
@@ -376,17 +376,25 @@ angular
             var url = 'initiateInspection&piId='+PI.Key_id+'&'+$.param({inspectorIds:inspectorIds});
             if (rad) url = url + "&rad=true";
 
-            if (!rooms) {
-                var roomIds = [];
-                PI.Rooms.forEach(function (r) { roomIds.push(r.Key_id)})
+            var roomIds;
+            console.log(rooms);
+            if(rooms){
+                roomIds = rooms.filter(function(r){
+                    return inspectionId + "checked" in r && r[inspectionId + "checked"];
+                }).map(function(r){
+                    return r.Key_id;
+                })
+            }else{
+                roomIds = PI.Rooms.map(function(r){return r.Key_id})
             }
+            console.log(roomIds);
             if (roomIds) url = url + '&' + $.param({ roomIds: roomIds });
-
+            
 
             if(inspectionId) url+='&inspectionId='+inspectionId;
             var temp = this;
             console.log(url);
-             $rootScope.InspectionSaving = genericAPIFactory.read(url).then(
+            $rootScope.InspectionSaving = genericAPIFactory.read(url).then(
                                               function( returned ){
                                                   var inspection = returned.data;
                                                   if (rad || inspectionId) {
