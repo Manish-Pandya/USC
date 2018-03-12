@@ -16,11 +16,11 @@
         <div ng-include="'views/cabinet-table.html'" ng-init="uncertified = false;campus = {}" class="first-accordion"></div>
     </accordion>
 
-    <accordion ng-if="!showInactive && currentYear == selectedCertificationDate" style="margin-top:70px">
+    <accordion ng-if="!showInactive" style="margin-top:70px">
         <div ng-include="'views/cabinet-table.html'" ng-init="uncertified = true; campus = {}" class="first-accordion"></div>
     </accordion>
     <!-- ng-show="cabinets.length && completeCabinets.length || selectedBuilding"-->
     <accordion ng-repeat="campus in campuses.data | orderBy: 'Name'" ng-init="uncertified = false;" ng-if="!showInactive">
-        <div ng-include="'views/cabinet-table.html'" ng-class="{'first-accordion':currentYear != selectedCertificationDate && $index == 0}"></div>
+        <div ng-include="'views/cabinet-table.html'"></div>
     </accordion>
 </div>

@@ -203,8 +203,9 @@ angular
             } else if (uncertified) {
                 let year = new Date().getFullYear().toString();
                 return equips.filter(function (e) {
-                    return e.EquipmentInspections.every(function (i) { // true if not certified in current year
-                        return i.Is_uncertified || !i.Certification_date || i.Certification_date.indexOf(year) == -1;
+                    return e.EquipmentInspections.every(function (i) {
+                        // true if not certified in current year
+                        return i.Is_uncertified || !i.Certification_date || i.Certification_date.indexOf(dateString) == -1;
                     })
                 });
             } else if (showInactive) {
@@ -232,10 +233,11 @@ angular
                     return uncertified ? i.Is_uncertified || (!i.Certification_date && (!i.Fail_date || i.Fail_date.indexOf(dateString) != -1)) : !i.Is_uncertified && ((i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1));
                 });
             } else {
-                //for inactive cabinets, we show in a single grouping, showing only the most recent inspection
-                return inspections.sort( (a, b) => {
+                var insps = inspections.filter((i) => { return i.Fail_date || i.Certification_date });                
+                if (!insps) insps = inspections;
+                return [insps.sort( (a, b) => {
                     return a.Date_created > b.Date_created;
-                })[0];
+                })[0]];
             }
         }
     })

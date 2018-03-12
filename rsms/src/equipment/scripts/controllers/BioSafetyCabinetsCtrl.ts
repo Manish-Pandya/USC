@@ -495,4 +495,10 @@ angular.module('EquipmentModule')
             $rootScope.modalClosed = true;
             $modalInstance.dismiss();
         };
+
+        $scope.getYear = (inspection: equipment.EquipmentInspection):string => {
+            let date = inspection.Certification_date || inspection.Fail_date || inspection.Due_date;
+            date = inspection.Is_uncertified ? (parseInt(date) + 1).toString() : date;
+            return date.substr(0,4);
+        }
     });

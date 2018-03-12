@@ -1,11 +1,11 @@
 ﻿<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 
 <div class="modal-header" style="padding:0;">
-    <h2 style="padding:5px; background:#428642; color:white">Certification History For {{modalData.BioSafetyCabinet.Serial_number}} ({{modalData.BioSafetyCabinet.SelectedInspection.Room.Building_name}} {{modalData.BioSafetyCabinet.SelectedInspection.Room.Name}})</h2>
+    <h2 style="padding:5px; background:#428642; color:white">Certification History for Serial #{{modalData.BioSafetyCabinet.Serial_number}} ({{modalData.BioSafetyCabinet.SelectedInspection.Room.Building_name}} {{modalData.BioSafetyCabinet.SelectedInspection.Room.Name}})</h2>
 </div>
 
 <div class="modal-body inspections wide-modal" style="overflow-y:visible !important;">
-    <table class="table table-striped table-bordered" >
+    <table class="table table-striped table-bordered" style="width:60%;">
         <tr class="table-header">
             <th>TYPE</th>
             <th>MANUFACTURER</th>
@@ -31,24 +31,29 @@
     <table class="table table-striped table-bordered">
         <tr class="table-header">
             <th>
-                BUILDING<br>
+                YEAR
+            </th>
+            <th>
+                BUILDING
             </th>
             <th>
                 ROOM
             </th>
-            <th>CERT-DATE</th>
             <th>
                 PI / CONTACT
             </th>
             <th>
-                STATUS
+                CERT RECORD
             </th>
             <th>
                 REPORT/<br />Quote
             </th>
             <th>COMMENTS</th>
         </tr>
-        <tr class="table-header" ng-repeat="inspection in cabinet.EquipmentInspections">
+        <tr class="table-header" ng-repeat="inspection in cabinet.EquipmentInspections | orderBy:'year'">
+            <td ng-init="inspection.year = getYear(inspection)">
+                {{inspection.year}}
+            </td>
             <td>
                {{inspection.Room.Building.Alias || inspection.Room.Building.Name}}
                    
@@ -56,6 +61,11 @@
             <td>
                {{inspection.Room.Name}}
             </td>
+            <td>
+                <span><a ng-class="{'red':!pi.Is_active}" style="display: block;padding: 3px 0;" ng-click="openPiInfoModal(pi)" ng-repeat="pi in pis = (inspection.PrincipalInvestigators | activeWhenInspected:inspection)">{{pi.User.Name}}<br ng-if="!$last"></a></span>
+                <span ng-if="!pis.length" class="red">Unsassigned</span>
+            </td>
+            <!--
             <td>
                 <span ng-class="{'red': inspection.Status == constants.EQUIPMENT.STATUS.FAIL || inspection.Status == constants.EQUIPMENT.STATUS.OVERDUE || inspection.Is_uncertified,
                                         'yellow': inspection.Status == constants.EQUIPMENT.STATUS.PENDING || inspection.Status == constants.EQUIPMENT.STATUS.NEW,
@@ -67,27 +77,27 @@
                     {{inspection.Certification_date || inspection.Fail_date || inspection.Due_date | dateToIso}}
                 </span>
             </td>
+                -->
             <td>
-                <span><a ng-class="{'red':!pi.Is_active}" style="display: block;padding: 3px 0;" ng-click="openPiInfoModal(pi)" ng-repeat="pi in pis = (inspection.PrincipalInvestigators | activeWhenInspected:inspection)">{{pi.User.Name}}<br ng-if="!$last"></a></span>
-                <span ng-if="!pis.length" class="red">Unsassigned</span>
-            </td>
-            <td>
-                <span ng-class="{'red': inspection.Status == constants.EQUIPMENT.STATUS.FAIL || inspection.Status == constants.EQUIPMENT.STATUS.OVERDUE || inspection.Is_uncertified,
+                <span ng-class="{'red': inspection.Status == constants.EQUIPMENT.STATUS.FAIL || inspection.Status == constants.EQUIPMENT.STATUS.OVERDUE,
                                         'yellow': inspection.Status == constants.EQUIPMENT.STATUS.PENDING || inspection.Status == constants.EQUIPMENT.STATUS.NEW,
                                         'green': inspection.Status == constants.EQUIPMENT.STATUS.PASS }">
-                    <span class="bold" ng-if="inspection.Is_uncertified && inspection.Status != constants.EQUIPMENT.STATUS.FAIL">FAILED ON:<br />{{inspection.Due_date | dateToISO}}</span>
-                    <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.FAIL">FAIL</span>
-                    <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.OVERDUE">OVERDUE:<br />{{inspection.Due_date | dateToISO}}</span>
-                    <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.PENDING">DUE: <br />{{inspection.Due_date | dateToISO}}</span>
+                    <span class="bold" ng-if="inspection.Is_uncertified && inspection.Status != constants.EQUIPMENT.STATUS.FAIL">OPEN CERTIFICATION</span>
+                    <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.FAIL">FAIL: {{inspection.Fail_date | dateToISO}}</span>
+                    <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.OVERDUE">OVERDUE: {{inspection.Due_date | dateToISO}}</span>
+                    <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.PENDING">DUE: {{inspection.Due_date | dateToISO}}</span>
                     <span class="bold" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.NEW">NO CERTIFICATION RECORD</span>
-                    <span class="bold green" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.PASS">PASS</span>
+                    <span class="bold green" ng-if="inspection.Status == constants.EQUIPMENT.STATUS.PASS">PASS: {{inspection.Certification_date | dateToISO}}</span>
                 </span>
             </td>
             <td>
-                {{cabinet.Model}}
+                <a ng-if="inspection.Report_path" class="btn" ng-class="{'btn-danger': inspection.Status == constants.EQUIPMENT.STATUS.FAIL,'btn-success': inspection.Status != constants.EQUIPMENT.STATUS.FAIL}" href="../biosafety-committees/protocol-documents/{{inspection.Report_path}}" target="_blank">Report</a>
+                <a ng-if="inspection.Quote_path" class="btn btn-primary" href="../biosafety-committees/protocol-documents/{{inspection.Quote_path}}" target="_blank">Quote</a>
+                <a ng-if="inspection.Decon_path" class="btn btn-warning" href="../biosafety-committees/protocol-documents/{{inspection.Decon_path}}" target="_blank">Decon</a>
             </td>
             <td>
-                <span ng-bind-html="getMostRecentComment(cabinet, inspection)"></span>
+                {{inspection.Comment || "No Comments"}}
+
             </td>
         </tr>
     </table>

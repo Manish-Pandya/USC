@@ -116,7 +116,7 @@ require_once '../top_view.php';
                 <td class="triple-inner-inner" style="width:8%">
                     <div ng-repeat="campus in dto.Campuses">
                         <div ng-repeat="building in campus.Buildings" style="margin-bottom:10px">
-                            <div ng-class="{'red':room.notInspected}" ng-repeat="room in building.Rooms">
+                            <div ng-class="{'red':room.notInspected}" ng-repeat="room in building.Rooms | orderBy: convenienceMethods.sortAlphaNum('Name')">
                                 {{room.Name}}
                             </div>
                         </div>
@@ -241,7 +241,6 @@ require_once '../top_view.php';
                             <span><br>(Scheduled for {{dto.Inspections.Schedule_month | getMonthName}})</span>
                             <br>
                             <span ng-init="dto = getRoomUrlString(dto)"></span>
-                            <pre>{{dto | json}}</pre>
                             <a target="_blank" style="margin:  5px 0;" class="btn btn-danger left" href="../../hazard-inventory/#?pi={{dto.Pi_key_id}}&{{dto.roomUrlParam}}"><img src="../../img/hazard-icon.png" />Inventory</a>
                         </span>
                     </span>

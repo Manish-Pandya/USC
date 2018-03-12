@@ -20,6 +20,7 @@ namespace equipment {
         Due_date: string;
         Date_created: string;
         Status: string;
+        Is_uncertified: boolean;
 
         constructor() {
             super();
