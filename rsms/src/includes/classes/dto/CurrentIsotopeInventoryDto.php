@@ -17,6 +17,7 @@ class CurrentIsotopeInventoryDto
     private $amount_picked_up;
     private $amount_on_hand;
     private $amount_disposed;
+    private $amount_transferred;
     private $usable_amount;
     private $auth_limit;
     private $max_order;
@@ -78,7 +79,7 @@ class CurrentIsotopeInventoryDto
 	}
 
 	public function getAmount_on_hand(){
-        $this->amount_on_hand = $this->getOrdered()-$this->getAmount_picked_up();
+        $this->amount_on_hand = $this->getOrdered()-$this->getAmount_picked_up()-$this->getAmount_transferred();
 		return (float) $this->amount_on_hand;
 	}
 
@@ -95,7 +96,7 @@ class CurrentIsotopeInventoryDto
 	}
 
 	public function getUsable_amount(){
-        $this->usable_amount = $this->getOrdered() - $this->getAmount_disposed();
+        $this->usable_amount = $this->getOrdered() - $this->getAmount_disposed() - $this->getAmount_transferred();
 		return (float) $this->usable_amount;
 	}
 
@@ -118,5 +119,13 @@ class CurrentIsotopeInventoryDto
 
 	public function setMax_order($maxOrder){
 		$this->max_order = $maxOrder;
+	}
+
+    public function getAmount_transferred(){
+		return $this->amount_transferred;
+	}
+
+	public function setAmount_transferred($amount_transferred){
+		$this->amount_transferred = $amount_transferred;
 	}
 }
