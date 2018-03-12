@@ -1,0 +1,37 @@
+﻿<div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../busy-templates/full-page-busy.html'}"></div>
+<div class="modal-header blueBg" style="padding:0;">
+    <h2 style="padding:5px" ng-show="modalData.IBCMeeting.Key_id" color:white">Edit Meeting</h2>
+    <h2 style="padding:5px" ng-hide="modalData.IBCMeeting.Key_id" color:white">Create a New Meeting</h2>
+</div>
+
+<div class="modal-body">
+    <div class="control-group">
+        <label class="control-label">Date</label>
+        <quick-datepicker ng-model='modalData.IBCMeeting.Meeting_date'></quick-datepicker>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Location</label>
+        <input type="text" style="width:500px" ng-init="modalData.IBCMeeting.Location = modalData.IBCMeeting.Location.length ? modalData.IBCMeeting.Location : 'Benson School, room 302B'" ng-model="modalData.IBCMeeting.Location" />
+    </div>
+    <div class="control-group">
+        <label class="control-label">Agenda</label>
+        <input type="text" style="width:500px" ng-model="modalData.IBCMeeting.Agenda" />
+    </div>
+    <div class="control-group">
+        <label class="control-label">Add Attendees</label>
+        <ul>
+            <li ng-repeat="attendee in modalData.possibleAttendees" style="padding: 3px 0; font-size: 15px;">
+                <label class="checkbox inline">
+                    <input type="checkbox" ng-model="attendee.isChecked" ng-change="addRemoveAttendee(attendee, attendee.isChecked)" />
+                    <span class="metro-checkbox" once-text="attendee.Name"></span>
+                </label>
+            </li>
+        </ul>
+    </div>
+    <br />
+</div>
+
+<div class="modal-footer">
+    <a class="btn btn-large btn-success left" ng-click="save(modalData.IBCMeeting)"><i class="icon-checkmark"></i>Save</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+</div>

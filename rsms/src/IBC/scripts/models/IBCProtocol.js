@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var ibc;
 (function (ibc) {
-    var IBCProtocol = (function (_super) {
+    var IBCProtocol = /** @class */ (function (_super) {
         __extends(IBCProtocol, _super);
         function IBCProtocol() {
             var _this = _super.call(this) || this;

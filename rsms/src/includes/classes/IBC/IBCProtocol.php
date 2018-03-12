@@ -37,6 +37,10 @@ class IBCProtocol extends GenericCrud {
 	private $expiration_date;
 	private $report_path;
 
+	/**
+	 * Summary of $principalInvestigators
+	 * @var PrincipalInvestigator[]
+	 */
 	private $principalInvestigators;
 
 	private $department_id;
@@ -45,6 +49,10 @@ class IBCProtocol extends GenericCrud {
 	private $hazard_id;
 	private $hazard;
 
+    /**
+     * Summary of $IBCProtocolRevisions
+     * @var IBCProtocolRevision[]
+     */
     private $IBCProtocolRevisions;
 
 	private $IBCSections;
@@ -160,6 +168,7 @@ class IBCProtocol extends GenericCrud {
 	}
 
     public function getIBCProtocolRevisions(){
+		$l = Logger::getLogger(__FUNCTION__);
 		if($this->IBCProtocolRevisions === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
 			$this->IBCProtocolRevisions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$REVISIONS_RELATIONSHIP));
@@ -172,7 +181,9 @@ class IBCProtocol extends GenericCrud {
 				$revision->setRevision_number("0");
 				$revision->setIs_active(true);
 				$revisionDao = new GenericDAO($revision);
-				$this->IBCProtocolRevisions = array($revisionDao->save($revision));
+				$revision = $revisionDao->save($revision);
+				$l->fatal($revision);
+				$this->IBCProtocolRevisions = array($revision);
 			}
 		}
 		return $this->IBCProtocolRevisions;

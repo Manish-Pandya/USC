@@ -20,10 +20,13 @@ angular.module('ng-IBC')
 
         var getEmailData = function (): void {
             $scope.emails = new ViewModelHolder();
-            return $q.all([DataStoreManager.getAll("IBCEmailGen", $scope.emails)])
+            $scope.protocol = new ViewModelHolder();
+            // TODO: Remove test protocol fetching
+            return $q.all([DataStoreManager.getAll("IBCEmailGen", $scope.emails), DataStoreManager.getById("IBCProtocol", 2, $scope.protocol, [ibc.IBCProtocol.RevisionMap, ibc.IBCProtocol.PIMap])])
                 .then(
                     function (whateverGotReturned) {
                         console.log($scope.emails.data);
+                        console.log($scope.protocol.data);
                         console.log(DataStoreManager._actualModel);
                     }
                 )
@@ -39,11 +42,33 @@ angular.module('ng-IBC')
         }
 
         $scope.loading = $rootScope.getCurrentRoles().then(getRecipients).then(getEmailData);
-    })
-    .controller('IBCEmailMgmtModalCtrl', function ($scope, $rootScope, $modalInstance, $modal, convenienceMethods, roleBasedFactory) {
-        $scope.constants = Constants;
-        var rbf = roleBasedFactory;
 
+        $scope.openModal = function (object: FluxCompositerBase) {
+            var modalData = {};
+            if (!object) {
+                object = new ibc.IBCEmailGen;
+            }
+            // TODO: Remove test revision setting
+            object.Revision = ($scope.protocol.data as ibc.IBCProtocol).IBCProtocolRevisions[$scope.protocol.data.IBCProtocolRevisions.length - 1];
+            modalData[object.thisClass['name']] = object;
+            DataStoreManager.ModalData = modalData;
+            var modalInstance = $modal.open({
+                templateUrl: 'views/modals/email-gen-parsed-modal.html',
+                controller: 'IBCEmailMgmtModalCtrl'
+            });
+        }
+    })
+    .controller('IBCEmailMgmtModalCtrl', function ($scope, $rootScope, $modalInstance, $modal, convenienceMethods, $q) {
+        $scope.constants = Constants;
+        $scope.modalData = DataStoreManager.ModalData;
+
+        
+        //TODO: David add param to force DataStoreManager to fetch from server
+        $rootScope.loading = $q.all([XHR.POST("getPreviewCorpus", $scope.modalData.IBCEmailGen)]).then((r) => {
+            console.log($scope.modalData.IBCEmailGen, r);
+            $scope.modalData.IBCEmailGen.ParsedCorpus = r;
+        })
+        
         $scope.close = function () {
             $modalInstance.dismiss();
         }

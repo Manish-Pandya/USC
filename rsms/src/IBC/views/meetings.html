@@ -1,0 +1,45 @@
+﻿<div cg-busy="{promise:loading, message:'Loading...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:saving, message:'Saving...', backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+
+<h1 class="card full">
+    <i class="icon-protocol"></i>IBC Meetings Management
+    <a ng-click="showInactive = !showInactive" class="btn left" style="margin-left:10px">{{showInactive ? 'Show Active' : 'Show Inactive'}}</a>
+</h1>
+<br />
+
+<div class="card full">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr class="redBg">
+                <th colspan="9" class="redBg">
+                    <h1 class="redBg">Meetings</h1>
+                    <h2 class="redBg"><span class="bold underline">{{meetings.data.length || "0"}}</span> Meetings Displayed</h2>
+                </th>
+            </tr>
+            <tr>
+                <th>Edit Meeting</th>
+                <th>Date</th>
+                <th>Location</th>
+                <th>Attendees</th>
+                <th>Agenda</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr ng-repeat="meeting in meetings.data  | filter:{Is_active:!showInactive}">
+                <td style="width:8%;">
+                    <button class="edit btn btn-primary" ng-click="openModal(meeting)" alt="Edit" title="Edit"><i class="icon-pencil"></i></button>
+                    <button class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(meeting)" ng-if="meeting.Is_active"><i class="icon-remove"></i></button>
+                    <button class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(meeting)" ng-if="!meeting.Is_active"><i class="icon-checkmark"></i></button>
+                </td>
+                <td>{{meeting.Meeting_date | dateToIsoTime}}</td>
+                <td>{{meeting.Location}}</td>
+                <td><p ng-repeat="user in meeting.Attendees track by $index">{{user.Name}}</p> </td>
+                <td>{{meeting.Agenda}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-large btn-success left" ng-click="openModal()"><i class="icon-cancel-2"></i>Scheduler Modal</a>
+</div>
+

@@ -18,6 +18,7 @@ angular
         'angular.filter',
         'ui.tinymce',
         'ui.router',
+        'ngQuickDate'
     ])
     .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
         $urlRouterProvider.otherwise("/my-protocols1");
@@ -52,6 +53,11 @@ angular
               templateUrl: "views/email-management.html",
               controller: "IBCEmailMgmtCtrl"
             })
+            .state('ibc.meetings', {
+                url: "/meetings",
+                templateUrl: "views/meetings.html",
+                controller: "IBCMeetingsCtrl"
+            })
             .state('ibc.test', {
                 url: "/test/:id",
                 templateUrl: "views/test.html",
@@ -65,7 +71,8 @@ angular
         $rootScope.constants = Constants;
 
         $rootScope.tinymceOptions = {
-            plugins: 'link lists',
+            plugins: ['link lists', 'autoresize'],
+            contextmenu_never_use_native: true,
             toolbar: 'bold | italic | underline | link | lists | bullist | numlist',
             menubar: false,
             elementpath: false,

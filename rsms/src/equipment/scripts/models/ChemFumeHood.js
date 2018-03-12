@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var equipment;
 (function (equipment) {
-    var ChemFumeHood = (function (_super) {
+    var ChemFumeHood = /** @class */ (function (_super) {
         __extends(ChemFumeHood, _super);
         function ChemFumeHood() {
             return _super.call(this) || this;

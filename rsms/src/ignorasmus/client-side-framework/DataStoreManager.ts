@@ -124,7 +124,6 @@ abstract class DataStoreManager {
                                 DataStoreManager._actualModel[type].fullyComposed = true;
                             }
                             viewModelInst.data = DataStoreManager._actualModel[type].ViewModelWatcher;
-
                             return viewModelInst;
                         })
                         .catch((reason) => {

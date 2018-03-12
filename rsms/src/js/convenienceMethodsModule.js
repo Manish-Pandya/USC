@@ -451,7 +451,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
             }
         },
         dateToIso: function (input, object, propertyName, setToString, nullable) {
-
             if (!input && !nullable) {
                 return "N/A";
             } else if (!input && nullable) {
@@ -576,9 +575,20 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
         return convenienceMethods.dateToIso(input, object, propertyName, setToString);
     };
 })
-.filter('dateToIso', function (convenienceMethods) {
-    return function (input, object, propertyName, setToString) {
-        return convenienceMethods.dateToIso(input, object, propertyName, setToString);
+.filter('dateToIsoTime', function (convenienceMethods) {
+    return function (input) {
+        if (!input) return "N/A";
+        // Split timestamp into [ Y, M, D, h, m, s ]
+        var t = input.split(/[- :]/);
+        if (t[0] == "0000") return "N/A";
+        // Apply each element to the Date function
+        var d = new Date(t[0], t[1] - 1, t[2], t[3], t[4]);
+
+        //at times like these, it's important to consider the nature of addition, concatonation and the universe in general.
+        //input = d.getMonth() + 1 + '/' + d.getDate() + '/' + d.getFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() d.;
+        input = d.toLocaleString();
+        
+        return input;
     };
 })
 .filter('activeOnly', function() {

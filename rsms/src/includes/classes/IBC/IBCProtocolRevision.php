@@ -22,6 +22,7 @@ class IBCProtocolRevision extends GenericCrud
         "date_approved"				=> "timestamp",
         "date_submitted"            => "timestamp",
         "date_in_review"            => "timestamp",
+        "status"					=> "text",
 
 		"protocol_type"				=> "text",
         //GenericCrud
@@ -68,6 +69,18 @@ class IBCProtocolRevision extends GenericCrud
     /* array of primary reviewers responsible for reviewing this protocal revision*/
     private $preliminaryReviewers;
 
+	/**
+	 * Summary of $protocolFillOutUser
+	 * @var User[]
+	 */
+	private $protocolFillOutUsers;
+
+	/**
+	 * Summary of $protocolUsers
+	 * @var User[]
+	 */
+	private $protocolUsers;
+
     /** array of sections containing questions relevant to this protocol revision's hazard **/
     private $section;
 
@@ -78,7 +91,10 @@ class IBCProtocolRevision extends GenericCrud
         $entityMaps[] = new EntityMap("lazy","getPrimaryReviewers");
         $entityMaps[] = new EntityMap("lazy","getIBCPreliminaryComments");
 		$entityMaps[] = new EntityMap("lazy","getIBCResponses");
+		//$entityMaps[] = new EntityMap("lazy","getProtocolFillOutUsers");
 		$this->setEntityMaps($entityMaps);
+
+		if($this->status == null)$this->status = self::$STATUSES["NOT_SUBMITTED"];
 	}
 
     /** Relationships */
@@ -107,6 +123,20 @@ class IBCProtocolRevision extends GenericCrud
         "className"	=>	"User",
         "tableName"	=>	"ibc_revision_preliminary_reviewer",
         "keyName"	=>	"reviewer_id",
+        "foreignKeyName"	=>	"revision_id"
+    );
+
+	public static $PROTOCOL_FILLOUT_USERS_RELATIONSHIP = array(
+        "className"	=>	"User",
+        "tableName"	=>	"ibc_revision_protocol_fillout_user",
+        "keyName"	=>	"protocol_fillout_user_id",
+        "foreignKeyName"	=>	"revision_id"
+    );
+
+	public static $PROTOCOL_USERS_RELATIONSHIP = array(
+        "className"	=>	"User",
+        "tableName"	=>	"ibc_revision_protocol_user",
+        "keyName"	=>	"protocol_user_id",
         "foreignKeyName"	=>	"revision_id"
     );
 
@@ -177,42 +207,9 @@ class IBCProtocolRevision extends GenericCrud
             "IN_REVIEW" => "In Review",
             "APPROVED" => "Approved"
         );
-	public function getStatus(){
-        if(!$this->date_submitted && !$this->date_returned){
-            $this->status = IBCProtocolRevision::$STATUSES["NOT_SUBMITTED"];
-        }
-        elseif($this->date_submitted && !$this->date_in_review && !$this->date_approved && !$this->date_returned){
-            $this->status = IBCProtocolRevision::$STATUSES["SUBMITTED"];
-        }
-        elseif($this->date_in_review && !$this->date_approved && !$this->date_returned){
-            $this->status = IBCProtocolRevision::$STATUSES["IN_REVIEW"];
-        }
-        elseif(!$this->date_approved && $this->date_returned){
-            $this->status = IBCProtocolRevision::$STATUSES["RETURNED_FOR_REVISION"];
-        }
-        elseif($this->date_approved){
-            $this->status = IBCProtocolRevision::$STATUSES["APPROVED"];
-        }
-		return $this->status;
-	}
 
-	public function setStatus($status){
-		if(!$this->date_submitted && !$this->date_returned){
-            $this->status = IBCProtocolRevision::$STATUSES["NOT_SUBMITTED"];
-        }
-        elseif($this->date_submitted && !$this->date_in_review && !$this->date_approved && !$this->date_returned){
-            $this->status = IBCProtocolRevision::$STATUSES["SUBMITTED"];
-        }
-        elseif($this->date_in_review && !$this->date_approved && !$this->date_returned){
-            $this->status = IBCProtocolRevision::$STATUSES["IN_REVIEW"];
-        }
-        elseif(!$this->date_approved && $this->date_returned){
-            $this->status = IBCProtocolRevision::$STATUSES["RETURNED_FOR_REVISION"];
-        }
-        elseif($this->date_approved){
-            $this->status = IBCProtocolRevision::$STATUSES["APPROVED"];
-        }
-	}
+	public function getStatus(){ return $this->status; }
+	public function setStatus($status){ $this->status = $status; }
 
     public function getIBCResponses(){
 		if($this->IBCResponses === NULL && $this->hasPrimaryKeyValue()) {
@@ -254,9 +251,30 @@ class IBCProtocolRevision extends GenericCrud
 		}
 		return $this->preliminaryReviewers;
 	}
-
 	public function setPreliminaryReviewers($preliminaryReviewers){
 		$this->preliminaryReviewers = $preliminaryReviewers;
+	}
+
+	public function getProtocolFillOutUsers(){
+        if($this->protocolFillOutUsers == NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->protocolFillOutUsers = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PROTOCOL_FILLOUT_USERS_RELATIONSHIP));
+		}
+		return $this->protocolFillOutUsers;
+	}
+	public function setProtocolFillOutUsers($protocolFillOutUsers){
+		$this->protocolFillOutUsers = $protocolFillOutUsers;
+	}
+
+	public function getProtocolUsers(){
+        if($this->protocolUsers == NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->protocolUsers = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PROTOCOL_USERS_RELATIONSHIP));
+		}
+		return $this->protocolUsers;
+	}
+	public function setProtocolUsers($protocolUsers){
+		$this->protocolUsers = $protocolUsers;
 	}
 
 }

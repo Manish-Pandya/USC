@@ -255,6 +255,9 @@ class PrincipalInvestigator extends GenericCrud {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 
+	/*
+	 * @return User
+	 */
 	public function getUser(){
 		if($this->user == null) {
 			$userDAO = new GenericDAO(new User());

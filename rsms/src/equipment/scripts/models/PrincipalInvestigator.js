@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var equipment;
 (function (equipment) {
-    var PrincipalInvestigator = (function (_super) {
+    var PrincipalInvestigator = /** @class */ (function (_super) {
         __extends(PrincipalInvestigator, _super);
         //static RoomMap: CompositionMapping = new CompositionMapping(CompositionMapping.MANY_TO_MANY, "Room", "getPropertyByName&type={{DataStoreManager.classPropName}}&property=rooms&id={{UID}}", "Rooms", "Principal_investigator_id", "Room_id", "PrincipalInvestigatorRoom", "getRelationships&class1=PrincipalInvestigator&class2=Room");
         function PrincipalInvestigator() {

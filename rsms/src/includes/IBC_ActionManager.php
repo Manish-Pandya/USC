@@ -128,6 +128,7 @@ class IBC_ActionManager extends ActionManager {
         //hold Preliminary and Primary reviewers
 		$primaryReviewers = $decodedObject->getPrimaryReviewers();
         $preliminaryReviewers = $decodedObject->getPreliminaryReviewers();
+        $protocolEditors = $decodedObject->getProtocolFillOutUsers();
 
         $dao = $this->getDao($decodedObject);
         $revision = $dao->save($decodedObject);
@@ -152,21 +153,30 @@ class IBC_ActionManager extends ActionManager {
             $dao->addRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PRELIMINARY_REVIEWERS_RELATIONSHIP));
         }
 
+		foreach($revision->getProtocolFillOutUsers() as $reviewer){
+            if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
+            $dao->removeRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PROTOCOL_FILLOUT_USERS_RELATIONSHIP));
+        }
+
+        foreach($protocolEditors as $reviewer){
+            if(is_array($reviewer))$reviewer = JsonManager::assembleObjectFromDecodedArray($reviewer);
+            $dao->addRelatedItems($reviewer->getKey_id(), $revision->getKey_id(), DataRelationship::fromArray(IBCProtocolRevision::$PROTOCOL_FILLOUT_USERS_RELATIONSHIP));
+        }
+
 		//Protocol's current IBCProtocolRevision has been returned for revision, to be revised for revisions
 		if($revision->getStatus() === IBCProtocolRevision::$STATUSES["RETURNED_FOR_REVISION"] && $cloneIfReturnedForRevision){
 			$newRevision = clone($revision);//new IBCProtocolRevision()
 			$this->purgeKeyIds($newRevision);
 			$newRevision->setPreliminaryReviewers($preliminaryReviewers);
 			$newRevision->setPrimaryReviewers($primaryReviewers);
+			$newRevision->setProtocolFillOutUsers($protocolEditors);
 			$responses = $revision->getIBCResponses();
 			$preComments = $revision->getIBCPreliminaryComments();
-			$l->fatal($newRevision);
 			//TODO: get our primary comments and save them after we write the other stuff for that thing
 			//$primaryComments = $newRevision->getIBCPriminaryComments();
 			$newRevision->setRevision_number(intval ($revision->getRevision_number()) + 1);
 			$newRevision = $this->saveProtocolRevision($newRevision, false);
-			$l->fatal($newRevision);
-			$l->fatal($responses);
+
 			foreach($responses as $response){
 				$response->setKey_id(null);
 				$response->setKey_id(null);
@@ -198,8 +208,22 @@ class IBC_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("eager","getPrimaryReviewers");
 		$revision->setEntityMaps($entityMaps);
 
+		//TODO: use getIbcEmailByStatus to determine if an email, and if so, which, should be sent
+		//if($revision->getStatus() == IBCProtocolRevision::$STATUSES["SUBMITTED"]){
+			$l->fatal($revision);
+
+			$emailGen = $this->getIBCEmailGenById(6);
+			$emailGen->setRevision($revision);
+			$l->fatal($emailGen);
+		//}
+
         return $revision;
     }
+
+	//TODO: write simple factory to get proper IBCEmail gen by status. refactor title column in email_madlib to match status column
+	public function getIbcEmailByStatus($status){
+
+	}
 
 	/*
 	 * RECURSIVELY PURGE KEY_IDS FROM OBJECT TREE FOR FRESH SAVES
@@ -528,6 +552,13 @@ class IBC_ActionManager extends ActionManager {
         return $responses;
 	}
 
+	public function getIBCEmailGenById($id = null){
+		if($id == NULL)$id = $this->getValueFromRequest('id', $id);
+        if($id == NULL)return new ActionError("No request param 'id' provided.");
+        $dao = $this->getDao(new IBCEmailGen());
+        return $dao->getById($id);
+	}
+
 	public function saveIBCEmailGen(IBCEmailGen $decodedObject){
         if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
         if($decodedObject == NULL)return new ActionError("No input read from stream");
@@ -535,10 +566,73 @@ class IBC_ActionManager extends ActionManager {
         return $dao->save($decodedObject);
     }
 
-	public function testEmailGen() {
-		//return EmailGen::doThing();
-		$emailGen = new IBCEmailGen();
-		return $emailGen->parse();
+	public function getPreviewCorpus($decodedObject = null){
+		if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
+		return $decodedObject->parse($decodedObject->getCorpus());
+	}
+
+	// IBC Meetings Mgmt functions //
+	//////////////////////////////
+
+	public function getAllIBCMeetings() {
+		$dao = $this->getDao(new IBCMeeting());
+        return $dao->getAll();
+	}
+
+	public function getIBCMeetingById($id = null){
+		if($id == NULL)$id = $this->getValueFromRequest('id', $id);
+        if($id == NULL)return new ActionError("No request param 'id' provided.");
+        $dao = $this->getDao(new IBCMeeting());
+        return $dao->getById($id);
+	}
+
+	public function saveIBCMeeting(IBCMeeting $decodedObject){
+        if($decodedObject == NULL)$decodedObject = $this->convertInputJson();
+        if($decodedObject == NULL)return new ActionError("No input read from stream");
+        $dao = $this->getDao($decodedObject);
+
+		$oldMeeting = $this->getIBCMeetingById($decodedObject->getKey_id());
+		if($oldMeeting != null){
+			$oldAttendees = $oldMeeting->getAttendees();
+			foreach($oldAttendees as $attendee){
+				$dao->removeRelatedItems($attendee->getKey_id(), $oldMeeting->getKey_id(), DataRelationship::fromArray(IBCMeeting::$ATTENDEES_RELATIONSHIP));
+			}
+		}
+
+		$newAttendees = $decodedObject->getAttendees();
+		$decodedObject = $dao->save($decodedObject);
+		foreach($newAttendees as $attendee){
+			if(is_array($attendee))$attendee = JsonManager::assembleObjectFromDecodedArray($attendee);
+			$dao->addRelatedItems($attendee->getKey_id(), $decodedObject->getKey_id(), DataRelationship::fromArray(IBCMeeting::$ATTENDEES_RELATIONSHIP));
+		}
+
+		if ($decodedObject->getProtocolRevisions() == null) {
+			$revision = new IBCProtocolRevision();
+			$revision->setProtocol_type("NEW");
+			$revision->setProtocol_id( $decodedObject->getKey_id() );
+			$revision->setRevision_number(0);
+			$revision->setIs_active(true);
+			$dao = $this->getDao($revision);
+			$revision = $dao->save($revision);
+		}
+
+        return $dao->save($decodedObject);
+    }
+
+	public function getIBCPossibleMeetingAttendees(){
+		$users = $this->getAllUsers();
+
+		$users = array_filter($users,
+			/**
+			  * @var User
+			  */
+			function($user) {
+				foreach($user->getRoles() as $role) {
+					if (stristr($role->getName(), "ibc")) return true;
+				}
+				return false;
+			});
+		return $users;
 	}
 }
 
