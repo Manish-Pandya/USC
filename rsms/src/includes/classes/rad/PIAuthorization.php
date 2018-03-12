@@ -9,7 +9,7 @@
 class PIAuthorization extends RadCrud{
 
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "pi_authorization";
+	public static $TABLE_NAME = "pi_authorization";
 
 
 	/** Key/Value Array listing column names mapped to their types */
@@ -47,6 +47,12 @@ class PIAuthorization extends RadCrud{
 			"foreignKeyName" =>	"pi_authorization_id"
 	);
 
+	public static $USERS_RELATIONSHIP = array(
+			"className"	=>	"User",
+			"tableName"	=>	"pi_authorization_user",
+			"keyName"	=>	"user_id",
+			"foreignKeyName" =>	"pi_authorization_id"
+	);
 
 	public static $AUTHORIZATIONS_RELATIONSHIP = array(
 			"className" =>  "Authorization",
@@ -55,10 +61,31 @@ class PIAuthorization extends RadCrud{
 			"foreignKeyName" => "pi_authorization_id"
 	);
 
+    public static $CONDITIONS_RELATIONSHIP = array(
+        "className" =>  "RadCondition",
+        "tableName" =>  "pi_authorization_rad_condition",
+        "keyName"   =>  "condition_id",
+        "foreignKeyName" => "pi_authorization_id",
+        "orderColumn"    => "order_index"
+    );
+
 	private $principal_investigator_id;
 
+	/**
+	 * Summary of $rooms
+	 * @var Room[]
+	 */
 	private $rooms;
+	/**
+	 * Summary of $departments
+	 * @var Department[]
+	 */
 	private $departments;
+    /**
+     * Summary of $users
+     * @var User[]
+     */
+    private $users;
 	private $authorization_number;
 	private $amendment_number;
 
@@ -75,6 +102,8 @@ class PIAuthorization extends RadCrud{
 
     private $new_notes;
     private $update_notes;
+
+    private $conditions;
 
 	public function __construct(){
 		// Define which subentities to load
@@ -113,6 +142,17 @@ class PIAuthorization extends RadCrud{
 	}
 	public function setRooms($rooms){
 		$this->rooms = $rooms;
+	}
+
+	public function getUsers(){
+		if($this->users === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->users = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$USERS_RELATIONSHIP));
+		}
+		return $this->users;
+	}
+	public function setUsers($users){
+		$this->users = $users;
 	}
 
 	public function getDepartments(){
@@ -160,6 +200,15 @@ class PIAuthorization extends RadCrud{
 
     public function getUpdate_notes(){return $this->update_notes;}
     public function setUpdate_notes($notes){$this->update_notes = $notes;}
+
+    public function getConditions(){
+		if($this->conditions === NULL && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->conditions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$CONDITIONS_RELATIONSHIP));
+		}
+		return $this->conditions;
+	}
+	public function setConditions($conditions){ $this->conditions = $conditions; }
 
 }
 

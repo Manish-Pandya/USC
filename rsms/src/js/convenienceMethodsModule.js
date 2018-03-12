@@ -1,4 +1,34 @@
-angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','ui.select','ngSanitize'])
+angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 'ui.select', 'ngSanitize'])
+.config(['$provide', function ($provide) {
+    $provide.decorator('orderByFilter', ['$delegate', '$parse', function ($delegate, $parse) {
+        return function () {
+            var predicates = arguments[1];
+            var invertEmpties = arguments[3];
+            if (angular.isDefined(invertEmpties)) {
+                if (!angular.isArray(predicates)) {
+                    predicates = [predicates];
+                }
+                var newPredicates = [];
+                angular.forEach(predicates, function (predicate) {
+                    if (angular.isString(predicate)) {
+                        var trimmed = predicate;
+                        if (trimmed.charAt(0) == '-') {
+                            trimmed = trimmed.slice(1);
+                        }
+                        var keyFn = $parse(trimmed);
+                        newPredicates.push(function (item) {
+                            var value = keyFn(item);
+                            return (angular.isDefined(value) && value != null) == invertEmpties;
+                        })
+                    }
+                    newPredicates.push(predicate);
+                });
+                predicates = newPredicates;
+            }
+            return $delegate(arguments[0], predicates, arguments[2]);
+        }
+    }])
+}])
 .run(function($rootScope) {
     $rootScope.Constants = Constants;
 })
@@ -395,12 +425,17 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
 
         getDate: function (mysql_string){
             var t, result = null;
-
             if (typeof mysql_string === 'string') {
-                t = mysql_string.split(/[- :]/);
-
-                //when t[3], t[4] and t[5] are missing they defaults to zero
-                result = new Date(t[0], t[1] - 1, t[2], t[3] || 0, t[4] || 0, t[5] || 0);
+                t = mysql_string.split(/[-/:]/);
+                if (~mysql_string.indexOf("-")) {
+                    //when t[3], t[4] and t[5] are missing they defaults to zero
+                    result = new Date(t[0], t[1] - 1, t[2], t[3] || 0, t[4] || 0, t[5] || 0);
+                } else if (~mysql_string.indexOf("/")) {
+                    if (t[2] && t[2].length == 2) t[2] = '20' + t[2];
+                    console.log("T IS", t);
+                    result = new Date(t[2], t[1]-1, t[0]);
+                    console.log(result.toLocaleDateString())
+                }
             }
 
             return result;  
@@ -740,7 +775,6 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute','roleBased','u
     //sorts strings including those that have
     .filter('sortAlphanumeric', [function () {
         return function (item, field) {
-            if(item.Building_id && item.Building_id == "15")console.log(naturalService.naturalValue(item[field]))
             return naturalService.naturalValue(item[field]);
         }
     }])

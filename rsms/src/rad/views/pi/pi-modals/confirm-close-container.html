@@ -5,8 +5,14 @@
     <h3>
         Are you sure you want to close {{getLabel(modalData.Container)}} {{modalData.Container.Label || modalData.Container.CarboyNumber}}?
     </h3>
+    <div class="control-group" ng-if="modalData.Container.Class == 'ScintVialCollection'" style="margin-top:15px">
+        <div class="controls input-append span2" style="width:140px">
+            <input style="width:40px" type="number" ng-model="modalData.Container.Trays"/>
+            <span class="add-on">Number of Trays</span>
+        </div>
+    </div>
 </div>
 <div class="modal-footer">
-    <a class="btn btn-large btn-success left" ng-click="confirmCloseContainer( modalData.Container )"><i class="icon-checkmark"></i>Confirm</a>
+    <button ng-disabled="modalData.Container.Class == 'ScintVialCollection' && !modalData.Container.Trays" class="btn btn-large btn-success left" ng-click="confirmCloseContainer( modalData.Container )"><i class="icon-checkmark"></i>Confirm</button>
     <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Cancel</a>
 </div>

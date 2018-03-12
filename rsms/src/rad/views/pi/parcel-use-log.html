@@ -51,11 +51,17 @@
     </div>
     <div class="card full parcels">
         <div class="card-content">
-            <h3 class="card-header padding">Package Usages <button ng-click="addUsage(parcel)" ng-disabled="parcel.AmountOnHand == 0" class="btn btn-success left"><i class="icon-plus-2"></i>Add Usage</button></h3>
+            <h3 class="card-header padding">
+                Package Uses 
+                <button ng-click="addUsage(parcel)" ng-disabled="parcel.AmountOnHand == 0" class="btn btn-success left"><i class="icon-plus-2"></i>Add Usage</button>
+                <button ng-init="parcel.showActive = true" ng-click="parcel.showActive = !parcel.showActive"  class="btn">
+                    Show <span ng-if="parcel.showActive">Inactive</span><span ng-if="!parcel.showActive">Active</span> Uses
+                </button>
+            </h3>
             <table class="table-bordered table parcel-uses" style="margin-bottom:0" ng-show="parcelUses">
                 <tbody>
                     <tr class="table-header">
-                        <th>Edit</th>
+                        <th>Edit {{parcel.showActive}} {{parcel.ParcelUses.length}}</th>
                         <th>Date</th>
                         <th>Use</th>
                         <th>Amount</th>
@@ -74,7 +80,7 @@
                                     ng-click="deactivate(use)" 
                                     ng-if="(!use.Date_transferred && !use.getIsPickedUp()) || roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])"
                                     ng-class="{'btn-danger':use.Is_active, 'btn-success':!use.Is_active}">
-                            <i ng-class="{'icon-remove':use.Is_active, 'icon-checkmark-2':!use.Is_active}"></i></button>
+                            <i ng-class="{'icon-cancel-2':use.Is_active, 'icon-checkmark-2':!use.Is_active}"></i></button>
 
                             <button class="btn btn-primary disabled"
                                     popover-placement="right" popover="Contact RSO if changes are needed." popover-title="This waste has already been picked up"

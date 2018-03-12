@@ -399,7 +399,7 @@ class GenericDAO {
                 OR g.pickup_id = i.key_id
                 OR h.pickup_id = i.key_id
                 AND i.status != 'Requested'
-				WHERE c.authorization_id IN (select key_id from authorization where principal_investigator_id = ? AND original_pi_auth_id = ?)
+				WHERE c.authorization_id IN (select key_id from authorization where principal_investigator_id = ? AND isotope_id = ?)
                 AND b.is_active = 1
 				AND (((b.date_used BETWEEN ? AND ? AND b.date_used != '0000-00-00 00:00:00')
                 AND (f.pickup_id IS NOT NULL OR g.pickup_id IS NOT NULL OR h.pickup_id IS NOT NULL ))
@@ -410,7 +410,7 @@ class GenericDAO {
 		global $db;
 		$stmt = $db->prepare($sql);
 		$stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
-        $stmt->bindValue(2, $this->modelObject->getAuthorization()->getOriginal_pi_auth_id());
+        $stmt->bindValue(2, $this->modelObject->getAuthorization()->getIsotope_id());
 		$stmt->bindValue(3, $startDate);
 		$stmt->bindValue(4, $endDate);
         $stmt->bindValue(5, $startDate);
@@ -435,7 +435,7 @@ class GenericDAO {
         $l = Logger::getLogger("transfer amounts");
 		$sql = "SELECT SUM(`quantity`)
 				FROM parcel a
-                WHERE `authorization_id` IN (select key_id from authorization where principal_investigator_id = ? AND original_pi_auth_id = ?)";
+                WHERE `authorization_id` IN (select key_id from authorization where principal_investigator_id = ? AND isotope_id = ?)";
 
 		// Get the db connection
 		global $db;
@@ -453,7 +453,7 @@ class GenericDAO {
         //$l->fatal(array($startDate, $this->modelObject));
 
         $stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
-        $stmt->bindValue(2, $this->modelObject->getAuthorization()->getOriginal_pi_auth_id());
+        $stmt->bindValue(2, $this->modelObject->getAuthorization()->getIsotope_id());
 
 
         if ( $stmt->execute() ) {
@@ -482,7 +482,7 @@ class GenericDAO {
                         OR g.pickup_id = i.key_id
                         OR h.pickup_id = i.key_id
                         AND i.status != 'Requested'
-				        WHERE c.authorization_id IN (select key_id from authorization where principal_investigator_id = ? AND original_pi_auth_id = ?)
+				        WHERE c.authorization_id IN (select key_id from authorization where principal_investigator_id = ? AND isotope_id = ?)
                         AND b.is_active = 1
 				        AND (((b.date_used < ? AND b.date_used != '0000-00-00 00:00:00')
                         AND (f.pickup_id IS NOT NULL OR g.pickup_id IS NOT NULL OR h.pickup_id IS NOT NULL ))
@@ -490,7 +490,7 @@ class GenericDAO {
 
                 $stmt = $db->prepare($sql);
                 $stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
-                $stmt->bindValue(2, $this->modelObject->getAuthorization()->getOriginal_pi_auth_id());
+                $stmt->bindValue(2, $this->modelObject->getAuthorization()->getIsotope_id());
                 $stmt->bindValue(3, $startDate);
                 $stmt->bindValue(4, $startDate);
                 if ( $stmt->execute() ) {
@@ -526,7 +526,7 @@ class GenericDAO {
 
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel`
-				where `authorization_id` IN (select key_id from authorization where principal_investigator_id = ? AND original_pi_auth_id = ?)";
+				where `authorization_id` IN (select key_id from authorization where principal_investigator_id = ? AND isotope_id = ?)";
 
         if($hasTransferDate == true){
             $sql .= " AND transfer_in_date BETWEEN ? AND ?";
@@ -541,7 +541,7 @@ class GenericDAO {
 		global $db;
 		$stmt = $db->prepare($sql);
 		$stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
-        $stmt->bindValue(2, $this->modelObject->getAuthorization()->getOriginal_pi_auth_id());
+        $stmt->bindValue(2, $this->modelObject->getAuthorization()->getIsotope_id());
 		$stmt->bindValue(3, $startDate);
 		$stmt->bindValue(4, $endDate);
 
@@ -566,14 +566,14 @@ class GenericDAO {
 	public function getTransferOutAmounts( $startDate, $endDate ){
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel_use`
-				where `parcel_id` in (select key_id from parcel where `authorization_id` IN (select key_id from authorization where principal_investigator_id = ? AND original_pi_auth_id = ?)
+				where `parcel_id` in (select key_id from parcel where `authorization_id` IN (select key_id from authorization where principal_investigator_id = ? AND isotope_id = ?)
 				AND `date_transferred` BETWEEN ? AND ?";
 
 		// Get the db connection
 		global $db;
 		$stmt = $db->prepare($sql);
 		$stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
-        $stmt->bindValue(2, $this->modelObject->getAuthorization()->getOriginal_pi_auth_id());
+        $stmt->bindValue(2, $this->modelObject->getAuthorization()->getIsotope_id());
 		$stmt->bindValue(3, $startDate);
 		$stmt->bindValue(4, $endDate);
 
@@ -694,13 +694,44 @@ class GenericDAO {
 		$tableName		= $relationship->getTableName();
 		$keyName		= $relationship->getKeyName();
 		$foreignKeyName	= $relationship->getForeignKeyName();
+        if($relationship->orderColumn != null) {
+            $orderColumn = $relationship->orderColumn;
+            $class = $this->modelClassName;
+            $parentTable = $class::$TABLE_NAME;
+            $parentId = $this->modelObject->getKey_id();
+        }
 		$modelObject    = $this->modelObject;
 		//$this->LOG->error("$this->logprefix Retrieving related items for " . get_class($modelObject) . " entity with id=$id");
 
 		$whereTag = $activeOnly ? " WHERE is_active = 1 AND " : " WHERE ";
 		//$sql = "SELECT * FROM " . $modelObject->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
-		$sql = "SELECT * FROM " . $classInstance->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
-		$sql .= $activeOnlyRelated ? " AND is_active = 1)" : ")";
+		if(!isset($orderColumn)){
+            $sql = "SELECT * FROM " . $classInstance->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
+            $sql .= $activeOnlyRelated ? " AND is_active = 1)" : ")";
+        }else{
+            $this->LOG->fatal("getting ordered");
+            $this->LOG->fatal($this->modelObject);
+            /*
+             * SELECT a.*, b.order_index as order_index
+            FROM rad_condition a
+            LEFT OUTER JOIN pi_authorization_rad_condition b
+            ON b.condition_id = a.key_id
+            LEFT OUTER JOIN pi_authorization c
+            ON c.key_id = b.pi_authorization_id
+            where c.key_id = 55;
+             */
+            $sql = "SELECT a.*, b.$orderColumn as $orderColumn
+                    FROM " . $classInstance->getTableName() . " a
+                    LEFT OUTER JOIN $tableName b
+                    ON a.key_id = b.$keyName
+                    LEFT OUTER JOIN $parentTable c
+                    ON c.key_id = b.$foreignKeyName
+                    WHERE c.key_id = $parentId";
+            /*
+            $sql = "SELECT a.*, b.$orderColumn as $orderColumn
+                    FROM a." . $classInstance->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName b WHERE $foreignKeyName = $id";
+        */
+        }
 
 		if ($sortColumns != null){
 			$sql .= " ORDER BY";
@@ -736,9 +767,8 @@ class GenericDAO {
 	 * @param DataRelationship $relationship
 	 * @return unknown
 	 */
-	function addRelatedItems($key_id, $foreignKey_id, DataRelationship $relationship) {
-		//$this->LOG->trace("$this->logprefix Inserting new related item for entity with id=$foreignKey_id");
-
+	function addRelatedItems($key_id, $foreignKey_id, DataRelationship $relationship, $index = null) {
+		$this->LOG->fatal("$this->logprefix Inserting new related item for entity with id=$foreignKey_id and key_id=$key_id");
 		// Get the db connection
 		global $db;
 
@@ -748,14 +778,23 @@ class GenericDAO {
 		$tableName		= $relationship->getTableName();
 		$keyName		= $relationship->getKeyName();
 		$foreignKeyName	= $relationship->getForeignKeyName();
+        if($relationship->orderColumn != null) $orderColumn = $relationship->orderColumn;
 
-		$sql = "INSERT INTO  $tableName ($foreignKeyName, $keyName) VALUES (:foreignKey_id, :key_id) ";
+		if($index == null || !isset($orderColumn)){
+            $sql = "INSERT INTO  $tableName ($foreignKeyName, $keyName) VALUES (:foreignKey_id, :key_id) ";
+        }else{
+            $this->LOG->fatal("inserting in ELSE");
+            $this->LOG->fatal($foreignKeyName . " " . $keyName . " " . $orderColumn );
+            $this->LOG->fatal($foreignKey_id . " " . $key_id . " " . $index );
+            $sql = "INSERT INTO  $tableName ( $foreignKeyName, $keyName, $orderColumn) VALUES ( :foreignKey_id, :key_id, :index) ";
+        }
 		//$this->LOG->trace("Preparing insert statement [$sql]");
 
 		$stmt = $db->prepare($sql);
 		// Bind the params.
 		$stmt->bindParam(":foreignKey_id",$foreignKey_id,PDO::PARAM_INT);
 		$stmt->bindParam(":key_id",$key_id,PDO::PARAM_INT);
+        if(isset($index)) $stmt->bindParam(":index", $index, PDO::PARAM_INT);
 
 		// Insert the record and return true
 		if ($stmt->execute() ) {
@@ -1447,7 +1486,6 @@ class GenericDAO {
                         b.key_id as authorization_id,
                         ROUND(SUM(d.quantity) ,7) as ordered,
                         c.name as isotope_name,
-                        b.form as authorized_form,
                         ROUND(b.max_quantity, 7) as auth_limit,
                         ROUND( b.max_quantity - (SUM(d.quantity) - picked_up.amount_picked_up-amount_transferred.amount_used) ) as max_order,
                         ROUND(picked_up.amount_picked_up - amount_transferred.amount_used, 7) as amount_picked_up,
@@ -1467,8 +1505,7 @@ class GenericDAO {
                         LEFT OUTER JOIN (
 	                        select sum(a.curie_level) as amount_picked_up,
                             e.name as isotope,
-                            e.key_id as isotope_id,
-							d.original_pi_auth_id
+                            e.key_id as isotope_id
 	                        from parcel_use_amount a
 	                        join parcel_use b
 	                        on a.parcel_use_id = b.key_id
@@ -1491,16 +1528,14 @@ class GenericDAO {
 	                        AND i.status != 'REQUESTED'
                             WHERE i.principal_investigator_id = ?
                             AND b.is_active = 1
-	                        group by e.name, e.key_id, d.original_pi_auth_id
+	                        group by e.name, e.key_id, d.isotope_id
                         ) as picked_up
                         ON picked_up.isotope_id = b.isotope_id
-						AND picked_up.original_pi_auth_id = b.original_pi_auth_id
 
                         LEFT OUTER JOIN (
 	                        select sum(a.curie_level) as amount_used,
                             e.name as isotope,
-                            e.key_id as isotope_id,
-                            d.original_pi_auth_id
+                            e.key_id as isotope_id
 	                        from parcel_use_amount a
 	                        join parcel_use b
 	                        on a.parcel_use_id = b.key_id
@@ -1512,17 +1547,15 @@ class GenericDAO {
 	                        ON d.isotope_id = e.key_id
                             WHERE c.principal_investigator_id = ?
                             AND b.is_active = 1
-	                        group by e.name, e.key_id, d.original_pi_auth_id
+	                        group by e.name, e.key_id, d.isotope_id
                         ) as total_used
                         ON total_used.isotope_id = b.isotope_id
-                        AND total_used.original_pi_auth_id = b.original_pi_auth_id
 
 
                         LEFT OUTER JOIN (
 	                        select sum(a.curie_level) as amount_used,
                             e.name as isotope,
-                            e.key_id as isotope_id,
-                            d.original_pi_auth_id
+                            e.key_id as isotope_id
 	                        from parcel_use_amount a
 	                        join parcel_use b
 	                        on a.parcel_use_id = b.key_id
@@ -1534,13 +1567,12 @@ class GenericDAO {
 	                        ON d.isotope_id = e.key_id
                             WHERE c.principal_investigator_id = ?
                             AND a.waste_type_id = 6
-	                        group by e.name, e.key_id, d.original_pi_auth_id
+	                        group by e.name, e.key_id, d.isotope_id
                         ) as amount_transferred
                         ON amount_transferred.isotope_id = b.isotope_id
-                        AND amount_transferred.original_pi_auth_id = b.original_pi_auth_id
 
                         where b.pi_authorization_id IN(select key_id from pi_authorization where principal_investigator_id = ?)
-                        group by b.isotope_id, b.original_pi_auth_id,c.name, c.key_id, a.principal_investigator_id";
+                        group by b.isotope_id ,c.name, c.key_id, a.principal_investigator_id";
 
         $stmt = $db->prepare($queryString);
 
@@ -1841,6 +1873,33 @@ class GenericDAO {
         $stmt->execute();
         $currentInspections = $stmt->fetchAll(PDO::FETCH_CLASS, "EquipmentInspection");
         return $currentInspections;
+    }
+
+    public function deleteRadData(){
+        global $db;
+        $sql = 'DELETE FROM parcel_use_amount WHERE key_id > 0;
+                DELETE FROM parcel_use WHERE key_id > 0;
+                DELETE FROM waste_bag WHERE key_id > 0;
+                DELETE FROM other_waste WHERE key_id > 0;
+                DELETE FROM carboy_reading_amount WHERE key_id > 0;
+                DELETE FROM carboy_use_cycle WHERE key_id > 0;
+                DELETE FROM scint_vial_collection WHERE key_id > 0;
+                DELETE FROM solids_container WHERE key_id > 0;
+                DELETE FROM parcel_wipe WHERE key_id > 0;
+                DELETE FROM parcel_wipe_test WHERE key_id > 0;
+                DELETE FROM other_waste_container WHERE key_id > 0;
+                DELETE FROM disposal_lot WHERE key_id > 0;
+                DELETE FROM pi_quarterly_inventory WHERE key_id > 0;
+                DELETE FROM quarterly_inventory WHERE key_id > 0;
+                DELETE FROM pi_wipe WHERE key_id > 0;
+                DELETE FROM pi_wipe_test WHERE key_id > 0;
+                DELETE FROM parcel WHERE key_id > 0;';
+
+        $stmt = $db->prepare($sql);
+        if($stmt->execute()){
+            return true;
+        }
+        return false;
     }
 
 }

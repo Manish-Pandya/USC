@@ -1,4 +1,4 @@
-<form name="authForm" ng-submit="savePIAuthorization( modalData.PIAuthorizationCopy, modalData.PIAuthorization, false, modalData.resultRooms )">
+<form name="authForm" ng-submit="savePIAuthorization( modalData.PIAuthorizationCopy, modalData.PIAuthorization, false, modalData.resultRooms, modalData.PIAuthorizationCopy.Users )">
     <div class="modal-header" style="padding:0;">
         <h2 style="padding:5px; background:rgb(151, 49, 58); color:white" class="blueBg">Create or edit Authorization</h2>
     </div>
@@ -15,7 +15,7 @@
         <div class="control-group"  style="width:100%">
             <label class="control-label" for="inputEmail">Amendment Number</label>
             <div class="controls input-append">
-                <input ng-disabled="modalData.PIAuthorizationCopy.isOriginal" style="width: 40px;border-radius: 0;" formnovalidate ng-class="{'error': authForm.amendmentNumber.$error && authForm.$submitted}" ng-required="modalData.isAmendment" name="amendmentNumber" ng-model="modalData.PIAuthorizationCopy.Amendment_number" maxlength="3" />
+                <input ng-disabled="modalData.PIAuthorizationCopy.isOriginal" style="width: 40px;border-radius: 0;" formnovalidate ng-class="{'error': authForm.amendmentNumber.$error && authForm.$submitted}" ng-required="modalData.isAmendment && !modalData.PIAuthorizationCopy.isOriginal" name="amendmentNumber" ng-model="modalData.PIAuthorizationCopy.Amendment_number" maxlength="3" />
                 <span class="red" ng-if="authForm.amendmentNumber.$error && authForm.$submitted">Please provide Amendment Number</span>
                 <label class="checkbox" style="margin-left: 5px;line-height: 27px; display:inline-block">
                     <input type="checkbox" 
@@ -68,6 +68,34 @@
                 </select>
             </div>
         </div>
+
+        <hr />
+
+        <div class="control-group">
+            <label class="control-label bold">Trained Personel</label>
+            <div class="controls" ng-repeat="user in modalData.PIAuthorizationCopy.Users | orderBy:'Name' track by $index">
+                <label class="checkbox">
+                    <input type="checkbox"
+                           ng-init="user.isAuthorized = userIsAuthorized(user, modalData.PIAuthorizationCopy)"
+                           ng-model="user.isAuthorized" ng-change="checkboxChange(user, modalData.PIAuthorizationCopy)" />
+                    <span class="metro-checkbox">{{user.Name}}</span>
+                </label>
+            </div>
+        </div>
+
+        <a class="btn btn-success left" ng-click="getUsers()" ng-if="!modalData.addUser">
+            <i class="icon-plus-2"></i>Add User
+        </a>
+
+        <div ng-if="modalData.addUser">
+            <div class="control-group">
+                <label class="control-label bold">Personnel</label>
+                <select ng-options="u as (u.Last_name + ', ' + u.First_name) for u in modalData.Users | orderBy:'Last_name'" ng-model="modalData.user" ng-change="selectUser(modalData.user)">
+                    <option value="">--Select Personel--</option>
+                </select>
+            </div>
+        </div>
+
         <hr />
 
         <div class="control-group">

@@ -158,8 +158,10 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 
 
 				"getRadInventoryReport"	=> new ActionMapping("getRadInventoryReport","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"getRadModels"	=> new ActionMapping("getRadModels","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"resetRadData"	=> new ActionMapping("resetRadData","","", $this::$ROLE_GROUPS["RADMIN"])
+				"getRadModels"	        => new ActionMapping("getRadModels","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"resetRadData"	        => new ActionMapping("resetRadData","","", $this::$ROLE_GROUPS["RADMIN"]),
+                "removeFromPickup" 	    => new ActionMapping("removeFromPickup", "", "", $this::$ROLE_GROUPS["EHS"] ),
+
 		);
 	}
 }

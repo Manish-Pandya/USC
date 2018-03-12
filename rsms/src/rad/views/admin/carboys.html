@@ -25,9 +25,7 @@
                         {{carboy.Carboy_number}}
                     </div>
                     <div>
-                        {{carboy.Current_carboy_use_cycle.Status}}{{carboy.Current_carboy_use_cycle.Key_id}}
-
-
+                        {{carboy.Current_carboy_use_cycle.Status}}
                     </div>
                     <div ng-init="getPiByCycle(carboy)">
                         {{carboy.PI.Name || "N/A"}}

@@ -205,7 +205,7 @@ class Parcel extends RadCrud {
 	public function getParcelUses() {
 		if($this->parcelUses == null && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->parcelUses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PARCELUSE_RELATIONSHIP), null, true);
+			$this->parcelUses = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PARCELUSE_RELATIONSHIP));
 		}
 		return $this->parcelUses;
 	}
@@ -219,7 +219,7 @@ class Parcel extends RadCrud {
 			$uses = $this->getParcelUses();
 			$usedAmount = 0;
 			foreach($uses as $use) {
-				$usedAmount += $use->getQuantity();
+				if($use->getIs_active())$usedAmount += $use->getQuantity();
 			}
 
 			// subtract the amount used from the initial quantity

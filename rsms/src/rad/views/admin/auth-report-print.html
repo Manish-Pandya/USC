@@ -6,6 +6,12 @@
             <span ng-if="!filterObj.showNew">Show New Authorizations</span>
             <span ng-if="filterObj.showNew">Show All Authorizations</span>
         </a>
+
+        <a class="btn btn-primary left" style="margin-left:5px;" ng-click="filterObj.showTerminated =! filterObj.showTerminated; filterObj.toDate = null; filterObj.fromDate = null; filtered = piAuths">
+            <span ng-if="!filterObj.showTerminated">Show Terminated Authorizations</span>
+            <span ng-if="filterObj.showTerminated">Show Open Authorizations</span>
+        </a>
+
         <a class="btn btn-info left" ng-click="print();"><i class="icon-printer"></i>Print</a>
         <span ng-if="filterObj.showNew" style="display:block">
             from <input placeholder="mm/dd/yy" ng-model="filterObj.fromDate" /> to <input placeholder="mm/dd/yy" ng-model="filterObj.toDate" /><a class="btn btn-success" ng-click="filtered = search(filterObj)"><i class="icon-search"></i></a>

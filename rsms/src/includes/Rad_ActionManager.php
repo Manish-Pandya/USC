@@ -342,7 +342,7 @@ class Rad_ActionManager extends ActionManager {
 
     public function getAllRadPis(){
         $dao = $this->getDao(new PrincipalInvestigator());
-        $pis = $dao->getAll(null, false, true);
+        $pis = $dao->getAll();
 
         $entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
@@ -365,9 +365,14 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("lazy","getOpenInspections");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
 
-        foreach($pis as $pi){
+        foreach($pis as $key => $pi){
+            if($pi->getName() == null){
+                unset($pis[$key]);
+                continue;
+            }
             $pi->setEntityMaps($entityMaps);
         }
+
 
         return $pis;
 
@@ -384,8 +389,9 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("lazy","getRoles");
         $entityMaps[] = new EntityMap("lazy","getPrimary_department");
 
-        foreach($users as $user){
+        foreach($users as $key => $user){
             $user->setEntityMaps($entityMaps);
+            if($user->getLast_name() == null)unset($users[$key]);
         }
 
         return $users;
@@ -692,6 +698,7 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("eager", "getWaste_bags");
         $entityMaps[] = new EntityMap("eager", "getScint_vial_collections");
         $entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
+        $entityMaps[] = new EntityMap("eager", "getPiName");
 
         $pickups = $dao->getAll();
         foreach($pickups as $pickup){
@@ -844,6 +851,7 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new CarboyUseCycle());
+            $decodedObject = $this->handlePickup($decodedObject);
             $decodedObject = $dao->save($decodedObject);
 
             $entityMaps = array();
@@ -1075,24 +1083,11 @@ class Rad_ActionManager extends ActionManager {
                         if($amount['Key_id'] != NULL)$newAmount->setKey_id($amount['Key_id']);
 
                         if($amount['Waste_bag_id'] != NULL){
-
-                            if($newAmount->getKey_id() != null){
-                                //this amount has been saved previously.
-                                //We need to make sure that we aren't accidentally moving it to a new waste bag in the same container
-                                $amountDao = $this->getDao(new ParcelUseAmount());
-                                $relevantAmount = $amountDao->getById($newAmount->getKey_id());
-                                $bag = $this->getWasteBagById($amount['Waste_bag_id']);
-                                $oldBag = $this->getWasteBagById($relevantAmount->getWaste_bag_id());
-                                if( $oldBag == null){
-                                    $newAmount->setWaste_bag_id($amount['Waste_bag_id']);
-                                }else{
-                                    $newAmount->setWaste_bag_id($relevantAmount->getWaste_bag_id());
-                                }
-                            }
-                            //this ParcelUseAmount is either new or was missing its waste_bag_id
-                            else{
-                                $newAmount->setWaste_bag_id($amount['Waste_bag_id']);
-                            }
+                            $newAmount->setWaste_bag_id($amount['Waste_bag_id']);
+                            $entityMaps = array();
+                            $entityMaps[] = new EntityMap("lazy", "getWaste_type");
+                            $entityMaps[] = new EntityMap("lazy", "getContainer_name");
+                            $newAmount->setEntityMaps($entityMaps);
                         }
                         if($amount['Carboy_id'] != NULL){
                             $newAmount->setCarboy_id($amount['Carboy_id']);
@@ -1210,6 +1205,7 @@ class Rad_ActionManager extends ActionManager {
                     $svColDao = $this->getDao(new ScintVialCollection());
                     $collection = $svColDao->getById($collectionArray['Key_id']);
                     $collection->setPickup_id($pickup->getKey_id());
+                    $collection->setTrays($collectionArray['Trays']);
                     $svColDao->save($collection);
                 }
 
@@ -1251,6 +1247,7 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new ScintVialCollection());
+            $decodedObject = $this->handlePickup($decodedObject);
             $collection = $dao->save($decodedObject);
             return $collection;
         }
@@ -1301,6 +1298,7 @@ class Rad_ActionManager extends ActionManager {
         else {
             $dao = $this->getDao(new WasteBag());
             $lots = $decodedObject->getPickupLots();
+            $decodedObject = $this->handlePickup($decodedObject);
             $decodedObject = $dao->save($decodedObject);
 
             $lotDao = new GenericDAO(new PickupLot());
@@ -2882,7 +2880,8 @@ class Rad_ActionManager extends ActionManager {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
         $LOG->fatal($decodedObject);
         $d = new GenericDAO($decodedObject);
-        return $d->save();
+        $decodedObject = $this->handlePickup($decodedObject);
+        return $d->save($decodedObject);
     }
 
     public function getOtherWasteContainerBiId($id = NULL) {
@@ -2939,6 +2938,51 @@ class Rad_ActionManager extends ActionManager {
         if($decodedObject == null)return new ActionError("No data read from input stream");
         $dao = $this->getDao($decodedObject);
         return $dao->save();
+    }
+
+    private function handlePickup(WasteBag $container){
+        $l = Logger::getLogger(__FUNCTION__);
+        $l->fatal($container);
+        if($container->getClose_date() == null)return $container;
+        $dao = new GenericDAO(new Pickup());
+        $group = new WhereClauseGroup(
+            array(
+                new WhereClause("principal_investigator_id", "=", $container->getPrincipal_investigator_id()),
+                new WhereClause("status", "=", "REQUESTED")
+            )
+        );
+        $existingPickups = $dao->getAllWhere($group);
+        $l->fatal($existingPickups);
+        if(count($existingPickups)){
+            $pickup = $existingPickups[0];
+        } else {
+            $pickup = new Pickup();
+            $pickup->setPrincipal_investigator_id($container->getPrincipal_investigator_id());
+            $pickup->setStatus("REQUESTED");
+            $pickup = $dao->save($pickup);
+        }
+        $l->fatal($pickup);
+        $container->setPickup_id($pickup->getKey_id());
+        return $container;
+    }
+
+    public function removeFromPickup(){
+
+        $decodedObject = $this->convertInputJson();
+        if( $decodedObject === NULL ) {
+            return new ActionError('Error converting input stream to Authorization', 202);
+        }
+        else if( $decodedObject instanceof ActionError) {
+            return $decodedObject;
+        }
+
+        $decodedObject->setPickup_id(null);
+        $decodedObject->setPickup_date(null);
+        $l = Logger::getLogger(__FUNCTION__);
+        $l->fatal($decodedObject);
+        $dao = new GenericDAO($decodedObject);
+        $decodedObject = $dao->save();
+        return $decodedObject;
     }
 }
 ?>

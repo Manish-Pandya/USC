@@ -18,19 +18,21 @@
                     <option style="display:none" value="">Select Amendment</option>
                 </select>
 
-                <a class="btn btn-primary left" ng-if="!selectedPiAuth.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth)"><i class="icon-pencil"></i><span ng-if="!pi.Pi_authorization">Add</span><span ng-if="pi.Pi_authorization">Edit</span> Authorization</a>
+                <a class="btn btn-primary left" ng-if="!selectedPiAuth.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth)"><i class="icon-pencil"></i><span ng-if="!pi.Pi_authorization">Add</span><span ng-if="pi.Pi_authorization">Edit</span> Auth</a>
                 <a class="btn btn-success left" ng-if="!selectedAmendment.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-modal', selectedPiAuth, true)"><i class="icon-plus-2"></i>Add Amendment</a>
                 <a class="btn btn-primary left" ng-if="selectedPiAuth.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-deactivate', selectedPiAuth)"><i class="icon-pencil"></i>Edit Termination</a>
-                <a class="btn btn-danger left" ng-if="!selectedPiAuth.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-deactivate', selectedPiAuth)"><i class="icon-cancel-2"></i>Terminate Authorization</a>
-                <a class="btn btn-info left" ng-if="selectedPiAuth.Termination_date" ng-click="reopenAuth(selectedPiAuth)"><i class="icon-checkmark"></i>Reopen Authorization</a>
+                <a class="btn btn-danger left" ng-if="!selectedPiAuth.Termination_date" ng-click="openModal('views/admin/admin-modals/pi-auth-deactivate', selectedPiAuth)"><i class="icon-cancel-2"></i>Terminate</a>
+                <a class="btn btn-info left" ng-if="selectedPiAuth.Termination_date" ng-click="reopenAuth(selectedPiAuth)"><i class="icon-checkmark"></i>Reopen</a>
 
             </h3>
             <div class="card-content" ng-repeat="piAuth in mappedAmendments" ng-if="selectedView == 'authorizations' && selectedAmendment == piAuth.weight">
-                <div class="fake-table striped bordered half" style="margin:0 0 19px 0; width:60%; border-right:3px solid #DDD" ng-if="mappedAmendments.length">
+                
+                <div class="fake-table striped bordered full" style="margin:0 0 19px 0; width:98%; border-right:3px solid #DDD" ng-if="mappedAmendments.length">
                     <div class="table-header">
                         <h3>Authorization Number</h3>
                         <h3>Rooms</h3>
                         <h3>Departments</h3>
+                        <h3>Trained Personnel</h3>
                         <h3>Comment</h3>
 
                     </div>
@@ -43,21 +45,47 @@
                             <ul><li ng-repeat="dept in piAuth.Departments | orderBy:'Name'">{{dept.Name}}</li></ul>
                         </div>
                         <div>
+                            <ul><li ng-repeat="user in piAuth.Users | orderBy:'Name'">{{user.Name}}</li></ul>
+                        </div>
+                        <div>
                             {{piAuth.New_notes || piAuth.Update_notes}}
                         </div>
                     </div>
                 </div>
-                <h3 style="margin-bottom:5px;">
-                    Authorized Isotopes
+
+                <h3>
+                    Conditions
+                    <button class="btn btn-info" ng-click="piAuth.showConditions = !piAuth.showConditions">
+                        <span ng-if="!piAuth.showConditions">Show</span> 
+                        <span ng-if="piAuth.showConditions">Hide</span>
+                        Conditions
+                    </button>
+                    <button class="btn btn-success left" ng-click="openConditionsModal(piAuth)">
+                        <i class="icon-paragraph-left"></i>Manage Conditions
+                    </button>
                 </h3>
-                <div class="fake-table striped bordered" ng-if="piAuth.Authorizations.length">
+                <div class="fake-table full conditions" ng-if="piAuth.showConditions">
+                    <div ng-repeat="condition in piAuth.Conditions | orderBy: 'Order_index'" class="table-header">
+                        <h3 style="vertical-align:top">{{condition.Order_index}}</h3>
+                        <h3 style="border-left:1px solid #cecece" ng-bind-html="condition.Text"></h3>
+                    </div>
+                </div>
+
+                <h3 style="margin:10px 0;">
+                    Authorized Isotopes
+                    <button class="btn btn-info" ng-click="piAuth.showIsotopes = !piAuth.showIsotopes">
+                        <span ng-if="!piAuth.showIsotopes">Show</span>
+                        <span ng-if="piAuth.showIsotopes">Hide</span>
+                        Isotopes
+                    </button>
+                </h3>
+                <div class="fake-table striped bordered" ng-if="piAuth.Authorizations.length && piAuth.showIsotopes">
                     <div class="table-header">
                         <h3>Edit</h3>
                         <h3>Isotope</h3>
                         <h3>Half Life</h3>
                         <h3>Emitter Type</h3>
                         <h3>Maximum Quantity</h3>
-                        <h3>Form</h3>
                     </div>
                     <div class="table-row" ng-repeat="auth in piAuth.Authorizations | orderBy: 'Isotope.Name'">
                         <div>
@@ -78,10 +106,6 @@
 
                         <div>
                             {{auth.Max_quantity | unit:auth.Isotope}}
-                        </div>
-
-                        <div>
-                            {{auth.Form}}
                         </div>
                     </div>
                 </div>
@@ -213,7 +237,7 @@
         </div>
     </div>
 
-    <div class="card full carboys" ng-click="af.setSelectedView('carboys')" ng-init="cycles = (pi.CarboyUseCycles | filter: {'Status':Constants.CARBOY_USE_CYCLE.STATUS.IN_USE})">
+    <div class="card full carboys" ng-click="af.setSelectedView('carboys')">
         <h3 class="card-header padding" ng-show="cycles.length">
             <i class="icon-carboy"></i><span class="bold">{{cycles.length}} Carboy<span ng-if="cycles.length != 1">s</span></span>
             <a ng-click="openModal('views/admin/admin-modals/carboy-assignment')" class="btn btn-success left"><i class="icon-carboy"></i>Assign Carboy</a>
@@ -233,7 +257,7 @@
                 </div>
                 <div class="table-row" ng-repeat="cycle in cycles">
                     <div>{{cycle.Carboy.Carboy_number}}</div>
-                    <div>{{cycle.Room.Name}}</div>
+                    <div><span ng-if="cycle.Room">{{cycle.Room.Building_name}}: {{cycle.Room.Name}}</span></div>
                     <div>{{cycle.Lab_date | dateToISO}}</div>
                     <div>{{cycle.Curie_level}}</div>
                 </div>

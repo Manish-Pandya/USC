@@ -214,10 +214,11 @@ angular
             return equips;
         }
         else if (uncertified) {
-            var year_1 = new Date().getFullYear().toString();
+            var year = new Date().getFullYear().toString();
             return equips.filter(function (e) {
                 return e.EquipmentInspections.every(function (i) {
-                    return i.Is_uncertified || !i.Certification_date || i.Certification_date.indexOf(year_1) == -1;
+                    // true if not certified in current year
+                    return i.Is_uncertified || !i.Certification_date || i.Certification_date.indexOf(dateString) == -1;
                 });
             });
         }
@@ -246,10 +247,12 @@ angular
             });
         }
         else {
-            //for inactive cabinets, we show in a single grouping, showing only the most recent inspection
-            return inspections.sort(function (a, b) {
-                return a.Date_created > b.Date_created;
-            })[0];
+            var insps = inspections.filter(function (i) { return i.Fail_date || i.Certification_date; });
+            if (!insps)
+                insps = inspections;
+            return [insps.sort(function (a, b) {
+                    return a.Date_created > b.Date_created;
+                })[0]];
         }
     };
 })

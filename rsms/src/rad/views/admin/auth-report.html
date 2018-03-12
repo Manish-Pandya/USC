@@ -7,6 +7,10 @@
                 <span ng-if="!filterObj.showNew">Show New Authorizations</span>
                 <span ng-if="filterObj.showNew">Show All Authorizations</span>
             </a>
+            <a class="btn btn-primary left" style="margin-left:5px;" ng-click="filterObj.showTerminated =! filterObj.showTerminated; filterObj.toDate = null; filterObj.fromDate = null; filtered = piAuths">
+                <span ng-if="!filterObj.showTerminated">Show Terminated Authorizations</span>
+                <span ng-if="filterObj.showTerminated">Show Open Authorizations</span>
+            </a>
             <a class="btn btn-info left" ui-sref="auth-report-print"><i class="icon-printer"></i>Print</a>
 
             <span ng-if="filterObj.showNew" style="display:block">
@@ -19,16 +23,17 @@
             <table class="table striped">
                 <tr class="table-header">
                     <th>Investigator<br /><input ng-model="filterObj.piName" /></th>
-                    <th ng-if="filterObj.showNew">Date</th>
-                    <th ng-if="!filterObj.showNew">Department<br /><input ng-model="filterObj.department" /></th>
-                    <th ng-if="!filterObj.showNew">
+                    <th ng-if="filterObj.showNew || filterObj.showTerminated">Date Terminated</th>
+                    <th ng-if="filterObj.showTerminated">Notes</th>
+                    <th ng-if="!filterObj.showNew && !filterObj.showTerminated">Department<br /><input ng-model="filterObj.department" /></th>
+                    <th ng-if="!filterObj.showNew && !filterObj.showTerminated">
                         <span class="span6" style="margin-left:0">Building<br /><input ng-model="filterObj.building" /></span>
                     </th>
-                    <th ng-if="!filterObj.showNew">
+                    <th ng-if="!filterObj.showNew && !filterObj.showTerminated">
                         <span class="span6" style="margin-left:0">Room<br /><input ng-model="filterObj.room" /></span>
                     </th>
-                    <th ng-if="filterObj.showNew">Amendments</th>
-                    <th ng-if="filterObj.showNew">License Authorization</th>
+                    <th ng-if="filterObj.showNew && !filterObj.showTerminated">Amendments</th>
+                    <th ng-if="filterObj.showNew && !filterObj.showTerminated">License Authorization</th>
                     <th ng-if="!filterObj.showNew">Auth #</th>
 
                 </tr>
@@ -36,7 +41,13 @@
                     <td>
                         {{piAuth.PiName}}
                     </td>
-                    <td ng-if="!filterObj.showNew">
+                    <td ng-if="filterObj.showTerminated">
+                        {{piAuth.Termination_date | dateToISO}}
+                    </td>
+                    <td ng-if="filterObj.showTerminated">
+                        {{piAuth.Termination_notes}}
+                    </td>
+                    <td ng-if="!filterObj.showNew && !filterObj.showTerminated">
                         <ul>
                             <li ng-repeat="dept in piAuth.Departments">
                                 {{dept.Name}}
@@ -44,7 +55,7 @@
                         </ul>
 
                     </td>
-                    <td ng-if="!filterObj.showNew">
+                    <td ng-if="!filterObj.showNew && !filterObj.showTerminated">
                         <ul class="selectedBuildings">
                             <li ng-repeat="(key, r) in piAuth.Rooms | groupBy: 'Building.Name'">
                                 <div>
@@ -53,7 +64,7 @@
                             </li>
                         </ul>
                     </td>
-                    <td ng-if="!filterObj.showNew">
+                    <td ng-if="!filterObj.showNew && !filterObj.showTerminated">
                         <ul class="selectedBuildings">
                             <li ng-repeat="(key, r) in piAuth.Rooms | groupBy: 'Building.Name'">
                                 <ul>

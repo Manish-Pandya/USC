@@ -1,6 +1,32 @@
 'use strict';
 /**
  * @ngdoc function
+ * @name 00RsmsAngularOrmApp.controller:PiRadHomeCtrl
+ * @description
+ * # PiRadHomeCtrl
+ * Controller of the 00RsmsAngularOrmApp PI dashboard
+ */
+angular.module('00RsmsAngularOrmApp')
+    .controller('PiRadHomeCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
+    var af = actionFunctionsFactory;
+    $scope.af = af;
+    $rootScope.piPromise = af.getRadPIById($stateParams.pi)
+        .then(function (pi) {
+        console.log(pi);
+        $scope.pi = pi;
+    }, function () { });
+    $scope.getNeedsLabWipes = function (pi) {
+        var d = new Date();
+        var oneWeekAgo = convenienceMethods.setMysqlTime(new Date(d.setDate((d.getDate() - 7))).toLocaleString());
+        var hasWipes = pi.ActiveParcels.filter(function (p) {
+            return p.ParcelUses.some(function (pu) { return pu.Date_used < oneWeekAgo; });
+        }).length;
+        var recentWipePerformed = pi.WipeTests.filter(function (wt) { return wt.Date_created > oneWeekAgo; }).length;
+        return hasWipes && !recentWipePerformed;
+    };
+});
+/**
+ * @ngdoc function
  * @name 00RsmsAngularOrmApp.controller:PiDetailCtrl
  * @description
  * # RadminMainCtrl
@@ -292,7 +318,8 @@ angular.module('00RsmsAngularOrmApp')
     var af = actionFunctionsFactory;
     $scope.af = af;
     $scope.getContainers = function (pi) {
-        return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections).concat(pi.OtherWasteContainers)
+        console.log("WASTEBAGS", pi.WasteBags);
+        var containers = pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections).concat(pi.OtherWasteContainers)
             .map(function (c, idx) {
             var container = angular.extend({}, c);
             container.ViewLabel = c.Label || c.CarboyNumber;
@@ -316,6 +343,9 @@ angular.module('00RsmsAngularOrmApp')
             }
             return container;
         });
+        console.dir("CONTAINERS");
+        console.dir(containers);
+        return containers;
     };
     $scope.getContainer = function (amt, pi) {
         var num = pi.Containers.filter(function (container) {
@@ -587,8 +617,7 @@ angular.module('00RsmsAngularOrmApp')
     $scope.getCurrentPickup = function (pi) {
         $scope.CurrentPickup = !pi.Pickups || !pi.Pickups.length ? null : pi.Pickups.filter(function (p) { return p.Status == Constants.PICKUP.STATUS.REQUESTED; })[0];
     };
-    $scope.createPickup = function (containers, pi, notes) {
-        //collection of things to be picked up
+    var createPickup = function (containers, pi, notes) {
         if ($scope.CurrentPickup)
             var pickup = $scope.CurrentPickup;
         if (!pickup) {
@@ -602,12 +631,15 @@ angular.module('00RsmsAngularOrmApp')
             pickup.Requested_date = convenienceMethods.setMysqlTime(Date());
             pickup.Status = Constants.PICKUP.STATUS.REQUESTED;
             pickup.Principal_investigator_id = pi.Key_id;
+            pickup.Trays = trays;
         }
         var pickupCopy = {
             Class: "Pickup",
             Key_id: pickup.Key_id || null,
-            Scint_vial_collections: pickup.Scint_vial_collections,
-            Waste_bags: pickup.Waste_bags,
+            Scint_vial_collections: [],
+            Waste_bags: [],
+            Carboy_use_cycles: [],
+            Other_waste_containers: [],
             Bags: pickup.Bags,
             Status: pickup.Status,
             Principal_investigator_id: pickup.Principal_investigator_id,
@@ -620,7 +652,6 @@ angular.module('00RsmsAngularOrmApp')
         else {
             pickupCopy.Notes = notes;
         }
-        pickupCopy.Carboy_use_cycles = [];
         containers.forEach(function (c) {
             var collectionClass = "";
             switch (c.Class) {
@@ -638,8 +669,6 @@ angular.module('00RsmsAngularOrmApp')
                     break;
             }
         });
-        console.log(pickupCopy);
-        return;
         $rootScope.saving = af.savePickup(pickup, pickupCopy, true).then(function (newPickup) {
             console.log(newPickup);
             if (!$scope.CurrentPickup || !$scope.CurrentPickup.Key_id) {
@@ -651,6 +680,27 @@ angular.module('00RsmsAngularOrmApp')
             }
             console.log($scope.CurrentPickup);
         });
+    };
+    $scope.createPickup = function (containers, pi, notes) {
+        var svCollections = containers.filter(function (c) { return c.Class == "ScintVialCollection"; });
+        containers = containers.filter(function (c) { return c.Class != "ScintVialCollection"; });
+        if (!svCollections.length) {
+            createPickup(containers, pi, notes);
+        }
+        else {
+            var modalInstance = $modal.open({
+                templateUrl: 'views/pi/pi-modals/trays-modal.html',
+                controller: 'PickupModalCtrl',
+                resolve: {
+                    Collections: function () { return svCollections; }
+                }
+            });
+            modalInstance.result
+                .then(function () {
+                containers = containers.concat(svCollections);
+                createPickup(containers, pi, notes);
+            });
+        }
     };
     $scope.selectWaste = function (waste, pickupId) {
         $scope.pi.ActiveParcels = [];
@@ -752,67 +802,19 @@ angular.module('00RsmsAngularOrmApp')
         $modalInstance.dismiss();
     };
 })
-    .controller('PickupModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
-    var af = actionFunctionsFactory;
-    $scope.af = af;
-    $scope.modalData = af.getModalData();
-    if (!$scope.modalData.SolidsContainerCopy) {
-        $scope.modalData.SolidsContainerCopy = {
-            Class: 'SolidsContainer',
-            Room_id: null,
-            Is_active: true
-        };
-    }
-    $scope.requestPickup = function (pickup) {
-        $scope.close();
-        //var pickupCopy = dataStoreManager.createCopy(pickup);
-        var pickupCopy = {
-            Class: "Pickup",
-            Key_id: pickup.Key_id || null,
-            Scint_vial_collections: pickup.Scint_vial_collections,
-            Waste_bags: pickup.Waste_bags,
-            Bags: pickup.Bags,
-            Status: pickup.Status,
-            Principal_investigator_id: pickup.Principal_investigator_id,
-            Scint_vial_trays: pickup.Scint_vial_trays,
-            Requested_date: convenienceMethods.setMysqlTime(new Date())
-        };
-        pickupCopy.Carboy_use_cycles = [];
-        var i = pickup.Carboy_use_cycles.length;
-        while (i--) {
-            var originalCycle = pickup.Carboy_use_cycles[i];
-            var cycle = new CarboyUseCycle();
-            for (var prop in originalCycle) {
-                if (typeof originalCycle[prop] != "object" && typeof originalCycle[prop] != "array") {
-                    cycle[prop] = originalCycle[prop];
-                }
-            }
-            pickupCopy.Carboy_use_cycles[i] = cycle;
-        }
-        af.savePickup(pickup, pickupCopy, true);
+    .controller('PickupModalCtrl', function ($scope, actionFunctionsFactory, Collections, $modalInstance) {
+    $scope.collections = Collections;
+    $scope.confirm = function (trays) {
+        $scope.error = "";
+        //if (!isNaN(trays)) {
+        $modalInstance.close($scope.collections);
+        //} else {
+        $scope.error = "Please enter a number here.";
+        //}
     };
     $scope.close = function () {
         $modalInstance.dismiss();
-        af.deleteModalData();
     };
-});
-'use strict';
-/**
- * @ngdoc function
- * @name 00RsmsAngularOrmApp.controller:PiRadHomeCtrl
- * @description
- * # PiRadHomeCtrl
- * Controller of the 00RsmsAngularOrmApp PI dashboard
- */
-angular.module('00RsmsAngularOrmApp')
-    .controller('PiRadHomeCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal) {
-    var af = actionFunctionsFactory;
-    $scope.af = af;
-    $rootScope.piPromise = af.getRadPIById($stateParams.pi)
-        .then(function (pi) {
-        console.log(pi);
-        $scope.pi = pi;
-    }, function () { });
 });
 'use strict';
 /**
@@ -898,6 +900,10 @@ angular.module('00RsmsAngularOrmApp')
         var modalInstance = $modal.open({
             templateUrl: 'views/pi/pi-modals/pi-wipe-modal.html',
             controller: 'PIWipeTestModalCtrl'
+        });
+        modalInstance.result.then(function (obj) {
+            if (obj && obj.Class == "CarboyUseCycle")
+                $scope.pi.CarboyUseCycles.push(obj);
         });
     };
 })
@@ -1007,6 +1013,7 @@ angular.module('00RsmsAngularOrmApp')
             templateUrl: 'views/pi/pi-modals/confirm-close-container.html',
             controller: 'RecepticalModalCtrl'
         });
+        modalInstance.result.then(function () { $scope.pi.containers = $scope.getContainers($scope.pi); });
     };
     $scope.openContainerModal = function () {
         var modalData = { pi: null, Container: { Class: "", Principal_investigator_id: $scope.pi.Key_id } };
@@ -1050,6 +1057,8 @@ angular.module('00RsmsAngularOrmApp')
         return $rootScope.saving = af.save(container).then(function (r) {
             console.log(r, container);
             angular.extend(container, r);
+            console.log(dataStore.WasteBag);
+            $scope.pi.containers = $scope.getContainers($scope.pi);
             return container;
         });
     };
@@ -1081,9 +1090,36 @@ angular.module('00RsmsAngularOrmApp')
             return "other";
         return false;
     };
-    $scope.confirmCloseContainer = function (container, copy) {
-        container.Close_date = convenienceMethods.setMysqlTime(new Date());
-        return $rootScope.saving = af.save(container).then(function (r) {
+    function isCyclic(obj) {
+        var seenObjects = [];
+        function detect(obj) {
+            if (obj && typeof obj === 'object') {
+                if (seenObjects.indexOf(obj) !== -1) {
+                    return true;
+                }
+                seenObjects.push(obj);
+                for (var key in obj) {
+                    if (obj.hasOwnProperty(key) && detect(obj[key])) {
+                        console.log(obj, 'cycle at ' + key);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return detect(obj);
+    }
+    $scope.confirmCloseContainer = function (container) {
+        console.log(container);
+        var copy = {
+            Close_date: convenienceMethods.setMysqlTime(new Date()),
+            Class: container.Class,
+            Key_id: container.Key_id,
+            Principal_investigator_id: container.Principal_investigator_id,
+            Carboy_id: container.Carboy_id || null,
+            Trays: container.Trays || null
+        };
+        return $rootScope.saving = af.save(copy).then(function (r) {
             angular.extend(container, r);
             $modalInstance.dismiss();
             af.deleteModalData();

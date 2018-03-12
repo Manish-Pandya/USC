@@ -8,19 +8,15 @@
     <div class="card full two-thirds pickup-collection">
         <h2 style="padding:10px;">
             <span ng-if="!CurrentPickup && !containers.length">No Waste is ready for pickup</span>
-            <span ng-if="!CurrentPickup && containers.length">Containers Ready for Pickup</span>
-            <span ng-if="CurrentPickup">Containers In Pickup Requested {{CurrentPickup.Requested_date | dateToIso}}</span>
+            <span ng-if="CurrentPickup">The following waste containers are scheduled for pickup:</span>
         </h2>
         <containers containers="containers"></containers>
         <div style="padding:10px;" ng-if="containers.length">
-            <label>Notes:</label>
+            <label>Notes/Supplies (Please be specific, i.e. "2 Scint Vial trays or 1 Carboy"):</label>
             <textarea ng-init="pickupNotes = CurrentPickup.Notes" rows="3" style="width:90%" ng-model="pickupNotes"></textarea>
-        </div>
-        <div style="padding:10px;" ng-if="containers.length">
-            <button ng-click="createPickup(containers,pi,pickupNotes)" class="btn btn-success btn-large left" ng-disabled="!pi.CurrentWasteBag.Contents.length && pi.CurrentScintVialCollection && pi.CarboyUseCycles">
-                <i class="icon-box-remove"></i>
-                <span ng-if="!CurrentPickup"> Request Pickup</span>
-                <span ng-if="CurrentPickup"> Update Pickup</span>
+            <button ng-click="createPickup(containers,pi,pickupNotes)" class="btn btn-success right" ng-disabled="!pi.CurrentWasteBag.Contents.length && pi.CurrentScintVialCollection && pi.CarboyUseCycles">
+                <span ng-if="CurrentPickup">Save Notes</span>
+                <i class="icon-checkmark-2"></i>
             </button>
         </div>
     </div>        

@@ -111,6 +111,17 @@ class Carboy extends RadCrud {
 	
 	public function getCurrent_carboy_use_cycle(){
 		$cycles = $this->getCarboy_use_cycles();
+        $l = Logger::getLogger(__FUNCTION__);
+        //carboys should always have at least one CarboyUseCycle
+        if($this->key_id != null && ($cycles == null || count($cycles) == 0)){
+            $cycle = new CarboyUseCycle();
+            $cycle->setCarboy_id($this->key_id);
+            $cycle->setStatus("Available");
+            $cycleDao = new GenericDAO($cycle);
+            $cycle = $cycleDao->save();
+            return $cycle;
+        }
+
 		foreach($cycles as $cycle){
 			//the cycle is the current one if it hasn't been poured 
 			if($cycle->getPour_date() == NULL){
@@ -118,6 +129,7 @@ class Carboy extends RadCrud {
 				return $cycle;
 			}
 		}
+        return null;
 	}
 	
 }

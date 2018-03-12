@@ -343,7 +343,7 @@ angular.module('00RsmsAngularOrmApp')
         return function (containers, reverse) {
             if (!reverse) reverse = false;
             return typeof containers != "undefined" ? containers.filter(function (c) {
-                return (c.Close_date == null) == reverse;
+                return (c.Close_date == null) != reverse;
             }) : []
         }
     }).filter('unit', function () {
@@ -356,6 +356,25 @@ angular.module('00RsmsAngularOrmApp')
             if (!drums) return;
             return drums.filter(function (d) {
                 return showShipped ? d.Pickup_date != null : d.Pickup_date == null;
+            })
+        }
+    }).filter('orderEmpty', () => {
+        return (things, prop) => {
+            if (!things) return;
+            if (!prop) return things;
+            return things.sort((a, b) => {
+                if (!a[prop]) return 1;
+                if (!b[prop]) return -1;
+                return a[prop] > b[prop];
+            })
+        }
+    }).filter('sortIsotopes', () => {
+        return (auths, reverse) => {
+            if (!auths) return;
+            if (!reverse) reverse = false;
+
+            return auths.sort((a, b) => {
+                return a.License_line_item && b.License_line_item && a.License_line_item.length > b.License_line_item.length && a.License_line_item > b.License_line_item;
             })
         }
     })

@@ -1,7 +1,11 @@
 <div class="modal-header" style="padding:0;">
     <h2 ng-show="!addRoom" style="padding:5px; background:rgb(122, 6, 109); color:white">Add a Carboy to {{modalData.pi.User.Name}}</h2>
 </div>
-<div class="modal-body wide-modal">
+<div class="modal-body wide-modal" ng-init="loadCarboys()">
+    <span ng-if="loadingCarboys" class="loading">
+        <i class="icon icon-spinnery-dealie spinner large"></i>
+        <span>Loading Carboys...</span>
+    </span>
     <div class="fake-table striped bordered">
         <div class="table-header">
             <h3>Add</h3>
@@ -9,14 +13,14 @@
             <h3>Carboy Number</h3>
             <h3>Rooms</h3>
         </div>
-        <div class="table-row" ng-repeat="cycle in carboys | filter: {Status: 'Available'}">
+        <div class="table-row" ng-repeat="cycle in carboys | filter: {Status: 'Available'}" ng-init="cycle.loadRoom()">
             <div>
                 <a ng-click="addCarboyToLab(cycle, modalData.pi, cycle.Room)" class="btn left btn-success"><i class="icon-plus-2"></i>Assign</a>
             </div>
             <div>{{cycle.Carboy.Commission_date | dateToISO}}</div>
             <div>{{cycle.Carboy.Carboy_number}}</div>
             <div>
-                <select ng-model="cycle.Room" ng-options="room.Name for room in modalData.pi.Rooms">
+                <select ng-model="cycle.Room" ng-options="(room.Building_name + ': ' + room.Name) for room in modalData.pi.Rooms">
                     <option value="">Select a room</option>
                 </select>
             </div>

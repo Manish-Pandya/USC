@@ -156,7 +156,7 @@ class ScintVialCollection extends Container{
     public function getComments(){return $this->comments;}
     public function setComments($comments){$this->comments = $comments;}
 
-    public function getTrays(){return $this->trays;}
+    public function getTrays(){return (int) $this->trays;}
     public function setTrays($trays){$this->trays = $trays;}
 
     public function getLabel(){

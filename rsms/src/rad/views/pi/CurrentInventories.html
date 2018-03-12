@@ -5,14 +5,12 @@
     <table class="table table-striped table-bordered">
         <tr>
             <th>Isotope</th>
-            <th>Authorized Form</th>
             <th>Authorized Limit</th>
             <th>Amount on Hand</th>
             <th>Usable Amount</th>
         </tr>
         <tr ng-repeat="invt in pi.CurrentIsotopeInventories">
             <td>{{invt.Isotope_name}}</td>
-            <td>{{invt.Authorized_form}}</td>
             <td>{{invt.Auth_limit | roundFloat}}</td>
             <td>{{invt.Amount_on_hand | roundFloat}}</td>
             <td>{{invt.Usable_amount | roundFloat}}</td>

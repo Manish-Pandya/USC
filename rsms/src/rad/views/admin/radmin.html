@@ -13,19 +13,20 @@
     <div class="row-fluid" style="margin-top: -15px;">
         <div class="left-nav">
             <ul class="sideNav">
-                <li><a class="inventories" ui-sref="radmin.inventories"><i class=" fa fa-calendar-o"></i>Inventories</a></li>
-                <li><a class="wipe-tests" ui-sref="radmin.wipe-tests"><i class="icon-paper"></i>Wipe Tests</a></li>
-                <li><a class="pickups" ui-sref="admin-pickups"><i class="icon-box-remove"></i>Pickups</a></li>
-                <li><a class="solids-containers" ui-sref="radmin.disposals"><i class="icon-trashcan"></i>Disposals</a></li>
-                <li><a class="carboys" ui-sref="radmin.carboys"><i class="icon-carboy"></i>Carboys</a></li>
-                <li><a class="isotopes" style="color:black" ui-sref="radmin.isotopes"><img src="../img/radiation-large-icon.png" style="width:20px;"/>Isotopes</a></li>
-                <li><a class="parcels" ui-sref="radmin.orders"><i class="icon-box-add"></i>Orders</a></li>
-                <li><a class="transfers" ui-sref="radmin.transfers"><i class="icon-tab"></i>Transfers</a></li>
-                <li><a class="auth-report" ui-sref="radmin.auth-report"><i class="icon-copy"></i>Auth Report</a></li>
-                <li><a class="inventories" ui-sref="radmin.other-waste"><i class="icon-beaker-alt"></i>Other Waste</a></li>
-                <li><a class="auth-report" ui-sref="radmin.isotope-report"><i class="icon-copy"></i>Total Inventories</a></li>
+                <li><a class="inventories" ng-class="{'active': state.current.name == 'radmin.inventories'}" ui-sref="radmin.inventories"><i class=" fa fa-calendar-o"></i>Inventories</a></li>
+                <li><a class="wipe-tests" ng-class="{'active': state.current.name == 'radmin.wipe-tests'}" ui-sref="radmin.wipe-tests"><i class="icon-paper"></i>Wipe Tests</a></li>
+                <li><a class="pickups"  ng-class="{'active': state.current.name == 'radmin.admin-pickups'}" ui-sref="admin-pickups"><i class="icon-box-remove"></i>Pickups</a></li>
+                <li><a class="solids-containers"ng-class="{'active': state.current.name == 'radmin.disposals'}" ui-sref="radmin.disposals"><i class="icon-trashcan"></i>Disposals</a></li>
+                <li><a class="carboys" ng-class="{'active': state.current.name == 'radmin.carboys'}" ui-sref="radmin.carboys"><i class="icon-carboy"></i>Carboys</a></li>
+                <li><a class="isotopes" ng-class="{'active': state.current.name == 'radmin.isotopes'}" ui-sref="radmin.isotopes"><img src="../img/radiation-large-icon.png" style="width:20px;"/>Isotopes</a></li>
+                <li><a class="parcels" ng-class="{'active': state.current.name == 'radmin.orders'}" ui-sref="radmin.orders"><i class="icon-box-add"></i>Orders</a></li>
+                <li><a class="transfers" ng-class="{'active': state.current.name == 'radmin.transfers'}" ui-sref="radmin.transfers"><i class="icon-tab"></i>Transfers</a></li>
+                <li><a class="auth-report" ng-class="{'active': state.current.name == 'radmin.auth-report'}" ui-sref="radmin.auth-report"><i class="icon-copy"></i>Auth Report</a></li>
+                <li><a class="inventories" ng-class="{'active': state.current.name == 'radmin.other-waste'}" ui-sref="radmin.other-waste"><i class="icon-beaker-alt"></i>Other Waste</a></li>
+                <li><a class="auth-report" ng-class="{'active': state.current.name == 'radmin.isotope-report'}" ui-sref="radmin.isotope-report"><i class="icon-copy"></i>Total Inventories</a></li>
+                <li><a class="auth-report" ng-class="{'active': state.current.name == 'radmin.conditions'}" ui-sref="radmin.conditions"><i class="icon-paragraph-left"></i>Conditions</a></li>
+                <li><a ng-class="{'active': state.current.name == 'radmin.zap'}" ui-sref="radmin.zap"><i class="icon-lightning"></i>Zap Test Data</a></li>
             </ul>
-            
             <!--
             <ul class="sideNav" ng-if="pi && $state.current.url.indexOf('pi-detail')>-1">
                 <li><a class="auths" ng-click="af.setSelectedView('authorizations')"><i class="icon-unlocked-2"></i>Authorizations</a></li>

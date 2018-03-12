@@ -11,7 +11,7 @@
                     R[Constants.ROLE.NAME.RADIATION_INSPECTOR],
                     R[Constants.ROLE.NAME.ADMIN]])"
                 ng-click="stuff.showClosed = !stuff.showClosed; pi.containers = getContainers(pi, stuff.showClosed)">
-            <span ng-if="stuff.showClosed">Hide</span><span ng-if="!stuff.showClosed">Show</span> Closed Containers
+            Show<span ng-if="stuff.showClosed"> Open</span><span ng-if="!stuff.showClosed"> Closed</span> Containers
         </button>
     </h2>
     <div class="card two-thirds full">

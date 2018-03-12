@@ -106,6 +106,8 @@ class Pickup extends RadCrud {
 
     private $solidContents;
 
+    private $piName;
+
 	public function __construct() {
 
 		// Define which subentities to load
@@ -222,5 +224,12 @@ class Pickup extends RadCrud {
     public function getBags(){return $this->bags;}
     public function setBags($bags){$this->bags = $bags;}
 
+    public function getPiName(){
+        $pi = $this->getPrincipalInvestigator();        
+        if($pi != null && $pi->getName() != null){
+            $this->piName = $pi->getName();
+        }
+        return $this->piName;
+    }
 }
 ?>
