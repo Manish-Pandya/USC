@@ -11,9 +11,9 @@ angular.module('00RsmsAngularOrmApp')
     var af = actionFunctionsFactory;
     var getAllPickups = function () {
         af.getAllPickups()
-            .then(function (pickups) {
-            console.log(pickups);
-            $scope.pickups = pickups;
+            .then(function () {
+            $scope.pickups = dataStore.Pickup;
+            console.log("pickups", $scope.pickups);
         }, function () { });
     };
     $scope.af = af;
@@ -35,29 +35,21 @@ angular.module('00RsmsAngularOrmApp')
             $scope.pickups = dataStoreManager.get("Pickup");
         });
     }
-    $scope.setStatusAndSave = function (pickup, oldStatus, isChecked) {
-        console.log("PREPPING STATUS", status, oldStatus);
-        console.log(isChecked);
-        isChecked = !isChecked;
-        console.log(isChecked);
-        var pickupCopy = dataStoreManager.createCopy(pickup);
-        if (isChecked == true) {
-            pickupCopy.Status = oldStatus;
-            if (oldStatus == Constants.PICKUP.STATUS.PICKED_UP) {
-                pickupCopy.Status = Constants.PICKUP.STATUS.AT_RSO;
-            }
-            else if (oldStatus == Constants.PICKUP.STATUS.REQUESTED) {
-                pickupCopy.Status = Constants.PICKUP.STATUS.PICKED_UP;
-            }
-        }
-        else {
-            if (oldStatus == Constants.PICKUP.STATUS.PICKED_UP) {
-                pickupCopy.Status = Constants.PICKUP.STATUS.REQUESTED;
-            }
-            else {
-                pickupCopy.Status = Constants.PICKUP.STATUS.PICKED_UP;
-            }
-        }
+    $scope.setStatusAndSave = function (pickup) {
+        var pickupCopy = angular.extend({}, pickup);
+        if (pickupCopy.Status == Constants.PICKUP.STATUS.REQUESTED)
+            pickup.Pickup_date = null;
+        //Prevent recursive structure by leaving out Carboy client-side convenience property
+        pickupCopy.Carboy_use_cycles = pickupCopy.Carboy_use_cycles.map(function (c) {
+            return {
+                Key_id: c.Key_id,
+                Class: "CarboyUseCycle",
+                Close_date: c.Close_date,
+                Pickup_id: c.Pickup_id,
+                Principal_investigator_id: c.Principal_investigator_id
+            };
+        });
+        console.log("PRE_SAVE PICKUP", pickupCopy);
         af.savePickup(pickup, pickupCopy, true);
     };
     $scope.selectWaste = function (waste, pickup, pi) {
@@ -122,36 +114,38 @@ angular.module('00RsmsAngularOrmApp')
         var reverse = $scope.filterObj.reverse;
         return (item.Pickup_id == null) == reverse;
     };
-    $scope.pickupsFilter = function (pi, reverse) {
-        return $scope.availableContainers = pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections).concat(pi.OtherWasteContainers)
-            .filter(function (c) {
-            if (typeof reverse == "undefined")
-                reverse = false;
-            return c.Close_date && !c.Clearable;
-        })
-            .map(function (c, idx) {
-            var container = angular.extend({}, c);
-            container.ViewLabel = c.Label || c.CarboyNumber;
-            //we index at 1 because JS can't tell the difference between false and the number 0 (see return of $scope.getContainer method below)
-            container.idx = idx + 1;
-            switch (c.Class) {
-                case ("WasteBag"):
-                    container.ClassLabel = "Waste Bags";
-                    break;
-                case ("CarboyUseCycle"):
-                    container.ClassLabel = "Carboys";
-                    break;
-                case ("ScintVialCollection"):
-                    container.ClassLabel = "Scint Vial Containers";
-                    break;
-                case ("OtherWasteContainer"):
-                    container.ClassLabel = "Other Waste";
-                    break;
-                default:
-                    container.ClassLabel = "";
-            }
-            return container;
-        });
+    $scope.pickupsFilter = function (pickup, reverse) {
+        console.log(pickup.PiName, Pickup);
+        if (!$scope.availableContainers)
+            $scope.availableContainers = [];
+        return $scope.availableContainers[pickup.Key_id] =
+            (pickup.Carboy_use_cycles || [])
+                .concat(pickup.Waste_bags || [])
+                .concat(pickup.Scint_vial_collections || [])
+                .concat(pickup.Other_waste_containers || [])
+                .map(function (c, idx) {
+                var container = angular.extend({}, c);
+                container.ViewLabel = c.Label || c.CarboyNumber;
+                //we index at 1 because JS can't tell the difference between false and the number 0 (see return of $scope.getContainer method below)
+                container.idx = idx + 1;
+                switch (c.Class) {
+                    case ("WasteBag"):
+                        container.ClassLabel = "Waste Bags";
+                        break;
+                    case ("CarboyUseCycle"):
+                        container.ClassLabel = "Carboys";
+                        break;
+                    case ("ScintVialCollection"):
+                        container.ClassLabel = "Scint Vial Containers";
+                        break;
+                    case ("OtherWasteContainer"):
+                        container.ClassLabel = "Other Waste";
+                        break;
+                    default:
+                        container.ClassLabel = "";
+                }
+                return container;
+            });
     };
     $scope.hasClosedNotPickedUp = function (containers) {
         return containers.some(function (c) { return c.Pickup_id == null; });
@@ -185,7 +179,9 @@ angular.module('00RsmsAngularOrmApp')
     .filter('authsFilter', function () {
     return function (auths, filterObj) {
         var filtered = auths.filter(function (a) {
-            if (a.Termination_date)
+            if (a.Termination_date && !filterObj.showTerminated)
+                return false;
+            if (!a.Termination_date && filterObj.showTerminated)
                 return false;
             if (!filterObj)
                 return true;
@@ -305,7 +301,7 @@ angular.module('00RsmsAngularOrmApp')
                 if (pi.Key_id == carboy.Current_carboy_use_cycle.Principal_investigator_id) {
                     carboy.PI = pi;
                 }
-            })[0] || null;
+            });
         });
     };
 })
@@ -859,10 +855,15 @@ angular.module('00RsmsAngularOrmApp')
 angular.module('00RsmsAngularOrmApp')
     .controller('IsotopeCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
     var af = actionFunctionsFactory;
+    var sortIsotopes = function (isotopes) {
+        return isotopes.sort(function (a, b) {
+            return a.License_line_item.length - b.License_line_item.length || a.License_line_item.localeCompare(b.License_line_item) || a.Name - b.Name;
+        });
+    };
     var getAllIsotopes = function () {
         af.getAllIsotopes()
             .then(function (isotopes) {
-            $scope.isotopes = dataStore.Isotope;
+            $scope.isotopes = sortIsotopes(dataStore.Isotope);
         }, function () { });
     };
     $scope.af = af;
@@ -883,6 +884,9 @@ angular.module('00RsmsAngularOrmApp')
         var modalInstance = $modal.open({
             templateUrl: 'views/admin/admin-modals/isotope-modal.html',
             controller: 'IsotopeModalCtrl'
+        });
+        modalInstance.result.then(function () {
+            $scope.isotopes = sortIsotopes(dataStore.Isotope);
         });
     };
 })
@@ -998,13 +1002,15 @@ angular.module('00RsmsAngularOrmApp')
             pi.loadWasteBags();
             $rootScope.pi = pi;
             //$scope.getHighestAmendmentNumber($scope.mappedAmendments);
+            $scope.cycles = $scope.getCycles(pi.CarboyUseCycles);
             return pi;
         }, function () {
         });
     };
     $rootScope.$watch("pi", function (oldPi, newPi) {
         console.log("WACHTED", oldPi, newPi, $rootScope.pi);
-        $scope.getHighestAmendmentNumber($rootScope.pi.Pi_authorization);
+        if ($rootScope.pi)
+            $scope.getHighestAmendmentNumber($rootScope.pi.Pi_authorization);
     });
     $rootScope.radPromise = af.getRadModels()
         .then(getRadPi);
@@ -1030,7 +1036,7 @@ angular.module('00RsmsAngularOrmApp')
         }
     };
     $scope.openModal = function (templateName, object, isAmendment) {
-        console.log(object);
+        console.log("yo", object);
         var modalData = {};
         modalData.pi = $scope.pi;
         modalData.isAmendment = isAmendment || false;
@@ -1065,7 +1071,13 @@ angular.module('00RsmsAngularOrmApp')
                 });
                 $scope.getHighestAmendmentNumber($rootScope.pi.Pi_authorization, thing);
             }
+            if (thing && thing.Class == "CarboyUseCycle") {
+                $scope.cycles.push(thing);
+            }
         });
+    };
+    $scope.getCycles = function (cycles) {
+        return cycles.filter(function (c) { return c.Status == Constants.CARBOY_USE_CYCLE.STATUS.IN_USE; });
     };
     $scope.getHighestAmendmentNumber = function (amendments, selected) {
         if (!amendments)
@@ -1109,6 +1121,10 @@ angular.module('00RsmsAngularOrmApp')
             templateUrl: templateName + '.html',
             controller: 'PiDetailModalCtrl'
         });
+        modalInstance.result.then(function (modifiedAuth) {
+            console.log(auth, modifiedAuth);
+            //angular.extend(auth, modifiedAuth)
+        });
     };
     $scope.openWipeTestModal = function (parcel) {
         var modalData = { pi: null, Parcel: null };
@@ -1131,10 +1147,11 @@ angular.module('00RsmsAngularOrmApp')
         var copy = new window.PIAuthorization();
         angular.extend(copy, piAuth);
         copy.Termination_date = null;
+        copy.view_Termination_date = null;
         for (var n = 0; n < copy.Authorizations; n++) {
             copy.Authorizations[n].Is_active = true;
         }
-        af.savePIAuthorization(copy, piAuth, $scope.pi);
+        af.savePIAuthorization(copy, piAuth, $scope.pi, piAuth.Rooms || [], piAuth.Users || []);
     };
     $scope.removeOtherWasteType = function (type, pi) {
         var id = type.Key_id;
@@ -1149,13 +1166,81 @@ angular.module('00RsmsAngularOrmApp')
             });
         });
     };
+    $scope.openConditionsModal = function (piAuth) {
+        console.log(piAuth);
+        var modalInstance = $modal.open({
+            templateUrl: 'views/admin/admin-modals/pi-auth-conditions-modal.html',
+            controller: 'PiAuthConditionsModalCtrl',
+            resolve: {
+                Auth: function () { return angular.extend({}, piAuth, true); }
+            }
+        });
+        modalInstance.result.then(function (c) {
+            piAuth.Conditions = [].concat(c);
+            console.log("post save", c, piAuth.Conditions);
+        });
+    };
 })
-    .controller('PiDetailModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods, $http) {
+    .controller('PiAuthConditionsModalCtrl', function ($scope, $rootScope, $modalInstance, Auth, actionFunctionsFactory, convenienceMethods, dataSwitchFactory) {
+    var mapConditions = function (conditions) {
+        return conditions.sort(function (a, b) { return a.Order_index > b.Order_index; }).map(function (c, i) {
+            return angular.extend(c, { Order_index: i + 1 });
+        });
+    };
+    Auth.Conditions = mapConditions(Auth.Conditions);
+    $scope.auth = Auth;
+    var filterConditions = function (conditions, auth) {
+        return conditions.filter(function (c) {
+            console.log(auth.Conditions, !convenienceMethods.arrayContainsObject(auth.Conditions, c));
+            return !convenienceMethods.arrayContainsObject(auth.Conditions, c);
+        });
+    };
+    var loadConditions = function () {
+        return dataSwitchFactory.getAllObjects("RadCondition")
+            .then(function () {
+            $scope.conditions = filterConditions(dataStore.RadCondition, Auth);
+        });
+    };
+    $scope.addCondtion = function (condition, auth) {
+        auth.Conditions.push(condition);
+        $scope.conditions = filterConditions(dataStore.RadCondition, auth);
+        auth.Conditions = mapConditions(Auth.Conditions);
+        console.log(auth.Conditions);
+    };
+    $scope.removeCondition = function (idx, auth) {
+        auth.Conditions.splice(idx, 1);
+        $scope.conditions = filterConditions(dataStore.RadCondition, auth);
+        auth.Conditions = mapConditions(Auth.Conditions);
+        console.log(auth.Conditions);
+    };
+    $scope.loading = loadConditions();
+    $scope.save = function (piAuth) {
+        console.log(piAuth);
+        $rootScope.saving = actionFunctionsFactory.save(piAuth).then(function (returnedAuth) { $modalInstance.close(returnedAuth.C, onditions); });
+    };
+    $scope.move = function (auth, direction, idx) {
+        var conditionToMoveIdx = auth.Conditions[idx].Order_index;
+        console.log(idx, idx - direction, conditionToMoveIdx, auth.Conditions);
+        auth.Conditions[idx].Order_index = auth.Conditions[idx - direction].Order_index;
+        auth.Conditions[idx - direction].Order_index = conditionToMoveIdx;
+        auth.Conditions = mapConditions(auth.Conditions);
+    };
+    $scope.cancel = function () { return $modalInstance.dismiss(); };
+})
+    .controller('PiDetailModalCtrl', ['$scope', 'dataSwitchFactory', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, dataSwitchFactory, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods, $http) {
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
         $scope.cm = convenienceMethods;
-        console.log($http);
+        console.log("HEY", dataSwitchFactory, actionFunctionsFactory);
+        //$scope.carboys = af.getCachedCollection('CarboyUseCycle');
+        $scope.loadCarboys = function () {
+            $scope.loadingCarboys = true;
+            $scope.loading = dataSwitchFactory.getAllObjects("CarboyUseCycle", false, true).then(function () {
+                $scope.carboys = dataStore.CarboyUseCycle;
+                $scope.loadingCarboys = false;
+            });
+        };
         $scope.otherWasteTypes = dataStore.OtherWasteType;
         $scope.getType = function (typeId) {
             return $scope.otherWasteTypes.filter(function (t) { return t.Key_id == typeId; })[0];
@@ -1176,6 +1261,21 @@ angular.module('00RsmsAngularOrmApp')
                 console.log(dataStore.Building);
                 $scope.modalData.Buildings = dataStore.Building;
                 $scope.modalData.building = $scope.modalData.building ? $scope.modalData.building : {};
+            });
+        };
+        $scope.getRooms = function () {
+            $rootScope.loading = af.getAllRooms().then(function (b) {
+                console.log(dataStore);
+                $scope.modalData.addUser = true;
+                console.log(dataStore.Building);
+                $scope.modalData.Users = dataStore.User;
+                $scope.modalData.building = $scope.modalData.building ? $scope.modalData.building : {};
+            });
+        };
+        $scope.getUsers = function () {
+            $rootScope.loading = af.getAllUsers(true).then(function (b) {
+                $scope.modalData.addUser = true;
+                $scope.modalData.Users = dataStore.User;
             });
         };
         if (!$scope.modalData.PurchaseOrderCopy) {
@@ -1243,7 +1343,6 @@ angular.module('00RsmsAngularOrmApp')
             if (piAuth.Termination_date)
                 piAuth.Form_Termination_date = convenienceMethods.dateToIso(piAuth.Termination_date);
         };
-        $scope.carboys = af.getCachedCollection('CarboyUseCycle');
         $scope.selectIsotope = function (auth) {
             auth.Isotope = dataStoreManager.getById("Isotope", auth.Isotope_id);
             if ($scope.modalData.AuthorizationCopy && $scope.modalData.AuthorizationCopy.Isotope) {
@@ -1290,8 +1389,8 @@ angular.module('00RsmsAngularOrmApp')
             if (auth.isOriginal)
                 auth.Amendment_number = null;
         };
-        $scope.savePIAuthorization = function (copy, auth, terminated, rooms) {
-            console.log(rooms);
+        $scope.savePIAuthorization = function (copy, auth, terminated, rooms, users) {
+            console.log("calling this", terminated);
             var pi = $scope.modalData.pi;
             if ($scope.modalData.isAmendment)
                 copy.Key_id = null;
@@ -1305,21 +1404,24 @@ angular.module('00RsmsAngularOrmApp')
             }
             else {
                 copy.Is_active = false;
+                console.log("getting termination date");
                 copy.Termination_date = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.Form_Termination_date));
                 for (var n = 0; n < copy.Authorizations; n++) {
                     copy.Authorizations[n].Is_active = false;
                 }
             }
-            af.savePIAuthorization(copy, auth, pi, rooms).then(function (returnedAuth) {
+            console.log(copy); //return;
+            af.savePIAuthorization(copy, auth, pi, rooms, users)
+                .then(function (returnedAuth) {
                 $modalInstance.close(returnedAuth);
                 af.deleteModalData();
             });
         };
         $scope.saveAuthorization = function (piAuth, copy, auth) {
+            //return;
             copy.Pi_authorization_id = copy.Pi_authorization_id || pi.Pi_authorization.Key_id;
-            $modalInstance.dismiss();
             af.deleteModalData();
-            af.saveAuthorization(piAuth, copy, auth);
+            af.saveAuthorization(piAuth, copy, auth).then(function (returnedAuth) { return $modalInstance.close(returnedAuth); });
         };
         $scope.saveParcel = function (pi, copy, parcel) {
             af.deleteModalData();
@@ -1355,7 +1457,6 @@ angular.module('00RsmsAngularOrmApp')
             console.log(cycle);
             //cycle.loadCarboy();
             cycle.Is_active = false;
-            $modalInstance.dismiss();
             var cycleCopy = {
                 Class: "CarboyUseCycle",
                 Room_id: cycle.Room ? cycle.Room.Key_id : null,
@@ -1365,7 +1466,10 @@ angular.module('00RsmsAngularOrmApp')
             };
             console.log(cycleCopy);
             af.deleteModalData();
-            af.addCarboyToLab(cycleCopy, pi);
+            af.addCarboyToLab(cycleCopy, pi).then(function (c) {
+                console.log(c);
+                $modalInstance.close(c);
+            });
         };
         $scope.roomIsAuthorized = function (room, authorization) {
             room.isAuthorized = false;
@@ -1376,7 +1480,6 @@ angular.module('00RsmsAngularOrmApp')
                 while (i--) {
                     if (authorization.Rooms[i].Key_id == room.Key_id) {
                         return true;
-                        console.log("FOUND:", room);
                     }
                 }
                 return false;
@@ -1384,7 +1487,23 @@ angular.module('00RsmsAngularOrmApp')
             else {
                 return true;
             }
-            return false;
+        };
+        $scope.userIsAuthorized = function (user, authorization) {
+            user.isAuthorized = false;
+            if (!authorization.Users && authorization.Key_id)
+                return;
+            if (authorization.Users) {
+                var i = authorization.Users.length;
+                while (i--) {
+                    if (authorization.Users[i].Key_id == user.Key_id) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            else {
+                return true;
+            }
         };
         $scope.getAuthRooms = function (piRooms, auth) {
             $scope.modalData.resultRooms = piRooms;
@@ -1400,6 +1519,25 @@ angular.module('00RsmsAngularOrmApp')
             $scope.modalData.PIAuthorizationCopy.Rooms.push(room);
             $scope.getAuthRooms($scope.modalData.pi.Rooms, $scope.modalData.PIAuthorizationCopy);
             $scope.modalData.addRoom = false;
+        };
+        $scope.getAuthUsers = function (users, auth) {
+            if (!auth.Users)
+                auth.Users = [];
+            $scope.modalData.resultUsers = users || [];
+            if (auth.Users) {
+                $scope.modalData.resultUsers =
+                    $scope.modalData.resultUsers.concat(auth.Users.filter(function (u) {
+                        return !convenienceMethods.arrayContainsObject(users, u);
+                    }));
+            }
+        };
+        $scope.selectUser = function (user) {
+            if (!$scope.modalData.PIAuthorizationCopy.Users)
+                $scope.modalData.PIAuthorizationCopy.Users = [];
+            $scope.modalData.PIAuthorizationCopy.Users.push(user);
+            user.isAuthorized = true;
+            $scope.getAuthUsers($scope.modalData.pi.Users, $scope.modalData.PIAuthorizationCopy);
+            $scope.modalData.addUser = false;
         };
         $scope.departmentIsAuthorized = function (department, authorization) {
             department.isAuthorized = false;
@@ -2120,4 +2258,62 @@ angular.module('00RsmsAngularOrmApp')
     $rootScope.loading = actionFunctionsFactory.getInventoryReport().then(function () {
         $scope.reports = dataStore.RadReportDTO;
     });
+})
+    .controller('ZapCtrl', function ($scope, $modal) {
+    $scope.openModal = function (object) {
+        var modalInstance = $modal.open({
+            templateUrl: 'views/admin/admin-modals/zap-modal.html',
+            controller: 'ZapModalCtrl'
+        });
+    };
+})
+    .controller('ZapModalCtrl', function ($scope, $http, $modalInstance) {
+    $scope.save = function (owt) {
+        console.log(owt);
+        $http.get("http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=resetRadData")
+            .then(window.location.reload(true));
+    };
+    $scope.cancel = function () { return $modalInstance.dismiss(); };
+})
+    .controller('ConditionsCtrl', function ($scope, $modal, actionFunctionsFactory, dataSwitchFactory) {
+    var af = $scope.af = actionFunctionsFactory;
+    var loadConditions = function () {
+        return dataSwitchFactory.getAllObjects("RadCondition")
+            .then(function () {
+            console.log("STORE", dataStore);
+            $scope.conditions = dataStore.RadCondition;
+        });
+    };
+    $scope.openModal = function (condition) {
+        var condition = !condition ? { Class: "RadCondition" } : condition;
+        var modalInstance = $modal.open({
+            templateUrl: 'views/admin/admin-modals/condition-modal.html',
+            controller: 'ConditionsModalCtrl',
+            resolve: {
+                Condition: function () { return angular.extend({}, condition); }
+            }
+        });
+        modalInstance.result.then(function (c) {
+            console.log("returned", c);
+            if (!condition.Key_id)
+                $scope.conditions.splice(0, 0, condition);
+            angular.extend(condition, c);
+        });
+    };
+    $scope.loading = loadConditions();
+})
+    .controller('ConditionsModalCtrl', function ($scope, $rootScope, $modalInstance, Condition, actionFunctionsFactory) {
+    $scope.condition = Condition;
+    $scope.tinymceOptions = {
+        plugins: 'link lists',
+        toolbar: 'bold | italic | underline | lists | bullist | numlist',
+        menubar: false,
+        elementpath: false,
+        content_style: "p,ul li, ol li {font-size:14px}"
+    };
+    $scope.save = function (condition) {
+        console.log(condition);
+        $rootScope.saving = actionFunctionsFactory.save(condition).then(function (c) { return $modalInstance.close(c); });
+    };
+    $scope.cancel = function () { return $modalInstance.dismiss(); };
 });

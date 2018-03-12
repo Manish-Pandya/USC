@@ -85,8 +85,14 @@ angular
                 //set a root scope marker as the promise so that we can use angular-busy directives in the view
                 return $rootScope[object.Class + 'Saving'] = genericAPIFactory.save(object, seg, saveChildren)
                     .then(
-                    function (returnedData) {
-                        return returnedData.data;
+                    function (returned) {
+                        if (object.Key_id && object.api) {
+                            console.log(dataStoreManager.getById(object.Class, object.Key_id))
+                            angular.extend(dataStoreManager.getById(object.Class, object.Key_id), returned.data);
+                        } else {
+                            return modelInflatorFactory.instateAllObjectsFromJson(returned.data);
+                        }
+                        return returned.data;
                     },
                     function (error) {
                         //object.Name = error;
@@ -208,41 +214,49 @@ angular
                     {
                         Name:'solids',
                         Label: 'My Radiation Laboratory',
-                        Dashboard:true
+                        Dashboard: true,
+                        showPiNav: true
                     },
                     {
                         Name:'pi-orders',
                         Label: 'My Radiation Laboratory',
-                        Dashboard:true
+                        Dashboard: true,
+                        showPiNav: true
                     },
                     {
                         Name:'lab-wipes',
                         Label: 'My Radiation Laboratory -- Wipe Tests',
-                        Dashboard:true
+                        Dashboard: true,
+                        showPiNav: true
                     },
                     {
                         Name:'use-log',
                         Label: 'Use Log',
-                        Dashboard:true
+                        Dashboard: true,
+                        showPiNav: true
                     },
                     {
                         Name: 'containers',
                         Label: 'Waste Containers',
-                        Dashboard: true
+                        Dashboard: true,
+                        showPiNav: true
                     },
                     {
                         Name:'parcel-use-log',
                         Label: 'Package Use Log',
-                        Dashboard: true
+                        Dashboard: true,
+                        showPiNav: true
                     },
                     {
                         Name:'pickups',
                         Label: 'Pickups',
-                        Dashboard: true
+                        Dashboard: true,
+                        showPiNav: true
                     },
                     {
                         Name:'inspection-wipes:inspection',
-                        Label: 'Inspection Wipes'
+                        Label: 'Inspection Wipes',
+                        showPiNav: true
                     },
                     {
                         Name:'radmin.disposals',
@@ -252,7 +266,8 @@ angular
                     {
                         Name: 'current-inventories',
                         Label: 'Current Inventories',
-                        Dashboard: true
+                        Dashboard: true,
+                        showPiNav: true
                     },
                     {
                         Name:'quarterly-inventory',
@@ -1613,6 +1628,7 @@ angular
                             storedCycle.loadRoom();
                             storedCycle.loadCarboy();
                             pi.CarboyUseCycles.push(storedCycle);
+                            return storedCycle;
                         },
                         af.setError('The Carboy could not be added to the lab.')
                     )
@@ -1956,7 +1972,9 @@ angular
                     var label = "Scintillation Vials";
                 }
                 copy.Pickup_id = null;
-                return this.save( copy )
+                console.log("thing to save:", copy);
+
+                return this.save( copy, false, "removeFromPickup" )
                     .then(
                         function(returnedObj){
                             angular.extend(object, returnedObj);
@@ -2656,7 +2674,7 @@ angular
                 copy.Rooms = rooms.filter(r => r.isAuthorized);
                 copy.Departments = pi.Departments.filter(r => r.isAuthorized);               
                 copy.Users = users.filter(r => r.isAuthorized);               
-                console.log(copy);
+                console.log(copy.Termination_date);
                 af.clearError();
                 return this.save(copy)
                     .then(

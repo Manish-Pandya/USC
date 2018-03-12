@@ -641,7 +641,7 @@ ParcelWipeTest.prototype = {
 
     },
     loadParcel_wipes: function () {
-        this.Parcel_wipes = [];
+        if(!this.Parcel_wipes)this.Parcel_wipes = [];
         dataLoader.loadOneToManyRelationship(this, 'Parcel_wipes', this.ParcelWipesRelationship);
     },
 
@@ -1020,6 +1020,10 @@ PrincipalInvestigator.prototype = {
         //this.CurrentScintVialCollections = [];
         dataLoader.loadOneToManyRelationship(this, 'CurrentScintVialCollections', this.CurrentScintVialCollectionRelationship);
     },
+    loadLabPersonnel: function () {
+        //this.CurrentScintVialCollections = [];
+        dataLoader.loadOneToManyRelationship(this, 'LabPersonnel', this.LabPersonnelRelationship);
+    },
     getName: function () {
         this.Name = "";
 
@@ -1264,3 +1268,13 @@ OtherWasteType.prototype = {
 
 // inherit from GenericModel
 extend(OtherWasteType, GenericModel);
+
+//constructor
+var RadCondition = function () { };
+RadCondition.prototype = {
+    className: "RadCondition",
+    Class: "RadCondition"
+}
+
+// inherit from GenericModel
+extend(RadCondition, GenericModel);

@@ -168,7 +168,8 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="../client-side-framework/dataStore/dataStoreManager.js"></script>
 <script src="../client-side-framework/dataStore/dataSwitch.js"></script>
 <script src="../client-side-framework/dataStore/dataLoader.js"></script>
-
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+    <script src="<?php echo WEB_ROOT?>js/lib/tinymce.js"></script>
 
 <!-- models 
 <script src="./scripts/models/Authorization.js"></script>
@@ -207,6 +208,26 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="scripts/models/MiscellaneousWaste.js"></script>
     -->
 <script src="scripts/models/rad-models-bundle.js"></script>
+    <style>
+        ul.piNav {
+            margin-right: 160px;
+            float: right;
+            margin-top: -30px;
+        }
+            ul.piNav li {
+                display:inline-block;
+                margin-right:10px;
+            }
+                ul.piNav li a {
+                    font-weight: bold;
+                    font-size: 12px;
+                    color: rgba(51, 51, 51, 0.7);
+                    display: block;
+                }
+                    ul.piNav li a:hover {
+                        color: black;
+                    }
+    </style>
 </head>
     <body>
         <?php if($_SESSION['USER'] != NULL){ ?>
@@ -223,6 +244,15 @@ if(!isset($_SESSION["USER"])){ ?>
         <!-- NAVIGATION -->
         <div class="banner {{bannerClass | splitAtPeriod}} radiation no-print" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
             <h1>{{viewLabel}} <a style="float:right;margin: 11px 128px 0 0; color:black" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/safety-programs"><i class="icon-home" style="font-size:40px;"></i></a></h1>
+            <ul class="piNav" ng-if="showPiNav">
+                <li><a ui-sref="pi-orders({ pi: 331})">Orders</a></li>
+                <li><a ui-sref="use-log({ pi: 331})">Use Logs</a></li>
+                <li><a ui-sref="pickups({ pi: 331})">Pickups</a></li>
+                <li><a ui-sref="containers({ pi:331})">Waste Containers</a></li>
+                <li><a ui-sref="current-inventories({ pi:331})">Inventory</a></li>
+                <li><a ui-sref="lab-wipes({ pi: 331})">Wipe Tests</a></li>
+                <li><a ui-sref="pi-auths({ pi: 331})">Authorizations</a></li>
+            </ul>
         </div>
         <!-- VIEW NESTING -->
         <div ui-view class="noBg"></div>

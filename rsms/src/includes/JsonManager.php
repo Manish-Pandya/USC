@@ -301,7 +301,7 @@ class JsonManager {
 	 * @return Array
 	 */
 	public static function callObjectAccessors($object){
-
+       
 
 		$classname = get_class($object);
 

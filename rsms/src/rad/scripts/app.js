@@ -215,6 +215,7 @@ angular
     });
     $rootScope.$on('$stateChangeSuccess',
         function (event, toState, toParams, fromState, fromParams) {
+            console.log("on naviGATE",event, toState, toParams, fromState, fromParams);
             $rootScope.state = $state;
             $rootScope.loading = false;
             var viewMap = actionFunctionsFactory.getViewMap($state.current);
@@ -222,6 +223,15 @@ angular
             $rootScope.bannerClass = viewMap.Name;
             $rootScope.dashboardView = viewMap.Dashboard;
             $rootScope.noHead = viewMap.NoHead;
+            $rootScope.showPiNav = viewMap.showPiNav;
+
+            if ((toParams && toParams.pi) || (fromParams && fromParams.pi) && !$rootScope.navPi) {
+                console.log(fromState)
+                $rootScope.navPi = fromState.pi;
+            }
+            $rootScope.navPi = 1;
+
+
         });
 
       //global authorization getter function used by multiple controllers

@@ -13,15 +13,15 @@ ParcelWipeTest.prototype = {
         }
     ],
 
-        ParcelWipesRelationship: {
+    ParcelWipesRelationship: {
         className: 'ParcelWipe',
         keyReference: 'Parcel_wipe_test_id',
         paramValue: 'Key_id',
         paramName: 'id'
-
     },
     loadParcel_wipes: function () {
-        this.Parcel_wipes = [];
+        //this.Parcel_wipes = [];
+        alert("load called")
         dataLoader.loadOneToManyRelationship(this, 'Parcel_wipes', this.ParcelWipesRelationship);
     },
 
