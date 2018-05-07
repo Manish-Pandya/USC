@@ -1499,7 +1499,7 @@ class GenericDAO {
                         LEFT OUTER JOIN isotope c
                         ON c.key_id = b.isotope_id
                         LEFT OUTER JOIN parcel d
-                        ON d.authorization_id = b.key_id
+                        ON d.authorization_id = b.key_id AND d.status IN ('Delivered')
 
 
                         LEFT OUTER JOIN (
@@ -1572,6 +1572,7 @@ class GenericDAO {
                         ON amount_transferred.isotope_id = b.isotope_id
 
                         where b.pi_authorization_id IN(select key_id from pi_authorization where principal_investigator_id = ?)
+                       
                         group by b.isotope_id ,c.name, c.key_id, a.principal_investigator_id";
 
         $stmt = $db->prepare($queryString);
