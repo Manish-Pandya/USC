@@ -1710,7 +1710,7 @@ class GenericDAO {
                         LEFT OUTER JOIN authorization b
                         ON b.isotope_id = a.key_id
                         LEFT OUTER JOIN parcel c
-                        ON c.authorization_id = b.key_id
+                        ON c.authorization_id = b.key_id AND c.status != 'Ordered'
                         LEFT OUTER JOIN parcel_use d
                         on d.parcel_id = c.key_id
                         LEFT OUTER JOIN parcel_use_amount e
