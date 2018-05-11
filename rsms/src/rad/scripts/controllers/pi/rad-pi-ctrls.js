@@ -458,8 +458,8 @@ angular.module('00RsmsAngularOrmApp')
         use.DateError = "";
         var usageDateString = convenienceMethods.setMysqlTime(use.view_Date_used);
         if (usageDateString < parcel.Arrival_date || usageDateString < parcel.Transfer_in_date) {
-            use.DateError = "The date you entered is before this package arrived.<br>";
-            valid = false;
+            //use.DateError = "The date you entered is before this package arrived.<br>";
+            valid = true;
         }
         //verify that the usage date isn't before the most recent pickup
         var pu = $rootScope.pi.Pickups.sort(function (a, b) { return a.Pickup_date > b.Pickup_date; })[0];

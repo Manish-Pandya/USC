@@ -1604,8 +1604,8 @@ class GenericDAO {
                         LEFT OUTER JOIN authorization b
                         ON b.isotope_id = a.key_id
                         LEFT OUTER JOIN parcel c
-                        ON c.authorization_id = b.key_id
-                        LEFT OUTER JOIN parcel_use d
+                        ON (c.authorization_id = b.key_id AND c.status IN('Delivered'))
+        		        LEFT OUTER JOIN parcel_use d
                         on d.parcel_id = c.key_id
                         LEFT OUTER JOIN parcel_use_amount e
                         ON e.parcel_use_id = d.key_id
@@ -1710,7 +1710,7 @@ class GenericDAO {
                         LEFT OUTER JOIN authorization b
                         ON b.isotope_id = a.key_id
                         LEFT OUTER JOIN parcel c
-                        ON c.authorization_id = b.key_id AND c.status != 'Ordered'
+                        ON (c.authorization_id = b.key_id AND c.status IN('Delivered'))
                         LEFT OUTER JOIN parcel_use d
                         on d.parcel_id = c.key_id
                         LEFT OUTER JOIN parcel_use_amount e
@@ -1801,6 +1801,22 @@ class GenericDAO {
 
                         group by a.key_id
                         ;";
+        $queryString = "SELECT 	a.name as isotope_name,
+        a.key_id as isotope_id,
+        a.auth_limit,
+        ROUND(SUM(d.waste),7) as waste,
+        ROUND(SUM(c.quantity - d.waste),7) as ordered
+        
+FROM isotope a LEFT OUTER JOIN authorization b
+	ON b.isotope_id = a.key_id
+LEFT OUTER JOIN parcel c
+	ON (c.authorization_id = b.key_id AND c.status IN('Delivered'))
+LEFT OUTER JOIN (SELECT SUM(parcel_use.quantity) as waste, parcel_id FROM parcel_use WHERE parcel_id IS NOT NULL AND quantity IS NOT NULL GROUP BY parcel_id) d 
+	ON (d.parcel_id = c.key_id AND c.key_id IS NOT NULL)
+GROUP BY a.name, a.key_id, a.auth_limit
+ORDER BY a.name DESC;        ";
+        	
+        
         $stmt = $db->prepare($queryString);
 
         $stmt->execute();

@@ -38,7 +38,7 @@
 
             <span class="span3 pull-right">
                 <h3>Response Date:</h3>
-                <p ng-if="!inspection.Cap_submitted_date" style="color:#f00">OPEN</p>
+                <p ng-if="!inspection.Cap_submitted_date" style="color:#00f">N/A</p>
                 <p ng-if="inspection.Cap_submitted_date">{{inspection.Cap_submitted_date | date:'MM/dd/yyyy'}}</p>
             </span>
 
@@ -117,7 +117,7 @@
         <h3>No Deficiencies were found during this inspection.</h3>
     </div>
     <div ng-if="pf.getIsReadyToSubmit().totals && pf.getIsReadyToSubmit().totals == pf.getIsReadyToSubmit().correcteds">
-        <h3>All deficiencies found were corrected during the inspection.  No further action is recquired.</h3>
+        <h3>All deficiencies found were corrected during the inspection.  No further action is required.</h3>
     </div>
 </div>
 <div class="alert alert-info submit-cap" style="box-shadow: 0 0 17px rgba(0,0,0,0.4); left:0; right:0; width:auto !important; position:absolute;text-align:center" sticky offset="45" ng-if="pf.getIsReadyToSubmit().totals != pf.getIsReadyToSubmit().correcteds && pf.getIsReadyToSubmit().readyToSubmit && (!inspection.Cap_submitted_date || inspection.Cap_submitted_date == '0000-00-00 00:00:00')">
