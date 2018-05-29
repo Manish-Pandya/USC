@@ -469,10 +469,20 @@ angular.module('00RsmsAngularOrmApp')
         var usageDateString = convenienceMethods.setMysqlTime(use.view_Date_used);
         var usageDate = convenienceMethods.getDateString(usageDateString).formattedString;
 
+        var today = convenienceMethods.getDateString(
+            convenienceMethods.setMysqlTime(new Date())).formattedString;
+
         if( usageDate < arrivalDate || usageDate < transferDate ){
             use.DateError = "The date you entered is before this package arrived.<br>";
             valid = false;
         }
+
+        // Verify usage date is not after today
+        else if( usageDate > today ){
+            use.DateError = "The date you entered is after today.<br>";
+            valid = false;
+        }
+
         //verify that the usage date isn't before the most recent pickup
         var pu = $rootScope.pi.Pickups.sort(function (a, b) { return a.Pickup_date > b.Pickup_date; })[0];
         if (pu && convenienceMethods.getDateString(pu.Pickup_date).formattedString > usageDate) {
