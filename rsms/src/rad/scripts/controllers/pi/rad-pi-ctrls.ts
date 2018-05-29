@@ -463,14 +463,26 @@ angular.module('00RsmsAngularOrmApp')
         function validateUsageDate(use, parcel) {
             var valid = true;
             use.DateError = "";
+
+            // Convert arrival, transfer, usage timestamps to dates
+            var arrivalDate = convenienceMethods.getDateString(parcel.Arrival_date).formattedString;
+
+            // Transfer may not be present
+            var transferDate = null;
+            if( parcel.Transfer_in_date ){
+                transferDate = convenienceMethods.getDateString(parcel.Transfer_in_date).formattedString;
+            }
+
             var usageDateString = convenienceMethods.setMysqlTime(use.view_Date_used);
-            if (usageDateString < parcel.Arrival_date || usageDateString < parcel.Transfer_in_date) {
+            var usageDate = convenienceMethods.getDateString(usageDateString).formattedString;
+
+            if( usageDate < arrivalDate || usageDate < transferDate ){
                 use.DateError = "The date you entered is before this package arrived.<br>";
                 valid = false;
             }
             //verify that the usage date isn't before the most recent pickup
             var pu = $rootScope.pi.Pickups.sort(function (a, b) { return a.Pickup_date > b.Pickup_date; })[0];
-            if (pu && pu.Pickup_date > usageDateString) {
+            if (pu && convenienceMethods.getDateString(pu.Pickup_date).formattedString > usageDate) {
                 use.DateError += "The date you entered is before your most recent pickup. If you need to make changes to uses that have already been picked up, please contact RSO.<br>";
                 valid = false;
                 if (roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]])) {
