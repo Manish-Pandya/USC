@@ -927,6 +927,7 @@ angular.module('00RsmsAngularOrmApp')
             dataStore.PrincipalInvestigator[i].loadActiveParcels();
             dataStore.PrincipalInvestigator[i].loadPurchaseOrders();
             dataStore.PrincipalInvestigator[i].loadPIAuthorizations();
+            dataStore.PrincipalInvestigator[i].loadUser();
         }
         $scope.pis = dataStore.PrincipalInvestigator;
     });
