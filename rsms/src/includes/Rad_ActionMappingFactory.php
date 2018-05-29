@@ -38,6 +38,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getRadInspectionById"			=> new ActionMapping("getRadInspectionById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
 				// get entity by relationship functions
+				"getAuthorizationById"			=> new ActionMapping("getAuthorizationById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getAuthorizationsByPIId"		=> new ActionMapping("getAuthorizationsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getWasteBagsByPickupId"		=> new ActionMapping("getWasteBagsByPickupId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getResultingDrumsByPickupId" 	=> new ActionMapping("getResultingDrumsByPickupId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),

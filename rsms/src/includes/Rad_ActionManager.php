@@ -542,6 +542,21 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
+    function getAuthorizationById($id = NULL) {
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__);
+
+        $id = $this->getValueFromRequest('id', $id);
+
+        if( $id !== NULL ) {
+            $authorizationDao = $this->getDao(new Authorization());
+            $selectedAuthorization = $authorizationDao->getById($id);
+            return $selectedAuthorization;
+        }
+        else {
+            return new ActionError("No request parameter 'id' was provided", 201);
+        }
+    }
+
     function getWasteBagsByPickupId($id = NULL) {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__);
 
