@@ -2706,7 +2706,7 @@ class Rad_ActionManager extends ActionManager {
     	//$dto->setParcelWipeTest($this->getAllParcelWipeTests());
     	//$dto->setParcel($this->getAllParcels());
     	//$dto->setPickup($this->getAllPickups());
-    	//$dto->setPurchaseOrder($this->getAllPurchaseOrders());
+        $dto->setPurchaseOrder($this->getAllPurchaseOrders());
     	//$dto->getQuarterlyIsotopeAmount($this->getAllQuarterlyInventories());
     	//$dto->setQuarterlInventory($this->getMostRecentInventory());
     	//$dto->setPIQuarterlyInventory($this->getAllPIQuarterlyInventories());
