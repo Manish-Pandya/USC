@@ -1597,7 +1597,9 @@ angular.module('00RsmsAngularOrmApp')
     var af = actionFunctionsFactory;
     $scope.af = af;
     $scope.$state = $state;
-    af.getRadModels()
+
+    // Load RAD Models; retain promise for chaining
+    $rootScope.radModelsPromise = af.getRadModels()
         .then(function (models) {
         var pis = dataStoreManager.get('PrincipalInvestigator');
         console.log(dataStore);
