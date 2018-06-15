@@ -215,7 +215,10 @@ angular
     });
     $rootScope.$on('$stateChangeSuccess',
         function (event, toState, toParams, fromState, fromParams) {
-            console.log("on naviGATE",event, toState, toParams, fromState, fromParams);
+            console.log("on naviGATE",event);
+            console.log("    to", toState, toParams);
+            console.log("  from", fromState, fromParams);
+
             $rootScope.state = $state;
             $rootScope.loading = false;
             var viewMap = actionFunctionsFactory.getViewMap($state.current);
