@@ -245,13 +245,13 @@ if(!isset($_SESSION["USER"])){ ?>
         <div class="banner {{bannerClass | splitAtPeriod}} radiation no-print" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
             <h1>{{viewLabel}} <a style="float:right;margin: 11px 128px 0 0; color:black" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/safety-programs"><i class="icon-home" style="font-size:40px;"></i></a></h1>
             <ul class="piNav" ng-if="showPiNav">
-                <li><a ui-sref="pi-orders({ pi: 331})">Orders</a></li>
-                <li><a ui-sref="use-log({ pi: 331})">Use Logs</a></li>
-                <li><a ui-sref="pickups({ pi: 331})">Pickups</a></li>
-                <li><a ui-sref="containers({ pi:331})">Waste Containers</a></li>
-                <li><a ui-sref="current-inventories({ pi:331})">Inventory</a></li>
-                <li><a ui-sref="lab-wipes({ pi: 331})">Wipe Tests</a></li>
-                <li><a ui-sref="pi-auths({ pi: 331})">Authorizations</a></li>
+                <li><a ui-sref="pi-orders({ pi: navPi })">Orders</a></li>
+                <li><a ui-sref="use-log({ pi: navPi})">Use Logs</a></li>
+                <li><a ui-sref="pickups({ pi: navPi})">Pickups</a></li>
+                <li><a ui-sref="containers({ pi:navPi})">Waste Containers</a></li>
+                <li><a ui-sref="current-inventories({ pi:navPi})">Inventory</a></li>
+                <li><a ui-sref="lab-wipes({ pi: navPi})">Wipe Tests</a></li>
+                <li><a ui-sref="pi-auths({ pi: navPi})">Authorizations</a></li>
             </ul>
         </div>
         <!-- VIEW NESTING -->
