@@ -225,13 +225,19 @@ angular
             $rootScope.noHead = viewMap.NoHead;
             $rootScope.showPiNav = viewMap.showPiNav;
 
-            if ((toParams && toParams.pi) || (fromParams && fromParams.pi) && !$rootScope.navPi) {
-                console.log(fromState)
-                $rootScope.navPi = fromState.pi;
+            var newNavPi = 1;
+
+            if( toParams && toParams.pi ){
+              newNavPi = toParams.pi;
             }
-            $rootScope.navPi = 1;
+            else if( fromParams && fromParams.pi ){
+              newNavPi = fromParams.pi;
+            }
 
-
+            if( $rootScope.navPi === undefined || $rootScope.navPi != newNavPi ){
+              console.debug("Change (nav) PI from " + $rootScope.navPi + " to " + newNavPi);
+              $rootScope.navPi = newNavPi;
+            }
         });
 
       //global authorization getter function used by multiple controllers
