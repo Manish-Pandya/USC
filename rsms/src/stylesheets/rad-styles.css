@@ -989,6 +989,15 @@ div.fake-table .table-row > div div.pickup-comments {
             padding: 5px 0;
             border-bottom: none;
         }
+
+.auths .table-header {
+    white-space: nowrap;
+}
+
+.auths .authorizedIsotopes ul li {
+    font-weight: normal;
+}
+
 /** transfer styles **/
 .parcel-list ul {
     margin: 0;
