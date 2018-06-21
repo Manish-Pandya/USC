@@ -82,8 +82,14 @@
                 </td>
                 <td>
                     <ul class="selectedBuildings" ng-if="piAuth.Authorizations.length > 0">
-                        <li ng-repeat="a in piAuth.Authorizations">
-                            {{a.IsotopeName}} ({{a.Max_quantity}} mCi)
+                        <li>
+                            <div>
+                                <ul>
+                                    <li ng-repeat="a in piAuth.Authorizations">
+                                        <span ng-if="a.IsotopeName">{{a.IsotopeName}} ({{a.Max_quantity}} mCi)</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                     </ul>
                 </td>
@@ -102,8 +108,14 @@
                 </td>
                 <td>
                     <ul class="selectedBuildings" ng-if="piAuth.Authorizations.length > 0">
-                        <li ng-repeat="a in piAuth.Authorizations">
-                            {{a.IsotopeName}} ({{a.Max_quantity}} mCi)
+                        <li>
+                            <div>
+                                <ul>
+                                    <li ng-repeat="a in piAuth.Authorizations">
+                                        <span ng-if="a.IsotopeName">{{a.IsotopeName}} ({{a.Max_quantity}} mCi)</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                     </ul>
                 </td>
