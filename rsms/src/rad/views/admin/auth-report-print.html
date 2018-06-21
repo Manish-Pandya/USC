@@ -129,4 +129,19 @@
             </tr>
         </table>
     </div>
+
+    <div ng-if="piAuths.length" class="catd rso-signatures">
+        <table style="border-spacing: 15px 10; border-collapse: separate;">
+            <tr>
+                <th width="25%" style="text-align: right;">RSO Signatures</th>
+                <th width="40%" style="text-align: left;"></th>
+                <th width="25%" style="text-align: left;"></th>
+            </tr>
+            <tr ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: 'PiName'">
+                <td style="text-align: right;">{{piAuth.PiName}}</td>
+                <td style="text-align: left; border-bottom:1px solid black">Name:</td>
+                <td style="text-align: left; border-bottom:1px solid black">Date:</td>
+            </li>
+        </ul>
+    </div>
 </div>
