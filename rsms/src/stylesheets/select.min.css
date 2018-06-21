@@ -6,7 +6,7 @@
 *
 **********************************************************/
 @media print {
-  @page {size: landscape}
+
    .authReports div.fake-table > div.table-row > div, .authReports div.fake-table > div.table-row > div ul li, .authReports div.fake-table > div.table-row > div h4{
        font-size:8pt !important;
     }

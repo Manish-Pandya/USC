@@ -10,9 +10,6 @@
 }
 
 @media print {
-    @page {
-        size: landscape
-    }
 
     .authReports table > tr > td, .authReports table tr > td ul li, .authReports table > tr > th h4, .authReports table > tr > th, .authReports table * {
         font-size: 8pt !important;
