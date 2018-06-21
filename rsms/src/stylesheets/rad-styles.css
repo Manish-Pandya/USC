@@ -969,6 +969,14 @@ div.fake-table .table-row > div div.pickup-comments {
     margin-top: 100px !important;
 }
 
+.split-container {
+    display: flex;
+}
+
+.split {
+    width: 50%;
+    padding: 0px 10px 0px 10px;
+}
 
 /* line 819, ../sass/style.scss */
 .auths ul {
