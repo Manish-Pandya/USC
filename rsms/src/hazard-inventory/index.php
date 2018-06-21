@@ -143,7 +143,7 @@ echo "</script>";
     <script src="../client-side-framework/dataStore/dataStoreManager.js"></script>
     <script src="../client-side-framework/dataStore/dataSwitch.js"></script>
     <script src="../client-side-framework/dataStore/dataLoader.js"></script>
-    <script src="../client-side-framework/filters/splitAtPeriod.js"></script>
+    <script src="../client-side-framework/filters/filtersApp.js"></script>
 
 
     <!-- app -->

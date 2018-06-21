@@ -129,7 +129,6 @@ if(!isset($_SESSION["USER"])){ ?>
     <script src="scripts/controllers/TestCtrl.js"></script>
 
     <!-- filters -->
-    <!--script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></!--script>-->
     <script src="scripts/filters/IBCFilters.js"></script>
 
     <!-- directives -->

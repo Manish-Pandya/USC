@@ -93,8 +93,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script type="text/javascript" src="scripts/directives/side-nav.js"></script>
 <script src="../js/uploadContainer.js"></script>
 <!-- filters -->
-<script type="text/javascript" src="../client-side-framework/filters/dateToIso.js"></script>
-<script type="text/javascript" src="../client-side-framework/filters/splitAtPeriod.js"></script>
+<script type="text/javascript" src="../client-side-framework/filters/filtersApp.js"></script>
 <script type="text/javascript" src="scripts/filters/equipmentFilters.js"></script>
 <script type="text/javascript" src="../js/lib/angular.filter.js"></script>
 
