@@ -34,6 +34,7 @@
                 <th ng-if="filterObj.showNew">Amendments</th>
                 <th ng-if="filterObj.showNew">License Authorization</th>
                 <th ng-if="!filterObj.showNew">Auth #</th>
+                <th ng-if="!filterObj.showNew">Last Amended</th>
                 <th>Nuclides</th>
             </tr>
             <tr class="table-row" ng-if="!filterObj.showNew" ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: 'PiName'">
@@ -80,6 +81,9 @@
                 <td ng-if="!filterObj.showNew">
                     {{piAuth.Authorization_number}}
                 </td>
+                <td ng-if="!filterObj.showNew">
+                    <span>{{piAuth.Approval_date | dateToIso}}</span>
+                </td>
                 <td>
                     <ul class="selectedBuildings" ng-if="piAuth.Authorizations.length > 0">
                         <li>
@@ -105,6 +109,9 @@
                 </td>
                 <td ng-if="filterObj.showNew " style="padding:10px !important;width:30%">
                     <span ng-if="!piAuth.Amendment_number || piAuth.Amendment_number == 0">{{piAuth.Update_notes || piAuth.New_notes}}</span>
+                </td>
+                <td ng-if="filterObj.showNew">
+                    <span>{{piAuth.Approval_date | dateToIso}}</span>
                 </td>
                 <td>
                     <ul class="selectedBuildings" ng-if="piAuth.Authorizations.length > 0">
