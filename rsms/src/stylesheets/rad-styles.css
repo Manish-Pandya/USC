@@ -976,6 +976,11 @@ div.fake-table .table-row > div div.pickup-comments {
     list-style: none;
 }
     /* line 822, ../sass/style.scss */
+    .auths ul li.pi_user{
+        margin-left: 15px;
+        font-weight: normal;
+        font-style: italic;
+    }
     .auths ul li {
         font-weight: bold;
     }

@@ -39,7 +39,16 @@
                 </tr>
                 <tr class="table-row" ng-if="!filterObj.showNew" ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: 'PiName'" >
                     <td>
-                        {{piAuth.PiName}}
+                        <ul>
+                            <li class="ng-binding">
+                                {{piAuth.PiName}}
+                                <ul ng-if="piAuth.Users.length > 0">
+                                    <li ng-repeat="u in piAuth.Users" class="pi_user">
+                                        <span>{{u.Name}}</span>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
                     </td>
                     <td ng-if="filterObj.showTerminated">
                         {{piAuth.Termination_date | dateToISO}}
