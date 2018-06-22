@@ -248,27 +248,12 @@ angular.module('00RsmsAngularOrmApp')
     $rootScope.configureAuthColumns();
 
     var getAllPIAuthorizations = function () {
-        af.getAllPIAuthorizations()
-            .then(function (piAuths) {
-            $rootScope.piAuths = [];
-            $rootScope.allAuths = dataStore.PIAuthorization;
-            console.log($rootScope.allAuths);
-            var piAuths = _.groupBy(dataStore.PIAuthorization, 'Principal_investigator_id');
-            for (var pi_id in piAuths) {
-                var newest_pi_auth = piAuths[pi_id].sort(function (a, b) {
-                    var sortVector = b.Amendment_number - a.Amendment_number || b.Key_id - a.Key_id || b.Approval_date - a.Approval_date;
-                    return sortVector;
-                })[0];
-                $rootScope.piAuths.push(newest_pi_auth);
-                $rootScope.filtered = $rootScope.piAuths;
-            }
-            console.log($scope.piAuths);
-        }, function () {
-            console.log("dang!");
-        });
+        ;
     };
-    $rootScope.radPromise = af.getRadModels().then(getAllPIAuthorizations);
+
     $rootScope.search = function (filterObj) {
+        console.debug("Filtering authorizations with ", filterObj);
+
         if (!filterObj.fromDate)
             return $scope.piAuths;
         $scope.filtered = $rootScope.allAuths.filter(function (a) {
@@ -285,7 +270,35 @@ angular.module('00RsmsAngularOrmApp')
     $scope.print = function () {
         window.print();
     };
-    console.log("AuthReportCtrl running asdf");
+
+    $rootScope.radPromise = af.getRadModels()
+        .then(af.getAllPIAuthorizations)
+        .then(function (piAuths) {
+            $rootScope.piAuths = [];
+            $rootScope.allAuths = dataStore.PIAuthorization;
+            console.log($rootScope.allAuths);
+            var piAuths = _.groupBy(dataStore.PIAuthorization, 'Principal_investigator_id');
+            for (var pi_id in piAuths) {
+                var newest_pi_auth = piAuths[pi_id].sort(function (a, b) {
+                    var sortVector = b.Amendment_number - a.Amendment_number || b.Key_id - a.Key_id || b.Approval_date - a.Approval_date;
+                    return sortVector;
+                })[0];
+                $rootScope.piAuths.push(newest_pi_auth);
+                $rootScope.filtered = $rootScope.piAuths;
+            }
+            console.log($scope.piAuths);
+        }, function () {
+            console.warn("Error retrieving all PI Authorizations...");
+        })
+        .then(function(){
+            // ensure that any pre-existing filters are applied after data is ready
+            $scope.filtered = $rootScope.search($rootScope.filterObj);
+        });
+
+    console.log("AuthReportCtrl running");
+    $rootScope.radPromise.then(function(){
+        console.log("AuthReportCtrl complete");
+    });
 });
 'use strict';
 /**
