@@ -215,7 +215,38 @@ angular.module('00RsmsAngularOrmApp')
     var af = $scope.af = actionFunctionsFactory;
     if (!$rootScope.filterObj)
         $rootScope.filterObj = { showNew: false, piName: '' };
-    $scope.orderProps = ["PiName"];
+
+    $rootScope.configureAuthColumns = function(){
+        $rootScope.columnConfig = {
+            investigator:     true,
+
+            approvalDate:     $rootScope.filterObj.showNew,
+            newOrUpdateNotes: $rootScope.filterObj.showNew,
+
+            terminatedDate:   !$rootScope.filterObj.showNew && $rootScope.filterObj.showTerminated,
+            terminatedNotes:  !$rootScope.filterObj.showNew && $rootScope.filterObj.showTerminated,
+
+            department:       !$rootScope.filterObj.showNew && !$rootScope.filterObj.showTerminated,
+            buildingAndRoom:  !$rootScope.filterObj.showNew && !$rootScope.filterObj.showTerminated,
+            amendments:       $rootScope.filterObj.showNew && !$rootScope.filterObj.showTerminated,
+            licenseAuth:      $rootScope.filterObj.showNew && !$rootScope.filterObj.showTerminated,
+            authNumber:       !$rootScope.filterObj.showNew,
+            lastAmended:      !$rootScope.filterObj.showNew,
+            isotopes:         true
+        };
+
+        if(!$rootScope.filterObj.showNew){
+            $scope.orderProps = ["PiName"];
+        }
+        else {
+            $scope.orderProps = ["Approval_date", "PiName"];
+        }
+
+        console.debug("Columns:", $rootScope.columnConfig, "Sort:", $scope.orderProps);
+    }
+
+    $rootScope.configureAuthColumns();
+
     var getAllPIAuthorizations = function () {
         af.getAllPIAuthorizations()
             .then(function (piAuths) {

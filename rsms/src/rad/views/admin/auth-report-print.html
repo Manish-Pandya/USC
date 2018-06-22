@@ -2,12 +2,12 @@
 <div class="auths well card" style="margin:0; padding:0; border:none; box-shadow:none; width:100%">
     <h1 class="hide-print">
         <i class="icon-copy" style="page-break-after:avoid; page-break-before:avoid"></i>Print Authorization Report
-        <a class="btn btn-primary left" style="margin-left:5px;" ng-click="filterObj.showNew =! filterObj.showNew; filterObj.toDate = null; filterObj.fromDate = null; filtered = piAuths">
+        <a class="btn btn-primary left" style="margin-left:5px;" ng-click="filterObj.showNew =! filterObj.showNew; filterObj.toDate = null; filterObj.fromDate = null; filtered = piAuths; configureAuthColumns();">
             <span ng-if="!filterObj.showNew">Show New Authorizations</span>
             <span ng-if="filterObj.showNew">Show All Authorizations</span>
         </a>
 
-        <a class="btn btn-primary left" style="margin-left:5px;" ng-click="filterObj.showTerminated =! filterObj.showTerminated; filterObj.toDate = null; filterObj.fromDate = null; filtered = piAuths">
+        <a class="btn btn-primary left" style="margin-left:5px;" ng-click="filterObj.showTerminated =! filterObj.showTerminated; filterObj.toDate = null; filterObj.fromDate = null; filtered = piAuths; configureAuthColumns();">
             <span ng-if="!filterObj.showTerminated">Show Terminated Authorizations</span>
             <span ng-if="filterObj.showTerminated">Show Open Authorizations</span>
         </a>
@@ -22,23 +22,26 @@
     <div class="card full authReports" ng-if="piAuths.length">
         <table class="table striped">
             <tr class="table-header">
-                <th>Investigator<br /><input ng-model="filterObj.piName" /></th>
-                <th ng-if="filterObj.showNew">Date</th>
-                <th ng-if="!filterObj.showNew">Department<br /><input ng-model="filterObj.department" /></th>
-                <th ng-if="!filterObj.showNew">
+                <th ng-if="columnConfig.investigator">Investigator<br /><input ng-model="filterObj.piName" /></th>
+                <th ng-if="columnConfig.approvalDate">Date Approved</th>
+                <th ng-if="columnConfig.newOrUpdateNotes">Notes</th>
+                <th ng-if="columnConfig.terminatedDate">Date Terminated</th>
+                <th ng-if="columnConfig.terminatedNotes">Notes</th>
+                <th ng-if="columnConfig.department">Department<br /><input ng-model="filterObj.department" /></th>
+                <th ng-if="columnConfig.buildingAndRoom">
                     <span style="margin-left:0">Building<br /><input ng-model="filterObj.building" /></span>
                 </th>
-                <th ng-if="!filterObj.showNew">
+                <th ng-if="columnConfig.buildingAndRoom">
                     <span style="margin-left:0">Room<br /><input ng-model="filterObj.room" /></span>
                 </th>
-                <th ng-if="filterObj.showNew">Amendments</th>
-                <th ng-if="filterObj.showNew">License Authorization</th>
-                <th ng-if="!filterObj.showNew">Auth #</th>
-                <th ng-if="!filterObj.showNew">Last Amended</th>
-                <th>Nuclides</th>
+                <th ng-if="columnConfig.amendments" style="padding:10px !important;width:30%">Amendments</th>
+                <th ng-if="columnConfig.licenseAuth" style="padding:10px !important;width:30%">License Authorization</th>
+                <th ng-if="columnConfig.authNumber">Auth #</th>
+                <th ng-if="columnConfig.lastAmended">Last Amended</th>
+                <th ng-if="columnConfig.isotopes" style="padding:10px !important;width:30%">Nuclides</th>
             </tr>
-            <tr class="table-row" ng-if="!filterObj.showNew" ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: 'PiName'">
-                <td>
+            <tr class="table-row" ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: orderProps" >
+                <td ng-if="columnConfig.investigator">
                     <ul>
                         <li class="ng-binding">
                             {{piAuth.PiName}}
@@ -50,7 +53,19 @@
                         </li>
                     </ul>
                 </td>
-                 <td ng-if="!filterObj.showNew">
+                <td ng-if="columnConfig.approvalDate">
+                    {{piAuth.Approval_date | dateToISO}}
+                </td>
+                <td ng-if="columnConfig.newOrUpdateNotes">
+                    <span>{{piAuth.Update_notes || piAuth.New_notes}}</span>
+                </td>
+                <td ng-if="columnConfig.terminatedDate">
+                    {{piAuth.Termination_date | dateToISO}}
+                </td>
+                <td ng-if="columnConfig.terminatedNotes">
+                    <span>{{piAuth.Termination_notes}}</span>
+                </td>
+                <td ng-if="columnConfig.department">
                     <ul>
                         <li ng-repeat="dept in piAuth.Departments">
                             {{dept.Name}}
@@ -59,7 +74,7 @@
 
                 </td>
 
-                <td ng-if="!filterObj.showNew" colspan="2">
+                <td ng-if="columnConfig.buildingAndRoom" colspan="2">
                     <ul class="selectedBuildings">
                         <li ng-repeat="(key, r) in piAuth.Rooms | groupBy: 'Building.Name'" class="split-container">
                             <div class="split">
@@ -74,42 +89,21 @@
                     </ul>
                 </td>
 
-                <td ng-if="!filterObj.showNew">
-                    {{piAuth.Authorization_number}}
-                </td>
-                <td ng-if="!filterObj.showNew">
-                    <span>{{piAuth.Approval_date | dateToIso}}</span>
-                </td>
-                <td>
-                    <ul class="selectedBuildings" ng-if="piAuth.Authorizations.length > 0">
-                        <li>
-                            <div>
-                                <ul>
-                                    <li ng-repeat="a in piAuth.Authorizations">
-                                        <span ng-if="a.IsotopeName">{{a.IsotopeName}} ({{a.Max_quantity}} mCi)</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-            <tr class="table-row" ng-if="filterObj.showNew" ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: ['Approval_date','PiName']">
-                <td>
-                    {{piAuth.PiName}}
-                </td>
-
-                <td ng-if="filterObj.showNew" style="padding:10px !important;">{{piAuth.Approval_date | dateToIso}}</td>
-                <td ng-if="filterObj.showNew " style="padding:10px !important;width:30%">
+                <td ng-if="columnConfig.amendments">
                     <span ng-if="piAuth.Amendment_number && piAuth.Amendment_number != 0">{{piAuth.Update_notes || piAuth.New_notes}}</span>
                 </td>
-                <td ng-if="filterObj.showNew " style="padding:10px !important;width:30%">
+
+                <td ng-if="columnConfig.licenseAuth">
                     <span ng-if="!piAuth.Amendment_number || piAuth.Amendment_number == 0">{{piAuth.Update_notes || piAuth.New_notes}}</span>
+                </td> 
+
+                <td ng-if="columnConfig.authNumber">
+                    {{piAuth.Authorization_number}}
                 </td>
-                <td ng-if="filterObj.showNew">
+                <td ng-if="columnConfig.lastAmended">
                     <span>{{piAuth.Approval_date | dateToIso}}</span>
                 </td>
-                <td>
+                <td ng-if="columnConfig.isotopes">
                     <ul class="selectedBuildings" ng-if="piAuth.Authorizations.length > 0">
                         <li>
                             <div>
