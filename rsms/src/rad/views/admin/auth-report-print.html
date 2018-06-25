@@ -109,7 +109,7 @@
                             <div>
                                 <ul>
                                     <li ng-repeat="a in piAuth.Authorizations">
-                                        <span ng-if="a.IsotopeName">{{a.IsotopeName}} ({{a.Max_quantity}} mCi)</span>
+                                        <span ng-if="a.IsotopeName">{{a.IsotopeName}} ({{a.Max_quantity | unit:a.Isotope}})</span>
                                     </li>
                                 </ul>
                             </div>
