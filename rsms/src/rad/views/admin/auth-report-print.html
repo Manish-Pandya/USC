@@ -1,4 +1,4 @@
-<div cg-busy="{promise:piAuthsPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:radPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div class="auths well card" style="margin:0; padding:0; border:none; box-shadow:none; width:100%">
     <h1 class="hide-print">
         <i class="icon-copy" style="page-break-after:avoid; page-break-before:avoid"></i>Print Authorization Report
@@ -36,9 +36,11 @@
                 </th>
                 <th ng-if="columnConfig.amendments" style="padding:10px !important;width:30%">Amendments</th>
                 <th ng-if="columnConfig.licenseAuth" style="padding:10px !important;width:30%">License Authorization</th>
-                <th ng-if="columnConfig.authNumber">Auth #</th>
+                <th ng-if="columnConfig.authNumber">Auth&nbsp;#</th>
                 <th ng-if="columnConfig.lastAmended">Last Amended</th>
-                <th ng-if="columnConfig.isotopes" style="padding:10px !important;width:30%">Nuclides</th>
+
+                <th ng-if="columnConfig.isotopes">Authorized Radionuclides</th>
+                <th ng-if="columnConfig.isotopes">Maximum Possession Limit (mCi) (g)</th>
             </tr>
             <tr class="table-row" ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: orderProps" >
                 <td ng-if="columnConfig.investigator">
@@ -103,15 +105,14 @@
                 <td ng-if="columnConfig.lastAmended">
                     <span>{{piAuth.Approval_date | dateToIso}}</span>
                 </td>
-                <td ng-if="columnConfig.isotopes">
+                <td ng-if="columnConfig.isotopes" colspan="2">
                     <ul class="selectedBuildings" ng-if="piAuth.Authorizations.length > 0">
-                        <li>
-                            <div>
-                                <ul>
-                                    <li ng-repeat="a in piAuth.Authorizations">
-                                        <span ng-if="a.IsotopeName">{{a.IsotopeName}} ({{a.Max_quantity | unit:a.Isotope}})</span>
-                                    </li>
-                                </ul>
+                        <li ng-repeat="a in piAuth.Authorizations | orderBy: 'IsotopeName'" ng-if="a.IsotopeName" class="split-container">
+                            <div class="split">
+                                <ul><li>{{a.IsotopeName}}</li></ul>
+                            </div>
+                            <div class="split">
+                                <ul><li>{{a.Max_quantity | unit:a.Isotope}}</li></ul>
                             </div>
                         </li>
                     </ul>
