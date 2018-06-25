@@ -247,10 +247,6 @@ angular.module('00RsmsAngularOrmApp')
 
     $rootScope.configureAuthColumns();
 
-    var getAllPIAuthorizations = function () {
-        ;
-    };
-
     $rootScope.search = function (filterObj) {
         console.debug("Filtering authorizations with ", filterObj);
 
