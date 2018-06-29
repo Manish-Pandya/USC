@@ -242,7 +242,7 @@ if(!isset($_SESSION["USER"])){ ?>
             <div cg-busy="{promise:saving,message:'Saving...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
         <!-- NAVIGATION -->
         <div class="banner {{bannerClass | splitAtPeriod}} radiation no-print" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
-            <h1>{{viewLabel}} <a style="float:right;margin: 11px 128px 0 0; color:black" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/safety-programs"><i class="icon-home" style="font-size:40px;"></i></a></h1>
+            <h1>{{viewLabel}} <a style="float:right;margin: 11px 128px 0 0; color:black" ui-sref="rad-home()"><i class="icon-home" style="font-size:40px;"></i></a></h1>
             <ul class="piNav" ng-if="showPiNav">
                 <li><a ui-sref="pi-orders({ pi: navPi })">Orders</a></li>
                 <li><a ui-sref="use-log({ pi: navPi})">Use Logs</a></li>
