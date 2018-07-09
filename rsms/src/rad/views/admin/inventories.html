@@ -56,9 +56,9 @@
     <div class="well half search-tools">
         <h2><i class="fa fa-calendar"></i>Find Inventories by P.I.</h2>
         <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="getInventoriesByPiId($item.Key_id)" class="span6">
-            <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
-            <ui-select-choices repeat="pi in typeAheadPis | orderBy: 'User.Name' | propsFilter: {User.Name: $select.search} track by $index">
-                <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+            <ui-select-match placeholder="Select or search for a PI">{{$select.selected.Name}}</ui-select-match>
+            <ui-select-choices repeat="pi in typeAheadPis | orderBy: 'Name' | propsFilter: {Name: $select.search} track by $index">
+                <div ng-bind-html="pi.Name | highlight: $select.search"></div>
             </ui-select-choices>
         </ui-select>
         <div ng-if="piInventories" class="card full">
