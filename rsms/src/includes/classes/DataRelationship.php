@@ -17,6 +17,16 @@ class DataRelationship {
 	public function __construct(){
 	}
 
+	public function __toString(){
+		return '[' .get_class($this)
+		. " className=" . $this->className
+		. " tableName=" . $this->tableName
+		. " keyName=" . $this->keyName
+		. " foreignKeyName=" . $this->foreignKeyName
+		. " orderColumn=" . $this->orderColumn
+		. "]";
+	}
+
 	public static function fromValues( $className, $tableName, $keyName, $foreignKeyName ) {
 		$instance = new self();
 		$instance->className = $className;
