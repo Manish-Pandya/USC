@@ -37,18 +37,15 @@ class GenericDAO {
 	 * @param GenericCrud $model_object
 	 */
 	public function __construct(GenericCrud $model_object){
-		$this->LOG = Logger::getLogger( __CLASS__ );
-
-		$this->modelObject = $model_object;
-		$this->modelClassName = get_class( $model_object );
-
-		$this->logprefix = "[$this->modelClassName" . "DAO]";
+		$this->setModelObject($model_object);
 	}
 
 	public function setModelObject(GenericCrud $new_model_object) {
 		$this->modelObject = $new_model_object;
 		$this->modelClassName = get_class($new_model_object);
 		$this->logprefix = "[$this->modelClassName" . "DAO]";
+
+		$this->LOG = Logger::getLogger( __CLASS__ . ":" . $this->modelClassName );
 	}
 
 	/**
@@ -230,6 +227,7 @@ class GenericDAO {
 	 * @return Array $result
 	 */
 	function getAllWhere( WhereClauseGroup $whereClauseGroup, $junction = "AND", $sortColumn = null ){
+		$this->LOG->debug("getAllWhere");
 		// Get the db connection
 		global $db;
 		$className = get_class($this);
@@ -300,8 +298,8 @@ class GenericDAO {
             $sql .= " ORDER BY " . $sortColumn;
         }
 		//Prepare to query all from the table
+		$this->LOG->debug("Executing: $sql");
 		$stmt = $db->prepare($sql);
-        //$this->LOG->fatal($sql);
 
 		$i = 1;
 		foreach($whereClauses as $clause){
@@ -331,6 +329,7 @@ class GenericDAO {
 
 		}
 
+		$this->LOG->debug("Retrieved " . count($result) . " Results");
 		return $result;
 	}
 
@@ -683,6 +682,7 @@ class GenericDAO {
 	 * @return Array:
 	 */
 	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumns = null, $activeOnly = false, $activeOnlyRelated = false){
+		$this->LOG->debug("getRelatedItemsById($id, $relationship, $sortColumns, $activeOnly, $activeOnlyRelated)");
 		if (empty($id)) { return array();}
 
 		// Get the db connection
@@ -709,8 +709,8 @@ class GenericDAO {
             $sql = "SELECT * FROM " . $classInstance->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
             $sql .= $activeOnlyRelated ? " AND is_active = 1)" : ")";
         }else{
-            $this->LOG->fatal("getting ordered");
-            $this->LOG->fatal($this->modelObject);
+            $this->LOG->trace("getting ordered");
+            $this->LOG->trace($this->modelObject);
             /*
              * SELECT a.*, b.order_index as order_index
             FROM rad_condition a
@@ -743,6 +743,8 @@ class GenericDAO {
 				}
 			}
 		}
+
+		$this->LOG->debug("Executing: $sql");
 		$stmt = $db->prepare($sql);
 
 		// Query the db and return an array of $this type of object
@@ -756,6 +758,7 @@ class GenericDAO {
 			$this->LOG->error('Returning QueryError with message: ' . $resultError->getMessage());
 		}
 
+		$this->LOG->debug("Retrieved " . count($result) . " results");
 		return $result;
 	}
 

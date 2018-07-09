@@ -414,11 +414,14 @@ class PrincipalInvestigator extends GenericCrud {
 
 	public function getQuarterly_inventories(  ){
 		$LOG = Logger::getLogger(__CLASS__);
+		$LOG->debug("Get quarterly inventories for $this");
 		if($this->quarterly_inventories === NULL && $this->hasPrimaryKeyValue()) {
+			$LOG->debug("Loading quarterly inventories...");
 			$thisDAO = new GenericDAO($this);
 			/** quarterly inventories should be sorted by date */
 			$this->quarterly_inventories = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$QUARTERLY_INVENTORIES_RELATIONSHIP), array("date_last_modified"), true);
 
+			$LOG->debug("Loaded " . count($this->quarterly_inventories) . " quarterly inventories. Sorting...");
             usort($this->quarterly_inventories, function($a, $b)
             {
                 return strcmp($a->getEnd_date(), $b->getEnd_date());
@@ -467,7 +470,8 @@ class PrincipalInvestigator extends GenericCrud {
 	}
 
     public function getCurrentPi_authorization(){
-        $LOG = Logger::getLogger("asdf");
+		$LOG = Logger::getLogger(__CLASS__);
+
 		if($this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO(new PIAuthorization());
 			$whereClauseGroup = new WhereClauseGroup(
@@ -479,6 +483,9 @@ class PrincipalInvestigator extends GenericCrud {
             if($auths != null){
                 return end($auths);
             }
+		}
+		else{
+			$LOG->warn("$this has no primary key!");
 		}
         return array();
 
