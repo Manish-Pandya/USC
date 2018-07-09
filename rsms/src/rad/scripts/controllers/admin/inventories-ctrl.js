@@ -17,10 +17,10 @@ angular.module('00RsmsAngularOrmApp')
         $scope.pi_inventory = dataStoreManager.getById("PIQuarterlyInventory", $state.params.pi_inventory);
         console.log($scope.pi_inventory);
         */
-        af.getQuartleryInventory(1)
+        af.getQuartleryInventory($state.params.pi_inventory)
           .then(
             function(){
-              $scope.pi_inventory = dataStoreManager.getById("PIQuarterlyInventory",1);
+              $scope.pi_inventory = dataStoreManager.getById("PIQuarterlyInventory",$state.params.pi_inventory);
             }
           )
       }

@@ -836,16 +836,19 @@ angular.module('00RsmsAngularOrmApp')
  */
 angular.module('00RsmsAngularOrmApp')
     .controller('InventoriesCtrl', function ($scope, actionFunctionsFactory, $rootScope, $state, convenienceMethods) {
+    console.log("Inventories Controller", $scope);
     var af = actionFunctionsFactory;
     var getInventory = function () {
+        console.log("Get inventory with ID " + $scope.state.pi_inventory);
         /*
         console.log($state);
         $scope.pi_inventory = dataStoreManager.getById("PIQuarterlyInventory", $state.params.pi_inventory);
         console.log($scope.pi_inventory);
         */
-        af.getQuartleryInventory(1)
-            .then(function () {
-            $scope.pi_inventory = dataStoreManager.getById("PIQuarterlyInventory", 1);
+        af.getQuartleryInventoryById($state.params.pi_inventory)
+            .then(function (inv) {
+            $scope.pi_inventory = inv;
+            console.log("PI " + $state.params.pi_inventory + " inventory: ", $scope.pi_inventory);
         });
     };
     $scope.getAllPIs = af.getAllPIs()
