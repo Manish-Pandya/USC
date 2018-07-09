@@ -341,6 +341,7 @@ class Rad_ActionManager extends ActionManager {
     }
 
     public function getAllRadPis(){
+        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
         $dao = $this->getDao(new PrincipalInvestigator());
         $pis = $dao->getAll();
 
@@ -372,7 +373,6 @@ class Rad_ActionManager extends ActionManager {
             }
             $pi->setEntityMaps($entityMaps);
         }
-
 
         return $pis;
 
@@ -2087,7 +2087,11 @@ class Rad_ActionManager extends ActionManager {
             return new ActionError("No request parameter 'endDate' was provided");
         }
 
+        $LOG->debug("Create/update quarterly inventory $startDate - $endDate");
+
+        $LOG->debug("Retrieve all RAD PIs...");
         $pis = $this->getAllRadPis();
+        $LOG->debug("...Retrieved " . count($pis) . " PIs");
 
         //create a master inventory, since all pis will have one with the same dates
         $inventoryDao = $this->getDao(new QuarterlyInventory());
@@ -2103,10 +2107,12 @@ class Rad_ActionManager extends ActionManager {
 
         //do we already have a master inventory for this period?
         if($inventories != NULL){
+            $LOG->debug("Updating existing quarterly inventory");
             $inventory = $inventories[0];
         }
         //we don't have one, so make one
         else{
+            $LOG->debug("Create new quarterly inventory");
             $inventory = new QuarterlyInventory();
             //get the last inventory so we can set the start date, if there is one
             $inventoryDao = $this->getDao(new QuarterlyInventory());
@@ -2344,6 +2350,7 @@ class Rad_ActionManager extends ActionManager {
     public function getInventoriesByPiId( $piId = NULL ){
         $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
         $piId = $this->getValueFromRequest("piId", $piId);
+        $LOG->debug("Get inventories for PI #$piId");
 
         $inventoriesDao = $this->getDao(new PIQuarterlyInventory());
         $clauses = array(new WhereClause("principal_investigator_id", "=", $piId));
@@ -2357,7 +2364,8 @@ class Rad_ActionManager extends ActionManager {
         foreach($inventories as $inventory){
             $inventory->setEntityMaps($entityMaps);
         }
-
+        $invcount = count($inventories);
+        $LOG->debug("Inventories for PI #$piId: $invcount");
         return $inventories;
     }
 
