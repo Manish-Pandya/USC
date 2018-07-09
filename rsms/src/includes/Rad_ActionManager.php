@@ -2339,9 +2339,20 @@ class Rad_ActionManager extends ActionManager {
             $pi = $this->getPIById($piId, false);
         }
 
+        $LOG->info("Get current inventory of $pi");
         //get the most recent inventory for this PI so we can use the quantities of its QuarterlyIsotopeAmounts to set new ones
         //$pi->getQuarterly_inventories()'s query is ordered by date_modified column, so the last in the array will be the most recent
-        $mostRecentIntentory = end($pi->getQuarterly_inventories());
+        $quarterlyInventories = $pi->getQuarterly_inventories();
+        $qisize = count($quarterlyInventories);
+
+        if( empty($quarterlyInventories) ){
+            $LOG->info("$pi has no quarterly inventory");
+            return array();
+        }
+
+        $mostRecentIntentory = end($quarterlyInventories);
+        $LOG->debug("PI $piId most recent inventory (of $qisize): $mostRecentIntentory");
+
         $pi_inventory = $this->getPiInventory($piId,$mostRecentIntentory->getQuarterly_inventory_id());
         foreach($pi_inventory->getQuarterly_isotope_amounts() as $amt){
             $entityMaps = array();
