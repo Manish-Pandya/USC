@@ -251,6 +251,8 @@ if(!isset($_SESSION["USER"])){ ?>
                 <li><a ui-sref="current-inventories({ pi:navPi})">Inventory</a></li>
                 <li><a ui-sref="lab-wipes({ pi: navPi})">Wipe Tests</a></li>
                 <li><a ui-sref="pi-auths({ pi: navPi})">Authorizations</a></li>
+                <li>|</li>
+                <li><a ui-sref="pi-rad-management({ pi: navPi })">My Lab</a></li>
             </ul>
         </div>
         <!-- VIEW NESTING -->
