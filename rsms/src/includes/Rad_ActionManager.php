@@ -2126,15 +2126,28 @@ class Rad_ActionManager extends ActionManager {
         $piInventories = array();
 
         foreach($pis as $pi){
-            $pi = new PrincipalInvestigator();
             $auth = $pi->getCurrentPi_authorization();
-            if($auth == null || $auth->getTermination_date() != null)continue;
-            if($pi->get)
+            // Omit PIs with no Authorization, or Authorizations which are terminated
+            if($auth == null){
+                $LOG->debug("Omit null auth");
+                continue;
+            }
+            else if($auth->getTermination_date() != null){
+                $LOG->debug("Omit terminated auth: $auth");
+                continue;
+            }
+
             $piInventory = $this->getPiInventory( $pi->getKey_id(), $inventory->getKey_id() );
+
             if($piInventory != NULL){
                 $piInventories[] = $piInventory;
             }
+            else{
+                $LOG->debug("Omit null inventory for PI $pi");
+            }
         }
+
+        $LOG->debug("Added " . count($piInventories) . " of " . count($pis) . " PI inventories");
 
         $inventory->setPi_quarterly_inventories($piInventories);
         $entityMaps = array();
