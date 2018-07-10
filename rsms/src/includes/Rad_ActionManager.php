@@ -2354,11 +2354,7 @@ class Rad_ActionManager extends ActionManager {
         $LOG->debug("PI $piId most recent inventory (of $qisize): $mostRecentIntentory");
 
         $pi_inventory = $this->getPiInventory($piId,$mostRecentIntentory->getQuarterly_inventory_id());
-        foreach($pi_inventory->getQuarterly_isotope_amounts() as $amt){
-            $entityMaps = array();
-            $entityMaps[] = new EntityMap("eager", "getAuthorization");
-            $amt->setEntityMaps($entityMaps);
-        }
+        $this->eagerLoadInventoryAuthorization($pi_inventory);
         return $pi_inventory;
     }
 
@@ -2398,19 +2394,12 @@ class Rad_ActionManager extends ActionManager {
         $piId = $this->getValueFromRequest("piId", $piId);
 
         $inventoriesDao = $this->getDao(new PIQuarterlyInventory());
-        $clauses = array(new WhereClause("principal_investigator_id", "=", $piId));
-        $whereClauseGroup = new WhereClauseGroup($clauses);
-        $inventories=  $inventoriesDao->getAllWhere($whereClauseGroup);
+        $inv = $inventoriesDao->getById($piId);
 
-        $entityMaps = array();
-        $entityMaps[] = new EntityMap("lazy", "getQuarterly_isotope_amounts");
-        $entityMaps[] = new EntityMap("eager", "getQuarterly_inventory");
+        // force the Authorizations to load...
+        $this->eagerLoadInventoryAuthorization($inv);
 
-        foreach($inventories as $inventory){
-            $inventory->setEntityMaps($entityMaps);
-        }
-
-        return $inventories;
+        return $inv;
     }
 
 
@@ -2582,6 +2571,13 @@ class Rad_ActionManager extends ActionManager {
      *         Not exposed to frontend, just helpful for internal use.           *
     \*****************************************************************************/
 
+    function eagerLoadInventoryAuthorization($inventory){
+        foreach($inventory->getQuarterly_isotope_amounts() as $amt){
+            $entityMaps = array();
+            $entityMaps[] = new EntityMap("eager", "getAuthorization");
+            $amt->setEntityMaps($entityMaps);
+        }
+    }
 
     /**
      * Converts array of ParcelUseAmounts into associative array of [Type] => [Amount].

@@ -2597,9 +2597,9 @@ angular
                         )
             }
 
-            af.getPIInventoryIdById = function(id){
+            af.getPIInventoryById = function(id){
                 af.clearError();
-                var urlSegment = 'getPIInventoryIdById&piId=' + id;
+                var urlSegment = 'getPIInventoryById&piId=' + id;
                 return genericAPIFactory.read(urlSegment)
                         .then(
                             function(returned){

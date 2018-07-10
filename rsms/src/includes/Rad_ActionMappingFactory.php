@@ -140,6 +140,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getMostRecentInventory"	 => new ActionMapping("getMostRecentInventory", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
                 "getQuartleryInventoryById"	 => new ActionMapping("getQuartleryInventoryById", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"getPiInventory"				 => new ActionMapping("getPiInventory", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"getPIInventoryById"		 => new ActionMapping("getPIInventoryById", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"getCurrentPIInventory"				 => new ActionMapping("getCurrentPIInventory", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"getInventoriesByPiId"		=> new ActionMapping("getInventoriesByPiId","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"savePIQuarterlyInventory"	=> new ActionMapping("savePIQuarterlyInventory","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
