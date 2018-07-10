@@ -839,18 +839,23 @@ angular.module('00RsmsAngularOrmApp')
     console.log("Inventories Controller", $scope);
     var af = actionFunctionsFactory;
     var getInventory = function () {
-        console.log("Get inventory with ID " + $scope.state.pi_inventory);
-        /*
-        console.log($state);
-        $scope.pi_inventory = dataStoreManager.getById("PIQuarterlyInventory", $state.params.pi_inventory);
-        console.log($scope.pi_inventory);
-        */
-        af.getQuartleryInventoryById($state.params.pi_inventory)
-            .then(function (inv) {
-            $scope.pi_inventory = inv;
-            console.log("PI " + $state.params.pi_inventory + " inventory: ", $scope.pi_inventory);
-        });
+        console.log("Get inventory with ID " + $state.params.pi_inventory);
+        return af.getPIInventoryById($state.params.pi_inventory)
+            .then(function(inventory){
+                console.log("PI " + $state.params.pi_inventory + " | Inventory: ", inventory);
+                $scope.pi_inventory = inventory;
+            });
     };
+
+    var getMostRecentInventory = function(){
+        console.log("Get most recent inventory");
+        return af.getMostRecentInventory()
+            .then(function(quarterlyInventory){
+                $scope.inventory = quarterlyInventory;
+                console.log("Most recent quarterly inventory:", $scope.inventory);
+            });
+    }
+
     $scope.getAllPIs = af.getAllPIs()
         .then(function (pis) {
         $scope.PIs = pis;
@@ -859,15 +864,16 @@ angular.module('00RsmsAngularOrmApp')
         $scope.error = "Couldn't get the PIs";
         return false;
     });
+
     $scope.af = af;
-    $scope.inventoryPromise = af.getMostRecentInventory()
-        .then(function (inventory) {
-        $scope.inventory = inventory;
-        console.log(inventory);
-    }, function () { });
+
     if ($state.current.name == 'radmin-quarterly-inventory') {
-        getInventory();
+        $scope.inventoryPromise = getInventory();
     }
+    else{
+        $scope.inventoryPromise = getMostRecentInventory().then(getInventory());
+    }
+
     $scope.getInventoriesByPiId = function (id) {
         $scope.piInventoriesPromise = af.getInventoriesByPiId(id)
             .then(function (piInventories) {
