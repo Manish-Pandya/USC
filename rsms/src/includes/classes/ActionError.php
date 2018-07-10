@@ -9,8 +9,9 @@ class ActionError {
 		$this->message = $message;
 		$this->statusCode = $statusCode;
 		$this->LOG = Logger::getLogger( __CLASS__ );
-		// TODO: possibly log what created this instance of ActionError, if possible?
 
+		// log what created this instance of ActionError
+		$this->logStack("$this created at");
 	}
 	
 	public function __toString() {
@@ -32,10 +33,19 @@ class ActionError {
 	// function that expects another type of object.
 	public function __call($method, $args) {
 		if(!isset($this->$method)) {
-			$this->LOG->error('Method ' . $method . ' does not exist on object of type ' . get_class());
+			$this->LOG->error($this . ' Method ' . $method . ' does not exist on object of type ' . get_class());
+			$this->logStack("Call Stack");
+
 			// Thought for future self: Would it make more sense to return an error instead?
 			// or would that be redundant?
 			return NULL;
+		}
+	}
+
+	private function logStack($msg){
+		if( $this->LOG->isTraceEnabled()){
+			$e = new \Exception;
+			$this->LOG->trace("$msg:\n    " . str_replace("\n", "\n    ", $e->getTraceAsString()));
 		}
 	}
 }
