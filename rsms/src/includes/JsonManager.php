@@ -301,19 +301,18 @@ class JsonManager {
 	 * @return Array
 	 */
 	public static function callObjectAccessors($object){
-       
+        $LOG = Logger::getLogger(__CLASS__);
 
 		$classname = get_class($object);
 
 		$functions = get_class_methods( $classname);
 
-		//$this->LOG->trace("Calling accessors on $classname");
+		$LOG->trace("Calling accessors on $classname");
 
 		//Retain the object's type in the json
 		$objectVars = array('Class'=>$classname);
 
 		//get all functions named get*
-        $LOG = Logger::getLogger("em debug");
 		foreach( $functions as $func ){
 
 			$skip = false;

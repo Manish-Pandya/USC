@@ -24,7 +24,7 @@ class ErrorHandler {
 	}
 	
 	function __construct(){
-		Logger::getLogger( __CLASS__ )->info("created ErrorHandler class");
+		Logger::getLogger( __CLASS__ )->debug("created ErrorHandler class");
 	}
 	
 	/**

@@ -145,7 +145,7 @@ function isEquipmentEnabled(){
 
 function isCommitteesEnabled(){
 	$LOG = Logger::getLogger("committees");
-	$LOG->fatal('committees enabled');
+	$LOG->info('committees enabled');
 	if(	strstr($_SERVER["HTTP_REFERER"], '/biosafety-committees/' ) || isset($_GET['biosafety-committees']))return true;
 	return false;
 }
@@ -153,7 +153,7 @@ function isCommitteesEnabled(){
 
 function isIBCEnabled(){
 	$LOG = Logger::getLogger("ibc");
-	$LOG->fatal('ibc enabled');
+	$LOG->info('ibc enabled');
 	if(	stristr($_SERVER["HTTP_REFERER"], '/ibc/' ) || isset($_GET['ibc']) || isset($_GET['IBC']))return true;
 	return false;
 }

@@ -32,7 +32,9 @@ class Container extends RadCrud
     public function getPickup_date(){
         if($this->hasPrimaryKeyValue() && $this->getPickup() != null){
             $p = $this->getPickup();
-            if($p->getPickup_date() != null)$this->pickup_date = $p->getPickup_date();
+            if($p->getPickup_date() != null){
+                $this->pickup_date = $p->getPickup_date();
+            }
         }
 		return $this->pickup_date;
 	}

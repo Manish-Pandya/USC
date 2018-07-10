@@ -76,13 +76,19 @@ class GenericDAO {
 	 * @return GenericCrud
 	 */
 	function getById($id){
-		//$this->LOG->trace("$this->logprefix Looking up entity with keyid $id");
+		if (empty($id)) {
+			return new ActionError("$this->modelClassName.getById: No ID provided");
+		}
+
+		$this->LOG->debug("Looking up entity with keyid '$id'");
 
 		// Get the db connection
 		global $db;
 
 		//Prepare to query the table by key_id
 		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ?';
+		$this->LOG->debug("Executing: $sql");
+
 		$stmt = $db->prepare($sql);
 		$stmt->bindParam(1,$id,PDO::PARAM_INT);
 		$stmt->setFetchMode(PDO::FETCH_CLASS, $this->modelClassName);			// Query the db and return one of $this type of object
@@ -91,10 +97,12 @@ class GenericDAO {
 
 			// $result being false indicates no rows returned.
 			if(!$result) {
-				//$this->LOG->trace('No Rows returned. Returning ActionError');
+				$this->LOG->warn("No Rows returned for fetch by ID $id ($sql)");
 				//return;
 				return new ActionError('No rows returned');
 			}
+
+			$this->LOG->trace("Result: " . count($result));
 		// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
@@ -137,16 +145,18 @@ class GenericDAO {
 	 */
 	function getAll( $sortColumn = NULL, $sortDescending = FALSE, $activeOnly = FALSE ){
 
-		//$this->LOG->trace("$this->logprefix Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
+		$this->LOG->debug("Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
 
 		// Get the db connection
 		global $db;
 		$className = get_class($this);
 
 		//Prepare to query all from the table
-		$stmt = $db->prepare('SELECT * FROM ' . $this->modelObject->getTableName() . ' ' . ($activeOnly ? 'WHERE is_active = 1 ' : '') .
-        ($sortColumn == NULL ? '' : " ORDER BY  CAST($sortColumn AS UNSIGNED), $sortColumn " . ($sortDescending ? 'DESC' : 'ASC')) );
+		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' ' . ($activeOnly ? 'WHERE is_active = 1 ' : '') .
+	        ($sortColumn == NULL ? '' : " ORDER BY  CAST($sortColumn AS UNSIGNED), $sortColumn " . ($sortDescending ? 'DESC' : 'ASC'));
+		$stmt = $db->prepare($sql);
 
+		$this->LOG->debug("Executing: $sql");
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
 			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
@@ -161,7 +171,9 @@ class GenericDAO {
             $this->LOG->fatal("hello");
             $this->cacheIfNeeded($r);
         }
-        */
+		*/
+
+		$this->LOG->trace("Result: " . count($result));
 		return $result;
 	}
 
