@@ -1,72 +1,41 @@
 <?php
+// Helper function to configure a logger without having to duplicate so much content...
+// See LOG4PHP-221: https://issues.apache.org/jira/browse/LOG4PHP-221
+//   Unless you provide appenders on a logger, they will not override the rootLogger config
+function configLogger($level, $appenders = array('logFileAppender', 'htmlFileAppender')){
+	return array(
+		'level' => $level,
+		'appenders' => $appenders,
+		'additivity' => false
+	);
+}
+
 //This file simply returns the configuration array to pass to Logger::configure()
 return array(
 	//Root logger
-	'rootLogger' => array(
-		'appenders' => array(
-			'logFileAppender',
-			'htmlFileAppender',
-		),
-		'level' => 'FATAL'
-	),
+	'rootLogger' => configLogger('INFO'),
+
 	//Other loggers
 	'loggers' => array(
-		'Autoloader' => array(
-			'appenders' => array(
-				'logFileAppender',
-				'htmlFileAppender',
-			),
-			'level' => 'INFO'
-		),
+		'Autoloader' => configLogger('INFO'),
+		'ErrorHandler' => configLogger('TRACE'),
+		'DtoManager' => configLogger('TRACE'),
+		'ValidationManager' => configLogger('TRACE'),
+		'JsonManager' => configLogger('INFO'),
+		'ActionDispatcher' => configLogger('INFO'),
+		'ActionError' => configLogger('INFO'),
+		'PrincipalInvestigator' => configLogger('TRACE'),
 
-		'ErrorHandler' => array(
-			'appenders' => array(
-				'logFileAppender',
-				'htmlFileAppender',
-			),
-			'level' => 'TRACE'
-		),
-
-		'DtoManager' => array(
-			'appenders' => array(
-				'logFileAppender',
-				'htmlFileAppender',
-			),
-			'level' => 'TRACE'
-		),
-
-		'ValidationManager' => array(
-			'appenders' => array(
-				'logFileAppender',
-				'htmlFileAppender',
-			),
-			'level' => 'TRACE'
-		),
-
-		'JsonManager' => array(
-			'appenders' => array(
-				'logFileAppender',
-				'htmlFileAppender',
-			),
-			'level' => 'DEBUG'
-		),
-
-		'ActionDispatcher' => array(
-			'appenders' => array(
-				'logFileAppender',
-				'htmlFileAppender',
-			),
-			'level' => 'TRACE'
-		),
+		// DAOs
+		'GenericDAO:PrincipalInvestigator' => configLogger('INFO'),
+		'GenericDAO:PIAuthorization' => configLogger('INFO'),
+		'GenericDAO:QuarterlyInventory' => configLogger('INFO'),
 
 		//Action Functions
-		'Action:moveHazardToParent' => array(
-			'appenders' => array(
-				'logFileAppender',
-				'htmlFileAppender',
-			),
-			'level' => 'TRACE'
-		),
+		'Action:moveHazardToParent' => configLogger('TRACE'),
+		'Action:getCurrentPIInventory' => configLogger('TRACE'),
+		'Action:getAllRadPis' => configLogger('DEBUG'),
+		'Action:createQuarterlyInventories' => configLogger('TRACE'),
 	),
 
 	//Appenders
@@ -76,7 +45,7 @@ return array(
 			'layout' => array(
 				'class' => 'LoggerLayoutPattern',
 				'params' => array(
-					'conversionPattern' => '%date{Y-m-d H:i:s} [%5p] [%20logger] [%.-20F:%4L] %message%newline'
+					'conversionPattern' => '%date{Y-m-d H:i:s} [%s{UNIQUE_ID}] [%5p] [%20logger] [%.-20F:%4L] %message%newline'
 				)
 			),
 			'params' => array(
