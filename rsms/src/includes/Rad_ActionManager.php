@@ -692,8 +692,14 @@ class Rad_ActionManager extends ActionManager {
     }
 
     public function getAllParcels(){
+        $LOG = Logger::getLogger('Action.' . __FUNCTION__);
+        $LOG->debug("getAllParcels");
+
         $dao = $this->getDao(new Parcel());
-        return $dao->getAll();
+        $parcels = $dao->getAll();
+
+        $LOG->debug("Retrieved " . count($parcels) . " parcels");
+        return $parcels;
     }
 
     public function getAllParcelUses(){

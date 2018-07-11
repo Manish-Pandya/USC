@@ -14,6 +14,19 @@
 require_once( dirname(__FILE__) . '/action_setup.php');
 session_start();
 
+$LOG = Logger::getLogger('ajaxaction.' . $actionName);
+if($LOG->isDebugEnabled()){
+    $params = "";
+    foreach( $dataSource as $key=>$value){
+        if( $key == 'action' || $key == 'callback')
+            continue;
+
+        $params .= "[$key : $value] ";
+    }
+
+    $LOG->debug('>>>>     ' . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . " $params");
+}
+
 // Create Dispatcher (based on $_SESSION)
 $sessionSource = $_SESSION;
 
@@ -40,7 +53,7 @@ if( array_key_exists('callback', $_GET) ){
 
 //if the user is not logged in or does not have permissions, the client will redirect to the login page.  prepare a message
 if($actionResult->statusCode == 401){
-    $LOG->fatal('setting');
+    $LOG->fatal('User is not authenticated');
     $_SESSION['LOGGED_OUT'] = "You have been logged out of the system.  Please log in again to continue";
 }else{
     $_SESSION['LOGGED_OUT'] = NULL;
@@ -61,6 +74,9 @@ if($actionResult->statusCode == 302){
 //http_response_code(404);
 
 // Output JSON (with possible callback)
-$LOG = Logger::getLogger('ajax action');
+if($LOG->isDebugEnabled()){
+    $LOG->debug("<<<< $actionResult->statusCode " . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . ' content-length:' . strlen($output));
+}
+
 echo $output;
 ?>

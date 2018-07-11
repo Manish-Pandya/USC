@@ -297,16 +297,18 @@ class ActionDispatcher {
         $action_function = $actionMapping->actionFunctionName;
         $actions = new $this->actionManagerType();
 
+        $this->LOG->trace("doAction $action_function on $this->actionManagerType");
+
         if( method_exists( $actions, $action_function ) ){
             //call the specified action function
-            //$this->LOG->debug("Executing action function '$action_function'");
+            $this->LOG->trace("Executing action function '$this->actionManagerType::$action_function'");
             $functionResult = $actions->$action_function();
 
             return $functionResult;
         }
         else{
             //TODO: Show critical error; function doesn't exist
-            $msg = "Mapped function '$action_function' does not exist";
+            $msg = "Mapped function '$action_function' does not exist on $this->actionManagerType";
             $this->LOG->error( $msg );
             return new ActionError( $msg );
         }

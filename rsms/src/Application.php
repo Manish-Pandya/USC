@@ -144,21 +144,23 @@ function isEquipmentEnabled(){
 }
 
 function isCommitteesEnabled(){
-	$LOG = Logger::getLogger("committees");
-	$LOG->info('committees enabled');
 	if(	strstr($_SERVER["HTTP_REFERER"], '/biosafety-committees/' ) || isset($_GET['biosafety-committees']))return true;
 	return false;
 }
 
 
 function isIBCEnabled(){
-	$LOG = Logger::getLogger("ibc");
-	$LOG->info('ibc enabled');
 	if(	stristr($_SERVER["HTTP_REFERER"], '/ibc/' ) || isset($_GET['ibc']) || isset($_GET['IBC']))return true;
 	return false;
 }
 
 //////////////////////////////////////////////////
+
+
+if( !array_key_exists('HTTP_REFERER', $_SERVER)){
+	Logger::getRootLogger()->info("No HTTP_REFERER. adding empty value");
+	$_SERVER['HTTP_REFERER'] = '';
+}
 
 //TODO Application functions
 ?>
