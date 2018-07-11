@@ -24,18 +24,18 @@
         </tr>
         <tr ng-repeat="parcel in undelivered = (pi.ActiveParcels | notDelivered)">
             <td>
-                <button disabled="disabled" ng-if="parcel.Status != constants.PARCEL.STATUS.REQUESTED" class="btn btn-primary left" ng-click="openModal(parcel)" title="This order has already been approved.  If you need to make changes, contact the Radiation Safety Office."><i class="icon-pencil"></i>Edit Order</button>
-                <button ng-if="parcel.Status == constants.PARCEL.STATUS.REQUESTED" class="btn btn-primary left"><i class="icon-pencil"></i>Edit Order</button>
+                <button disabled="disabled" ng-if="parcel.Status != constants.PARCEL.STATUS.REQUESTED" class="btn btn-primary left" title="This order has already been approved.  If you need to make changes, contact the Radiation Safety Office."><i class="icon-pencil"></i>Edit Order</button>
+                <button ng-if="parcel.Status == constants.PARCEL.STATUS.REQUESTED" class="btn btn-primary left" ng-click="openModal(parcel)"><i class="icon-pencil"></i>Edit Order</button>
              </td>
-            <td once-text="parcel.Rs_number"></td>
-            <td once-text="parcel.Status"></td>
-            <td once-text="parcel.PurchaseOrder.Purchase_order_number"></td>
-            <td once-text="parcel.PurchaseOrder.Vendor"></td>
-            <td once-text="parcel.Catalog_number"></td>
-            <td once-text="parcel.Authorization.Isotope.Name"></td>
-            <td><span once-text="parcel.Quantity"></span>mCi</td>
-            <td><span once-text="parcel.Chemical_compound"></span></td>
-            <td once-text="parcel.Authorization.Form"></td>
+            <td ng-bind="parcel.Rs_number"></td>
+            <td ng-bind="parcel.Status"></td>
+            <td ng-bind="parcel.PurchaseOrder.Purchase_order_number"></td>
+            <td ng-bind="parcel.PurchaseOrder.Vendor"></td>
+            <td ng-bind="parcel.Catalog_number"></td>
+            <td ng-bind="parcel.Authorization.Isotope.Name"></td>
+            <td><span ng-bind="parcel.Quantity"></span>mCi</td>
+            <td><span ng-bind="parcel.Chemical_compound"></span></td>
+            <td ng-bind="parcel.Authorization.Form"></td>
         </tr>
     </table>
 </div>
