@@ -285,16 +285,12 @@ class ActionManager {
                     return true;
                 } else {
                     $LOG->fatal("LOCAL AUTHENTICATION FAILED");
-                    $LOG->fatal($username);
-                    $LOG->fatal($password);
                     // successful LDAP login, but not an authorized Erasmus user, return false
                      $_SESSION['ERROR'] = "The username or password you entered was incorrect.";
                      return false;
                 }
             }else{
                 $LOG->fatal("LDAP AUTHENTICATION FAILED");
-                $LOG->fatal($username);
-                $LOG->fatal($password);
             }
         }
 
