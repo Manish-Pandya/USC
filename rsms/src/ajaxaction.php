@@ -40,8 +40,21 @@ $actionResult = $actionDispatcher->dispatch($actionName);
 
 // JSON-Encode result
 
-$json = JsonManager::encode($actionResult->actionFunctionResult);
-$LOG = Logger::getLogger('json manager result');
+$entityMappingOverrides = null;
+if( array_key_exists('eager', $dataSource) ){
+    $eagers = explode(',', $dataSource['eager']);
+    foreach($eagers as $accessor){
+        $entityMappingOverrides[] = new EntityMap("eager", $accessor);
+    }
+}
+if( array_key_exists('lazy', $dataSource) ){
+    $lazies = explode(',', $dataSource['lazy']);
+    foreach($lazies as $accessor){
+        $entityMappingOverrides[] = new EntityMap("lazy", $accessor);
+    }
+}
+
+$json = JsonManager::encode($actionResult->actionFunctionResult, $entityMappingOverrides);
 //$LOG->debug($json);
 $output = $json;
 

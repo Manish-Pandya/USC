@@ -28,8 +28,8 @@ class JsonManager {
 	 * @param unknown $value
 	 * @return string
 	 */
-	public static function encode($value){
-		$jsonable = JsonManager::buildJsonableValue($value);
+	public static function encode($value, $entityMaps = NULL){
+		$jsonable = JsonManager::buildJsonableValue($value, $entityMaps);
 
 		return json_encode($jsonable);
 	}
@@ -38,14 +38,14 @@ class JsonManager {
 	 * Constructs a 'JSON-able' value based on the parameter. The returned value is either of a PHP primitive type,
 	 * or an array of such information that can be easily JSON-encoded.
 	 */
-	public static function buildJsonableValue($value){
+	public static function buildJsonableValue($value, $entityMaps = NULL){
 		$jsonable = $value;
 
 		//Differentiate Objects and Arrays
 		if( is_object($value) ){
 			////$this->LOG->trace( 'Building a JsonableValue for simple ' . $input );
 			//Simply convert the object
-			$jsonable = JsonManager::objectToBasicArray($value);
+			$jsonable = JsonManager::objectToBasicArray($value, $entityMaps);
 		}
 		else if( is_array($value) ){
 			//Convert each element of the array
@@ -53,7 +53,7 @@ class JsonManager {
 
 			foreach( $value as $element ){
 				// json-ify
-				$jsonable[] = JsonManager::buildJsonableValue($element);
+				$jsonable[] = JsonManager::buildJsonableValue($element, $entityMaps);
 			}
 		}
 
@@ -282,12 +282,12 @@ class JsonManager {
         return true;
     }
 
-	public static function objectToBasicArray($object){
+	public static function objectToBasicArray($object, $entityMaps = NULL){
 		//Call Accessors
-		$objectVars = JsonManager::callObjectAccessors($object);
+		$objectVars = JsonManager::callObjectAccessors($object, $entityMaps);
 
 		foreach( $objectVars as $key=>&$value ){
-			$value = JsonManager::buildJsonableValue($value);
+			$value = JsonManager::buildJsonableValue($value, $entityMaps);
 		}
 
 		return $objectVars;
@@ -300,7 +300,7 @@ class JsonManager {
 	 * @param mixed $object
 	 * @return Array
 	 */
-	public static function callObjectAccessors($object){
+	public static function callObjectAccessors($object, $overrideEntityMaps = NULL){
         $LOG = Logger::getLogger(__CLASS__);
 
 		$classname = get_class($object);
@@ -312,6 +312,12 @@ class JsonManager {
 		//Retain the object's type in the json
 		$objectVars = array('Class'=>$classname);
 
+		// Merge class entityMaps (if available) with overrides (if provided)
+		$entityMaps = $overrideEntityMaps;
+		if (method_exists($object,"getEntityMaps")) {
+			$entityMaps = JsonManager::mergeEntityMaps($object->getEntityMaps(), $overrideEntityMaps);
+		}
+
 		//get all functions named get*
 		foreach( $functions as $func ){
 
@@ -320,26 +326,22 @@ class JsonManager {
 			//TODO: Add class-specific names to ignore?
 			if( strstr($func, 'get') && !in_array($func, JsonManager::$JSON_IGNORE_FUNCTION_NAMES) ){
 
-				// check for entity loading preferences for this object
-				if (method_exists($object,"getEntityMaps")) {
-					$entityMaps = $object->getEntityMaps();
-					if(!empty($entityMaps)) {
-						foreach($entityMaps as $em){
-
-							if($em->getEntityAccessor() == $func && $em->getLoadingType() == "lazy")	{
-								$skip = true;
-                            }
+				if(!empty($entityMaps)) {
+					foreach($entityMaps as $em){
+						if($em->getEntityAccessor() == $func && $em->getLoadingType() == "lazy")	{
+							$skip = true;
+							break;
 						}
 					}
 				}
 
 				if(!$skip){
-					//$this->LOG->trace("Calling $classname#$func()");
+					$LOG->trace("EAGER get $classname::$func()");
 					//Call function to get value
 					$value = $object->$func();
 					////$this->LOG->trace("#func() returns [$value]");
 				} else {
-					//$this->LOG->trace("Skipping (lazy loading) $classname#$func()");
+					$LOG->trace(" LAZY get $classname::$func()");
 					//Call function to get value
 					$value = null;
 
@@ -358,6 +360,39 @@ class JsonManager {
 		}
 
 		return $objectVars;
+	}
+
+	static function mergeEntityMaps($maps, $overrides = null){
+		$LOG = Logger::getLogger(__CLASS__);
+
+		// Copy $maps to a new array, $merged
+		$merged = $maps;
+
+		if( $overrides != null ){
+			// Override or add mappings from $overrides
+			foreach($overrides as $over){
+				// is this key already in $merged?
+				$ref = null;
+				foreach($merged as $em){
+					if( $over->getEntityAccessor() == $em->getEntityAccessor() ){
+						$ref = $em;
+						break;
+					}
+				}
+
+				if($ref == null){
+					// Add
+					$merged[] = $over;
+				}
+				else{
+					// Update
+					$LOG->trace('Override mapping ' . $ref->getEntityAccessor() . ' ' . $ref->getLoadingType()  . ' => ' . $over->getLoadingType());
+					$ref->setLoadingType($over->getLoadingType());
+				}
+			}
+		}
+
+		return $merged;
 	}
 }
 ?>
