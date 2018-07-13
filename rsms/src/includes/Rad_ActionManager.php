@@ -2966,6 +2966,8 @@ class Rad_ActionManager extends ActionManager {
     }
 
     public function resetRadData(){
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+        $LOG->warn("User requested reset of Rad data");
         $dao = new GenericDAO(new User());
         if($dao->deleteRadData()){
             return true;

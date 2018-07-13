@@ -1597,6 +1597,10 @@ class GenericDAO {
         $stmt->bindValue(3, $piId);
         $stmt->bindValue(4, $piId);
 
+		if( $this->LOG->isDebugEnabled()){
+			$this->LOG->debug("Executing SQL with params piId=$piId: " . $queryString);
+		}
+
         $stmt->execute();
         $inventories = $stmt->fetchAll(PDO::FETCH_CLASS, "CurrentIsotopeInventoryDto");
         return $inventories;
@@ -1908,6 +1912,7 @@ ORDER BY a.name DESC;        ";
     }
 
     public function deleteRadData(){
+		$this->LOG->warn("Preparing to delete radiation module data");
         global $db;
         $sql = 'DELETE FROM parcel_use_amount WHERE key_id > 0;
                 DELETE FROM parcel_use WHERE key_id > 0;
