@@ -1,0 +1,19 @@
+﻿<div cg-busy="{promise:loading,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div class="right-column">
+    <div class="well full conditions">
+        <h3 style="margin-bottom:10px; padding-bottom:10px">Create Condition <button ng-click="openModal()" class="btn btn-success left">Add Condition<i class="icon-plus-2"></i></button></h3>
+        <div ng-repeat="condition in conditions" class="fake-table">
+            <div class="table-header">
+                <h3 style="width:3%; display:inline-block">{{$index + 1}}.</h3>
+                <h3 style="width:97%;"ng-bind-html="condition.Text"></h3>
+            </div>
+            <div class="table-header">
+                <h3></h3>
+                <h3>
+                    <button class="btn btn-primary right" ng-click="openModal(condition)">Edit<i class="icon-pencil"></i></button>
+                </h3>
+            </div>
+        </div>
+    </div>
+</div>
+

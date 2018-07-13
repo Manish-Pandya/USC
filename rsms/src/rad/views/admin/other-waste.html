@@ -1,0 +1,30 @@
+﻿<div class="right-column">
+    <div class="card half" ng-if="otherWasteTypes">
+        <div class="card-header">
+            <h3 style="padding:9px 9px 0">Other Waste <button class="btn btn-success left" ng-click="openModal()"><i class="icon-plus-2"></i>Add Other Waste Type</button></h3>
+        </div>
+        <div class="fake-table bordered">
+            <div class="table-header">
+                <h3>Edit</h3>
+                <h3>Type</h3>
+                <h3>Cleared By RSO</h3>
+            </div>
+            <div class="table-row" ng-repeat="t in otherWasteTypes | orderBy:'Name'" ng-class="{'inactive':!t.Is_active}">
+                <div>
+                    <button class="btn-primary btn"
+                            ng-click="openModal(t)">
+                        <i class="icon-pencil"></i>
+                    </button>
+                    <button class="btn"
+                            ng-class="{'btn-danger':t.Is_active,'btn-success':!t.Is_active}"
+                            ng-click="switchActive(t)">
+                        <i class="icon-remove"                             
+                           ng-class="{'icon-remove':t.Is_active,'icon-checkmark':!t.Is_active}"></i>
+                    </button>
+                </div>
+                <div>{{t.Name}}</div>
+                <div><i ng-class="{'red icon-cancel-2':!t.Clearable, 'success icon-checkmark':t.Clearable}"></i></div>
+            </div>
+        </div>
+    </div>
+</div>

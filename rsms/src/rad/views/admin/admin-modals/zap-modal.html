@@ -1,0 +1,10 @@
+﻿<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px; background:#da4f49; color:white">Delete?</h2>
+</div>
+<form class="form form-horizontal" ng-submit="save(modalData.ParcelUseAmountCopy, modalData.ParcelUseAmount, modalData.Container)">
+    <h2>Are you sure you want to delete all packages, uses, waste and other radiation data related to labs? This cannot be undone.</h2>
+    <div class="modal-footer">
+        <button ng-click="save()" class="btn btn-large btn-danger left"><i class="icon-lightning"></i>Delete Data</button>
+        <a class="btn btn-large left" ng-click="close()"><i class="icon-cancel-2"></i>Cancel</a>
+    </div>
+</form>

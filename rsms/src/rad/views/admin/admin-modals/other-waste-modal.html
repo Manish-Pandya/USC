@@ -1,0 +1,23 @@
+﻿<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px; background:rgb(151, 49, 58); color:white">{{modalData.OtherWasteType.Name || "New Other Waste Type"}}</h2>
+</div>
+
+<div class="modal-body">
+    <div class="control-group">
+        <label class="control-label">Type</label>
+        <div class="controls">
+            <input ng-model="modalData.OtherWasteTypeCopy.Name" placeholder="Type" />
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="checkbox inline full">
+            <input type="checkbox"  ng-model="modalData.OtherWasteTypeCopy.Clearable" />
+            <span class="metro-checkbox">Cleared By RSO</span>
+        </label>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <a class="btn btn-large btn-success left" ng-click="save(modalData.OtherWasteTypeCopy)"><i class="icon-checkmark"></i>Save</a>
+    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Cancel</a>
+</div>

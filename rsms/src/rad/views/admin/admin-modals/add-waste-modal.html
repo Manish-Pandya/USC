@@ -1,0 +1,35 @@
+﻿<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px; background:rgb(91, 183, 91); color:white">Add Waste To {{modalData.Container.ViewLabel}}</h2>
+</div>
+<form class="form form-horizontal" ng-submit="save(modalData.ParcelUseAmountCopy, modalData.ParcelUseAmount, modalData.Container)">
+    <div class="modal-body">
+        <div class="control-group">
+            <label class="control-label">Waste Description</label>
+            <div class="controls">
+                <textarea style="width:90%" rows="4" ng-model="modalData.ParcelUseAmountCopy.Comments"></textarea>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Isotope</label>
+            <div class="controls">
+                <select ng-options="i.Key_id as i.Name for i in isotopes | orderBy: 'Name'" ng-model="modalData.ParcelUseAmountCopy.Isotope_id" required>
+                    <option value="" style="display:none">--Choose an Isotope--</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Activity</label>
+            <div class="input-append">
+                <input class="span2" type="text" name="activity" id="inputEmail" ng-model="modalData.ParcelUseAmountCopy.Curie_level" required>
+                <span class="add-on">{{"" | unit:modalData.ParcelUseAmountCopy}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-large btn-success left"><i class="icon-checkmark"></i>Save</button>
+        <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+    </div>
+</form>

@@ -1,0 +1,14 @@
+﻿<form ng-submit="save(condition)">
+    <div class="modal-header">
+        <span ng-if="condition.Key_id">Edit</span><span ng-if="!condition.Key_id">Create</span> Condition
+    </div>
+    <div class="modal-body wide-modal">
+        <label>Condition Text</label>
+        <textarea ui-tinymce="tinymceOptions" ng-model="condition.Text" 
+                  style="width:100%;" rows="5" placeholder="Enter Condition Text"></textarea>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success right">Save <i class="icon-checkmark"></i></button>
+        <a class="btn btn-danger right" ng-click="cancel()">Cancel <i class="icon-cancel-2"></i></a>
+    </div>
+</form>

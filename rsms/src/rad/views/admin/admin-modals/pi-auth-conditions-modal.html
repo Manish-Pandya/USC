@@ -1,0 +1,56 @@
+﻿<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px; background:rgb(91, 183, 91); color:white">
+        Manage Conditions for Authorization {{auth.Authorization_number}} Amendment {{auth.Amendment_number}} ({{auth.PiName}})
+    </h2>
+</div>
+<form class="form form-horizontal" ng-submit="save(auth)">
+    <div class="modal-body very-wide-modal">
+        <div class="fake-table">
+            <div class="table-header">
+                <h3>Current Conditions</h3>
+                <h3>Select Conditions</h3>
+            </div>
+            <div class="table-row admin-conditions" style="background: transparent !important">
+                <div style="width:50%; vertical-align:top">
+                    
+                    <div ng-show="auth.Conditions.length" ng-repeat="condition in auth.Conditions | orderBy: 'Order_index'">
+                        <div style="display:inline-block; width:2%; vertical-align:top">{{condition.Order_index}}.</div>
+                        <div style="display:inline-block; width:90%" ng-bind-html="condition.Text"></div>
+                        <div style="display:inline-block; width:6%; vertical-align:top;">
+                            <div style="display:table">
+                                <div style="display: table-row">
+                                    <div style="width:50%; vertical-align:middle; display: table-cell; height:50px">
+                                        <i class="icon-cancel-2 red" ng-click="removeCondition($index, auth)"></i>
+                                    </div>
+                                    <div style="width:50%; vertical-align:middle; display: table-cell; height:50px">
+                                        <i class="icon-arrow-up" ng-if="$index != 0" ng-click="move(auth, 1, $index)"></i>
+                                        <i class="icon-arrow-down" ng-if="$index != (auth.Conditions.length -1)" ng-click="move(auth, -1, $index)"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-show="!auth.Conditions.length">No Conditions have been added</div>
+                </div>
+                <div style="width:50%; border-left:solid 1px #eee; vertical-align:top">
+                    <div class="form-control">
+                        <label>Search for condition</label>
+                        <input ng-model="search" />
+                    </div>
+                    <div ng-repeat="condition in conditions | filter:{Text:search}">
+                        <div style="display:inline-block; width:2%; vertical-align:top">{{$index + 1}}.</div>
+                        <div style="display:inline-block; width:90%" ng-bind-html="condition.Text"></div>
+                        <div></div>
+                        <div><a class="btn btn-success left" ng-click="addCondtion(condition, auth)"><i class="icon-plus-2"></i>Add Condition</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-large btn-success left"><i class="icon-checkmark"></i>Save</button>
+        <a class="btn btn-large btn-danger left" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
+    </div>
+</form>
