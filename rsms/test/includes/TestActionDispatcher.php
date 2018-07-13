@@ -66,7 +66,7 @@ class TestActionDispatcher extends UnitTestCase {
 		$factory = new MockActionMappingFactory();
 		$factory->expectOnce('getConfig');
 		
-		$dispatcher = new ActionDispatcher(array(), $factory);
+		$dispatcher = new ActionDispatcher(array(), array(), $factory);
 		
 		//Call to test expectations
 		$dispatcher->getActionMappings();
@@ -113,11 +113,14 @@ class TestActionDispatcher extends UnitTestCase {
 			array("ROLE1")
 		);
 		
-		$datasource = array(
-			"ROLE" => array("ROLE1", "ROLE2"),
+		$datasource = array();
+		$sessionSource = array(
+			"ROLE" => array(
+				"userRoles" => array("ROLE1", "ROLE2")
+			)
 		);
 		
-		$dispatcher = new ActionDispatcher($datasource);
+		$dispatcher = new ActionDispatcher($datasource, $sessionSource);
 		$access = $dispatcher->checkRoles($actionMapping);
 		
 		$this->assertTrue($access);
