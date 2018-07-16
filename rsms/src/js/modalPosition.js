@@ -37,7 +37,7 @@ angular.module('modalPosition', [])
                         $(element[0]).find('.modal-body').css({ maxHeight: $window.innerHeight * .85 });
                     }
                     var topMargin = $window.innerHeight - element[0].clientHeight;
-                    console.log(topMargin);
+
                     $(element[0]).css({ top: (topMargin / 2) - 20, marginTop: -10 });
                 }
 
