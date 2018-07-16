@@ -2340,14 +2340,23 @@ angular.module('00RsmsAngularOrmApp')
     $scope.save = function (owt) {
         console.log(owt);
         $scope.resettingRadData = actionFunctionsFactory.resetRadData()
-        .then( function( returnedPromise ) {
-            if(window.confirm('RAD Data has been reset, and the page needs to be reloaded. Reload now?')){
-                window.location.reload(true);
-            }
-            else{
-                console.warn("Rad data has been reset and needs to be reloaded");
-            }
-        });
+        .then(
+            function( returned ) {
+                if( !returned || returned.status !== 200){
+                    alert("Unable to reset RAD Data. Contact your system administrator.");
+                }
+                else{
+                    if(window.confirm('RAD Data has been reset, and the page needs to be reloaded. Reload now?')){
+                        window.location.reload(true);
+                    }
+                    else{
+                        console.warn("Rad data has been reset and needs to be reloaded");
+                    }
+                }
+            },
+            function(err){
+                console.error("Can't do it!", err);
+            });
     };
     $scope.cancel = function () { return $modalInstance.dismiss(); };
 })
