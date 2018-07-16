@@ -49,7 +49,7 @@ return array(
 				)
 			),
 			'params' => array(
-				'file' => DIR_PATH . '/../logs/erasmus.log',
+				'file' => constant('RSMS_LOGS') . '/erasmus.log',
 				'append' => true
 			)
 		),
@@ -64,7 +64,7 @@ return array(
 					)
 			),
 			'params' => array(
-					'file' => DIR_PATH . '/../logs/erasmus-log.html',
+					'file' => constant('RSMS_LOGS') . '/erasmus-log.html',
 					'append' => false
 			)
 		),
