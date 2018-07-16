@@ -1932,12 +1932,19 @@ ORDER BY a.name DESC;        ";
                 DELETE FROM pi_wipe_test WHERE key_id > 0;
                 DELETE FROM parcel WHERE key_id > 0;';
 
+		$this->LOG->debug("Executing: $sql");
         $stmt = $db->prepare($sql);
         if($stmt->execute()){
+			$this->LOG->warn("Radiation data has been deleted");
             return true;
-        }
+		}
+
+		$this->LOG->error("Failed to delete Radiation data");
         return false;
     }
 
+	function validateKeyId($id){
+		return !empty($id) && $id > 0;
+	}
 }
 ?>

@@ -17,25 +17,7 @@ return array(
 
 	//Other loggers
 	'loggers' => array(
-		'Autoloader' => configLogger('INFO'),
-		'ErrorHandler' => configLogger('TRACE'),
-		'DtoManager' => configLogger('TRACE'),
-		'ValidationManager' => configLogger('TRACE'),
-		'JsonManager' => configLogger('INFO'),
-		'ActionDispatcher' => configLogger('INFO'),
-		'ActionError' => configLogger('INFO'),
-		'PrincipalInvestigator' => configLogger('TRACE'),
 
-		// DAOs
-		'GenericDAO:PrincipalInvestigator' => configLogger('INFO'),
-		'GenericDAO:PIAuthorization' => configLogger('INFO'),
-		'GenericDAO:QuarterlyInventory' => configLogger('INFO'),
-
-		//Action Functions
-		'Action:moveHazardToParent' => configLogger('TRACE'),
-		'Action:getCurrentPIInventory' => configLogger('TRACE'),
-		'Action:getAllRadPis' => configLogger('DEBUG'),
-		'Action:createQuarterlyInventories' => configLogger('TRACE'),
 	),
 
 	//Appenders

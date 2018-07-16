@@ -2954,14 +2954,9 @@ class Rad_ActionManager extends ActionManager {
     }
 
     public function getRadInventoryReport(){
-        $dao = new GenericDAO(new Isotope());
-        $reports = $dao->getIsotopeTotalsReport();
-        foreach($reports as &$report){
-            /**
-             * @var RadReportDTO $report
-             */
-            $report->calculate();
-        }
+        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+        $LOG->info("Get total inventory report");
+        $reports = $this->getTotalInventories();
         return $reports;
     }
 
