@@ -2744,5 +2744,9 @@ angular
                         });
             }
 
+            af.resetRadData = function(){
+                var urlSegment = 'resetRadData';
+                return genericAPIFactory.read( urlSegment );
+            }
             return af;
         });

@@ -2336,11 +2336,18 @@ angular.module('00RsmsAngularOrmApp')
         });
     };
 })
-    .controller('ZapModalCtrl', function ($scope, $http, $modalInstance) {
+    .controller('ZapModalCtrl', function ($scope, $http, $modalInstance, actionFunctionsFactory) {
     $scope.save = function (owt) {
         console.log(owt);
-        $http.get("http://erasmus.graysail.com/rsms/src/ajaxaction.php?action=resetRadData")
-            .then(window.location.reload(true));
+        $scope.resettingRadData = actionFunctionsFactory.resetRadData()
+        .then( function( returnedPromise ) {
+            if(window.confirm('RAD Data has been reset, and the page needs to be reloaded. Reload now?')){
+                window.location.reload(true);
+            }
+            else{
+                console.warn("Rad data has been reset and needs to be reloaded");
+            }
+        });
     };
     $scope.cancel = function () { return $modalInstance.dismiss(); };
 })
