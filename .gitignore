@@ -3,6 +3,7 @@
 .idea
 .buildpath
 rsms/logs/*
+rsms/src/logs/*
 rsms/src/biosafety-committees/protocol-documents/
 .vs/config/applicationhost.config
 .vs/rsms/v14/.suo
