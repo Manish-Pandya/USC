@@ -92,12 +92,4 @@ class RadReportDTO
 	public function setAuth_limit($auth_limit){
 		$this->auth_limit = $auth_limit;
 	}
-
-    public function calculate(){
-        return;
-        if($this->calculated)return;
-        $this->ordered = $this->ordered - $this->waste - $this->poured - $this->transferred;
-        $this->waste = $this->waste - $this->poured - $this->transferred;
-        $this->calculated = true;
-    }
 }

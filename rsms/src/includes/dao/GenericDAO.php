@@ -1608,240 +1608,36 @@ class GenericDAO {
     }
 
     public function getIsotopeTotalsReport(){
+		$this->LOG->info('Building Isotope Report');
         global $db;
 
-        $queryString = "select a.name as isotope_name,
-                        a.key_id as isotope_id,
-                        a.`auth_limit` as auth_limit,
-                        a.is_mass as is_mass,
-                        ROUND(SUM(c.quantity),7) as ordered,
-                        ROUND(SUM(e.curie_level),7) as waste,
-                        ROUND(shipped.amount_picked_up,7) as shipped,
-                        ROUND(poured.amount_picked_up,7) as poured,
-                        ROUND(transferred.amount_picked_up,7) as transferred
-                        from isotope a
-                        LEFT OUTER JOIN authorization b
-                        ON b.isotope_id = a.key_id
-                        LEFT OUTER JOIN parcel c
-                        ON (c.authorization_id = b.key_id AND c.status IN('Delivered'))
-        		        LEFT OUTER JOIN parcel_use d
-                        on d.parcel_id = c.key_id
-                        LEFT OUTER JOIN parcel_use_amount e
-                        ON e.parcel_use_id = d.key_id
-
-                        LEFT OUTER JOIN (
-				            select sum(a.curie_level)
-                        as amount_picked_up,
-                        e.name as isotope,
-                        e.key_id as isotope_id
-                        from parcel_use_amount a
-                        join parcel_use b
-                        on a.parcel_use_id = b.key_id
-                        JOIN parcel c
-                        ON b.parcel_id = c.key_id
-                        JOIN authorization d
-                        ON c.authorization_id = d.key_id
-                        JOIN isotope e
-                        ON d.isotope_id = e.key_id
-                        left join waste_bag f
-                        ON a.waste_bag_id = f.key_id
-                        left join carboy_use_cycle g
-                        ON a.carboy_id = g.key_id
-                        left join scint_vial_collection h
-                        ON a.scint_vial_collection_id = h.key_id
-                        left join other_waste_container j
-                        ON a.other_waste_container_id = j.key_id
-                        join drum i
-                        ON f.drum_id = i.key_id
-                        OR g.drum_id = i.key_id
-                        OR h.drum_id = i.key_id
-                        OR j.drum_id = i.key_id
-                        WHERE i.pickup_date IS NOT NULL
-                        AND (f.drum_id IS NOT NULL
-                        OR g.drum_id IS NOT NULL
-                        OR h.drum_id IS NOT NULL
-                        OR j.drum_id IS NOT NULL)
-
-                        group by e.name, e.key_id
-
-                        ) as shipped
-                        on shipped.isotope_id = a.key_id
-
-                        LEFT JOIN (
-                        select sum(a.curie_level)
-                        as amount_picked_up,
-                        e.name as isotope,
-                        e.key_id as isotope_id
-                        from parcel_use_amount a
-                        join parcel_use b
-                        on a.parcel_use_id = b.key_id
-                        JOIN parcel c
-                        ON b.parcel_id = c.key_id
-                        JOIN authorization d
-                        ON c.authorization_id = d.key_id
-                        JOIN isotope e
-                        ON d.isotope_id = e.key_id
-                        left join waste_bag f
-                        ON a.waste_bag_id = f.key_id
-                        left join carboy_use_cycle g
-                        ON a.carboy_id = g.key_id
-
-                        WHERE g.pour_date IS NOT NULL
-
-
-                        group by e.name, e.key_id
-                        )as poured
-                        ON poured.isotope_id = a.key_id
-
-                        LEFT JOIN (
-	                        select sum(a.curie_level)
-	                        as amount_picked_up,
-	                        e.name as isotope,
-	                        e.key_id as isotope_id
-	                        from parcel_use_amount a
-	                        join parcel_use b
-	                        on a.parcel_use_id = b.key_id
-	                        JOIN parcel c
-	                        ON b.parcel_id = c.key_id
-	                        JOIN authorization d
-	                        ON c.authorization_id = d.key_id
-	                        JOIN isotope e
-	                        ON d.isotope_id = e.key_id
-	                        WHERE b.date_transferred IS NOT NULL
-	                        group by e.name, e.key_id
-                        ) as transferred
-                        ON transferred.isotope_id = a.key_id
-
-                        group by a.key_id
-                        order by isotope_name DESC;";
-        //ROUND(SUM(e.curie_level),7) as waste,
-        $queryString = "select a.name as isotope_name,
-                        a.key_id as isotope_id,
-                        a.`auth_limit` as auth_limit,
-                        a.is_mass as is_mass,
-                        ROUND(SUM(c.quantity),7) as ordered,
-                        ROUND(SUM(e.curie_level),7) as waste,
-                        ROUND(shipped.amount_picked_up,7) as shipped,
-                        ROUND(poured.amount_picked_up,7) as poured,
-                        ROUND(transferred.amount_picked_up,7) as transferred
-
-                        from isotope a
-                        LEFT OUTER JOIN authorization b
-                        ON b.isotope_id = a.key_id
-                        LEFT OUTER JOIN parcel c
-                        ON (c.authorization_id = b.key_id AND c.status IN('Delivered'))
-                        LEFT OUTER JOIN parcel_use d
-                        on d.parcel_id = c.key_id
-                        LEFT OUTER JOIN parcel_use_amount e
-                        ON e.parcel_use_id = d.key_id
-
-                        LEFT OUTER JOIN (
-				            select sum(a.curie_level)
-                        as amount_picked_up,
-                        e.name as isotope,
-                        e.key_id as isotope_id
-                        from parcel_use_amount a
-                        join parcel_use b
-                        on a.parcel_use_id = b.key_id
-                        JOIN parcel c
-                        ON b.parcel_id = c.key_id
-                        JOIN authorization d
-                        ON c.authorization_id = d.key_id
-                        JOIN isotope e
-                        ON d.isotope_id = e.key_id
-                        left join waste_bag f
-                        ON a.waste_bag_id = f.key_id
-                        left join carboy_use_cycle g
-                        ON a.carboy_id = g.key_id
-                        left join scint_vial_collection h
-                        ON a.scint_vial_collection_id = h.key_id
-                        left join other_waste_container j
-                        ON a.other_waste_container_id = j.key_id
-                        join drum i
-                        ON f.drum_id = i.key_id
-                        OR g.drum_id = i.key_id
-                        OR h.drum_id = i.key_id
-                        OR j.drum_id = i.key_id
-                        WHERE i.pickup_date IS NOT NULL
-                        AND (f.drum_id IS NOT NULL
-                        OR g.drum_id IS NOT NULL
-                        OR h.drum_id IS NOT NULL
-                        OR j.drum_id IS NOT NULL)
-
-                        group by e.name, e.key_id
-
-                        ) as shipped
-                        on shipped.isotope_id = a.key_id
-
-                        LEFT JOIN (
-                            select sum(a.curie_level)
-                            as amount_picked_up,
-                            e.name as isotope,
-                            e.key_id as isotope_id
-                            from parcel_use_amount a
-                            join parcel_use b
-                            on a.parcel_use_id = b.key_id
-                            JOIN parcel c
-                            ON b.parcel_id = c.key_id
-                            JOIN authorization d
-                            ON c.authorization_id = d.key_id
-                            JOIN isotope e
-                            ON d.isotope_id = e.key_id
-                            left join waste_bag f
-                            ON a.waste_bag_id = f.key_id
-                            left join carboy_use_cycle g
-                            ON a.carboy_id = g.key_id
-
-                            WHERE g.pour_date IS NOT NULL
-
-
-                            group by e.name, e.key_id
-                        )as poured
-                        ON poured.isotope_id = a.key_id
-
-                        LEFT JOIN (
-	                        select sum(a.curie_level)
-	                        as amount_picked_up,
-	                        e.name as isotope,
-	                        e.key_id as isotope_id
-	                        from parcel_use_amount a
-	                        join parcel_use b
-	                        on a.parcel_use_id = b.key_id
-	                        JOIN parcel c
-	                        ON b.parcel_id = c.key_id
-	                        JOIN authorization d
-	                        ON c.authorization_id = d.key_id
-	                        JOIN isotope e
-	                        ON d.isotope_id = e.key_id
-	                        WHERE b.date_transferred IS NOT NULL
-	                        group by e.name, e.key_id
-                        ) as transferred
-                        ON transferred.isotope_id = a.key_id
-
-                        group by a.key_id
-                        ;";
-        $queryString = "SELECT 	a.name as isotope_name,
+        $queryString = "SELECT a.name as isotope_name,
         a.key_id as isotope_id,
         a.auth_limit,
         ROUND(SUM(d.waste),7) as waste,
-        ROUND(SUM(c.quantity - d.waste),7) as ordered
-        
-FROM isotope a LEFT OUTER JOIN authorization b
-	ON b.isotope_id = a.key_id
-LEFT OUTER JOIN parcel c
-	ON (c.authorization_id = b.key_id AND c.status IN('Delivered'))
-LEFT OUTER JOIN (SELECT SUM(parcel_use.quantity) as waste, parcel_id FROM parcel_use WHERE parcel_id IS NOT NULL AND quantity IS NOT NULL GROUP BY parcel_id) d 
-	ON (d.parcel_id = c.key_id AND c.key_id IS NOT NULL)
-GROUP BY a.name, a.key_id, a.auth_limit
-ORDER BY a.name DESC;        ";
-        	
-        
+        ROUND(COALESCE(SUM(c.quantity), 0) - COALESCE(SUM(d.waste), 0),7) as ordered
+		FROM isotope a
+		LEFT OUTER JOIN authorization b
+			ON b.isotope_id = a.key_id
+		LEFT OUTER JOIN parcel c
+			ON (c.authorization_id = b.key_id AND c.status IN('Delivered'))
+		LEFT OUTER JOIN (SELECT SUM(parcel_use.quantity) as waste, parcel_id FROM parcel_use WHERE parcel_id IS NOT NULL AND quantity IS NOT NULL GROUP BY parcel_id) d
+			ON (d.parcel_id = c.key_id AND c.key_id IS NOT NULL)
+		GROUP BY a.name, a.key_id, a.auth_limit
+		ORDER BY a.name DESC;";
+
+		$this->LOG->debug("Executing: $queryString");
+
         $stmt = $db->prepare($queryString);
 
         $stmt->execute();
         $inventories = $stmt->fetchAll(PDO::FETCH_CLASS, "RadReportDTO");
-        $l=Logger::getLogger(__FUNCTION__);
-        $l->fatal($inventories);
+
+		$this->LOG->info(count($inventories) . ' Resulting Isotope Inventories');
+		if($this->LOG->isTraceEnabled()){
+			$this->LOG->trace($inventories);
+		}
+
         return $inventories;
     }
 
