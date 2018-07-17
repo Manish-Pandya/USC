@@ -27,8 +27,7 @@
                            ng-change="setSampleUse(ParcelUseCopy)"
                            name="quantity"
                            ng-model="ParcelUseCopy.Quantity"
-                           ng-class="{'invalid':ParcelUseCopy.TotalError}"
-                           ng-pattern="/\d*\.?\d*/">
+                           ng-class="{'invalid':ParcelUseCopy.TotalError}">
                     <span class="help-block">mCi</span>
                     <span ng-if="ParcelUseCopy.TotalError" class="red bold" ng-bind-html="ParcelUseCopy.TotalError"></span>
                 </div>

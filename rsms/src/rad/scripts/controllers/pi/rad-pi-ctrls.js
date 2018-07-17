@@ -525,11 +525,7 @@ angular.module('00RsmsAngularOrmApp')
         parcelUse.error = "";
         parcelUse.ParcelUseAmounts.sort(function (a, b) { return b.Waste_type_id < a.Waste_type_id; }).forEach(function (amt, idx, arr) {
             if (amt.Waste_type_id != Constants.WASTE_TYPE.SAMPLE) {
-                if (isNaN(amt.Curie_level)){
-                    // entered value is not a number...
-                    //parcelUse.error = "Disposal amount must be numeric.";
-                }
-                else{
+                if (!isNaN(amt.Curie_level)){
                     total += parseFloat(amt.Curie_level);
                 }
             }
