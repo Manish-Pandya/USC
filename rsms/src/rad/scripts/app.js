@@ -16,6 +16,7 @@ angular
     'filtersApp',
     'angular.filter',
     'actionFunctionsModule',
+    'radValidationFunctionsModule',
     'dataSwitchModule', 
     'cgBusy',
     'ui.bootstrap',

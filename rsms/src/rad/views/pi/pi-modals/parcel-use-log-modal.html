@@ -1,6 +1,6 @@
 ﻿
-<form ng-submit="saveParcelUse(parcel, ParcelUseCopy, use)" class="form use-log-modal-form">
-    <div class="modal-body use-log-modal">
+<form name="useLogModalForm" ng-submit="saveParcelUse(parcel, ParcelUseCopy, use)" class="form use-log-modal-form">
+    <div class="modal-body use-log-modal" style="display: flex;">
         <div class="use-log-form span8">
             <h2>Usage Information</h2>
 
@@ -22,13 +22,15 @@
 
             <label class="control-label" for="quantity">Amount:</label>
             <div class="control-group">
-                <div class="controls input-append">
+                <div class="controls">
                     <input style="max-width:50%;"
                            ng-change="setSampleUse(ParcelUseCopy)"
                            name="quantity"
                            ng-model="ParcelUseCopy.Quantity"
-                           ng-class="{'invalid':ParcelUseCopy.error}">
+                           ng-class="{'invalid':ParcelUseCopy.TotalError}"
+                           ng-pattern="/\d*\.?\d*/">
                     <span class="help-block">mCi</span>
+                    <span ng-if="ParcelUseCopy.TotalError" class="red bold" ng-bind-html="ParcelUseCopy.TotalError"></span>
                 </div>
             </div>
             <section class="disposal-info">
@@ -79,8 +81,7 @@
                             <input style="width:100px"
                                    ng-init="setSampleUse(ParcelUseCopy)"
                                    ng-model="amt.Curie_level"
-                                   disabled="disabled"
-                                   ng-class="{'invalid':ParcelUseCopy.error}">
+                                   disabled="disabled">
                             <span class="add-on">mCi <i title="Picked Up" ng-if="amt.IsPickedUp" class="danger icon-remove"></i></span>
                         </div>
                         <div class="span4" style="margin-left:8px;width:240px">
@@ -158,8 +159,9 @@
             </section>
 
             <div class="pull-left">
-                <div class="alert alert-danger" ng-if="ParcelUseCopy.error" ng-bind-html="ParcelUseCopy.error"></div>
                 <div class="alert alert-danger" ng-if="ParcelUseCopy.DateError" ng-bind-html="ParcelUseCopy.DateError"></div>
+                <div class="alert alert-danger" ng-if="ParcelUseCopy.TotalError" ng-bind-html="ParcelUseCopy.TotalError"></div>
+                <div class="alert alert-danger" ng-if="ParcelUseCopy.error" ng-bind-html="ParcelUseCopy.error"></div>
                 <button class="btn btn-success left" type="submit">
                     <i class="icon-checkmark"></i>Save <span ng-if="ParcelUseCopy.IsPickedUp">And Place </span>Usage
                 </button>
@@ -167,55 +169,53 @@
             </div>
         </div>
 
-        <div class="parcel-info span4">
-            <div style="position:fixed">
-                <h2>Package Information</h2>
-                <ul>
-                    <li>
-                        <h3>R.S. Number</h3>
-                        <div>
-                            {{parcel.Rs_number}}
-                        </div>
-                    </li>
-                    <li>
-                        <h3>Isotope</h3>
-                        <div>
-                            {{parcel.Authorization.IsotopeName}}
-                        </div>
-                    </li>
-                    <li>
-                        <h3>Arrival Date</h3>
-                        <div>
-                            <span ng-if="parcel.Arrival_date && parcel.Arrival_date != '0000-00-00 00:00:00'">{{parcel.Arrival_date | dateToISO}}</span>
-                            <span ng-if="parcel.Transfer_in_date">{{parcel.Transfer_in_date | dateToISO}}</span>
-                        </div>
-                    </li>
-                    <li>
-                        <h3>R.S. Number</h3>
-                        <div>
-                            {{parcel.Rs_number}}
-                        </div>
-                    </li>
-                    <li>
-                        <h3>Orginal Activity</h3>
-                        <div>
-                            {{parcel.Quantity}} mCi
-                        </div>
-                    </li>
-                    <li>
-                        <h3>Usable Activity</h3>
-                        <div>
-                            {{parcel.Remainder}} mCi
-                        </div>
-                    </li>
-                    <li>
-                        <h3>Amount On Hand</h3>
-                        <div>
-                            {{parcel.AmountOnHand}} mCi
-                        </div>
-                    </li>
-                </ul>
-            </div>
+        <div class="parcel-info span4 pull-right" style="padding-right:0px">
+            <h2>Package Information</h2>
+            <ul>
+                <li>
+                    <h3>R.S. Number</h3>
+                    <div>
+                        {{parcel.Rs_number}}
+                    </div>
+                </li>
+                <li>
+                    <h3>Isotope</h3>
+                    <div>
+                        {{parcel.Authorization.IsotopeName}}
+                    </div>
+                </li>
+                <li>
+                    <h3>Arrival Date</h3>
+                    <div>
+                        <span ng-if="parcel.Arrival_date && parcel.Arrival_date != '0000-00-00 00:00:00'">{{parcel.Arrival_date | dateToISO}}</span>
+                        <span ng-if="parcel.Transfer_in_date">{{parcel.Transfer_in_date | dateToISO}}</span>
+                    </div>
+                </li>
+                <li>
+                    <h3>R.S. Number</h3>
+                    <div>
+                        {{parcel.Rs_number}}
+                    </div>
+                </li>
+                <li>
+                    <h3>Orginal Activity</h3>
+                    <div>
+                        {{parcel.Quantity}} mCi
+                    </div>
+                </li>
+                <li>
+                    <h3>Usable Activity</h3>
+                    <div>
+                        {{parcelUsageTotalUsableActivity}} mCi
+                    </div>
+                </li>
+                <li>
+                    <h3>Amount On Hand</h3>
+                    <div>
+                        {{parcel.AmountOnHand}} mCi
+                    </div>
+                </li>
+            </ul>
         </div>
     </div>
 

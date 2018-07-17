@@ -61,7 +61,7 @@
             <table class="table-bordered table parcel-uses" style="margin-bottom:0" ng-show="parcelUses">
                 <tbody>
                     <tr class="table-header">
-                        <th>Edit {{parcel.showActive}} {{parcel.ParcelUses.length}}</th>
+                        <th>Edit</th>
                         <th>Date</th>
                         <th>Use</th>
                         <th>Amount</th>
@@ -71,7 +71,7 @@
                         <th>Other Waste</th>
                         <th class="use-amount vials">Not Disposed</th>
                     </tr>
-                    <tr class="table-row top-align" ng-repeat="use in parcel.ParcelUses" ng-if="use" ng-class="{'formError': use.error}" table-error="{{use.error}}" obj="use">
+                    <tr class="table-row top-align" ng-repeat="use in parcel.ParcelUses" ng-if="use && parcel.showActive == use.Is_active" ng-class="{'formError': use.error}" table-error="{{use.error}}" obj="use">
                         <td ng-init="use.loadParcelUseAmounts()">
                             <button class="btn btn-primary" 
                                     ng-click="editUse(use)" 

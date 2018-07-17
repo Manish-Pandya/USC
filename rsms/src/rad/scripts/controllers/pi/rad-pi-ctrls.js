@@ -165,6 +165,7 @@ angular.module('00RsmsAngularOrmApp')
     };
 });
 'use strict';
+
 /**
  * @ngdoc function
  * @name 00RsmsAngularOrmApp.controller:ParcelUseLogCtrl
@@ -173,7 +174,7 @@ angular.module('00RsmsAngularOrmApp')
  * Controller of the 00RsmsAngularOrmApp PI Use Log
  */
 angular.module('00RsmsAngularOrmApp')
-    .controller('ParcelUseLogCtrl', function (convenienceMethods, $scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, roleBasedFactory) {
+    .controller('ParcelUseLogCtrl', function (convenienceMethods, $scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, roleBasedFactory, parcelUseValidationFactory) {
     var af = actionFunctionsFactory;
     $scope.af = af;
     $scope.roleBasedFactory = roleBasedFactory;
@@ -273,9 +274,16 @@ angular.module('00RsmsAngularOrmApp')
         while (i--) {
             $scope.parcel.ParcelUses[i].edit = false;
         }
+
+        // clone the use
         $rootScope.ParcelUseCopy = {};
         $rootScope.use = use;
         af.createCopy(use);
+
+        // Calculate the available Remainder, including this useage if it's already active
+        $rootScope.parcelUsageTotalUsableActivity = parcelUseValidationFactory.getAvailableQuantityForUseValidation($scope.parcel, $rootScope.ParcelUseCopy);
+
+        // Ensure there's a 'still in use' amount
         if ($rootScope.ParcelUseCopy.ParcelUseAmounts.filter(function (pu) {
             return pu.Waste_type_id == Constants.WASTE_TYPE.SAMPLE;
         }).length == 0) {
@@ -283,6 +291,8 @@ angular.module('00RsmsAngularOrmApp')
             sampleUsageAmount.Waste_type_id = Constants.WASTE_TYPE.SAMPLE;
             $rootScope.ParcelUseCopy.ParcelUseAmounts.push(sampleUsageAmount);
         }
+
+        // Open the modal
         var modalInstance = $modal.open({
             templateUrl: 'views/pi/pi-modals/parcel-use-log-modal.html',
             controller: 'ModalParcelUseLogCtrl'
@@ -298,22 +308,54 @@ angular.module('00RsmsAngularOrmApp')
         });
         return sum.toString() + "mCi";
     };
+
+    /**
+     * Deactive (or reactivate!) parcel usage
+     *
+     * @param {*} pu 
+     */
     $scope.deactivate = function (pu) {
-        pu.Is_active = !pu.Is_active;
-        console.log(pu);
-        pu.ParcelUseAmounts.forEach(function (pua) { console.log(pua); pua.Is_active = !pua.Is_active; });
-        $scope.saving = af.saveParcelUse($rootScope.parcel, pu, pu).then(function (returned) {
-            if (!$rootScope.parcel.ParcelUses || !$rootScope.parcel.ParcelUses.length) {
-                console.log(returned);
-                $rootScope.parcel.ParcelUses = returned.ParcelUses;
-            }
-            $rootScope.parcelUses = {};
-            $rootScope.parcelUses = $rootScope.mapUses($rootScope.parcel.ParcelUses);
-        });
+        var allowAction = false;
+
+        // Are we activating or deactivating?
+        if( !pu.Is_active ){
+            // First validate that the usage can be activated
+            allowAction = parcelUseValidationFactory.validateUseLogEntry($rootScope.parcel, pu);
+        }
+        else {
+            // Always allow deactivation
+            allowAction = true;
+        }
+
+        if( allowAction ){
+            // de/activate the usage
+            pu.Is_active = !pu.Is_active;
+            console.log(pu);
+
+            // de/activate the usage amounts
+            pu.ParcelUseAmounts.forEach(function (pua) { console.log(pua); pua.Is_active = !pua.Is_active; });
+
+            // Save
+            $scope.saving = af.saveParcelUse($rootScope.parcel, pu, pu).then(function (returned) {
+                if (!$rootScope.parcel.ParcelUses || !$rootScope.parcel.ParcelUses.length) {
+                    console.log(returned);
+                    $rootScope.parcel.ParcelUses = returned.ParcelUses;
+                }
+                $rootScope.parcelUses = {};
+                $rootScope.parcelUses = $rootScope.mapUses($rootScope.parcel.ParcelUses);
+            });
+        }
+        else{
+            // This usage is invalid
+            alert("This use is invalid and cannot be activated. Edit the entry and try again.");
+        }
     };
 });
 angular.module('00RsmsAngularOrmApp')
-    .controller('ModalParcelUseLogCtrl', function ($scope, $rootScope, $modalInstance, $modal, actionFunctionsFactory, convenienceMethods, roleBasedFactory) {
+    .controller('ModalParcelUseLogCtrl', function ($scope, $rootScope, $modalInstance, $modal, actionFunctionsFactory, convenienceMethods, roleBasedFactory, parcelUseValidationFactory) {
+        console.debug("Start ModalParcelUseLogCtrl");
+        console.debug("$rootScope:", $rootScope);
+        console.debug("$scope:", $scope);
     $scope.roleBasedFactory = roleBasedFactory;
     var af = actionFunctionsFactory;
     $scope.af = af;
@@ -411,9 +453,13 @@ angular.module('00RsmsAngularOrmApp')
         return valid;
     };
     $scope.saveParcelUse = function (parcel, copy, use) {
-        //console.log(copy, use); return;
-        if ($scope.validateUseAmounts(copy, use)) {
+        console.debug("saveParcelUse(parcel, copy, use)", parcel, copy, use);
+
+        // Pass the original AND updated use for validation
+        if (parcelUseValidationFactory.validateUseLogEntry(parcel, copy, use)) {
+            console.debug("  Parcel Use is valid");
             af.saveParcelUse(parcel, copy, use).then(function (returned) {
+                console.debug("  Parcel Use is saved: ", returned);
                 if (!$rootScope.parcel.ParcelUses || !$rootScope.parcel.ParcelUses.length) {
                     $rootScope.parcel.ParcelUses = returned.ParcelUses;
                 }
@@ -422,28 +468,13 @@ angular.module('00RsmsAngularOrmApp')
                 $modalInstance.close();
             });
         }
+        else{
+            console.warn("  Parcel Use is invalid");
+        }
+
+        console.debug("end saveParcelUse");
     };
-    //this is here specifically because form validation seems like it belongs in the controller (VM) layer rather than the CONTROLLER(actionFunctions layer) of this application,
-    //which if you think about it, has sort of become an MVCVM
-    $scope.validateUseAmounts = function (use, orig) {
-        use.error = null;
-        use.isValid = false;
-        var total = 0;
-        var i = use.ParcelUseAmounts.length;
-        while (i--) {
-            if (use.ParcelUseAmounts[i].Curie_level)
-                total = total + parseFloat(use.ParcelUseAmounts[i].Curie_level);
-        }
-        total = Math.round(total * 100000) / 100000;
-        if (parseFloat(use.Quantity) == total) {
-            use.isValid = true;
-        }
-        else {
-            use.error = 'Total disposal amount must equal use amount.';
-        }
-        use.isValid = validateUsageDate(use, $rootScope.parcel);
-        return use.isValid;
-    };
+
     var parcelUseHasUseAmountType = function (use, typeId) {
         var i = use.ParcelUseAmounts.length;
         while (i--) {
@@ -453,55 +484,7 @@ angular.module('00RsmsAngularOrmApp')
         }
         return false;
     };
-    function validateUsageDate(use, parcel) {
-        var valid = true;
-        use.DateError = "";
 
-        // Convert arrival, transfer, usage timestamps to dates
-        var arrivalDate = convenienceMethods.getDateString(parcel.Arrival_date).formattedString;
-
-        // Transfer may not be present
-        var transferDate = null;
-        if( parcel.Transfer_in_date ){
-            transferDate = convenienceMethods.getDateString(parcel.Transfer_in_date).formattedString;
-        }
-
-        var usageDateString = convenienceMethods.setMysqlTime(use.view_Date_used);
-        var usageDate = convenienceMethods.getDateString(usageDateString).formattedString;
-
-        var today = convenienceMethods.getDateString(
-            convenienceMethods.setMysqlTime(new Date())).formattedString;
-
-        if( usageDate < arrivalDate || usageDate < transferDate ){
-            use.DateError = "The date you entered is before this package arrived.<br>";
-            valid = false;
-        }
-
-        // Verify usage date is not after today
-        else if( usageDate > today ){
-            use.DateError = "The date you entered is after today.<br>";
-            valid = false;
-        }
-
-        //verify that the usage date isn't before the most recent pickup
-        var pu = $rootScope.pi.Pickups.sort(function (a, b) { return a.Pickup_date > b.Pickup_date; })[0];
-        if (pu && convenienceMethods.getDateString(pu.Pickup_date).formattedString > usageDate) {
-            use.DateError += "The date you entered is before your most recent pickup. If you need to make changes to uses that have already been picked up, please contact RSO.<br>";
-            valid = false;
-            if (roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]])) {
-                var mi = $modal.open({
-                    templateUrl: 'views/pi/pi-modals/parcel-use-log-override-modal.html',
-                    controller: 'ModalParcelUseLogOverrideCtrl'
-                });
-                mi.result.then(function (r) {
-                    $rootScope.parcelUses = {};
-                    $rootScope.parcelUses = $rootScope.mapUses($rootScope.parcel.ParcelUses);
-                    $modalInstance.close();
-                });
-            }
-        }
-        return use.isValid = valid;
-    }
     $scope.selectContainer = function (amt, containers) {
         var container = containers[amt.ContainerIdx - 1];
         amt.Waste_bag_id = null;
@@ -542,19 +525,25 @@ angular.module('00RsmsAngularOrmApp')
         parcelUse.error = "";
         parcelUse.ParcelUseAmounts.sort(function (a, b) { return b.Waste_type_id < a.Waste_type_id; }).forEach(function (amt, idx, arr) {
             if (amt.Waste_type_id != Constants.WASTE_TYPE.SAMPLE) {
-                if (!isNaN(amt.Curie_level))
+                if (isNaN(amt.Curie_level)){
+                    // entered value is not a number...
+                    //parcelUse.error = "Disposal amount must be numeric.";
+                }
+                else{
                     total += parseFloat(amt.Curie_level);
+                }
             }
             else {
                 amt.Curie_level = max - total;
                 amt.Curie_level = Math.round(amt.Curie_level * 10000000000) / 10000000000;
-                if (max < total)
+                if (max < total || total < 0)
                     parcelUse.error = "Total disposal amount must equal use amount.";
             }
         });
     };
     $scope.orderAmts = function () {
     };
+    console.debug("End ModalParcelUseLogCtrl");
 })
     .controller('ModalParcelUseLogOverrideCtrl', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods, roleBasedFactory) {
     $scope.cm = convenienceMethods;

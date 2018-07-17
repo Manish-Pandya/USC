@@ -139,6 +139,7 @@ if(!isset($_SESSION["USER"])){ ?>
 
 <!-- business logic-->
 <script type="text/javascript" src="./scripts/actionFunctions.js"></script>
+<script type="text/javascript" src="./scripts/validationFunctions.js"></script>
 <script src="scripts/controllers/admin/rad-admin-ctrls.js"></script>
 <script src="scripts/controllers/pi/rad-pi-ctrls.js"></script>
 <script type="text/javascript" src="./scripts/controllers/inspection/inspectionWipeCtrl.js"></script>
