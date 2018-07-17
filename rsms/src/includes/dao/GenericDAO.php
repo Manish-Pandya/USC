@@ -76,7 +76,7 @@ class GenericDAO {
 	 * @return GenericCrud
 	 */
 	function getById($id){
-		if (empty($id)) {
+		if (!$this->validateKeyId($id)) {
 			return new ActionError("$this->modelClassName.getById: No ID provided");
 		}
 
