@@ -11,6 +11,7 @@
                     <th>Isotope</th>
                     <th>Stock</th>
                     <th>In Waste</th>
+                    <th>Total Activity</th>
                     <th>Limit</th>
                 </tr>
                 <tr class="table-row" ng-repeat="report in reports">
@@ -19,6 +20,7 @@
                     </td>
                     <td>{{report.Ordered}}</td>
                     <td>{{report.Waste}}</td>
+                    <td>{{report.Total_quantity}}</td>
                     <td>{{report.Auth_limit}}<span ng-if="!report.Is_mass">mCi</span><span ng-if="report.Is_mass">g</span></td>
                 </tr>
 

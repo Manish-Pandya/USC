@@ -19,7 +19,16 @@ class RadReportDTO
     private $transferred;
     private $calculated;
     private $is_mass;
-    private $auth_limit;
+	private $auth_limit;
+	private $total_quantity;
+
+	public function getTotal_quantity(){
+		return (float) $this->total_quantity;
+	}
+
+	public function setTotal_quantity($total_quantity){
+		$this->total_quantity = $total_quantity;
+	}
 
     public function getOrdered(){
 		return (float) $this->ordered;

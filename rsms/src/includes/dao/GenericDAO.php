@@ -1614,6 +1614,7 @@ class GenericDAO {
         $queryString = "SELECT a.name as isotope_name,
         a.key_id as isotope_id,
         a.auth_limit,
+		ROUND(SUM(c.quantity),7) as total_quantity,
         ROUND(SUM(d.waste),7) as waste,
         ROUND(COALESCE(SUM(c.quantity), 0) - COALESCE(SUM(d.waste), 0),7) as ordered
 		FROM isotope a
