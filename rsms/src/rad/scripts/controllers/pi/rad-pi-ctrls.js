@@ -245,7 +245,7 @@ angular.module('00RsmsAngularOrmApp')
         });
         total = Math.round(total * 100000) / 100000;
         if (total > 0)
-            return totalf + "mCi";
+            return total + "mCi";
         return "N/A";
     };
     $scope.addUsage = function (parcel) {
