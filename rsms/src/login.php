@@ -1,9 +1,6 @@
 <?php
-if( stristr( $_SERVER['HTTP_HOST'], "graysail" ) ){
-    include('src/Application.php');
-}else{
-    include('Application.php');
-}
+include('Application.php');
+
 session_start();
 
 if( isset($_SESSION) && !isset($_SESSION['error']) ){
