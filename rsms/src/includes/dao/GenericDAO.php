@@ -1611,21 +1611,70 @@ class GenericDAO {
 		$this->LOG->info('Building Isotope Report');
         global $db;
 
-        $queryString = "SELECT a.name as isotope_name,
-        a.key_id as isotope_id,
-        a.auth_limit,
-		ROUND(SUM(c.quantity),7) as total_quantity,
-        ROUND(SUM(d.waste),7) as waste,
-        ROUND(COALESCE(SUM(c.quantity), 0) - COALESCE(SUM(d.waste), 0),7) as ordered
-		FROM isotope a
-		LEFT OUTER JOIN authorization b
-			ON b.isotope_id = a.key_id
-		LEFT OUTER JOIN parcel c
-			ON (c.authorization_id = b.key_id AND c.status IN('Arrived', 'Delivered'))
-		LEFT OUTER JOIN (SELECT SUM(parcel_use.quantity) as waste, parcel_id FROM parcel_use WHERE is_active=1 AND parcel_id IS NOT NULL AND quantity IS NOT NULL GROUP BY parcel_id) d
-			ON (d.parcel_id = c.key_id AND c.key_id IS NOT NULL)
-		GROUP BY a.name, a.key_id, a.auth_limit
-		ORDER BY a.name DESC;";
+        $queryString = "SELECT iso.name AS isotope_name,
+        iso.key_id AS isotope_id,
+        iso.auth_limit,
+		ROUND(SUM(parcel.quantity),7) AS total_quantity,
+        ROUND(SUM(collected_waste.waste_quantity),7) AS waste,
+        ROUND(COALESCE(SUM(parcel.quantity), 0) - COALESCE(SUM(collected_waste.waste_quantity), 0),7) AS ordered
+
+		-- Isotope
+		FROM isotope iso
+
+		-- Authorization
+		LEFT OUTER JOIN authorization auth
+			ON auth.isotope_id = iso.key_id
+
+		-- Parcel on-premise
+		LEFT OUTER JOIN parcel parcel
+			ON (parcel.authorization_id = auth.key_id AND parcel.status IN('Arrived', 'Delivered'))
+
+		-- Active Use Logs
+		LEFT OUTER JOIN (
+				SELECT
+				  SUM(parcel_use.quantity) AS waste,
+				  parcel_id
+				FROM parcel_use
+				WHERE is_active=1 AND parcel_id IS NOT NULL AND quantity IS NOT NULL GROUP BY parcel_id
+			) parcel_use
+			ON (parcel_use.parcel_id = parcel.key_id AND parcel.key_id IS NOT NULL)
+
+		-- Collected Waste
+		LEFT OUTER JOIN (
+			SELECT
+				pu.parcel_id AS parcel_id,
+				SUM(amt.quantity) AS waste_quantity,
+				amt.container_id
+			FROM parcel_use pu
+			LEFT OUTER JOIN (
+				SELECT
+					SUM(curie_level) AS quantity,
+                    COALESCE(waste_bag_id, scint_vial_collection_id, carboy_id, other_waste_container_id) AS container_id,
+					parcel_use_id
+				FROM parcel_use_amount
+				WHERE COALESCE(waste_bag_id, scint_vial_collection_id, carboy_id, other_waste_container_id) IN (
+					SELECT container_id FROM (
+						SELECT
+							all_waste.key_id AS container_id,
+							pickup.status AS pickup_status
+						FROM
+							( SELECT key_id, pickup_id, close_date FROM scint_vial_collection UNION
+							  SELECT key_id, pickup_id, close_date FROM waste_bag UNION
+							  SELECT key_id, pickup_id, close_date FROM carboy_use_cycle
+							) AS all_waste
+							JOIN pickup ON pickup.key_id = all_waste.pickup_id
+							WHERE close_date IS NOT NULL AND pickup.status IN ('PICKED UP', 'AT RSO')
+						) container
+					)
+				GROUP BY parcel_use_id, waste_bag_id
+			) amt
+			ON amt.parcel_use_id = pu.key_id
+            GROUP BY parcel_id
+		) collected_waste
+		ON (collected_waste.parcel_id = parcel.key_id)
+
+		GROUP BY iso.name, iso.key_id, iso.auth_limit
+		ORDER BY iso.name DESC";
 
 		$this->LOG->debug("Executing: $queryString");
 
