@@ -1,23 +1,25 @@
 <?php
-//Settings for development server
-//require_once('/usr/local/src/csg/classes/ADLDAPV2.php');
 
+// Additional includes, as necessary
+if( ApplicationConfiguration::get()['server']['auth']['type'] === "ldap" ){
+    require_once(ApplicationConfiguration::get()['server']['auth']['provider']);
+}
+
+/*DEPRECATED?*/
 function isProductionServer() {
     return false;
 }
 
 function getDBConnection() {
-    return 'mysql:host=localhost;dbname=usc_ehs_rsms';
+    return ApplicationConfiguration::get()['server']['db']['connection'];
 }
 
 function getDBUsername() {
-    return 'root';
-    return 'erasmus';
+    return ApplicationConfiguration::get()['server']['db']['username'];
 }
 
 function getDBPassword() {
-    return;
-    return 'eR@m#682d';
+    return ApplicationConfiguration::get()['server']['db']['password'];
 }
 
 ?>

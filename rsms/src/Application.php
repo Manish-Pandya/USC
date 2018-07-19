@@ -8,20 +8,6 @@
 
 define('DIR_PATH', dirname(__FILE__) );
 define('URL_PATH', 'http://localhost');
-define('ADMIN_MAIL', 'hoke@graysail.com');
-
-if(isProduction()){
-	define('WEB_ROOT', '/rsms/');
-	define('LOGIN_PAGE', '/rsms/');
-	define('BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR', getcwd().'/biosafety-committees/protocol-documents/');
-
-
-}else{
-	define('WEB_ROOT', '/rsms/src/');
-	define('LOGIN_PAGE', 'http://erasmus.graysail.com:9080/rsms/');
-	define('BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR', getcwd().'/biosafety-committees/protocol-documents/');
-
-}
 define('UPLOAD_DIR_PATH', getcwd());
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -31,7 +17,15 @@ define('UPLOAD_DIR_PATH', getcwd());
 ////////////////////////////////////////////////////////////////////////////////
 require_once dirname(__FILE__) . '/logging/Logger.php';
 define('RSMS_LOGS', DIR_PATH . '/logs');
-Logger::configure( dirname(__FILE__) . "/includes/conf/log4php-config.php");
+Logger::configure( dirname(__FILE__) . '/includes/conf/log4php-config.php');
+
+/////////////////////////////////////////////////////////////////////////////////
+//
+// Read configuration
+//
+////////////////////////////////////////////////////////////////////////////////
+require_once dirname(__FILE__) . '/ApplicationConfiguration.php';
+ApplicationConfiguration::configure( dirname(__FILE__) . "/config/rsms-config.php");
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -39,6 +33,17 @@ Logger::configure( dirname(__FILE__) . "/includes/conf/log4php-config.php");
 //
 ////////////////////////////////////////////////////////////////////////////////
 require_once dirname(__FILE__) . '/includes/conf/server.php';
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Application environment-dependent Constants
+//
+////////////////////////////////////////////////////////////////////////////////
+
+define('ADMIN_MAIL', ApplicationConfiguration::get()['server']['web']['ADMIN_MAIL']);
+define('WEB_ROOT', ApplicationConfiguration::get()['server']['web']['WEB_ROOT']);
+define('LOGIN_PAGE', ApplicationConfiguration::get()['server']['web']['LOGIN_PAGE']);
+define('BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR', ApplicationConfiguration::get()['server']['web']['BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR']);
 
 ////////////////////////////////////////////////////////////////////////////////
 //
