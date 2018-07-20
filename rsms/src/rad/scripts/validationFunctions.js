@@ -157,8 +157,10 @@ angular.module('radValidationFunctionsModule', [
                 validDate.isValid = false;
             }
 
-            //verify that the usage date isn't before the most recent pickup
-            var pu = $rootScope.pi.Pickups.sort(function (a, b) { return a.Pickup_date > b.Pickup_date; })[0];
+            //verify that the usage date isn't before the most recent picked-up pickup
+            var pu = $rootScope.pi.Pickups
+                .filter(p=>p.Pickup_date !== null)  // Pickup date shouldn't be null if it's picked up; could alternatively check status
+                .sort(function (a, b) { return a.Pickup_date > b.Pickup_date; })[0];
             if (pu && convenienceMethods.getDateString(pu.Pickup_date).formattedString > usageDate) {
                 validDate.error += "The date you entered is before your most recent pickup. If you need to make changes to uses that have already been picked up, please contact RSO.<br>";
                 valid = false;
