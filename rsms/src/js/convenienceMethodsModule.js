@@ -357,6 +357,25 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
             //console.log(formattedTime);
             return formattedTime;
         },
+
+        /**
+         * Returns true if the given date falls before isBeforeDate
+         */
+        dateIsBefore: function(date, isBeforeDate){
+            var _date = date;
+            var _before = isBeforeDate;
+
+            if( !(_date instanceof Date)){
+                _date = new Date(Date.parse(_date));
+            }
+
+            if( !(_before instanceof Date)){
+                _before = new Date(Date.parse(_before));
+            }
+
+            return _date.getTime() < _before.getTime();
+        },
+
         /*
         *
         *	Converts a Javascript date object to a MYSQL datetime formatted string
