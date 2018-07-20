@@ -163,7 +163,7 @@ angular.module('radValidationFunctionsModule', [
                 .sort(function (a, b) { return a.Pickup_date > b.Pickup_date; })[0];
             if (pu && convenienceMethods.getDateString(pu.Pickup_date).formattedString > usageDate) {
                 validDate.error += "The date you entered is before your most recent pickup. If you need to make changes to uses that have already been picked up, please contact RSO.<br>";
-                valid = false;
+                validDate.isValid = false;
                 if (roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]])) {
                     var mi = $modal.open({
                         templateUrl: 'views/pi/pi-modals/parcel-use-log-override-modal.html',
