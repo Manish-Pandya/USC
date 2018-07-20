@@ -263,6 +263,7 @@ angular.module('00RsmsAngularOrmApp')
         $rootScope.ParcelUseCopy.Is_active = true;
         var amt = new window.ParcelUseAmount();
         amt.Waste_type_id = -1;
+        amt.Curie_level = 0;
         amt.Is_active = true;
         console.log($rootScope.ParcelUseCopy.ParcelUseAmounts);
         $rootScope.ParcelUseCopy.ParcelUseAmounts = $rootScope.ParcelUseCopy.ParcelUseAmounts.concat([amt]);
@@ -414,6 +415,7 @@ angular.module('00RsmsAngularOrmApp')
     $scope.addAmount = function () {
         var amt = new window.ParcelUseAmount();
         amt.Is_active = true;
+        amt.Curie_level = 0;
         amt.Waste_type_id = -1;
         $rootScope.ParcelUseCopy.ParcelUseAmounts.splice($rootScope.ParcelUseCopy.ParcelUseAmounts.length - 1, 0, amt);
     };
