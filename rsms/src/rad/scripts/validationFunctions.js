@@ -146,13 +146,13 @@ angular.module('radValidationFunctionsModule', [
             var today = convenienceMethods.getDateString(
                 convenienceMethods.setMysqlTime(new Date())).formattedString;
 
-            if( usageDate < arrivalDate || usageDate < transferDate ){
+            if( convenienceMethods.dateIsBefore(usageDate, arrivalDate) || convenienceMethods.dateIsBefore(usageDate, transferDate)){
                 validDate.error = "The date you entered is before this package arrived.<br>";
                 validDate.isValid = false;
             }
 
             // Verify usage date is not after today
-            else if( usageDate > today ){
+            else if(convenienceMethods.dateIsBefore(today, usageDate)){
                 validDate.error = "The date you entered is after today.<br>";
                 validDate.isValid = false;
             }
@@ -161,7 +161,8 @@ angular.module('radValidationFunctionsModule', [
             var pu = $rootScope.pi.Pickups
                 .filter(p=>p.Pickup_date !== null)  // Pickup date shouldn't be null if it's picked up; could alternatively check status
                 .sort(function (a, b) { return a.Pickup_date > b.Pickup_date; })[0];
-            if (pu && convenienceMethods.getDateString(pu.Pickup_date).formattedString > usageDate) {
+
+            if (pu && convenienceMethods.dateIsBefore(usageDate, convenienceMethods.getDateString(pu.Pickup_date).formattedString)) {
                 validDate.error += "The date you entered is before your most recent pickup. If you need to make changes to uses that have already been picked up, please contact RSO.<br>";
                 validDate.isValid = false;
                 if (roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]])) {
