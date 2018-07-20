@@ -7,6 +7,7 @@
  * The request is treated as a standard, synchronous request.
  */
 ?><?php
+Logger::getRootLogger()->info("START action.php");
 
 //Setup basic action data
 //	$sessionDataSource and $actionName are defined here
@@ -68,4 +69,6 @@ else{
     }
     
 }
+DBConnection::disconnect();
+Logger::getRootLogger()->info("END action.php");
 ?>

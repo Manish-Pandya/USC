@@ -17,7 +17,9 @@ return array(
 
 	//Other loggers
 	'loggers' => array(
-
+		'GenericDAO:Isotope' => configLogger('INFO'),
+		'ajaxaction' => configLogger('DEBUG'),
+		'action' => configLogger('DEBUG')
 	),
 
 	//Appenders

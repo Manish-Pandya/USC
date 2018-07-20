@@ -14,6 +14,7 @@
 require_once( dirname(__FILE__) . '/action_setup.php');
 session_start();
 
+Logger::getRootLogger()->info("START ajaxaction.php");
 $LOG = Logger::getLogger('ajaxaction.' . $actionName);
 if($LOG->isDebugEnabled()){
     $params = "";
@@ -41,7 +42,6 @@ $actionResult = $actionDispatcher->dispatch($actionName);
 // JSON-Encode result
 
 $json = JsonManager::encode($actionResult->actionFunctionResult);
-$LOG = Logger::getLogger('json manager result');
 //$LOG->debug($json);
 $output = $json;
 
@@ -77,6 +77,9 @@ if($actionResult->statusCode == 302){
 if($LOG->isDebugEnabled()){
     $LOG->debug("<<<< $actionResult->statusCode " . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . ' content-length:' . strlen($output));
 }
+
+DBConnection::disconnect();
+Logger::getRootLogger()->info("END ajaxaction.php");
 
 echo $output;
 ?>

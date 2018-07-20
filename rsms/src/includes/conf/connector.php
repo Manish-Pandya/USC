@@ -26,8 +26,6 @@ require_once 'MDB2.php';
 	/** Define variable to hold the autoquery-update mode. This is helpful if database modules are changed */
 	//define('DATABASE_AUTOQUERY_UPDATE', MDB2_AUTOQUERY_UPDATE);
 
-
-
-$db = new PDO(getDBConnection(),getDBUsername(),getDBPAssword());
+DBConnection::connect();
 
 	?>
