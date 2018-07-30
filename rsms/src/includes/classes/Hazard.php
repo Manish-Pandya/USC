@@ -222,7 +222,7 @@ class Hazard extends GenericCrud {
 		}
 */
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 
 		foreach($this->inspectionRooms as $room){

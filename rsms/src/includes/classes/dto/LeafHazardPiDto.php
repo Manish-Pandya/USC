@@ -31,7 +31,7 @@
 
 	public function getRoomIds(){
 		if($this->roomIds == null){
-			global $db;
+			$db = DBConnection::get();
 			$dao = new GenericDao(new PrincipalInvestigatorHazardRoomRelation());
 			$this->roomIds = $dao->getRoomIdsByPiAndHazarIds($this->getPrincipal_investigator_id(), $this->getHazard_id());
 		}

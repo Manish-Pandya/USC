@@ -194,7 +194,7 @@ class Checklist extends GenericCrud {
 		$LOG->debug("Filtering rooms for checklist: " . $this->getName() . ", key_id " . $this->getKey_id());
 
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		foreach($this->getRooms() as $room){
 			$rooms[] = $room->getKey_id();

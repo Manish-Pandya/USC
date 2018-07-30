@@ -95,7 +95,7 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 
     public function getPiName(){
         if($this->piName == null && $this->principal_investigator_id != null){
-            global $db;
+            $db = DBConnection::get();
             $queryString = "SELECT concat(c.first_name, ' ', c.last_name) as piName
                             FROM principal_investigator_hazard_room a
                             JOIN principal_investigator b

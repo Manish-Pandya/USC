@@ -4757,7 +4757,7 @@ class ActionManager {
         //$this->LOG->trace("$this->logprefix Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
 
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
         $inQuery = implode(',', array_fill(0, count($piIds), '?'));
         $l->fatal($inQuery);
 		//Prepare to query all from the table

@@ -210,7 +210,7 @@ include_once 'RadCrud.php';
     public function getIsPickedUp(){
         $l = Logger::getLogger(__FUNCTION__);
         $this->isPickedUp = false;
-        global $db;
+        $db = DBConnection::get();
 		$queryString = "select a.key_id, a.pickup_date, a.requested_date, a.principal_investigator_id from pickup a
                         left join waste_bag b
                         on b.pickup_id = a.key_id

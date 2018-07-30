@@ -272,7 +272,7 @@ class Room extends GenericCrud {
 			//In addition to the Hazards this room is related to, we also get all hazards that are either the General Hazard or it's SubHazards
 
 			// Get the db connection
-			global $db;
+			$db = DBConnection::get();
 
 			$queryString = "SELECT * FROM hazard WHERE key_id = 9999 OR parent_hazard_id = 9999 ORDER BY parent_hazard_id, order_index";
 			$LOG->debug("query: " . $queryString);
@@ -314,7 +314,7 @@ class Room extends GenericCrud {
 
 		$this->has_hazards = false;
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		$queryString = "SELECT COUNT(*) FROM hazard_room WHERE room_id = " . $this->key_id;
 		$stmt = $db->prepare($queryString);
@@ -353,7 +353,7 @@ class Room extends GenericCrud {
         $branchIds = "1, 10009, 10010, 10016, 2, 10015, 10675, 10422, 10676, 10435";
 
         // Get the db connection
-        global $db;
+        $db = DBConnection::get();
 
         $this->bio_hazards_present = false;
         $this->chem_hazards_present = false;
@@ -437,7 +437,7 @@ class Room extends GenericCrud {
     }
 
     public function getAnimal_facility(){
-        global $db;
+        $db = DBConnection::get();
 
         $queryString = "select count(*)
                         from room a

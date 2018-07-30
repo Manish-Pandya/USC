@@ -64,7 +64,7 @@ class HazardDto {
         $LOG = Logger::getLogger(__CLASS__ );
         $this->isPresent = false;
         // Get the db connection
-        global $db;
+        $db = DBConnection::get();
         $roomIds = implode (',',$this->roomIds);
 
 		$queryString = "SELECT principal_investigator_id, room_id

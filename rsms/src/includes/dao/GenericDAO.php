@@ -53,7 +53,7 @@ class GenericDAO {
 	 */
 	public function doesTableExist(){
 		$tableName = $this->modelObject->getTableName();
-		global $db;
+		$db = DBConnection::get();
 		$result = $db->query("SHOW TABLES LIKE '$tableName'");
 		$tableExists = $result->fetch(PDO::FETCH_NUM) > 0;
 		return $tableExists;
@@ -83,7 +83,7 @@ class GenericDAO {
 		$this->LOG->debug("Looking up entity with keyid '$id'");
 
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		//Prepare to query the table by key_id
 		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ?';
@@ -123,7 +123,7 @@ class GenericDAO {
 		$this->LOG->debug("$this->logprefix Deleting entity with key_id $id");
 
 			// Get the db connection
-			global $db;
+			$db = DBConnection::get();
 
 			//Prepare to delete from the table by key_id
 			$stmt = $db->prepare('DELETE FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ?');
@@ -148,7 +148,7 @@ class GenericDAO {
 		$this->LOG->debug("Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
 
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 		$className = get_class($this);
 
 		//Prepare to query all from the table
@@ -179,7 +179,7 @@ class GenericDAO {
 
     function cacheIfNeeded(GenericCrud $target){
         return;
-        global $db;
+        $db = DBConnection::get();
 
         $id = $target->getKey_id();
         $class = get_class($target);
@@ -241,7 +241,7 @@ class GenericDAO {
 	function getAllWhere( WhereClauseGroup $whereClauseGroup, $junction = "AND", $sortColumn = null ){
 		$this->LOG->debug("getAllWhere");
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 		$className = get_class($this);
 
 		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' ';
@@ -354,7 +354,7 @@ class GenericDAO {
 	 */
 	public function getAllWith(DataRelationship $relationship){
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		// get the relationship parameters needed to build the query
 		$className		= $relationship->getClassName();
@@ -418,7 +418,7 @@ class GenericDAO {
 				AND `waste_type_id` = ?";
 
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 		$stmt = $db->prepare($sql);
 		$stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
         $stmt->bindValue(2, $this->modelObject->getAuthorization()->getIsotope_id());
@@ -449,7 +449,7 @@ class GenericDAO {
                 WHERE `authorization_id` IN (select key_id from authorization where principal_investigator_id = ? AND isotope_id = ?)";
 
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
         if($startDate != null){
             $sql .= " AND (a.arrival_date < ? OR a.transfer_in_date < ?)";
             $stmt = $db->prepare($sql);
@@ -549,7 +549,7 @@ class GenericDAO {
 
 
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 		$stmt = $db->prepare($sql);
 		$stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
         $stmt->bindValue(2, $this->modelObject->getAuthorization()->getIsotope_id());
@@ -581,7 +581,7 @@ class GenericDAO {
 				AND `date_transferred` BETWEEN ? AND ?";
 
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 		$stmt = $db->prepare($sql);
 		$stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
         $stmt->bindValue(2, $this->modelObject->getAuthorization()->getIsotope_id());
@@ -632,7 +632,7 @@ class GenericDAO {
 		}
 
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 		//print_r($db);
 
 		// Check to see if this item has a key_id
@@ -698,7 +698,7 @@ class GenericDAO {
 		if (empty($id)) { return array();}
 
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		// get the relationship parameters needed to build the query
 		$className		= $relationship->getClassName();
@@ -785,7 +785,7 @@ class GenericDAO {
 	function addRelatedItems($key_id, $foreignKey_id, DataRelationship $relationship, $index = null) {
 		$this->LOG->fatal("$this->logprefix Inserting new related item for entity with id=$foreignKey_id and key_id=$key_id");
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		//print_r($relationship);
 		// get the relationship parameters needed to build the query
@@ -830,7 +830,7 @@ class GenericDAO {
 		$this->LOG->debug("$this->logprefix Removing related item for entity with id=$foreignKey_id");
 
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		//print_r($relationship);
 		// get the relationship parameters needed to build the query
@@ -929,7 +929,7 @@ class GenericDAO {
 		$this->LOG->debug("$this->logprefix Looking up entity with keyid $id");
 
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		$user = new User();
 
@@ -1022,7 +1022,7 @@ class GenericDAO {
 		//$this->LOG->trace("$this->logprefix Looking up inspections for $year");
 
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		//Prepare to query all from the table
 		//$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name, pi_name');
@@ -1123,7 +1123,7 @@ class GenericDAO {
 
     function getInspectionsByYear($year){
         //`inspection` where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)
-        global $db;
+        $db = DBConnection::get();
 
 		//Prepare to query all from the table
 		//$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name, pi_name');
@@ -1150,7 +1150,7 @@ class GenericDAO {
 	function getRelationships( RelationMapping $relationship ){
 		$this->LOG->debug("about to get relationships from $tableName");
 
-		global $db;
+		$db = DBConnection::get();
 
 		//sometimes, in many to many relationships, we are asking for what we usually think of as the child objects to get their collection of parents
 		//in those cases, we reverse the relationships
@@ -1182,7 +1182,7 @@ class GenericDAO {
 
 	function getPIsByHazard($rooms = NULL){
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		// get the relationship parameters needed to build the query
 		$hazard = $this->modelObject;
@@ -1228,7 +1228,7 @@ class GenericDAO {
 
 		$this->has_hazards = false;
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		$queryString = "SELECT a.key_id as room_id, a.building_id as building_id, a.name as room_name, c.key_id as pi_key_id, CONCAT(f.first_name, ' ', f.last_name) as pi_name, e.key_id as department_id, e.name as department_name
 						FROM room a
@@ -1253,7 +1253,7 @@ class GenericDAO {
 
 		$this->has_hazards = false;
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		$queryString = "SELECT d.name as department_name, d.is_active as is_active, c.name as campus_name, d.key_id as department_id, d.specialty_lab as specialty_lab, c.key_id as campus_id,
 						count(distinct e.key_id) room_count,
@@ -1280,7 +1280,7 @@ class GenericDAO {
 
 		$this->has_hazards = false;
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		$queryString = "SELECT d.name as department_name, d.is_active as is_active, c.name as campus_name, d.key_id as department_id, d.specialty_lab as specialty_lab, c.key_id as campus_id,
 						count(distinct e.key_id) room_count,
@@ -1304,7 +1304,7 @@ class GenericDAO {
 	}
 
 	public function getDepartmentsByCampusId(){
-		global $db;
+		$db = DBConnection::get();
 
 		$queryString = "SELECT a.key_id as department_id, a.name as department_name, a.is_active, a.specialty_lab,
 						g.name as campus_name, g.key_id as campus_id
@@ -1324,7 +1324,7 @@ class GenericDAO {
 		$LOG = Logger::getLogger(__CLASS__);
         $LOG->fatal($roomIds);
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		//get this pi's rooms
 		if($roomIds == null){
@@ -1384,7 +1384,7 @@ class GenericDAO {
 		$LOG = Logger::getLogger(__CLASS__);
 
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 		$inQuery = implode(',', array_fill(0, count($roomIds), '?'));
 
         $LOG->fatal("yop");
@@ -1420,7 +1420,7 @@ class GenericDAO {
 	}
 
     function getPiHazardRoomsByPiAndHazard($piId, $hazardId){
-        global $db;
+        $db = DBConnection::get();
         $query = "SELECT * from principal_investigator_hazard_room WHERE hazard_id = ? AND principal_investigator_id = ?";
         $stmt = $db->prepare($query);
         $stmt->bindValue(1, $hazardId);
@@ -1437,7 +1437,7 @@ class GenericDAO {
     }
 
     function getPIHazardRoomsByRoomAndHazardIds($roomIds, $hazardId, $piIds){
-        global $db;
+        $db = DBConnection::get();
         $newPiIds = implode(',', array_fill(0, count($piIds), '?'));
         $queryString = "SELECT a.*,
                         concat(c.first_name, ' ', c.last_name) as piName
@@ -1471,7 +1471,7 @@ class GenericDAO {
 
     function getPendingHazardChangeByVerificationAndHazard($hazardId,  $verificationId){
         $l = Logger::getLogger(__FUNCTION__);
-        global $db;
+        $db = DBConnection::get();
         $l->fatal("CALLED");
         $l->fatal($hazardId);
         $l->fatal($verificationId);
@@ -1494,7 +1494,7 @@ class GenericDAO {
 
     function getCurrentInvetoriesByPiId($piId, $authId){
 
-        global $db;
+        $db = DBConnection::get();
 
         $queryString = "SELECT a.principal_investigator_id as principal_investigator_id,
                         b.isotope_id,
@@ -1609,7 +1609,7 @@ class GenericDAO {
 
     public function getIsotopeTotalsReport(){
 		$this->LOG->info('Building Isotope Report');
-        global $db;
+        $db = DBConnection::get();
 
         $queryString = "SELECT iso.name AS isotope_name,
         iso.key_id AS isotope_id,
@@ -1700,7 +1700,7 @@ class GenericDAO {
      *
      */
     public function getCurrentInspectionsByEquipment(Equipment $equipment){
-        global $db;
+        $db = DBConnection::get();
         $queryString = 'select * from equipment_inspection
                         WHERE equipment_class = :class
                         AND equipment_id = :id
@@ -1725,7 +1725,7 @@ class GenericDAO {
     }
 
     public function getEquipmentByPi($id, $equipmentClass){
-        global $db;
+        $db = DBConnection::get();
         $queryString = 'select * from equipment_inspection a
                         left join principal_investigator_equipment_inspection b
                         on a.key_id = b.inspection_id
@@ -1742,7 +1742,7 @@ class GenericDAO {
     }
 
     public function getEquipmentRelations($equipmentTypeId, $piId, $roomId){
-        global $db;
+        $db = DBConnection::get();
         $queryString = 'select * from principal_investigator_hazard_room a
                         left join principal_investigator_equipment_inspection b
                         on a.key_id = b.inspection_id
@@ -1760,7 +1760,7 @@ class GenericDAO {
 
     public function deleteRadData(){
 		$this->LOG->warn("Preparing to delete radiation module data");
-        global $db;
+        $db = DBConnection::get();
         $sql = 'DELETE FROM parcel_use_amount WHERE key_id > 0;
                 DELETE FROM parcel_use WHERE key_id > 0;
                 DELETE FROM waste_bag WHERE key_id > 0;

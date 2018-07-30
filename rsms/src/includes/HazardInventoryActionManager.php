@@ -280,7 +280,7 @@ class HazardInventoryActionManager extends ActionManager {
 			$principalInvestigatorId = $this->getValueFromRequest('piId', $piId);
 		}
 
-        global $db;
+        $db = DBConnection::get();
         $newRoomIds = implode(',', array_fill(0, count($roomIds), '?'));
 
 		$queryString = "SELECT principal_investigator_id
@@ -364,7 +364,7 @@ class HazardInventoryActionManager extends ActionManager {
         $LOG = Logger::getLogger(__CLASS__);
 		$id = $this->getValueFromRequest("id", $id);
         if($id == null)return new ActionError("No Id provided");
-        global $db;
+        $db = DBConnection::get();
 
 		$queryString = "SELECT a.* from biosafety_cabinet a
                         left join  equipment_inspection b

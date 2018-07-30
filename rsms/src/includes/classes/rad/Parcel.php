@@ -287,7 +287,7 @@ class Parcel extends RadCrud {
 	}
 
     public function getAmountOnHand(){
-        global $db;
+        $db = DBConnection::get();
         $totalPickedUp = 0;
 		$queryString = "SELECT ROUND(SUM(a.curie_level),7) from parcel_use_amount a
                         JOIN parcel_use b

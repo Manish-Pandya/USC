@@ -391,7 +391,7 @@ class PrincipalInvestigator extends GenericCrud {
 	}
 	public function getOpenInspections(){
 		// Get the db connection
-		global $db;
+		$db = DBConnection::get();
 
 		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
