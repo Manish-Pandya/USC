@@ -2,6 +2,15 @@
 
 class DBConnection {
 
+    public static function get(){
+        global $db;
+        if( !isset($db) ){
+            connect();
+        }
+
+        return $db;
+    }
+
     public static function connect(){
         LOGGER::getLogger(__CLASS__)->debug("Opening DB connection");
         $GLOBALS['db'] = new PDO(
