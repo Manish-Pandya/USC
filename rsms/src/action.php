@@ -69,6 +69,6 @@ else{
     }
     
 }
-DBConnection::disconnect();
+
 Logger::getRootLogger()->info("END action.php");
 ?>

@@ -78,7 +78,6 @@ if($LOG->isDebugEnabled()){
     $LOG->debug("<<<< $actionResult->statusCode " . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . ' content-length:' . strlen($output));
 }
 
-DBConnection::disconnect();
 Logger::getRootLogger()->info("END ajaxaction.php");
 
 echo $output;
