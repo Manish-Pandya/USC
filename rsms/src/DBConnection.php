@@ -2,21 +2,22 @@
 
 class DBConnection {
 
+    private static $STATEMENTS = array();
+
     public static function get(){
-        global $db;
-        if( !isset($db) ){
-            connect();
+        if( !isset($GLOBALS['db']) ){
+            DBConnection::connect();
         }
 
-        return $db;
+        return $GLOBALS['db'];
     }
 
     public static function connect(){
-        LOGGER::getLogger(__CLASS__)->debug("Opening DB connection");
+        Logger::getLogger(__CLASS__)->debug("Opening DB connection");
         $GLOBALS['db'] = new PDO(
             getDBConnection(),
             getDBUsername(),
-            getDBPAssword(),
+            getDBPassword(),
             array(
                 // Use Connection pooling
                 PDO::ATTR_PERSISTENT => true
@@ -24,21 +25,49 @@ class DBConnection {
         );
 
         // After everything's done, disconnect the connection
-        register_shutdown_function('DBConnection::disconnect');
+        register_shutdown_function(function(){
+            DBConnection::shutdown();
+        });
     }
 
-    public static function disconnect(){
-        global $db;
+    private static function shutdown(){
+        $LOG = Logger::getLogger(__CLASS__);
+        $LOG->debug("Shutdown " . count(self::$STATEMENTS) . " DB statement(s) and connection");
 
-        if( $db != null ){
-            LOGGER::getLogger(__CLASS__)->debug("Closing DB connection");
-            $db = null;
+        $LOG->debug( $GLOBALS['db'] );
+        $LOG->debug( self::$STATEMENTS );
+
+        // Ensure all statements are closed
+        foreach(self::$STATEMENTS as &$stmt){
+            DBConnection::closeStatement($stmt);
         }
+
+        // Close connection
+        if( $GLOBALS['db'] != null ){
+            $LOG->debug("Closing DB connection");
+            $GLOBALS['db'] = null;
+        }
+
+        $LOG->debug( $GLOBALS['db'] );
+        $LOG->debug( self::$STATEMENTS );
     }
 
     public static function closeStatement(&$stmt){
         LOGGER::getLogger(__CLASS__)->debug("Closing statement");
         $stmt = null;
+    }
+
+    public static function &prepareStatement(&$sql){
+        if(!isset($sql)){
+            throw new Exception("No statement provided");
+        }
+
+        $db = DBConnection::get();
+        $stmt = $db->prepare($sql);
+
+        self::$STATEMENTS[] &= $stmt;
+
+        return $stmt;
     }
 }
 ?>
