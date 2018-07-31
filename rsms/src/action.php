@@ -7,12 +7,12 @@
  * The request is treated as a standard, synchronous request.
  */
 ?><?php
-Logger::getRootLogger()->info("START action.php");
 
 //Setup basic action data
 //	$sessionDataSource and $actionName are defined here
 require_once( dirname(__FILE__) . '/action_setup.php');
 session_start();
+Logger::getRootLogger()->info("START action.php");
 $LOG = Logger::getLogger('action');
 
 //$LOG->debug($_SESSION['DESTINATION']);
