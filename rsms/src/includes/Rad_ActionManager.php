@@ -345,6 +345,8 @@ class Rad_ActionManager extends ActionManager {
         $dao = $this->getDao(new PrincipalInvestigator());
         $pis = $dao->getAll();
 
+        $LOG->debug('Read ' . count($pis) . ' PIs from db');
+
         $entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getLabPersonnel");
         $entityMaps[] = new EntityMap("lazy","getRooms");
@@ -366,14 +368,20 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("lazy","getOpenInspections");
         $entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
 
+        $LOG->debug("Filter PIs with no user...");
         foreach($pis as $key => $pi){
+            // Filter out PIs with no User details
             if($pi->getName() == null){
+                $LOG->debug("Remove PI " . $pi->getKey_Id() . " from list; it has no name");
                 unset($pis[$key]);
                 continue;
             }
+
+            // Set entitymaps for future RAD operations
             $pi->setEntityMaps($entityMaps);
         }
 
+        $LOG->debug("Returning " . count($pis) . " PIs");
         return $pis;
 
     }
