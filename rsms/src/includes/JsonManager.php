@@ -301,11 +301,11 @@ class JsonManager {
 	 * @return Array
 	 */
 	public static function callObjectAccessors($object, $overrideEntityMaps = NULL){
-        $LOG = Logger::getLogger(__CLASS__);
-
 		$classname = get_class($object);
 
 		$functions = get_class_methods( $classname);
+
+		$LOG = Logger::getLogger(__CLASS__ . '.' . $classname);
 
 		$LOG->trace("Calling accessors on $classname");
 
@@ -392,7 +392,24 @@ class JsonManager {
 			}
 		}
 
+		if($LOG->isDebugEnabled()){
+			$LOG->debug($merged);
+		}
 		return $merged;
+	}
+
+	public static function extractEntityMapOverrides(&$dataSource){
+		$entityMappingOverrides = null;
+		foreach( array(EntityMap::$TYPE_EAGER, EntityMap::$TYPE_LAZY) as $type){
+			if( array_key_exists($type, $dataSource) ){
+				$overrides = explode(',', $dataSource[$type]);
+				foreach($overrides as $accessor){
+					$entityMappingOverrides[] = new EntityMap($type, $accessor);
+				}
+			}
+		}
+
+		return $entityMappingOverrides;
 	}
 }
 ?>

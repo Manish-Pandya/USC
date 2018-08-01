@@ -7,7 +7,9 @@
  * @author Hoke Currie, GraySail LLC
  */
 class EntityMap {
-	
+	public static $TYPE_EAGER = 'eager';
+	public static $TYPE_LAZY = 'lazy';
+
 	private $loadingType;
 	private $entityAccessor;	
 	
