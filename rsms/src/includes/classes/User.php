@@ -166,7 +166,7 @@ class User extends GenericCrud{
 	public function setSupervisor_id($id){ $this->supervisor_id = $id; }
 
 	public function getSupervisor() {
-		if($this->supervisor === NULL && $this->hasPrimaryKeyValue()) {
+		if($this->supervisor === NULL && $this->hasPrimaryKeyValue() && $this->supervisor_id > 0) {
 			$superDAO = new GenericDAO(new PrincipalInvestigator());
 			$this->supervisor = $superDAO->getById($this->supervisor_id);
 		}
