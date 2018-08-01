@@ -26,6 +26,7 @@ require_once 'MDB2.php';
 	/** Define variable to hold the autoquery-update mode. This is helpful if database modules are changed */
 	//define('DATABASE_AUTOQUERY_UPDATE', MDB2_AUTOQUERY_UPDATE);
 
-DBConnection::connect();
+//No longer necessary; see DBConnection
+//DBConnection::connect();
 
 	?>
