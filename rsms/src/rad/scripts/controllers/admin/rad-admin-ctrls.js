@@ -972,30 +972,9 @@ angular.module('00RsmsAngularOrmApp')
 
     // Wait for RadModels to load
     $rootScope.parcelPromise = $rootScope.radModelsPromise
-
-    // Then additionally load PI and PIAuthorizations
-    .then($q.all(
-        af.getAllPIs(),
-        af.getAllPIAuthorizations()
-    ))
-
-    // Then populate PIs with additional details for this view
-    .then(function () {
-        var i = dataStore.PrincipalInvestigator.length;
-        var allPromises = [];
-        while (i--) {
-            allPromises.push(dataStore.PrincipalInvestigator[i].loadActiveParcels());
-            allPromises.push(dataStore.PrincipalInvestigator[i].loadPurchaseOrders());
-            allPromises.push(dataStore.PrincipalInvestigator[i].loadPIAuthorizations());
-            allPromises.push(dataStore.PrincipalInvestigator[i].loadUser());
-        }
-
-        return $q.all(allPromises);
-    })
-    .then(function(){
-        // Done populating all PIs
-        $scope.pis = dataStore.PrincipalInvestigator;
-    });
+        .then(function(){
+            $scope.pis = dataStore.PrincipalInvestigator;
+        });
 
     $scope.deactivate = function (carboy) {
         var copy = dataStoreManager.createCopy(carboy);
