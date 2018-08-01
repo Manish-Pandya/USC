@@ -302,7 +302,7 @@ class Drum extends RadCrud {
 				$amounts = array_merge($amounts, $cycle->getParcelUseAmounts());
 			}
 		}
-        $LOG->fatal($amounts);
+        $LOG->debug($amounts);
 		$this->contents = $this->sumUsages($amounts);
 		return $this->contents;
 	}

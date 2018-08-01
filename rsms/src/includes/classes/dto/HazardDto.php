@@ -73,7 +73,7 @@ class HazardDto {
                         ON a.principal_investigator_id = b.key_id
                         WHERE b.is_active = 1 AND a.room_id IN ( $roomIds ) group by a.principal_investigator_id";
 
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
         foreach ($roomIds as $k => $id){
 		    $stmt->bindValue(($k+1), $id);
 		}
@@ -103,7 +103,7 @@ class HazardDto {
                         ON c.key_id = a.principal_investigator_id
 						WHERE (c.is_active = 1 OR c.key_id = $this->principal_investigator_id) AND a.hazard_id = $this->hazard_id AND a.room_id IN ($roomIds) AND b.room_id IN($roomIds)";
 
-        $stmt = $db->prepare($queryString);
+        $stmt = DBConnection::prepareStatement($queryString);
         $stmt->execute();
         $piHazardRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
 

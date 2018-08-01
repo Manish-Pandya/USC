@@ -397,7 +397,7 @@ class PrincipalInvestigator extends GenericCrud {
 
 
 		$queryString = "SELECT * FROM inspection WHERE principal_investigator_id =  $this->key_id AND date_closed IS NULL";
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
 			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "Inspection");

@@ -14,9 +14,10 @@
 require_once( dirname(__FILE__) . '/action_setup.php');
 session_start();
 
-Logger::getRootLogger()->info("START ajaxaction.php");
+$rlog = Logger::getLogger('request.ajax.' . $actionName);
 $LOG = Logger::getLogger('ajaxaction.' . $actionName);
-if($LOG->isDebugEnabled()){
+
+if($rlog->isDebugEnabled()){
     $params = "";
     foreach( $dataSource as $key=>$value){
         if( $key == 'action' || $key == 'callback')
@@ -25,7 +26,7 @@ if($LOG->isDebugEnabled()){
         $params .= "[$key : $value] ";
     }
 
-    $LOG->debug('>>>>     ' . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . " $params");
+    $rlog->debug('>>>>     ' . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . " $params");
 }
 
 // Create Dispatcher (based on $_SESSION)
@@ -74,11 +75,9 @@ if($actionResult->statusCode == 302){
 //http_response_code(404);
 
 // Output JSON (with possible callback)
-if($LOG->isDebugEnabled()){
-    $LOG->debug("<<<< $actionResult->statusCode " . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . ' content-length:' . strlen($output));
+if($rlog->isDebugEnabled()){
+    $rlog->debug("<<<< $actionResult->statusCode " . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . ' content-length:' . strlen($output));
 }
-
-Logger::getRootLogger()->info("END ajaxaction.php");
 
 echo $output;
 ?>

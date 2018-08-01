@@ -288,7 +288,7 @@ class HazardInventoryActionManager extends ActionManager {
                         LEFT JOIN principal_investigator b
                         ON a.principal_investigator_id = b.key_id
                         WHERE b.is_active = 1 AND a.room_id IN ( $newRoomIds ) group by a.principal_investigator_id";
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
         foreach ($roomIds as $k => $id){
 		    $stmt->bindValue(($k+1), $id);
 		}
@@ -313,7 +313,7 @@ class HazardInventoryActionManager extends ActionManager {
                         AND a.principal_investigator_id IN ( $newPiIds )
                         AND a.hazard_id = ?";
 
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
         // bindvalue is 1-indexed, so $k+1
 
 		foreach ($roomIds as $k => $id){
@@ -375,7 +375,7 @@ class HazardInventoryActionManager extends ActionManager {
                         AND c.principal_investigator_id = ?
                         AND a.Is_active = 1
                         GROUP BY a.key_id";
-        $stmt = $db->prepare($queryString);
+        $stmt = DBConnection::prepareStatement($queryString);
         $stmt->bindValue(1, $id);
         $stmt->execute();
         $cabs = $stmt->fetchAll(PDO::FETCH_CLASS, "BioSafetyCabinet");

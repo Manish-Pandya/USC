@@ -135,7 +135,7 @@ abstract class Equipment extends GenericCrud{
 
                 //Next, see if there is already an inspection we can infer to to be the next one.
                 $db = DBConnection::get();
-                $query = $db->prepare("select * from equipment_inspection where equipment_id = :id and equipment_class = :class and (date_created > :date OR is_uncertified = 1) ORDER BY key_id DESC");
+                $query = DBConnection::prepareStatement("select * from equipment_inspection where equipment_id = :id and equipment_class = :class and (date_created > :date OR is_uncertified = 1) ORDER BY key_id DESC");
                 $id = (int) $this->key_id;
                 $date = date('Y-m-d H:i:s',strtotime($inspection->getDate_created()));
                 $query->bindParam(":id",$id,PDO::PARAM_INT);

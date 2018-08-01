@@ -305,7 +305,7 @@ class Parcel extends RadCrud {
                         where b.is_active = 1 AND a.parcel_use_id IN(select key_id from parcel_use where parcel_id = ?)
                         AND f.status != 'REQUESTED'";
 
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
         $stmt->bindParam(1,$this->getKey_id(),PDO::PARAM_INT);
 		$stmt->execute();
 		while($sum = $stmt->fetchColumn()){

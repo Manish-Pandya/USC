@@ -276,7 +276,7 @@ class Room extends GenericCrud {
 
 			$queryString = "SELECT * FROM hazard WHERE key_id = 9999 OR parent_hazard_id = 9999 ORDER BY parent_hazard_id, order_index";
 			$LOG->debug("query: " . $queryString);
-			$stmt = $db->prepare($queryString);
+			$stmt = DBConnection::prepareStatement($queryString);
 			$stmt->execute();
 			$generalHazards = $stmt->fetchAll(PDO::FETCH_CLASS, "Hazard");
 			$this->hazards = array_merge($this->hazards, $generalHazards);
@@ -317,7 +317,7 @@ class Room extends GenericCrud {
 		$db = DBConnection::get();
 
 		$queryString = "SELECT COUNT(*) FROM hazard_room WHERE room_id = " . $this->key_id;
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
 		$stmt->execute();
 		$number_of_rows = $stmt->fetchColumn();
 		if($number_of_rows > 0) $this->has_hazards =  true;
@@ -383,7 +383,7 @@ class Room extends GenericCrud {
                         OR a.key_id IN($branchIds) )
                         AND b.room_id = $this->key_id
                         AND c.room_id = $this->key_id";
-        $stmt = $db->prepare($queryString);
+        $stmt = DBConnection::prepareStatement($queryString);
         $stmt->execute();
 
 
@@ -420,7 +420,7 @@ class Room extends GenericCrud {
                         AND a.key_id IN ($hazIds)
                         AND b.room_id = $this->key_id
                         AND c.room_id = $this->key_id";
-        $stmt = $db->prepare($queryString);
+        $stmt = DBConnection::prepareStatement($queryString);
         $stmt->execute();
 
         while($id = $stmt->fetchColumn()){
@@ -445,7 +445,7 @@ class Room extends GenericCrud {
 	                        where principal_investigator_id in (select principal_investigator_id from principal_investigator_department where department_id = 2)
                         )
                         AND a.key_id = $this->key_id";
-        $stmt = $db->prepare($queryString);
+        $stmt = DBConnection::prepareStatement($queryString);
         $stmt->execute();
         $num_rows = $stmt->fetchAll();
         //$l = Logger::getLogger(__FUNCTION__);

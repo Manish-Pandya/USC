@@ -110,8 +110,10 @@ class WasteBag extends Container {
      */
 	public function getPickup() {
 		if($this->pickup === null && $this->hasPrimaryKeyValue()) {
-			$pickupDao = new GenericDAO(new Pickup());
-			$this->pickup = $pickupDao->getById( $this->getPickup_id() );
+			if( $this->getPickup_id() != null ){
+				$pickupDao = new GenericDAO(new Pickup());
+				$this->pickup = $pickupDao->getById( $this->getPickup_id() );
+			}
 		}
 		return $this->pickup;
 	}

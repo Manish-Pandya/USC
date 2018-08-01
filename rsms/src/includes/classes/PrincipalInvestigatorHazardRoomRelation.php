@@ -103,7 +103,7 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
                             JOIN erasmus_user c
                             ON c.key_id = b.user_id
                             AND b.key_id = :piId";
-            $stmt = $db->prepare($queryString);
+            $stmt = DBConnection::prepareStatement($queryString);
             $stmt->bindParam(':piId', $this->principal_investigator_id, PDO::PARAM_INT);
             $stmt->execute();
             while($name = $stmt->fetchColumn()){

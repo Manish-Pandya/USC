@@ -232,7 +232,7 @@ class Hazard extends GenericCrud {
 		$roomIds = implode (',',$rooms);
 		$queryString = "SELECT room_id FROM hazard_room WHERE hazard_id =  $this->key_id AND room_id IN ( $roomIds )";
 		$LOG->debug("query: " . $queryString);
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
 		$stmt->execute();
 		$roomIdsToEval = array();
 		while($roomId = $stmt->fetchColumn()){

@@ -4,7 +4,7 @@ class DBConnection {
 
     private static $STATEMENTS = array();
 
-    public static function get(){
+    public static function &get(){
         if( !isset($GLOBALS['db']) ){
             DBConnection::connect();
         }
@@ -34,8 +34,8 @@ class DBConnection {
         $LOG = Logger::getLogger(__CLASS__);
         $LOG->debug("Shutdown " . count(self::$STATEMENTS) . " DB statement(s) and connection");
 
-        $LOG->debug( $GLOBALS['db'] );
-        $LOG->debug( self::$STATEMENTS );
+        $LOG->trace( $GLOBALS['db'] );
+        $LOG->trace( self::$STATEMENTS );
 
         // Ensure all statements are closed
         foreach(self::$STATEMENTS as &$stmt){
@@ -48,16 +48,15 @@ class DBConnection {
             $GLOBALS['db'] = null;
         }
 
-        $LOG->debug( $GLOBALS['db'] );
-        $LOG->debug( self::$STATEMENTS );
+        $LOG->trace( $GLOBALS['db'] );
+        $LOG->trace( self::$STATEMENTS );
     }
 
     public static function closeStatement(&$stmt){
-        LOGGER::getLogger(__CLASS__)->debug("Closing statement");
         $stmt = null;
     }
 
-    public static function &prepareStatement(&$sql){
+    public static function prepareStatement(&$sql){
         if(!isset($sql)){
             throw new Exception("No statement provided");
         }

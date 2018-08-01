@@ -204,7 +204,7 @@ class Checklist extends GenericCrud {
 
 		$queryString = "SELECT room_id FROM principal_investigator_hazard_room WHERE principal_investigator_id = $piId AND hazard_id = $this->hazard_id AND room_id IN ( $roomIds )";
 		$LOG->debug("query: " . $queryString);
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
 		$stmt->execute();
 		$roomIdsToEval = array();
 		while($roomId = $stmt->fetchColumn()){

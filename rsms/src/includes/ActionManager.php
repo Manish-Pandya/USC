@@ -4764,7 +4764,7 @@ class ActionManager {
 		$sql = "SELECT COUNT(key_id) FROM principal_investigator_hazard_room where room_id = ?
                              AND principal_investigator_id IN($inQuery)";
 		// Query the db and return an array of $this type of object
-        $stmt = $db->prepare($sql);
+        $stmt = DBConnection::prepareStatement($sql);
 
         $stmt->bindValue( 1, $id );
         $i = 2;

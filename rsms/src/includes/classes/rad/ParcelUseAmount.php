@@ -224,7 +224,7 @@ include_once 'RadCrud.php';
                         OR e.carboy_id = d.key_id
                         where e.key_id = ?";
 
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
         $stmt->bindParam(1,$this->key_id,PDO::PARAM_INT);
 		$stmt->execute();
         $pickups = $stmt->fetchAll(PDO::FETCH_CLASS, "Pickup");

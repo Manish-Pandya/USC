@@ -82,14 +82,11 @@ class GenericDAO {
 
 		$this->LOG->debug("Looking up entity with keyid '$id'");
 
-		// Get the db connection
-		$db = DBConnection::get();
-
 		//Prepare to query the table by key_id
 		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ?';
 		$this->LOG->debug("Executing: $sql");
 
-		$stmt = $db->prepare($sql);
+		$stmt = DBConnection::prepareStatement($sql);
 		$stmt->bindParam(1,$id,PDO::PARAM_INT);
 		$stmt->setFetchMode(PDO::FETCH_CLASS, $this->modelClassName);			// Query the db and return one of $this type of object
 		if ($stmt->execute()) {
@@ -97,6 +94,9 @@ class GenericDAO {
 
 			// $result being false indicates no rows returned.
 			if(!$result) {
+				// 'close' the statment
+				$stmt = null;
+
 				$this->LOG->warn("No Rows returned for fetch by ID $id ($sql)");
 				//return;
 				return new ActionError('No rows returned');
@@ -110,6 +110,8 @@ class GenericDAO {
 			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
 		}
 
+		// 'close' the statment
+		$stmt = null;
 		return $result;
 	}
 
@@ -122,11 +124,8 @@ class GenericDAO {
 	function deleteById($id){
 		$this->LOG->debug("$this->logprefix Deleting entity with key_id $id");
 
-			// Get the db connection
-			$db = DBConnection::get();
-
 			//Prepare to delete from the table by key_id
-			$stmt = $db->prepare('DELETE FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ?');
+			$stmt = DBConnection::prepareStatement('DELETE FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ?');
 			$stmt->bindParam(1,$id,PDO::PARAM_INT);
 			if ($stmt->execute()) {
 			// ... otherwise, die and echo the db error
@@ -135,6 +134,10 @@ class GenericDAO {
                 $object = new ModifyError($errorInfo[2], $object);
                 $this->LOG->fatal('Returning ModifyError with message: ' . $object->getMessage());
 			}
+
+			// 'close' the statment
+			$stmt = null;
+
 			return true;
 	}
 
@@ -147,14 +150,12 @@ class GenericDAO {
 
 		$this->LOG->debug("Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
 
-		// Get the db connection
-		$db = DBConnection::get();
 		$className = get_class($this);
 
 		//Prepare to query all from the table
 		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' ' . ($activeOnly ? 'WHERE is_active = 1 ' : '') .
 	        ($sortColumn == NULL ? '' : " ORDER BY  CAST($sortColumn AS UNSIGNED), $sortColumn " . ($sortDescending ? 'DESC' : 'ASC'));
-		$stmt = $db->prepare($sql);
+		$stmt = DBConnection::prepareStatement($sql);
 
 		$this->LOG->debug("Executing: $sql");
 		// Query the db and return an array of $this type of object
@@ -173,6 +174,9 @@ class GenericDAO {
         }
 		*/
 
+		// 'close' the statment
+		$stmt = null;
+
 		$this->LOG->trace("Result: " . count($result));
 		return $result;
 	}
@@ -183,7 +187,7 @@ class GenericDAO {
 
         $id = $target->getKey_id();
         $class = get_class($target);
-        $stmt = $db->prepare("SELECT * FROM dumb_cache WHERE parent_id = '$id' AND parent_class = '$class'");
+        $stmt = DBConnection::prepareStatement("SELECT * FROM dumb_cache WHERE parent_id = '$id' AND parent_class = '$class'");
         // Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
 			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
@@ -196,7 +200,7 @@ class GenericDAO {
         if(count($result) == 0 ){
 
             $value = json_encode(JsonManager::encode($target));
-            $stmt = $db->prepare("INSERT INTO dumb_cache (parent_id, parent_class, cached_value) VALUES ('$id', '$class', '$value');" );
+            $stmt = DBConnection::prepareStatement("INSERT INTO dumb_cache (parent_id, parent_class, cached_value) VALUES ('$id', '$class', '$value');" );
             // Query the db and return an array of $this type of object
             if ($stmt->execute() ) {
                 $this->LOG->fatal('success');
@@ -240,8 +244,7 @@ class GenericDAO {
 	 */
 	function getAllWhere( WhereClauseGroup $whereClauseGroup, $junction = "AND", $sortColumn = null ){
 		$this->LOG->debug("getAllWhere");
-		// Get the db connection
-		$db = DBConnection::get();
+
 		$className = get_class($this);
 
 		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' ';
@@ -311,7 +314,7 @@ class GenericDAO {
         }
 		//Prepare to query all from the table
 		$this->LOG->debug("Executing: $sql");
-		$stmt = $db->prepare($sql);
+		$stmt = DBConnection::prepareStatement($sql);
 
 		$i = 1;
 		foreach($whereClauses as $clause){
@@ -333,6 +336,9 @@ class GenericDAO {
 			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
 			// ... otherwise, generate error message to be returned
 		} else {
+			// 'close' the statment
+			$stmt = null;
+
 			$error = $stmt->errorInfo();
 			$result = new QueryError($error);
 			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
@@ -340,6 +346,9 @@ class GenericDAO {
             return $stmt->debugDumpParams();
 
 		}
+
+		// 'close' the statment
+		$stmt = null;
 
 		$this->LOG->debug("Retrieved " . count($result) . " Results");
 		return $result;
@@ -353,8 +362,6 @@ class GenericDAO {
 	 *  @return Array $result   A bunch of objects of $this->modelObject's type
 	 */
 	public function getAllWith(DataRelationship $relationship){
-		// Get the db connection
-		$db = DBConnection::get();
 
 		// get the relationship parameters needed to build the query
 		$className		= $relationship->getClassName();
@@ -365,7 +372,7 @@ class GenericDAO {
 
 		$sql = "SELECT * FROM " . $modelObject->getTableName() . " WHERE is_active = 1 OR key_id IN(SELECT $foreignKeyName FROM $tableName)";
 
-		$stmt = $db->prepare($sql);
+		$stmt = DBConnection::prepareStatement($sql);
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
@@ -378,7 +385,11 @@ class GenericDAO {
 		}
         foreach($result as $r){
             $this->cacheIfNeeded($r);
-        }
+		}
+		
+		// 'close' the statment
+		$stmt = null;
+
 		return $result;
 	}
 
@@ -417,9 +428,7 @@ class GenericDAO {
 				OR (b.date_transferred BETWEEN ? AND ? AND b.date_transferred != '0000-00-00 00:00:00'))
 				AND `waste_type_id` = ?";
 
-		// Get the db connection
-		$db = DBConnection::get();
-		$stmt = $db->prepare($sql);
+		$stmt = DBConnection::prepareStatement($sql);
 		$stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
         $stmt->bindValue(2, $this->modelObject->getAuthorization()->getIsotope_id());
 		$stmt->bindValue(3, $startDate);
@@ -432,6 +441,10 @@ class GenericDAO {
 		$total = $stmt->fetch(PDO::FETCH_NUM);
 		$sum = $total[0]; // 0 is the first array. here array is only one.
 		//if($sum == NULL)$sum = 0;
+		
+		// 'close' the statment
+		$stmt = null;
+
 		return $sum;
 	}
 
@@ -448,17 +461,15 @@ class GenericDAO {
 				FROM parcel a
                 WHERE `authorization_id` IN (select key_id from authorization where principal_investigator_id = ? AND isotope_id = ?)";
 
-		// Get the db connection
-		$db = DBConnection::get();
         if($startDate != null){
             $sql .= " AND (a.arrival_date < ? OR a.transfer_in_date < ?)";
-            $stmt = $db->prepare($sql);
+            $stmt = DBConnection::prepareStatement($sql);
 
             $stmt->bindValue(3, $startDate);
             $stmt->bindValue(4, $startDate);
 
         }else{
-            $stmt = $db->prepare($sql);
+            $stmt = DBConnection::prepareStatement($sql);
         }
         //$l->fatal($sql);
         //$l->fatal(array($startDate, $this->modelObject));
@@ -499,7 +510,7 @@ class GenericDAO {
                         AND (f.pickup_id IS NOT NULL OR g.pickup_id IS NOT NULL OR h.pickup_id IS NOT NULL ))
 				        OR (b.date_transferred < ? AND b.date_transferred != '0000-00-00 00:00:00'))";
 
-                $stmt = $db->prepare($sql);
+                $stmt = DBConnection::prepareStatement($sql);
                 $stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
                 $stmt->bindValue(2, $this->modelObject->getAuthorization()->getIsotope_id());
                 $stmt->bindValue(3, $startDate);
@@ -515,12 +526,19 @@ class GenericDAO {
             if($sum == NULL)$sum = 0;
 
 
-        }else{
+        }else{		
+			// 'close' the statment
+			$stmt = null;
+
             $error = $stmt->errorInfo();
 			$result = new QueryError($error);
 			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
             return $result;
-        }
+		}
+		
+		// 'close' the statment
+		$stmt = null;
+
 		return $sum;
 	}
 
@@ -549,8 +567,7 @@ class GenericDAO {
 
 
 		// Get the db connection
-		$db = DBConnection::get();
-		$stmt = $db->prepare($sql);
+		$stmt = DBConnection::prepareStatement($sql);
 		$stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
         $stmt->bindValue(2, $this->modelObject->getAuthorization()->getIsotope_id());
 		$stmt->bindValue(3, $startDate);
@@ -561,6 +578,9 @@ class GenericDAO {
 		$total = $stmt->fetch(PDO::FETCH_NUM);
 		$sum = $total[0]; // 0 is the first array. here array is only one.
 		if($sum == NULL)$sum = 0;
+
+		// 'close' the statment
+		$stmt = null;
 
 		return $sum;
 	}
@@ -580,9 +600,7 @@ class GenericDAO {
 				where `parcel_id` in (select key_id from parcel where `authorization_id` IN (select key_id from authorization where principal_investigator_id = ? AND isotope_id = ?)
 				AND `date_transferred` BETWEEN ? AND ?";
 
-		// Get the db connection
-		$db = DBConnection::get();
-		$stmt = $db->prepare($sql);
+		$stmt = DBConnection::prepareStatement($sql);
 		$stmt->bindValue(1, $this->modelObject->getAuthorization()->getPrincipal_investigator_id());
         $stmt->bindValue(2, $this->modelObject->getAuthorization()->getIsotope_id());
 		$stmt->bindValue(3, $startDate);
@@ -593,6 +611,9 @@ class GenericDAO {
 		$total = $stmt->fetch(PDO::FETCH_NUM);
 		$sum = $total[0]; // 0 is the first array. here array is only one.
 		if($sum == NULL)$sum = 0;
+
+		// 'close' the statment
+		$stmt = null;
 
 		return $sum;
 	}
@@ -619,6 +640,9 @@ class GenericDAO {
 		}
 		//else use $object as-is!
 
+		// Get DB Connection
+		$db = DBConnection::get();
+
 		// update the modify timetamp
 		$object->setDate_last_modified(date("Y-m-d H:i:s"));
 
@@ -630,10 +654,6 @@ class GenericDAO {
 			$object->setLast_modified_user_id($_SESSION["USER"]->getKey_id());
 			if($object->getCreated_user_id() == null)$object->setCreated_user_id($_SESSION["USER"]->getKey_id());
 		}
-
-		// Get the db connection
-		$db = DBConnection::get();
-		//print_r($db);
 
 		// Check to see if this item has a key_id
 		//  If it does, we assume it's an existing record and issue an UPDATE
@@ -677,6 +697,9 @@ class GenericDAO {
 			$this->LOG->error('Returning ModifyError with message: ' . $object->getMessage());
 			$this->LOG->fatal($object);
 		}
+		
+		// 'close' the statment
+		$stmt = null;
 
 		// return the updated object
 		return $object;
@@ -696,9 +719,6 @@ class GenericDAO {
 	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumns = null, $activeOnly = false, $activeOnlyRelated = false){
 		$this->LOG->debug("getRelatedItemsById($id, $relationship, $sortColumns, $activeOnly, $activeOnlyRelated)");
 		if (empty($id)) { return array();}
-
-		// Get the db connection
-		$db = DBConnection::get();
 
 		// get the relationship parameters needed to build the query
 		$className		= $relationship->getClassName();
@@ -757,7 +777,7 @@ class GenericDAO {
 		}
 
 		$this->LOG->debug("Executing: $sql");
-		$stmt = $db->prepare($sql);
+		$stmt = DBConnection::prepareStatement($sql);
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
@@ -769,6 +789,9 @@ class GenericDAO {
 			$resultError = new QueryError($error);
 			$this->LOG->error('Returning QueryError with message: ' . $resultError->getMessage());
 		}
+		
+		// 'close' the statment
+		$stmt = null;
 
 		$this->LOG->debug("Retrieved " . count($result) . " results");
 		return $result;
@@ -784,8 +807,6 @@ class GenericDAO {
 	 */
 	function addRelatedItems($key_id, $foreignKey_id, DataRelationship $relationship, $index = null) {
 		$this->LOG->fatal("$this->logprefix Inserting new related item for entity with id=$foreignKey_id and key_id=$key_id");
-		// Get the db connection
-		$db = DBConnection::get();
 
 		//print_r($relationship);
 		// get the relationship parameters needed to build the query
@@ -805,7 +826,7 @@ class GenericDAO {
         }
 		//$this->LOG->trace("Preparing insert statement [$sql]");
 
-		$stmt = $db->prepare($sql);
+		$stmt = DBConnection::prepareStatement($sql);
 		// Bind the params.
 		$stmt->bindParam(":foreignKey_id",$foreignKey_id,PDO::PARAM_INT);
 		$stmt->bindParam(":key_id",$key_id,PDO::PARAM_INT);
@@ -813,11 +834,18 @@ class GenericDAO {
 
 		// Insert the record and return true
 		if ($stmt->execute() ) {
+		
+			// 'close' the statment
+			$stmt = null;
+
 			//$this->LOG->trace( "Inserted new related item with key_id [$key_id]");
 			return true;
 		// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
+
+			// 'close' the statment
+			$stmt = null;
 
 			// create modify error with human readable error message
 			$result = new ModifyError($error[2]);
@@ -829,9 +857,6 @@ class GenericDAO {
 	function removeRelatedItems($key_id, $foreignKey_id, DataRelationship $relationship) {
 		$this->LOG->debug("$this->logprefix Removing related item for entity with id=$foreignKey_id");
 
-		// Get the db connection
-		$db = DBConnection::get();
-
 		//print_r($relationship);
 		// get the relationship parameters needed to build the query
 		$className		= $relationship->getClassName();
@@ -842,17 +867,23 @@ class GenericDAO {
 		$sql = "DELETE FROM $tableName WHERE $foreignKeyName =  :foreignKey_id AND $keyName = :key_id";
 		//$this->LOG->trace("DELETE FROM $tableName WHERE $foreignKeyName =  $foreignKey_id AND $keyName = $key_id");
 
-		$stmt = $db->prepare($sql);
+		$stmt = DBConnection::prepareStatement($sql);
 		// Bind the params.
 		$stmt->bindParam(":foreignKey_id",$foreignKey_id,PDO::PARAM_INT);
 		$stmt->bindParam(":key_id",$key_id,PDO::PARAM_INT);
 
 		// Delete the record and return true
 		if ($stmt->execute() ) {
+			// 'close' the statment
+			$stmt = null;
+
 			//$this->LOG->trace( "Remove related item with key_id [$key_id]");
 			return true;
 		// ... otherwise, generate an error message to be returned
-		} else {
+		} else {		
+			// 'close' the statment
+			$stmt = null;
+
 			$error = $stmt->errorInfo();
 
 			// create modify error with human readable error message
@@ -904,7 +935,7 @@ class GenericDAO {
 
 		//$this->LOG->trace("Preparing insert statement [$sql]");
 
-		$stmt = $db->prepare($sql);
+		$stmt = DBConnection::prepareStatement($sql);
 		//var_export($stmt->queryString);
 		return $stmt;
 	}
@@ -920,21 +951,20 @@ class GenericDAO {
 		$sql = rtrim($sql,",");
 		$sql .= " WHERE key_id = :key_id";
 		$this->LOG->debug("Preparing update statement [$sql]");
-		$stmt = $db->prepare($sql);
+		$stmt = DBConnection::prepareStatement($sql);
 		//var_export($stmt->queryString);
 		return $stmt;
 	}
 
+	// TODO: The following are not generic functions, and should be moved into their own DAO type
+
 	function getUserByUsername($username){
 		$this->LOG->debug("$this->logprefix Looking up entity with keyid $id");
-
-		// Get the db connection
-		$db = DBConnection::get();
 
 		$user = new User();
 
 		//Prepare to query the user table by username
-		$stmt = $db->prepare('SELECT * FROM ' . $user->getTableName() . ' WHERE username = ?');
+		$stmt = DBConnection::prepareStatement('SELECT * FROM ' . $user->getTableName() . ' WHERE username = ?');
 		$stmt->bindParam(1,$username,PDO::PARAM_STR);
 		$stmt->setFetchMode(PDO::FETCH_CLASS, "User");			// Query the db and return one user
 		if ($stmt->execute()) {
@@ -946,6 +976,9 @@ class GenericDAO {
 
 			$result = new QueryError($error[2]);
 		}
+
+		// 'close' the statment
+		$stmt = null;
 
 		return $result;
 	}
@@ -1021,11 +1054,8 @@ class GenericDAO {
     function getNeededInspectionsByYear($year){
 		//$this->LOG->trace("$this->logprefix Looking up inspections for $year");
 
-		// Get the db connection
-		$db = DBConnection::get();
-
 		//Prepare to query all from the table
-		//$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name, pi_name');
+		//$stmt = DBConnection::prepareStatement('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name, pi_name');
         $sql = "select `a`.`key_id` AS `pi_key_id`,
                 concat(`b`.`last_name`,', ',`b`.`first_name`) AS `pi_name`,
                 `d`.`name` AS `building_name`,
@@ -1105,7 +1135,7 @@ class GenericDAO {
                 and (`c`.`building_id` = `d`.`key_id`) and (`d`.`campus_id` = `e`.`key_id`) and (coalesce(year(`g`.`date_started`),
                 `g`.`schedule_year`) = ?) )
                 group by `a`.`key_id`,concat(`b`.`last_name`,', ',`b`.`first_name`),`d`.`name`,`d`.`key_id`,`e`.`name`,`e`.`key_id`,coalesce(year(`g`.`date_started`),`g`.`schedule_year`),`f`.`inspection_id` ORDER BY campus_name, building_name, pi_name";
-        $stmt = $db->prepare($sql);
+        $stmt = DBConnection::prepareStatement($sql);
 		$stmt->bindParam(1,$year,PDO::PARAM_STR);
         $stmt->bindParam(2,$year,PDO::PARAM_STR);
 
@@ -1117,18 +1147,20 @@ class GenericDAO {
 			$error = $stmt->errorInfo();
 			die($error[2]);
 		}
+		
+		// 'close' the statment
+		$stmt = null;
 
 		return $result;
 	}
 
     function getInspectionsByYear($year){
         //`inspection` where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)
-        $db = DBConnection::get();
 
 		//Prepare to query all from the table
-		//$stmt = $db->prepare('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name, pi_name');
+		//$stmt = DBConnection::prepareStatement('SELECT * FROM pi_rooms_buildings WHERE year = ? ORDER BY campus_name, building_name, pi_name');
         $sql = "select * from inspection where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)";
-        $stmt = $db->prepare($sql);
+        $stmt = DBConnection::prepareStatement($sql);
 		$stmt->bindParam(1,$year,PDO::PARAM_STR);
 
 		// Query the db and return an array of $this type of object
@@ -1140,6 +1172,9 @@ class GenericDAO {
 			die($error[2]);
 		}
 
+		// 'close' the statment
+		$stmt = null;
+
 		return $result;
     }
 
@@ -1149,8 +1184,6 @@ class GenericDAO {
 
 	function getRelationships( RelationMapping $relationship ){
 		$this->LOG->debug("about to get relationships from $tableName");
-
-		$db = DBConnection::get();
 
 		//sometimes, in many to many relationships, we are asking for what we usually think of as the child objects to get their collection of parents
 		//in those cases, we reverse the relationships
@@ -1162,7 +1195,7 @@ class GenericDAO {
 			$childColumn  = $relationship->getChildColumn();
 		}
 		$stmt = "SELECT $parentColumn as parentId, $childColumn as childId FROM " . $relationship->getTableName();
-		$stmt = $db->prepare($stmt);
+		$stmt = DBConnection::prepareStatement($stmt);
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
@@ -1176,13 +1209,14 @@ class GenericDAO {
 			$error = $stmt->errorInfo();
 			die($error[2]);
 		}
+		
+		// 'close' the statment
+		$stmt = null;
 
 		return $result;
 	}
 
 	function getPIsByHazard($rooms = NULL){
-		// Get the db connection
-		$db = DBConnection::get();
 
 		// get the relationship parameters needed to build the query
 		$hazard = $this->modelObject;
@@ -1207,7 +1241,7 @@ class GenericDAO {
 			$sql .= " IN(SELECT principal_investigator_id from principal_investigator_room WHERE room_id IN($roomsCSV))";
 		}
 
-		$stmt = $db->prepare($sql);
+		$stmt = DBConnection::prepareStatement($sql);
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {
@@ -1219,6 +1253,9 @@ class GenericDAO {
 			$resultError = new QueryError($error);
 			$this->LOG->error('Returning QueryError with message: ' . $resultError->getMessage());
 		}
+		
+		// 'close' the statment
+		$stmt = null;
 
 		return $result;
 	}
@@ -1227,8 +1264,6 @@ class GenericDAO {
 		$LOG = Logger::getLogger(__CLASS__);
 
 		$this->has_hazards = false;
-		// Get the db connection
-		$db = DBConnection::get();
 
 		$queryString = "SELECT a.key_id as room_id, a.building_id as building_id, a.name as room_name, c.key_id as pi_key_id, CONCAT(f.first_name, ' ', f.last_name) as pi_name, e.key_id as department_id, e.name as department_name
 						FROM room a
@@ -1243,17 +1278,20 @@ class GenericDAO {
 						LEFT JOIN erasmus_user f
 						ON c.user_id = f.key_id
 						ORDER BY a.building_id, c.key_id;";
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
 		$stmt->execute();
-		return $stmt->fetchAll(PDO::FETCH_CLASS, "LocationsDto");
+		$locations = $stmt->fetchAll(PDO::FETCH_CLASS, "LocationsDto");
+		
+		// 'close' the statment
+		$stmt = null;
+
+		return $locations;
 	}
 
 	function getAllDepartmentsAndCounts(){
 		$LOG = Logger::getLogger(__CLASS__);
 
 		$this->has_hazards = false;
-		// Get the db connection
-		$db = DBConnection::get();
 
 		$queryString = "SELECT d.name as department_name, d.is_active as is_active, c.name as campus_name, d.key_id as department_id, d.specialty_lab as specialty_lab, c.key_id as campus_id,
 						count(distinct e.key_id) room_count,
@@ -1270,17 +1308,20 @@ class GenericDAO {
 
 						GROUP BY c.name, d.name
 						ORDER BY d.name, c.name";
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
 		$stmt->execute();
-		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
+		$data = $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
+		
+		// 'close' the statment
+		$stmt = null;
+
+		return $data;
 	}
 
 	function getDepartmentDtoById( $id ){
 		$LOG = Logger::getLogger(__CLASS__);
 
 		$this->has_hazards = false;
-		// Get the db connection
-		$db = DBConnection::get();
 
 		$queryString = "SELECT d.name as department_name, d.is_active as is_active, c.name as campus_name, d.key_id as department_id, d.specialty_lab as specialty_lab, c.key_id as campus_id,
 						count(distinct e.key_id) room_count,
@@ -1297,14 +1338,18 @@ class GenericDAO {
 						WHERE d.key_id = :id
 						GROUP BY c.name, d.name
 						ORDER BY d.name, c.name";
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();
-		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
+		$data = $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
+		
+		// 'close' the statment
+		$stmt = null;
+
+		return $data;
 	}
 
 	public function getDepartmentsByCampusId(){
-		$db = DBConnection::get();
 
 		$queryString = "SELECT a.key_id as department_id, a.name as department_name, a.is_active, a.specialty_lab,
 						g.name as campus_name, g.key_id as campus_id
@@ -1314,24 +1359,27 @@ class GenericDAO {
 						LEFT JOIN principal_investigator_room e ON (b.key_id = e.principal_investigator_id)
 						LEFT JOIN building f ON (e.key_id = e.room_id)
 						LEFT JOIN campus g ON (g.key_id = f.campus_id);";
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
 		//$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();
-		return $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
+		$data = $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDto");
+
+		// 'close' the statement
+		$stmt = null;
+
+		return $data;
 	}
 
 	function getHazardRoomDtosByPIId( $pIId, $roomIds = null ){
 		$LOG = Logger::getLogger(__CLASS__);
         $LOG->fatal($roomIds);
-		// Get the db connection
-		$db = DBConnection::get();
 
 		//get this pi's rooms
 		if($roomIds == null){
 			$roomsQueryString = "SELECT a.key_id as room_id, a.building_id, a.name as room_name, COALESCE(NULLIF(b.alias, ''), b.name) as building_name from room a
 								 LEFT JOIN building b on a.building_id = b.key_id
 								 where a.key_id in (select room_id from principal_investigator_room where principal_investigator_id = :id)";
-			$stmt = $db->prepare($roomsQueryString);
+			$stmt = DBConnection::prepareStatement($roomsQueryString);
 			$stmt->bindParam(':id', $pIId, PDO::PARAM_INT);
 		}else{
             $inQuery = implode(',', array_fill(0, count($roomIds), '?'));
@@ -1340,7 +1388,7 @@ class GenericDAO {
 								 LEFT JOIN building b on a.building_id = b.key_id
 								 where a.key_id IN ";
             $roomsQueryString .= "($inQuery)";
-			$stmt = $db->prepare($roomsQueryString);
+			$stmt = DBConnection::prepareStatement($roomsQueryString);
             foreach($roomIds as $key=>$id){
             	$stmt->bindValue($key+1, $id, PDO::PARAM_INT);
             }
@@ -1348,11 +1396,17 @@ class GenericDAO {
 		if($stmt->execute()){
             $rooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PIHazardRoomDto");
         }else{
+			// 'close' the statement
+			$stmt = null;
+
 			$error = $stmt->errorInfo();
 			$result = new QueryError($error);
 			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
             return $result;
-        }
+		}
+
+		// 'close' the statement
+		$stmt = null;
 
 		$roomIds = array();
 		foreach($rooms as $room){
@@ -1361,9 +1415,12 @@ class GenericDAO {
 
 		//get a dto for every hazard
 		$queryString = "SELECT key_id as hazard_id, order_index, key_id, name as hazard_name, is_equipment, parent_hazard_id as parent_hazard_id, (SELECT EXISTS(SELECT 1 from hazard where parent_hazard_id = hazard_id) ) as hasChildren from hazard WHERE is_active = 1;";
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
 		$stmt->execute();
 		$dtos = $stmt->fetchAll(PDO::FETCH_CLASS, "HazardDto");
+
+		// 'close' the statement
+		$stmt = null;
 
 		foreach($dtos as $dto){
 			$dto->setRoomIds($roomIds);
@@ -1383,8 +1440,6 @@ class GenericDAO {
 	function getPisByHazardAndRoomIDs( $roomIds, $hazardId = null){
 		$LOG = Logger::getLogger(__CLASS__);
 
-		// Get the db connection
-		$db = DBConnection::get();
 		$inQuery = implode(',', array_fill(0, count($roomIds), '?'));
 
         $LOG->fatal("yop");
@@ -1404,7 +1459,7 @@ class GenericDAO {
 		$queryString .= ')';
 
 
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
 		/*
 		if($hazardId != null){
 			$stmt->bindValue(":hazardId", $hazardId, PDO::PARAM_INT);
@@ -1416,13 +1471,15 @@ class GenericDAO {
 		$stmt->execute();
 		$pis = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigator");
 
+		// 'close' the statement
+		$stmt = null;
+
 		return $pis;
 	}
 
     function getPiHazardRoomsByPiAndHazard($piId, $hazardId){
-        $db = DBConnection::get();
         $query = "SELECT * from principal_investigator_hazard_room WHERE hazard_id = ? AND principal_investigator_id = ?";
-        $stmt = $db->prepare($query);
+        $stmt = DBConnection::prepareStatement($query);
         $stmt->bindValue(1, $hazardId);
         $stmt->bindValue(2, $piId);
         if($stmt->execute()){
@@ -1433,11 +1490,13 @@ class GenericDAO {
 			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
 		}
 
+		// 'close' the statement
+		$stmt = null;
+
         return $result;
     }
 
     function getPIHazardRoomsByRoomAndHazardIds($roomIds, $hazardId, $piIds){
-        $db = DBConnection::get();
         $newPiIds = implode(',', array_fill(0, count($piIds), '?'));
         $queryString = "SELECT a.*,
                         concat(c.first_name, ' ', c.last_name) as piName
@@ -1450,7 +1509,7 @@ class GenericDAO {
                         AND a.principal_investigator_id IN ( $newPiIds )
                         AND a.hazard_id = ?";
 
-		$stmt = $db->prepare($queryString);
+		$stmt = DBConnection::prepareStatement($queryString);
         // bindvalue is 1-indexed, so $k+1
 
 		foreach ($roomIds as $k => $id){
@@ -1466,19 +1525,21 @@ class GenericDAO {
         $stmt->execute();
         $piHazRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
 
+		// 'close' the statement
+		$stmt = null;
+
         return $piHazRooms;
     }
 
     function getPendingHazardChangeByVerificationAndHazard($hazardId,  $verificationId){
         $l = Logger::getLogger(__FUNCTION__);
-        $db = DBConnection::get();
         $l->fatal("CALLED");
         $l->fatal($hazardId);
         $l->fatal($verificationId);
 
         $query = "select * from pending_change where hazard_id = ? AND verification_id = ?";
         $l->fatal($query);
-        $stmt = $db->prepare($query);
+        $stmt = DBConnection::prepareStatement($query);
         $stmt->bindValue(1, $hazardId);
         $stmt->bindValue(2, $verificationId);
         if($stmt->execute()){
@@ -1489,12 +1550,14 @@ class GenericDAO {
 			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
 		}
         $l->fatal($result);
+
+		// 'close' the statement
+		$stmt = null;
+
         return $result;
     }
 
     function getCurrentInvetoriesByPiId($piId, $authId){
-
-        $db = DBConnection::get();
 
         $queryString = "SELECT a.principal_investigator_id as principal_investigator_id,
                         b.isotope_id,
@@ -1590,7 +1653,7 @@ class GenericDAO {
                        
                         group by b.isotope_id ,c.name, c.key_id, a.principal_investigator_id";
 
-        $stmt = $db->prepare($queryString);
+        $stmt = DBConnection::prepareStatement($queryString);
 
         $stmt->bindValue(1, $piId);
         $stmt->bindValue(2, $piId);
@@ -1603,13 +1666,16 @@ class GenericDAO {
 
         $stmt->execute();
         $inventories = $stmt->fetchAll(PDO::FETCH_CLASS, "CurrentIsotopeInventoryDto");
+
+		// 'close' the statement
+		$stmt = null;
+
         return $inventories;
 
     }
 
     public function getIsotopeTotalsReport(){
 		$this->LOG->info('Building Isotope Report');
-        $db = DBConnection::get();
 
         $queryString = "SELECT iso.name AS isotope_name,
         iso.key_id AS isotope_id,
@@ -1679,10 +1745,13 @@ class GenericDAO {
 
 		$this->LOG->debug("Executing: $queryString");
 
-        $stmt = $db->prepare($queryString);
+        $stmt = DBConnection::prepareStatement($queryString);
 
         $stmt->execute();
-        $inventories = $stmt->fetchAll(PDO::FETCH_CLASS, "RadReportDTO");
+		$inventories = $stmt->fetchAll(PDO::FETCH_CLASS, "RadReportDTO");
+
+		// 'close' the statement
+		$stmt = null;
 
 		$this->LOG->info(count($inventories) . ' Resulting Isotope Inventories');
 		if($this->LOG->isTraceEnabled()){
@@ -1700,7 +1769,6 @@ class GenericDAO {
      *
      */
     public function getCurrentInspectionsByEquipment(Equipment $equipment){
-        $db = DBConnection::get();
         $queryString = 'select * from equipment_inspection
                         WHERE equipment_class = :class
                         AND equipment_id = :id
@@ -1715,52 +1783,62 @@ class GenericDAO {
 
                         );';
 
-        $stmt = $db->prepare($queryString);
+        $stmt = DBConnection::prepareStatement($queryString);
         $stmt->bindParam(':class', get_class($equipment), PDO::PARAM_STR);
         $stmt->bindParam(':id', $equipment->getKey_id(), PDO::PARAM_INT);
 
         $stmt->execute();
         $currentInspections = $stmt->fetchAll(PDO::FETCH_CLASS, "EquipmentInspection");
+
+		// 'close' the statement
+		$stmt = null;
+
         return $currentInspections;
     }
 
     public function getEquipmentByPi($id, $equipmentClass){
-        $db = DBConnection::get();
         $queryString = 'select * from equipment_inspection a
                         left join principal_investigator_equipment_inspection b
                         on a.key_id = b.inspection_id
                         AND a.equipment_class = :class
                         where b.principal_investigator_id = :id;';
 
-        $stmt = $db->prepare($queryString);
+        $stmt = DBConnection::prepareStatement($queryString);
         $stmt->bindParam(':class',$equipmentClass, PDO::PARAM_STR);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
         $stmt->execute();
         $currentInspections = $stmt->fetchAll(PDO::FETCH_CLASS, "EquipmentInspection");
+
+		// 'close' the statement
+		$stmt = null;
+
         return $currentInspections;
     }
 
     public function getEquipmentRelations($equipmentTypeId, $piId, $roomId){
-        $db = DBConnection::get();
         $queryString = 'select * from principal_investigator_hazard_room a
                         left join principal_investigator_equipment_inspection b
                         on a.key_id = b.inspection_id
                         AND a.equipment_class = :class
                         where b.principal_investigator_id = :id;';
 
-        $stmt = $db->prepare($queryString);
+        $stmt = DBConnection::prepareStatement($queryString);
         $stmt->bindParam(':class',$equipmentClass, PDO::PARAM_STR);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
         $stmt->execute();
         $currentInspections = $stmt->fetchAll(PDO::FETCH_CLASS, "EquipmentInspection");
+
+		// 'close' the statement
+		$stmt = null;
+
         return $currentInspections;
     }
 
     public function deleteRadData(){
 		$this->LOG->warn("Preparing to delete radiation module data");
-        $db = DBConnection::get();
+
         $sql = 'DELETE FROM parcel_use_amount WHERE key_id > 0;
                 DELETE FROM parcel_use WHERE key_id > 0;
                 DELETE FROM waste_bag WHERE key_id > 0;
@@ -1780,11 +1858,16 @@ class GenericDAO {
                 DELETE FROM parcel WHERE key_id > 0;';
 
 		$this->LOG->debug("Executing: $sql");
-        $stmt = $db->prepare($sql);
+        $stmt = DBConnection::prepareStatement($sql);
         if($stmt->execute()){
+			// 'close' the statement
+			$stmt = null;
 			$this->LOG->warn("Radiation data has been deleted");
             return true;
 		}
+
+		// 'close' the statement
+		$stmt = null;
 
 		$this->LOG->error("Failed to delete Radiation data");
         return false;
