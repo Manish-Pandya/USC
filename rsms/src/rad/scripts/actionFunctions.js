@@ -2733,13 +2733,16 @@ angular
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.SolidsContainer));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.OtherWasteContainer));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Room ));
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.PrincipalInvestigator));
+
+                            // Recursively instantiate PIs
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.PrincipalInvestigator, 'PrincipalInvestigator', true));
+
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.DrumWipe));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.DrumWipeTest));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.Drum));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.OtherWasteType));
 
-                            console.log(dataStore);
+                            console.log("Rad models loaded:", dataStore);
                             return dataStore;
                         });
             }
