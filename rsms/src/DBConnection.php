@@ -30,7 +30,7 @@ class DBConnection {
         });
     }
 
-    private static function shutdown(){
+    static function shutdown(){
         $LOG = Logger::getLogger(__CLASS__);
         $LOG->debug("Shutdown " . count(self::$STATEMENTS) . " DB statement(s) and connection");
 
