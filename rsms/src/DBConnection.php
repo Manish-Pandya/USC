@@ -56,7 +56,7 @@ class DBConnection {
         $stmt = null;
     }
 
-    public static function prepareStatement(&$sql){
+    public static function prepareStatement($sql){
         if(!isset($sql)){
             throw new Exception("No statement provided");
         }
