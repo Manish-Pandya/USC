@@ -86,13 +86,20 @@ angular
                 return $rootScope[object.Class + 'Saving'] = genericAPIFactory.save(object, seg, saveChildren)
                     .then(
                     function (returned) {
+                        // Check if this object is already in the datastore
+                        var cached = false;
                         if (object.Key_id && object.api) {
-                            console.log(dataStoreManager.getById(object.Class, object.Key_id))
+                            cached = dataStoreManager.getById(object.Class, object.Key_id);
+                        }
+
+                        if( cached ){
+                            // Update cached entry
                             angular.extend(dataStoreManager.getById(object.Class, object.Key_id), returned.data);
+                            return returned.data;
                         } else {
+                            // Save uncached entry
                             return modelInflatorFactory.instateAllObjectsFromJson(returned.data);
                         }
-                        return returned.data;
                     },
                     function (error) {
                         //object.Name = error;
