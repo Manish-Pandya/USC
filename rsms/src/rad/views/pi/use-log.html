@@ -16,7 +16,7 @@
                     <h3>Usable Activity</h3>
                     <h3>Amount On Hand</h3>
                 </div>
-                <div class="table-row" ng-repeat="parcel in pi.ActiveParcels | parcelsInLab" ng-class="{'inactive':!parcel.Is_active}">
+                <div class="table-row" ng-repeat="parcel in pi.ActiveParcels | parcelsInLab | orderBy:'-AmountOnHand'" ng-class="{'inactive':!parcel.Is_active||parcel.AmountOnHand == 0}">
                     <div>
                         <a ui-sref="parcel-use-log({ pi: pi.Key_id, parcel: parcel.Key_id})" class="btn left btn-info">
                             <i class="icon-list-2"></i>Use log
