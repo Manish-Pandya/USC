@@ -31,8 +31,7 @@ class JsonManager {
 	public static function encode($value, $entityMaps = NULL){
 		$jsonable = JsonManager::buildJsonableValue($value, $entityMaps);
 
-		// RSMS-310: Encode numbers as non-string values in JSON
-		return json_encode($jsonable, JSON_NUMERIC_CHECK);
+		return json_encode($jsonable);
 	}
 
 	/**

@@ -1179,4 +1179,9 @@ angular.module('00RsmsAngularOrmApp')
         $scope.pi = dataStoreManager.getById("PrincipalInvestigator", $stateParams.pi);
         console.log(dataStore);
     }, function () { });
+
+    $scope.getParcelAmountOnHand = function(parcel){
+        // Ensure Number comparison
+        return Number(parcel.AmountOnHand);
+    }
 });
