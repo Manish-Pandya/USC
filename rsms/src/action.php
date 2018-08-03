@@ -12,7 +12,7 @@
 //	$sessionDataSource and $actionName are defined here
 require_once( dirname(__FILE__) . '/action_setup.php');
 session_start();
-Logger::getRootLogger()->info("START action.php");
+Logger::getRootLogger()->debug("START action.php");
 $LOG = Logger::getLogger('action');
 
 //$LOG->debug($_SESSION['DESTINATION']);
@@ -70,5 +70,5 @@ else{
     
 }
 
-Logger::getRootLogger()->info("END action.php");
+Logger::getRootLogger()->debug("END action.php");
 ?>
