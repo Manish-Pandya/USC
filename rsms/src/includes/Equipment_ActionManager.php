@@ -291,7 +291,7 @@ class Equipment_ActionManager extends ActionManager {
 
 		// Write the file
 		if (move_uploaded_file($_FILES['file']['tmp_name'], $filename) != true) {
-			return new ActionError("Directory permissions error for " . UPLOAD_DATA_DIR);
+			return new ActionError("Directory permissions error for " . BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR);
 		}
 
 
@@ -370,7 +370,7 @@ class Equipment_ActionManager extends ActionManager {
 
 		// Write the file
 		if (move_uploaded_file($_FILES['file']['tmp_name'], $filename) != true) {
-			return new ActionError("Directory permissions error for " . UPLOAD_DATA_DIR);
+			return new ActionError("Directory permissions error for " . BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR);
 		}
 
 
@@ -450,7 +450,7 @@ class Equipment_ActionManager extends ActionManager {
 
 		// Write the file
 		if (move_uploaded_file($_FILES['file']['tmp_name'], $filename) != true) {
-			return new ActionError("Directory permissions error for " . UPLOAD_DATA_DIR);
+			return new ActionError("Directory permissions error for " . BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR);
 		}
 
 
