@@ -106,8 +106,8 @@ abstract class Equipment extends GenericCrud{
      * @return EquipmentInspection $inspection;
      **/
     public function conditionallyCreateEquipmentInspection($selectedInspection = null){
-        $l = Logger::getLogger('conditionallyCreateEquipmentInspection?');
-        $l->fatal("here we are now " . $this->frequency);
+        $l = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+        $l->debug("here we are now " . $this->frequency);
         if($this->frequency == null){
             $this->frequency = $selectedInspection->getFrequency() != null ? $selectedInspection->getFrequency() : "Annually";
         }
@@ -117,10 +117,10 @@ abstract class Equipment extends GenericCrud{
 				$inspection = new EquipmentInspection(get_class($this), $this->frequency, $this->getKey_id(), $this->getCertification_date());
             } else {
                 if($selectedInspection == null){
-                    $l->fatal("selected was null");
+                    $l->debug("selected was null");
                     $inspection = $this->grabMostRecentInspection();
                 }else{
-                    $l->fatal("selected was not null");
+                    $l->debug("selected was not null");
                     $inspection  = $selectedInspection;
                 }
 			}
@@ -131,7 +131,7 @@ abstract class Equipment extends GenericCrud{
 			if($inspection->getCertification_date() != null || $inspection->getFail_date() != null) {
                 //first, save the current inspection, because it's likely we've just certifiied it.
                 if($this->getRoomId() != null) $inspection->setRoom_id($this->getRoomId());
-                $l->fatal("going to make a new one");
+                $l->debug("going to make a new one");
 
                 //Next, see if there is already an inspection we can infer to to be the next one.
                 $db = DBConnection::get();
@@ -152,8 +152,8 @@ abstract class Equipment extends GenericCrud{
 
                 if(isset($result) && is_array($result) && get_class($result[0]) == "EquipmentInspection"){
                     $nextInspection = $result[0];
-                    $l->fatal($result);
-                    $l->fatal("here");
+                    $l->debug($result);
+                    $l->debug("here");
                 }else{
                     $nextInspection = clone $inspection;
                     $nextInspection->setCertification_date(null);
@@ -162,10 +162,10 @@ abstract class Equipment extends GenericCrud{
                     $nextInspection->setStatus("PENDING");
                     $nextInspection->setComment(null);
                     $nextInspection->setReport_path(null);
-                    $l->fatal("nah");
+                    $l->debug("nah");
 
                 }
-                $l->fatal($nextInspection);
+                $l->debug($nextInspection);
 
                 $nextInspection->setIs_uncertified(false);
 
@@ -177,8 +177,8 @@ abstract class Equipment extends GenericCrud{
                             $parts = explode("-", $this->getCertification_date());
 
                             $parts[0] = $parts[0]+1;
-                            $l->fatal("DUE DATE OUGHT TO BE:");
-                            $l->fatal(implode("-", $parts));
+                            $l->debug("DUE DATE OUGHT TO BE:");
+                            $l->debug(implode("-", $parts));
                             $nextInspection->setDue_date(implode("-", $parts));
                         }
 
@@ -186,9 +186,9 @@ abstract class Equipment extends GenericCrud{
                         $newCertDate = new DateTime('America/New_York');
                         $newCertDate->setTimeStamp(strtotime($this->getCertification_date()));
                         $newCertDate->modify(('+6 months'));
-                        $l->fatal("DUE DATE OUGHT TO BE:");
-                        $l->fatal($newCertDate);
-                        $l->fatal($this->getCertification_date());
+                        $l->debug("DUE DATE OUGHT TO BE:");
+                        $l->debug($newCertDate);
+                        $l->debug($this->getCertification_date());
                         $nextInspection->setDue_date($newCertDate->format("Y-m-d H:i:s"));
                     }
                 }else{
@@ -208,15 +208,15 @@ abstract class Equipment extends GenericCrud{
                         if($this->frequency == "Annually"){
                             $parts = explode("-", $lastPassingInspection->getCertification_date());
                             $parts[0] = $parts[0]+1;
-                            $l->fatal("DUE DATE OUGHT TO BE:");
-                            $l->fatal(implode("-", $parts));
+                            $l->debug("DUE DATE OUGHT TO BE:");
+                            $l->debug(implode("-", $parts));
                             $nextInspection->setDue_date(implode("-", $parts));
                         }else{
                             $newCertDate = new DateTime('America/New_York');
                             $newCertDate->setTimeStamp(strtotime($lastPassingInspection->getCertification_date()));
                             $newCertDate->modify(('+6 months'));
-                            $l->fatal("DUE DATE OUGHT TO BE:");
-                            $l->fatal($newCertDate);
+                            $l->debug("DUE DATE OUGHT TO BE:");
+                            $l->debug($newCertDate);
                             $nextInspection->setDue_date($newCertDate);
                         }
                     }else{
