@@ -1593,6 +1593,11 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
+    function getAllPIWipes(){
+        $dao = $this->getDao(new PIWipe());
+        return $dao->getAll();
+    }
+
     function getAllPIWipeTests(){
         $dao = $this->getDao(new PIWipeTest());
         return $dao->getAll();
