@@ -242,58 +242,15 @@ class Equipment_ActionManager extends ActionManager {
 
     //upload the document for a BiosafteyProtocol
 	public function uploadReportCertDocument( $id = NULL){
-        $l = Logger::getLogger("upload cert doc");
-       // define(UPLOAD_DATA_DIR, "http://erasmus.graysail.com/rsms/src/biosafety-protocols/protocol-documents");
 		$LOG = Logger::getLogger('Action:' . __function__);
-		//verify that this file is of a type we consider safe
 
-		// Make sure the file upload didn't throw a PHP error
-		if ($_FILES[0]['error'] != 0) {
-			return new ActionError("File upload error.");
-		}
-		/*
-		// Make sure it was an HTTP upload
-		if (!is_uploaded_file($_FILES[$fieldname]['tmp_name'])) {
-			return new ActionError("Not a valid upload method.");
-		}
-		*/
-		//validate the file, make sure it's a .doc or .pdf
-		//check the extension
-		$valid_file_extensions = array("doc","pdf");
-		$file_extension = strtolower( substr( $_FILES['file']["name"], strpos($_FILES['file']["name"], "." ) + 1) ) ;
+		// Process file upload
+		$documentName = $this->uploadDocument();
 
-		if (!in_array($file_extension, $valid_file_extensions)) {
-            $l->fatal("Not a valid file extension: $file_extension");
-			return new ActionError("Not a valid file extension: $file_extension");
-		}else{
-			//make sure the file actually matches the extension, as best we can
-			$finfo = new finfo(FILEINFO_MIME);
-			$type = $finfo->file($_FILES['file']["tmp_name"]);
-			$match = false;
-			foreach($valid_file_extensions as $ext){
-				if(strstr($type, $ext)){
-					$match = true;
-				}
-			}
-			if($match == false){
-				return new ActionError("Not a valid file");
-			}
+		if( $documentName instanceof ActionError){
+			$LOG->error("Error in document upload");
+			return $documentName;
 		}
-
-		// Start by creating a unique filename using timestamp.  If it's
-		// already in use, keep incrementing the timstamp until we find an unused filename.
-		// 99.999% of the time, this should work the first time, but better safe than sorry.
-		$now = time();
-		while(file_exists($filename = BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR . $now.'-'.$_FILES['file']['name']))
-		{
-			$now++;
-		}
-
-		// Write the file
-		if (move_uploaded_file($_FILES['file']['tmp_name'], $filename) != true) {
-			return new ActionError("Directory permissions error for " . BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR);
-		}
-
 
 		/////////////////////////////////////
 		//
@@ -305,74 +262,29 @@ class Equipment_ActionManager extends ActionManager {
 		if($id == NULL){
 			$id = $this->getValueFromRequest('id', $id);
 		}
-		$LOG->debug($filename);
-		//get just the name of the file
-		$name = basename($filename);
 
 		//update the path of that report cert now and save it.
+		$LOG->info("Update EquipmentInspection #$id Report_path: $documentName");
         $protocolDao = $this->getDao( new EquipmentInspection() );
         $protocol = $this->getEquipmentInspectionById( $id );
-        $protocol->setReport_path( $name );
+        $protocol->setReport_path( $documentName );
         $LOG->debug($protocol);
         $protocolDao->save($protocol);
 
 		//return the name of the saved document so that it can be added to the client
-		return $name;
+		return $documentName;
 	}
 
     public function uploadDeconDocument( $id = NULL){
-        $l = Logger::getLogger("upload quote doc");
-        // define(UPLOAD_DATA_DIR, "http://erasmus.graysail.com/rsms/src/biosafety-protocols/protocol-documents");
 		$LOG = Logger::getLogger('Action:' . __function__);
-		//verify that this file is of a type we consider safe
 
-		// Make sure the file upload didn't throw a PHP error
-		if ($_FILES[0]['error'] != 0) {
-			return new ActionError("File upload error.");
-		}
-		/*
-		// Make sure it was an HTTP upload
-		if (!is_uploaded_file($_FILES[$fieldname]['tmp_name'])) {
-        return new ActionError("Not a valid upload method.");
-		}
-         */
-		//validate the file, make sure it's a .doc or .pdf
-		//check the extension
-		$valid_file_extensions = array("doc","pdf");
-		$file_extension = strtolower( substr( $_FILES['file']["name"], strpos($_FILES['file']["name"], "." ) + 1) ) ;
+		// Process file upload
+		$documentName = $this->uploadDocument();
 
-		if (!in_array($file_extension, $valid_file_extensions)) {
-            $l->fatal($file_extension);
-			return new ActionError("Not a valid file extension");
-		}else{
-			//make sure the file actually matches the extension, as best we can
-			$finfo = new finfo(FILEINFO_MIME);
-			$type = $finfo->file($_FILES['file']["tmp_name"]);
-			$match = false;
-			foreach($valid_file_extensions as $ext){
-				if(strstr($type, $ext)){
-					$match = true;
-				}
-			}
-			if($match == false){
-				return new ActionError("Not a valid file");
-			}
+		if( $documentName instanceof ActionError){
+			$LOG->error("Error in document upload");
+			return $documentName;
 		}
-
-		// Start by creating a unique filename using timestamp.  If it's
-		// already in use, keep incrementing the timstamp until we find an unused filename.
-		// 99.999% of the time, this should work the first time, but better safe than sorry.
-		$now = time();
-		while(file_exists($filename = BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR . $now.'-'.$_FILES['file']['name']))
-		{
-			$now++;
-		}
-
-		// Write the file
-		if (move_uploaded_file($_FILES['file']['tmp_name'], $filename) != true) {
-			return new ActionError("Directory permissions error for " . BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR);
-		}
-
 
 		/////////////////////////////////////
 		//
@@ -384,75 +296,30 @@ class Equipment_ActionManager extends ActionManager {
 		if($id == NULL){
 			$id = $this->getValueFromRequest('id', $id);
 		}
-		$LOG->fatal($filename);
-		//get just the name of the file
-		$name = basename($filename);
 
 		//update the path of that report cert now and save it.
+		$LOG->info("Update EquipmentInspection #$id Decon_path: $documentName");
         $protocolDao = $this->getDao( new EquipmentInspection() );
         $protocol = $this->getEquipmentInspectionById( $id );
-        $protocol->setDecon_path( $name );
-        $LOG->fatal($protocol);
+        $protocol->setDecon_path( $documentName );
+        $LOG->debug($protocol);
         $protocolDao->save($protocol);
 
 		//return the name of the saved document so that it can be added to the client
-		return $name;
+		return $documentName;
 	}
 
     //upload the document for a BiosafteyProtocol
 	public function uploadReportQuoteDocument( $id = NULL){
-        $l = Logger::getLogger("upload quote doc");
-        // define(UPLOAD_DATA_DIR, "http://erasmus.graysail.com/rsms/src/biosafety-protocols/protocol-documents");
 		$LOG = Logger::getLogger('Action:' . __function__);
-		//verify that this file is of a type we consider safe
 
-		// Make sure the file upload didn't throw a PHP error
-		if ($_FILES[0]['error'] != 0) {
-			return new ActionError("File upload error.");
-		}
-		/*
-		// Make sure it was an HTTP upload
-		if (!is_uploaded_file($_FILES[$fieldname]['tmp_name'])) {
-        return new ActionError("Not a valid upload method.");
-		}
-         */
-		//validate the file, make sure it's a .doc or .pdf
-		//check the extension
-		$valid_file_extensions = array("doc","pdf");
-		$file_extension = strtolower( substr( $_FILES['file']["name"], strpos($_FILES['file']["name"], "." ) + 1) ) ;
+		// Process file upload
+		$documentName = $this->uploadDocument();
 
-		if (!in_array($file_extension, $valid_file_extensions)) {
-            $l->fatal($file_extension);
-			return new ActionError("Not a valid file extension");
-		}else{
-			//make sure the file actually matches the extension, as best we can
-			$finfo = new finfo(FILEINFO_MIME);
-			$type = $finfo->file($_FILES['file']["tmp_name"]);
-			$match = false;
-			foreach($valid_file_extensions as $ext){
-				if(strstr($type, $ext)){
-					$match = true;
-				}
-			}
-			if($match == false){
-				return new ActionError("Not a valid file");
-			}
+		if( $documentName instanceof ActionError){
+			$LOG->error("Error in document upload");
+			return $documentName;
 		}
-
-		// Start by creating a unique filename using timestamp.  If it's
-		// already in use, keep incrementing the timstamp until we find an unused filename.
-		// 99.999% of the time, this should work the first time, but better safe than sorry.
-		$now = time();
-		while(file_exists($filename = BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR . $now.'-'.$_FILES['file']['name']))
-		{
-			$now++;
-		}
-
-		// Write the file
-		if (move_uploaded_file($_FILES['file']['tmp_name'], $filename) != true) {
-			return new ActionError("Directory permissions error for " . BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR);
-		}
-
 
 		/////////////////////////////////////
 		//
@@ -464,19 +331,17 @@ class Equipment_ActionManager extends ActionManager {
 		if($id == NULL){
 			$id = $this->getValueFromRequest('id', $id);
 		}
-		$LOG->fatal($filename);
-		//get just the name of the file
-		$name = basename($filename);
 
 		//update the path of that report cert now and save it.
+		$LOG->info("Update EquipmentInspection #$id Quote_path: $documentName");
         $protocolDao = $this->getDao( new EquipmentInspection() );
         $protocol = $this->getEquipmentInspectionById( $id );
-        $protocol->setQuote_path( $name );
-        $LOG->fatal($protocol);
+        $protocol->setQuote_path( $documentName );
+        $LOG->debug($protocol);
         $protocolDao->save($protocol);
 
 		//return the name of the saved document so that it can be added to the client
-		return $name;
+		return $documentName;
 	}
 
     public function getAllEquipmentPis(){
@@ -547,6 +412,61 @@ class Equipment_ActionManager extends ActionManager {
         return $rooms;
     }
 
+	function uploadDocument(){
+		$LOG = Logger::getLogger(__CLASS__);
+		//verify that this file is of a type we consider safe
+
+		// Make sure the file upload didn't throw a PHP error
+		if ($_FILES[0]['error'] != 0) {
+			return new ActionError("File upload error.");
+		}
+
+		//validate the file, make sure it's a .doc or .pdf
+		//check the extension
+		$valid_file_extensions = array("doc","pdf");
+		$file_extension = strtolower( substr( $_FILES['file']["name"], strpos($_FILES['file']["name"], "." ) + 1) ) ;
+
+		if (!in_array($file_extension, $valid_file_extensions)) {
+            $LOG->fatal("Not a valid file extension: $file_extension");
+			return new ActionError("Not a valid file extension: $file_extension");
+		}
+		else{
+			//make sure the file actually matches the extension, as best we can
+			$finfo = new finfo(FILEINFO_MIME);
+			$type = $finfo->file($_FILES['file']["tmp_name"]);
+			$match = false;
+			foreach($valid_file_extensions as $ext){
+				if(strstr($type, $ext)){
+					$match = true;
+				}
+			}
+			if($match == false){
+				return new ActionError("Not a valid file");
+			}
+		}
+
+		// Start by creating a unique filename using timestamp.  If it's
+		// already in use, keep incrementing the timstamp until we find an unused filename.
+		// 99.999% of the time, this should work the first time, but better safe than sorry.
+		$now = time();
+		while(file_exists($filename = BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR . $now.'-'.$_FILES['file']['name']))
+		{
+			$now++;
+		}
+
+		// Write the file
+		if (move_uploaded_file($_FILES['file']['tmp_name'], $filename) != true) {
+			return new ActionError("Directory permissions error for " . BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR);
+		}
+
+		$LOG->info("Saved document: $filename");
+
+		//get just the name of the file
+		$name = basename($filename);
+
+		//return the name of the saved document
+		return $name;
+	}
 }
 
 ?>
