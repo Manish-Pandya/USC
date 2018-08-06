@@ -119,11 +119,11 @@ class Equipment_ActionManager extends ActionManager {
                 $decodedObject->setKey_id($cabinet->getKey_id());
 
                 $inspection = $decodedObject->conditionallyCreateEquipmentInspection($insp);
-                $LOG->fatal($inspection);
+                $LOG->debug($inspection);
                 $pis = $inspection->getPrincipalInvestigators();
                 //if the inspection already exists, remove its PIs first, then add the relevant ones
                 if($decodedObject->getSelectedInspection() != null && $inspection != null){
-                    $LOG->fatal("we found an inspection");
+                    $LOG->debug("we found an inspection");
 
                     $piHazRoomDao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation());
 
@@ -263,8 +263,8 @@ class Equipment_ActionManager extends ActionManager {
 		$file_extension = strtolower( substr( $_FILES['file']["name"], strpos($_FILES['file']["name"], "." ) + 1) ) ;
 
 		if (!in_array($file_extension, $valid_file_extensions)) {
-            $l->fatal($file_extension);
-			return new ActionError("Not a valid file extension");
+            $l->fatal("Not a valid file extension: $file_extension");
+			return new ActionError("Not a valid file extension: $file_extension");
 		}else{
 			//make sure the file actually matches the extension, as best we can
 			$finfo = new finfo(FILEINFO_MIME);
@@ -305,7 +305,7 @@ class Equipment_ActionManager extends ActionManager {
 		if($id == NULL){
 			$id = $this->getValueFromRequest('id', $id);
 		}
-		$LOG->fatal($filename);
+		$LOG->debug($filename);
 		//get just the name of the file
 		$name = basename($filename);
 
@@ -313,7 +313,7 @@ class Equipment_ActionManager extends ActionManager {
         $protocolDao = $this->getDao( new EquipmentInspection() );
         $protocol = $this->getEquipmentInspectionById( $id );
         $protocol->setReport_path( $name );
-        $LOG->fatal($protocol);
+        $LOG->debug($protocol);
         $protocolDao->save($protocol);
 
 		//return the name of the saved document so that it can be added to the client

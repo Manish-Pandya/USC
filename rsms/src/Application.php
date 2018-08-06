@@ -158,7 +158,7 @@ function isIBCEnabled(){
 
 
 if( !array_key_exists('HTTP_REFERER', $_SERVER)){
-	Logger::getRootLogger()->info("No HTTP_REFERER. adding empty value");
+	Logger::getRootLogger()->debug("No HTTP_REFERER. adding empty value");
 	$_SERVER['HTTP_REFERER'] = '';
 }
 
