@@ -1123,6 +1123,10 @@ angular.module('00RsmsAngularOrmApp')
         });
     };
     $scope.getCycles = function (cycles) {
+        if(!cycles){
+            return [];
+        }
+
         return cycles.filter(function (c) { return c.Status == Constants.CARBOY_USE_CYCLE.STATUS.IN_USE; });
     };
     $scope.getHighestAmendmentNumber = function (amendments, selected) {
@@ -1236,6 +1240,10 @@ angular.module('00RsmsAngularOrmApp')
     Auth.Conditions = mapConditions(Auth.Conditions);
     $scope.auth = Auth;
     var filterConditions = function (conditions, auth) {
+        if( !conditions ){
+            return [];
+        }
+
         return conditions.filter(function (c) {
             console.log(auth.Conditions, !convenienceMethods.arrayContainsObject(auth.Conditions, c));
             return !convenienceMethods.arrayContainsObject(auth.Conditions, c);
@@ -1958,6 +1966,10 @@ angular.module('00RsmsAngularOrmApp')
     var getParcels = function () {
         return af.getAllParcels()
             .then(function (parcels) {
+                if( !parcels ){
+                    parcels = dataStoreManager.get('Parcel');
+                }
+
             var i = parcels.length;
             while (i--) {
                 parcels[i].loadPrincipalInvestigator();
