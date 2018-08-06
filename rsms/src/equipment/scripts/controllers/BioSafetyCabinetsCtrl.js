@@ -439,9 +439,14 @@ angular.module('EquipmentModule')
         inspection[reportType] = null;
         return $rootScope.saving = $q.all([DataStoreManager.save(inspection)]).then(function (i) { console.log(i); return inspection; });
     };
-    $scope.close = function () {
+    $scope.close = function (inspection) {
         $rootScope.modalClosed = true;
-        $modalInstance.dismiss();
+        // Inspection was already saved, but we need to update the object to which the UI is bound!
+        return $rootScope.saving = $q.all([DataStoreManager.commitToActualModel(inspection)])
+            .then(function (i) {
+                $modalInstance.close(inspection);
+                return inspection;
+            });
     };
 })
     .controller('BioSafetyCabinetsHistoryModalCtrl', function ($scope, $q, $modal, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
