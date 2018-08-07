@@ -84,23 +84,26 @@ angular.module('radValidationFunctionsModule', [
             // Validate raw values
             var total = 0;
             use.ParcelUseAmounts.forEach(amt => {
+                // validate value as a number
+                var value = parseFloat(amt.Curie_level);
+
                 // is number
-                if( isNaN(amt.Curie_level) ){
+                if( isNaN(value) ){
                     // Not a number...
                     validUsages.isValid = false;
                     validUsages.error = "Values must be numeric.";
                 }
-                else if( amt.Curie_level < 0 ){
+                else if( value < 0 ){
                     // Zero or negative
                     validUsages.isValid = false;
                     validUsages.error = "Values must be positive.";
                 }
-                else if( amt.Curie_level > use.Quantity){
+                else if( value > use.Quantity){
                     validUsages.isValid = false;
                     validUsages.error = "Values cannot exceed the usage Amount.";
                 }
                 else{
-                    total += parseFloat(amt.Curie_level);
+                    total += value;
                 }
             });
 
