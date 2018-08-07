@@ -115,6 +115,8 @@ angular.module('00RsmsAngularOrmApp')
     $scope.constants = Constants;
     $scope.af = af;
     $scope.modalData = af.getModalData();
+    $scope.errors = {};
+
     $scope.getHighestAuth = function (pi) {
         if (pi.Pi_authorization && pi.Pi_authorization.length) {
             var auths = _.sortBy(pi.Pi_authorization, [function (amendment) {
@@ -131,6 +133,11 @@ angular.module('00RsmsAngularOrmApp')
             Principal_investigator_id: $scope.modalData.pi.Key_id
         };
     }
+
+    $scope.onSelectAuthorization = function(){
+        $scope.findRelevantInventory($scope.modalData.ParcelCopy, $scope.modalData.pi);
+        $scope.checkMaxOrder($scope.modalData.ParcelCopy);
+    };
 
     /**
      * Finds the most recent isotope inventory from the modaldata's PI
@@ -162,7 +169,7 @@ angular.module('00RsmsAngularOrmApp')
         $scope.modalData.ParcelCopy.Room_id = $scope.modalData.ParcelCopy.Room.Key_id;
     };
     $scope.checkMaxOrder = function (parcel) {
-        $scope.quantityExceeded = false;
+        $scope.errors.quantityExceeded = true;
 
         // Ensure relevant inventory has been set
         if( !$scope.relevantInventory ){
@@ -177,16 +184,20 @@ angular.module('00RsmsAngularOrmApp')
 
             console.debug("Validate requested order of " + req + " against max of " + max);
 
-            if (max < req) {
+            if (isNaN(req) ){
+                // must be a number...
+                $scope.errors.quantityExceeded = true;
+            }
+            else if (max < req) {
                 // Cannot request more than maximum
-                $scope.quantityExceeded = false;
+                $scope.errors.quantityExceeded = true;
             }
             else if (req <= 0){
                 // Cannot request less than or equal to zero
-                $scope.quantityExceeded = false;
+                $scope.errors.quantityExceeded = true;
             }
             else {
-                $scope.quantityExceeded = true;
+                $scope.errors.quantityExceeded = false;
             }
         }
         else if(parcel.Authorization_id !== undefined){
@@ -196,16 +207,21 @@ angular.module('00RsmsAngularOrmApp')
             console.error("No current inventories (" + invs + ") match Authorization ID " + parcel.Authorization_id);
 
             // TODO: Provide a better error message
-            $scope.quantityExceeded = false;
+            $scope.errors.quantityExceeded = true;
         }
         // else no auth has been selected
-        return $scope.quantityExceeded;
+        return $scope.errors.quantityExceeded;
 
     };
 
     $scope.validateOrder = function(parcel){
-        // TODO: Validate other fields: Purchase Order, Catalog Number, Chemical compound, Comments?
-        return parcel && !$scope.quantityExceeded;
+        var valid = parcel
+            && !$scope.errors.quantityExceeded
+            && parcel.Purchase_order_id != null
+            && parcel.Authorization_id != null
+            && !_.isEmpty(parcel.Catalog_number)
+            && !_.isEmpty(parcel.Chemical_compound);
+        return valid;
     };
 
     $scope.saveParcel = function (pi, copy, parcel) {

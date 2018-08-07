@@ -4,7 +4,7 @@
 
 <div class="modal-body">
       <div class="control-group">
-        <label class="control-label" for="inputEmail">Purchase Order</label>
+        <label class="control-label" for="inputEmail" ng-class="{'red' : !modalData.ParcelCopy.Purchase_order_id}">Purchase Order</label>
         <div class="controls">
             <select data-ng-change="selectPO()" data-ng-options="po.Key_id as po.Purchase_order_number for po in modalData.pi.PurchaseOrders | activeOnly" data-ng-model="modalData.ParcelCopy.Purchase_order_id">
                 <option value="">Select a Purchase Order</option>
@@ -20,16 +20,16 @@
     </div>
 -->
     <div class="control-group">
-        <label class="control-label" for="inputEmail">Catalog Number</label>
+        <label class="control-label" for="inputEmail" ng-class="{'red' : !modalData.ParcelCopy.Catalog_number}">Catalog Number</label>
         <div class="controls input-append">
             <input ng-model="modalData.ParcelCopy.Catalog_number" />
         </div>
     </div>
 
     <div class="control-group">
-        <label class="control-label">Isotope</label>
+        <label class="control-label" ng-class="{'red' : !modalData.ParcelCopy.Authorization_id}">Isotope</label>
         <div class="controls">
-            <select data-ng-model="modalData.ParcelCopy.Authorization_id" ng-options="auth.Key_id as (auth.Isotope.Name + ':   (' + auth.Form + ')') for auth in getHighestAuth(modalData.pi).Authorizations" ng-change="selectAuth(); findRelevantInventory(modalData.ParcelCopy, modalData.pi);">
+            <select data-ng-model="modalData.ParcelCopy.Authorization_id" ng-options="auth.Key_id as (auth.Isotope.Name + ':   (' + auth.Form + ')') for auth in getHighestAuth(modalData.pi).Authorizations" ng-change="onSelectAuthorization()">
                 <option selected="selected" value="">Select an authorization</option>
             </select>
         </div>
@@ -40,12 +40,12 @@
         <div class="controls input-append">
             <input ng-disabled="!modalData.ParcelCopy.Authorization_id" ng-model="modalData.ParcelCopy.Quantity" ng-change="checkMaxOrder(modalData.ParcelCopy)"/><span class="add-on">mCi</span>
             <span ng-if="!modalData.ParcelCopy.Authorization_id" class="help-block red">Please select an authorization.</span>
-            <span ng-if="relevantInventory" ng-class="{'red' : quantityExceeded}" class="help-block">You can order up to {{relevantInventory.Max_order}}mCi of {{relevantInventory.Isotope_name}}.</span>
+            <span ng-if="relevantInventory" ng-class="{'red' : errors.quantityExceeded}" class="help-block">You can order up to {{relevantInventory.Max_order}}mCi of {{relevantInventory.Isotope_name}}.</span>
         </div>
     </div>
 
     <div class="control-group">
-        <label class="control-label" for="inputEmail">Chemical Compound</label>
+        <label class="control-label" for="inputEmail" ng-class="{'red' : !modalData.ParcelCopy.Chemical_compound}">Chemical Compound</label>
         <div class="controls input-append">
             <input ng-model="modalData.ParcelCopy.Chemical_compound" />
         </div>
@@ -61,6 +61,6 @@
 
 </div>
 <div class="modal-footer">
-    <button ng-disabled="validateOrder(modalData.ParcelCopy)" class="btn btn-large btn-success left" ng-click="saveParcel(modalData.ParcelCopy, modalData.Parcel, modalData.pi)"><i class="icon-checkmark"></i>Save</button>
+    <button ng-disabled="!validateOrder(modalData.ParcelCopy)" class="btn btn-large btn-success left" ng-click="saveParcel(modalData.ParcelCopy, modalData.Parcel, modalData.pi)"><i class="icon-checkmark"></i>Save</button>
     <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
 </div>
