@@ -131,27 +131,83 @@ angular.module('00RsmsAngularOrmApp')
             Principal_investigator_id: $scope.modalData.pi.Key_id
         };
     }
+
+    /**
+     * Finds the most recent isotope inventory from the modaldata's PI
+     * @param {Parcel} parcel
+     */
+    $scope.findRelevantInventory = function(parcel, pi){
+        if( !parcel ){
+            // No parcel to check, so no inventory to find
+            $scope.relevantInventory = null;
+            return;
+        }
+
+        console.debug("Find relevant inventory for parcel " + parcel.Authorization_id);
+
+        // Find the relevant inventory
+        var i = pi.CurrentIsotopeInventories.length;
+        while (i--) {
+            if (pi.CurrentIsotopeInventories[i].Authorization_id == parcel.Authorization_id) {
+                $scope.relevantInventory = pi.CurrentIsotopeInventories[i];
+                break;
+            }
+        }
+
+        console.debug("Relevant Inventory for " + parcel.Authorization_id + ": ", $scope.relevantInventory);
+        return $scope.relevantInventory;
+    };
+
     $scope.selectRoom = function () {
         $scope.modalData.ParcelCopy.Room_id = $scope.modalData.ParcelCopy.Room.Key_id;
     };
     $scope.checkMaxOrder = function (parcel) {
         $scope.quantityExceeded = false;
-        var pi = $scope.modalData.pi;
-        var i = pi.CurrentIsotopeInventories.length;
-        while (i--) {
-            if (pi.CurrentIsotopeInventories[i].Authorization_id == parcel.Authorization_id) {
-                console.log(pi.CurrentIsotopeInventories[i].Max_order);
-                if (parseFloat(pi.CurrentIsotopeInventories[i].Max_order) < parseFloat(parcel.Quantity)) {
-                    $scope.relevantInventory = pi.CurrentIsotopeInventories[i];
-                    return false;
-                }
-                else {
-                    return true;
-                }
+
+        // Ensure relevant inventory has been set
+        if( !$scope.relevantInventory ){
+            $scope.findRelevantInventory(parcel, $scope.modalData.pi);
+        }
+
+        // Aggressively ensure that this is validated against the correct authorization/relevantInventory
+        if( $scope.relevantInventory && $scope.relevantInventory.Authorization_id == parcel.Authorization_id){
+            // Validate request against relevant inventory
+            var max = parseFloat($scope.relevantInventory.Max_order);
+            var req = parseFloat(parcel.Quantity);
+
+            console.debug("Validate requested order of " + req + " against max of " + max);
+
+            if (max < req) {
+                // Cannot request more than maximum
+                $scope.quantityExceeded = false;
+            }
+            else if (req <= 0){
+                // Cannot request less than or equal to zero
+                $scope.quantityExceeded = false;
+            }
+            else {
+                $scope.quantityExceeded = true;
             }
         }
-        return true;
+        else if(parcel.Authorization_id !== undefined){
+            // No relevant inventory was matched to the auth ID!
+            var invs = "";
+            $scope.modalData.pi.CurrentIsotopeInventories.forEach(inv=>invs += inv.Authorization_id + ',');
+            console.error("No current inventories (" + invs + ") match Authorization ID " + parcel.Authorization_id);
+
+            // TODO: Provide a better error message
+            $scope.quantityExceeded = false;
+        }
+        // else no auth has been selected
+        return $scope.quantityExceeded;
+
     };
+
+    $scope.validateOrder = function(parcel){
+        // TODO: Validate other fields: Purchase Order, Catalog Number, Chemical compound, Comments?
+        return parcel && !$scope.quantityExceeded;
+    };
+
     $scope.saveParcel = function (pi, copy, parcel) {
         af.deleteModalData();
         af.saveParcel(pi, copy, parcel).
