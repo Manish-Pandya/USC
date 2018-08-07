@@ -2,7 +2,7 @@
 angular.module('radValidationFunctionsModule', [
     'convenienceMethodWithRoleBasedModule'
 ])
-    .factory('parcelUseValidationFactory', function parcelUseValidationFactory($rootScope, convenienceMethods){
+    .factory('parcelUseValidationFactory', function parcelUseValidationFactory($rootScope, convenienceMethods, roleBasedFactory){
         var parcelUseValidationFactory = {};
 
         parcelUseValidationFactory.getAvailableQuantityForUseValidation = function(parcel, use){
@@ -163,7 +163,7 @@ angular.module('radValidationFunctionsModule', [
                 .sort(function (a, b) { return a.Pickup_date > b.Pickup_date; })[0];
 
             if (pu && convenienceMethods.dateIsBefore(usageDate, convenienceMethods.getDateString(pu.Pickup_date).formattedString)) {
-                validDate.error += "The date you entered is before your most recent pickup. If you need to make changes to uses that have already been picked up, please contact RSO.<br>";
+                validDate.error = "The date you entered is before your most recent pickup. If you need to make changes to uses that have already been picked up, please contact RSO.<br>";
                 validDate.isValid = false;
                 if (roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]])) {
                     var mi = $modal.open({
