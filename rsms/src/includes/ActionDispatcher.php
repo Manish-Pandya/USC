@@ -259,6 +259,11 @@ class ActionDispatcher {
         $result->destinationPage = $actionMapping->success_page;
         $result->statusCode = $actionMapping->success_code;
 
+        // If our result is an ActionError with a nonzero status, override the status code
+        if( $result->actionFunctionResult instanceof ActionError && $result->actionFunctionResult->getStatusCode() > 0){
+            $result->statusCode = $result->actionFunctionResult->getStatusCode();
+        }
+
         $this->LOG->debug("Dispatching success. Code=$result->statusCode | Page=$result->destinationPage");
     }
 

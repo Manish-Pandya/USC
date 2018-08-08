@@ -433,7 +433,7 @@ class Equipment_ActionManager extends ActionManager {
 
 		if (!array_key_exists($file_extension, $valid_file_types)) {
             $LOG->fatal("Not a valid file extension: $file_extension");
-			return new ActionError("Not a valid file extension: $file_extension");
+			return new ActionError("Not a valid file extension: $file_extension", 415);
 		}
 		else{
 			//make sure the file actually matches the extension, as best we can
@@ -454,7 +454,7 @@ class Equipment_ActionManager extends ActionManager {
             }
 
 			if($match == false){
-				return new ActionError("Not a valid file");
+				return new ActionError("Not a valid file", 415);
 			}
 		}
 
