@@ -87,8 +87,8 @@ class DtoManager {
 			else{
 				//Generated function cannot be called on the given object.
 				
-				//Warn that the function does not exist
-				$LOG->warn("Cannot set field '$fieldName' on name '$prefixName' - No such function: '$setterName' on class " . get_class($baseObject));
+				//Log that the function does not exist
+				$LOG->debug("Cannot set field '$fieldName' on name '$prefixName' - No such function: '$setterName' on class " . get_class($baseObject));
 			}
 		}
 		
