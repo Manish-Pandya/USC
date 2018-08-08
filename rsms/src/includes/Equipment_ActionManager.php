@@ -421,12 +421,17 @@ class Equipment_ActionManager extends ActionManager {
 			return new ActionError("File upload error.");
 		}
 
-		//validate the file, make sure it's a .doc or .pdf
+        //validate the file, make sure it's a .doc or .pdf
+        $valid_file_types = array(
+            'pdf'  => 'application/pdf',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'doc'  => 'application/msword',
+        );
+
 		//check the extension
-		$valid_file_extensions = array("doc","docx","pdf");
 		$file_extension = strtolower( substr( $_FILES['file']["name"], strpos($_FILES['file']["name"], "." ) + 1) ) ;
 
-		if (!in_array($file_extension, $valid_file_extensions)) {
+		if (!array_key_exists($file_extension, $valid_file_types)) {
             $LOG->fatal("Not a valid file extension: $file_extension");
 			return new ActionError("Not a valid file extension: $file_extension");
 		}
@@ -434,12 +439,20 @@ class Equipment_ActionManager extends ActionManager {
 			//make sure the file actually matches the extension, as best we can
 			$finfo = new finfo(FILEINFO_MIME);
 			$type = $finfo->file($_FILES['file']["tmp_name"]);
-			$match = false;
-			foreach($valid_file_extensions as $ext){
-				if(strstr($type, $ext)){
+            $match = false;
+            $LOG->debug("Checking file type '$type' against our valid extensions");
+			foreach($valid_file_types as $ext => $mime){
+				if(strstr($type, $mime)){
 					$match = true;
-				}
-			}
+                }
+
+                $LOG->trace("$type = $mime" . ($match ? ' : MATCHED' : ''));
+
+                if($match){
+                    break;
+                }
+            }
+
 			if($match == false){
 				return new ActionError("Not a valid file");
 			}
