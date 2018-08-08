@@ -423,7 +423,7 @@ class Equipment_ActionManager extends ActionManager {
 
 		//validate the file, make sure it's a .doc or .pdf
 		//check the extension
-		$valid_file_extensions = array("doc","pdf");
+		$valid_file_extensions = array("doc","docx","pdf");
 		$file_extension = strtolower( substr( $_FILES['file']["name"], strpos($_FILES['file']["name"], "." ) + 1) ) ;
 
 		if (!in_array($file_extension, $valid_file_extensions)) {
