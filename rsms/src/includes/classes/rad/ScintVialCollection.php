@@ -132,7 +132,7 @@ class ScintVialCollection extends Container{
 	}
 
 	public function getPickup() {
-		if($this->pickup === null && $this->hasPrimaryKeyValue()) {
+		if($this->pickup === null && $this->hasPrimaryKeyValue() && $this->getPickup_id() != null ) {
 			$pickupDao = new GenericDAO(new Pickup());
 			$this->pickup = $pickupDao->getById( $this->getPickup_id() );
 		}
