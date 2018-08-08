@@ -406,6 +406,8 @@ angular.module('EquipmentModule')
         var formData = data.formData;
         data.clickTarget.Is_active = false;
         var insp = data.clickTarget;
+        $scope.uploading = true;
+        $scope.uploadError = undefined;
         insp.reportUploaded = false;
         insp.reportUploading = true;
         $scope.$apply();
@@ -416,9 +418,12 @@ angular.module('EquipmentModule')
         xhr.open('POST', url, true);
         xhr.send(formData);
         xhr.onreadystatechange = function () {
-            if (xhr.readyState !== XMLHttpRequest.DONE || xhr.status !== 200) {
+            if (xhr.readyState !== XMLHttpRequest.DONE ) {
                 return;
             }
+
+            $scope.uploading = false;
+
             if (xhr.status == 200) {
                 insp.reportUploaded = true;
                 insp.reportUploading = false;
@@ -431,8 +436,15 @@ angular.module('EquipmentModule')
                 else {
                     insp.Report_path = xhr.responseText.replace(/['"]+/g, '');
                 }
-                $scope.$apply();
             }
+            else if (xhr.status == 415) {
+                $scope.uploadError = "Upload failed; this file type is not supported.";
+            }
+            else{
+                $scope.uploadError = "Upload failed. Please try again or contact your administrator.";
+            }
+
+            $scope.$apply();
         };
     });
     $scope.remove = function (inspection, reportType) {

@@ -55,6 +55,8 @@
     </div>
 
     <div class="modal-footer">
+        <span ng-if="uploading" class="help-block">Uploading file...</span>
+        <span ng-if="uploadError" class="red help-block">{{uploadError}}</span>
         <a class="btn btn-large left" ng-click="close(modalData.BioSafetyCabinet.SelectedInspection)"><i class="icon-cancel-2"></i>Close</a>
     </div>
 </form>

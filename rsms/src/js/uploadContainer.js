@@ -22,6 +22,11 @@ angular.module('uploadContainer', [])
             })
             $(target).bind('change', function () {
                 var data = {};
+                if(target.files.length == 0){
+                    // Don't bother if there's no file to upload...
+                    return;
+                }
+
                 var formData = new FormData();
                 formData.append('file', target.files[0]);
                 $(target).blur();
