@@ -421,9 +421,10 @@ angular.module('00RsmsAngularOrmApp')
     var getOtherWaste = function () {
         return af.getAllOtherWasteContainers()
             .then(function (containers) {
+            if (!dataStore.OtherWasteContainers)
+                dataStore.OtherWasteContainer = [];
             dataStore.OtherWasteContainer.forEach(function (c) { if (c.Key_id == 4)
                 console.log("CONTENTS", c.Contents); });
-            //if (!dataStore.OtherWasteContainers) dataStore.OtherWasteContainer = [];
             console.log("CONTAINERS", dataStore.OtherWasteContainer);
             $rootScope.OtherWasteContainers = dataStore.OtherWasteContainer;
             return $rootScope.OtherWasteContainers;
