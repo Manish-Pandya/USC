@@ -9,12 +9,12 @@
                 <option value="">Select Container Type</option>
             </select>
         </div>
-        <!--
+
             <div class="form-group" ng-if="modalData.selectedType.Class == 'ScintVialCollection'">
                 <label for="notes">Number of Trays:</label>
                 <input rows="4" ng-model="modalData.Container.Trays">
             </div>
-        -->
+
         <div class="form-group" ng-if="modalData.selectedType.Other_waste_type_id">
             <label for="notes">Description (required):</label>
             <textarea rows="4" ng-model="modalData.Container.Description" style="width:80%"></textarea>
