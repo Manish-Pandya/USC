@@ -210,7 +210,7 @@ class CarboyUseCycle extends Container {
 	public function setDrum_id($newId) { $this->drum_id = $newId; }
 
 	public function getPickup() {
-		if($this->pickup == null) {
+		if($this->pickup == null && $this->getPickup_id() != null) {
 			$pickupDAO = new GenericDAO(new Pickup());
 			$this->pickup = $pickupDAO->getById($this->getPickup_id());
 		}
