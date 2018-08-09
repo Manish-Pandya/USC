@@ -98,7 +98,7 @@ angular.module('radValidationFunctionsModule', [
                     validUsages.isValid = false;
                     validUsages.error = "Values must be positive.";
                 }
-                else if( value > use.Quantity){
+                else if( value > parseFloat(use.Quantity)){
                     validUsages.isValid = false;
                     validUsages.error = "Values cannot exceed the usage Amount.";
                 }
