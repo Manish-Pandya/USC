@@ -1560,15 +1560,13 @@ angular
                     .then(
                         function(returnedCarboy){
                             returnedCarboy = modelInflatorFactory.instateAllObjectsFromJson( returnedCarboy );
-                            if(carboy){
+                            if(carboy && carboy.Key_id){
                                 angular.extend(carboy, copy)
                             }else{
                                 dataStoreManager.addOnSave(returnedCarboy);
-                                pi.SolidsContainers.push(returnedCarboy);
-                                dataStoreManager.store(returnedCarboy);
                             }
                         },
-                        af.setError('The Solids Container could not be saved')
+                        af.setError('The Carboy could not be saved')
                     )
             }
 
