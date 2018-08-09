@@ -1,4 +1,5 @@
 <!--div cg-busy="{promise:CarboyReadingAmountSaving, message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div-->
+<div cg-busy="{promise:carboysPromise, message:'Loading carboys...', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="right-column">
 
@@ -15,7 +16,7 @@
                     <h3>PI</h3>
                     <h3>Contents</h3>
                 </div>
-                <div class="table-row" ng-repeat="carboy in carboys | carboyHasNoRetireDate">
+                <div class="table-row" ng-repeat="carboy in carboys | carboyHasNoRetireDate | orderBy:'Carboy_number' track by carboy.Key_id">
                     <div>
                         <a ng-disabled="carboy.edit" ng-class="{'disabled':carboy.edit}" ng-click="openModal(carboy)" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</a>
                         <!-- TODO: Possible Status values should be enums -->
@@ -27,7 +28,7 @@
                     <div>
                         {{carboy.Current_carboy_use_cycle.Status}}
                     </div>
-                    <div ng-init="getPiByCycle(carboy)">
+                    <div>
                         {{carboy.PI.Name || "N/A"}}
                     </div>
                     <div>

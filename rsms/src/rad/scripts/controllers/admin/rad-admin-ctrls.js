@@ -307,15 +307,41 @@ angular.module('00RsmsAngularOrmApp')
 angular.module('00RsmsAngularOrmApp')
     .controller('CarboysCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
     var af = actionFunctionsFactory;
-    var getAllCarboys = function () {
-        af.getAllCarboys()
-            .then(function (carboys) {
-            $scope.carboys = dataStore.Carboy;
-        }, function () { });
-    };
+
+    var getCarboysFromDatastore = function(){
+        // Get them
+        $scope.carboys = dataStore.Carboy;
+
+        // Make sure their PI is set, if available
+        var pi_ids = $scope.carboys
+            .map(c => c.Current_carboy_use_cycle.Principal_investigator_id)
+            .filter(pid => pid);
+
+        console.debug(pi_ids.length + "/" + $scope.carboys.length + " have PI assignments");
+
+        var pis = dataStore.PrincipalInvestigator.filter(pi => pi_ids.includes(pi.Key_id));
+        console.debug("Found " + pis.length + "/" + pi_ids + " assigned PIs");
+
+        $scope.carboys.forEach(carboy => {
+            if( !carboy.PI && carboy.Current_carboy_use_cycle.Principal_investigator_id ){
+                console.debug("Find assignment for carboy ", carboy,);
+                var match = pis.filter(pi => pi.Key_id == carboy.Current_carboy_use_cycle.Principal_investigator_id)[0];
+                if(match){
+                    carboy.PI = match;
+                    console.debug("...", carboy.PI);
+                }
+                else{
+                    console.warn("Could not find PI assignment", carboy);
+                }
+            }
+        });
+    }
+
     $scope.af = af;
-    $rootScope.carboysPromise = af.getAllPIs()
-        .then(getAllCarboys);
+    $scope.carboysPromise = $rootScope.radModelsPromise
+        .then(af.getAllCarboys)
+        .then(getCarboysFromDatastore);
+
     $scope.deactivate = function (carboy) {
         var copy = dataStoreManager.createCopy(carboy);
         copy.Retirement_date = new Date();
@@ -333,16 +359,8 @@ angular.module('00RsmsAngularOrmApp')
             templateUrl: 'views/admin/admin-modals/carboy-modal.html',
             controller: 'CarboysModalCtrl'
         });
-    };
-    $scope.getPiByCycle = function (carboy) {
-        af.getAllPIs().then(function () {
-            dataStore.PrincipalInvestigator.forEach(function (pi) {
-                console.log(pi.Key_id == carboy.Current_carboy_use_cycle.Principal_investigator_id);
-                if (pi.Key_id == carboy.Current_carboy_use_cycle.Principal_investigator_id) {
-                    carboy.PI = pi;
-                }
-            });
-        });
+
+        modalInstance.result.then(getCarboysFromDatastore);
     };
 })
     .controller('CarboysModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
@@ -352,11 +370,14 @@ angular.module('00RsmsAngularOrmApp')
     console.log($scope.modalData);
     $scope.save = function (carboy) {
         af.saveCarboy(carboy.PrincipalInvestigator, carboy, $scope.modalData.Carboy)
-            .then($scope.close);
+        .then(function () {
+            $modalInstance.close(); //success
+            af.deleteModalData();
+        });
     };
+
     $scope.close = function () {
-        $modalInstance.dismiss();
-        dataStore.Carboy.push($scope.modalData.CarboyCopy);
+        $modalInstance.dismiss(); //cancel
         af.deleteModalData();
     };
 });
