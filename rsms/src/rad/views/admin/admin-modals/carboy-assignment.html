@@ -15,7 +15,7 @@
         </div>
         <div class="table-row" ng-repeat="cycle in carboys | filter: {Status: 'Available'}" ng-init="cycle.loadRoom()">
             <div>
-                <a ng-click="addCarboyToLab(cycle, modalData.pi, cycle.Room)" class="btn left btn-success"><i class="icon-plus-2"></i>Assign</a>
+                <a ng-disabled="!cycle.Room" ng-click="!cycle.Room || addCarboyToLab(cycle, modalData.pi, cycle.Room)" class="btn left btn-success"><i class="icon-plus-2"></i>Assign</a>
             </div>
             <div>{{cycle.Carboy.Commission_date | dateToISO}}</div>
             <div>{{cycle.Carboy.Carboy_number}}</div>
