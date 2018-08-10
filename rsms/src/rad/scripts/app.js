@@ -113,8 +113,8 @@ angular
            templateUrl: "views/admin/zap.html",
            controller: "ZapCtrl"
       })
-      .state('admin-pickups', {
-        url: "/admin/pickups",
+      .state('radmin.admin-pickups', {
+        url: "/pickups",
         templateUrl: "views/admin/pickups.html",
         controller: "AdminPickupCtrl"
       })

@@ -138,7 +138,7 @@ angular
                         Dashboard: true
                     },
                     {
-                        Name:'admin-pickups',
+                        Name:'radmin.admin-pickups',
                         Label: 'Pickups',
                         Dashboard: true
                     },

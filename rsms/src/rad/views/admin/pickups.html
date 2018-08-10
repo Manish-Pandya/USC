@@ -5,76 +5,78 @@
 <div cg-busy="{promise:CarboyUseCycleSaving,message:'Saving Pickup', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div class="spacer" style="height:70px;"></div>
 
-<ul class="nav nav-pills" style="margin:20px 0 0">
-    <li ng-class="{'active':!pickupsFilter.showAll}"><a ng-click="pickupsFilter.showAll = false;">Current Pickups</a></li>
-    <li ng-class="{'active':pickupsFilter.showAll}"><a ng-click="pickupsFilter.showAll = true;">All Pickups</a></li>
-    <li style="display:block;"><input ng-model="pi" placeholder="Search By Pi" /></li>
-</ul>
-<div class="card super pickups pickup-collection" ng-if="!activePickups || !activePickups.length">
-    <h1 class="card-header accordion-header">No Waste is ready for pickup.</h1>
-</div>
-<div class="card super pickups pickup-collection admin" ng-repeat="pickup in activePickups = (pickups | activePickups:pickupsFilter.showAll | filter:{PiName:pi}) track by $index">
-    <div>
-        <h1 ng-class="{'no-underline':!pickup.show}" class="card-header accordion-header" ng-click="pickup.show = !pickup.show">
-            <i class="icon-box-remove"></i>
-            <span ng-if="pickup.Pickup_date">{{pickup.PiName}}'s lab had waste picked up {{pickup.Pickup_date | dateToISO}}</span>
-            <span ng-if="!pickup.Pickup_date">{{pickup.PiName}}'s lab has waste ready to pick up.</span>
-        </h1>
+<div class="right-column">
+    <ul class="nav nav-pills" style="margin:20px 0 0">
+        <li ng-class="{'active':!pickupsFilter.showAll}"><a ng-click="pickupsFilter.showAll = false;">Current Pickups</a></li>
+        <li ng-class="{'active':pickupsFilter.showAll}"><a ng-click="pickupsFilter.showAll = true;">All Pickups</a></li>
+        <li style="display:block;"><input ng-model="pi" placeholder="Search By Pi" /></li>
+    </ul>
+    <div class="card super pickups pickup-collection" ng-if="!activePickups || !activePickups.length">
+        <h1 class="card-header accordion-header">No Waste is ready for pickup.</h1>
+    </div>
+    <div class="card super pickups pickup-collection admin" ng-repeat="pickup in activePickups = (pickups | activePickups:pickupsFilter.showAll | filter:{PiName:pi}) track by $index">
+        <div>
+            <h1 ng-class="{'no-underline':!pickup.show}" class="card-header accordion-header" ng-click="pickup.show = !pickup.show">
+                <i class="icon-box-remove"></i>
+                <span ng-if="pickup.Pickup_date">{{pickup.PiName}}'s lab had waste picked up {{pickup.Pickup_date | dateToISO}}</span>
+                <span ng-if="!pickup.Pickup_date">{{pickup.PiName}}'s lab has waste ready to pick up.</span>
+            </h1>
 
-        <div ng-if="pickup.show" class="print-always pickup-form">
-            <h3>
-                Pickup Status:
-                <select ng-model="pickup.Status" 
-                        ng-change="setStatusAndSave(pickup)"
-                        ng-options="status as status for status in [Constants.PICKUP.STATUS.REQUESTED, Constants.PICKUP.STATUS.PICKED_UP, Constants.PICKUP.STATUS.AT_RSO]"
-                        style="margin-top:7px;"
-                >
-                </select>
-                <label class="checkbox print">
-                    <input type="checkbox" ng-true-value="yes" ng-checked="pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO" />
-                    <span class="metro-checkbox">Picked Up</span>
-                </label>
-            </h3>
-            
-            <!--
+            <div ng-if="pickup.show" class="print-always pickup-form">
+                <h3>
+                    Pickup Status:
+                    <select ng-model="pickup.Status"
+                            ng-change="setStatusAndSave(pickup)"
+                            ng-options="status as status for status in [Constants.PICKUP.STATUS.REQUESTED, Constants.PICKUP.STATUS.PICKED_UP, Constants.PICKUP.STATUS.AT_RSO]"
+                            style="margin-top:7px;"
+                    >
+                    </select>
+                    <label class="checkbox print">
+                        <input type="checkbox" ng-true-value="yes" ng-checked="pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO" />
+                        <span class="metro-checkbox">Picked Up</span>
+                    </label>
+                </h3>
 
-            <a class="btn btn-large no-print btn-info" ng-click="setStatusAndSave(pickup, pickup.Status, (pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO))">
-                <label class="checkbox">
-                    <input type="checkbox" ng-model="Pickup.Status" ng-true-value="yes" ng-checked="pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO" />
-                    <span class="metro-checkbox">Picked Up</span>
-                </label>
-            </a>
+                <!--
 
-            <a class="btn btn-large no-print btn-success" ng-click="setStatusAndSave(pickup, Constants.PICKUP.STATUS.AT_RSO, (pickup.Status == Constants.PICKUP.STATUS.AT_RSO))">
-                <label class="checkbox">
-                    <input type="checkbox" ng-model="Pickup.Status" ng-true-value="yes" ng-checked="pickup.Status == Constants.PICKUP.STATUS.AT_RSO" />
-                    <span class="metro-checkbox">At RSO</span>
-                </label>
-            </a>
-            <button ng-click="selectWaste(pickup.Waste_bags, pickup, pickup.PrincipalInvestigator )" class="btn btn-primary left">
-                <i class="icon-pencil primary"></i>
-                Choose Usages
-            </button>
-            -->
-            <h2 ng-if="pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO" style="display:inline">
-                Picked up
-                <span ng-if="!pickup.editDate">{{pickup.Pickup_date | dateToISO:pickup:'Pickup_date':true}} <i class="icon-pencil primary" ng-click="pickup.editDate = true" style="margin:4px 0px 0 0"></i></span>
-                <span ng-if="pickup.editDate"><input ng-model="pickup.view_Pickup_date" style="width:90px" /> <i class="icon-checkmark success" ng-click="setPickupDate(pickup)" style="margin:4px 6px 0 0"></i><i class="icon-cancel-2 red" ng-click="pickup.editDate = false" style="margin:4px 0 0 0"></i></span>
-            </h2>
+                <a class="btn btn-large no-print btn-info" ng-click="setStatusAndSave(pickup, pickup.Status, (pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO))">
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="Pickup.Status" ng-true-value="yes" ng-checked="pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO" />
+                        <span class="metro-checkbox">Picked Up</span>
+                    </label>
+                </a>
 
-        </div>
-        <div class="print-always" ng-init="pickupsFilter(pickup, true)" ng-if="pickup.show">
-            
-            <span ng-if="availableContainers[pickup.Key_id]">
-                <containers containers="availableContainers[pickup.Key_id]" has-comments="true" button-text="Leave in Lab" close="adminRemoveFromPickup" filter-function="hasPickupId"></containers>
-            </span>
+                <a class="btn btn-large no-print btn-success" ng-click="setStatusAndSave(pickup, Constants.PICKUP.STATUS.AT_RSO, (pickup.Status == Constants.PICKUP.STATUS.AT_RSO))">
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="Pickup.Status" ng-true-value="yes" ng-checked="pickup.Status == Constants.PICKUP.STATUS.AT_RSO" />
+                        <span class="metro-checkbox">At RSO</span>
+                    </label>
+                </a>
+                <button ng-click="selectWaste(pickup.Waste_bags, pickup, pickup.PrincipalInvestigator )" class="btn btn-primary left">
+                    <i class="icon-pencil primary"></i>
+                    Choose Usages
+                </button>
+                -->
+                <h2 ng-if="pickup.Status == Constants.PICKUP.STATUS.PICKED_UP || pickup.Status == Constants.PICKUP.STATUS.AT_RSO" style="display:inline">
+                    Picked up
+                    <span ng-if="!pickup.editDate">{{pickup.Pickup_date | dateToISO:pickup:'Pickup_date':true}} <i class="icon-pencil primary" ng-click="pickup.editDate = true" style="margin:4px 0px 0 0"></i></span>
+                    <span ng-if="pickup.editDate"><input ng-model="pickup.view_Pickup_date" style="width:90px" /> <i class="icon-checkmark success" ng-click="setPickupDate(pickup)" style="margin:4px 6px 0 0"></i><i class="icon-cancel-2 red" ng-click="pickup.editDate = false" style="margin:4px 0 0 0"></i></span>
+                </h2>
 
-            <div class="print-always" ng-show="pickup.show" ng-if="pickup.Notes" style="margin-left:30px">
-                <h3 style="padding-bottom:10px;">Notes:</h3>
-                <p>{{pickup.Notes}}</p>
             </div>
-        </div>
+            <div class="print-always" ng-init="pickupsFilter(pickup, true)" ng-if="pickup.show">
 
+                <span ng-if="availableContainers[pickup.Key_id]">
+                    <containers containers="availableContainers[pickup.Key_id]" has-comments="true" button-text="Leave in Lab" close="adminRemoveFromPickup" filter-function="hasPickupId"></containers>
+                </span>
+
+                <div class="print-always" ng-show="pickup.show" ng-if="pickup.Notes" style="margin-left:30px">
+                    <h3 style="padding-bottom:10px;">Notes:</h3>
+                    <p>{{pickup.Notes}}</p>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 <!---->
