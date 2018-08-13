@@ -3031,7 +3031,7 @@ class Rad_ActionManager extends ActionManager {
             )
         );
 
-        // Find existing pickups
+        // Find existing REQUESTED pickups
         $existingPickups = $dao->getAllWhere($group);
 
         if(count($existingPickups)){
@@ -3050,12 +3050,6 @@ class Rad_ActionManager extends ActionManager {
             $pickup = $dao->save($pickup);
         }
 
-        $l->info("Add container $container to pickup $pickup");
-        if($l->isTraceEnabled()){
-            $l->trace($pickup);
-        }
-
-        $container->setPickup_id($pickup->getKey_id());
         return $container;
     }
 
