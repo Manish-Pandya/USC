@@ -17,7 +17,7 @@ session_start();
 $rlog = Logger::getLogger('request.ajax.' . $actionName);
 $LOG = Logger::getLogger('ajaxaction.' . $actionName);
 
-if($rlog->isDebugEnabled()){
+if($rlog->isInfoEnabled()){
     $params = "";
     foreach( $dataSource as $key=>$value){
         if( $key == 'action' || $key == 'callback')
@@ -26,7 +26,7 @@ if($rlog->isDebugEnabled()){
         $params .= "[$key : $value] ";
     }
 
-    $rlog->debug('>>>>     ' . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . " $params");
+    $rlog->info($_SESSION['USER']->getUsername() . ' >>>     ' . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . " $params");
 }
 
 // Create Dispatcher (based on $_SESSION)
@@ -77,8 +77,8 @@ if($actionResult->statusCode == 302){
 //http_response_code(404);
 
 // Output JSON (with possible callback)
-if($rlog->isDebugEnabled()){
-    $rlog->debug("<<<< $actionResult->statusCode " . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . ' content-length:' . strlen($output));
+if($rlog->isInfoEnabled()){
+    $rlog->info($_SESSION['USER']->getUsername() . " <<< $actionResult->statusCode " . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . ' content-length:' . strlen($output));
 }
 
 echo $output;
