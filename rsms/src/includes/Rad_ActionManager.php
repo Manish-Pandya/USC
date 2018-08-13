@@ -3012,8 +3012,17 @@ class Rad_ActionManager extends ActionManager {
 
     private function handlePickup(WasteBag $container){
         $l = Logger::getLogger(__FUNCTION__);
-        $l->fatal($container);
-        if($container->getClose_date() == null)return $container;
+        if($container->getClose_date() == null){
+            $l->debug("Container is not closed; no pickup necessary");
+            return $container;
+        }
+        else{
+            $l->debug("Handle pickup for container");
+            if($l->isTraceEnabled()){
+                $l->trace($container);
+            }
+        }
+
         $dao = new GenericDAO(new Pickup());
         $group = new WhereClauseGroup(
             array(
@@ -3021,17 +3030,31 @@ class Rad_ActionManager extends ActionManager {
                 new WhereClause("status", "=", "REQUESTED")
             )
         );
+
+        // Find existing pickups
         $existingPickups = $dao->getAllWhere($group);
-        $l->fatal($existingPickups);
+
         if(count($existingPickups)){
+            $l->info('Found ' . count($existingPickups) . ' pickup(s) for PI');
+
+            if($l->isTraceEnabled()){
+                $l->trace($existingPickups);
+            }
+
             $pickup = $existingPickups[0];
         } else {
+            $l->info("Requesting new pickup.");
             $pickup = new Pickup();
             $pickup->setPrincipal_investigator_id($container->getPrincipal_investigator_id());
             $pickup->setStatus("REQUESTED");
             $pickup = $dao->save($pickup);
         }
-        $l->fatal($pickup);
+
+        $l->info("Add container $container to pickup $pickup");
+        if($l->isTraceEnabled()){
+            $l->trace($pickup);
+        }
+
         $container->setPickup_id($pickup->getKey_id());
         return $container;
     }
@@ -3046,12 +3069,24 @@ class Rad_ActionManager extends ActionManager {
             return $decodedObject;
         }
 
+        $l = Logger::getLogger(__FUNCTION__);
+        $l->info("Removig $decodedObject from Pickup " . $decodedObject->getPickup_id());
+
+        if( $l->isTraceEnabled() ){
+            $l->trace('Before Pickup unlink:');
+            $l->trace($decodedObject);
+        }
+
         $decodedObject->setPickup_id(null);
         $decodedObject->setPickup_date(null);
-        $l = Logger::getLogger(__FUNCTION__);
-        $l->fatal($decodedObject);
+
+        if( $l->isTraceEnabled() ){
+            $l->trace('After Pickup unlink:');
+            $l->trace($decodedObject);
+        }
+
         $dao = new GenericDAO($decodedObject);
-        $decodedObject = $dao->save();
+        $decodedObject = $dao->save($decodedObject);
         return $decodedObject;
     }
 }
