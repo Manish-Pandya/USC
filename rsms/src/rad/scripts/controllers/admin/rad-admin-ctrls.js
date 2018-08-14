@@ -271,6 +271,9 @@ angular.module('00RsmsAngularOrmApp')
             return c;
         });
 
+    // For new Pickups, we want to select by-default all available containers
+    var selectAllContainers = pickup.Status === Constants.PICKUP.STATUS.REQUESTED;
+
     // Merge included with available (if any) and apply labels
     // FIXME: Externalize this repeated code
     $scope.containers = 
@@ -279,6 +282,11 @@ angular.module('00RsmsAngularOrmApp')
         .map(function (c, idx) {
             var container = angular.extend({}, c);
             container.ViewLabel = c.Label || c.Name || c.CarboyNumber;
+
+            if( selectAllContainers ){
+                container.isSelectedForPickup = true;
+            }
+
             //we index at 1 because JS can't tell the difference between false and the number 0
             container.idx = idx + 1;
             switch (c.Class) {
