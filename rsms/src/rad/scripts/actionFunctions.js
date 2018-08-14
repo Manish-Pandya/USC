@@ -1814,6 +1814,41 @@ angular
                     )
             }
 
+            af.savePickupDetails = function(pickup, modifiedContainers){
+                // Construct a DTO containing the details required for update
+                var dto = {
+                    pickup: {
+                        id: pickup.Key_id,
+                        status: pickup.Status,
+                        date: pickup.Pickup_date
+                    },
+
+                    containers: modifiedContainers.map( c => {
+                        return {
+                            id: c.Key_id,
+                            type: c.Class,
+                            comments: c.Comments,
+                            pickup_id: c.Pickup_id
+                        };
+                    })
+                };
+
+                af.clearError();
+
+                // Save
+                return genericAPIFactory.save(dto, 'savePickup')
+                    .then(
+                        function(response){
+                            var obj = modelInflatorFactory.instateAllObjectsFromJson( response.data );
+                            console.log("Pickup Saved:", obj);
+                        },
+                        function(err){
+                            console.error("Error saving Pickup", err);
+                        }
+                    );
+            };
+
+            // FIXME: Deprecate this function
             af.savePickup = function(originalPickup, editedPickup, saveChildren){
                 af.clearError();
 

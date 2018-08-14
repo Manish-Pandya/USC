@@ -1201,79 +1201,120 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
-    function savePickup($saveChildren = null) {
-        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-        $decodedObject = $this->convertInputJson();
-        if( $decodedObject === NULL ) {
+    function savePickup(){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        // Read DTO from requets
+        // We want this raw because we are not expecting a formal DTO
+        $dto = $this->readRawInputJson();
+        if( $dto === NULL ) {
             return new ActionError('Error converting input stream to Pickup', 202);
         }
-        else if( $decodedObject instanceof ActionError) {
-            return $decodedObject;
+        else if( $dto instanceof ActionError) {
+            return $dto;
         }
-        else {
-            $l = Logger::getLogger(__FUNCTION__);
-            $l->fatal($decodedObject);
-            $dao = $this->getDao(new Pickup());
-            $pickup = $dao->save($decodedObject);
-            $wasteBags = $decodedObject->getWaste_bags();
-            $svCollections = $decodedObject->getScint_vial_collections();
-            $carboys = $decodedObject->getCarboy_use_cycles();
-            $saveChildren = $this->getValueFromRequest('saveChildren', $saveChildren);
 
-            if($saveChildren != NULL){
-                foreach($wasteBags as $bagArray){
-                    $bagDao = $this->getDao(new WasteBag());
-                    $bag = $bagDao->getById($bagArray['Key_id']);
-                    $bag->setPickup_id($pickup->getKey_id());
-                    $amtDao = $this->getDao(new ParcelUseAmount());
-                    foreach($bagArray["ParcelUseAmounts"] as $amt){
-                        $amt = JsonManager::assembleObjectFromDecodedArray($amt);
-                        $LOG->fatal($amt);
-
-                        $amt->setWaste_bag_id($bag->getKey_id());
-                        $amt = $amtDao->save($amt);
-                        $LOG->fatal($amt);
-
-                    }
-                    $bagDao->save($bag);
-
-                }
-
-                foreach($svCollections as $collectionArray){
-                    $LOG->debug('collection with key id ');
-                    $svColDao = $this->getDao(new ScintVialCollection());
-                    $collection = $svColDao->getById($collectionArray['Key_id']);
-                    $collection->setPickup_id($pickup->getKey_id());
-                    $collection->setTrays($collectionArray['Trays']);
-                    $svColDao->save($collection);
-                }
-
-                foreach($carboys as $carboyArray){
-                    $LOG->debug('carboyUseCycle with key id '+$carboyArray['Key_id']);
-                    $carboyDao = $this->getDao(new CarboyUseCycle());
-                    $cycle = $carboyDao->getById($carboyArray['Key_id']);
-                    $cycle->setPickup_id($pickup->getKey_id());
-                    //carboy has been picked up.  If it is back at the radiation safety office, we set it to decaying and set its hot room date
-                    if($decodedObject->getStatus() == "AT RSO"){
-                        $cycle->setStatus("AT RSO");
-                        $cycle->setHotroom_date(NULL);
-                    }
-                    elseif($decodedObject->getStatus() == "PICKED UP"){
-                        $cycle->setStatus("Picked up");
-                        $cycle->setHotroom_date(NULL);
-                    }
-                    $carboyDao->save($cycle);
-                }
-            }
-            $entityMaps = array();
-            $entityMaps[] = new EntityMap("eager", "getCarboy_use_cycles");
-            $entityMaps[] = new EntityMap("eager", "getWaste_bags");
-            $entityMaps[] = new EntityMap("eager", "getScint_vial_collections");
-            $entityMaps[] = new EntityMap("eager", "getPrincipalInvestigator");
-            $pickup->setEntityMaps($entityMaps);
-
-            return $pickup;
+        $LOG->debug("Saving Pickup...");
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace($dto);
         }
+
+        // Extract details from DTO
+        $pickup_id = $dto['pickup']['id'];
+
+        $pickupDao = new GenericDao(new Pickup());
+        $LOG->debug("Read existing Pickup $pickup_id");
+        $pickup = $pickupDao->getById($dto['pickup']['id']);
+
+        $LOG->debug("Begin DB transaction...");
+        DBConnection::get()->beginTransaction();
+
+        $savedDto = array();
+
+        // Update Pickup details
+        // TODO: VALIDATE
+        $pickup->setStatus( $dto['pickup']['status']);
+        $pickup->setPickup_date( $dto['pickup']['date']);
+
+        $LOG->debug("Update Containers");
+
+        $savedDto['containers'] = array();
+        foreach($dto['containers'] as $containerDto){
+            $savedDto['containers'][] = $this->savePickup_container($containerDto);
+        }
+
+        $pickup = $pickupDao->save($pickup);
+
+        // Override pickup entitymaps to eagerly retrieve containers
+        $pickup->setEntityMaps( array(
+            new EntityMap(EntityMap::$TYPE_EAGER, "getCarboy_use_cycles"),
+            new EntityMap(EntityMap::$TYPE_EAGER, "getWaste_bags"),
+            new EntityMap(EntityMap::$TYPE_EAGER, "getScint_vial_collections"),
+            new EntityMap(EntityMap::$TYPE_EAGER, "getPrincipalInvestigator"),
+        ));
+
+        $savedDto['pickup'] = $pickup;
+
+        DBConnection::get()->commit();
+        $LOG->debug("...Committed transaction");
+
+        // FIXME: Need some kind of composite or generic DTO
+        $LOG->trace($savedDto);
+
+        return $savedDto;
+    }
+
+    function savePickup_container($dto){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+        $LOG->debug("Update (" . $dto['type'] . ') #' . $dto['id']);
+
+        // TODO: validate DTO
+
+        $dao = null;
+
+        switch( $dto['type'] ){
+            case 'WasteBag':
+                $dao = new GenericDao(new WasteBag());
+                break;
+            case 'ScintVialCollection':
+                $dao = new GenericDao(new ScintVialCollection());
+                break;
+            case 'CarboyUseCycle':
+                $dao = new GenericDao(new CarboyUseCycle());
+                break;
+            case 'OtherWasteContainer':
+                $dao = new GenericDao(new OtherWasteContainer());
+                break;
+            default:
+                $LOG->warn('Cannot update unkown waste container type: ' . $dto['type']);
+                throw new Exception("Cannot determine DTO type for container");
+        }
+
+        // Look up the container by ID
+        $container = $dao->getById($dto['id']);
+
+        if( $container == null ){
+            // Container must exist...
+            throw new Exception("Unknown container of type " . $dto['type'] . ' with key_id ' . $dto['id'] );
+        }
+
+        // Add To or Remove From Pickup
+        if( $dto['pickup_id'] != null){
+            $LOG->debug('Add container to Pickup ' . $dto['pickup_id']);
+            $container->setPickup_id( $dto['pickup_id']);
+        }
+        else{
+            $LOG->debug('Remove container from Pickup ' . $container->getPickup_id());
+            $container->setPickup_id( null );
+        }
+
+        // Add/Update Comments
+        $container->setComments( $dto['comments'] );
+
+        // TODO: SAVE
+        $container = $dao->save($container);
+
+        return $container;
     }
 
     function saveSVCollection($collection = null){
