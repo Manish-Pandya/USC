@@ -919,6 +919,14 @@ angular
                 return dataSwitchFactory.getAllObjects('Pickup', true);
             }
 
+            af.getWasteContainersReadyForPickup = function()
+            {
+                return genericAPIFactory.read( 'getAllWasteContainersReadyForPickup' )
+                .then( function( returnedPromise ) {
+                    return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                });
+            };
+
             /********************************************************************
             **
             **      PURCHASEORDER            **

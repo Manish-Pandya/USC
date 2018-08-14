@@ -81,6 +81,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
                 "removeParcelUseAmountFromPickup"	=> new ActionMapping("removeParcelUseAmountFromPickup", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
                 "getAllRadConditions"		    => new ActionMapping("getAllRadConditions", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
+				"getAllWasteContainersReadyForPickup"
+												=> new ActionMapping("getAllWasteContainersReadyForPickup", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 
                 "saveDrumWipe"                  => new ActionMapping("saveDrumWipe", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "saveDrumWipeTest"              => new ActionMapping("saveDrumWipeTest", "", "", $this::$ROLE_GROUPS["ADMIN"]),

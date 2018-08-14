@@ -3042,6 +3042,47 @@ class Rad_ActionManager extends ActionManager {
     }
 
     /**
+     * Retrieves all Waste Containers (of any type) which have been Closed
+     * and not yet picked up
+     */
+    public function getAllWasteContainersReadyForPickup() {
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $LOG->info('Get all pickup-ready waste containers');
+
+        $container_types = array(
+            "CarboyUseCycle",
+            "ScintVialCollection",
+            "WasteBag"
+        );
+
+        // Get containers which are closed and are not assigned to a pickup
+        $whereContainerIsPickupReady = new WhereClauseGroup(
+            array(
+                new WhereClause("pickup_id", "IS", "NULL"),
+                new WhereClause("close_date", "IS NOT", "NULL")
+            )
+        );
+
+        $pickupReady = array();
+        foreach($container_types as $type){
+            $LOG->debug("Get all pickup-ready containers of type $type");
+
+            $dao = new GenericDao( new $type());
+            $pickupReadyOfType = $dao->getAllWhere($whereContainerIsPickupReady);
+
+            $LOG->debug('Found ' . count($pickupReadyOfType) . " $type containers ready for pickup");
+
+            $pickupReady = array_merge($pickupReady, $pickupReadyOfType);
+        }
+
+        $LOG->info('Found ' . count($pickupReady) . " containers ready for pickup");
+
+        // TODO: eager/lazy overrides?
+        return $pickupReady;
+    }
+
+    /**
      * @param RadCondition $condition
      * */
     public function saveRadCondition(RadCondition $decodedObject = null){
