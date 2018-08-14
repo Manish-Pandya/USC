@@ -3117,7 +3117,7 @@ class Rad_ActionManager extends ActionManager {
         $existingPickups = $dao->getAllWhere($group);
 
         if(count($existingPickups)){
-            $l->info('Found ' . count($existingPickups) . ' pickup(s) for PI');
+            $l->info('Found ' . count($existingPickups) . ' pickup(s) for PI ' . $container->getPrincipal_investigator_id());
 
             if($l->isTraceEnabled()){
                 $l->trace($existingPickups);
@@ -3125,7 +3125,7 @@ class Rad_ActionManager extends ActionManager {
 
             $pickup = $existingPickups[0];
         } else {
-            $l->info("Requesting new pickup.");
+            $l->info("Requesting new pickup for PI " . $container->getPrincipal_investigator_id());
             $pickup = new Pickup();
             $pickup->setPrincipal_investigator_id($container->getPrincipal_investigator_id());
             $pickup->setStatus("REQUESTED");

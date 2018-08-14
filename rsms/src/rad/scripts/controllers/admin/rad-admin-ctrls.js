@@ -52,6 +52,7 @@ angular.module('00RsmsAngularOrmApp')
         console.log("PRE_SAVE PICKUP", pickupCopy);
         af.savePickup(pickup, pickupCopy, true);
     };
+
     $scope.selectWaste = function (waste, pickup, pi) {
         pi = dataStoreManager.getById("PrincipalInvestigator", pi.Key_id);
         pi.loadActiveParcels().then(function () {
@@ -91,6 +92,7 @@ angular.module('00RsmsAngularOrmApp')
             });
         });
     };
+
     $scope.setPickupDate = function (pickup) {
         var pickupCopy = dataStoreManager.createCopy(pickup);
         pickupCopy.Pickup_date = convenienceMethods.setMysqlTime(pickup.view_Pickup_date);
@@ -99,9 +101,11 @@ angular.module('00RsmsAngularOrmApp')
             pickup.editDate = false;
         });
     };
+
     $scope.adminRemoveFromPickup = function (container) {
         return $scope.af.adminRemoveFromPickup(container).then(function () { container.Pickup_id = null; });
     };
+
     $scope.adminAddToPickup = function (container, pickup) {
         return $scope.af.adminAddToPickup(container, pickup).then(function () {
             container.Pickup_id = pickup.Key_id;
@@ -109,11 +113,14 @@ angular.module('00RsmsAngularOrmApp')
                 $scope.filterObj.reverse = false;
         });
     };
+
     $scope.filterObj = { reverse: false };
+
     $scope.hasPickupId = function (item) {
         var reverse = $scope.filterObj.reverse;
         return (item.Pickup_id == null) == reverse;
     };
+
     $scope.pickupsFilter = function (pickup, reverse) {
         console.log(pickup.PiName, Pickup);
         if (!$scope.availableContainers)
