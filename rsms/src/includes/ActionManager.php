@@ -68,6 +68,15 @@ class ActionManager {
         }
     }
 
+    public function readRawInputJson(){
+        try{
+            return JsonManager::readRawJsonFromInputStream();
+        }
+        catch(Exception $e){
+            return new ActionError("Unable to decode JSON. Cause: $e");
+        }
+    }
+
     public function getInputFile(){
     	try{
     		$decodedObject = JsonManager::getFile();

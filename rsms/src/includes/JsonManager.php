@@ -69,6 +69,30 @@ class JsonManager {
 		return JsonManager::jsonToObject($json, $object);
 	}
 
+	private static function readInputStream( $stream ){
+		if( empty( $stream ) ){
+			$LOG->debug("No stream specified");
+			return NULL;
+		}
+
+		//read JSON from input stream
+		return file_get_contents( $stream );
+	}
+
+	public static function readRawJsonFromInputStream( $stream='php://input' ){
+		$input = JsonManager::readInputStream($stream);
+
+		if( !empty( $input ) ){
+			// Return raw JSON object
+			return json_decode($input, true);
+		}
+		else {
+			//No data read from input stream.
+			$LOG->warn( "Nothing to JSON-decode; no data read from input stream: $stream" );
+			return NULL;
+		}
+	}
+
 	/**
 	 * Reads data from the given stream and decodes it as JSON.
 	 *
@@ -78,17 +102,9 @@ class JsonManager {
 	 * @return Ambigous <object, NULL>|NULL
 	 */
 	public static function decodeInputStream( $stream='php://input' ){
+		$LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
-
-		if( empty( $stream ) ){
-			//$this->LOG->error("No stream specified; cannot decode JSON");
-			return NULL;
-		}
-
-		//read JSON from input stream
-		$input = file_get_contents( $stream );
-
-		//$this->LOG->trace( 'Data read from input stream: ' . $input );
+		$input = JsonManager::readInputStream($stream);
 
 		//Only attempt to convert if data is read from the stream
 		if( !empty( $input) ){
@@ -107,7 +123,7 @@ class JsonManager {
 		}
 		else{
 			//No data read from input stream.
-			//$this->LOG->error( "Nothing to JSON-decode; no data read from input stream: $stream" );
+			$LOG->debug( "Nothing to JSON-decode; no data read from input stream: $stream" );
 			return NULL;
 		}
 	}
@@ -222,9 +238,9 @@ class JsonManager {
 		}
 
         if( $object == NULL ){
+			$LOG->error("Error assembling object from decoded JSON - NULL base object");
             return NULL;
 			// We have a problem!
-			//$this->LOG->error("Error assembling object from decoded JSON - NULL base object");
 		}
 
         //if object is null, pull ["Class"] from decode to infer type
