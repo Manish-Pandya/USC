@@ -192,7 +192,7 @@ class Pickup extends RadCrud {
 		}
 		$LOG = Logger::getLogger(__CLASS__);
 		$LOG->debug('calling pickup get other collections');
-		return $this->scint_vial_collections;
+		return $this->other_waste_containers;
 	}
 	public function setOther_waste_containers($collections){
 		$this->other_waste_containers = $collections;
