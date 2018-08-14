@@ -84,9 +84,11 @@ angular
                     var i = json.length;
                     while(i--){
                         var currentJsonObj = json[i];
-                        //if we have haven't passed a string, get the the class name of the object
-                        if( !objectFlavor ) objectFlavor = currentJsonObj.Class;
-                        models.push( inflator.instantiateObjectFromJson( currentJsonObj, objectFlavor, recurse ) );
+
+                        models.push( inflator.instantiateObjectFromJson(
+                            currentJsonObj,
+                            objectFlavor || currentJsonObj.Class,  //if we have haven't passed a string, get the the class name of the object
+                            recurse ) );
                     }
 
                     return models;
