@@ -86,7 +86,7 @@ angular.module('00RsmsAngularOrmApp')
 
         // Assign pickup date
         if( !pickup.Pickup_date ){
-            pickup.Pickup_date = new Date();
+            pickup.Pickup_date = convenienceMethods.setMysqlTime(new Date());
             console.debug("Assign pickup date to ", pickup.Pickup_date);
         }
 
