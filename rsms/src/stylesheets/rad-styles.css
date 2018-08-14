@@ -1304,3 +1304,7 @@ i.solids-containers {
 .admin-conditions .icon-arrow-down{
     font-size:30px;
 }
+
+.modal-dialog-wide .modal-dialog, .modal-dialog-wide.modal {
+    width: 1000px;
+}

@@ -9,16 +9,60 @@
 angular.module('00RsmsAngularOrmApp')
     .controller('AdminPickupCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods, modelInflatorFactory) {
     var af = actionFunctionsFactory;
-    var getAllPickups = function () {
-        af.getAllPickups()
-            .then(function () {
+
+    $scope.af = af;
+
+    $rootScope.pickupsPromise = af.getRadModels()
+        .then(af.getAllPickups)
+        .then(function(){
             $scope.pickups = dataStore.Pickup;
             console.log("pickups", $scope.pickups);
-        }, function () { });
-    };
-    $scope.af = af;
-    $rootScope.pickupsPromise = af.getRadModels()
-        .then(getAllPickups);
+
+            function groupPickups(label, status){
+                return {
+                    label: label,
+                    status: status,
+
+                    allowStart: status == Constants.PICKUP.STATUS.REQUESTED,
+                    allowEdit: status == Constants.PICKUP.STATUS.PICKED_UP,
+                    allowComplete: status == Constants.PICKUP.STATUS.PICKED_UP,
+
+                    listAvailableContainers: [Constants.PICKUP.STATUS.REQUESTED, Constants.PICKUP.STATUS.PICKED_UP].includes(status),
+                    listIncludedContainers: [Constants.PICKUP.STATUS.PICKED_UP, Constants.PICKUP.STATUS.AT_RSO].includes(status),
+
+                    pickups: $scope.pickups.filter(p => p.Status == status)
+                };
+            }
+
+            // Group by status
+            $scope.pickup_groups = [
+                groupPickups('In-Progress', Constants.PICKUP.STATUS.PICKED_UP),
+                groupPickups('Requested', Constants.PICKUP.STATUS.REQUESTED),
+                groupPickups('Completed', Constants.PICKUP.STATUS.AT_RSO)
+            ];
+        });
+
+    $rootScope.pickupReadyContainersPromise = af.getWasteContainersReadyForPickup()
+    .then(function(containers){
+        console.debug("Loaded all pickup-ready containers ", containers)
+
+        // Map containers to their PI
+        function reduceContainers(map, container){
+            // Add PI key if we don't have it yet
+            if( !map[container.Principal_investigator_id] ){
+                map[container.Principal_investigator_id] = [];
+            }
+
+            // Push the container to that PI's entry
+            map[container.Principal_investigator_id].push(container);
+
+            return map;
+        }
+
+        $scope.pickupReadyContainersByPI = containers.reduce( reduceContainers, []);
+        console.debug($scope.pickupReadyContainersByPI);
+    });
+
     function getAllPickups() {
         af.getAllPickups().then(function () {
             var pickups = af.get("Pickup");
@@ -34,7 +78,46 @@ angular.module('00RsmsAngularOrmApp')
             }
             $scope.pickups = dataStoreManager.get("Pickup");
         });
-    }
+    };
+
+    $scope.editPickup = function(sourcePickup, targetStatusName){
+        // Clone the pickup to ease cancelling
+        var pickup = angular.extend({}, sourcePickup);
+
+        // Assign pickup date
+        if( !pickup.Pickup_date ){
+            pickup.Pickup_date = new Date();
+            console.debug("Assign pickup date to ", pickup.Pickup_date);
+        }
+
+        var modalData = {
+            pickup: pickup,
+            targetStatusName: targetStatusName,
+            availableContainers: $scope.pickupReadyContainersByPI[pickup.Principal_investigator_id]
+        };
+
+        af.setModalData(modalData);
+
+        var modalInstance = $modal.open({
+            templateUrl: 'views/admin/admin-modals/edit-pickup-modal.html',
+            controller: 'AdminPickupEditModalCtrl',
+            windowClass: 'modal-dialog-wide'
+        });
+
+        modalInstance.result.then(
+            function (arg){
+                if(arg.promiseToSave){
+                    console.debug("Pickup is saving...");
+                    $scope.PickupSaving = arg.promiseToSave
+                        .then(function(){
+                            console.debug("TODO: INVALIDATE");
+                        });
+                    
+                }
+            }
+        );
+    };
+
     $scope.setStatusAndSave = function (pickup) {
         var pickupCopy = angular.extend({}, pickup);
         if (pickupCopy.Status == Constants.PICKUP.STATUS.REQUESTED)
@@ -154,8 +237,207 @@ angular.module('00RsmsAngularOrmApp')
                 return container;
             });
     };
+
     $scope.hasClosedNotPickedUp = function (containers) {
         return containers.some(function (c) { return c.Pickup_id == null; });
+    };
+})
+.controller('AdminPickupEditModalCtrl', function($scope, $modalInstance, $q, actionFunctionsFactory, convenienceMethods){
+    
+    var modalData = actionFunctionsFactory.getModalData();
+    var pickup = modalData.pickup;
+
+    $scope.pickup = pickup;
+    console.debug("Open edit-pickup modal", $scope, $modalInstance, $scope.modalData);
+
+    $scope.targetStatus = Constants.PICKUP.STATUS[modalData.targetStatusName];
+
+    // Change from REQUESTED to PICKED_UP
+    $scope.editActionLabel = pickup.Status == Constants.PICKUP.STATUS.REQUESTED ? 'Begin' : 'Edit';
+
+    if( $scope.targetStatus == Constants.PICKUP.STATUS.AT_RSO ){
+        $scope.editActionLabel = 'Finalize';
+    }
+
+    // Collect all included containers from pickup
+
+    // Flag all included containers as selected
+    var preselectedContainers = (pickup.Carboy_use_cycles || [])
+        .concat(pickup.Waste_bags || [])
+        .concat(pickup.Scint_vial_collections || [])
+        .concat(pickup.Other_waste_containers || [])
+        .map(c => {
+            c.isSelectedForPickup = true;
+            return c;
+        });
+
+    // Merge included with available (if any) and apply labels
+    // FIXME: Externalize this repeated code
+    $scope.containers = 
+        (modalData.availableContainers || [])
+        .concat(preselectedContainers || [])
+        .map(function (c, idx) {
+            var container = angular.extend({}, c);
+            container.ViewLabel = c.Label || c.Name || c.CarboyNumber;
+            //we index at 1 because JS can't tell the difference between false and the number 0
+            container.idx = idx + 1;
+            switch (c.Class) {
+                case ("WasteBag"):
+                    container.ClassLabel = "Waste Bags";
+                    break;
+                case ("CarboyUseCycle"):
+                    container.ClassLabel = "Carboys";
+                    break;
+                case ("ScintVialCollection"):
+                    container.ClassLabel = "Scint Vial Containers";
+                    break;
+                case ("OtherWasteContainer"):
+                    container.ClassLabel = "Other Waste";
+                    break;
+                default:
+                    container.ClassLabel = "";
+            }
+            return container;
+        }
+    );
+
+    $scope.countSelected = function(){
+        return $scope.containers.filter(c => c.isSelectedForPickup).length;
+    };
+
+    $scope.addOrRemoveContainer = function(container) {
+        container.isSelectedForPickup = !container.isSelectedForPickup;
+
+        console.debug("TODO: " + (container.isSelectedForPickup ? 'Add' : 'Remove') + " container from pickup", container);
+    };
+
+    $scope.getClassByContainerType = function(container) {
+        switch(container.Class){
+            case "WasteBag":            return "icon-remove-2 solids-containers";
+            case "ScintVialCollection": return "icon-sv scint-vials";
+            case "CarboyUseCycle":      return "icon-carboy carboys";
+            case "OtherWasteContainer": return "other icon-beaker-alt red";
+            default: return "";
+        }
+    };
+
+    $scope.editPickupDate = function(pickup){
+        $scope.editDate = true;
+        $scope.view_Pickup_date = convenienceMethods.dateToIso(pickup.Pickup_date);
+    };
+
+    $scope.editPickupDateAccept = function(pickup, date){
+        $scope.editDate = false;
+        pickup.Pickup_date = convenienceMethods.setMysqlTime(date);
+    }
+
+    $scope.editPickupDateCancel = function(pickup){
+        $scope.editDate = false;
+        $scope.view_Pickup_date = new Date();
+    }
+
+    $scope.editComment = function(c){
+        $scope.comment_copy = c.Comments;
+        c.editing_comment = true;
+    };
+
+    $scope.editCommentAccept = function(c){
+        console.debug("Accept new comments for ", c);
+        console.debug("\\______New:", c.Comments);
+        console.debug("\\_Previous:", $scope.comment_copy);
+
+        // Forget our old value
+        $scope.comment_copy = undefined;
+        c.editing_comment = false;
+
+        // Flag that a comment was edited
+        c.edited_comment = true;
+        $scope.edited_comment = true;
+    };
+
+    $scope.editCommentCancel = function(c){
+        c.Comments = $scope.comment_copy;
+        c.edit = false;
+    };
+
+    $scope.validate = function(){
+        // Require at least one selected container
+        var selectedContainers = $scope.countSelected() > 0;
+
+        // TODO Validate Pickup Date
+        var validPickupDate = true;
+
+        $scope.valid = (selectedContainers && validPickupDate);
+
+        return $scope.valid;
+    }
+
+    $scope.saveOnlyComments = function(pickup){
+        console.debug("Saving Containers with edited comments...");
+        var promises = [];
+        $scope.containers.forEach(c => {
+            if( c.edited_comment ){
+                console.debug('Saving Comments:', c);
+                promises.push(actionFunctionsFactory.save(c));
+            }
+        });
+
+        $scope.pickupsCommentsSavingPromise = $q.all(promises)
+        .then(
+            function(){
+                console.debug("Containers saved");
+                $modalInstance.close();
+            },
+            function(err){
+                console.error("Error saving Container:", err);
+            }
+        );
+    }
+
+    $scope.save = function(pickup) {
+        if( $scope.validate() ){
+            console.debug("Close/save edit-pickup modal");
+            console.debug("Prepare to save ", pickup);
+
+            // Assign/Unassign containers
+            var modifiedContainers = [];
+
+            $scope.containers.forEach(c => {
+                if( c.isSelectedForPickup ){
+                    console.debug('     Add to Pickup:', c);
+                    c.Pickup_id = pickup.Key_id;
+                    modifiedContainers.push(c);
+                }
+                else if( c.Pickup_id ) {
+                    console.debug('Remove from Pickup:', c);
+                    c.Pickup_id = null;
+                    modifiedContainers.push(c);
+                }
+                else{
+                    // nothing to do
+                    console.debug('No change to Container: ', c);
+                }
+            });
+
+            // Update Status?
+            if( $scope.targetStatus != pickup.Status ){
+                console.debug("Change pickup status from " + pickup.Status + " to " + $scope.targetStatus);
+                pickup.Status = $scope.targetStatus;
+            }
+
+            // Save Pickup (& containers?)
+            $modalInstance.close({
+                promiseToSave: actionFunctionsFactory.savePickupDetails(pickup, modifiedContainers)
+            });
+        }
+        else{
+            console.warn("Cannot save invalid pickup");
+        }
+    };
+
+    $scope.dismiss = function(){
+        console.debug("Dismiss edit-pickup modal");
+        $modalInstance.dismiss();
     };
 })
     .controller('AdminPickupModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
