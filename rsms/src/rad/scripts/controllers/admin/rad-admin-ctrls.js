@@ -15,7 +15,7 @@ angular.module('00RsmsAngularOrmApp')
     $rootScope.pickupsPromise = af.getRadModels()
         .then(af.getAllPickups)
         .then(function(){
-            $scope.pickups = dataStore.Pickup;
+            $scope.pickups = dataStore.Pickup || [];
             console.log("pickups", $scope.pickups);
 
             function groupPickups(label, status){

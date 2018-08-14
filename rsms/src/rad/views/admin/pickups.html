@@ -15,8 +15,14 @@
         <li style="display:block;"><input ng-model="piSearch" placeholder="Search By Pi" /></li>
     </ul>
 
-    <div class="well super" ng-repeat="pickup_group in pickup_groups">
+    <div class="well super" ng-if="pickups.length == 0">
+        <h3>No pickups</h3>
+    </div>
+    <div class="well super" ng-repeat="pickup_group in pickup_groups" ng-if="pickups.length">
         <h1 class="card-header accordion-header">[Pickups {{pickup_group.label}} ({{pickup_group.pickups.length}})]</h1>
+
+        <div ng-if="pickup_group.pickups.length == 0">No {{pickup_group.label}} Pickups</div>
+
         <div class="card super pickups pickup-collection admin" ng-repeat="pickup in pickup_group.pickups | filter:{PiName:piSearch} track by $index">
             <h1 ng-class="{'no-underline':!pickup.show}" class="card-header accordion-header" ng-click="pickup.show = !pickup.show">
                 <i class="icon-box-remove"></i>
