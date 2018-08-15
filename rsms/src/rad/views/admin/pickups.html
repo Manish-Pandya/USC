@@ -19,9 +19,10 @@
         <h3>No pickups</h3>
     </div>
     <div class="well super" ng-repeat="pickup_group in pickup_groups" ng-if="pickups.length">
-        <h1 class="card-header accordion-header">[Pickups {{pickup_group.label}} ({{pickup_group.pickups.length}})]</h1>
-
-        <div ng-if="pickup_group.pickups.length == 0">No {{pickup_group.label}} Pickups</div>
+        <h1 class="card-header accordion-header">
+            <span ng-if="pickup_group.pickups.length > 0">{{pickup_group.label}} <span class="badge">{{pickup_group.pickups.length}}</span></span>
+            <span ng-if="pickup_group.pickups.length == 0">No {{pickup_group.label}} Pickups</span>
+        </h1>
 
         <div class="card super pickups pickup-collection admin {{pickup_group.statusName | lowercase}}" ng-repeat="pickup in pickup_group.pickups | filter:{PiName:piSearch} track by $index">
             <h1 ng-class="{'no-underline':!pickup.show}" class="card-header accordion-header" ng-click="pickup.show = !pickup.show">

@@ -311,6 +311,14 @@ i.solids-containers {
     background: rgb(151, 49, 58);
 }
 
+.badge {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    color: #fff;
+    background-color: #0088cc;
+    margin-left: 10px;
+    position: absolute;
+}
+
 .card.pickups, .card.pickups.requested {
     border-left: rgb(91, 183, 91) solid 6px;
 }
