@@ -271,11 +271,12 @@ angular.module('00RsmsAngularOrmApp')
         return containers.some(function (c) { return c.Pickup_id == null; });
     };
 })
-.controller('AdminPickupEditModalCtrl', function($scope, $modalInstance, $q, actionFunctionsFactory, convenienceMethods, radUtilitiesFactory){
+.controller('AdminPickupEditModalCtrl', function($scope, $modalInstance, $q, actionFunctionsFactory, convenienceMethods, radUtilitiesFactory, pickupsValidationFactory){
     
     var modalData = actionFunctionsFactory.getModalData();
     var pickup = modalData.pickup;
 
+    $scope.validationErrors = [];
     $scope.pickup = pickup;
     console.debug("Open edit-pickup modal", $scope, $modalInstance, $scope.modalData);
 
@@ -322,10 +323,6 @@ angular.module('00RsmsAngularOrmApp')
         }
     });
 
-    $scope.countSelected = function(){
-        return $scope.containers.filter(c => c.isSelectedForPickup).length;
-    };
-
     $scope.addOrRemoveContainer = function(container) {
         container.isSelectedForPickup = !container.isSelectedForPickup;
         $scope.edited_pickup_contents = true;
@@ -355,7 +352,7 @@ angular.module('00RsmsAngularOrmApp')
 
     $scope.editPickupDateCancel = function(pickup){
         $scope.editDate = false;
-        $scope.view_Pickup_date = new Date();
+        $scope.view_Pickup_date = undefined;
     }
 
     $scope.editComment = function(c){
@@ -389,13 +386,9 @@ angular.module('00RsmsAngularOrmApp')
     };
 
     $scope.validate = function(){
-        // Require at least one selected container
-        var selectedContainers = $scope.countSelected() > 0;
+        $scope.validationErrors = pickupsValidationFactory.validatePickup($scope.pickup, $scope.containers);
 
-        // TODO Validate Pickup Date
-        var validPickupDate = true;
-
-        $scope.valid = (selectedContainers && validPickupDate);
+        $scope.valid = $scope.validationErrors.length == 0;
 
         return $scope.valid;
     }

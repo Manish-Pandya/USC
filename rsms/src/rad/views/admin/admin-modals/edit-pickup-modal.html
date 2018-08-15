@@ -106,6 +106,12 @@
 </div>
 
 <div class="modal-footer">
+    <div class="red bold" ng-if="!valid">
+        <ul class="alert alert-danger" style="list-style: none; text-align: left;">
+            <li ng-repeat="error in validationErrors">{{error}}</li>
+        </ul>
+    </div>
+
     <a class="btn btn-large left btn-warning" ng-disabled="!edited_comment" ng-click="edited_comment && saveOnlyComments(pickup)">
         <i class="icon-comment"></i>
         <span>Save Comments Only</span>

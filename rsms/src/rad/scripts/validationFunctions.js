@@ -2,6 +2,64 @@
 angular.module('radValidationFunctionsModule', [
     'convenienceMethodWithRoleBasedModule'
 ])
+    .factory('pickupsValidationFactory', function pickupsValidationFactory(convenienceMethods){
+        var pickupsValidationFactory = {};
+
+        pickupsValidationFactory.validatePickup = function(pickup, containers){
+            var validations = [
+                pickupsValidationFactory.validatePickupDate(pickup),
+                pickupsValidationFactory.validatePickupContainers(containers)
+            ];
+
+            return validations.filter(v => !v.isValid).map(v => v.error) || [];
+        }
+
+        pickupsValidationFactory.validatePickupContainers = function(containers){
+            var validContainers = {
+                isValid: true,
+                error: null
+            }
+
+            var count = containers.filter(c => c.isSelectedForPickup).length;
+
+            if( count == 0 ){
+                validContainers.isValid = false;
+                validContainers.error = "At least one Container must be selected.";
+            }
+
+            // TODO: Validate each container?
+
+            return validContainers;
+        }
+
+        pickupsValidationFactory.validatePickupDate = function(pickup){
+            var validDate = {
+                isValid: true,
+                error:  null
+            };
+
+            // Require pickup date
+            if( !pickup.Pickup_date ){
+                validDate.isValid = false;
+                validDate.error = "Pickup Date is required.";
+
+                // return early; no need to check the rest
+                return validDate;
+            }
+
+            // Pickup date cannot be after now
+            var now = convenienceMethods.setMysqlTime(new Date());
+
+            if( convenienceMethods.dateIsBefore(now, pickup.Pickup_date) ){
+                validDate.error = "The date you entered is in the future.";
+                validDate.isValid = false;
+            }
+
+            return validDate;
+        };
+
+        return pickupsValidationFactory;
+    })
     .factory('parcelUseValidationFactory', function parcelUseValidationFactory($rootScope, convenienceMethods, roleBasedFactory){
         var parcelUseValidationFactory = {};
 
