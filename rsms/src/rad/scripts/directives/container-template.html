@@ -48,15 +48,15 @@
             </li>
         </ul>
         <div class="pickup-comments" style="padding:0;margin-left:20px;margin-top:10px" ng-if="hasComments">
-            <span ng-if="c.Comments && !c.edit">Comments: {{c.Comments}}
-                <i ng-click="af.createCopy(c)" class="icon-pencil primary"></i>
+            <span ng-if="c.Comments && !c.edi">Comments: {{c.Comments}}
+                <i ng-if="canEditComments" ng-click="af.createCopy(c)" class="icon-pencil primary"></i>
             </span>
-            <span ng-if="!c.Comments && !c.edit">Add Comment:
+            <span ng-if="!c.Comments && !c.edit && canEditComments">Add Comment:
                 <a class="btn btn-success btn-mini" ng-click="af.createCopy(c)">
                     <i class="icon-plus-2 success"></i>
                 </a>
             </span>
-            <div class="control-group" ng-if="c.edit">
+            <div class="control-group" ng-if="c.edit && canEditComments">
                 <label class="control-label">Comments</label>
                 <div class="controls">
                     <textarea style="width:100%" ng-model="c.Comments" rows="2" maxlength="255"></textarea> </div>

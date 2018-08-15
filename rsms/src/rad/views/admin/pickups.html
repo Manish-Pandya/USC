@@ -33,18 +33,18 @@
             <div ng-if="pickup.show" class="print-always pickup-form card-body">
                 <div >
                     <button ng-if="pickup_group.allowStart"    ng-click="editPickup(pickup, 'PICKED_UP')" class="btn btn-primary">Start Pickup</button>
-                    <button ng-if="pickup_group.allowEdit"     ng-click="editPickup(pickup, 'PICKED_UP')" class="btn btn-warning">Edit Pickup</button>
+                    <button ng-if="pickup_group.allowEdit"     ng-click="editPickup(pickup)" class="btn btn-warning">Edit Pickup</button>
                     <button ng-if="pickup_group.allowComplete" ng-click="editPickup(pickup, 'AT_RSO')" class="btn btn-danger">Finish Pickup</button>
                 </div>
 
                 <div ng-if="pickup_group.listIncludedContainers && pickup.includedContainers.length" class="card super picked-up">
                     <h3 class="card-header">Picked-up Containers</h3>
-                    <containers containers="pickup.includedContainers" has-comments="false"></containers>
+                    <containers containers="pickup.includedContainers" has-comments="true"></containers>
                 </div>
 
                 <div ng-if="pickup_group.listAvailableContainers && pickupReadyContainersByPI[pickup.Principal_investigator_id].length" class="card super available">
                     <h3 class="card-header">{{pickupReadyContainersByPI[pickup.Principal_investigator_id].length}} Containers Ready for Pickup</h3>
-                    <containers containers="pickupReadyContainersByPI[pickup.Principal_investigator_id]" has-comments="false"></containers>
+                    <containers containers="pickupReadyContainersByPI[pickup.Principal_investigator_id]" has-comments="true"></containers>
                 </div>
             </div>
         </div>

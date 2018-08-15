@@ -9,6 +9,7 @@ angular.module('00RsmsAngularOrmApp')
             buttonClass: "@?",
             filterFunction: "=?",
             hasComments: "@?",
+            canEditComments: "@?",
             suppressCloseDate: "@?",
             additionalParam: "=?",
             addWaste: "=?"
@@ -17,7 +18,6 @@ angular.module('00RsmsAngularOrmApp')
         replace: true,
         transclude: false,
         link: function (scope, element, attrs, controller) {
-            console.log("attrs", attrs);
             if (!('close' in attrs)) {
                 scope.close = null;
             }
