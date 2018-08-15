@@ -32,8 +32,8 @@
         <div class="card super pickups pickup-collection admin {{pickup_group.statusName | lowercase}}" ng-repeat="pickup in pickup_group.pickups | filter:{PiName:piSearch} track by $index">
             <h1 ng-class="{'no-underline':!pickup.show}" class="card-header accordion-header" ng-click="pickup.show = !pickup.show">
                 <i class="icon-box-remove {{pickup_group.statusName | lowercase}}"></i>
-                <span class="one-third">{{pickup.PiName}}</span>
-                <span class="one-third" ng-if="pickup.Pickup_date">Picked up: {{pickup.Pickup_date | dateToISO}}</span>
+                <span>{{pickup.PiName}}</span>
+                <span style="float:right" ng-if="pickup.Pickup_date">Picked up: {{pickup.Pickup_date | dateToISO}}</span>
             </h1>
 
             <div ng-if="pickup.show" class="print-always pickup-form card-body">
