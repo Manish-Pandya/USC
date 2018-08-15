@@ -1225,7 +1225,7 @@ class Rad_ActionManager extends ActionManager {
         // Extract details from DTO
         $pickup_id = $dto['pickup']['id'];
 
-        $pickupDao = new GenericDao(new Pickup());
+        $pickupDao = new GenericDAO(new Pickup());
         $LOG->debug("Read existing Pickup $pickup_id");
         $pickup = $pickupDao->getById($dto['pickup']['id']);
 
@@ -1278,16 +1278,16 @@ class Rad_ActionManager extends ActionManager {
 
         switch( $dto['type'] ){
             case 'WasteBag':
-                $dao = new GenericDao(new WasteBag());
+                $dao = new GenericDAO(new WasteBag());
                 break;
             case 'ScintVialCollection':
-                $dao = new GenericDao(new ScintVialCollection());
+                $dao = new GenericDAO(new ScintVialCollection());
                 break;
             case 'CarboyUseCycle':
-                $dao = new GenericDao(new CarboyUseCycle());
+                $dao = new GenericDAO(new CarboyUseCycle());
                 break;
             case 'OtherWasteContainer':
-                $dao = new GenericDao(new OtherWasteContainer());
+                $dao = new GenericDAO(new OtherWasteContainer());
                 break;
             default:
                 $LOG->warn('Cannot update unkown waste container type: ' . $dto['type']);
@@ -3072,7 +3072,7 @@ class Rad_ActionManager extends ActionManager {
         foreach($container_types as $type){
             $LOG->debug("Get all pickup-ready containers of type $type");
 
-            $dao = new GenericDao( new $type());
+            $dao = new GenericDAO( new $type());
             $pickupReadyOfType = $dao->getAllWhere($whereContainerIsPickupReady);
 
             $LOG->debug('Found ' . count($pickupReadyOfType) . " $type containers ready for pickup");
