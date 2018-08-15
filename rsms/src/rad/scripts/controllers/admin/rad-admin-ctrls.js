@@ -18,10 +18,12 @@ angular.module('00RsmsAngularOrmApp')
             $scope.pickups = dataStore.Pickup || [];
             console.log("pickups", $scope.pickups);
 
-            function groupPickups(label, status){
+            function groupPickups(label, statusName){
+                var status = Constants.PICKUP.STATUS[statusName];
                 return {
                     label: label,
                     status: status,
+                    statusName: statusName,
 
                     allowStart: status == Constants.PICKUP.STATUS.REQUESTED,
                     allowEdit: status == Constants.PICKUP.STATUS.PICKED_UP,
@@ -41,9 +43,9 @@ angular.module('00RsmsAngularOrmApp')
 
             // Group by status
             $scope.pickup_groups = [
-                groupPickups('In-Progress', Constants.PICKUP.STATUS.PICKED_UP),
-                groupPickups('Requested', Constants.PICKUP.STATUS.REQUESTED),
-                groupPickups('Completed', Constants.PICKUP.STATUS.AT_RSO)
+                groupPickups('In-Progress', 'PICKED_UP'),
+                groupPickups('Requested', 'REQUESTED'),
+                groupPickups('Completed', 'AT_RSO')
             ];
         });
 
@@ -262,6 +264,18 @@ angular.module('00RsmsAngularOrmApp')
     if( $scope.targetStatus == Constants.PICKUP.STATUS.AT_RSO ){
         $scope.editActionLabel = 'Finalize';
     }
+
+    // Determine class-name for modal header
+    $scope.getStatusClassName = function(pickup){
+        switch(pickup.Status){
+            default:
+            case Constants.PICKUP.STATUS.REQUESTED: return 'requested';
+            case Constants.PICKUP.STATUS.PICKED_UP: return 'picked_up';
+            case Constants.PICKUP.STATUS.AT_RSO:    return 'at_rso';
+        }
+    }
+
+    $scope.statusClass = $scope.getStatusClassName(pickup);
 
     // Collect all included containers from pickup
 

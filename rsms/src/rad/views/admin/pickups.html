@@ -23,9 +23,9 @@
 
         <div ng-if="pickup_group.pickups.length == 0">No {{pickup_group.label}} Pickups</div>
 
-        <div class="card super pickups pickup-collection admin" ng-repeat="pickup in pickup_group.pickups | filter:{PiName:piSearch} track by $index">
+        <div class="card super pickups pickup-collection admin {{pickup_group.statusName | lowercase}}" ng-repeat="pickup in pickup_group.pickups | filter:{PiName:piSearch} track by $index">
             <h1 ng-class="{'no-underline':!pickup.show}" class="card-header accordion-header" ng-click="pickup.show = !pickup.show">
-                <i class="icon-box-remove"></i>
+                <i class="icon-box-remove {{pickup_group.statusName | lowercase}}"></i>
                 <span ng-if="pickup.Pickup_date">{{pickup.PiName}}'s lab had waste picked up {{pickup.Pickup_date | dateToISO}}</span>
                 <span ng-if="!pickup.Pickup_date">{{pickup.PiName}}'s lab has waste ready to pick up.</span>
             </h1>

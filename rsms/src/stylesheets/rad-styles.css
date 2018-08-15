@@ -295,12 +295,37 @@ i.solids-containers {
 
 
 .modal-header.pickups h2 {
+    padding: 5px;
+    color: white;
+}
+
+.modal-header.pickups h2.requested {
     background: rgb(91, 183, 91);
 }
 
-.card.pickups {
-    border-left: rgb(91, 183, 91) solid 6px
+.modal-header.pickups h2.picked_up {
+    background: rgb(191, 183, 91);
 }
+
+.modal-header.pickups h2.at_rso {
+    background: rgb(151, 49, 58);
+}
+
+.card.pickups, .card.pickups.requested {
+    border-left: rgb(91, 183, 91) solid 6px;
+}
+
+.card.pickups.picked_up {
+    border-left: rgb(191, 183, 91) solid 6px;
+}
+
+.card.pickups.at_rso {
+    border-left: rgb(151, 49, 58) solid 6px;
+}
+
+i.requested:first-child { color: rgb(91, 183, 91); }
+i.picked_up:first-child { color: rgb(191, 183, 91); }
+i.at_rso:first-child    { color: rgb(151, 49, 58); }
 
     .card.pickups.pickup-collection:first-child {
         margin-top: 25px;
@@ -310,7 +335,7 @@ i.solids-containers {
     .card.pickups h2 > i:first-child,
     .card.pickups h3 > i:first-child {
         font-size: 30px;
-        color: rgb(91, 183, 91);
+        padding: 6px 0px 0px 6px;
         margin: 14px 32px 0 5px !important;
     }
 
