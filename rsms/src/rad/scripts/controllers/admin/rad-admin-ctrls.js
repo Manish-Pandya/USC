@@ -427,8 +427,14 @@ angular.module('00RsmsAngularOrmApp')
                     modifiedContainers.push(c);
                 }
                 else if( c.Pickup_id ) {
+                    // Not selected for pickup, but we still have ID. This is being removed
                     console.debug('Remove from Pickup:', c);
                     c.Pickup_id = null;
+                    modifiedContainers.push(c);
+                }
+                else if( c.edited_comment ){
+                    // No change to selection, but the comment was edited
+                    console.debug('Edited container comment:', c);
                     modifiedContainers.push(c);
                 }
                 else{
