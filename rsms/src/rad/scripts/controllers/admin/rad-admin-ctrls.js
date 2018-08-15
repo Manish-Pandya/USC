@@ -378,7 +378,7 @@ angular.module('00RsmsAngularOrmApp')
 
     $scope.editCommentCancel = function(c){
         c.Comments = $scope.comment_copy;
-        c.edit = false;
+        c.editing_comment = false;
     };
 
     $scope.validate = function(){
