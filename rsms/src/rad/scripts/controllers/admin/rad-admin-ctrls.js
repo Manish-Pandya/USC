@@ -7,7 +7,7 @@
  * Controller of the 00RsmsAngularOrmApp PI waste Pickups view
  */
 angular.module('00RsmsAngularOrmApp')
-    .controller('AdminPickupCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods, modelInflatorFactory) {
+    .controller('AdminPickupCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods, radUtilitiesFactory) {
     var af = actionFunctionsFactory;
 
     $scope.af = af;
@@ -33,6 +33,11 @@ angular.module('00RsmsAngularOrmApp')
                     pickups: $scope.pickups.filter(p => p.Status == status)
                 };
             }
+
+            // Collect included containers into a single array for each pickup
+            $scope.pickups.forEach(p => {
+                p.includedContainers = radUtilitiesFactory.getAllWasteContainersFromPickup(p);
+            });
 
             // Group by status
             $scope.pickup_groups = [
@@ -60,7 +65,6 @@ angular.module('00RsmsAngularOrmApp')
         }
 
         $scope.pickupReadyContainersByPI = containers.reduce( reduceContainers, []);
-        console.debug($scope.pickupReadyContainersByPI);
     });
 
     function getAllPickups() {
@@ -242,7 +246,7 @@ angular.module('00RsmsAngularOrmApp')
         return containers.some(function (c) { return c.Pickup_id == null; });
     };
 })
-.controller('AdminPickupEditModalCtrl', function($scope, $modalInstance, $q, actionFunctionsFactory, convenienceMethods){
+.controller('AdminPickupEditModalCtrl', function($scope, $modalInstance, $q, actionFunctionsFactory, convenienceMethods, radUtilitiesFactory){
     
     var modalData = actionFunctionsFactory.getModalData();
     var pickup = modalData.pickup;
@@ -262,10 +266,7 @@ angular.module('00RsmsAngularOrmApp')
     // Collect all included containers from pickup
 
     // Flag all included containers as selected
-    var preselectedContainers = (pickup.Carboy_use_cycles || [])
-        .concat(pickup.Waste_bags || [])
-        .concat(pickup.Scint_vial_collections || [])
-        .concat(pickup.Other_waste_containers || [])
+    var preselectedContainers = radUtilitiesFactory.getAllWasteContainersFromPickup(pickup)
         .map(c => {
             c.isSelectedForPickup = true;
             return c;
@@ -275,39 +276,15 @@ angular.module('00RsmsAngularOrmApp')
     var selectAllContainers = pickup.Status === Constants.PICKUP.STATUS.REQUESTED;
 
     // Merge included with available (if any) and apply labels
-    // FIXME: Externalize this repeated code
     $scope.containers = 
         (modalData.availableContainers || [])
-        .concat(preselectedContainers || [])
-        .map(function (c, idx) {
-            var container = angular.extend({}, c);
-            container.ViewLabel = c.Label || c.Name || c.CarboyNumber;
+        .concat(preselectedContainers || []);
 
-            if( selectAllContainers ){
-                container.isSelectedForPickup = true;
-            }
-
-            //we index at 1 because JS can't tell the difference between false and the number 0
-            container.idx = idx + 1;
-            switch (c.Class) {
-                case ("WasteBag"):
-                    container.ClassLabel = "Waste Bags";
-                    break;
-                case ("CarboyUseCycle"):
-                    container.ClassLabel = "Carboys";
-                    break;
-                case ("ScintVialCollection"):
-                    container.ClassLabel = "Scint Vial Containers";
-                    break;
-                case ("OtherWasteContainer"):
-                    container.ClassLabel = "Other Waste";
-                    break;
-                default:
-                    container.ClassLabel = "";
-            }
-            return container;
-        }
-    );
+    if( selectAllContainers ){
+        $scope.containers.forEach(container => {
+            container.isSelectedForPickup = true;
+        });
+    };
 
     $scope.countSelected = function(){
         return $scope.containers.filter(c => c.isSelectedForPickup).length;

@@ -16,6 +16,7 @@ angular
     'filtersApp',
     'angular.filter',
     'actionFunctionsModule',
+    'radUtilitiesModule',
     'radValidationFunctionsModule',
     'dataSwitchModule', 
     'cgBusy',
