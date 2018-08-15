@@ -731,6 +731,9 @@ class Rad_ActionManager extends ActionManager {
     }
 
     public function getAllPickups(){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+        $LOG->info("Get all pickups");
+
         $dao = $this->getDao(new Pickup());
         $entityMaps = array();
         $entityMaps[] = new EntityMap("eager", "getCarboy_use_cycles");
@@ -1229,7 +1232,6 @@ class Rad_ActionManager extends ActionManager {
         $LOG->debug("Begin DB transaction...");
         DBConnection::get()->beginTransaction();
 
-        $savedDto = array();
 
         // Update Pickup details
         // TODO: VALIDATE
@@ -1238,9 +1240,9 @@ class Rad_ActionManager extends ActionManager {
 
         $LOG->debug("Update Containers");
 
-        $savedDto['containers'] = array();
+        $savedContainers = array();
         foreach($dto['containers'] as $containerDto){
-            $savedDto['containers'][] = $this->savePickup_container($containerDto);
+            $savedContainers[] = $this->savePickup_container($containerDto);
         }
 
         $pickup = $pickupDao->save($pickup);
@@ -1253,13 +1255,15 @@ class Rad_ActionManager extends ActionManager {
             new EntityMap(EntityMap::$TYPE_EAGER, "getPrincipalInvestigator"),
         ));
 
-        $savedDto['pickup'] = $pickup;
-
         DBConnection::get()->commit();
         $LOG->debug("...Committed transaction");
 
-        // FIXME: Need some kind of composite or generic DTO
-        $LOG->trace($savedDto);
+        // Composite DTO
+        $savedDto = new SavedPickupDetailsDto($pickup, $savedContainers);
+
+        if($LOG->isTraceEnabled()){
+            $LOG->trace($savedDto);
+        }
 
         return $savedDto;
     }
@@ -1311,7 +1315,7 @@ class Rad_ActionManager extends ActionManager {
         // Add/Update Comments
         $container->setComments( $dto['comments'] );
 
-        // TODO: SAVE
+        // Save
         $container = $dao->save($container);
 
         return $container;

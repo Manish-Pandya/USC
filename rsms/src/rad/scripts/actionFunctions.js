@@ -1847,8 +1847,9 @@ angular
                 return genericAPIFactory.save(dto, 'savePickup')
                     .then(
                         function(response){
-                            var obj = modelInflatorFactory.instateAllObjectsFromJson( response.data );
-                            console.log("Pickup Saved:", obj);
+                            var dto = modelInflatorFactory.instateAllObjectsFromJson( response.data );
+                            console.debug("Pickup Saved:", dto);
+                            return dto;
                         },
                         function(err){
                             console.error("Error saving Pickup", err);
