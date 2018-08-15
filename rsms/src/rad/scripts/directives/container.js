@@ -17,7 +17,6 @@ angular.module('00RsmsAngularOrmApp')
         replace: true,
         transclude: false,
         link: function (scope, element, attrs, controller) {
-            scope.containers.forEach(function (c) { console.log(c, c.Contents); });
             console.log("attrs", attrs);
             if (!('close' in attrs)) {
                 scope.close = null;
