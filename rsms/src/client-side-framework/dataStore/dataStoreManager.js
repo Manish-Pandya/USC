@@ -94,6 +94,7 @@ dataStoreManager.checkCollection = function( type )
 
 dataStoreManager.purge = function( objectFlavor )
 {
+        console.debug("Purging cached " + objectFlavor + " data");
         delete dataStore[objectFlavor];
 }
 

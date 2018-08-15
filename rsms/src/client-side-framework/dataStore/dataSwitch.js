@@ -63,7 +63,7 @@ angular
                 var deferred = $q.defer();
 
                 //this request has already been made.  we return the promise already created by it instead of making another
-                if( dataSwitch.promises[className] ){
+                if( !force && dataSwitch.promises[className] ){
                     return dataSwitch.promises[className].promise;
                 }else{
                     //this is a new request.  make reference to our promise in dataSwitch so the next time we make it, we return the one we already made
