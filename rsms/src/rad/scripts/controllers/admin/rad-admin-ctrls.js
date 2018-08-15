@@ -294,11 +294,13 @@ angular.module('00RsmsAngularOrmApp')
         (modalData.availableContainers || [])
         .concat(preselectedContainers || []);
 
-    if( selectAllContainers ){
-        $scope.containers.forEach(container => {
+    $scope.containers.forEach(container => {
+        container.ClassLabel = radUtilitiesFactory.getFriendlyWasteLabel(container.Class);
+
+        if( selectAllContainers ){
             container.isSelectedForPickup = true;
-        });
-    };
+        }
+    });
 
     $scope.countSelected = function(){
         return $scope.containers.filter(c => c.isSelectedForPickup).length;

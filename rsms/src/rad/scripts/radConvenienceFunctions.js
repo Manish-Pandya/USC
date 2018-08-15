@@ -5,6 +5,26 @@ angular.module('radUtilitiesModule', [
     .factory('radUtilitiesFactory', function radUtilitiesFactory($rootScope, convenienceMethods, roleBasedFactory){
         var radUtilitiesFactory = {};
 
+        radUtilitiesFactory.getFriendlyWasteLabel = function(wasteType){
+            switch (wasteType) {
+                case ("WasteBag"):            return "Waste Bags";
+                case ("CarboyUseCycle"):      return "Carboys";
+                case ("ScintVialCollection"): return "Scint Vial Containers";
+                case ("OtherWasteContainer"): return "Other Waste";
+                default:                      return "";
+            }
+        };
+
+        radUtilitiesFactory.applyWasteTypeLabels = function(containers){
+            containers.forEach(c => {
+                // Apply 'friendly' labels by-type
+                c.ClassLabel = radUtilitiesFactory.getFriendlyWasteLabel(c.Class);
+                return c;
+            });
+
+            return containers;
+        };
+
         radUtilitiesFactory.getAllWasteContainersFromPickup = function(pickup){
             console.debug("Collect all containers from pickup ", pickup);
             var allContainers =
@@ -22,22 +42,8 @@ angular.module('radUtilitiesModule', [
                     container.idx = idx + 1;
 
                     // Apply 'friendly' labels by-type
-                    switch (c.Class) {
-                        case ("WasteBag"):
-                            container.ClassLabel = "Waste Bags";
-                            break;
-                        case ("CarboyUseCycle"):
-                            container.ClassLabel = "Carboys";
-                            break;
-                        case ("ScintVialCollection"):
-                            container.ClassLabel = "Scint Vial Containers";
-                            break;
-                        case ("OtherWasteContainer"):
-                            container.ClassLabel = "Other Waste";
-                            break;
-                        default:
-                            container.ClassLabel = "";
-                    }
+                    container.ClassLabel = radUtilitiesFactory.getFriendlyWasteLabel(c.Class);
+
                     return container;
                 }
             );
