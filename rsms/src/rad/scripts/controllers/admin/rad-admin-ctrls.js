@@ -328,8 +328,8 @@ angular.module('00RsmsAngularOrmApp')
 
     $scope.addOrRemoveContainer = function(container) {
         container.isSelectedForPickup = !container.isSelectedForPickup;
-
-        console.debug("TODO: " + (container.isSelectedForPickup ? 'Add' : 'Remove') + " container from pickup", container);
+        $scope.edited_pickup_contents = true;
+        console.debug((container.isSelectedForPickup ? 'Add' : 'Remove') + " container from pickup", container);
     };
 
     $scope.getClassByContainerType = function(container) {
@@ -349,6 +349,7 @@ angular.module('00RsmsAngularOrmApp')
 
     $scope.editPickupDateAccept = function(pickup, date){
         $scope.editDate = false;
+        $scope.edited_pickup_date = true;
         pickup.Pickup_date = convenienceMethods.setMysqlTime(date);
     }
 
@@ -379,6 +380,12 @@ angular.module('00RsmsAngularOrmApp')
     $scope.editCommentCancel = function(c){
         c.Comments = $scope.comment_copy;
         c.editing_comment = false;
+    };
+
+    $scope.hasChanged = function(){
+        return $scope.edited_comment
+            || $scope.edited_pickup_date
+            || $scope.edited_pickup_contents;
     };
 
     $scope.validate = function(){

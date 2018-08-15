@@ -110,7 +110,7 @@
         <i class="icon-comment"></i>
         <span>Save Comments Only</span>
     </a>
-    <a class="btn btn-large left btn-success" ng-disabled="!validate()" ng-click="valid && save(pickup)">
+    <a class="btn btn-large left btn-success" ng-disabled="!validate() || !hasChanged()" ng-click="hasChanged() && valid && save(pickup)">
         <i class="icon-checkmark"></i>
         <span>Save Pickup</span>
     </a>
