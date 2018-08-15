@@ -7,67 +7,80 @@
  * Controller of the 00RsmsAngularOrmApp PI waste Pickups view
  */
 angular.module('00RsmsAngularOrmApp')
-    .controller('AdminPickupCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods, radUtilitiesFactory) {
+    .controller('AdminPickupCtrl', function ($scope, actionFunctionsFactory, $rootScope, $modal, convenienceMethods, radUtilitiesFactory) {
     var af = actionFunctionsFactory;
 
     $scope.af = af;
 
-    $rootScope.pickupsPromise = af.getRadModels()
-        .then(af.getAllPickups)
-        .then(function(){
-            $scope.pickups = dataStore.Pickup || [];
-            console.log("pickups", $scope.pickups);
+    function loadPickupsData(){
+        console.debug("Loading data for Pickups...");
 
-            function groupPickups(label, statusName){
-                var status = Constants.PICKUP.STATUS[statusName];
-                return {
-                    label: label,
-                    status: status,
-                    statusName: statusName,
+        // Load pickups
+        $rootScope.pickupsPromise = $rootScope.radModelsPromise
+            .then(af.getAllPickups)
+            .then(function(){
+                $scope.pickups = dataStore.Pickup || [];
+                console.debug("loaded pickups", $scope.pickups);
 
-                    allowStart: status == Constants.PICKUP.STATUS.REQUESTED,
-                    allowEdit: status == Constants.PICKUP.STATUS.PICKED_UP,
-                    allowComplete: status == Constants.PICKUP.STATUS.PICKED_UP,
+                function groupPickups(label, statusName){
+                    var status = Constants.PICKUP.STATUS[statusName];
+                    return {
+                        label: label,
+                        status: status,
+                        statusName: statusName,
 
-                    listAvailableContainers: [Constants.PICKUP.STATUS.REQUESTED, Constants.PICKUP.STATUS.PICKED_UP].includes(status),
-                    listIncludedContainers: [Constants.PICKUP.STATUS.PICKED_UP, Constants.PICKUP.STATUS.AT_RSO].includes(status),
+                        allowStart: status == Constants.PICKUP.STATUS.REQUESTED,
+                        allowEdit: status == Constants.PICKUP.STATUS.PICKED_UP,
+                        allowComplete: status == Constants.PICKUP.STATUS.PICKED_UP,
 
-                    pickups: $scope.pickups.filter(p => p.Status == status)
-                };
+                        listAvailableContainers: [Constants.PICKUP.STATUS.REQUESTED, Constants.PICKUP.STATUS.PICKED_UP].includes(status),
+                        listIncludedContainers: [Constants.PICKUP.STATUS.PICKED_UP, Constants.PICKUP.STATUS.AT_RSO].includes(status),
+
+                        pickups: $scope.pickups.filter(p => p.Status == status)
+                    };
+                }
+
+                // Collect included containers into a single array for each pickup
+                $scope.pickups.forEach(p => {
+                    p.includedContainers = radUtilitiesFactory.getAllWasteContainersFromPickup(p);
+                });
+
+                // Group by status
+                $scope.pickup_groups = [
+                    groupPickups('Requested', 'REQUESTED'),
+                    groupPickups('In-Progress', 'PICKED_UP'),
+                    groupPickups('Completed', 'AT_RSO')
+                ];
+            }
+        );
+
+        // Load ready containers
+        $rootScope.pickupReadyContainersPromise = af.getWasteContainersReadyForPickup()
+        .then(function(containers){
+            console.debug("Loaded all pickup-ready containers ", containers)
+
+            // Map containers to their PI
+            function reduceContainers(map, container){
+                // Add PI key if we don't have it yet
+                if( !map[container.Principal_investigator_id] ){
+                    map[container.Principal_investigator_id] = [];
+                }
+
+                // Push the container to that PI's entry
+                map[container.Principal_investigator_id].push(container);
+
+                return map;
             }
 
-            // Collect included containers into a single array for each pickup
-            $scope.pickups.forEach(p => {
-                p.includedContainers = radUtilitiesFactory.getAllWasteContainersFromPickup(p);
-            });
-
-            // Group by status
-            $scope.pickup_groups = [
-                groupPickups('Requested', 'REQUESTED'),
-                groupPickups('In-Progress', 'PICKED_UP'),
-                groupPickups('Completed', 'AT_RSO')
-            ];
+            $scope.pickupReadyContainersByPI = containers.reduce( reduceContainers, []);
         });
+    }
 
-    $rootScope.pickupReadyContainersPromise = af.getWasteContainersReadyForPickup()
-    .then(function(containers){
-        console.debug("Loaded all pickup-ready containers ", containers)
+    // Perform data load & prep
+    loadPickupsData();
 
-        // Map containers to their PI
-        function reduceContainers(map, container){
-            // Add PI key if we don't have it yet
-            if( !map[container.Principal_investigator_id] ){
-                map[container.Principal_investigator_id] = [];
-            }
-
-            // Push the container to that PI's entry
-            map[container.Principal_investigator_id].push(container);
-
-            return map;
-        }
-
-        $scope.pickupReadyContainersByPI = containers.reduce( reduceContainers, []);
-    });
+    /////////////////////
+    // Scope functions //
 
     function getAllPickups() {
         af.getAllPickups().then(function () {
@@ -98,7 +111,7 @@ angular.module('00RsmsAngularOrmApp')
 
         var modalData = {
             pickup: pickup,
-            targetStatusName: targetStatusName || pickup.Status,
+            targetStatusName: targetStatusName || radUtilitiesFactory.getStatusNameByValue(pickup.Status),
             availableContainers: $scope.pickupReadyContainersByPI[pickup.Principal_investigator_id]
         };
 
@@ -115,8 +128,16 @@ angular.module('00RsmsAngularOrmApp')
                 if(arg.promiseToSave){
                     console.debug("Pickup is saving...");
                     $scope.PickupSaving = arg.promiseToSave
-                        .then(function(){
-                            console.debug("TODO: INVALIDATE");
+                        .then(function(data){
+                            // Invalidate saved Pickup and containers
+                            dataStoreManager.purge('Pickup');
+                            dataStoreManager.purge('WasteBag');
+                            dataStoreManager.purge('CarboyUseCycle');
+                            dataStoreManager.purge('ScintVialCollection');
+                            dataStoreManager.purge('OtherWasteContainer');
+                            
+                            // Reload our data!
+                            loadPickupsData();
                         });
                     
                 }
@@ -267,12 +288,9 @@ angular.module('00RsmsAngularOrmApp')
 
     // Determine class-name for modal header
     $scope.getStatusClassName = function(pickup){
-        switch(pickup.Status){
-            default:
-            case Constants.PICKUP.STATUS.REQUESTED: return 'requested';
-            case Constants.PICKUP.STATUS.PICKED_UP: return 'picked_up';
-            case Constants.PICKUP.STATUS.AT_RSO:    return 'at_rso';
-        }
+        return radUtilitiesFactory
+            .getStatusNameByValue(pickup.Status || Constants.PICKUP.STATUS.REQUESTED)
+            .toLowerCase();
     }
 
     $scope.statusClass = $scope.getStatusClassName(pickup);
@@ -397,7 +415,6 @@ angular.module('00RsmsAngularOrmApp')
 
     $scope.save = function(pickup) {
         if( $scope.validate() ){
-            console.debug("Close/save edit-pickup modal");
             console.debug("Prepare to save ", pickup);
 
             // Assign/Unassign containers
@@ -427,6 +444,7 @@ angular.module('00RsmsAngularOrmApp')
             }
 
             // Save Pickup (& containers?)
+            console.debug("Close/save edit-pickup modal");
             $modalInstance.close({
                 promiseToSave: actionFunctionsFactory.savePickupDetails(pickup, modifiedContainers)
             });

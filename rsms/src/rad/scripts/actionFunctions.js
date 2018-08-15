@@ -914,9 +914,9 @@ angular
                 return pickup;
             }
 
-            af.getAllPickups = function( key_id )
+            af.getAllPickups = function()
             {
-                return dataSwitchFactory.getAllObjects('Pickup', true);
+                return dataSwitchFactory.getAllObjects('Pickup', true, true);
             }
 
             af.getWasteContainersReadyForPickup = function()

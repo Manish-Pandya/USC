@@ -5,6 +5,15 @@ angular.module('radUtilitiesModule', [
     .factory('radUtilitiesFactory', function radUtilitiesFactory($rootScope, convenienceMethods, roleBasedFactory){
         var radUtilitiesFactory = {};
 
+        radUtilitiesFactory.getStatusNameByValue = function(statusValue){
+            switch(statusValue){
+                case Constants.PICKUP.STATUS.REQUESTED: return 'REQUESTED';
+                case Constants.PICKUP.STATUS.PICKED_UP: return 'PICKED_UP';
+                case Constants.PICKUP.STATUS.AT_RSO:    return 'AT_RSO';
+                default: throw new Exception('No status value provided');
+            }
+        };
+
         radUtilitiesFactory.getFriendlyWasteLabel = function(wasteType){
             switch (wasteType) {
                 case ("WasteBag"):            return "Waste Bags";
