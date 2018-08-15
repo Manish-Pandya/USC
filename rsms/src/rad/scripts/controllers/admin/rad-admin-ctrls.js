@@ -403,16 +403,9 @@ angular.module('00RsmsAngularOrmApp')
             }
         });
 
-        $scope.pickupsCommentsSavingPromise = $q.all(promises)
-        .then(
-            function(){
-                console.debug("Containers saved");
-                $modalInstance.close();
-            },
-            function(err){
-                console.error("Error saving Container:", err);
-            }
-        );
+        $modalInstance.close({
+            promiseToSave: $q.all(promises)
+        });
     }
 
     $scope.save = function(pickup) {
