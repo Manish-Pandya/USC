@@ -318,7 +318,21 @@ i.solids-containers {
         margin: 1px 19px 0 5px !important;
     }
 
+    .card.pickups .card-body {
+        margin: 5px 0px 0px 15px;
+    }
 
+    .card.pickups .card {
+        padding: 10px 0px 0px 10px;
+    }
+
+    .card.pickups .card.picked-up {
+        border-left: rgb(91, 183, 191) solid 6px;
+    }
+
+    .card.pickups .card.available {
+        border-left: rgb(191, 83, 91) solid 6px;
+    }
 
 .card.wipe-tests {
     border-left: rgb(107, 86, 179) solid 6px
