@@ -50,8 +50,8 @@ angular.module('00RsmsAngularOrmApp')
                 // Group by status
                 $scope.pickup_groups = [
                     groupPickups('Requested', 'REQUESTED'),
-                    groupPickups('In-Progress', 'PICKED_UP'),
-                    groupPickups('Completed', 'AT_RSO')
+                    groupPickups('Picked Up', 'PICKED_UP'),
+                    groupPickups('At RSO', 'AT_RSO')
                 ];
             }
         );
