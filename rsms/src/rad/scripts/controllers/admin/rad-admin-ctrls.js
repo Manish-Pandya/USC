@@ -98,7 +98,7 @@ angular.module('00RsmsAngularOrmApp')
 
         var modalData = {
             pickup: pickup,
-            targetStatusName: targetStatusName,
+            targetStatusName: targetStatusName || pickup.Status,
             availableContainers: $scope.pickupReadyContainersByPI[pickup.Principal_investigator_id]
         };
 
