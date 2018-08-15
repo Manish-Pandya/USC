@@ -10,15 +10,16 @@
 
 <div class="right-column">
     <ul class="nav nav-pills" style="margin:20px 0 0">
-        <li ng-class="{'active':!pickupsFilter.showAll}"><a ng-click="pickupsFilter.showAll = false;">Current Pickups</a></li>
-        <li ng-class="{'active':pickupsFilter.showAll}"><a ng-click="pickupsFilter.showAll = true;">All Pickups</a></li>
+        <li ng-repeat="pickup_group in pickup_groups" ng-class="{'active':pickup_group.active}">
+            <a ng-click="pickup_group.active = !pickup_group.active">{{pickup_group.label}} Pickups</a>
+        </li>
         <li style="display:block;"><input ng-model="piSearch" placeholder="Search By Pi" /></li>
     </ul>
 
     <div class="well super" ng-if="pickups.length == 0">
         <h3>No pickups</h3>
     </div>
-    <div class="well super" ng-repeat="pickup_group in pickup_groups" ng-if="pickups.length">
+    <div class="well super" ng-repeat="pickup_group in pickup_groups | filter: {active:true}" ng-if="pickups.length">
         <h1 class="card-header accordion-header">
             <span ng-if="pickup_group.pickups.length > 0">{{pickup_group.label}} <span class="badge">{{pickup_group.pickups.length}}</span></span>
             <span ng-if="pickup_group.pickups.length == 0">No {{pickup_group.label}} Pickups</span>

@@ -25,6 +25,8 @@ angular.module('00RsmsAngularOrmApp')
                 function groupPickups(label, statusName){
                     var status = Constants.PICKUP.STATUS[statusName];
                     return {
+                        active: true,
+
                         label: label,
                         status: status,
                         statusName: statusName,
