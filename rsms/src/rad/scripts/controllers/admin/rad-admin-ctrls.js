@@ -32,7 +32,7 @@ angular.module('00RsmsAngularOrmApp')
                         statusName: statusName,
 
                         allowStart: status == Constants.PICKUP.STATUS.REQUESTED,
-                        allowEdit: status == Constants.PICKUP.STATUS.PICKED_UP,
+                        allowEdit: [Constants.PICKUP.STATUS.PICKED_UP, Constants.PICKUP.STATUS.AT_RSO].includes(status),
                         allowComplete: status == Constants.PICKUP.STATUS.PICKED_UP,
 
                         listAvailableContainers: [Constants.PICKUP.STATUS.REQUESTED, Constants.PICKUP.STATUS.PICKED_UP].includes(status),
