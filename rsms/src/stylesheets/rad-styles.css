@@ -297,6 +297,7 @@ i.solids-containers {
 .modal-header.pickups h2 {
     padding: 5px;
     color: white;
+    background: rgb(91, 183, 91);
 }
 
 .modal-header.pickups h2.requested {
