@@ -625,6 +625,71 @@ angular.module('00RsmsAngularOrmApp')
     };
     $scope.cancel = function () { return $modalInstance.dismiss(); };
 });
+
+angular.module('00RsmsAngularOrmApp')
+    .controller('PickupCtrl', function ($scope, actionFunctionsFactory, $stateParams, radUtilitiesFactory, $q, convenienceMethods) {
+        var af = actionFunctionsFactory;
+
+        var loadPickups = function(){
+            return af.getPickupsForPI($stateParams.pi)
+            .then(function(pickups){
+                console.debug('PI Pickups loaded', pickups);
+
+                // merge pickups' containers
+                pickups.forEach(p => {
+                    p.includedContainers = radUtilitiesFactory.getAllWasteContainersFromPickup(p);
+                });
+
+                // group pickups by status
+                $scope.pickup_groups = radUtilitiesFactory.groupPickupsByStatus(pickups);
+    
+                // Has a pickup been requested?
+                var requestedGroup =  $scope.pickup_groups.filter(g => g.status === 'REQUESTED');
+                var requestedPickups = requestedGroup[0].pickups
+                    .sort((a,b) => a.Date_created < b.Date_created);
+
+                $scope.requestedPickup = requestedPickups[0];
+
+                console.debug("Requested pickup: ", $scope.requestedPickup);
+                console.debug("PI Pickups ready", $scope.pickup_groups);
+            });
+        };
+
+        var loadReadyContainers = function(){
+            return af.getWasteContainersReadyForPickup($stateParams.pi)
+            .then(function(containers){
+                console.debug("PI Containers Loaded", containers);
+                $scope.readyContainers = containers.map(container => {
+                    container.ClassLabel = radUtilitiesFactory.getFriendlyWasteLabel(container.Class);
+                    return container;
+                });
+
+                return $scope.readyContainers;
+            });
+        };
+
+        // Load PI Pickups
+        $scope.piPickupsPromise = loadPickups();
+
+        // Load containrs
+        $scope.loadReadyContainersPromise = loadReadyContainers();
+
+        $scope.savePickupNotes = function(pickup){
+            $scope.PickupSaving = actionFunctionsFactory.savePickupNotes(pickup)
+                .then(
+                    function(){
+                        // Notes saved
+                        console.debug("Notes saved");
+                    },
+                    function(){
+                        // Notes didn't save...
+                        $scope.notes_saved_err = "Failed to save notes";
+                    }
+                );
+        }
+
+    });
+
 /**
  * @ngdoc function
  * @name 00RsmsAngularOrmApp.controller:PickupCtrl
@@ -633,241 +698,6 @@ angular.module('00RsmsAngularOrmApp')
  * Controller of the 00RsmsAngularOrmApp PI waste Pickups view
  */
 angular.module('00RsmsAngularOrmApp')
-    .controller('PickupCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
-    var af = actionFunctionsFactory;
-    $scope.af = af;
-    $rootScope.piPromise = af.getRadPIById($stateParams.pi)
-        .then(function (pi) {
-        //pi.loadRooms();
-        pi = dataStoreManager.getById("PrincipalInvestigator", $stateParams.pi);
-        if (pi.Pickups && pi.Pickups.length) {
-            $scope.CurrentPickup = pi.Pickups.filter(function (p) {
-                return p.Pickup_date == null;
-            }).sort(function (a, b) {
-                return a.Date_created < b.Date_created;
-            })[0] || null;
-        }
-        $scope.pi = pi;
-        $scope.containers = $scope.getContainers($scope.pi);
-    }, function () { });
-    $scope.solidsContainerHasPickups = function (container) {
-        if (!container)
-            return false;
-        if ($scope.hasPickupItems(container.WasteBagsForPickup))
-            return true;
-        return false;
-    };
-    $scope.hasPickupItems = function (collection) {
-        if (!collection || !collection.length)
-            return false;
-        var hasPickupItems = false;
-        if (!collection)
-            return false;
-        var i = collection.length;
-        while (i--) {
-            // TODO: Should collection[i].Contents ever be null? Had to add null check here before getting length, because it's null sometimes.
-            if (!collection[i].Pickup_id && collection[i].Class == "WasteBag" || (!collection[i].Pickup_id && collection[i].Contents && collection[i].Contents.length)) {
-                hasPickupItems = true;
-            }
-        }
-        return hasPickupItems;
-    };
-    $scope.setSVCollection = function (pi) {
-        if (!$scope.CurrentPickup || !$scope.CurrentPickup.Scint_vial_collections) {
-            if (pi.CurrentScintVialCollections && pi.CurrentScintVialCollections.length)
-                return;
-            var collection = new window.ScintVialCollection();
-            collection.Principal_investigator_id = pi.Key_id;
-            collection.new = true;
-            $scope.CurrentScintVialCollections = [collection];
-        }
-        else {
-            console.log($scope.CurrentPickup);
-            $scope.CurrentScintVialCollections = $scope.CurrentPickup.Scint_vial_collections;
-        }
-    };
-    $scope.svTrays = 0;
-    $scope.wasteInContainersScheduledScheduled = function (containers) {
-        var i = containers.length;
-        while (i--) {
-            if (containers[i].Pickup_id)
-                return true;
-        }
-        return false;
-    };
-    $scope.getCurrentPickup = function (pi) {
-        $scope.CurrentPickup = !pi.Pickups || !pi.Pickups.length ? null : pi.Pickups.filter(function (p) { return p.Status == Constants.PICKUP.STATUS.REQUESTED; })[0];
-    };
-    var createPickup = function (containers, pi, notes) {
-        if ($scope.CurrentPickup)
-            var pickup = $scope.CurrentPickup;
-        if (!pickup) {
-            var pickup = new window.Pickup();
-            pickup.Is_active = true;
-            pickup.Class = "Pickup";
-            pickup.Carboy_use_cycles = [];
-            pickup.Scint_vial_collections = [];
-            pickup.Waste_bags = [];
-            pickup.Principal_investigator_id = null;
-            pickup.Requested_date = convenienceMethods.setMysqlTime(Date());
-            pickup.Status = Constants.PICKUP.STATUS.REQUESTED;
-            pickup.Principal_investigator_id = pi.Key_id;
-            pickup.Trays = trays;
-        }
-        var pickupCopy = {
-            Class: "Pickup",
-            Key_id: pickup.Key_id || null,
-            Scint_vial_collections: [],
-            Waste_bags: [],
-            Carboy_use_cycles: [],
-            Other_waste_containers: [],
-            Bags: pickup.Bags,
-            Status: pickup.Status,
-            Principal_investigator_id: pickup.Principal_investigator_id,
-            Scint_vial_trays: pickup.Scint_vial_trays,
-            Requested_date: convenienceMethods.setMysqlTime(new Date())
-        };
-        if ($scope.CurrentPickup) {
-            pickupCopy.Notes = notes || $scope.CurrentPickup.Notes;
-        }
-        else {
-            pickupCopy.Notes = notes;
-        }
-        containers.forEach(function (c) {
-            var collectionClass = "";
-            switch (c.Class) {
-                case ("WasteBag"):
-                    pickupCopy.Waste_bags.push(c);
-                    break;
-                case ("CarboyUseCycle"):
-                    pickupCopy.Carboy_use_cycles.push(c);
-                    break;
-                case ("ScintVialCollection"):
-                    pickupCopy.Scint_vial_collections.push(c);
-                    break;
-                case ("OtherWasteContainer"):
-                    pickupCopy.Other_waste_containers.push(c);
-                    break;
-            }
-        });
-        $rootScope.saving = af.savePickup(pickup, pickupCopy, true).then(function (newPickup) {
-            console.log(newPickup);
-            if (!$scope.CurrentPickup || !$scope.CurrentPickup.Key_id) {
-                $scope.pi.Pickups.push(newPickup);
-                $scope.CurrentPickup = newPickup;
-            }
-            else {
-                angular.extend($scope.CurrentPickup, newPickup);
-            }
-            console.log($scope.CurrentPickup);
-        });
-    };
-    $scope.createPickup = function (containers, pi, notes) {
-        var svCollections = containers.filter(function (c) { return c.Class == "ScintVialCollection"; });
-        containers = containers.filter(function (c) { return c.Class != "ScintVialCollection"; });
-        if (!svCollections.length) {
-            createPickup(containers, pi, notes);
-        }
-        else {
-            var modalInstance = $modal.open({
-                templateUrl: 'views/pi/pi-modals/trays-modal.html',
-                controller: 'PickupModalCtrl',
-                resolve: {
-                    Collections: function () { return svCollections; }
-                }
-            });
-            modalInstance.result
-                .then(function () {
-                containers = containers.concat(svCollections);
-                createPickup(containers, pi, notes);
-            });
-        }
-    };
-    $scope.selectWaste = function (waste, pickupId) {
-        $scope.pi.ActiveParcels = [];
-        $scope.pi.loadActiveParcels().then(function () {
-            var modalData = { pi: { ActiveParcels: [] }, waste: {}, amts: [] };
-            modalData.pi = $scope.pi;
-            if (!Array.isArray(waste))
-                waste = [waste];
-            var containerIds = [];
-            waste = waste.forEach(function (w) {
-                containerIds.push(w.Key_id);
-            });
-            modalData.pi.ActiveParcels.forEach(function (p) {
-                if (p.ParcelUses) {
-                    p.ParcelUses.forEach(function (pu) {
-                        pu.ParcelUseAmounts.forEach(function (amt) {
-                            if (amt.IsPickedUp == pickupId && amt.Waste_type_id == Constants.WASTE_TYPE.SOLID) {
-                                amt.Date_used = pu.Date_used;
-                                amt.Isotope_name = p.Authorization.IsotopeName;
-                                modalData.amts.push(amt);
-                            }
-                        });
-                    });
-                }
-            });
-            modalData.waste = waste;
-            af.setModalData(modalData);
-            var modalInstance = $modal.open({
-                templateUrl: 'views/pi/pi-modals/select-waste-modal.html',
-                controller: 'SelectWasteCtrl'
-            });
-            modalInstance.result.then(function (arr) {
-                console.log(arr);
-                if (arr[1])
-                    $scope.pi.CurrentWasteBag = arr[1];
-                $scope.CurrentPickup.Waste_bags = [];
-                $scope.CurrentPickup.Waste_bags = arr[0].Waste_bags;
-            });
-        });
-    };
-    $scope.hasContents = function (bags) {
-        return bags.some(function (b) { return b.Contents && b.Contents.length; });
-    };
-    $scope.getContainers = function (pi) {
-        return pi.CarboyUseCycles.concat(pi.WasteBags).concat(pi.ScintVialCollections).concat(pi.OtherWasteContainers)
-            .filter(function (c) {
-            return !c.Clearable && c.Close_date != null
-                && (($scope.CurrentPickup && $scope.CurrentPickup.Key_id) ? c.Pickup_id == $scope.CurrentPickup.Key_id : !c.Pickup_id);
-        })
-            .map(function (c, idx) {
-            var container = angular.extend({}, c);
-            container.ViewLabel = c.Label || c.CarboyNumber;
-            //we index at 1 because JS can't tell the difference between false and the number 0 (see return of $scope.getContainer method below)
-            container.idx = idx + 1;
-            switch (c.Class) {
-                case ("WasteBag"):
-                    container.ClassLabel = "Solid Waste";
-                    break;
-                case ("CarboyUseCycle"):
-                    container.ClassLabel = "Carboys";
-                    break;
-                case ("ScintVialCollection"):
-                    container.ClassLabel = "Scint Vial Containers";
-                    break;
-                case ("OtherWasteContainer"):
-                    container.ClassLabel = "Other Waste";
-                    break;
-                default:
-                    container.ClassLabel = "";
-            }
-            return container;
-        }).sort(function (a, b) { return a.Waste_type_id > b.Waste_type_id; });
-    };
-    $scope.getClassByContainerType = function (container) {
-        var classList = "";
-        if (container.Class == "WasteBag")
-            classList = "icon-remove-2 solids-containers";
-        if (container.Class == "ScintVialCollection")
-            classList = "icon-lab scint-vials";
-        if (container.Class == "CarboyUseCycle")
-            classList = "icon-carboy carboys";
-        if (container.Class == "OtherWasteContainer")
-            classList = "other icon-beaker-alt";
-        return classList;
-    };
-})
     .controller('SelectWasteCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
     var af = actionFunctionsFactory;
     $scope.af = af;

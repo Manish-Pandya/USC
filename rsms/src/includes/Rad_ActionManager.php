@@ -1216,6 +1216,45 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
+    function savePickupNotes(){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        // Read DTO from requets
+        // We want this raw because we are not expecting a formal DTO
+        $dto = $this->readRawInputJson();
+        if( $dto === NULL ) {
+            return new ActionError('Error converting input stream to Pickup', 202);
+        }
+        else if( $dto instanceof ActionError) {
+            return $dto;
+        }
+
+        $LOG->debug("Saving Pickup Notes...");
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace($dto);
+        }
+
+        // Extract details from DTO
+        $pickup_id = $dto['pickup_id'];
+        $pickup_notes = $dto['notes'];
+
+        $pickupDao = new GenericDAO(new Pickup());
+        $LOG->debug("Read existing Pickup $pickup_id");
+        $pickup = $pickupDao->getById($pickup_id);
+
+        $LOG->debug("Begin DB transaction...");
+        DBConnection::get()->beginTransaction();
+        $pickup->setNotes( $pickup_notes );
+
+        $pickup = $pickupDao->save($pickup);
+
+        DBConnection::get()->commit();
+        $LOG->debug("...Committed transaction");
+
+        // Saved
+        return true;
+    }
+
     function savePickup(){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
@@ -1243,7 +1282,6 @@ class Rad_ActionManager extends ActionManager {
 
         $LOG->debug("Begin DB transaction...");
         DBConnection::get()->beginTransaction();
-
 
         // Update Pickup details
         // TODO: VALIDATE

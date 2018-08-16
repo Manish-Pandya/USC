@@ -127,7 +127,9 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getAllPIAuthorizations"	=> new ActionMapping("getAllPIAuthorizations", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "saveMiscellaneousWaste"	=> new ActionMapping("saveMiscellaneousWaste", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getAllMiscellaneousWaste"	=> new ActionMapping("getAllMiscellaneousWaste", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-                "saveRadCondition"		    => new ActionMapping("saveRadCondition", "", "", $this::$ROLE_GROUPS["RADMIN"]),
+				"saveRadCondition"		    => new ActionMapping("saveRadCondition", "", "", $this::$ROLE_GROUPS["RADMIN"]),
+
+				"savePickupNotes"		    => new ActionMapping("savePickupNotes", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 
 				// other functions
 				"getParcelRemainder"			 => new ActionMapping("getParcelRemainder", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),

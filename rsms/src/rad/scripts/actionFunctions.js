@@ -1874,6 +1874,26 @@ angular
                     );
             };
 
+            af.savePickupNotes = function( pickup ){
+                var dto = {
+                    pickup_id: pickup.Key_id,
+                    notes: pickup.Notes
+                };
+
+                af.clearError();
+
+                // Save
+                return genericAPIFactory.save(dto, 'savePickupNotes')
+                    .then(
+                        function(response){
+                            console.debug("Pickup Notes Saved:", dto);
+                        },
+                        function(err){
+                            console.error("Error saving Pickup Notes", err);
+                        }
+                    );
+            };
+
             // FIXME: Deprecate this function
             af.savePickup = function(originalPickup, editedPickup, saveChildren){
                 af.clearError();

@@ -1,23 +1,32 @@
-<div cg-busy="{promise:PickupSaving,message:'Saving Pickup', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:ScintVialCollectionSaving,message:'Saving Pickup', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:WasteBagSaving,message:'Saving Pickup', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:CarboyUseCycleSaving,message:'Saving Pickup', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:piPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:PickupSaving,message:'Saving Pickup...', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:loadReadyContainersPromise,message:'Loading Containers...', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:piPickupsPromise,message:'Loading Pickups...', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
-<div style="margin-top: 70px;" ng-if="pi" ng-init="getCurrentPickup(pi)">
-    <div class="card full two-thirds pickup-collection">
-        <h2 style="padding:10px;">
-            <span ng-if="!CurrentPickup && !containers.length">No Waste is ready for pickup</span>
-            <span ng-if="CurrentPickup">The following waste containers are scheduled for pickup:</span>
-        </h2>
-        <containers containers="containers"></containers>
-        <div style="padding:10px;" ng-if="containers.length">
-            <label>Notes/Supplies (Please be specific, i.e. "2 Scint Vial trays or 1 Carboy"):</label>
-            <textarea ng-init="pickupNotes = CurrentPickup.Notes" rows="3" style="width:90%" ng-model="pickupNotes"></textarea>
-            <button ng-click="createPickup(containers,pi,pickupNotes)" class="btn btn-success right" ng-disabled="!pi.CurrentWasteBag.Contents.length && pi.CurrentScintVialCollection && pi.CarboyUseCycles">
-                <span ng-if="CurrentPickup">Save Notes</span>
-                <i class="icon-checkmark-2"></i>
-            </button>
+<div style="margin-top: 70px;">
+    <div class="card full two-thirds pickups pickup-collection requested">
+        <div ng-if="readyContainers.length == 0">
+            <h2 style="padding:10px;">No Waste is ready for pickup</h2>
         </div>
-    </div>        
+        <div ng-if="readyContainers.length > 0">
+            <h2 style="padding:10px;">The following waste containers are ready for Pickup</h2>
+
+            <containers containers="readyContainers"></containers>
+
+            <div style="padding:10px;" ng-if="requestedPickup">
+                <label>Notes/Supplies (Please be specific, i.e. "2 Scint Vial trays or 1 Carboy"):</label>
+                <textarea ng-model="requestedPickup.Notes" rows="3" style="width:90%;"></textarea>
+                <button ng-click="savePickupNotes(requestedPickup)" class="btn btn-success right">
+                    <span>Save Notes</span>
+                    <i class="icon-checkmark-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card full two-thirds pickups pickup-collection {{pickup_group.statusName | lowercase}}" ng-repeat="pickup_group in pickup_groups | filter: {statusName:'PICKED_UP', active:true}">
+        <div ng-repeat="pickup in pickup_group.pickups">
+            <h2 style="padding:10px;">The following waste containers were picked up on {{pickup.Pickup_date | dateToISO}}</h2>
+            <containers containers="pickup.includedContainers"></containers>
+        </div>
+    </div>
 </div>
