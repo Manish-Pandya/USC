@@ -10,7 +10,7 @@
         <div ng-if="readyContainers.length > 0">
             <h2 style="padding:10px;">The following waste containers are ready for Pickup</h2>
 
-            <containers containers="readyContainers"></containers>
+            <containers containers="readyContainers" has-comments="true"></containers>
 
             <div style="padding:10px;" ng-if="requestedPickup">
                 <label>Notes/Supplies (Please be specific, i.e. "2 Scint Vial trays or 1 Carboy"):</label>
@@ -26,7 +26,7 @@
     <div class="card full two-thirds pickups pickup-collection {{pickup_group.statusName | lowercase}}" ng-repeat="pickup_group in pickup_groups | filter: {statusName:'PICKED_UP', active:true}">
         <div ng-repeat="pickup in pickup_group.pickups">
             <h2 style="padding:10px;">The following waste containers were picked up on {{pickup.Pickup_date | dateToISO}}</h2>
-            <containers containers="pickup.includedContainers"></containers>
+            <containers containers="pickup.includedContainers" has-comments="true"></containers>
         </div>
     </div>
 </div>
