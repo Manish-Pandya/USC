@@ -3121,7 +3121,6 @@ class Rad_ActionManager extends ActionManager {
 
         if( $piId ){
             $LOG->debug("Add clause to limit to PI $piId");
-            $clauses = $whereContainerIsPickupReady->getClauses();
             $clauses[] = new WhereClause('principal_investigator_id', '=', $piId);
         }
 
