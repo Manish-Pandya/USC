@@ -5,6 +5,34 @@ angular.module('radUtilitiesModule', [
     .factory('radUtilitiesFactory', function radUtilitiesFactory($rootScope, convenienceMethods, roleBasedFactory){
         var radUtilitiesFactory = {};
 
+        radUtilitiesFactory.groupPickupsByStatus = function(pickups){
+            return [
+                radUtilitiesFactory.$$groupPickups(pickups, 'Requested', 'REQUESTED'),
+                radUtilitiesFactory.$$groupPickups(pickups, 'Picked Up', 'PICKED_UP'),
+                radUtilitiesFactory.$$groupPickups(pickups, 'At RSO', 'AT_RSO')
+            ];
+        };
+
+        radUtilitiesFactory.$$groupPickups = function(pickups, label, statusName){
+            var status = Constants.PICKUP.STATUS[statusName];
+            return {
+                active: true,
+
+                label: label,
+                status: status,
+                statusName: statusName,
+
+                allowStart: status == Constants.PICKUP.STATUS.REQUESTED,
+                allowEdit: [Constants.PICKUP.STATUS.PICKED_UP, Constants.PICKUP.STATUS.AT_RSO].includes(status),
+                allowComplete: status == Constants.PICKUP.STATUS.PICKED_UP,
+
+                listAvailableContainers: [Constants.PICKUP.STATUS.REQUESTED, Constants.PICKUP.STATUS.PICKED_UP].includes(status),
+                listIncludedContainers: [Constants.PICKUP.STATUS.PICKED_UP, Constants.PICKUP.STATUS.AT_RSO].includes(status),
+
+                pickups: pickups.filter(p => p.Status == status)
+            };
+        };
+
         radUtilitiesFactory.getStatusNameByValue = function(statusValue){
             switch(statusValue){
                 case Constants.PICKUP.STATUS.REQUESTED: return 'REQUESTED';

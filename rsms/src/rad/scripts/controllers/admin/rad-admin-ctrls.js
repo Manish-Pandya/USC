@@ -22,37 +22,13 @@ angular.module('00RsmsAngularOrmApp')
                 $scope.pickups = dataStore.Pickup || [];
                 console.debug("loaded pickups", $scope.pickups);
 
-                function groupPickups(label, statusName){
-                    var status = Constants.PICKUP.STATUS[statusName];
-                    return {
-                        active: true,
-
-                        label: label,
-                        status: status,
-                        statusName: statusName,
-
-                        allowStart: status == Constants.PICKUP.STATUS.REQUESTED,
-                        allowEdit: [Constants.PICKUP.STATUS.PICKED_UP, Constants.PICKUP.STATUS.AT_RSO].includes(status),
-                        allowComplete: status == Constants.PICKUP.STATUS.PICKED_UP,
-
-                        listAvailableContainers: [Constants.PICKUP.STATUS.REQUESTED, Constants.PICKUP.STATUS.PICKED_UP].includes(status),
-                        listIncludedContainers: [Constants.PICKUP.STATUS.PICKED_UP, Constants.PICKUP.STATUS.AT_RSO].includes(status),
-
-                        pickups: $scope.pickups.filter(p => p.Status == status)
-                    };
-                }
-
                 // Collect included containers into a single array for each pickup
                 $scope.pickups.forEach(p => {
                     p.includedContainers = radUtilitiesFactory.getAllWasteContainersFromPickup(p);
                 });
 
                 // Group by status
-                $scope.pickup_groups = [
-                    groupPickups('Requested', 'REQUESTED'),
-                    groupPickups('Picked Up', 'PICKED_UP'),
-                    groupPickups('At RSO', 'AT_RSO')
-                ];
+                $scope.pickup_groups = radUtilitiesFactory.groupPickupsByStatus($scope.pickups);
             }
         );
 

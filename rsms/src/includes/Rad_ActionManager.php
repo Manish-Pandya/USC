@@ -730,9 +730,9 @@ class Rad_ActionManager extends ActionManager {
         return $dao->getAll();
     }
 
-    public function getAllPickups(){
+    public function getAllPickups( $piId = NULL ){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
-        $LOG->info("Get all pickups");
+        $LOG->info("Get all pickups" . ($piId ? " for PI $piId" : ''));
 
         $dao = $this->getDao(new Pickup());
         $entityMaps = array();
@@ -742,7 +742,19 @@ class Rad_ActionManager extends ActionManager {
         $entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
         $entityMaps[] = new EntityMap("eager", "getPiName");
 
-        $pickups = $dao->getAll();
+        if( $piId ){
+            // Get all, limited by PI
+            $whereGroup = new WhereClauseGroup(array(
+                new WhereClause('principal_investigator_id', '=', $piId)
+            ));
+
+            $pickups = $dao->getAllWhere($clauses);
+        }
+        else{
+            // Get all
+            $pickups = $dao->getAll();
+        }
+
         foreach($pickups as $pickup){
             $pickup->setEntityMaps($entityMaps);
         }
@@ -3049,10 +3061,13 @@ class Rad_ActionManager extends ActionManager {
      * Retrieves all Waste Containers (of any type) which have been Closed
      * and not yet picked up
      */
-    public function getAllWasteContainersReadyForPickup() {
+    public function getAllWasteContainersReadyForPickup( $piId ) {
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
-        $LOG->info('Get all pickup-ready waste containers');
+        // Get PI filter from request, if any
+        $piId = $this->getValueFromRequest('piId', $piId);
+
+        $LOG->info('Get all pickup-ready waste containers' . ($piId ? " for PI $piId" : ''));
 
         $container_types = array(
             "CarboyUseCycle",
@@ -3067,6 +3082,11 @@ class Rad_ActionManager extends ActionManager {
                 new WhereClause("close_date", "IS NOT", "NULL")
             )
         );
+
+        if( $piId ){
+            $LOG->debug("Add clause to limit to PI $piId");
+            $whereContainerIsPickupReady->getClauses()[] = new WhereClause('principal_investigator_id', '=', $piId);
+        }
 
         $pickupReady = array();
         foreach($container_types as $type){

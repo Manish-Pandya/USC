@@ -919,9 +919,26 @@ angular
                 return dataSwitchFactory.getAllObjects('Pickup', true, true);
             }
 
-            af.getWasteContainersReadyForPickup = function()
+            af.getPickupsForPI = function(piId){
+                if( !piId )
+                    throw new Exception('No PI...');
+
+                var urlSegment = 'getAllPickups' + '&pi=' + piId;
+
+                return genericAPIFactory.read( urlSegment )
+                .then( function( returnedPromise ) {
+                    return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                });
+            };
+
+            af.getWasteContainersReadyForPickup = function( piId )
             {
-                return genericAPIFactory.read( 'getAllWasteContainersReadyForPickup' )
+                var urlSegment = 'getAllWasteContainersReadyForPickup';
+                if( piId ){
+                    urlSegment += '&piId=' + piId;
+                }
+
+                return genericAPIFactory.read( urlSegment )
                 .then( function( returnedPromise ) {
                     return modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
                 });

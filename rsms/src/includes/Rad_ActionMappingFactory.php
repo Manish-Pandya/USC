@@ -82,7 +82,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
                 "getAllRadConditions"		    => new ActionMapping("getAllRadConditions", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
 				"getAllWasteContainersReadyForPickup"
-												=> new ActionMapping("getAllWasteContainersReadyForPickup", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+												=> new ActionMapping("getAllWasteContainersReadyForPickup", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
                 "saveDrumWipe"                  => new ActionMapping("saveDrumWipe", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "saveDrumWipeTest"              => new ActionMapping("saveDrumWipeTest", "", "", $this::$ROLE_GROUPS["ADMIN"]),
