@@ -3114,17 +3114,18 @@ class Rad_ActionManager extends ActionManager {
         );
 
         // Get containers which are closed and are not assigned to a pickup
-        $whereContainerIsPickupReady = new WhereClauseGroup(
-            array(
-                new WhereClause("pickup_id", "IS", "NULL"),
-                new WhereClause("close_date", "IS NOT", "NULL")
-            )
+        $clauses = array(
+            new WhereClause("pickup_id", "IS", "NULL"),
+            new WhereClause("close_date", "IS NOT", "NULL")
         );
 
         if( $piId ){
             $LOG->debug("Add clause to limit to PI $piId");
-            $whereContainerIsPickupReady->getClauses()[] = new WhereClause('principal_investigator_id', '=', $piId);
+            $clauses = $whereContainerIsPickupReady->getClauses();
+            $clauses[] = new WhereClause('principal_investigator_id', '=', $piId);
         }
+
+        $whereContainerIsPickupReady = new WhereClauseGroup($clauses);
 
         $pickupReady = array();
         foreach($container_types as $type){
