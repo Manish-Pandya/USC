@@ -17,6 +17,7 @@ session_start();
 $rlog = Logger::getLogger('request.ajax.' . $actionName);
 $LOG = Logger::getLogger('ajaxaction.' . $actionName);
 
+$username = $_SESSION['USER'] ? $_SESSION['USER']->getUsername() : '';
 if($rlog->isInfoEnabled()){
     $params = "";
     foreach( $dataSource as $key=>$value){
@@ -26,7 +27,7 @@ if($rlog->isInfoEnabled()){
         $params .= "[$key : $value] ";
     }
 
-    $rlog->info($_SESSION['USER']->getUsername() . ' >>>     ' . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . " $params");
+    $rlog->info($username . ' >>>     ' . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . " $params");
 }
 
 // Create Dispatcher (based on $_SESSION)
@@ -78,7 +79,7 @@ if($actionResult->statusCode == 302){
 
 // Output JSON (with possible callback)
 if($rlog->isInfoEnabled()){
-    $rlog->info($_SESSION['USER']->getUsername() . " <<< $actionResult->statusCode " . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . ' content-length:' . strlen($output));
+    $rlog->info($username . " <<< $actionResult->statusCode " . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . ' content-length:' . strlen($output));
 }
 
 echo $output;
