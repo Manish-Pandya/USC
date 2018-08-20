@@ -1297,6 +1297,9 @@ class Rad_ActionManager extends ActionManager {
 
         $pickup = $pickupDao->save($pickup);
 
+        // Handle partial Pickups - ensure no new pickup is required
+        $this->handlePickup($pickup->getPrincipal_investigator_id());
+
         // Override pickup entitymaps to eagerly retrieve containers
         $pickup->setEntityMaps( array(
             new EntityMap(EntityMap::$TYPE_EAGER, "getCarboy_use_cycles"),
@@ -2180,7 +2183,7 @@ class Rad_ActionManager extends ActionManager {
 
         $dao = $this->getDao(new Pickup());
         if($dao->deleteById($id) !== true){
-            return new ActionError("No request parameter 'id' was provided");
+            return new ActionError("Could not delete Pickup #$id");
         }
 
         return true;
