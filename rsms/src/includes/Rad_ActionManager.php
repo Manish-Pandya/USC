@@ -861,7 +861,7 @@ class Rad_ActionManager extends ActionManager {
     }
 
     function saveCarboy() {
-        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $decodedObject = $this->convertInputJson();
         if( $decodedObject === NULL ) {
             return new ActionError('Error converting input stream to Carboy', 202);
@@ -871,23 +871,38 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $key_id = $decodedObject->getKey_id();
-            $dao = $this->getDao(new Carboy());
-            $carboy = $dao->save($decodedObject);
+            $carboyDao = $this->getDao(new Carboy());
+
+            // Create or update?
             if ( $decodedObject->getKey_id() == NULL ) {
-                $carboy->setCommission_date( date('Y-m-d H:i:s') );
-                $carboy = $dao->save($carboy);
+                // New carboy
+                $LOG->info("Create new Carboy: " . $decodedObject);
+
+                // Set commission date
+                $decodedObject->setCommission_date( date('Y-m-d H:i:s') );
+
+                // Save the carboy so we can map to our first use-cycle
+                $carboy = $carboyDao->save($decodedObject);
+
+                // Create its first use-cycle
+                $cycle = new CarboyUseCycle();
+                $cycle->setCarboy_id($carboy->getKey_id());
+                $cycle->setIs_active(true);
+                $cycle->setStatus("Available");
+
+                $LOG->info("Create initial CarboyUseCycle: " . $cycle);
+
+                $cycleDao = new GenericDAO($cycle);
+                $cycle = $cycleDao->save($cycle);
+            }
+            else{
+                // Update
+                $LOG->info("Update Carboy: " . $decodedObject);
+                $carboy = $carboyDao->save($decodedObject);
             }
 
-            if($carboy->getCarboy_use_cycles() == NULL){
-                $carboyCycle = new CarboyUseCycle();
-                $carboyCycle->setCarboy_id( $carboy->getKey_id() );
-                $carboyCycle->setStatus( "Available" );
-                $carboyUseCycle_dao = $this->getDao($carboyCycle);
-                $savedCarboyCycle = $carboyUseCycle_dao->save($carboyCycle);
-            }
-
-            $entityMaps = array();
-            $entityMaps[] = new EntityMap("eager", "getCarboy_use_cycles");
+            // Override entitymaps to eagerly load use-cycle(s)
+            $entityMaps = array(new EntityMap(EntityMap::$TYPE_EAGER, "getCarboy_use_cycles"));
             $carboy->setEntityMaps($entityMaps);
 
             return $carboy;
