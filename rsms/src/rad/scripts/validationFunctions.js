@@ -115,7 +115,10 @@ angular.module('radValidationFunctionsModule', [
 
             var availableQuantity = parcelUseValidationFactory.getAvailableQuantityForUseValidation(parcel, originalUse || use);
 
-            if( use.Quantity > availableQuantity){
+            if( !use.Quantity ){
+                validTotal.error = "Amount is required.";
+            }
+            else if( use.Quantity > availableQuantity){
                 validTotal.error = "Amount cannot exceed Usable Activity.";
             }
             else if( use.Quantity == 0){
