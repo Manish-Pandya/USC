@@ -20,7 +20,7 @@
             <div>{{cycle.Carboy.Commission_date | dateToISO}}</div>
             <div>{{cycle.Carboy.Carboy_number}}</div>
             <div>
-                <select ng-model="cycle.Room" ng-options="(room.Building_name + ': ' + room.Name) for room in modalData.pi.Rooms">
+                <select ng-model="cycle.Room" ng-options="(room.Building_name + ': ' + room.Name) for room in getAuthorizedRoomsForPi(modalData.pi)">
                     <option value="">Select a room</option>
                 </select>
             </div>

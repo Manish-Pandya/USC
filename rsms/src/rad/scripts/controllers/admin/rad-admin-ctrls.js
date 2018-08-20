@@ -1360,6 +1360,14 @@ angular.module('00RsmsAngularOrmApp')
         }, function () {
         });
     };
+
+    $rootScope.getAuthorizedRoomsForPi = function (pi){
+        if( pi.CurrentPi_authorization )
+            return pi.CurrentPi_authorization.Rooms || [];
+
+        return [];
+    };
+
     $rootScope.$watch("pi", function (oldPi, newPi) {
         console.log("WACHTED", oldPi, newPi, $rootScope.pi);
         if ($rootScope.pi)
