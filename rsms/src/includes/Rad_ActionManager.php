@@ -905,7 +905,7 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new CarboyUseCycle());
-            $decodedObject = $this->handlePickup($decodedObject);
+            $decodedObject = $this->onWasteContainerUpdated($decodedObject);
             $decodedObject = $dao->save($decodedObject);
 
             $entityMaps = array();
@@ -1381,7 +1381,7 @@ class Rad_ActionManager extends ActionManager {
         }
         else {
             $dao = $this->getDao(new ScintVialCollection());
-            $decodedObject = $this->handlePickup($decodedObject);
+            $decodedObject = $this->onWasteContainerUpdated($decodedObject);
             $collection = $dao->save($decodedObject);
             return $collection;
         }
@@ -1432,7 +1432,7 @@ class Rad_ActionManager extends ActionManager {
         else {
             $dao = $this->getDao(new WasteBag());
             $lots = $decodedObject->getPickupLots();
-            $decodedObject = $this->handlePickup($decodedObject);
+            $decodedObject = $this->onWasteContainerUpdated($decodedObject);
             $decodedObject = $dao->save($decodedObject);
 
             $lotDao = new GenericDAO(new PickupLot());
@@ -3048,7 +3048,7 @@ class Rad_ActionManager extends ActionManager {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
         $LOG->fatal($decodedObject);
         $d = new GenericDAO($decodedObject);
-        $decodedObject = $this->handlePickup($decodedObject);
+        $decodedObject = $this->onWasteContainerUpdated($decodedObject);
         return $d->save($decodedObject);
     }
 
@@ -3154,47 +3154,78 @@ class Rad_ActionManager extends ActionManager {
         return $dao->save();
     }
 
-    private function handlePickup(WasteBag $container){
+    /**
+     * Actions performed when a Waste container is updated
+     */
+    private function onWasteContainerUpdated($container){
         $l = Logger::getLogger(__FUNCTION__);
+
+        // Handle requesting Pickup
         if($container->getClose_date() == null){
             $l->debug("Container is not closed; no pickup necessary");
-            return $container;
         }
         else{
             $l->debug("Handle pickup for container");
             if($l->isTraceEnabled()){
                 $l->trace($container);
             }
+
+            // Handle pickup
+            $this->handlePickup($container->getPrincipal_investigator_id());
         }
 
+        return $container;
+    }
+
+    private function handlePickup($piId){
+        $l = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        if( $piId == NULL ){
+            $l->warn('No PI ID provided to ' . __FUNCTION__);
+            return;
+        }
+
+        // Are there any containers ready for pickup?
+        $readyContainers = $this->getAllWasteContainersReadyForPickup($piId);
+        $requirePickup = count($readyContainers) > 0;
+
+        $l->debug("PI $piId requires waste pickup");
+
+        // Find existing REQUESTED pickups
         $dao = new GenericDAO(new Pickup());
         $group = new WhereClauseGroup(
             array(
-                new WhereClause("principal_investigator_id", "=", $container->getPrincipal_investigator_id()),
+                new WhereClause("principal_investigator_id", "=", $piId),
                 new WhereClause("status", "=", "REQUESTED")
             )
         );
 
-        // Find existing REQUESTED pickups
         $existingPickups = $dao->getAllWhere($group);
+        $pickupExists = count($existingPickups) > 0;
 
-        if(count($existingPickups)){
-            $l->info('Found ' . count($existingPickups) . ' pickup(s) for PI ' . $container->getPrincipal_investigator_id());
+        $l->debug('Found ' . count($existingPickups) . ' existing pickup(s) for PI ' . $piId);
 
-            if($l->isTraceEnabled()){
-                $l->trace($existingPickups);
-            }
-
-            $pickup = $existingPickups[0];
-        } else {
-            $l->info("Requesting new pickup for PI " . $container->getPrincipal_investigator_id());
+        if( $requirePickup && !$pickupExists ){
+            // A new pickup is required
+            $l->info("Requesting new pickup for PI " . $piId);
             $pickup = new Pickup();
-            $pickup->setPrincipal_investigator_id($container->getPrincipal_investigator_id());
+            $pickup->setPrincipal_investigator_id($piId);
             $pickup->setStatus("REQUESTED");
             $pickup = $dao->save($pickup);
-        }
 
-        return $container;
+            $l->info("Saved pickup " . $pickup);
+        }
+        else if ( !$requirePickup && $pickupExists){
+            // No pickups are required; trim the orphans
+            $l->info("PI $piId has requested Pickups but no ready containers; trimming orphan Pickups...");
+            foreach( $existingPickups as $orphan ){
+                $this->deletePickupById($orphan->getKey_id());
+            }
+        }
+        else{
+            // else nothing required
+            $l->warn("PI $piId requires no new Pickup. " . count($existingPickups) . ' Existing Pickup(s), ' . count($readyContainers) . ' ready Waste Containers');
+        }
     }
 
     public function removeFromPickup(){
