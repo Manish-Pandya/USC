@@ -92,6 +92,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css"/>
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css" />
+<link href="../js/lib/ng-quick-date/ng-quick-date.css" rel="stylesheet" />
 
 <!-- included fonts
  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>

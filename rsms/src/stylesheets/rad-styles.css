@@ -1356,3 +1356,7 @@ i.solids-containers {
 .modal-dialog-wide .modal-dialog, .modal-dialog-wide.modal {
     width: 1000px;
 }
+
+.quickdate .btn i {
+    padding-right: 5px;
+}

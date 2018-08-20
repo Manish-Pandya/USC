@@ -24,7 +24,7 @@ angular
     'once',
     'ui.router',
     'ui.tinymce',
-
+    'ngQuickDate',
     'modalPosition',
     'convenienceMethodWithRoleBasedModule',
     //'ngMockE2E'
@@ -283,5 +283,16 @@ angular
       // Otherwise send them to RSMSCenter
       window.location.href = GLOBAL_WEB_ROOT + 'views/RSMSCenter.php';
     }
-  });;
+  })
+  .config(function (ngQuickDateDefaultsProvider) {
+    return ngQuickDateDefaultsProvider.set({
+      closeButtonHtml: "<i class='icon-cancel-2'></i>",
+      buttonIconHtml: "<i class='icon-calendar-2'></i>",
+      nextLinkHtml: "<i class='icon-arrow-right'></i>",
+      prevLinkHtml: "<i class='icon-arrow-left'></i>",
+      parseDateFunction: function (str) {
+        return new Date(Date.parse(str));
+      }
+    });
+  });
 
