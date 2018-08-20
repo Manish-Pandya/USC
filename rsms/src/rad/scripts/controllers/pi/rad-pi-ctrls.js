@@ -526,6 +526,15 @@ angular.module('00RsmsAngularOrmApp')
         }
         return valid;
     };
+
+    $scope.useDateButtonClass = 'btn-info';
+    $scope.onChangeDateUsed = function(parcel, copy, use){
+        var validDate = parcelUseValidationFactory.validateUsageDate(copy, parcel);
+        $scope.useDateButtonClass = validDate.isValid ? 'btn-info' : 'btn-danger';
+        copy.isValid = false;
+        copy.DateError = validDate.error;
+    };
+
     $scope.saveParcelUse = function (parcel, copy, use) {
         console.debug("saveParcelUse(parcel, copy, use)", parcel, copy, use);
 
