@@ -53,7 +53,9 @@ angular.module('00RsmsAngularOrmApp')
                 return map;
             }
 
-            $scope.pickupReadyContainersByPI = containers.reduce( reduceContainers, []);
+            $scope.pickupReadyContainersByPI = radUtilitiesFactory
+                .applyWasteTypeLabels(containers)
+                .reduce( reduceContainers, []);
         });
     }
 

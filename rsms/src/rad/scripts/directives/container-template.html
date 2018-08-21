@@ -8,8 +8,8 @@
             <li class="labels">
                 <div class="container-label" ng-init="c.ViewLabel = c.ViewLabel ? c.ViewLabel : c.Name || c.Label || c.Carboy_number">
                 {{c.ViewLabel}}
-                    <span ng-if="c.Trays">({{c.Trays}} Tray
-                        <span ng-if="c.Trays != 1">s</span>)</span>
+                    <span ng-if="c.Trays && c.Trays == 1">({{c.Trays}} Tray)</span>
+                    <span ng-if="c.Trays && c.Trays != 1">({{c.Trays}} Trays)</span>
                     <p ng-if="c.Description">{{c.Description}}</p>
                 </div>
                 <div>
