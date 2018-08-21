@@ -312,9 +312,12 @@ angular.module('00RsmsAngularOrmApp')
     };
     $scope.getSampleAmount = function (use) {
         var total = use.Quantity;
-        use.ParcelUseAmounts.forEach(function (pu) {
-            total -= parseFloat(pu.Curie_level);
-        });
+        use.ParcelUseAmounts
+            .filter(pu => pu.Is_active)
+            .forEach(function (pu) {
+                total -= parseFloat(pu.Curie_level);
+            }
+        );
         total = Math.round(total * 100000) / 100000;
         if (total > 0)
             return total + "mCi";
