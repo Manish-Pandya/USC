@@ -29,6 +29,9 @@ angular.module('00RsmsAngularOrmApp')
 
                 // Group by status
                 $scope.pickup_groups = radUtilitiesFactory.groupPickupsByStatus($scope.pickups);
+
+                // Default to show all groups
+                $scope.show_all_pickup_groups = true;
             }
         );
 
