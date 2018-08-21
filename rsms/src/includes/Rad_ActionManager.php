@@ -1300,14 +1300,20 @@ class Rad_ActionManager extends ActionManager {
 
         // Update Pickup details
         // TODO: VALIDATE
-        $pickup->setStatus( $dto['pickup']['status']);
+        $newStatus = $dto['pickup']['status'];
+
+        if( $newStatus != $pickup->getStatus() ){
+            $LOG->info('Transistion pickup ' . $pickup . ' ' . $pickup->getStatus() . " => $newStatus");
+        }
+
+        $pickup->setStatus( $newStatus );
         $pickup->setPickup_date( $dto['pickup']['date']);
 
         $LOG->debug("Update Containers");
 
         $savedContainers = array();
         foreach($dto['containers'] as $containerDto){
-            $savedContainers[] = $this->savePickup_container($containerDto);
+            $savedContainers[] = $this->savePickup_container($containerDto, $newStatus);
         }
 
         $pickup = $pickupDao->save($pickup);
@@ -1336,31 +1342,13 @@ class Rad_ActionManager extends ActionManager {
         return $savedDto;
     }
 
-    function savePickup_container($dto){
+    function savePickup_container($dto, $pickupStatus){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->debug("Update (" . $dto['type'] . ') #' . $dto['id']);
 
         // TODO: validate DTO
 
-        $dao = null;
-
-        switch( $dto['type'] ){
-            case 'WasteBag':
-                $dao = new GenericDAO(new WasteBag());
-                break;
-            case 'ScintVialCollection':
-                $dao = new GenericDAO(new ScintVialCollection());
-                break;
-            case 'CarboyUseCycle':
-                $dao = new GenericDAO(new CarboyUseCycle());
-                break;
-            case 'OtherWasteContainer':
-                $dao = new GenericDAO(new OtherWasteContainer());
-                break;
-            default:
-                $LOG->warn('Cannot update unkown waste container type: ' . $dto['type']);
-                throw new Exception("Cannot determine DTO type for container");
-        }
+        $dao = $this->getDaoForWasteContainer($dto['type']);
 
         // Look up the container by ID
         $container = $dao->getById($dto['id']);
@@ -1371,13 +1359,34 @@ class Rad_ActionManager extends ActionManager {
         }
 
         // Add To or Remove From Pickup
-        if( $dto['pickup_id'] != null){
+        $includeInPickup = $dto['pickup_id'] != null;
+
+        if( $includeInPickup ){
             $LOG->debug('Add container to Pickup ' . $dto['pickup_id']);
             $container->setPickup_id( $dto['pickup_id']);
         }
         else{
             $LOG->debug('Remove container from Pickup ' . $container->getPickup_id());
             $container->setPickup_id( null );
+        }
+
+        // Special cases...
+        if( $container instanceof CarboyUseCycle ){
+            // Set status
+            if( $includeInPickup ){
+                // Included in Pickup; either Picked Up or At RSO, based on Pickup status
+                switch( $pickupStatus ){
+                    case 'PICKED UP': $container->setStatus('Picked Up'); break;
+                    case 'AT RSO':    $container->setStatus('AT RSO');    break;
+                    default: $LOG->error("Unabled to identify CarboyUseCycle status; Pickup status: $pickupStatus");
+                }
+            }
+            else{
+                // Removed from pickup; put back In Use
+                $container->setStatus("In Use");
+            }
+
+            $LOG->info("Transition " . $container . " status to " . $container->getStatus());
         }
 
         // Add/Update Comments
@@ -3172,18 +3181,75 @@ class Rad_ActionManager extends ActionManager {
         return $dao->save();
     }
 
+    public function closeWasteContainer($containerId = null, $containerType = null){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $closeDate = new DateTime();
+
+        if( !$containerId && !$containerType ){
+            $dto = $this->readRawInputJson();
+            if( $dto === NULL ) {
+                return new ActionError('Error converting input stream to Pickup', 202);
+            }
+            else if( $dto instanceof ActionError) {
+                return $dto;
+            }
+
+            $containerId = $dto['id'];
+            $containerType = $dto['type'];
+            $closeDate = $dto['date'];
+        }
+
+        // We need both params
+        if( !$containerId || !$containerType ){
+            return new ActionError("Invalid request");
+        }
+
+        $LOG->debug("Close $containerType $containerId...");
+
+        // Get appropriate DAO
+        $dao = $this->getDaoForWasteContainer( $containerType );
+
+        // Lookup container
+        $container = $dao->getById($containerId);
+
+        if( ! $container ){
+            return new ActionError("No such $containerType $containerId");
+        }
+
+        if( $container->getClose_date() == NULL ){
+            $LOG->info("Closing container " . $container . ' at ' . $closeDate);
+
+            // Close the container
+            $container->setClose_date($closeDate);
+
+            // TODO: type-specific special cases?
+
+            // Save changes
+            $container = $dao->save($container);
+
+            $this->onWasteContainerUpdated($container);
+        }
+        else {
+            // else nothing to do
+            $LOG->info($container . ' is already closed');
+        }
+
+        return $container;
+    }
+
     /**
      * Actions performed when a Waste container is updated
      */
     private function onWasteContainerUpdated($container){
-        $l = Logger::getLogger(__FUNCTION__);
+        $l = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
         // Handle requesting Pickup
         if($container->getClose_date() == null){
             $l->debug("Container is not closed; no pickup necessary");
         }
         else{
-            $l->debug("Handle pickup for container");
+            $l->info("Handle pickup for container " . $container);
             if($l->isTraceEnabled()){
                 $l->trace($container);
             }
@@ -3275,6 +3341,19 @@ class Rad_ActionManager extends ActionManager {
         $dao = new GenericDAO($decodedObject);
         $decodedObject = $dao->save($decodedObject);
         return $decodedObject;
+    }
+
+    private function getDaoForWasteContainer($type){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+        switch( $type ){
+            case 'WasteBag':            return new GenericDAO(new WasteBag());
+            case 'ScintVialCollection': return new GenericDAO(new ScintVialCollection());
+            case 'CarboyUseCycle':      return new GenericDAO(new CarboyUseCycle());
+            case 'OtherWasteContainer': return new GenericDAO(new OtherWasteContainer());
+            default:
+                $LOG->warn('Cannot update unkown waste container type: ' . $type);
+                throw new Exception("Cannot determine DTO type for container");
+        }
     }
 }
 ?>

@@ -1033,21 +1033,14 @@ angular.module('00RsmsAngularOrmApp')
         return detect(obj);
     }
     $scope.confirmCloseContainer = function (container) {
-        console.log(container);
-        var copy = {
-            Close_date: convenienceMethods.setMysqlTime(new Date()),
-            Class: container.Class,
-            Key_id: container.Key_id,
-            Principal_investigator_id: container.Principal_investigator_id,
-            Carboy_id: container.Carboy_id || null,
-            Trays: container.Trays || null
-        };
-        return $rootScope.saving = af.save(copy).then(function (r) {
-            angular.extend(container, r);
-            $modalInstance.dismiss();
-            af.deleteModalData();
-            return r;
-        });
+        console.log("Confirm close container ", container);
+        return $rootScope.saving = af.closeWasteContainer(container)
+            .then(function(r){
+                angular.extend(container, r);
+                $modalInstance.close(container);
+                af.deleteModalData();
+                return r;
+            });
     };
     $scope.getValidTrays = function (num) {
         return num && num.length && !isNaN(num);

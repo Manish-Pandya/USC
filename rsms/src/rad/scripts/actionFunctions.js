@@ -1070,6 +1070,29 @@ angular
                 return dataSwitchFactory.getAllObjects('WasteType');
             }
 
+            /********************************************************************
+            **      WASTE CONTAINER
+            ********************************************************************/
+
+            af.closeWasteContainer = function(container){
+                var dto = {
+                    type: container.Class,
+                    id: container.Key_id,
+                    date: convenienceMethods.setMysqlTime(new Date())
+                };
+
+                return genericAPIFactory.save(dto, 'closeWasteContainer').
+                    then(
+                        function(response){
+                            var dto = modelInflatorFactory.instateAllObjectsFromJson( response.data );
+                            console.debug("Container closed", dto);
+                            return dto;
+                        },
+                        function(err){
+                            console.error("Error closing container", container, err);
+                        }
+                    );
+            };
 
             /********************************************************************
             **

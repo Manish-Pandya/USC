@@ -131,6 +131,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 
 				"savePickupNotes"		    => new ActionMapping("savePickupNotes", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 
+				"closeWasteContainer"       => new ActionMapping("closeWasteContainer", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+
 				// other functions
 				"getParcelRemainder"			 => new ActionMapping("getParcelRemainder", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"disposeParcelRemainder" 	   	 => new ActionMapping("disposeParcelRemainder", "","", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
