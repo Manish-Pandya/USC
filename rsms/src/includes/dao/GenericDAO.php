@@ -1693,7 +1693,7 @@ class GenericDAO {
 
 		-- Parcel on-premise
 		LEFT OUTER JOIN parcel parcel
-			ON (parcel.authorization_id = auth.key_id AND parcel.status IN('Arrived', 'Delivered'))
+			ON (parcel.authorization_id = auth.key_id AND parcel.status IN('Arrived', 'Wipe Tested', 'Delivered'))
 
 		-- Active Use Logs
 		LEFT OUTER JOIN (
