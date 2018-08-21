@@ -319,7 +319,7 @@ angular.module('00RsmsAngularOrmApp')
             }
         );
         total = Math.round(total * 100000) / 100000;
-        if (total > 0)
+        if (total >= 0)
             return total + "mCi";
         return "N/A";
     };
