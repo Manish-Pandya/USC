@@ -77,6 +77,22 @@ angular.module('00RsmsAngularOrmApp')
         });
     };
 
+    $scope.filterPickupGroups = function(group){
+        $scope.show_all_pickup_groups = group === undefined;
+        if( $scope.show_all_pickup_groups ){
+            // show all
+            $scope.pickup_groups.forEach(g => {
+                g.active = true;
+            });
+        }
+        else{
+            // show one
+            $scope.pickup_groups.forEach(g => {
+                g.active = (g === group);
+            });
+        }
+    };
+
     $scope.editPickup = function(sourcePickup, targetStatusName){
         // Clone the pickup to ease cancelling
         var pickup = angular.extend({}, sourcePickup);

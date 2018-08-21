@@ -10,8 +10,11 @@
 
 <div class="right-column">
     <ul class="nav nav-pills" style="margin:20px 0 0">
+        <li ng-class="{'active':show_all_pickup_groups}">
+            <a ng-click="filterPickupGroups()">All Pickups</a>
+        </li>
         <li ng-repeat="pickup_group in pickup_groups" ng-class="{'active':pickup_group.active}">
-            <a ng-click="pickup_group.active = !pickup_group.active">{{pickup_group.label}} Pickups</a>
+            <a ng-click="filterPickupGroups(pickup_group)">{{pickup_group.label}} Pickups</a>
         </li>
         <li style="display:block;"><input ng-model="piSearch" placeholder="Search By Pi" /></li>
     </ul>
