@@ -3273,8 +3273,6 @@ class Rad_ActionManager extends ActionManager {
         $readyContainers = $this->getAllWasteContainersReadyForPickup($piId);
         $requirePickup = count($readyContainers) > 0;
 
-        $l->debug("PI $piId requires waste pickup");
-
         // Find existing REQUESTED pickups
         $dao = new GenericDAO(new Pickup());
         $group = new WhereClauseGroup(
