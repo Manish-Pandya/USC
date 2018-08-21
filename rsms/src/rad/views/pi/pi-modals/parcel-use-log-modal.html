@@ -63,7 +63,7 @@
                                 <option value="">Select Container</option>
                             </select>
                             <div class="span4"
-                                 ng-show="amt.PickedUp && !roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])"
+                                 ng-show="amt.PickedUp"
                                  style="margin-left:8px;width:260px">
                                 <h5 style="margin-top:4px;">{{pi.Containers[amt.ContainerIdx-1].ViewLabel}} (closed {{pi.Containers[amt.ContainerIdx-1].Close_date | dateToISO}})</h5>
                             </div>
