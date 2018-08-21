@@ -1360,3 +1360,8 @@ i.solids-containers {
 .quickdate .btn i {
     padding-right: 5px;
 }
+
+.isotope-report tr.empty td {
+    color: #A0A0A0;
+    font-style: italic;
+}
