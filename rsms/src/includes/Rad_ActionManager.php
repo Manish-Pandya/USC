@@ -885,17 +885,15 @@ class Rad_ActionManager extends ActionManager {
                 $carboy = $carboyDao->save($decodedObject);
 
                 $LOG->debug("Saved new carboy: " . $carboy);
-
-                // Create its first use-cycle
-                $cycle = $this->checkCycleCarboy($carboy->getKey_id());
-
-                $LOG->info("Created initial CarboyUseCycle: " . $cycle);
             }
             else{
                 // Update
                 $LOG->info("Update Carboy: " . $decodedObject);
                 $carboy = $carboyDao->save($decodedObject);
             }
+
+            // Check that it has an active use-cycle
+            $this->checkCycleCarboy($carboy->getKey_id());
 
             // Override entitymaps to eagerly load use-cycle(s)
             $entityMaps = array(new EntityMap(EntityMap::$TYPE_EAGER, "getCarboy_use_cycles"));
@@ -957,11 +955,17 @@ class Rad_ActionManager extends ActionManager {
         $carboyDao = new GenericDao(new Carboy());
         $carboy = $carboyDao->getById($carboyId);
 
+        // Ignore if this carboy is retired
+        if( $carboy->getRetirement_date() != null ){
+            $LOG->info("$carboy is retired");
+            return;
+        }
+
         $LOG->debug("Check current cycle for " . $carboy);
         $currentCycle = $carboy->getCurrent_carboy_use_cycle();
 
         if( $currentCycle == null ){
-            $LOG->info("Carboy requires new cycle");
+            $LOG->debug("Carboy requires new cycle");
 
             $cycle = new CarboyUseCycle();
             $cycle->setCarboy_id($carboy->getKey_id());
@@ -971,6 +975,8 @@ class Rad_ActionManager extends ActionManager {
             // Save
             $cycleDao = new GenericDAO($cycle);
             $cycle = $cycleDao->save($cycle);
+
+            $LOG->info("Created new use cycle $cycle");
 
             // Invalidate the carboy's cached cycles, forcing it to re-load them (thus including the newly-saved cycle)
             $carboy->setCarboy_use_cycles(null);
