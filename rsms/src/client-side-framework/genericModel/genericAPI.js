@@ -75,7 +75,7 @@ angular
                 if(!object.Class && object.className)object.Class = object.className;
                 if( !urlFragment )var urlFragment = api.fetchActionString( "save", object.Class );
                 var url = api.buildRequestUrl( urlFragment, false );
-                console.log("SENDING TO", url);
+                console.log("Sending to ", url, "Data:", object);
                 if(saveChildren)url = url + "&saveChildren=true";
 
                 var promise = $http.post(url, object)

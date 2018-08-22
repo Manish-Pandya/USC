@@ -910,7 +910,7 @@ class Rad_ActionManager extends ActionManager {
     }
 
     function saveCarboyUseCycle() {
-        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $decodedObject = $this->convertInputJson();
         if( $decodedObject === NULL ) {
             return new ActionError('Error converting input stream to CarboyUseCycle', 202);

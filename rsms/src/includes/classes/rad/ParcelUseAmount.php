@@ -208,7 +208,7 @@ include_once 'RadCrud.php';
     public function setIsotope_id($id){$this->isotope_id = $id;}
 
     public function getIsPickedUp(){
-        $l = Logger::getLogger(__FUNCTION__);
+        $l = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
         $this->isPickedUp = false;
         $db = DBConnection::get();
 		$queryString = "select a.key_id, a.pickup_date, a.requested_date, a.principal_investigator_id from pickup a

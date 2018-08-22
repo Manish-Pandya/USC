@@ -1019,7 +1019,7 @@ angular.module('00RsmsAngularOrmApp')
             var drums = dataStoreManager.get("Drum");
             af.replaceDrums(drums)
                 .then(function (returnedDrums) {
-                console.log(returnedDrums);
+                console.log('Reloaded Drums', returnedDrums);
             });
         };
         $scope.addPickupLot = function (wasteBag) {
