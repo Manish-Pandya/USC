@@ -331,5 +331,11 @@ class CarboyUseCycle extends Container {
 
 	public function getClose_date(){ return $this->close_date; }
 	public function setClose_date($close_date){ $this->close_date = $close_date; }
+
+	public function isDisposed(){
+		return $this->getPour_date() != null
+			|| $this->getStatus() == 'Poured'
+			|| $this->getStatus() == 'Mixed Waste';
+	}
 }
 ?>

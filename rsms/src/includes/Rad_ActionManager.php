@@ -884,16 +884,12 @@ class Rad_ActionManager extends ActionManager {
                 // Save the carboy so we can map to our first use-cycle
                 $carboy = $carboyDao->save($decodedObject);
 
+                $LOG->debug("Saved new carboy: " . $carboy);
+
                 // Create its first use-cycle
-                $cycle = new CarboyUseCycle();
-                $cycle->setCarboy_id($carboy->getKey_id());
-                $cycle->setIs_active(true);
-                $cycle->setStatus("Available");
+                $cycle = $this->checkCycleCarboy($carboy->getKey_id());
 
-                $LOG->info("Create initial CarboyUseCycle: " . $cycle);
-
-                $cycleDao = new GenericDAO($cycle);
-                $cycle = $cycleDao->save($cycle);
+                $LOG->info("Created initial CarboyUseCycle: " . $cycle);
             }
             else{
                 // Update
@@ -919,9 +915,19 @@ class Rad_ActionManager extends ActionManager {
             return $decodedObject;
         }
         else {
+            // Save the cycle
+            $LOG->info("Save " . $decodedObject);
             $dao = $this->getDao(new CarboyUseCycle());
             $decodedObject = $this->onWasteContainerUpdated($decodedObject);
-            $decodedObject = $dao->save($decodedObject);
+            $cycle = $dao->save($decodedObject);
+
+            if( $LOG->isTraceEnabled()){
+                $LOG->trace($cycle);
+            }
+
+            // Determine if carboy needs a new cycle
+            $this->checkCycleCarboy($cycle->getCarboy_id());
+            $cycle->setCarboy(null);
 
             $entityMaps = array();
             $entityMaps[] = new EntityMap("lazy", "getCarboy");
@@ -932,8 +938,45 @@ class Rad_ActionManager extends ActionManager {
             $entityMaps[] = new EntityMap("lazy", "getRoom");
             $entityMaps[] = new EntityMap("lazy", "getPickup");
             $entityMaps[] = new EntityMap("eager", "getPour_allowed_date");
-            $decodedObject->setEntityMaps($entityMaps);
-            return $decodedObject;
+            $cycle->setEntityMaps($entityMaps);
+
+            $LOG->debug("SAVE COMPLETE");
+            return $cycle;
+        }
+    }
+
+    function checkCycleCarboy($carboyId){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        if( !$carboyId ){
+            $LOG->error("Cannot check carboy cycle(s) without a key id");
+            return;
+        }
+
+        $LOG->debug("Get carboy by ID: '$carboyId'");
+        $carboyDao = new GenericDao(new Carboy());
+        $carboy = $carboyDao->getById($carboyId);
+
+        $LOG->debug("Check current cycle for " . $carboy);
+        $currentCycle = $carboy->getCurrent_carboy_use_cycle();
+
+        if( $currentCycle == null ){
+            $LOG->info("Carboy requires new cycle");
+
+            $cycle = new CarboyUseCycle();
+            $cycle->setCarboy_id($carboy->getKey_id());
+            $cycle->setIs_active(true);
+            $cycle->setStatus("Available");
+
+            // Save
+            $cycleDao = new GenericDAO($cycle);
+            $cycle = $cycleDao->save($cycle);
+
+            // Invalidate the carboy's cached cycles, forcing it to re-load them (thus including the newly-saved cycle)
+            $carboy->setCarboy_use_cycles(null);
+        }
+        else{
+            $LOG->debug("Carboy does not require new cycle");
         }
     }
 
