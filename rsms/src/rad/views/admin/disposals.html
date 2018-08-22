@@ -197,7 +197,7 @@
         <h1><i class="icon-remove-2"></i>Containers</h1>
         <h3 ng-show="!drumableContainers.length">No solid waste to dispose</h3>
         <div class="card full solids-containers" ng-if="drumableContainers.length">
-            <containers add-waste="addWaste" filter-function="nonDrummed" suppress-close-date="true" close="assignWasteBagToDrum" containers="drumableContainers" button-text="Place In Drum" button-class="btn-success"></containers>
+            <containers add-waste="addWaste" filter-function="nonDrummed" suppress-close-date="true" close="assignDrum" containers="drumableContainers" button-text="Place In Drum" button-class="btn-success"></containers>
         </div>
     </div>
 

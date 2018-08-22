@@ -53,7 +53,8 @@ var Constants = /** @class */ (function () {
             PICKED_UP: "Picked Up",
             AT_RSO: "AT RSO",
             HOT_ROOM: "In Hot Room",
-            MIXED_WASTE: "Mixed Waste"
+            MIXED_WASTE: "Mixed Waste",
+            POURED: "Poured"
         }
     };
     Constants.INSPECTION = {

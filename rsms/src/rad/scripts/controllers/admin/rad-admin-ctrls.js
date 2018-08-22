@@ -816,30 +816,31 @@ angular.module('00RsmsAngularOrmApp')
     $scope.date = new Date();
     $scope.assignDrum = function (object) {
         var modalData = {};
-        if (object)
+
+        if(object){
+            // Special handling for WasteBag
+            if( object.Class == "WasteBag" ){
+                if (!wasteBag.PickupLots || !wasteBag.PickupLots.length) {
+                    wasteBag.PickupLots = [{
+                        Class: "PickupLot",
+                        Currie_level: 0,
+                        Waste_bag_id: wasteBag.Key_id,
+                        Waste_type_id: Constants.WASTE_TYPE.SOLID,
+                        Isotope_id: null
+                    }];
+                }
+            }
+
             modalData[object.Class] = object;
+        }
+
         af.setModalData(modalData);
         var modalInstance = $modal.open({
             templateUrl: 'views/admin/admin-modals/drum-assignment.html',
             controller: 'DrumAssignmentCtrl'
         });
     };
-    $scope.assignWasteBagToDrum = function (wasteBag) {
-        if (!wasteBag.PickupLots || !wasteBag.PickupLots.length) {
-            wasteBag.PickupLots = [{
-                    Class: "PickupLot",
-                    Currie_level: 0,
-                    Waste_bag_id: wasteBag.Key_id,
-                    Waste_type_id: Constants.WASTE_TYPE.SOLID,
-                    Isotope_id: null
-                }];
-        }
-        af.setModalData({ "WasteBag": wasteBag });
-        var modalInstance = $modal.open({
-            templateUrl: 'views/admin/admin-modals/drum-assignment.html',
-            controller: 'DrumAssignmentCtrl'
-        });
-    };
+
     $scope.drumModal = function (object) {
         var modalData = {};
         if (object)

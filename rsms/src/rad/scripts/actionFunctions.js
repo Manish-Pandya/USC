@@ -1623,14 +1623,21 @@ angular
                 af.clearError();
                 if(poured){
                     copy.Pour_date = convenienceMethods.setMysqlTime(new Date());
-                    copy.Status = Constants.CARBOY_USE_CYCLE.STATUS.AVAILABLE;
+                    copy.Status = Constants.CARBOY_USE_CYCLE.STATUS.POURED;
                 }
 
                 //we've changed the hot isotope, so set the date
                 if (!cycle.Hotroom_date && copy.Hot_isotope_id != cycle.Hot_isotope_id) {
                     copy.Hotroom_date = convenienceMethods.setMysqlTime(new Date());
                 }
-                console.log(copy);
+
+                // Remove cyclic references...
+                copy.rootScope = undefined;
+                copy.api = undefined;
+                copy.Carboy = undefined;
+
+                console.log('Save CarboyUseCycle', copy);
+
                 return this.save( copy )
                     .then(
                         function(returnedCycle){
