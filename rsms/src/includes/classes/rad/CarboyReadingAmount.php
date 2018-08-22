@@ -208,12 +208,6 @@ include_once 'RadCrud.php';
 
             //calculate the current uci in the carboy
             $this->decayed_carboy_uci = $origUci * exp(-0.693147*$decayDays/$this->getIsotope()->getHalf_life());
-
-            //if the cycle has been poured, persist this value in the database so it can be grabbed for reporting
-            if($cycle->getPour_date() != null){
-                $dao = new GenericDAO($this);
-                $dao->save($this);
-            }
         }
 
         return (float) $this->decayed_carboy_uci;
