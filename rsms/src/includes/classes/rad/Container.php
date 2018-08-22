@@ -43,7 +43,7 @@ class Container extends RadCrud
 	}
 
     public function getAddedAmounts(){
-        if($this->getAddedAmounts == null){
+        if($this->added_amounts == null){
             $this->added_amounts = array();
             $method = method_exists($this, "getParcelUseAmounts") ? "getParcelUseAmounts" : "getParcel_use_amounts";
             if(!$method)return $this->added_amounts;

@@ -187,7 +187,7 @@ include_once 'RadCrud.php';
             //if the carboy has been poured, we stop decaying at the pour date. In that case, we persist the value after calculating it
             if($cycle != null && $cycle->getPour_date() != null
                 && $this->getDate_read() != null
-                && $this->getCarboy_uci != null
+                && $this->getCarboy_uci() != null
                 && $this->getIsotope() != null) {
 
                 $endDate = $cycle->getPour_date();
