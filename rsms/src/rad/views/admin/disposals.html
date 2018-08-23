@@ -31,7 +31,7 @@
                     <h3>Comments</h3>
                     <h3 ng-if="cycle.Status != Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE">Pour Date</h3>
                     <h3 ng-if="cycle.edit">Save</h3>
-                    <h3 ng-if="!cycle.edit && cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING">Pour/Place In Drum</h3>
+                    <h3 ng-if="!cycle.edit && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE)">Pour/Place In Drum</h3>
                 </div>
                 <div class="table-row" ng-class="{'new':cycle.pourable}">
                     <div ng-if="!cycle.edit && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING
@@ -121,78 +121,80 @@
                     </div>
                 </div>
             </div>
-            <h3 class="card-header padding" ng-if="(cycle.edit || cycle.showReadings || showReadings) && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE)">Samples<a style="margin-left:10px;" ng-click="addReading(cycle)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Sample</a></h3>
-            <!-- this carboy's readings -->
-            <div class="fake-table bordered" style="margin-top:-5px;" ng-if="(cycle.edit || cycle.showReadings || showReadings) && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE)">
-                <div class="table-header">
-                    <h3 ng-if="!cycle.readingEdit">Edit</h3>
-                    <h3>Isotope</h3>
-                    <h3>Sample DPM</h3>
-                    <h3>Date Read</h3>
-                    <h3>Original Activity</h3>
-                    <h3>Total Activity as of {{date | date:'MM/dd/yy'}}</h3>
-                    <h3>Decay Date</h3>
-                    <h3 ng-if="cycle.readingEdit">Save/Cancel</h3>
-                </div>
-                <div class="table-row" ng-repeat="reading in cycle.Carboy_reading_amounts">
-                    <div ng-if="!cycle.readingEdit">
-                        <button ng-click="af.createCopy(reading); cycle.readingEdit = true;" ng-disabled="reading.edit" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</button>
+            <div class="readings">
+                <h3 class="card-header padding" ng-if="!cycle.edit && (cycle.showReadings || showReadings) && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE)">Samples<a style="margin-left:10px;" ng-click="addReading(cycle)" class="btn btn-success left"><i class="icon-plus-2"></i>Add Sample</a></h3>
+                <!-- this carboy's readings -->
+                <div class="fake-table bordered" style="margin-top:-5px;" ng-if="!cycle.edit && (cycle.showReadings || showReadings) && (cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.DECAYING || CarboyUseCycleCopy.Status == Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE)">
+                    <div class="table-header">
+                        <h3 ng-if="!cycle.readingEdit">Edit</h3>
+                        <h3>Isotope</h3>
+                        <h3>Sample DPM</h3>
+                        <h3>Date Read</h3>
+                        <h3>Original Activity</h3>
+                        <h3>Total Activity as of {{date | date:'MM/dd/yy'}}</h3>
+                        <h3>Decay Date</h3>
+                        <h3 ng-if="cycle.readingEdit">Save/Cancel</h3>
                     </div>
+                    <div class="table-row" ng-repeat="reading in cycle.Carboy_reading_amounts">
+                        <div ng-if="!cycle.readingEdit">
+                            <button ng-click="af.createCopy(reading); cycle.readingEdit = true;" ng-disabled="reading.edit" class="btn btn-primary left"><i class="icon-pencil"></i>Edit</button>
+                        </div>
 
-                    <div ng-if="!reading.edit">
-                        {{reading.Isotope.Name}}
-                    </div>
-                    <div ng-if="reading.edit">
-                        <select ng-model="CarboyReadingAmountCopy.Isotope_id">
-                            <option ng-repeat="isotope in isotopes | orderBy:'Name'" ng-selected="CarboyReadingAmountCopy.Isotope_id == isotope.Key_id" value="{{isotope.Key_id}}">{{isotope.Name}}</option>
-                        </select>
-                    </div>
+                        <div ng-if="!reading.edit">
+                            {{reading.Isotope.Name}}
+                        </div>
+                        <div ng-if="reading.edit">
+                            <select ng-model="CarboyReadingAmountCopy.Isotope_id">
+                                <option ng-repeat="isotope in isotopes | orderBy:'Name'" ng-selected="CarboyReadingAmountCopy.Isotope_id == isotope.Key_id" value="{{isotope.Key_id}}">{{isotope.Name}}</option>
+                            </select>
+                        </div>
 
-                    <div ng-if="!reading.edit">
-                        {{reading.Curie_level}} DPM
-                    </div>
-                    <div ng-if="reading.edit">
-                        <div class="control-group">
-                            <div class="controls input-append">
-                                <input style="width: 90px;padding: 0px 3px;" ng-model="CarboyReadingAmountCopy.Curie_level">
-                                <span class="add-on">DPM</span>
+                        <div ng-if="!reading.edit">
+                            {{reading.Curie_level}} DPM
+                        </div>
+                        <div ng-if="reading.edit">
+                            <div class="control-group">
+                                <div class="controls input-append">
+                                    <input style="width: 90px;padding: 0px 3px;" ng-model="CarboyReadingAmountCopy.Curie_level">
+                                    <span class="add-on">DPM</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div ng-if="!reading.edit">
-                        {{reading.Date_read | dateToISO:reading:'Date_read':true:true}}
-                    </div>
-                    <div ng-if="reading.edit">
-                        <div class="control-group">
-                            <div class="controls input-append">
-                                <input ng-init="CarboyReadingAmountCopy.view_Date_read = getDateRead(reading)" style="width: 90px;padding: 0px 3px;" ng-model="CarboyReadingAmountCopy.view_Date_read">
-                                <span class="add-on">mm/dd/yy</span>
+                        <div ng-if="!reading.edit">
+                            {{reading.Date_read | dateToISO:reading:'Date_read':true:true}}
+                        </div>
+                        <div ng-if="reading.edit">
+                            <div class="control-group">
+                                <div class="controls input-append">
+                                    <input ng-init="CarboyReadingAmountCopy.view_Date_read = getDateRead(reading)" style="width: 90px;padding: 0px 3px;" ng-model="CarboyReadingAmountCopy.view_Date_read">
+                                    <span class="add-on">mm/dd/yy</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div>
-                        {{reading.Carboy_uci | number:3}} uCi
-                    </div>
-                    <div>
-                        {{reading.Decayed_carboy_uci | number:3}} uCi
-                    </div>
+                        <div>
+                            {{reading.Carboy_uci | number:3}} uCi
+                        </div>
+                        <div>
+                            {{reading.Decayed_carboy_uci | number:3}} uCi
+                        </div>
 
-                    <div>
-                        {{reading.Pour_allowed_date | dateToISO}}
-                    </div>
+                        <div>
+                            {{reading.Pour_allowed_date | dateToISO}}
+                        </div>
 
-                    <div ng-if="cycle.readingEdit">
-                        <button class="btn btn-success left" ng-click="af.saveCarboyReadingAmount( cycle, CarboyReadingAmountCopy )" ng-if="reading.edit"><i class="icon-checkmark"></i>Save</button>
-                        <button class="btn btn-danger left" ng-click="af.cancelEdit(reading); cycle.readingEdit = false;" ng-if="reading.edit"><i class="icon-cancel-2"></i>Cancel</button>
-                    </div>
+                        <div ng-if="cycle.readingEdit">
+                            <button class="btn btn-success left" ng-click="af.saveCarboyReadingAmount( cycle, CarboyReadingAmountCopy )" ng-if="reading.edit"><i class="icon-checkmark"></i>Save</button>
+                            <button class="btn btn-danger left" ng-click="af.cancelEdit(reading); cycle.readingEdit = false;" ng-if="reading.edit"><i class="icon-cancel-2"></i>Cancel</button>
+                        </div>
 
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
+
     <div class="well two-thirds">
         <h1><i class="icon-remove-2"></i>Containers</h1>
         <h3 ng-show="!drumableContainers.length">No solid waste to dispose</h3>
@@ -201,7 +203,6 @@
         </div>
     </div>
 
-    
     <div class="well two-thirds">
         <h1 class="disposals">
             <i class="icon-database"></i>Drums <a class="btn btn-success left" ng-click="editDrum(drum)"><i class="icon-plus-2"></i>Create Drum</a>
@@ -241,6 +242,47 @@
                     <div>
                         <span ng-show="false" ng-if="modalData.DrumCopy.Date_destroyed">{{modalData.DrumCopy.Date_destroyed | dateToISO:modalData.DrumCopy:'Date_destroyed':true}}</span>
                         <button ng-click="drumModal(drum)" class="btn btn-success left"><i class="icon-out-2"></i>Ship Drum</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="well two-thirds" ng-repeat="otherType in otherWasteTypes" ng-init="containers = getOtherWasteOfType(otherType)">
+        <h1 class="disposals">
+            <i class="icon-beaker-alt"></i>Other Waste Containers: {{otherType.Name}}
+        </h1>
+        <div>
+            <h3   ng-show="!containers.length">No {{otherType.Name}} waste to dispose</h3>
+            <span ng-show="containers.length" style="display:block;"><input ng-model="piSearch" placeholder="Filter By PI" /></span>
+        </div>
+        <div ng-show="containers.length" class="card full">
+            <div class="fake-table bordered">
+                <div class="table-header">
+                    <h3>Container</h3>
+                    <h3>Date Disposed</h3>
+                    <h3>Activity Disposed</h3>
+                    <h3>PI</h3>
+                    <h3>Cleared by RSO</h3>
+                </div>
+                <div class="table-row" ng-repeat="container in filteredContainers=(containers | filter:{PiName:piSearch})">
+                    <div>{{container.Label}}</div>
+                    <div>{{container.Close_date | dateToISO}}</div>
+                    <div>
+                        <p ng-repeat="content in container.Contents">
+                            {{content.Curie_level | unit:content}} of {{content.Isotope_name}}
+                        </p>
+                    </div>
+                    <div>{{getPiName(container.Principal_investigator_id)}}</div>
+                    <div>
+                        <div ng-if="!container.Close_date">
+                            <button class="btn btn-danger left" ng-click="rsoClearContainer(container)">
+                                <i class="icon-check-alt"></i>Clear Now
+                            </button>
+                        </div>
+                        <div ng-if="container.Close_date">
+                            <i class="icon-check-alt" style="color: #5bb75b;"></i> Cleared on <span>{{container.Close_date | dateToISO}}</span>
+                        </div>
                     </div>
                 </div>
             </div>

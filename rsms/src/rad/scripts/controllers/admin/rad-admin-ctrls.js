@@ -748,12 +748,14 @@ angular.module('00RsmsAngularOrmApp')
     var getOtherWaste = function () {
         return af.getAllOtherWasteContainers()
             .then(function (containers) {
-            if (!dataStore.OtherWasteContainers)
+            if (!dataStore.OtherWasteContainer)
                 dataStore.OtherWasteContainer = [];
-            dataStore.OtherWasteContainer.forEach(function (c) { if (c.Key_id == 4)
-                console.log("CONTENTS", c.Contents); });
-            console.log("CONTAINERS", dataStore.OtherWasteContainer);
+
             $rootScope.OtherWasteContainers = dataStore.OtherWasteContainer;
+
+            // Apply PI names
+            $rootScope.OtherWasteContainers.forEach(c => c.PiName = $scope.getPiName(c.Principal_investigator_id));
+
             return $rootScope.OtherWasteContainers;
         });
     };
@@ -802,9 +804,21 @@ angular.module('00RsmsAngularOrmApp')
             return container;
         });
     };
+
+    var getOtherWasteTypes = function(){
+        return af.getAllOtherWasteTypes()
+            .then(function (otherWasteTypes) {
+                console.debug("Loaded Other Waste Types", otherWasteTypes);
+                $rootScope.otherWasteTypes = dataStore.OtherWasteType;
+                return otherWasteTypes;
+            }
+        );
+    };
+
     $scope.hasClosedNotPickedUp = function (containers) {
         return containers.some(function (c) { return c.Pickup_id == null; });
     };
+
     $rootScope.radPromise = getAllWasteBags()
         .then(getIsotopes)
         .then(getSVCollections)
@@ -812,8 +826,37 @@ angular.module('00RsmsAngularOrmApp')
         .then(getCycles)
         .then(getMiscWaste)
         .then(getOtherWaste)
-        .then(getContainers);
+        .then(getContainers)
+        .then(getOtherWasteTypes);
     $scope.date = new Date();
+
+    $scope.getOtherWasteOfType = function(type){
+        return ($rootScope.OtherWasteContainers || [])
+            .filter(c => c.Other_waste_type_id == type.Key_id);
+    };
+
+    $scope.getPiName = function (piId){
+        var matches = dataStore.PrincipalInvestigator.filter(pi => pi.Key_id == piId);
+        if( matches.length )
+            return matches[0].Name;
+        return null;
+    };
+
+    $scope.rsoClearContainer = function(container){
+        if( !container.Clearable ){
+            console.warn("Container is not clearable", container);
+            return;
+        }
+
+        // TODO: REQUIRE CONFIRMATION?
+
+        $rootScope.saving = af.closeWasteContainer(container)
+            .then(function(r){
+                angular.extend(container, r);
+                return r;
+            });
+    };
+
     $scope.assignDrum = function (object) {
         var modalData = {};
 

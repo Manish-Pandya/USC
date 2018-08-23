@@ -258,6 +258,10 @@ h1.parcels i:first-child {
     border-left: rgb(122, 6, 109) solid 6px;
 }
 
+.card.carboys .readings {
+    background-color: #d3d3d3;
+}
+
 .modal-header.carboys h2 {
     background: rgb(122, 6, 109);
 }
