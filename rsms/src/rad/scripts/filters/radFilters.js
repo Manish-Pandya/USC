@@ -387,3 +387,36 @@ angular.module('00RsmsAngularOrmApp')
             })
         }
     })
+
+    .filter('sumContainersActivityPerIsotope', () => {
+        // Since this is TRANSFORMING the incoming containers rather than FILTERING per se,
+        //   run the results through _.memoize in order to properly cache/hash the values
+        //   to avoid Angular getting confuzed by the new-but-equal objects
+        return _.memoize(
+            function(containers){
+                if(!containers) return [];
+
+                var totals = [];
+                containers.forEach(function(container){
+                    container.Contents.forEach( function(content){
+                        if( totals.filter(c => c.Isotope_name == content.Isotope_name).length == 0){
+                            totals.push({
+                                Isotope_name: content.Isotope_name,
+                                Is_mass: content.Is_mass,
+                                Total: 0
+                            });
+                        }
+
+                        var iso = totals.filter(c => c.Isotope_name == content.Isotope_name)[0];
+
+                        iso.Total = iso.Total + parseFloat(content.Curie_level);
+                    });
+                });
+
+                return totals;
+            },
+            function(containers){
+                return containers.length;
+            }
+        );
+    });

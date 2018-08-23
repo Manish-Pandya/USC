@@ -285,6 +285,16 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="table-row" style="font-style:italic; background-color:#d3d3d3;" ng-if="containers.length">
+                    <div>Total Disposed Activity</div>
+                    <div></div>
+                    <div ng-repeat="iso in data=(containers | filter:{PiName:piSearch} | sumContainersActivityPerIsotope) track by iso.Isotope_name">
+                        <p>{{iso.Total | unit:iso}} of {{iso.Isotope_name}}</p>
+                    </div>
+                    <div></div>
+                    <div></div>
+                </div>
             </div>
         </div>
     </div>
