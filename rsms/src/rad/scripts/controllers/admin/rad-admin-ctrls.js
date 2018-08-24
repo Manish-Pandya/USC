@@ -865,11 +865,11 @@ angular.module('00RsmsAngularOrmApp')
         if(object){
             // Special handling for WasteBag
             if( object.Class == "WasteBag" ){
-                if (!wasteBag.PickupLots || !wasteBag.PickupLots.length) {
-                    wasteBag.PickupLots = [{
+                if (!object.PickupLots || !object.PickupLots.length) {
+                    object.PickupLots = [{
                         Class: "PickupLot",
                         Currie_level: 0,
-                        Waste_bag_id: wasteBag.Key_id,
+                        Waste_bag_id: object.Key_id,
                         Waste_type_id: Constants.WASTE_TYPE.SOLID,
                         Isotope_id: null
                     }];
