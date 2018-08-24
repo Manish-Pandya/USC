@@ -1369,3 +1369,9 @@ i.solids-containers {
     color: #A0A0A0;
     font-style: italic;
 }
+
+/* Radmin Disposals */
+.others.fake-table .table-header {
+    font-style:italic;
+    background-color:#d3d3d3;
+}

@@ -257,23 +257,29 @@
             <span ng-show="containers.length" style="display:block;"><input ng-model="piSearch" placeholder="Search By PI" /></span>
         </div>
         <div ng-show="containers.length" class="card full">
-            <div class="fake-table bordered">
+            <div class="others fake-table bordered">
                 <div class="table-header">
                     <h3>Container</h3>
-                    <h3>Date Disposed</h3>
-                    <h3>Activity Disposed</h3>
                     <h3>PI</h3>
+                    <h3>Activity Disposed</h3>
                     <h3>Cleared by RSO</h3>
                 </div>
                 <div class="table-row" ng-repeat="container in filteredContainers=(containers | filter:{PiName:piSearch})">
-                    <div>{{container.Label}}</div>
-                    <div>{{container.Close_date | dateToISO}}</div>
                     <div>
-                        <p ng-repeat="content in container.Contents">
-                            {{content.Curie_level | unit:content}} of {{content.Isotope_name}}
-                        </p>
+                        <div>{{container.Label}}</div>
+                        <p ng-if="container.Description" style="padding:5px 0 0 10px; font-style:italic;">{{container.Description}}</p>
                     </div>
                     <div>{{getPiName(container.Principal_investigator_id)}}</div>
+                    <div>
+                        <!--Disposals-->
+                        <div class="fake-table bordered">
+                            <div class="table-row" ng-repeat="use in container.ParcelUseAmounts | orderBy:'-Date_used'">
+                                <div>{{use.Date_used | dateToISO}}</div>
+                                <div>{{use.Isotope_name}}</div>
+                                <div>{{use.Curie_level | unit:use}}</div>
+                            </div>
+                        </div>
+                    </div>
                     <div>
                         <div ng-if="!container.Close_date">
                             <button class="btn btn-danger left" ng-click="rsoClearContainer(container)">
@@ -285,13 +291,15 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="table-row" style="font-style:italic; background-color:#d3d3d3;" ng-if="containers.length">
-                    <div>Total Disposed Activity</div>
-                    <div></div>
-                    <div ng-repeat="iso in data=(containers | filter:{PiName:piSearch} | sumContainersActivityPerIsotope) track by iso.Isotope_name">
-                        <p>{{iso.Total | unit:iso}} of {{iso.Isotope_name}}</p>
-                    </div>
+                <div class="table-header">
+                    <h3>Total Activity Disposed</h3>
+                    <h3>Isotope</h3>
+                    <h3></h3>
+                    <h3></h3>
+                </div>
+                <div class="table-row" ng-repeat="iso in data=(containers | filter:{PiName:piSearch} | sumContainersActivityPerIsotope) track by iso.Isotope_name">
+                    <div>{{iso.Total | unit:iso}}</div>
+                    <div>{{iso.Isotope_name}}</div>
                     <div></div>
                     <div></div>
                 </div>
