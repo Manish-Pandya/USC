@@ -850,11 +850,13 @@ angular.module('00RsmsAngularOrmApp')
 
         // TODO: REQUIRE CONFIRMATION?
 
-        $rootScope.saving = af.closeWasteContainer(container)
-            .then(function(r){
-                angular.extend(container, r);
-                return r;
-            });
+        if (window.confirm("Are you sure you want to clear " + container.Label + "?")) {
+            $rootScope.saving = af.closeWasteContainer(container)
+                .then(function(r){
+                    angular.extend(container, r);
+                    return r;
+                });
+        }
     };
 
     $scope.assignDrum = function (object) {
