@@ -815,6 +815,21 @@ angular.module('00RsmsAngularOrmApp')
         );
     };
 
+    $scope.getCycleRowClass = function(cycle){
+        switch(cycle.Status){
+            case Constants.CARBOY_USE_CYCLE.STATUS.AT_RSO: return 'at-rso';
+
+            case Constants.CARBOY_USE_CYCLE.STATUS.DECAYING: return 'decaying';
+
+            case Constants.CARBOY_USE_CYCLE.STATUS.HOT_ROOM:
+            case Constants.CARBOY_USE_CYCLE.STATUS.MIXED_WASTE:
+                return 'disposable';
+
+            default: return '';
+        }
+
+    };
+
     $scope.hasClosedNotPickedUp = function (containers) {
         return containers.some(function (c) { return c.Pickup_id == null; });
     };
@@ -857,6 +872,31 @@ angular.module('00RsmsAngularOrmApp')
                     return r;
                 });
         }
+    };
+
+    $scope.manageCarboyDisposal = function (cycle) {
+        af.setModalData({
+            cycle
+        });
+
+        var modalInstance = $modal.open({
+            templateUrl: 'views/admin/admin-modals/carboy-disposal-modal.html',
+            controller: 'ManageCarboyDisposalCtrl'
+        });
+
+        modalInstance.result.then(
+            function (arg){
+                if(arg.promiseToSave){
+                    console.debug("Cycle is saving...");
+                    $scope.CarboyUseCycleSaving = arg.promiseToSave
+                        .then(function(data){
+                            console.debug("Saved CarboyUseCycle disposal information.");
+                            // TODO: any invalidations?
+                        }
+                    );
+                }
+            }
+        );
     };
 
     $scope.assignDrum = function (object) {
@@ -1030,6 +1070,130 @@ angular.module('00RsmsAngularOrmApp')
         return !container.Drum_id;
     };
 })
+    .controller('ManageCarboyDisposalCtrl', function($scope, $modalInstance, actionFunctionsFactory, convenienceMethods){
+        console.debug("Open carboy disposal management modal");
+
+        $scope.statuses = Constants.CARBOY_USE_CYCLE.STATUS;
+        $scope.cycle = actionFunctionsFactory.getModalData().cycle;
+        $scope.changes = {
+            comments: $scope.cycle.Comments,
+            volume: $scope.cycle.Volume
+        };
+
+        // Determine applicable statuses
+        function getAvailableTransitions(status){
+            switch(status){
+
+                case $scope.statuses.AT_RSO:
+                    return [
+                        $scope.statuses.DECAYING, $scope.statuses.HOT_ROOM, $scope.statuses.MIXED_WASTE
+                    ];
+
+                case $scope.statuses.DECAYING: return [$scope.statuses.HOT_ROOM]
+
+                default:
+                    return [];
+            }
+        }
+
+        function getAvailableDisposals(status){
+            switch(status){
+                // Actual disposal
+                case $scope.statuses.HOT_ROOM:    return [$scope.statuses.POURED];
+                case $scope.statuses.MIXED_WASTE: return [$scope.statuses.DRUMMED];
+
+                default:
+                    return [];
+            }
+        }
+
+        $scope.transitions = getAvailableTransitions($scope.cycle.Status);
+        $scope.disposals = getAvailableDisposals($scope.cycle.Status);
+
+        $scope.tabs = [
+            {name:'Transition', active:true}
+        ];
+
+        $scope.isTabActive = function(tabName){
+            for(var index in $scope.tabs){
+                var tab = $scope.tabs[index];
+                if(tab.active && tab.name === tabName){
+                    return true;
+                }
+            }
+
+            return false;
+        };
+
+        $scope.changeTab = function(tab){
+            $scope.tabs.forEach(t => t.active = t == tab);
+        };
+
+        $scope.changeStatus = function(newStatus){
+            if( !newStatus ){
+                console.debug("Reset status");
+                $scope.changes.status = undefined;
+                return;
+            }
+
+            $scope.changes.changed = true;
+            $scope.changes.status = newStatus;
+
+            console.debug("Change status to ", newStatus);
+
+            if( newStatus == $scope.statuses.POURED ){
+                $scope.changes.pourDate = $scope.getDefaultDate();
+            }
+            else if( newStatus == $scope.statuses.HOT_ROOM ){
+                $scope.changes.hotDate = $scope.getDefaultDate();
+            }
+        };
+
+        $scope.getDefaultDate = function(){
+            return convenienceMethods.setMysqlTime(new Date());
+        };
+
+        $scope.validate = function(cycle, changes){
+            if( !changes.changed ){
+                return true;
+            }
+
+            $scope.validationErrors = [];
+            if( changes.status ){
+                // Validate Status change
+
+                // Require Pour Date when Pouring
+                if( changes.status == $scope.statuses.POURED && !changes.pourDate ){
+                    $scope.validationErrors.push("Pour Date is required");
+                }
+
+                if( changes.status == $scope.statuses.DRUMMED && !changes.drumId){
+                    $scope.validationErrors.push("Drum is required");
+                }
+
+                // TODO: If status is now a disposal, ensure we have a 'final reading'
+            }
+
+            return $scope.validationErrors.length == 0;
+        };
+
+        $scope.save = function(cycle, changes){
+            console.debug("Save changes to ", cycle, $scope.changes);
+
+            // TODO: validate changes
+            if( $scope.validate(cycle, changes) ){
+                $modalInstance.close({
+                    promiseToSave: actionFunctionsFactory.saveCarboyUseCycleDisposalDetails(cycle, changes)
+                });
+            }
+
+        };
+
+        $scope.cancel = function(){
+            $modalInstance.dismiss();
+        };
+    })
+
     .controller('DrumAssignmentCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
         var af = actionFunctionsFactory;
         $scope.af = af;
