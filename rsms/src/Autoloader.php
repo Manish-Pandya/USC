@@ -91,6 +91,11 @@ class Autoloader {
 			//Define new logger as we can't access self
 			$LOG = Logger::getLogger(__CLASS__);
 			
+			if( $class == 'BiosafetyProtocol' ){
+				// This is a widespread misnomer in the application...
+				$class = 'BioSafetyProtocol';
+			}
+
 			$LOG->debug( "Attempting to autoload $class" );
 			$loaded = FALSE;
 			
