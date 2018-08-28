@@ -54,7 +54,8 @@ var Constants = /** @class */ (function () {
             AT_RSO: "AT RSO",
             HOT_ROOM: "In Hot Room",
             MIXED_WASTE: "Mixed Waste",
-            POURED: "Poured"
+            POURED: "Poured",
+            DRUMMED: "In Drum"
         }
     };
     Constants.INSPECTION = {

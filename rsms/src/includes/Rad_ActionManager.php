@@ -860,6 +860,68 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
+    function saveCarboyDisposalDetails(){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        // Read DTO from requets
+        // We want this raw because we are not expecting a formal DTO
+        $dto = $this->readRawInputJson();
+        if( $dto === NULL ) {
+            return new ActionError('Error converting input stream to Pickup', 202);
+        }
+        else if( $dto instanceof ActionError) {
+            return $dto;
+        }
+
+        $LOG->debug("Saving Carboy Cycle Disposal...");
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace($dto);
+        }
+
+        // Extract details from DTO
+        $cycle_id = $dto['cycle']['id'];
+
+        $cycleDao = new GenericDAO(new CarboyUseCycle());
+        $LOG->debug("Read existing CarboyUseCycle $cycle_id");
+        $cycle = $cycleDao->getById($cycle_id);
+
+        DBConnection::get()->beginTransaction();
+        $newStatus = $dto['cycle']['status'];
+
+        if( $newStatus != null && $newStatus != $cycle->getStatus() ){
+            $LOG->info('Transition cycle ' . $cycle . ' ' . $cycle->getStatus() . " => $newStatus");
+            $cycle->setStatus($newStatus);
+        }
+        else{
+            $LOG->info('Updating cycle details; no status transition');
+        }
+
+        if($dto['cycle']['hotDate'] && $cycle->getStatus() == 'In Hot Room'){
+            $LOG->debug("set hot date");
+            $cycle->setHotroom_date($dto['cycle']['hotDate']);
+        }
+
+        if($dto['cycle']['pourDate'] && $cycle->getStatus() == 'Poured'){
+            $LOG->debug("set pour date");
+            $cycle->setPour_date($dto['cycle']['pourDate']);
+        }
+
+        if($dto['cycle']['drumId'] && $cycle->getStatus() == 'In Drum'){
+            $LOG->debug("set drum ID");
+            $cycle->setDrum_id($dto['cycle']['drumId']);
+        }
+
+        $cycle->setComments($dto['cycle']['comments']);
+        $cycle->setVolume($dto['cycle']['volume']);
+
+        // Save
+        $cycle = $cycleDao->save($cycle);
+
+        DBConnection::get()->commit();
+
+        return $cycle;
+    }
+
     function saveCarboy() {
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $decodedObject = $this->convertInputJson();

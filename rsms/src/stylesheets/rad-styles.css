@@ -1375,3 +1375,15 @@ i.solids-containers {
     font-style:italic;
     background-color:#d3d3d3;
 }
+
+.table-row.carboys .at-rso {
+    border-left: rgb(91, 183, 91) solid 6px !important;
+}
+
+.table-row.carboys .decaying {
+    border-left: rgb(191, 183, 91) solid 6px !important;
+}
+
+.table-row.carboys .disposable {
+    border-left: rgb(151, 49, 58) solid 6px !important;
+}

@@ -2646,6 +2646,45 @@ angular
                 }
             }
 
+            af.saveCarboyUseCycleDisposalDetails = function(cycle, changes){
+                // Construct a DTO containing the details required for update
+                var dto = {
+                    cycle: {
+                        id: cycle.Key_id,
+                        status: changes.status,
+
+                        comments: changes.comments,
+                        volume: changes.volume,
+
+                        hotDate: changes.hotDate,
+
+                        pourDate: changes.pourDate,
+                        drumId: changes.drumId
+                    },
+
+                };
+
+                af.clearError();
+
+                // Save
+                return genericAPIFactory.save(dto, 'saveCarboyDisposalDetails')
+                    .then(
+                        function(response){
+                            var dto = modelInflatorFactory.instateAllObjectsFromJson( response.data );
+                            console.debug("Carboy Disposal Saved:", dto);
+
+                            // Update our cache...
+                            angular.extend(cycle, dto);
+
+                            cycle.loadCarboy();
+
+                            return cycle;
+                        },
+                        function(err){
+                            console.error("Error saving Carboy Disposal", err);
+                        }
+                    );
+            };
 
             /********************************************************************************
             **

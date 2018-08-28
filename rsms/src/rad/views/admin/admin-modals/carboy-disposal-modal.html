@@ -1,0 +1,95 @@
+<div class="modal-header carboys" style="padding:0;">
+        <h2 style="padding:5px; color:white">Manage Disposal of Carboy {{cycle.Carboy.Carboy_number}}</h2>
+        <ul class="nav nav-pills" style="margin-bottom:0px;">
+            <li ng-repeat="tab in tabs" ng-class="{'active': tab.active}">
+                <a ng-click="changeTab(tab)">{{tab.name}}</a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="modal-body">
+        <div class="control-group card full" style="padding: 5px;" ng-if="isTabActive('Transition')">
+            <h3>Transition Carboy</h3>
+            <span>
+                <label class="control-label">Status:</label>
+            </span>
+            <ul class="nav-pills">
+                <li style="padding-right:8px">
+                    <a ng-class="{'btn-success': !changes.status}" class="button btn" ng-click="changeStatus()">{{cycle.Status}}</a>
+                </li>
+                <li ng-repeat="transition in transitions">
+                    <a ng-class="{'btn-warning': changes.status == transition}" class="button btn" ng-click="changeStatus(transition)">{{transition}}</a>
+                </li>
+                <li ng-repeat="disposal in disposals">
+                    <a ng-class="{'btn-danger': changes.status == disposal}" class="button btn" ng-click="changeStatus(disposal)">{{disposal}}</a>
+                </li>
+            </ul>
+            <div ng-if="changes.status == statuses.HOT_ROOM">
+                <label class="control-label">Hot Room Date:</label>
+                <datepicker2 ng-model="changes.hotDate" disable-timepicker='true'
+                    placeholder="Set Hot Room Date"
+                    button-class="hotDateButtonClass" on-change="changes.changed = true;"></datepicker2>
+            </div>
+            <div ng-if="changes.status == statuses.POURED">
+                <label class="control-label">Pour Date:</label>
+                <datepicker2 ng-model="changes.pourDate" disable-timepicker='true'
+                    placeholder="Set Pour Date"
+                    button-class="pourDateButtonClass" on-change="changes.changed = true;"></datepicker2>
+            </div>
+            <div ng-if="changes.status == statuses.DRUMMED">
+                <label>Select a drum</label>
+                <select ng-model="changes.drumId">
+                    <option ng-repeat="drum in drums" value="{{drum.Key_id}}">{{drum.Label}}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="control-group card full" style="padding: 5px;" ng-if="isTabActive('Readings')">
+            <h3>Carboy Readings</h3>
+            <div class="fake-table bordered" style="margin-top:-5px;">
+                <div class="table-header">
+                    <h3>Isotope</h3>
+                    <h3>Reading</h3>
+                    <h3>Date Read</h3>
+                    <h3></h3>
+                </div>
+                <div class="table-row" ng-repeat="reading in cycle.Carboy_reading_amounts">
+                    <div><p>{{reading.Isotope.Name}}</p></div>
+                    <div><p>{{reading.Curie_level}}</p></div>
+                    <div><p>{{reading.Date_read | dateToISO:reading:'Date_read':true:true}}</p></div>
+                    <div><a class="button btn">Edit?</a></div>
+                </div>
+                <div class="table-row">
+                    <div><p></p></div>
+                    <div><p></p></div>
+                    <div><p></p></div>
+                    <div><a class="button btn">Add?</a></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group card full" style="padding: 5px;">
+            <h3>Edit Carboy Details</h3>
+            <div class="controls input-append">
+                <label class="control-label">Volume</label>
+                <input style="width: 90px;padding: 0px 3px;" ng-model="changes.volume" ng-change="changes.changed=true">
+                <span class="add-on">ml</span>
+            </div>
+    
+            <div class="control-group">
+                <label class="control-label">Comments</label>
+                <div class="controls">
+                    <textarea style="padding: 0px 3px;" ng-model="changes.comments" ng-change="changes.changed=true"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-footer">
+        <div class="red" style="display: inline-block; padding-right:10px;" ng-repeat="error in validationErrors">
+            <span>{{error}}</span>
+        </div>
+        <a class="btn btn-large btn-success left" ng-disabled="!changes.changed" ng-click="changes.changed && validate(cycle, changes) && save(cycle, changes)"><i class="icon-checkmark"></i>Save</a>
+        <a class="btn btn-large btn-danger left" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
+    </div>
+    
