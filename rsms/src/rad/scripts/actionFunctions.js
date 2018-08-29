@@ -1816,6 +1816,18 @@ angular
             af.saveParcelUse = function(parcel, copy, use){
                 af.clearError();
                 copy.Date_used = convenienceMethods.setMysqlTime(af.getDate(copy.view_Date_used));
+
+                // remove any cyclic fields...
+                copy.rootScope = undefined;
+                copy.api = undefined;
+
+                if( copy.ParcelUseAmount ){
+                    copy.ParcelUseAmount.forEach(amt => {
+                        amt.rootScope = undefined;
+                        amt.api = undefined;
+                    });
+                }
+
                 return this.save( copy )
                     .then(
                         function (returnedUse) {
