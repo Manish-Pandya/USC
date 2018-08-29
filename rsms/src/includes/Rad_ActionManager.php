@@ -1041,7 +1041,7 @@ class Rad_ActionManager extends ActionManager {
         }
 
         $LOG->debug("Get carboy by ID: '$carboyId'");
-        $carboyDao = new GenericDao(new Carboy());
+        $carboyDao = new GenericDAO(new Carboy());
         $carboy = $carboyDao->getById($carboyId);
 
         // Ignore if this carboy is retired
