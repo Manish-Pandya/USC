@@ -1,14 +1,9 @@
 <div class="modal-header carboys" style="padding:0;">
         <h2 style="padding:5px; color:white">Manage Disposal of Carboy {{cycle.Carboy.Carboy_number}}</h2>
-        <ul class="nav nav-pills" style="margin-bottom:0px;">
-            <li ng-repeat="tab in tabs" ng-class="{'active': tab.active}">
-                <a ng-click="changeTab(tab)">{{tab.name}}</a>
-            </li>
-        </ul>
     </div>
     
     <div class="modal-body">
-        <div class="control-group card full" style="padding: 5px;" ng-if="isTabActive('Transition')">
+        <div class="control-group card full" style="padding: 5px;">
             <h3 class="disposal-info">Transition Carboy</h3>
             <span>
                 <label class="control-label">Status:</label>
@@ -44,7 +39,7 @@
             </div>
         </div>
 
-        <div class="control-group card full" style="padding: 5px;" ng-if="isTabActive('Readings')">
+        <div class="control-group card full" style="padding: 5px;">
             <h3 class="disposal-info">Carboy Readings</h3>
             <div class="fake-table bordered" style="margin-top:-5px;">
                 <div class="table-header">
