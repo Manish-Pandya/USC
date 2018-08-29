@@ -337,7 +337,7 @@ class CarboyUseCycle extends Container {
 	public function isDisposed(){
 		return $this->getPour_date() != null
 			|| $this->getStatus() == 'Poured'
-			|| $this->getStatus() == 'Mixed Waste';
+			|| $this->getStatus() == 'In Drum';
 	}
 }
 ?>
