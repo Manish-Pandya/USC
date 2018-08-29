@@ -2656,6 +2656,8 @@ angular
                         comments: changes.comments,
                         volume: changes.volume,
 
+                        readings: changes.readings.edit.concat(changes.readings.add),
+
                         hotDate: changes.hotDate,
 
                         pourDate: changes.pourDate,

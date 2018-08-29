@@ -116,7 +116,7 @@ class CarboyUseCycle extends Container {
 		$entityMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
 		$entityMaps[] = new EntityMap("eager", "getContents");
 		$entityMaps[] = new EntityMap("eager", "getCarboyNumber");
-		$entityMaps[] = new EntityMap("lazy", "getCarboy_reading_amounts");
+		$entityMaps[] = new EntityMap("eager", "getCarboy_reading_amounts");
 		$entityMaps[] = new EntityMap("lazy", "getRoom");
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
 		$entityMaps[] = new EntityMap("eager", "getPour_allowed_date");
@@ -331,6 +331,8 @@ class CarboyUseCycle extends Container {
 
 	public function getClose_date(){ return $this->close_date; }
 	public function setClose_date($close_date){ $this->close_date = $close_date; }
+
+	public function getCarboyLabel(){ return $this->getCarboy()->getCarboy_number(); }
 
 	public function isDisposed(){
 		return $this->getPour_date() != null
