@@ -911,6 +911,31 @@ class Rad_ActionManager extends ActionManager {
             $cycle->setDrum_id($dto['cycle']['drumId']);
         }
 
+        // Readings
+        if( count($dto['cycle']['readings']) > 0 ){
+            $LOG->debug('add/update Readings');
+
+            // Add/Update reading(s)
+            $readingDao = new GenericDAO( new CarboyReadingAmount() );
+            foreach ( $dto['cycle']['readings'] as $readingDto ) {
+                if( $readingDto['Key_id'] ){
+                    $reading = $readingDao->getById($readingDto['Key_id']);
+                    $LOG->debug("Update existing reading: $reading");
+                }
+                else{
+                    $LOG->debug("Add new reading");
+                    $reading = new CarboyReadingAmount();
+                    $reading->setCarboy_use_cycle_id($cycle->getKey_id());
+                }
+
+                $reading->setIsotope_id($readingDto['Isotope_id']);
+                $reading->setCurie_level($readingDto['Curie_level']);
+                $reading->setDate_read($readingDto['Date_read']);
+
+                $readingDao->save($reading);
+            }
+        }
+
         $cycle->setComments($dto['cycle']['comments']);
         $cycle->setVolume($dto['cycle']['volume']);
 
@@ -918,6 +943,8 @@ class Rad_ActionManager extends ActionManager {
         $cycle = $cycleDao->save($cycle);
 
         DBConnection::get()->commit();
+
+        $LOG->info("Saved Carboy cycle details: " . $cycle);
 
         return $cycle;
     }
@@ -1014,7 +1041,7 @@ class Rad_ActionManager extends ActionManager {
         }
 
         $LOG->debug("Get carboy by ID: '$carboyId'");
-        $carboyDao = new GenericDao(new Carboy());
+        $carboyDao = new GenericDAO(new Carboy());
         $carboy = $carboyDao->getById($carboyId);
 
         // Ignore if this carboy is retired

@@ -1,15 +1,10 @@
 <div class="modal-header carboys" style="padding:0;">
         <h2 style="padding:5px; color:white">Manage Disposal of Carboy {{cycle.Carboy.Carboy_number}}</h2>
-        <ul class="nav nav-pills" style="margin-bottom:0px;">
-            <li ng-repeat="tab in tabs" ng-class="{'active': tab.active}">
-                <a ng-click="changeTab(tab)">{{tab.name}}</a>
-            </li>
-        </ul>
     </div>
     
     <div class="modal-body">
-        <div class="control-group card full" style="padding: 5px;" ng-if="isTabActive('Transition')">
-            <h3>Transition Carboy</h3>
+        <div class="control-group card full" style="padding: 5px;">
+            <h3 class="disposal-info">Transition Carboy</h3>
             <span>
                 <label class="control-label">Status:</label>
             </span>
@@ -44,8 +39,8 @@
             </div>
         </div>
 
-        <div class="control-group card full" style="padding: 5px;" ng-if="isTabActive('Readings')">
-            <h3>Carboy Readings</h3>
+        <div class="control-group card full" style="padding: 5px;">
+            <h3 class="disposal-info">Carboy Readings</h3>
             <div class="fake-table bordered" style="margin-top:-5px;">
                 <div class="table-header">
                     <h3>Isotope</h3>
@@ -53,23 +48,50 @@
                     <h3>Date Read</h3>
                     <h3></h3>
                 </div>
-                <div class="table-row" ng-repeat="reading in cycle.Carboy_reading_amounts">
-                    <div><p>{{reading.Isotope.Name}}</p></div>
+                <div class="table-row" ng-class="{greenbg:!reading.Key_id, 'bg-color-graylight':reading.edited}"
+                    ng-if="reading.EditCopy == undefined" ng-repeat-start="reading in cycle.Carboy_reading_amounts.concat(changes.readings.add)">
+                    <div><p>{{getIsotopeName(reading.Isotope_id)}}</p></div>
                     <div><p>{{reading.Curie_level}}</p></div>
                     <div><p>{{reading.Date_read | dateToISO:reading:'Date_read':true:true}}</p></div>
-                    <div><a class="button btn">Edit?</a></div>
+                    <div><button class="btn btn-primary left" ng-click="editReading(reading)"><i class="icon-pencil"></i>Edit</a></div>
+                </div>
+                <div class="table-row" ng-repeat-end ng-if="reading.EditCopy != undefined">
+                    <div>
+                        <select ng-model="reading.EditCopy.Isotope_id">
+                            <option ng-repeat="isotope in isotopes | orderBy:'Name'" ng-selected="reading.EditCopy.Isotope_id == isotope.Key_id" value="{{isotope.Key_id}}">{{isotope.Name}}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <div class="control-group">
+                            <div class="controls input-append">
+                                <input style="width: 90px;padding: 0px 3px;" ng-model="reading.EditCopy.Curie_level">
+                                <span class="add-on">mCi</span>
+                            </div>
+                        </div>            
+                    </div>
+                    <div>
+                        <datepicker2 placeholder="Date" disable-timepicker='true' button-class="readingDateButtonClass"
+                            ng-model="reading.EditCopy.Date_read"
+                            ng-init="reading.EditCopy.Date_read = getDefaultDate()"></datepicker2>
+                    </div>
+                    <div>
+                        <a class="btn btn-success" ng-click="editReadingSave(reading)"><i class="icon-checkmark"></i></a>
+                        <a class="btn btn-danger" ng-click="editReadingCancel(reading)"><i class="icon-cancel"></i></a>
+                    </div>
                 </div>
                 <div class="table-row">
                     <div><p></p></div>
                     <div><p></p></div>
                     <div><p></p></div>
-                    <div><a class="button btn">Add?</a></div>
+                    <div>
+                        <a class="btn btn-success left" ng-click="editReading()"><i class="icon-plus-2"></i>Add Reading</a>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="control-group card full" style="padding: 5px;">
-            <h3>Edit Carboy Details</h3>
+            <h3 class="disposal-info">Edit Carboy Details</h3>
             <div class="controls input-append">
                 <label class="control-label">Volume</label>
                 <input style="width: 90px;padding: 0px 3px;" ng-model="changes.volume" ng-change="changes.changed=true">
@@ -89,7 +111,7 @@
         <div class="red" style="display: inline-block; padding-right:10px;" ng-repeat="error in validationErrors">
             <span>{{error}}</span>
         </div>
-        <a class="btn btn-large btn-success left" ng-disabled="!changes.changed" ng-click="changes.changed && validate(cycle, changes) && save(cycle, changes)"><i class="icon-checkmark"></i>Save</a>
+        <a class="btn btn-large btn-success left" ng-disabled="!changes.changed || editing" ng-click="!editing && changes.changed && validate(cycle, changes) && save(cycle, changes)"><i class="icon-checkmark"></i>Save</a>
         <a class="btn btn-large btn-danger left" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
     </div>
     

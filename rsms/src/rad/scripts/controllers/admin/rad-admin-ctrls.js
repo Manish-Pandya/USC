@@ -876,12 +876,13 @@ angular.module('00RsmsAngularOrmApp')
 
     $scope.manageCarboyDisposal = function (cycle) {
         af.setModalData({
-            cycle
+            cycle: af.createCopy(cycle)
         });
 
         var modalInstance = $modal.open({
             templateUrl: 'views/admin/admin-modals/carboy-disposal-modal.html',
-            controller: 'ManageCarboyDisposalCtrl'
+            controller: 'ManageCarboyDisposalCtrl',
+            windowClass: 'modal-dialog-wide'
         });
 
         modalInstance.result.then(
@@ -891,7 +892,9 @@ angular.module('00RsmsAngularOrmApp')
                     $scope.CarboyUseCycleSaving = arg.promiseToSave
                         .then(function(data){
                             console.debug("Saved CarboyUseCycle disposal information.");
-                            // TODO: any invalidations?
+
+                            // Refresh our table
+                            getCycles();
                         }
                     );
                 }
@@ -1070,14 +1073,18 @@ angular.module('00RsmsAngularOrmApp')
         return !container.Drum_id;
     };
 })
-    .controller('ManageCarboyDisposalCtrl', function($scope, $modalInstance, actionFunctionsFactory, convenienceMethods){
+    .controller('ManageCarboyDisposalCtrl', function($rootScope, $scope, $modalInstance, actionFunctionsFactory, convenienceMethods){
         console.debug("Open carboy disposal management modal");
 
         $scope.statuses = Constants.CARBOY_USE_CYCLE.STATUS;
         $scope.cycle = actionFunctionsFactory.getModalData().cycle;
         $scope.changes = {
             comments: $scope.cycle.Comments,
-            volume: $scope.cycle.Volume
+            volume: $scope.cycle.Volume,
+            readings: {
+                add: [],
+                edit: []
+            }
         };
 
         // Determine applicable statuses
@@ -1111,7 +1118,8 @@ angular.module('00RsmsAngularOrmApp')
         $scope.disposals = getAvailableDisposals($scope.cycle.Status);
 
         $scope.tabs = [
-            {name:'Transition', active:true}
+            {name:'Transition', active:true},
+            {name:'Readings'}
         ];
 
         $scope.isTabActive = function(tabName){
@@ -1150,7 +1158,72 @@ angular.module('00RsmsAngularOrmApp')
         };
 
         $scope.getDefaultDate = function(){
-            return convenienceMethods.setMysqlTime(new Date());
+            return $scope.formatDate(new Date());
+        };
+
+        $scope.formatDate = function(date){
+            return convenienceMethods.setMysqlTime(date);
+        }
+
+        $scope.getIsotopeName = function(isotope_id){
+            return $rootScope.isotopes.filter(i => i.Key_id == isotope_id)[0].Name;
+        };
+
+        $scope.editReading = function(reading){
+            $scope.editing = true;
+
+            if( !reading ){
+                // Add empty reading (enable edit) to cycle
+                $scope.changes.readings.add.push({
+                    EditCopy: {}
+                });
+            }
+            else{
+                reading.EditCopy = actionFunctionsFactory.createCopy(reading);
+            }
+        };
+
+        $scope.editReadingCancel = function(reading){
+            $scope.editing = false;
+            reading.EditCopy = undefined;
+
+            if( !reading.Key_id ){
+                // This was a new one; remove it
+                var idx = $scope.changes.readings.add.indexOf(reading);
+                if( idx > -1 ){
+                    $scope.changes.readings.add.splice(idx, 1);
+                }
+            }
+        };
+
+        $scope.editReadingSave = function(reading){
+            // copy changes
+            console.debug("Save reading:", reading);
+
+            // Queue changes to be saved
+            if( reading.Key_id ){
+                $scope.changes.readings.edit.push(reading.EditCopy);
+            }
+            // else it already exists in Add array
+
+            // Replace contents
+            reading.Isotope = reading.EditCopy.Isotope;
+            reading.Isotope_id = reading.EditCopy.Isotope_id;
+            reading.Curie_level = reading.EditCopy.Curie_level;
+
+            if( typeof reading.EditCopy.Date_read == 'string'){
+                reading.Date_read = reading.EditCopy.Date_read;
+            }
+            else{
+                reading.Date_read = $scope.formatDate(reading.EditCopy.Date_read);
+            }
+
+            reading.EditCopy = undefined;
+
+            reading.edited = true;
+            $scope.editing = false;
+            $scope.changes.changed = true;
+            console.debug("Reading queued for save:", reading);
         };
 
         $scope.validate = function(cycle, changes){
@@ -1180,7 +1253,7 @@ angular.module('00RsmsAngularOrmApp')
         $scope.save = function(cycle, changes){
             console.debug("Save changes to ", cycle, $scope.changes);
 
-            // TODO: validate changes
+            // validate changes
             if( $scope.validate(cycle, changes) ){
                 $modalInstance.close({
                     promiseToSave: actionFunctionsFactory.saveCarboyUseCycleDisposalDetails(cycle, changes)
@@ -1190,6 +1263,7 @@ angular.module('00RsmsAngularOrmApp')
         };
 
         $scope.cancel = function(){
+            actionFunctionsFactory.deleteModalData();
             $modalInstance.dismiss();
         };
     })
