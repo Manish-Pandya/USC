@@ -892,7 +892,9 @@ angular.module('00RsmsAngularOrmApp')
                     $scope.CarboyUseCycleSaving = arg.promiseToSave
                         .then(function(data){
                             console.debug("Saved CarboyUseCycle disposal information.");
-                            // TODO: any invalidations?
+
+                            // Refresh our table
+                            getCycles();
                         }
                     );
                 }

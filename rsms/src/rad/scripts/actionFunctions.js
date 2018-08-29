@@ -2672,13 +2672,13 @@ angular
                 return genericAPIFactory.save(dto, 'saveCarboyDisposalDetails')
                     .then(
                         function(response){
-                            var dto = modelInflatorFactory.instateAllObjectsFromJson( response.data );
+                            var dto = modelInflatorFactory.instateAllObjectsFromJson( response.data, null, true );
                             console.debug("Carboy Disposal Saved:", dto);
 
                             // Update our cache...
                             angular.extend(cycle, dto);
-
-                            cycle.loadCarboy();
+                            dataStoreManager.store(cycle, true, 'CarboyUseCycle');
+                            cycle.Carboy_reading_amounts.forEach(r => dataStoreManager.store(r, true, 'CarboyReadingAmount'));
 
                             return cycle;
                         },
