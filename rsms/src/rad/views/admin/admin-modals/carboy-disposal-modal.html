@@ -48,7 +48,7 @@
                     <h3>Date Read</h3>
                     <h3></h3>
                 </div>
-                <div class="table-row" ng-if="reading.EditCopy == undefined" ng-repeat-start="reading in cycle.Carboy_reading_amounts.concat(changes.readings.add)">
+                <div class="table-row" ng-class="{greenbg: !reading.Key_id}" ng-if="reading.EditCopy == undefined" ng-repeat-start="reading in cycle.Carboy_reading_amounts.concat(changes.readings.add)">
                     <div><p>{{getIsotopeName(reading.Isotope_id)}}</p></div>
                     <div><p>{{reading.Curie_level}}</p></div>
                     <div><p>{{reading.Date_read | dateToISO:reading:'Date_read':true:true}}</p></div>
