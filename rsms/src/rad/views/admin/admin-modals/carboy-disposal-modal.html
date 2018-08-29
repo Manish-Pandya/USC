@@ -48,7 +48,8 @@
                     <h3>Date Read</h3>
                     <h3></h3>
                 </div>
-                <div class="table-row" ng-class="{greenbg: !reading.Key_id}" ng-if="reading.EditCopy == undefined" ng-repeat-start="reading in cycle.Carboy_reading_amounts.concat(changes.readings.add)">
+                <div class="table-row" ng-class="{greenbg:!reading.Key_id, 'bg-color-graylight':reading.edited}"
+                    ng-if="reading.EditCopy == undefined" ng-repeat-start="reading in cycle.Carboy_reading_amounts.concat(changes.readings.add)">
                     <div><p>{{getIsotopeName(reading.Isotope_id)}}</p></div>
                     <div><p>{{reading.Curie_level}}</p></div>
                     <div><p>{{reading.Date_read | dateToISO:reading:'Date_read':true:true}}</p></div>
@@ -110,7 +111,7 @@
         <div class="red" style="display: inline-block; padding-right:10px;" ng-repeat="error in validationErrors">
             <span>{{error}}</span>
         </div>
-        <a class="btn btn-large btn-success left" ng-disabled="!changes.changed" ng-click="changes.changed && validate(cycle, changes) && save(cycle, changes)"><i class="icon-checkmark"></i>Save</a>
+        <a class="btn btn-large btn-success left" ng-disabled="!changes.changed || editing" ng-click="!editing && changes.changed && validate(cycle, changes) && save(cycle, changes)"><i class="icon-checkmark"></i>Save</a>
         <a class="btn btn-large btn-danger left" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
     </div>
     

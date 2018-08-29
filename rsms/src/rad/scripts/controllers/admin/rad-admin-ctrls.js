@@ -1170,6 +1170,8 @@ angular.module('00RsmsAngularOrmApp')
         };
 
         $scope.editReading = function(reading){
+            $scope.editing = true;
+
             if( !reading ){
                 // Add empty reading (enable edit) to cycle
                 $scope.changes.readings.add.push({
@@ -1182,6 +1184,7 @@ angular.module('00RsmsAngularOrmApp')
         };
 
         $scope.editReadingCancel = function(reading){
+            $scope.editing = false;
             reading.EditCopy = undefined;
 
             if( !reading.Key_id ){
@@ -1217,6 +1220,8 @@ angular.module('00RsmsAngularOrmApp')
 
             reading.EditCopy = undefined;
 
+            reading.edited = true;
+            $scope.editing = false;
             $scope.changes.changed = true;
             console.debug("Reading queued for save:", reading);
         };
