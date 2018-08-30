@@ -134,6 +134,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"closeWasteContainer"       => new ActionMapping("closeWasteContainer", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 
 				"saveCarboyDisposalDetails"	=> new ActionMapping("saveCarboyDisposalDetails", "", "", $this::$ROLE_GROUPS["RADMIN"]),
+				"retireCarboy"	            => new ActionMapping("retireCarboy", "", "", $this::$ROLE_GROUPS["RADMIN"]),
 				"recirculateCarboy"	        => new ActionMapping("recirculateCarboy", "", "", $this::$ROLE_GROUPS["RADMIN"]),
 
 				// other functions

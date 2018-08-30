@@ -15,8 +15,6 @@
                 <div>
                     <button ng-if="canClose && !c.Clearable" ng-click="close(c, additionalParam)" class="btn {{buttonClass || 'btn-danger'}}">
                     {{buttonText || 'Close Container'}} </button>
-                    <button ng-if="canClose && (c.Clearable && isAdmin() )"
-                        ng-click="close(c, additionalParam)" class="btn {{buttonClass || 'btn-danger'}}"> Clear Container </button>
                     <button class="btn" ng-if="canAddWaste" ng-click="addWaste(c)">Add Waste</button>
                     <span ng-if="c.Close_date && !suppressCloseDate">
                         <span ng-if="!c.Clearable">Closed</span>

@@ -1075,6 +1075,67 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
+    function retireCarboy( $carboyId = NULL, $retireDate = NULL ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+        $carboyId = $this->getValueFromRequest('id', $carboyId);
+        $retireDate = $this->getValueFromRequest('date', $retireDate);
+
+        if( !$carboyId ){
+            return new ActionError('Carboy ID is required', 400);
+        }
+
+        if( !$retireDate ){
+            $retireDate = date();
+        }
+
+        $LOG->info("Request to retire carboy $carboyId on $retireDate");
+
+        $carboyDao = new GenericDAO(new Carboy());
+
+        // Look up the carboy
+        $carboy = $carboyDao->getById( $carboyId );
+
+        if( !$carboy ){
+            return new ActionError("No such carboy $carboyId", 404);
+        }
+
+        // Validate that this can be retired
+        // 1. Cannot already be retired
+        if( $carboy->getRetirement_date() != null ){
+            // Nothing to do
+            $LOG->info("Carboy is already retired: $carboy");
+            return $carboy;
+        }
+
+        // 2. Current cycle must be disposed or not in-use
+        $currentCycle = $carboy->getCurrent_carboy_use_cycle();
+        $finishedCycle = $currentCycle == null || $currentCycle->isDisposed();
+        $availableCycle = $currentCycle != null && $currentCycle->getStatus() == 'Available';
+
+        if( $finishedCycle || $availableCycle ){
+            // Set the date
+            $carboy->setRetirement_date($retireDate);
+
+            // Save
+            $carboy = $carboyDao->save($carboy);
+            $LOG->info("Retired carboy $carboy on " . $carboy->getRetirement_date());
+
+            if( $availableCycle ){
+                $LOG->info("Retired carboy has available cycle; deleting this cycle: $currentCycle");
+                $cycleDao = new GenericDAO($currentCycle);
+                $cycleDao->deleteById($currentCycle->getKey_id());
+            }
+
+            // Invalidate the carboy's cached cycles, forcing it to re-load them (thus including the newly-deleted cycle)
+            $carboy->setCarboy_use_cycles(null);
+
+            return $carboy;
+        }
+        else{
+            return new ActionError('Cannot retire Carboy', 401);
+        }
+    }
+
     function recirculateCarboy( $carboyId = NULL ) {
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
         $carboyId = $this->getValueFromRequest('id', $carboyId);
@@ -1122,7 +1183,7 @@ class Rad_ActionManager extends ActionManager {
         }
         else{
             // Can't do it
-            return new ActionError('Cannot recirculate this Carboy');
+            return new ActionError('Cannot recirculate this Carboy', 401);
         }
 
         return $carboy;

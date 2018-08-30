@@ -773,6 +773,28 @@ angular
                         );
             }
 
+            af.retireCarboy = function( carboy )
+            {
+                console.debug("Request to retire carboy ", carboy);
+                var dto = {id: carboy.Key_id, date: convenienceMethods.setMysqlTime(new Date())};
+
+                return genericAPIFactory.save(dto, 'retireCarboy&id=' + dto.id + '&date=' + dto.date )
+                        .then(
+                            function( returnedPromise ) {
+                                var dto = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                                console.debug("Carboy retired:", dto);
+
+                                // Update our cache...
+                                angular.extend(carboy, dto);
+
+                                return carboy;
+                            },
+                            function( err ){
+                                console.error("Unable to retire carboy ", carboy);
+                            }
+                        );
+            }
+
             /********************************************************************
             **
             **      DRUM            **
