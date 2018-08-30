@@ -651,8 +651,38 @@ angular.module('00RsmsAngularOrmApp')
     $scope.deactivate = function (carboy) {
         var copy = dataStoreManager.createCopy(carboy);
         copy.Retirement_date = new Date();
-        af.saveCarboy(carboy.PrincipalInvestigator, copy, carboy);
+        $scope.saveCarboyPromise = af.saveCarboy(carboy.PrincipalInvestigator, copy, carboy);
     };
+
+    $scope.recirculateCarboy = function(carboy) {
+        $scope.saveCarboyPromise = af.recirculateCarboy( carboy )
+            .then(function(updated){
+                // TODO: reload data?
+                updated.PI = undefined;
+            });
+    };
+
+    $scope.disposedStatuses = [
+        Constants.CARBOY_USE_CYCLE.STATUS.POURED,
+        Constants.CARBOY_USE_CYCLE.STATUS.DRUMMED
+    ];
+
+    $scope.allowRecirculateCarboy = function(carboy){
+        if( !carboy.Current_carboy_use_cycle ){
+            return false;
+        }
+
+        return $scope.disposedStatuses.includes(carboy.Current_carboy_use_cycle.Status);
+    };
+
+    $scope.allowRetireCarboy = function(carboy){
+        if( !carboy.Current_carboy_use_cycle ){
+            return false;
+        }
+
+        return $scope.allowRecirculateCarboy(carboy) || carboy.Current_carboy_use_cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.AVAILABLE;
+    };
+
     $scope.openModal = function (object) {
         var modalData = {};
         if (!object) {

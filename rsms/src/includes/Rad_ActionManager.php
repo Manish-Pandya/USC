@@ -1075,6 +1075,59 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
+    function recirculateCarboy( $carboyId = NULL ) {
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+        $carboyId = $this->getValueFromRequest('id', $carboyId);
+
+        if( !$carboyId ){
+            return new ActionError('Carboy ID is required', 400);
+        }
+
+        $LOG->debug("Recirculate carboy $carboyId");
+
+        $carboyDao = new GenericDAO(new Carboy());
+
+        // Look up the carboy
+        $carboy = $carboyDao->getById( $carboyId );
+
+        if( !$carboy ){
+            return new ActionError("No such carboy $carboyId", 404);
+        }
+
+        // Validate that the carboy can be recycled
+        // 1. Cannot recycle a retired carboy
+        $isNotRetired = $carboy->getRetirement_date() == null;
+
+        // 2. Current cycle must be disposed
+        $currentCycle = $carboy->getCurrent_carboy_use_cycle();
+        $finishedCycle = $currentCycle == null || $currentCycle->isDisposed();
+
+        if( $isNotRetired && $finishedCycle ){
+            // Create a new cycle
+            $LOG->debug("Create new carboy cycle");
+
+            $cycle = new CarboyUseCycle();
+            $cycle->setCarboy_id($carboy->getKey_id());
+            $cycle->setIs_active(true);
+            $cycle->setStatus("Available");
+
+            // Save
+            $cycleDao = new GenericDAO($cycle);
+            $cycle = $cycleDao->save($cycle);
+
+            $LOG->info("Created new use cycle for carboy $carboyId: $cycle");
+
+            // Invalidate the carboy's cached cycles, forcing it to re-load them (thus including the newly-saved cycle)
+            $carboy->setCarboy_use_cycles(null);
+        }
+        else{
+            // Can't do it
+            return new ActionError('Cannot recirculate this Carboy');
+        }
+
+        return $carboy;
+    }
+
     function saveDrum() {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
         $decodedObject = $this->convertInputJson();

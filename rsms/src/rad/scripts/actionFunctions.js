@@ -751,7 +751,27 @@ angular
                 return dataSwitchFactory.getAllObjects('CarboyUseCycle', true);
             }
 
+            af.recirculateCarboy = function( carboy )
+            {
+                console.debug("Request to recirculate carboy ", carboy);
+                var dto = {id: carboy.Key_id};
 
+                return genericAPIFactory.save(dto, 'recirculateCarboy&id=' + carboy.Key_id )
+                        .then(
+                            function( returnedPromise ) {
+                                var dto = modelInflatorFactory.instateAllObjectsFromJson( returnedPromise.data );
+                                console.debug("Carboy recirculated:", dto);
+
+                                // Update our cache...
+                                angular.extend(carboy, dto);
+
+                                return carboy;
+                            },
+                            function( err ){
+                                console.error("Unable to recirculate carboy ", carboy);
+                            }
+                        );
+            }
 
             /********************************************************************
             **
