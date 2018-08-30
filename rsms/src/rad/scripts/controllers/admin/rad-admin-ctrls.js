@@ -653,6 +653,32 @@ angular.module('00RsmsAngularOrmApp')
         copy.Retirement_date = new Date();
         af.saveCarboy(carboy.PrincipalInvestigator, copy, carboy);
     };
+
+    $scope.recirculateCarboy = function(carboy) {
+        // TODO: create new cycle
+    };
+
+    $scope.disposedStatuses = [
+        Constants.CARBOY_USE_CYCLE.STATUS.POURED,
+        Constants.CARBOY_USE_CYCLE.STATUS.DRUMMED
+    ];
+
+    $scope.allowRecirculateCarboy = function(carboy){
+        if( !carboy.Current_carboy_use_cycle ){
+            return false;
+        }
+
+        return $scope.disposedStatuses.includes(carboy.Current_carboy_use_cycle.Status);
+    };
+
+    $scope.allowRetireCarboy = function(carboy){
+        if( !carboy.Current_carboy_use_cycle ){
+            return false;
+        }
+
+        return $scope.allowRecirculateCarboy(carboy) || carboy.Current_carboy_use_cycle.Status == Constants.CARBOY_USE_CYCLE.STATUS.AVAILABLE;
+    };
+
     $scope.openModal = function (object) {
         var modalData = {};
         if (!object) {
