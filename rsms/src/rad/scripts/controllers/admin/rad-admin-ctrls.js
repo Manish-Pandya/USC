@@ -649,9 +649,10 @@ angular.module('00RsmsAngularOrmApp')
         .then(getCarboysFromDatastore);
 
     $scope.deactivate = function (carboy) {
-        var copy = dataStoreManager.createCopy(carboy);
-        copy.Retirement_date = new Date();
-        $scope.saveCarboyPromise = af.saveCarboy(carboy.PrincipalInvestigator, copy, carboy);
+        $scope.saveCarboyPromise = af.retireCarboy( carboy )
+            .then(function(updated){
+                // TODO: reload data?
+            });
     };
 
     $scope.recirculateCarboy = function(carboy) {
