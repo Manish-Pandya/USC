@@ -102,14 +102,15 @@ class Carboy extends RadCrud {
 	public function getCurrent_carboy_use_cycle(){
 		$cycles = $this->getCarboy_use_cycles();
 
-		foreach($cycles as $cycle){
-			//the cycle is the current one if it hasn't been poured 
-			if( !$cycle->isDisposed() ){
-				$this->current_carboy_use_cycle = $cycle;
-				return $cycle;
-			}
+		// Current cycle is the most recent one
+		// TODO: Order by date?
+		$cycleCount = count($cycles);
+		if( $cycleCount > 0 ){
+			// Return last one
+			return $cycles[$cycleCount - 1];
 		}
-        return null;
+
+		return null;
 	}
 	
 }

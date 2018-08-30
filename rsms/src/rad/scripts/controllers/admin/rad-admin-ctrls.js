@@ -651,11 +651,15 @@ angular.module('00RsmsAngularOrmApp')
     $scope.deactivate = function (carboy) {
         var copy = dataStoreManager.createCopy(carboy);
         copy.Retirement_date = new Date();
-        af.saveCarboy(carboy.PrincipalInvestigator, copy, carboy);
+        $scope.saveCarboyPromise = af.saveCarboy(carboy.PrincipalInvestigator, copy, carboy);
     };
 
     $scope.recirculateCarboy = function(carboy) {
-        // TODO: create new cycle
+        $scope.saveCarboyPromise = af.recirculateCarboy( carboy )
+            .then(function(updated){
+                // TODO: reload data?
+                updated.PI = undefined;
+            });
     };
 
     $scope.disposedStatuses = [
