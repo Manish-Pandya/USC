@@ -649,10 +649,12 @@ angular.module('00RsmsAngularOrmApp')
         .then(getCarboysFromDatastore);
 
     $scope.deactivate = function (carboy) {
-        $scope.saveCarboyPromise = af.retireCarboy( carboy )
+        if(window.confirm('Are you sure you want to Retire Carboy ' + carboy.Carboy_number + '?')){
+            $scope.saveCarboyPromise = af.retireCarboy( carboy )
             .then(function(updated){
                 // TODO: reload data?
             });
+        }
     };
 
     $scope.recirculateCarboy = function(carboy) {
