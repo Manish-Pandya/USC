@@ -1081,7 +1081,8 @@ angular.module('00RsmsAngularOrmApp')
                     modalData.ParcelUseAmount.Waste_bag_id = container.Key_id;
                     break;
                 case ("CarboyUseCycle"):
-                    modalData.ParcelUseAmount.Carboy_id = container.Carboy_id;
+                    // misnomer... 'ParcelUseAmount.Carboy_id' refers to the CYCLE ID
+                    modalData.ParcelUseAmount.Carboy_id = container.Key_id;
                     break;
                 case ("ScintVialCollection"):
                     modalData.ParcelUseAmount.Scint_vial_collection_id = container.Key_id;

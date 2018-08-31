@@ -1,5 +1,5 @@
 ﻿<div class="modal-header" style="padding:0;">
-    <h2 style="padding:5px; background:rgb(91, 183, 91); color:white">Add Waste To {{modalData.Container.ViewLabel}}</h2>
+    <h2 style="padding:5px; background:rgb(91, 183, 91); color:white">Add Waste To {{modalData.Container.ViewLabel || modalData.Container.CarboyNumber}}</h2>
 </div>
 <form class="form form-horizontal" ng-submit="save(modalData.ParcelUseAmountCopy, modalData.ParcelUseAmount, modalData.Container)">
     <div class="modal-body">

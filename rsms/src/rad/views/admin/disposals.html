@@ -10,7 +10,7 @@
         <h3 ng-show="!pourCarboys.length">No carboys awaiting disposal.</h3>
         <div ng-show="pourCarboys.length" class="card full fake-table bordered">
             <div class="table-header">
-                <h3>Carboy Number</h3>
+                <h3>Number</h3>
                 <h3>Status</h3>
                 <h3>Volume</h3>
                 <h3>Contents</h3>
@@ -25,14 +25,30 @@
                     <span ng-if="cycle.Volume">{{cycle.Volume}} ml</span>
                     <span ng-if="!cycle.Volume">N/A</span>
                 </div>
-                <div>
-                    <p ng-repeat="content in cycle.Contents">
-                        {{content.Curie_level | unit:content}} of {{content.Isotope_name}}
-                    </p>
+                <div class="containers-list" style="width: inherit">
+                    <ul>
+                        <li ng-if="cycle.AddedAmounts.length" class="group-header added-amounts">
+                            <h4 style="font-style: italic;">Added at RSO</h4>
+                        </li>
+                        <li ng-repeat="amt in cycle.AddedAmounts track by $index" ng-if="cycle.AddedAmounts.length" class="added-amounts">
+                            <div>{{amt.Isotope_name}}</div>
+                            <div>{{amt.Curie_level | unit:amt}}
+                                <i class="icon-pencil primary" style="float: right;" ng-click="addWaste(cycle, amt)"></i>
+                            </div>
+                        </li>
+                        <li ng-if="cycle.AddedAmounts.length" class="group-header added-amounts">
+                            <h4 style="font-style: italic;">Totals:</h4>
+                        </li>
+                        <li ng-repeat="amt in cycle.Contents track by $index" ng-if="cycle.Contents.length">
+                            <div>{{amt.Isotope_name}}</div>
+                            <div>{{amt.Curie_level | unit:amt}}</div>
+                        </li>
+                    </ul>
                 </div>
                 <div>{{cycle.Comments}}</div>
                 <div>
                     <a class="btn btn-primary left" ng-click="manageCarboyDisposal(cycle)"><i class="icon-pencil primary"></i>Edit</a>
+                    <button class="btn" ng-click="addWaste(cycle)">Add Waste</button>
                 </div>
             </div>
         </div>

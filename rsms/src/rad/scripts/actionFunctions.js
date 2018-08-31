@@ -1850,6 +1850,12 @@ angular
             }
 
             af.saveParcelUseAmount = function (copy, amt, container) {
+                // remove any cyclic fields...
+                copy.rootScope = undefined;
+                copy.api = undefined;
+                copy.inflator = undefined;
+                copy.Carboy = undefined;
+
                 return this.save(copy).then(function (c) {
                     angular.extend(container, c);
                 })
