@@ -33,7 +33,7 @@
                         <li ng-repeat="amt in cycle.AddedAmounts track by $index" ng-if="cycle.AddedAmounts.length" class="added-amounts">
                             <div>{{amt.Isotope_name}}</div>
                             <div>{{amt.Curie_level | unit:amt}}
-                                <i class="icon-pencil primary" style="float: right;" ng-click="addWaste(cycle, amt)"></i>
+                                <a><i class="icon-pencil primary" style="float: right;" ng-click="addWaste(cycle, amt)"></i></a>
                             </div>
                         </li>
                         <li ng-if="cycle.AddedAmounts.length" class="group-header added-amounts">
