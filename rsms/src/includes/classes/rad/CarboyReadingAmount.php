@@ -110,6 +110,8 @@ include_once 'RadCrud.php';
 	public function getIsotope_id(){return $this->isotope_id;}
 	public function setIsotope_id($id){$this->isotope_id = $id;}
 
+    public function getIsotope_name(){return $this->getIsotope()->getName();}
+
  	public function getIsotope() {
 		if($this->isotope == null) {
 			$isotopeDAO = new GenericDAO(new Isotope());
