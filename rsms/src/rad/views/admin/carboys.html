@@ -18,25 +18,25 @@
         <div class="card full carboys" ng-if="carboys.length">
             <div class="fake-table bordered">
                 <div class="table-header" ng-init="orderCarboysBy = 'Carboy_number'">
-                    <h3>Edit</h3>
-                    <h3 ng-click="orderCarboysBy = 'Carboy_number'">Carboy Number</h3>
+                    <h3>Actions</h3>
+                    <h3 ng-click="orderCarboysBy = 'Carboy_number'">Number</h3>
                     <h3 ng-click="orderCarboysBy = 'Current_carboy_use_cycle.Status'">Status</h3>
                     <h3 ng-click="orderCarboysBy = 'PI.Name'">PI</h3>
                     <h3>Contents</h3>
+                    <h3>Readings</h3>
                 </div>
                 <div class="table-row" ng-repeat="carboy in carboys | filter: {Retirement_date: null} | orderBy:orderCarboysBy track by carboy.Key_id">
                     <div>
                         <a ng-disabled="carboy.edit" ng-class="{'disabled':carboy.edit}" ng-click="openModal(carboy)" class="btn btn-primary left">
-                            <i class="icon-pencil"></i>Edit
+                            <i class="icon-pencil" title="Edit"></i>
                         </a>
-                        <!-- TODO: Possible Status values should be enums -->
                         <a ng-disabled="carboy.edit" ng-if="allowRetireCarboy(carboy)"
                            ng-class="{'disabled':carboy.edit}" ng-click="deactivate(carboy)" class="btn btn-danger left">
-                            <i class="icon-remove"></i>Deactivate
+                            <i class="icon-remove" title="Retire"></i>
                         </a>
                         <a ng-disabled="carboy.edit" ng-if="allowRecirculateCarboy(carboy)"
                            ng-class="{'disabled':carboy.edit}" ng-click="recirculateCarboy(carboy)" class="btn btn-warning left">
-                            <i class="icon-back-2"></i><i class="icon-forward"></i>Recirculate
+                            <i class="icon-back-2" title="Recirculate"></i>
                         </a>
                     </div>
                     <div>
@@ -48,22 +48,34 @@
                     <div>
                         {{carboy.PI.Name || "N/A"}}
                     </div>
-                    <div>
-                        <div class="fake-table" ng-if="carboy.Current_carboy_use_cycle.Contents.length">
-                            <div class="table-header">
-                                <h3>Isotope</h3>
-                                <h3>Quantity</h3>
-                            </div>
-                            <div class="table-row" ng-repeat="amt in carboy.Current_carboy_use_cycle.Contents track by $index">
+                    <div class="containers-list" style="width: inherit">
+                        <ul ng-if="carboy.Current_carboy_use_cycle">
+                            <li ng-if="!carboy.Current_carboy_use_cycle || !carboy.Current_carboy_use_cycle.Contents.length">N/A</li>
+                            <li ng-if="carboy.Current_carboy_use_cycle.AddedAmounts.length" class="group-header added-amounts">
+                                <h4 style="font-style: italic;">Added at RSO</h4>
+                            </li>
+                            <li ng-repeat="amt in carboy.Current_carboy_use_cycle.AddedAmounts track by $index" ng-if="carboy.Current_carboy_use_cycle.AddedAmounts.length" class="added-amounts">
                                 <div>{{amt.Isotope_name}}</div>
                                 <div>{{amt.Curie_level | unit:amt}}</div>
-                            </div>
-                        </div>
-                        <p ng-if="!carboy.Current_carboy_use_cycle.Contents.length">
-                            N/A
-                        </p>
+                            </li>
+                            <li ng-if="carboy.Current_carboy_use_cycle.AddedAmounts.length" class="group-header added-amounts">
+                                <h4 style="font-style: italic;">Totals:</h4>
+                            </li>
+                            <li ng-repeat="amt in carboy.Current_carboy_use_cycle.Contents track by $index" ng-if="carboy.Current_carboy_use_cycle.Contents.length">
+                                <div>{{amt.Isotope_name}}</div>
+                                <div>{{amt.Curie_level | unit:amt}}</div>
+                            </li>
+                        </ul>
                     </div>
 
+                    <div class="containers-list" style="width: inherit">
+                        <ul>
+                            <li ng-repeat="reading in carboy.Current_carboy_use_cycle.Carboy_reading_amounts">
+                                <div>{{reading.Isotope_name}}</div>
+                                <div>{{reading.Curie_level | unit:reading}}</div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

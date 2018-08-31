@@ -620,6 +620,7 @@ angular.module('00RsmsAngularOrmApp')
 
         // Make sure their PI is set, if available
         var pi_ids = $scope.carboys
+            .filter(c => c.Current_carboy_use_cycle != null)
             .map(c => c.Current_carboy_use_cycle.Principal_investigator_id)
             .filter(pid => pid);
 
@@ -629,7 +630,7 @@ angular.module('00RsmsAngularOrmApp')
         console.debug("Found " + pis.length + "/" + pi_ids + " assigned PIs");
 
         $scope.carboys.forEach(carboy => {
-            if( !carboy.PI && carboy.Current_carboy_use_cycle.Principal_investigator_id ){
+            if( !carboy.PI && carboy.Current_carboy_use_cycle && carboy.Current_carboy_use_cycle.Principal_investigator_id ){
                 console.debug("Find assignment for carboy ", carboy,);
                 var match = pis.filter(pi => pi.Key_id == carboy.Current_carboy_use_cycle.Principal_investigator_id)[0];
                 if(match){
@@ -1080,7 +1081,8 @@ angular.module('00RsmsAngularOrmApp')
                     modalData.ParcelUseAmount.Waste_bag_id = container.Key_id;
                     break;
                 case ("CarboyUseCycle"):
-                    modalData.ParcelUseAmount.Carboy_id = container.Carboy_id;
+                    // misnomer... 'ParcelUseAmount.Carboy_id' refers to the CYCLE ID
+                    modalData.ParcelUseAmount.Carboy_id = container.Key_id;
                     break;
                 case ("ScintVialCollection"):
                     modalData.ParcelUseAmount.Scint_vial_collection_id = container.Key_id;

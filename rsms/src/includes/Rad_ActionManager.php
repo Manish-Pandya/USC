@@ -1293,6 +1293,7 @@ class Rad_ActionManager extends ActionManager {
 
 
     function saveParcelUseAmount(ParcelUseAmount $decodedObject = null ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $decodedObject = $this->convertInputJson();
         if( $decodedObject === NULL ) {
@@ -1301,19 +1302,40 @@ class Rad_ActionManager extends ActionManager {
         else if( $decodedObject instanceof ActionError) {
             return $decodedObject;
         }
+
+        $LOG->debug("Save parcel use amount");
+
         $dao = new GenericDAO($decodedObject);
-        $l = Logger::getLogger(__FUNCTION__);
         $container = false;
+
+        // Look up container into which this is being placed
         if($decodedObject->getWaste_bag_id() != null){
             $container = $this->getWasteBagById($decodedObject->getWaste_bag_id());
-        }elseif($decodedObject->getCarboy_id() != null){
+        }
+        else if($decodedObject->getCarboy_id() != null){
             $container = $this->getCarboyUseCycleById($decodedObject->getCarboy_id());
-        }elseif($decodedObject->getOther_waste_container_id() != null){
+        }
+        else if($decodedObject->getOther_waste_container_id() != null){
             $container = $this->getOtherWasteContainerBiId($decodedObject->getOther_waste_container_id());
-        }elseif($decodedObject->getScint_vial_collection_id() != null){
+        }
+        else if($decodedObject->getScint_vial_collection_id() != null){
             $container = $this->getScintVialCollectionById($decodedObject->getScint_vial_collection_id());
         }
+
+        if( !$container ){
+            // Couldn't find container!
+            $msg = "Could not find container for parcel use amount";
+            $LOG->warn($msg);
+
+            if( $LOG->isTraceEnabled() ){
+                $LOG->trace( $decodedObject );
+            }
+
+            return new ActionError($msg, 404);
+        }
+
         $amount = $dao->save();
+        $LOG->debug("Saved parcel use amount: $amount");
 
         return $container;
     }

@@ -14,7 +14,7 @@
 require_once( dirname(__FILE__) . '/action_setup.php');
 session_start();
 
-$rlog = Logger::getLogger('request.ajax.' . $actionName);
+$rlog = Logger::getLogger('request.ajax');
 $LOG = Logger::getLogger('ajaxaction.' . $actionName);
 
 $username = $_SESSION['USER'] ? $_SESSION['USER']->getUsername() : '';

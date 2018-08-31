@@ -220,7 +220,7 @@ class JsonManager {
 				$decodedJsonArray[$key] = $entity;
 			}
 			else{
-				$LOG->warn("Unexpected value encountered at decoded assmbly at key: $key");
+				$LOG->debug("Unexpected value encountered at decoded assmbly at key: $key");
 			}
 		}
 
