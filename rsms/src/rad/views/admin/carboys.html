@@ -23,7 +23,7 @@
                     <h3 ng-click="orderCarboysBy = 'Current_carboy_use_cycle.Status'">Status</h3>
                     <h3 ng-click="orderCarboysBy = 'PI.Name'">PI</h3>
                     <h3>Contents</h3>
-                    <h3>Readings</h3>
+                    <h3>Disposed Activity</h3>
                 </div>
                 <div class="table-row" ng-repeat="carboy in carboys | filter: {Retirement_date: null} | orderBy:orderCarboysBy track by carboy.Key_id">
                     <div>
