@@ -1189,6 +1189,38 @@ class Rad_ActionManager extends ActionManager {
         return $carboy;
     }
 
+    function removeContainerFromDrum( $containerId, $containerType) {
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+        
+        $id = $this->getValueFromRequest('id', $containerId);
+        $type = $this->getValueFromRequest('type', $containerType);
+
+        if( $id === NULL || $type === NULL) {
+            return new ActionError('Insufficient data to remove from drum', 401);
+        }
+
+        $dao = $this->getDaoForWasteContainer($type);
+        $container = $dao->getById($id);
+
+        if( !$container ){
+            return new ActionError('No such container', 404);
+        }
+
+        $LOG->debug("Remove container from its drum: $container");
+
+        // Unlink from drum
+        $container->setDrum_id(null);
+
+        if( $container instanceof CarboyUseCycle ){
+            // Transition cycle back to Mixed Waste
+            $container->setStatus('Mixed Waste');
+
+            $LOG->debug("Transition carboy back to Mixed Waste");
+        }
+
+        return $dao->save($container);
+    }
+
     function saveDrum() {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
         $decodedObject = $this->convertInputJson();

@@ -2603,6 +2603,25 @@ angular
                     )
             }
 
+            af.removeContainerFromDrum = function(container){
+                console.debug("Remove container from its drum:", container);
+
+                af.clearError();
+
+                // Save
+                return genericAPIFactory.save({id: container.Key_id}, 'removeContainerFromDrum&id=' + container.Key_id + '&type=' + container.Class)
+                    .then(
+                        function(response){
+                            var dto = modelInflatorFactory.instateAllObjectsFromJson( response.data );
+                            console.debug("Container Saved:", dto);
+                            return dto;
+                        },
+                        function(err){
+                            console.error("Error saving Container", err);
+                        }
+                    );
+            };
+
             af.saveWasteBag = function(bag, copy){
               af.clearError();
                 return this.save(copy)
