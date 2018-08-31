@@ -147,12 +147,7 @@ class Drum extends RadCrud {
 		// Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getDisposalLots");
-        $entityMaps[] = new EntityMap("lazy","getWipe_test");        
-
-        $entityMaps[] = new EntityMap("lazy","getCarboyUseCycles");
-        $entityMaps[] = new EntityMap("lazy","getOtherWasteContainers");
-        $entityMaps[] = new EntityMap("lazy","getWasteBags");
-        $entityMaps[] = new EntityMap("lazy","getScintVialCollections");
+        $entityMaps[] = new EntityMap("lazy","getWipe_test");
 
 		$this->setEntityMaps($entityMaps);
 	}

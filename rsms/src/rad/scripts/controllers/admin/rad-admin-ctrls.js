@@ -730,7 +730,7 @@ angular.module('00RsmsAngularOrmApp')
  * Controller of the 00RsmsAngularOrmApp Radmin PI dashboard
  */
 angular.module('00RsmsAngularOrmApp')
-    .controller('disposalCtrl', function ($scope, actionFunctionsFactory, convenienceMethods, $stateParams, $rootScope, $modal) {
+    .controller('disposalCtrl', function ($scope, actionFunctionsFactory, convenienceMethods, radUtilitiesFactory, $rootScope, $modal) {
     //do we have access to action functions?
     var af = actionFunctionsFactory;
     $scope.af = af;
@@ -848,6 +848,32 @@ angular.module('00RsmsAngularOrmApp')
             }
         );
     };
+
+    $scope.showDrumDetails = function(drum){
+        if( !drum ){
+            $scope.detailDrum = null;
+            return;
+        }
+
+        $scope.detailDrum = {
+            drum: drum,
+            containers: radUtilitiesFactory.getAllWasteContainersFromDrum(drum)
+        };
+    }
+
+    $scope.removeFromDrum = function(container){
+        if( container && $scope.detailDrum ){
+            if( window.confirm("Are you sure you want to remove " + (container.Label || container.CarboyNumber) + " from " + $scope.detailDrum.drum.Label + "?") ){
+                console.debug("Remove container ", container, " from drum ", $scope.detailDrum.drum);
+
+                $scope.removeFromDrumPromise = actionFunctionsFactory.removeContainerFromDrum(container);
+            }
+        }
+    };
+
+    $scope.drumDetailsContainersFilter = function(o1){
+        return true;
+    }
 
     $scope.getCycleRowClass = function(cycle){
         switch(cycle.Status){

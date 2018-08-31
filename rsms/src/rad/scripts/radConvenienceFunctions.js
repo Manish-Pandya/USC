@@ -89,5 +89,32 @@ angular.module('radUtilitiesModule', [
             return allContainers;
         }; // end getAllWasteContainersFromPickup
 
+        radUtilitiesFactory.getAllWasteContainersFromDrum = function(drum){
+            console.debug("Collect all containers from drum ", drum);
+            var allContainers =
+                (drum.WasteBags || [])
+                .concat(drum.ScintVialCollections || [])
+                .concat(drum.CarboyUseCycles || [])
+                .concat(drum.OtherWasteContainers || [])
+                .map(function (c, idx) {
+                    var container = angular.extend({}, c);
+
+                    // Consolidate label-name mismatches
+                    container.ViewLabel = c.Label || c.CarboyNumber || c.Name;
+
+                    //we index at 1 because JS can't tell the difference between false and the number 0 (see return of $scope.getContainer method below)
+                    container.idx = idx + 1;
+
+                    // Apply 'friendly' labels by-type
+                    container.ClassLabel = radUtilitiesFactory.getFriendlyWasteLabel(c.Class);
+
+                    return container;
+                }
+            );
+
+            console.debug(allContainers);
+            return allContainers;
+        };
+
         return radUtilitiesFactory;
     });

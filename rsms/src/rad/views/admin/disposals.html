@@ -1,5 +1,6 @@
 <div cg-busy="{promise:CarboyReadingAmountSaving,message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:MiscellaneousWasteSaving,message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:removeFromDrumPromise,message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="right-column">
     <div class="well four-fifths">
@@ -65,11 +66,11 @@
     <div class="well two-thirds">
         <h1 class="disposals">
             <i class="icon-database"></i>Drums <a class="btn btn-success left" ng-click="editDrum(drum)"><i class="icon-plus-2"></i>Create Drum</a>
-            <button ng-click="showGoneDrums = !showGoneDrums" class="btn btn-primary">
+            <button ng-click="showDrumDetails(null); showGoneDrums = !showGoneDrums;" class="btn btn-primary">
                 <i class="icon-out-2"></i> Show <span ng-if="!showGoneDrums">Shipped</span><span ng-if="showGoneDrums">Present</span> Drums
             </button>
         </h1>
-        <div class="card full">
+        <div class="card full" ng-init="detailDrum = null">
             <div class="fake-table bordered">
                 <div class="table-header">
                     <h3>Edit Drum</h3>
@@ -78,7 +79,7 @@
                     <h3>Wipe Test</h3>
                     <h3>Shipment Info</h3>
                 </div>
-                <div class="table-row" ng-repeat="drum in drums | shippedOrNot:showGoneDrums">
+                <div class="table-row" ng-repeat="drum in filteredDrums = (drums | shippedOrNot:showGoneDrums | filter: (detailDrum == null || '') && {Key_id: detailDrum.drum.Key_id})" ng-show="detailDrum == null || detailDrum.drum == drum">
                     <div>
                         <button ng-click="editDrum(drum)" ng-disabled="drum.edit" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                     </div>
@@ -90,8 +91,12 @@
                         <input ng-model="DrumCopy.Label">
                     </div>
 
-                    <div>
+                    <div ng-class="{greybg: detailDrum && detailDrum.drum == drum}">
                         <p ng-repeat="isotope in drum.Contents">{{isotope.Curie_level | unit:isotope}} of {{isotope.Isotope_name}}</p>
+                        <p ng-if="drum.Contents.length">
+                            <a ng-if="!detailDrum" ng-click="showDrumDetails(drum)" class="btn btn-block btn-small"><i class="icon-info-circle"></i>Show containers...</a>
+                            <a ng-if="detailDrum"  ng-click="showDrumDetails(null)" class="btn btn-block btn-inverse"><i class="icon-arrow-up"></i>Show less...</a>
+                        </p>
                     </div>
 
                     <div>
@@ -103,6 +108,10 @@
                         <button ng-click="drumModal(drum)" class="btn btn-success left"><i class="icon-out-2"></i>Ship Drum</button>
                     </div>
                 </div>
+            </div>
+
+            <div ng-if="detailDrum && filteredDrums[0]" style="box-sizing:border-box; border: 10px solid #cccccc;">
+                <containers suppress-close-date="true" close="removeFromDrum" containers="detailDrum.containers" filterFunction="drumDetailsContainersFilter" button-text="Remove From Drum" button-class="btn-warning"></containers>
             </div>
         </div>
     </div>
