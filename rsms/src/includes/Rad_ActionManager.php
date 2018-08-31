@@ -1205,6 +1205,10 @@ class Rad_ActionManager extends ActionManager {
         if( !$container ){
             return new ActionError('No such container', 404);
         }
+        else if( $container->getDrum_id() == null ){
+            // Container is not in a drum; do nothing else
+            return $container;
+        }
 
         $LOG->debug("Remove container from its drum: $container");
 
