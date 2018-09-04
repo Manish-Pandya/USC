@@ -901,14 +901,16 @@ class Rad_ActionManager extends ActionManager {
             $cycle->setHotroom_date($dto['cycle']['hotDate']);
         }
 
-        if($dto['cycle']['pourDate'] && $cycle->getStatus() == 'Poured'){
-            $LOG->debug("set pour date");
-            $cycle->setPour_date($dto['cycle']['pourDate']);
-        }
-
         if($dto['cycle']['drumId'] && $cycle->getStatus() == 'In Drum'){
             $LOG->debug("set drum ID");
             $cycle->setDrum_id($dto['cycle']['drumId']);
+        }
+
+        // "Pour date" is technically a more general "disposal date"
+        $is_disposed = $cycle->getStatus() == 'Poured' || $cycle->getStatus() == 'In Drum';
+        if($dto['cycle']['pourDate'] && $is_disposed ){
+            $LOG->debug("set pour/drum date");
+            $cycle->setPour_date($dto['cycle']['pourDate']);
         }
 
         // Readings
