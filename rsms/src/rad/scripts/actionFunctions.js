@@ -1681,7 +1681,6 @@ angular
 
                 // Remove cyclic references...
                 copy.rootScope = undefined;
-                copy.api = undefined;
                 copy.Carboy = undefined;
 
                 console.log('Save CarboyUseCycle', copy);
@@ -1858,7 +1857,6 @@ angular
             af.saveParcelUseAmount = function (copy, amt, container) {
                 // remove any cyclic fields...
                 copy.rootScope = undefined;
-                copy.api = undefined;
                 copy.inflator = undefined;
                 copy.Carboy = undefined;
 
@@ -1873,12 +1871,10 @@ angular
 
                 // remove any cyclic fields...
                 copy.rootScope = undefined;
-                copy.api = undefined;
 
                 if( copy.ParcelUseAmount ){
                     copy.ParcelUseAmount.forEach(amt => {
                         amt.rootScope = undefined;
-                        amt.api = undefined;
                     });
                 }
 
@@ -2631,7 +2627,6 @@ angular
             af.saveWasteBag = function(bag, copy){
                 // Remove cyclic references...
                 copy.rootScope = undefined;
-                copy.api = undefined;
                 copy.Pickup = undefined;    // Pickup is transient at the JS layer
 
               af.clearError();
@@ -2656,6 +2651,10 @@ angular
             }
 
             af.saveSVCollection = function(collection, copy){
+                // Remove cyclic references...
+                copy.rootScope = undefined;
+                copy.Pickup = undefined;    // Pickup is transient at the JS layer
+
               af.clearError();
                 return this.save(copy)
                     .then(
