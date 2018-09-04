@@ -1695,7 +1695,7 @@ class Rad_ActionManager extends ActionManager {
                         $container->setStatus('AT RSO');
 
                         // Carboy is At RSO; set special timestamp
-                        $container->setRso_date( date("Y-m-d H:i:s" , new DateTime()->getTimestamp()) );
+                        $container->setRso_date( date('Y-m-d H:i:s') );
                         $LOG->info("Set CarboyUseCycle RSO date: " . $container->getRso_date());
                         break;
 
