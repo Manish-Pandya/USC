@@ -809,7 +809,7 @@ angular.module('00RsmsAngularOrmApp')
     };
     var getContainers = function () {
         console.log($rootScope.OtherWasteContainers);
-        return $scope.drumableContainers = $rootScope.WasteBags.concat($rootScope.ScintVialCollections).concat($rootScope.OtherWasteContainers)
+        $scope.drumableContainers = $rootScope.WasteBags.concat($rootScope.ScintVialCollections).concat($rootScope.OtherWasteContainers)
             .filter(function (c) {
             //console.log(c.Class, c)
             return c.Pickup_date && !c.Drum_id;
@@ -837,6 +837,8 @@ angular.module('00RsmsAngularOrmApp')
             }
             return container;
         });
+        console.debug("drumableContainers: ", $scope.drumableContainers);
+        return $scope.drumableContainers;
     };
 
     var getOtherWasteTypes = function(){
@@ -866,13 +868,25 @@ angular.module('00RsmsAngularOrmApp')
             if( window.confirm("Are you sure you want to remove " + (container.Label || container.CarboyNumber) + " from " + $scope.detailDrum.drum.Label + "?") ){
                 console.debug("Remove container ", container, " from drum ", $scope.detailDrum.drum);
 
-                $scope.removeFromDrumPromise = actionFunctionsFactory.removeContainerFromDrum(container);
+                $scope.removeFromDrumPromise = actionFunctionsFactory.removeContainerFromDrum(container)
+                    .then(function(){
+                        var drums = dataStoreManager.get("Drum");
+
+                        return af.replaceDrums(drums)
+                            .then(function (returnedDrums) {
+                            console.log('Reloaded Drums', returnedDrums);
+
+                            var drum = dataStoreManager.getById("Drum", $scope.detailDrum.drum.Key_id);
+                            $scope.showDrumDetails(drum);
+                        });
+                    })
+                    .then(loadDisposalsData);
             }
         }
     };
 
     $scope.drumDetailsContainersFilter = function(o1){
-        return true;
+        return $scope.detailDrum && o1.Drum_id == $scope.detailDrum.drum.Key_id;
     }
 
     $scope.getCycleRowClass = function(cycle){
@@ -894,7 +908,9 @@ angular.module('00RsmsAngularOrmApp')
         return containers.some(function (c) { return c.Pickup_id == null; });
     };
 
-    $rootScope.radPromise = getAllWasteBags()
+    var loadDisposalsData = function(){
+        console.debug("Loading disposals data...");
+        $rootScope.radPromise = getAllWasteBags()
         .then(getIsotopes)
         .then(getSVCollections)
         .then(getAllDrums)
@@ -902,7 +918,12 @@ angular.module('00RsmsAngularOrmApp')
         .then(getMiscWaste)
         .then(getOtherWaste)
         .then(getContainers)
-        .then(getOtherWasteTypes);
+        .then(getOtherWasteTypes)
+        .then(function(){console.debug("disposals data loaded.")});
+    };
+
+    loadDisposalsData();
+
     $scope.date = new Date();
 
     $scope.getOtherWasteOfType = function(type){
@@ -923,7 +944,7 @@ angular.module('00RsmsAngularOrmApp')
             return;
         }
 
-        // TODO: REQUIRE CONFIRMATION?
+        // REQUIRE CONFIRMATION
 
         if (window.confirm("Are you sure you want to clear " + container.Label + "?")) {
             $rootScope.saving = af.closeWasteContainer(container)
@@ -986,6 +1007,11 @@ angular.module('00RsmsAngularOrmApp')
         var modalInstance = $modal.open({
             templateUrl: 'views/admin/admin-modals/drum-assignment.html',
             controller: 'DrumAssignmentCtrl'
+        });
+
+        modalInstance.result.then( function(){
+            console.debug("Close drum details after drum assignment");
+            $scope.showDrumDetails(null);
         });
     };
 
@@ -1345,20 +1371,12 @@ angular.module('00RsmsAngularOrmApp')
         $scope.saveCarboyUseCycle = function (cycle, copy) {
             $scope.close();
             $rootScope.saving = af.saveCarboyUseCycle(copy, cycle)
-                .then(reloadDrum);
+                .then(reloadDrums);
         };
         $scope.saveSVCollection = function (collection, copy) {
             $scope.close();
             $rootScope.saving = af.saveSVCollection(collection, copy)
-                .then(reloadDrum);
-        };
-        var reloadDrum = function (obj) {
-            var drum = dataStoreManager.getById("Drum", obj.Drum_id);
-            af.replaceDrum(drum)
-                .then(function (returnedDrum) {
-                console.log(returnedDrum);
-                return drum.Contents = returnedDrum.Contents;
-            });
+                .then(reloadDrums);
         };
         var reloadDrums = function () {
             var drums = dataStoreManager.get("Drum");
@@ -1380,8 +1398,12 @@ angular.module('00RsmsAngularOrmApp')
         };
         $scope.close = function () {
             af.deleteModalData();
-            $modalInstance.dismiss();
+            $modalInstance.close();
         };
+        $scope.cancel = function(){
+            af.deleteModalData();
+            $modalInstance.dismiss();
+        }
     }])
     .controller('DrumShipCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods) {
         var af = actionFunctionsFactory;

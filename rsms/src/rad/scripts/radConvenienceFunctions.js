@@ -91,11 +91,11 @@ angular.module('radUtilitiesModule', [
 
         radUtilitiesFactory.getAllWasteContainersFromDrum = function(drum){
             console.debug("Collect all containers from drum ", drum);
-            var allContainers =
-                (drum.WasteBags || [])
-                .concat(drum.ScintVialCollections || [])
-                .concat(drum.CarboyUseCycles || [])
-                .concat(drum.OtherWasteContainers || [])
+            var allContainers = (dataStore.WasteBag || [])
+                                .concat(dataStore.ScintVialCollection || [])
+                                .concat(dataStore.CarboyUseCycle || [])
+                                .concat(dataStore.OtherWasteContainer || [])
+                .filter(c => c.Drum_id == drum.Key_id)
                 .map(function (c, idx) {
                     var container = angular.extend({}, c);
 

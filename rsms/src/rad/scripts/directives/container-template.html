@@ -3,7 +3,7 @@
         <h3>
             <i class="{{getClassByContainerType(group[0])}}"></i>{{group[0].ClassLabel}}</h3>
     </li>
-    <li ng-repeat="c in containersOfType = (group | filter:filterFunction | orderBy:'ViewLabel')" class="container-parent">
+    <li ng-repeat="c in containersOfType = (group | filter:filterFunction | orderBy:'ViewLabel') track by c.Key_id" class="container-parent">
         <ul>
             <li class="labels">
                 <div class="container-label" ng-init="c.ViewLabel = c.ViewLabel ? c.ViewLabel : c.Name || c.Label || c.Carboy_number">

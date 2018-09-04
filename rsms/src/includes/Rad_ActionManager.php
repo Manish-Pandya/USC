@@ -901,14 +901,16 @@ class Rad_ActionManager extends ActionManager {
             $cycle->setHotroom_date($dto['cycle']['hotDate']);
         }
 
-        if($dto['cycle']['pourDate'] && $cycle->getStatus() == 'Poured'){
-            $LOG->debug("set pour date");
-            $cycle->setPour_date($dto['cycle']['pourDate']);
-        }
-
         if($dto['cycle']['drumId'] && $cycle->getStatus() == 'In Drum'){
             $LOG->debug("set drum ID");
             $cycle->setDrum_id($dto['cycle']['drumId']);
+        }
+
+        // "Pour date" is technically a more general "disposal date"
+        $is_disposed = $cycle->getStatus() == 'Poured' || $cycle->getStatus() == 'In Drum';
+        if($dto['cycle']['pourDate'] && $is_disposed ){
+            $LOG->debug("set pour/drum date");
+            $cycle->setPour_date($dto['cycle']['pourDate']);
         }
 
         // Readings
@@ -1686,8 +1688,17 @@ class Rad_ActionManager extends ActionManager {
             if( $includeInPickup ){
                 // Included in Pickup; either Picked Up or At RSO, based on Pickup status
                 switch( $pickupStatus ){
-                    case 'PICKED UP': $container->setStatus('Picked Up'); break;
-                    case 'AT RSO':    $container->setStatus('AT RSO');    break;
+                    case 'PICKED UP':
+                        $container->setStatus('Picked Up');
+                        break;
+                    case 'AT RSO':
+                        $container->setStatus('AT RSO');
+
+                        // Carboy is At RSO; set special timestamp
+                        $container->setRso_date( date('Y-m-d H:i:s') );
+                        $LOG->info("Set CarboyUseCycle RSO date: " . $container->getRso_date());
+                        break;
+
                     default: $LOG->error("Unabled to identify CarboyUseCycle status; Pickup status: $pickupStatus");
                 }
             }

@@ -86,20 +86,7 @@ angular
                 return $rootScope[object.Class + 'Saving'] = genericAPIFactory.save(object, seg, saveChildren)
                     .then(
                     function (returned) {
-                        // Check if this object is already in the datastore
-                        var cached = false;
-                        if (object.Key_id && object.api) {
-                            cached = dataStoreManager.getById(object.Class, object.Key_id);
-                        }
-
-                        if( cached ){
-                            // Update cached entry
-                            angular.extend(dataStoreManager.getById(object.Class, object.Key_id), returned.data);
-                            return returned.data;
-                        } else {
-                            // Save uncached entry
-                            return modelInflatorFactory.instateAllObjectsFromJson(returned.data);
-                        }
+                        return af._cachePostSave(object, returned.data);
                     },
                     function (error) {
                         //object.Name = error;
@@ -108,6 +95,25 @@ angular
                     }
                     );
                 
+            }
+
+            af._cachePostSave = function(precacheObject, returnedData){
+                // Check if this object is already in the datastore
+                var cached = false;
+                if (precacheObject.Key_id && precacheObject.api) {
+                    cached = dataStoreManager.getById(precacheObject.Class, precacheObject.Key_id);
+                }
+
+                if( cached ){
+                    // Update cached entry
+                    console.debug("Updating cached entity. Pre-cache:", cached, " Post-cache:", returnedData);
+                    angular.extend(dataStoreManager.getById(precacheObject.Class, precacheObject.Key_id), returnedData);
+                    return returnedData;
+                } else {
+                    // Save uncached entry
+                    console.debug("Caching new entity:", returnedData);
+                    return modelInflatorFactory.instateAllObjectsFromJson(returnedData);
+                }
             }
 
             af.getById = function( objectFlavor, key_id )
@@ -1675,7 +1681,6 @@ angular
 
                 // Remove cyclic references...
                 copy.rootScope = undefined;
-                copy.api = undefined;
                 copy.Carboy = undefined;
 
                 console.log('Save CarboyUseCycle', copy);
@@ -1852,7 +1857,6 @@ angular
             af.saveParcelUseAmount = function (copy, amt, container) {
                 // remove any cyclic fields...
                 copy.rootScope = undefined;
-                copy.api = undefined;
                 copy.inflator = undefined;
                 copy.Carboy = undefined;
 
@@ -1867,12 +1871,10 @@ angular
 
                 // remove any cyclic fields...
                 copy.rootScope = undefined;
-                copy.api = undefined;
 
                 if( copy.ParcelUseAmount ){
                     copy.ParcelUseAmount.forEach(amt => {
                         amt.rootScope = undefined;
-                        amt.api = undefined;
                     });
                 }
 
@@ -2612,9 +2614,7 @@ angular
                 return genericAPIFactory.save({id: container.Key_id}, 'removeContainerFromDrum&id=' + container.Key_id + '&type=' + container.Class)
                     .then(
                         function(response){
-                            var dto = modelInflatorFactory.instateAllObjectsFromJson( response.data );
-                            console.debug("Container Saved:", dto);
-                            return dto;
+                            return af._cachePostSave(container, response.data);
                         },
                         function(err){
                             console.error("Error saving Container", err);
@@ -2623,6 +2623,10 @@ angular
             };
 
             af.saveWasteBag = function(bag, copy){
+                // Remove cyclic references...
+                copy.rootScope = undefined;
+                copy.Pickup = undefined;    // Pickup is transient at the JS layer
+
               af.clearError();
                 return this.save(copy)
                     .then(
@@ -2645,6 +2649,10 @@ angular
             }
 
             af.saveSVCollection = function(collection, copy){
+                // Remove cyclic references...
+                copy.rootScope = undefined;
+                copy.Pickup = undefined;    // Pickup is transient at the JS layer
+
               af.clearError();
                 return this.save(copy)
                     .then(

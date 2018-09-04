@@ -74,6 +74,7 @@ class CarboyUseCycle extends Container {
 
 
 	/** timestamp containing the date this carboy was emptied. */
+	/** NOTE that 'emptied' is not limited to the POURED status; this refers to the date on which it was Disposed */
 	private $pour_date;
 
 	/** date this carboy can be poured **/
