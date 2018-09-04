@@ -1345,20 +1345,12 @@ angular.module('00RsmsAngularOrmApp')
         $scope.saveCarboyUseCycle = function (cycle, copy) {
             $scope.close();
             $rootScope.saving = af.saveCarboyUseCycle(copy, cycle)
-                .then(reloadDrum);
+                .then(reloadDrums);
         };
         $scope.saveSVCollection = function (collection, copy) {
             $scope.close();
             $rootScope.saving = af.saveSVCollection(collection, copy)
-                .then(reloadDrum);
-        };
-        var reloadDrum = function (obj) {
-            var drum = dataStoreManager.getById("Drum", obj.Drum_id);
-            af.replaceDrum(drum)
-                .then(function (returnedDrum) {
-                console.log(returnedDrum);
-                return drum.Contents = returnedDrum.Contents;
-            });
+                .then(reloadDrums);
         };
         var reloadDrums = function () {
             var drums = dataStoreManager.get("Drum");
