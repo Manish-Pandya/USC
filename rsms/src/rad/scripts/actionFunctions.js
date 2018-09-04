@@ -2623,6 +2623,11 @@ angular
             };
 
             af.saveWasteBag = function(bag, copy){
+                // Remove cyclic references...
+                copy.rootScope = undefined;
+                copy.api = undefined;
+                copy.Pickup = undefined;    // Pickup is transient at the JS layer
+
               af.clearError();
                 return this.save(copy)
                     .then(
