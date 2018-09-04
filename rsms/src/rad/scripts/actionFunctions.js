@@ -2614,9 +2614,7 @@ angular
                 return genericAPIFactory.save({id: container.Key_id}, 'removeContainerFromDrum&id=' + container.Key_id + '&type=' + container.Class)
                     .then(
                         function(response){
-                            var dto = modelInflatorFactory.instateAllObjectsFromJson( response.data );
-                            console.debug("Container Saved:", dto);
-                            return dto;
+                            return af._cachePostSave(container, response.data);
                         },
                         function(err){
                             console.error("Error saving Container", err);
