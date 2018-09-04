@@ -86,20 +86,7 @@ angular
                 return $rootScope[object.Class + 'Saving'] = genericAPIFactory.save(object, seg, saveChildren)
                     .then(
                     function (returned) {
-                        // Check if this object is already in the datastore
-                        var cached = false;
-                        if (object.Key_id && object.api) {
-                            cached = dataStoreManager.getById(object.Class, object.Key_id);
-                        }
-
-                        if( cached ){
-                            // Update cached entry
-                            angular.extend(dataStoreManager.getById(object.Class, object.Key_id), returned.data);
-                            return returned.data;
-                        } else {
-                            // Save uncached entry
-                            return modelInflatorFactory.instateAllObjectsFromJson(returned.data);
-                        }
+                        return af._cachePostSave(object, returned.data);
                     },
                     function (error) {
                         //object.Name = error;
@@ -108,6 +95,25 @@ angular
                     }
                     );
                 
+            }
+
+            af._cachePostSave = function(precacheObject, returnedData){
+                // Check if this object is already in the datastore
+                var cached = false;
+                if (precacheObject.Key_id && precacheObject.api) {
+                    cached = dataStoreManager.getById(precacheObject.Class, precacheObject.Key_id);
+                }
+
+                if( cached ){
+                    // Update cached entry
+                    console.debug("Updating cached entity. Pre-cache:", cached, " Post-cache:", returnedData);
+                    angular.extend(dataStoreManager.getById(precacheObject.Class, precacheObject.Key_id), returnedData);
+                    return returnedData;
+                } else {
+                    // Save uncached entry
+                    console.debug("Caching new entity:", returnedData);
+                    return modelInflatorFactory.instateAllObjectsFromJson(returnedData);
+                }
             }
 
             af.getById = function( objectFlavor, key_id )
