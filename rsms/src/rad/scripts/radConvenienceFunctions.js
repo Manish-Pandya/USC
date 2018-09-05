@@ -109,7 +109,7 @@ angular.module('radUtilitiesModule', [
                 dataStore.OtherWasteContainer
             ]);
 
-            containers = radUtilitiesFactory._extendWasteContainersInfo(allContainers);
+            containers = radUtilitiesFactory._extendWasteContainersInfo(containers);
 
             return containers;
         };
