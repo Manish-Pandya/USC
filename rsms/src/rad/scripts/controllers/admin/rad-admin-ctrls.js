@@ -1160,6 +1160,9 @@ angular.module('00RsmsAngularOrmApp')
         return !container.Drum_id;
     };
 })
+.controller('DisposalHistoryCtrl', function($rootScope, $scope){
+
+})
     .controller('ManageCarboyDisposalCtrl', function($rootScope, $scope, $modalInstance, actionFunctionsFactory, convenienceMethods){
         console.debug("Open carboy disposal management modal");
 
