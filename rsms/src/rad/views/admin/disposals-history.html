@@ -1,12 +1,60 @@
-<div cg-busy="{promise:CarboyReadingAmountSaving,message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:MiscellaneousWasteSaving,message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:removeFromDrumPromise,message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:loadArchivePromise,message:'Loading...', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
 <div class="right-column">
-    <div class="well four-fifths">
-        [Disposal History]
+    <div class="well full">
+        <h1>All Waste Containers</h1>
+        Displaying {{filteredContainers.length || 0}} of {{containers.length || 0}} Containers
+        <div class="card full fake-table bordered">
+            <div class="table-header">
+                <h3>Type</h3>
+                <h3>Label</h3>
+                <h3>PI</h3>
+                <h3>Date Opened</h3>
+                <h3>Date Closed</h3>
+                <h3>Pickup Date</h3>
+                <h3>Date at RSO</h3>
+                <h3>Date in Hot Room</h3>
+                <h3>Date Disposed</h3>
+                <h3>Contents</h3>
+                <h3>Comments</h3>
+            </div>
+            <div class="table-row" ng-repeat="container in filteredContainers = (containers) track by container.Key_id">
+                <div>{{container.ClassLabel}}</div>
+                <div>{{container.ViewLabel}}</div>
+                <div>{{getPiName(container.Principal_investigator_id)}}</div>
+                <div>{{container.Lab_date || container.Date_created | dateToISO}}</div>
+                <div>{{container.Close_date || container.Date_closed | dateToISO | emptyNA}}</div>
+                <div>{{container.Pickup.Pickup_date | dateToISO | emptyNA}}</div>
+                <div>{{container.Rso_date || container.Pickup.Pickup_date | dateToISO}}</div>
+                <div>{{container.Hotroom_date | dateToISO}}</div>
+                <div>{{container.Pour_date | dateToISO}}</div>
+                <div class="containers-list" style="width: inherit">
+                    <ul>
+                        <li ng-if="container.AddedAmounts.length" class="group-header added-amounts">
+                            <h4 style="font-style: italic;">Added at RSO</h4>
+                        </li>
+                        <li ng-repeat="amt in container.AddedAmounts track by $index" ng-if="container.AddedAmounts.length" class="added-amounts">
+                            <div>{{amt.Isotope_name}}</div>
+                            <div>{{amt.Curie_level | unit:amt}}</div>
+                        </li>
+                        <li ng-if="container.AddedAmounts.length || container.Carboy_reading_amounts.length" class="group-header added-amounts">
+                            <h4 style="font-style: italic;">Totals:</h4>
+                        </li>
+                        <li ng-repeat="amt in container.Contents track by $index" ng-if="container.Contents.length">
+                            <div>{{amt.Isotope_name}}</div>
+                            <div>{{amt.Curie_level | unit:amt}}</div>
+                        </li>
+                        <li ng-if="container.Carboy_reading_amounts.length" class="group-header added-amounts">
+                            <h4 style="font-style: italic;">Disposed Activity:</h4>
+                        </li>
+                        <li ng-repeat="amt in container.Carboy_reading_amounts track by $index" ng-if="container.Carboy_reading_amounts.length">
+                            <div>{{amt.Isotope_name}}</div>
+                            <div>{{amt.Curie_level | unit:amt}}</div>
+                        </li>
+                    </ul>
+                </div>
+                <div>{{container.Comments}}</div>
+            </div>
+        </div>
     </div>
 </div>
-
-<div cg-busy="{promise:saving,message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<div cg-busy="{promise:saving,message:'Saving', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>

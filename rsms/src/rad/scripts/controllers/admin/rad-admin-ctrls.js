@@ -1160,8 +1160,39 @@ angular.module('00RsmsAngularOrmApp')
         return !container.Drum_id;
     };
 })
-.controller('DisposalHistoryCtrl', function($rootScope, $scope){
+.controller('DisposalHistoryCtrl', function($rootScope, $scope, $q, actionFunctionsFactory, radUtilitiesFactory){
+    var af = actionFunctionsFactory;
+    $scope.loadData = function loadData(){
+        console.debug("Waiting to load waste archive");
+        return $scope.loadArchivePromise = $rootScope.radModelsPromise
+            .then(function(){
+                console.debug("Load all waste containers...");
+                return $q.all(
+                    af.getAllDrums(),
+                    af.getAllWasteBags(),
+                    af.getAllCarboys(),
+                    af.getAllCarboyUseCycles(),
+                    af.getAllScintVialCollections(),
+                    af.getAllOtherWasteTypes(),
+                    af.getAllOtherWasteContainers(),
+                    af.getAllIsotopes(),
+                    af.getAllMiscellaneousWaste()
+                );
+            })
+            .then(function(){
+                console.debug("Get historical waste containers");
+                $scope.containers = radUtilitiesFactory.getAllWasteContainers();
+                console.debug($scope.containers);
+            }
+        );
+    };
 
+    $scope.getPiName = function getPiName(piId){
+        var pi = dataStoreManager.getById('PrincipalInvestigator', piId);
+        return pi ? pi.Name : '';
+    }
+
+    $scope.loadData();
 })
     .controller('ManageCarboyDisposalCtrl', function($rootScope, $scope, $modalInstance, actionFunctionsFactory, convenienceMethods){
         console.debug("Open carboy disposal management modal");
