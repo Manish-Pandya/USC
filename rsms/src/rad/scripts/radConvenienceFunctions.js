@@ -42,6 +42,20 @@ angular.module('radUtilitiesModule', [
             }
         };
 
+        radUtilitiesFactory.getIconClassByContainer = function(container) {
+            return radUtilitiesFactory.getIconClassByContainerType(container.Class);
+        };
+
+        radUtilitiesFactory.getIconClassByContainerType = function(containerClass){
+            switch(containerClass){
+                case "WasteBag":            return "icon-remove-2 solids-containers";
+                case "ScintVialCollection": return "icon-sv scint-vials";
+                case "CarboyUseCycle":      return "icon-carboy carboys";
+                case "OtherWasteContainer": return "other icon-beaker-alt red";
+                default: return "";
+            }
+        };
+
         radUtilitiesFactory.getFriendlyWasteLabel = function(wasteType){
             switch (wasteType) {
                 case ("WasteBag"):            return "Waste Bags";
@@ -68,7 +82,7 @@ angular.module('radUtilitiesModule', [
          */
         radUtilitiesFactory.getAllWasteContainersFromPickup = function(pickup){
             console.debug("Collect all containers from pickup ", pickup);
-            var allContainers = radUtilitiesFactory._mergeContainerArrays([
+            var allContainers = radUtilitiesFactory._mergeArrays([
                 pickup.Carboy_use_cycles,
                 pickup.Waste_bags,
                 pickup.Scint_vial_collections,
@@ -102,7 +116,7 @@ angular.module('radUtilitiesModule', [
          */
         radUtilitiesFactory.getAllWasteContainers = function(){
             // Read all containers from datastore and merge them into one array
-            var containers = radUtilitiesFactory._mergeContainerArrays([
+            var containers = radUtilitiesFactory._mergeArrays([
                 dataStore.WasteBag,
                 dataStore.ScintVialCollection,
                 dataStore.CarboyUseCycle,
@@ -118,7 +132,7 @@ angular.module('radUtilitiesModule', [
          * Merges the given array of arrays into a single array
          * @param {Array[Array]} arrays
          */
-        radUtilitiesFactory._mergeContainerArrays = function(arrays){
+        radUtilitiesFactory._mergeArrays = function(arrays){
             // concat all elements of 2D array
             return arrays.reduce( (_all, _arr) => _all.concat(_arr || []), []);
         };
@@ -143,6 +157,55 @@ angular.module('radUtilitiesModule', [
                 return container;
             });
         }
+
+        /**
+         * Returns true if the given container is Disposed
+         * @param {Container} container 
+         */
+        radUtilitiesFactory.isContainerDisposed = function(c){
+            /*
+                Disposed means:
+                carboy cycle is DRUMMED or POURED
+                generic container is drummed (and drum shipped?)
+            */
+
+            if( c.Class == 'OtherWasteContainer'){
+                // Other waste containers are always disposed
+                return true;
+            }
+            else if( c.Class == 'CarboyUseCycle' ){
+                // Carboy is Disposed if...
+                // ... it is Poured
+                if( c.Status == Constants.CARBOY_USE_CYCLE.STATUS.POURED){
+                    return true;
+                }
+
+                // ... or it is Drummed and the drum is shipped
+                if( c.Status == Constants.CARBOY_USE_CYCLE.STATUS.DRUMMED ){
+                    return radUtilitiesFactory._isDrumShippedById(c.Drum_id);
+                }
+            }
+            // 'generic' container is Disposed if it is drummed and shipped
+            else if( c.Drum_id ){
+                return radUtilitiesFactory._isDrumShippedById(c.Drum_id);
+            }
+
+            return false;
+        }
+
+        radUtilitiesFactory._isDrumShippedById = function(drumId){
+            if( !drumId ){
+                return false;
+            }
+
+            var drum = dataStoreManager.getById('Drum', drumId);
+            if( !drum ){
+                return false;
+            }
+
+            return drum.Pickup_date != null;
+        }
+
 
         return radUtilitiesFactory;
     });

@@ -419,4 +419,55 @@ angular.module('00RsmsAngularOrmApp')
                 return containers.length;
             }
         );
+    })
+
+    .filter('filterInactiveTypes', () => {
+        return function(containers, types){
+            if( !containers || !containers.length || !types ){
+                return containers;
+            }
+
+            // Filter only those containers whose types are active
+            var filtered = containers.filter(container => {
+                var type = types.find(t => t.Class == container.Class
+                    || (container.Other_waste_type_id && container.Other_waste_type_id == t.Key_id));
+                return type && type.active;
+            });
+            return filtered;
+        };
+    })
+
+    .filter('filterOnlyDisposedContainers', function(radUtilitiesFactory) {
+        return function(containers, limitToDisposed){
+            if( !limitToDisposed || !containers ){
+                return containers;
+            }
+
+            // Limit to disposed containers
+            return containers.filter(c => radUtilitiesFactory.isContainerDisposed(c));
+        };
+    })
+
+    .filter('containerContainsText', () => {
+        return function(containers, searchText){
+            if( !searchText || searchText.length == 0 || !containers ){
+                return containers;
+            }
+
+            var searchUpper = searchText.toUpperCase();
+            function match(str){
+                return str != null && str.length && str.toUpperCase().includes(searchUpper);
+            }
+
+            return containers.filter(c => {
+                var fields = [
+                    c.PI && c.PI.Name,
+                    c.ViewLabel,
+                    c.CarboyNumber,
+                    c.Comments
+                ];
+
+                return fields.filter(value => match(value)).length > 0;
+            });
+        }
     });

@@ -3,10 +3,34 @@
 <div class="right-column">
     <div class="well full">
         <h1>All Waste Containers</h1>
-        Displaying {{filteredContainers.length || 0}} of {{containers.length || 0}} Containers
+
+        <div class="control-group disposal-info">
+            <ul class="nav nav-pills">
+                <li>
+                    <a class="btn-small" ng-click="limitToDisposed = !limitToDisposed">
+                        <i style="padding-right:5px;" ng-class="{'icon-checkbox': limitToDisposed, 'icon-checkbox-unchecked': !limitToDisposed}"></i>
+                        <span>Show only disposed containers</span>
+                    </a>
+                </li>
+                <li style="display:block;">
+                    <input ng-model="searchText" placeholder="Search" />
+                </li>
+            </ul>
+            <ul class="nav nav-pills">
+                <li ng-repeat="type in wasteTypes">
+                    <a class="btn-small" ng-click="type.active = !type.active">
+                        <i style="padding-right:5px;" ng-class="{'icon-checkbox': type.active, 'icon-checkbox-unchecked': !type.active}"></i>
+                        <span>{{type.ClassLabel}}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <span>Displaying {{filteredContainers.length || 0}} of {{containers.length || 0}} Containers</span>
+
         <div class="card full fake-table bordered">
             <div class="table-header">
-                <h3>Type</h3>
+                <h3></h3>
                 <h3>Label</h3>
                 <h3>PI</h3>
                 <h3>Date Opened</h3>
@@ -15,11 +39,11 @@
                 <h3>Date at RSO</h3>
                 <h3>Date in Hot Room</h3>
                 <h3>Date Disposed</h3>
-                <h3>Contents</h3>
+                <h3 style="width:200px;">Contents</h3>
                 <h3>Comments</h3>
             </div>
-            <div class="table-row" ng-repeat="container in filteredContainers = (containers) track by container.Key_id">
-                <div>{{container.ClassLabel}}</div>
+            <div class="table-row" ng-repeat="container in filteredContainers = (containers | filterInactiveTypes:wasteTypes | filterOnlyDisposedContainers:limitToDisposed | containerContainsText:searchText) track by container.Key_id">
+                <div><i class="{{getIconClass(container)}}"></i></div>
                 <div>{{container.ViewLabel}}</div>
                 <div>{{getPiName(container.Principal_investigator_id)}}</div>
                 <div>{{container.Lab_date || container.Date_created | dateToISO}}</div>
@@ -27,7 +51,7 @@
                 <div>{{container.Pickup.Pickup_date | dateToISO | emptyNA}}</div>
                 <div>{{container.Rso_date || container.Pickup.Pickup_date | dateToISO}}</div>
                 <div>{{container.Hotroom_date | dateToISO}}</div>
-                <div>{{container.Pour_date | dateToISO}}</div>
+                <div>{{container.Pour_date || container.Drum.Pickup_date | dateToISO}}</div>
                 <div class="containers-list" style="width: inherit">
                     <ul>
                         <li ng-if="container.AddedAmounts.length" class="group-header added-amounts">

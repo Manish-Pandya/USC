@@ -1167,7 +1167,7 @@ angular.module('00RsmsAngularOrmApp')
         return $scope.loadArchivePromise = $rootScope.radModelsPromise
             .then(function(){
                 console.debug("Load all waste containers...");
-                return $q.all(
+                return $q.all([
                     af.getAllDrums(),
                     af.getAllWasteBags(),
                     af.getAllCarboys(),
@@ -1177,15 +1177,49 @@ angular.module('00RsmsAngularOrmApp')
                     af.getAllOtherWasteContainers(),
                     af.getAllIsotopes(),
                     af.getAllMiscellaneousWaste()
-                );
+                ]);
             })
             .then(function(){
+                // Get list of all containers
                 console.debug("Get historical waste containers");
                 $scope.containers = radUtilitiesFactory.getAllWasteContainers();
+
+                // Load pickup and drum data for all containters
+                $scope.containers.forEach(c => {
+                    if( c.loadPickup != undefined ){
+                        c.loadPickup();
+                    }
+
+                    if( c.loadDrum != undefined ){
+                        c.loadDrum();
+                    }
+                });
+
                 console.debug($scope.containers);
+
+                // Get list of all container types
+                $scope.wasteTypes = ['WasteBag', 'ScintVialCollection', 'CarboyUseCycle'].map(stType => {
+                    return {
+                        Class: stType,
+                        ClassLabel: radUtilitiesFactory.getFriendlyWasteLabel(stType),
+                        active: true
+                    };
+                });
+
+                // Add other types
+                dataStore.OtherWasteType.forEach(type => {
+                    $scope.wasteTypes.push({
+                        Key_id: type.Key_id,
+                        Class: type.Class,
+                        ClassLabel: type.Name,
+                        active: true
+                    })
+                });
             }
         );
     };
+
+    $scope.getIconClass = radUtilitiesFactory.getIconClassByContainer;
 
     $scope.getPiName = function getPiName(piId){
         var pi = dataStoreManager.getById('PrincipalInvestigator', piId);
