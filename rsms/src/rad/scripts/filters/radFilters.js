@@ -416,7 +416,10 @@ angular.module('00RsmsAngularOrmApp')
                 return totals;
             },
             function(containers){
-                return containers.length;
+                // Identify this set by the length of the containers array prefixed by the first 'other' waste type
+                var prefix = containers.length ? containers[0].Other_waste_type_id : '0';
+
+                return prefix + ':' + containers.length;
             }
         );
     })

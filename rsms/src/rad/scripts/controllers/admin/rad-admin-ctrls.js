@@ -1212,6 +1212,7 @@ angular.module('00RsmsAngularOrmApp')
                         Key_id: type.Key_id,
                         Class: type.Class,
                         ClassLabel: type.Name,
+                        disabled: !type.Is_active,
                         active: true
                     })
                 });

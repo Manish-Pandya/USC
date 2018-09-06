@@ -20,7 +20,7 @@
                 <li ng-repeat="type in wasteTypes">
                     <a class="btn-small" ng-click="type.active = !type.active">
                         <i style="padding-right:5px;" ng-class="{'icon-checkbox': type.active, 'icon-checkbox-unchecked': !type.active}"></i>
-                        <span>{{type.ClassLabel}}</span>
+                        <span>{{type.ClassLabel}}</span><span ng-if="type.disabled">(Inactive)</span>
                     </a>
                 </li>
             </ul>
@@ -33,31 +33,35 @@
                 <h3></h3>
                 <h3>Label</h3>
                 <h3>PI</h3>
-                <h3>Date Opened</h3>
-                <h3>Date Closed</h3>
-                <h3>Pickup Date</h3>
-                <h3>Date at RSO</h3>
-                <h3>Date in Hot Room</h3>
-                <h3>Date Disposed</h3>
+                <h3>Opened</h3>
+                <h3>Closed</h3>
+                <h3>Picked up</h3>
+                <h3>At RSO</h3>
+                <h3>Hot Room</h3>
                 <h3>Drum</h3>
+                <h3>Disposed</h3>
                 <h3 style="width:250px;">Contents</h3>
                 <h3>Comments</h3>
             </div>
             <div class="table-row" ng-repeat="container in filteredContainers = (containers | filterInactiveTypes:wasteTypes | filterOnlyDisposedContainers:limitToDisposed | containerContainsText:searchText) track by container.Key_id">
                 <div><i class="{{getIconClass(container)}}"></i></div>
-                <div>{{container.ViewLabel}}</div>
+                <div>
+                    <span>{{container.ViewLabel}}</span>
+                    <div ng-if="container.Description" style="font-weight:initial; font-style:italic;">{{container.Description}}</div>
+                </div>
                 <div>{{getPiName(container.Principal_investigator_id)}}</div>
                 <div>{{container.Lab_date || container.Date_created | dateToISO}}</div>
                 <div>{{container.Close_date || container.Date_closed | dateToISO | emptyNA}}</div>
                 <div>{{container.Pickup.Pickup_date | dateToISO | emptyNA}}</div>
                 <div>{{container.Rso_date || container.Pickup.Pickup_date | dateToISO}}</div>
                 <div>{{container.Hotroom_date | dateToISO}}</div>
-                <div>
-                    <span ng-if="container.Pour_date">Poured</span>
-                    <span ng-if="container.Drum.Pickup_date">Drum shipped</span>
-                    {{container.Pour_date || container.Drum.Pickup_date | dateToISO}}
-                </div>
                 <div>{{getDrumLabel(container)}}</div>
+                <div>
+                    <span ng-if="container.Pour_date">Poured {{container.Pour_date | dateToISO}}</span>
+                    <span ng-if="container.Drum.Pickup_date">Shipped {{container.Drum.Pickup_date | dateToISO}}</span>
+                    <span ng-if="container.Drum && !container.Drum.Pickup_date"></span>
+                    <span ng-if="container.Other_waste_type_id && container.Close_date">Cleared {{container.Close_date | dateToISO | emptyNA}}</span>
+                </div>
                 <div class="containers-list" style="width: inherit">
                     <ul>
                         <li ng-if="container.AddedAmounts.length" class="group-header added-amounts">

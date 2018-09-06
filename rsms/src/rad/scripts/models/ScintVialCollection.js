@@ -13,7 +13,9 @@ ScintVialCollection.prototype = {
         }
     },
 
-
+    loadDrum: function () {
+        dataLoader.loadChildObject(this, 'Drum', 'Drum', this.Drum_id);
+    },
 }
 
 //inherit from and extend GenericModel
