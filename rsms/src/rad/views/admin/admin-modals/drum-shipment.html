@@ -5,6 +5,14 @@
 <div class="modal-body">
     <form class="form form-horizontal">
         <div class="control-group">
+            <label class="control-label" for="shipDate">Date Shipped</label>
+            <div class="controls">
+                <datepicker2 ng-model="modalData.DrumCopy.Pickup_date" disable-timepicker='true'
+                    placeholder="Set Date Shipped"
+                    button-class="shipDateButtonClass" on-change="changes.changed = true;"></datepicker2>
+            </div>
+        </div>
+        <div class="control-group">
             <label class="control-label" for="inputEmail">Weight</label>
             <div class="controls">
                 <input data-ng-model="modalData.DrumCopy.Shipment_weight" placeholder="Weight" />
@@ -38,8 +46,9 @@
         <div class="control-group">
             <label class="control-label" for="inputEmail">Date Destroyed</label>
             <div class="controls">
-                <input data-ng-model="modalData.DrumCopy.view_Date_destroyed" placeholder="Date Destroyed" />
-                <span class="help-block under" style="">mm/dd/yy</span>
+                <datepicker2 ng-model="modalData.DrumCopy.Date_destroyed" disable-timepicker='true'
+                    placeholder="Set Date Destroyed"
+                    button-class="destroyDateButtonClass" on-change="changes.changed = true;"></datepicker2>
             </div>
         </div>
         <div class="control-group">
@@ -61,6 +70,13 @@
 </div>
 
 <div class="modal-footer">
-    <a class="btn btn-success btn-large left" ng-click="shipDrum(modalData.Drum, modalData.DrumCopy)"><i class="icon-checkmark"></i>Ship Drum</a>
+    <div class="red" style="display: inline-block; padding-right:10px;" ng-repeat="error in validationErrors">
+        <span>{{error}}</span>
+    </div>
+    <a class="btn btn-success btn-large left" ng-click="validate(modalData.DrumCopy) && shipDrum(modalData.Drum, modalData.DrumCopy)">
+        <i class="icon-checkmark"></i>
+        <span ng-if="modalData.Drum.Pickup_date">Save Drum</span>
+        <span ng-if="!modalData.Drum.Pickup_date">Ship Drum</span>
+    </a>
     <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
 </div>

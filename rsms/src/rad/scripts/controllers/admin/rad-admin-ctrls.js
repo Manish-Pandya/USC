@@ -1477,8 +1477,31 @@ angular.module('00RsmsAngularOrmApp')
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
+        $scope.validate = function(copy) {
+            $scope.validationErrors = [];
+
+            // Shipment date is required
+            if( copy.Pickup_date == null ){
+                $scope.validationErrors.push("Shipment date is required.");
+            }
+
+            return $scope.validationErrors.length == 0;
+        };
+
         $scope.shipDrum = function (drum, copy) {
-            copy.Date_destroyed = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.view_Date_destroyed));
+            if( !$scope.validate(copy) ){
+                return;
+            }
+
+            // format dates, if required
+            if( typeof copy.Pickup_date != 'string' ){
+                copy.Pickup_date = convenienceMethods.setMysqlTime(copy.Pickup_date);
+            }
+
+            if( typeof copy.Date_destroyed != 'string' ){
+                copy.Date_destroyed = convenienceMethods.setMysqlTime(copy.Date_destroyed);
+            }
+
             $rootScope.saving = af.saveDrum(drum, copy);
             $scope.close();
         };
@@ -1487,6 +1510,10 @@ angular.module('00RsmsAngularOrmApp')
             $scope.close();
         };
         $scope.close = function () {
+            af.deleteModalData();
+            $modalInstance.close();
+        };
+        $scope.cancel = function () {
             af.deleteModalData();
             $modalInstance.dismiss();
         };

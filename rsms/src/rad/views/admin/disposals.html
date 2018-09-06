@@ -107,7 +107,11 @@
 
                     <div>
                         <span ng-show="false" ng-if="modalData.DrumCopy.Date_destroyed">{{modalData.DrumCopy.Date_destroyed | dateToISO:modalData.DrumCopy:'Date_destroyed':true}}</span>
-                        <button ng-click="drumModal(drum)" class="btn btn-success left"><i class="icon-out-2"></i>Ship Drum</button>
+                        <button ng-click="drumModal(drum)" class="btn btn-success left">
+                            <i class="icon-out-2"></i>
+                            <span ng-if="!drum.Pickup_date">Ship Drum</span>
+                            <span ng-if="drum.Pickup_date">Edit Shipped Drum</span>
+                        </button>
                     </div>
                 </div>
             </div>
