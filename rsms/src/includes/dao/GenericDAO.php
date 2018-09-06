@@ -1729,7 +1729,7 @@ class GenericDAO {
 							  SELECT key_id, pickup_id, close_date FROM carboy_use_cycle UNION
 							  SELECT key_id, pickup_id, close_date FROM other_waste_container
 							) AS all_waste
-							JOIN pickup ON pickup.key_id = all_waste.pickup_id
+							JOIN pickup ON (all_waste.pickup_id IS NULL OR pickup.key_id = all_waste.pickup_id)
 							WHERE close_date IS NOT NULL AND pickup.status IN ('PICKED UP', 'AT RSO')
 						) container
 					)
