@@ -20,7 +20,7 @@
                 <li ng-repeat="type in wasteTypes">
                     <a class="btn-small" ng-click="type.active = !type.active">
                         <i style="padding-right:5px;" ng-class="{'icon-checkbox': type.active, 'icon-checkbox-unchecked': !type.active}"></i>
-                        <span>{{type.ClassLabel}}</span>
+                        <span>{{type.ClassLabel}}</span><span ng-if="type.disabled">(Inactive)</span>
                     </a>
                 </li>
             </ul>
