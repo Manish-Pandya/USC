@@ -1226,6 +1226,33 @@ angular.module('00RsmsAngularOrmApp')
         return pi ? pi.Name : '';
     }
 
+    $scope.getDrumLabel = function getDrumLabel(container){
+        // If container is NOT drummable, return 'N/A'
+        var nonDrummableCarboyStatuses = [
+            Constants.CARBOY_USE_CYCLE.STATUS.DECAYING,
+            Constants.CARBOY_USE_CYCLE.STATUS.HOT_ROOM,
+            Constants.CARBOY_USE_CYCLE.STATUS.POURED
+        ];
+
+        var notDrummable = container.Class == 'OtherWasteContainer'
+                        || (container.Class == 'CarboyUseCycle' && nonDrummableCarboyStatuses.includes(container.Status));
+
+        if( notDrummable ){
+            return "N/A";
+        }
+        else if( container.Drum_id ){
+            var drum = container.Drum;
+
+            if( !drum ){
+                drum = dataStoreManager.getById('Drum', container.Drum_id)
+            }
+
+            return drum.Label;
+        }
+
+        return '';
+    };
+
     $scope.loadData();
 })
     .controller('ManageCarboyDisposalCtrl', function($rootScope, $scope, $modalInstance, actionFunctionsFactory, convenienceMethods){

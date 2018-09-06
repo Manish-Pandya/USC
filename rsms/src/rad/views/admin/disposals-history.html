@@ -39,7 +39,8 @@
                 <h3>Date at RSO</h3>
                 <h3>Date in Hot Room</h3>
                 <h3>Date Disposed</h3>
-                <h3 style="width:200px;">Contents</h3>
+                <h3>Drum</h3>
+                <h3 style="width:250px;">Contents</h3>
                 <h3>Comments</h3>
             </div>
             <div class="table-row" ng-repeat="container in filteredContainers = (containers | filterInactiveTypes:wasteTypes | filterOnlyDisposedContainers:limitToDisposed | containerContainsText:searchText) track by container.Key_id">
@@ -51,7 +52,12 @@
                 <div>{{container.Pickup.Pickup_date | dateToISO | emptyNA}}</div>
                 <div>{{container.Rso_date || container.Pickup.Pickup_date | dateToISO}}</div>
                 <div>{{container.Hotroom_date | dateToISO}}</div>
-                <div>{{container.Pour_date || container.Drum.Pickup_date | dateToISO}}</div>
+                <div>
+                    <span ng-if="container.Pour_date">Poured</span>
+                    <span ng-if="container.Drum.Pickup_date">Drum shipped</span>
+                    {{container.Pour_date || container.Drum.Pickup_date | dateToISO}}
+                </div>
+                <div>{{getDrumLabel(container)}}</div>
                 <div class="containers-list" style="width: inherit">
                     <ul>
                         <li ng-if="container.AddedAmounts.length" class="group-header added-amounts">
