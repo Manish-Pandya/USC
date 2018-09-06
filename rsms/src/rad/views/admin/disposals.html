@@ -83,14 +83,11 @@
                 </div>
                 <div class="table-row" ng-repeat="drum in filteredDrums = (drums | shippedOrNot:showGoneDrums | filter: (detailDrum == null || '') && {Key_id: detailDrum.drum.Key_id})" ng-show="detailDrum == null || detailDrum.drum == drum">
                     <div>
-                        <button ng-click="editDrum(drum)" ng-disabled="drum.edit" class="btn btn-primary left"><i class="icon-pencil"></i></button>
+                        <button ng-click="editDrum(drum)" class="btn btn-primary left"><i class="icon-pencil"></i></button>
                     </div>
 
-                    <div ng-if="!drum.edit">
+                    <div>
                         {{drum.Label}}
-                    </div>
-                    <div ng-if='drum.edit'>
-                        <input ng-model="DrumCopy.Label">
                     </div>
 
                     <div ng-class="{greybg: detailDrum && detailDrum.drum == drum}">
@@ -106,11 +103,18 @@
                     </div>
 
                     <div>
-                        <span ng-show="false" ng-if="modalData.DrumCopy.Date_destroyed">{{modalData.DrumCopy.Date_destroyed | dateToISO:modalData.DrumCopy:'Date_destroyed':true}}</span>
+                        <div ng-if="drum.Pickup_date">
+                            <span>Shipped:</span>
+                            <span>{{drum.Pickup_date | dateToISO:drum:'Pickup_date':true}}</span>
+                        </div>
+                        <div ng-if="drum.Date_destroyed">
+                            <span>Destroyed:</span>
+                            <span>{{drum.Date_destroyed | dateToISO:drum:'Date_destroyed':true}}</span>
+                        </div>
                         <button ng-click="drumModal(drum)" class="btn btn-success left">
                             <i class="icon-out-2"></i>
                             <span ng-if="!drum.Pickup_date">Ship Drum</span>
-                            <span ng-if="drum.Pickup_date">Edit Shipped Drum</span>
+                            <span ng-if="drum.Pickup_date">Edit Shipment Details</span>
                         </button>
                     </div>
                 </div>
