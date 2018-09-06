@@ -277,6 +277,11 @@ angular
                         Dashboard: true
                     },
                     {
+                        Name:'radmin.disposals-history',
+                        Label: 'Disposals - History',
+                        Dashboard: true
+                    },
+                    {
                         Name: 'current-inventories',
                         Label: 'Current Inventories',
                         Dashboard: true,

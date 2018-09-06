@@ -23,6 +23,16 @@ angular.module('filtersApp').filter('dateToISO', function(){
     return _dateToIsoFn;
 });
 
+angular.module('filtersApp').filter('emptyNA', function(){
+    return function(input){
+        if( input == "N/A" ){
+            return '';
+        }
+
+        return input;
+    };
+});
+
 angular.module('filtersApp').filter('splitAtPeriod', function() {
     return function(input) {
         if(!input)return "N/A";

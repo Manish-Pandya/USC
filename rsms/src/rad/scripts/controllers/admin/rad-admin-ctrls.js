@@ -1160,6 +1160,101 @@ angular.module('00RsmsAngularOrmApp')
         return !container.Drum_id;
     };
 })
+.controller('DisposalHistoryCtrl', function($rootScope, $scope, $q, actionFunctionsFactory, radUtilitiesFactory){
+    var af = actionFunctionsFactory;
+    $scope.loadData = function loadData(){
+        console.debug("Waiting to load waste archive");
+        return $scope.loadArchivePromise = $rootScope.radModelsPromise
+            .then(function(){
+                console.debug("Load all waste containers...");
+                return $q.all([
+                    af.getAllDrums(),
+                    af.getAllWasteBags(),
+                    af.getAllCarboys(),
+                    af.getAllCarboyUseCycles(),
+                    af.getAllScintVialCollections(),
+                    af.getAllOtherWasteTypes(),
+                    af.getAllOtherWasteContainers(),
+                    af.getAllIsotopes(),
+                    af.getAllMiscellaneousWaste()
+                ]);
+            })
+            .then(function(){
+                // Get list of all containers
+                console.debug("Get historical waste containers");
+                $scope.containers = radUtilitiesFactory.getAllWasteContainers();
+
+                // Load pickup and drum data for all containters
+                $scope.containers.forEach(c => {
+                    if( c.loadPickup != undefined ){
+                        c.loadPickup();
+                    }
+
+                    if( c.loadDrum != undefined ){
+                        c.loadDrum();
+                    }
+                });
+
+                console.debug($scope.containers);
+
+                // Get list of all container types
+                $scope.wasteTypes = ['WasteBag', 'ScintVialCollection', 'CarboyUseCycle'].map(stType => {
+                    return {
+                        Class: stType,
+                        ClassLabel: radUtilitiesFactory.getFriendlyWasteLabel(stType),
+                        active: true
+                    };
+                });
+
+                // Add other types
+                dataStore.OtherWasteType.forEach(type => {
+                    $scope.wasteTypes.push({
+                        Key_id: type.Key_id,
+                        Class: type.Class,
+                        ClassLabel: type.Name,
+                        active: true
+                    })
+                });
+            }
+        );
+    };
+
+    $scope.getIconClass = radUtilitiesFactory.getIconClassByContainer;
+
+    $scope.getPiName = function getPiName(piId){
+        var pi = dataStoreManager.getById('PrincipalInvestigator', piId);
+        return pi ? pi.Name : '';
+    }
+
+    $scope.getDrumLabel = function getDrumLabel(container){
+        // If container is NOT drummable, return 'N/A'
+        var nonDrummableCarboyStatuses = [
+            Constants.CARBOY_USE_CYCLE.STATUS.DECAYING,
+            Constants.CARBOY_USE_CYCLE.STATUS.HOT_ROOM,
+            Constants.CARBOY_USE_CYCLE.STATUS.POURED
+        ];
+
+        var notDrummable = container.Class == 'OtherWasteContainer'
+                        || (container.Class == 'CarboyUseCycle' && nonDrummableCarboyStatuses.includes(container.Status));
+
+        if( notDrummable ){
+            return "N/A";
+        }
+        else if( container.Drum_id ){
+            var drum = container.Drum;
+
+            if( !drum ){
+                drum = dataStoreManager.getById('Drum', container.Drum_id)
+            }
+
+            return drum.Label;
+        }
+
+        return '';
+    };
+
+    $scope.loadData();
+})
     .controller('ManageCarboyDisposalCtrl', function($rootScope, $scope, $modalInstance, actionFunctionsFactory, convenienceMethods){
         console.debug("Open carboy disposal management modal");
 
@@ -1409,8 +1504,31 @@ angular.module('00RsmsAngularOrmApp')
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
+        $scope.validate = function(copy) {
+            $scope.validationErrors = [];
+
+            // Shipment date is required
+            if( copy.Pickup_date == null ){
+                $scope.validationErrors.push("Shipment date is required.");
+            }
+
+            return $scope.validationErrors.length == 0;
+        };
+
         $scope.shipDrum = function (drum, copy) {
-            copy.Date_destroyed = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.view_Date_destroyed));
+            if( !$scope.validate(copy) ){
+                return;
+            }
+
+            // format dates, if required
+            if( typeof copy.Pickup_date != 'string' ){
+                copy.Pickup_date = convenienceMethods.setMysqlTime(copy.Pickup_date);
+            }
+
+            if( typeof copy.Date_destroyed != 'string' ){
+                copy.Date_destroyed = convenienceMethods.setMysqlTime(copy.Date_destroyed);
+            }
+
             $rootScope.saving = af.saveDrum(drum, copy);
             $scope.close();
         };
@@ -1419,6 +1537,10 @@ angular.module('00RsmsAngularOrmApp')
             $scope.close();
         };
         $scope.close = function () {
+            af.deleteModalData();
+            $modalInstance.close();
+        };
+        $scope.cancel = function () {
             af.deleteModalData();
             $modalInstance.dismiss();
         };

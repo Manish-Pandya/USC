@@ -25,6 +25,10 @@ CarboyUseCycle.prototype = {
         dataLoader.loadChildObject(this, 'Carboy', 'Carboy', this.Carboy_id);     
     },
 
+    loadDrum: function () {
+        dataLoader.loadChildObject(this, 'Drum', 'Drum', this.Drum_id);
+    },
+
     loadCarboy_reading_amounts:function(){
         dataLoader.loadOneToManyRelationship( this, 'Carboy_reading_amounts', this.CarboyReadingAmountsRelationship);
     },
