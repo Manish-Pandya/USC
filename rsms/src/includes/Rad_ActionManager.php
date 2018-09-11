@@ -2545,7 +2545,7 @@ class Rad_ActionManager extends ActionManager {
      */
 
     function createQuarterlyInventories( $startDate = NULL, $endDate = null ){
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $startDate = $this->getValueFromRequest('startDate', $startDate);
         $endDate = $this->getValueFromRequest('endDate', $endDate);
@@ -2559,7 +2559,7 @@ class Rad_ActionManager extends ActionManager {
             return new ActionError("No request parameter 'endDate' was provided");
         }
 
-        $LOG->debug("Create/update quarterly inventory $startDate - $endDate");
+        $LOG->info("Create/update quarterly inventory $startDate - $endDate");
 
         $LOG->debug("Retrieve all RAD PIs...");
         $pis = $this->getAllRadPis();
@@ -2579,12 +2579,12 @@ class Rad_ActionManager extends ActionManager {
 
         //do we already have a master inventory for this period?
         if($inventories != NULL){
-            $LOG->debug("Updating existing quarterly inventory");
+            $LOG->info("Updating existing quarterly inventory");
             $inventory = $inventories[0];
         }
         //we don't have one, so make one
         else{
-            $LOG->debug("Create new quarterly inventory");
+            $LOG->info("Create new quarterly inventory");
             $inventory = new QuarterlyInventory();
             //get the last inventory so we can set the start date, if there is one
             $inventoryDao = $this->getDao(new QuarterlyInventory());
@@ -2627,13 +2627,15 @@ class Rad_ActionManager extends ActionManager {
     	$entityMaps[] = new EntityMap("eager", "getPi_quarterly_inventories");
         $inventory->setEntityMaps($entityMaps);
 
-        $LOG->fatal($inventory);
+        if( $LOG->isTraceEnabled()) {
+            $LOG->trace($inventory);
+        }
 
         return $inventory;
     }
 
     public function getPiInventory( $piId = NULL, $inventoryId = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         if($piId == null)$inventoryId = $this->getValueFromRequest('inventoryId', $inventoryId);
         if($inventoryId == null)$piId = $this->getValueFromRequest('piId', $piId);
@@ -2693,8 +2695,14 @@ class Rad_ActionManager extends ActionManager {
         //foreach($pi->getPi_authorization() as $piAuth){
         $piAuth = $pi->getCurrentPi_authorization();
         //$LOG->fatal($piAuth);
-        if($piAuth == null)return null;
+        if($piAuth == null) {
+            $LOG->info("No Current authorization exists for $pi");
+            return null;
+        }
+
+        $LOG->debug("Buildling inventories for $pi");
         foreach($piAuth->getAuthorizations() as $authorization){
+            $LOG->debug("Build inventory for $authorization");
 
             $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
 
