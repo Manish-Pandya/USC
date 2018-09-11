@@ -2802,6 +2802,11 @@ angular
                 return genericAPIFactory.read( urlSegment )
                     .then(
                         function(returned){
+                            if( !returned ){
+                                console.warn("No inventory retrieved");
+                                return null;
+                            }
+
                             var returnedInventory = modelInflatorFactory.instateAllObjectsFromJson( returned.data );
                             dataStoreManager.store(returnedInventory);
                             return dataStoreManager.getById("QuarterlyInventory", returnedInventory.Key_id);
