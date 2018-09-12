@@ -2103,7 +2103,7 @@ angular.module('00RsmsAngularOrmApp')
     $scope.loading = loadConditions();
     $scope.save = function (piAuth) {
         console.log(piAuth);
-        $rootScope.saving = actionFunctionsFactory.save(piAuth).then(function (returnedAuth) { $modalInstance.close(returnedAuth.C, onditions); });
+        $rootScope.saving = actionFunctionsFactory.save(piAuth).then(function (returnedAuth) { $modalInstance.close(returnedAuth.Conditions); });
     };
     $scope.move = function (auth, direction, idx) {
         var conditionToMoveIdx = auth.Conditions[idx].Order_index;
