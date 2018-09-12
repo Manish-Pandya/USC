@@ -28,7 +28,7 @@ class QuarterlyIsotopeAmountDAO extends GenericDAO {
                 SELECT key_id, pickup_id, 1 as waste_type_id FROM carboy_use_cycle UNION
                 SELECT key_id, pickup_id, 4 as waste_type_id FROM other_waste_container
             ) AS all_waste
-            JOIN pickup ON (all_waste.pickup_id IS NOT NULL AND pickup.key_id = all_waste.pickup_id AND pickup.status != 'REQUESTED')";
+            INNER JOIN pickup ON (all_waste.pickup_id IS NOT NULL AND pickup.key_id = all_waste.pickup_id AND pickup.status != 'REQUESTED')";
 
         $sql_select_usages = "SELECT
                 amt.curie_level,
@@ -36,19 +36,23 @@ class QuarterlyIsotopeAmountDAO extends GenericDAO {
                 COALESCE(amt.waste_bag_id, amt.scint_vial_collection_id, amt.carboy_id, amt.other_waste_container_id) as amt_container_id,
                 p.principal_investigator_id,
                 auth.isotope_id
+
+            -- based on ParcelUseAmount
             FROM parcel_use_amount amt
+            -- Join to Amount's ParcelUse
             LEFT JOIN parcel_use pu            ON amt.parcel_use_id = pu.key_id
+            -- Join to Use's Parcel
             LEFT JOIN parcel p                 ON pu.parcel_id = p.key_id
+            -- Join with parcel's Authorization
             LEFT JOIN authorization auth       ON auth.key_id = p.authorization_id
-            LEFT JOIN ($sql_select_all_waste) wastes ON wastes.container_id = COALESCE(amt.waste_bag_id, amt.scint_vial_collection_id, amt.carboy_id, amt.other_waste_container_id)
+            -- Join to Authorization's PIAuthorization
+            LEFT JOIN pi_authorization pia     ON auth.pi_authorization_id = pia.key_id
+            -- Join with all containers
+            INNER JOIN ($sql_select_all_waste) wastes ON wastes.container_id = COALESCE(amt.waste_bag_id, amt.scint_vial_collection_id, amt.carboy_id, amt.other_waste_container_id)
 
             WHERE pu.is_active = 1
-                AND p.authorization_id IN (
-                    SELECT auth.key_id
-                    FROM authorization auth
-                    JOIN pi_authorization pia ON auth.pi_authorization_id = pia.key_id
-                    WHERE pia.principal_investigator_id = ? AND auth.isotope_id = ?
-                )
+                AND pia.principal_investigator_id = ?
+                AND auth.isotope_id = ?
                 AND (
                     (pu.date_used BETWEEN ? AND ? AND pu.date_used != '0000-00-00 00:00:00')
                     OR (pu.date_transferred BETWEEN ? AND ? AND pu.date_transferred != '0000-00-00 00:00:00')
