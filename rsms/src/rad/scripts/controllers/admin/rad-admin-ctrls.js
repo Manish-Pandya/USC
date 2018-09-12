@@ -3201,7 +3201,6 @@ angular.module('00RsmsAngularOrmApp')
     var loadConditions = function () {
         return dataSwitchFactory.getAllObjects("RadCondition")
             .then(function () {
-            console.log("STORE", dataStore);
             $scope.conditions = dataStore.RadCondition;
         });
     };
@@ -3214,12 +3213,7 @@ angular.module('00RsmsAngularOrmApp')
                 Condition: function () { return angular.extend({}, condition); }
             }
         });
-        modalInstance.result.then(function (c) {
-            console.log("returned", c);
-            if (!condition.Key_id)
-                $scope.conditions.splice(0, 0, condition);
-            angular.extend(condition, c);
-        });
+        modalInstance.result.then(loadConditions);
     };
     $scope.loading = loadConditions();
 })
@@ -3234,7 +3228,12 @@ angular.module('00RsmsAngularOrmApp')
     };
     $scope.save = function (condition) {
         console.log(condition);
-        $rootScope.saving = actionFunctionsFactory.save(condition).then(function (c) { return $modalInstance.close(c); });
+        $rootScope.saving = actionFunctionsFactory.save(condition)
+            .then(function (c) {
+                dataStoreManager.store(c);
+                return c;
+            })
+            .then(function (c) { return $modalInstance.close(c); });
     };
     $scope.cancel = function () { return $modalInstance.dismiss(); };
 });
