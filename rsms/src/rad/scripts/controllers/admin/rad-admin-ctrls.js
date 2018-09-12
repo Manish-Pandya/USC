@@ -1207,15 +1207,17 @@ angular.module('00RsmsAngularOrmApp')
                 });
 
                 // Add other types
-                dataStore.OtherWasteType.forEach(type => {
-                    $scope.wasteTypes.push({
-                        Key_id: type.Key_id,
-                        Class: type.Class,
-                        ClassLabel: type.Name,
-                        disabled: !type.Is_active,
-                        active: true
-                    })
-                });
+                if( dataStore.OtherWasteType ){
+                    dataStore.OtherWasteType.forEach(type => {
+                        $scope.wasteTypes.push({
+                            Key_id: type.Key_id,
+                            Class: type.Class,
+                            ClassLabel: type.Name,
+                            disabled: !type.Is_active,
+                            active: true
+                        })
+                    });
+                }
             }
         );
     };
