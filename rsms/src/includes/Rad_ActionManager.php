@@ -2545,7 +2545,7 @@ class Rad_ActionManager extends ActionManager {
      */
 
     function createQuarterlyInventories( $startDate = NULL, $endDate = null ){
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $startDate = $this->getValueFromRequest('startDate', $startDate);
         $endDate = $this->getValueFromRequest('endDate', $endDate);
@@ -2559,7 +2559,7 @@ class Rad_ActionManager extends ActionManager {
             return new ActionError("No request parameter 'endDate' was provided");
         }
 
-        $LOG->debug("Create/update quarterly inventory $startDate - $endDate");
+        $LOG->info("Create/update quarterly inventory $startDate - $endDate");
 
         $LOG->debug("Retrieve all RAD PIs...");
         $pis = $this->getAllRadPis();
@@ -2579,12 +2579,12 @@ class Rad_ActionManager extends ActionManager {
 
         //do we already have a master inventory for this period?
         if($inventories != NULL){
-            $LOG->debug("Updating existing quarterly inventory");
+            $LOG->info("Updating existing quarterly inventory");
             $inventory = $inventories[0];
         }
         //we don't have one, so make one
         else{
-            $LOG->debug("Create new quarterly inventory");
+            $LOG->info("Create new quarterly inventory");
             $inventory = new QuarterlyInventory();
             //get the last inventory so we can set the start date, if there is one
             $inventoryDao = $this->getDao(new QuarterlyInventory());
@@ -2627,13 +2627,15 @@ class Rad_ActionManager extends ActionManager {
     	$entityMaps[] = new EntityMap("eager", "getPi_quarterly_inventories");
         $inventory->setEntityMaps($entityMaps);
 
-        $LOG->fatal($inventory);
+        if( $LOG->isTraceEnabled()) {
+            $LOG->trace($inventory);
+        }
 
         return $inventory;
     }
 
     public function getPiInventory( $piId = NULL, $inventoryId = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         if($piId == null)$inventoryId = $this->getValueFromRequest('inventoryId', $inventoryId);
         if($inventoryId == null)$piId = $this->getValueFromRequest('piId', $piId);
@@ -2646,18 +2648,21 @@ class Rad_ActionManager extends ActionManager {
         }
         elseif( $piId == NULL ) {
             return new ActionError("No request parameter 'piId' was provided");
-        }else{
-
-            $inventoryDao = $this->getDao(new QuarterlyInventory());
-            $inventory = $inventoryDao->getById($inventoryId);
-            $startDate = $inventory->getStart_date();
-            $endDate = $inventory->getEnd_date();
-            $pi = $this->getPIById($piId, false);
-
         }
 
+        $LOG->info("Get quarterly inventory #$inventoryId for PI #$piId" );
 
-        if($pi->getPi_authorization() == NULL)return NULL;
+        $inventoryDao = $this->getDao(new QuarterlyInventory());
+        $inventory = $inventoryDao->getById($inventoryId);
+        $startDate = $inventory->getStart_date();
+        $endDate = $inventory->getEnd_date();
+        $pi = $this->getPIById($piId, false);
+
+        if($pi->getPi_authorization() == NULL) {
+            $LOG->info("No authorization exists for $pi");
+            return NULL;
+        }
+
         //make sure we only have one inventory for this pi for this period
         $piInventoryDao = $this->getDao(new PIQuarterlyInventory());
 
@@ -2693,8 +2698,14 @@ class Rad_ActionManager extends ActionManager {
         //foreach($pi->getPi_authorization() as $piAuth){
         $piAuth = $pi->getCurrentPi_authorization();
         //$LOG->fatal($piAuth);
-        if($piAuth == null)return null;
+        if($piAuth == null) {
+            $LOG->info("No Current authorization exists for $pi");
+            return null;
+        }
+
+        $LOG->debug("Buildling inventories for $pi");
         foreach($piAuth->getAuthorizations() as $authorization){
+            $LOG->debug("Build inventory for $authorization");
 
             $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
 
@@ -2702,7 +2713,7 @@ class Rad_ActionManager extends ActionManager {
             $whereClauseGroup = new WhereClauseGroup();
             $clauses = array(
                     new WhereClause('authorization_id','=', $authorization->getKey_id() ),
-                    new WhereClause('quarterly_inventory_id','=', $piInventory ->getKey_id() ),
+                    new WhereClause('quarterly_inventory_id','=', $piInventory->getKey_id() ),
             );
 
             $whereClauseGroup->setClauses($clauses);
@@ -2710,32 +2721,32 @@ class Rad_ActionManager extends ActionManager {
 
             if($oldAmounts != NULL){
                 $newAmount = $oldAmounts[0];
+                $LOG->debug("Updating inventory amount entity $newAmount");
             }else{
                 $newAmount = new QuarterlyIsotopeAmount();
+                $newAmount->setIs_active(true);
+                $newAmount->setAuthorization_id($authorization->getKey_id());
+                $newAmount->setAuthorization($authorization);
+                $newAmount->setQuarterly_inventory_id($piInventory->getKey_id());
+
+                $LOG->debug("Creating new amount entity: $newAmount");
             }
 
-            //boolean to determine if this isotope has been accounted for
-            $isotopeFound = false;
-
             //if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
+            $oldAmount = null;
             if($mostRecentIntentory != null){
                 foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
                     if($amount->getAuthorization_id() == $authorization->getIsotope_id()){
-                        //$newAmount->setStarting_amount($amount->getEnding_amount());
-                        $isotopeFound = true;
+                        $LOG->debug("Found previous quarter amount $amount");
+                        $oldAmount = $amount;
+                        break;
                     }
                 }
             }
 
-            $newAmount->setIs_active(true);
-            $newAmount->setAuthorization_id($authorization->getKey_id());
-            $newAmount->setAuthorization($authorization);
-            $newAmount->setQuarterly_inventory_id($piInventory->getKey_id());
-
             //calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
-            $newAmount = $this->calculateQuarterlyAmount($newAmount, $startDate, $endDate);
+            $this->calculateQuarterlyAmount($newAmount, $oldAmount, $piId, $authorization->getIsotope_id(), $startDate, $endDate );
             $newAmount = $quarterlyAmountDao->save($newAmount);
-           // $LOG->fatal($newAmount);
 
             $amounts[] = $newAmount;
 
@@ -2751,51 +2762,68 @@ class Rad_ActionManager extends ActionManager {
      * @param string $startDate
      * @param string $endDate
      */
-    private function calculateQuarterlyAmount($amount, $startDate, $endDate){
-        $LOG = Logger::getLogger("calculon");
+    private function calculateQuarterlyAmount(&$amount, $oldAmount, $piId, $isotopeId, $startDate, $endDate){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $qDao = new QuarterlyIsotopeAmountDAO();
+
+        $LOG->debug("Calculate PI #$piId inventory of isotope #$isotopeId between [$startDate and $endDate]");
+        /**
+            TODO: Verify/implement
+            starting_amount     -> 'Last Quarter Amount'        -> previous quarter's amount on_hand
+            total_ordered       -> 'Total Ordered'              -> total amount which was received during this quarter
+            transfer_in         -> 'Transfer In'                -> total amount transfered [to me?]
+            transfer_out        -> 'Transfer out'               -> total amount transfered [from me?]
+            solid_waste         -> 'Solid Waste'                -> total amount disposed of via solids
+            liquid_waste        -> 'Liquid Waste'               -> total amount disposed of via Carboys
+            scint_vial_waste    -> 'Scintillation vial wasste   -> total amount disposed of via Scint vials
+            other_waste         -> 'Other Waste'                -> total amount disposed of via 'other' containers
+            on_hand             -> 'Actual amount on hand'      -> total amount which has not been disposed (previous + current - disposed)
+        */
+
+        // Note: starting_amount is not calculated here; it's obtained from previous inventory
+        if( $oldAmount != null ){
+            $LOG->debug("Applying previous quarter amount of " . $oldAmount->getEnding_amount());
+            $amount->setStarting_amount($oldAmount->getEnding_amount());
+        }
 
         //get the total ordered since the previous inventory
-        $ordersDao = $this->getDao($amount);
-
-        $amount->setStarting_amount($ordersDao->getStartingAmount($startDate));
 
         //get parcels for this QuarterlyIsotopsAmount's authorization that have an RS ID for the given dates
-        $amount->setTotal_ordered($ordersDao->getTransferAmounts($startDate, $endDate, false));
+        $amount->setTotal_ordered($qDao->getTransferAmounts($piId, $isotopeId, $startDate, $endDate, false));
 
         //get the total transfered in since the previous inventory
-        $transferInDao = $this->getDao($amount);
 
         //get parcels for this QuarterlyIsotopsAmount's authorization that DON'T have an RSID for the given dates
-        $amount->setTransfer_in($transferInDao->getTransferAmounts($startDate, $endDate, true));
+        $amount->setTransfer_in($qDao->getTransferAmounts($piId, $isotopeId, $startDate, $endDate, true));
 
 
         //get the total transfered out since the previous inventory
         //??what is a tranfer out?
-        $amount->setTransfer_out($transferInDao->getTransferOutAmounts($startDate, $endDate));
+        $amount->setTransfer_out($qDao->getTransferOutAmounts($piId, $isotopeId, $startDate, $endDate));
 
         //subtract this quarters parcel uses, going by parcel use amount, maintaining a count of each kind of disposal (liquid, solid or scintvial)
 
+        // FIXME: Replace magic numbers with entity references
+
         //get liquid amounts
-        $liquidSumDao = $this->getDao($amount);
-        $amount->setLiquid_waste($liquidSumDao->getUsageAmounts( $startDate, $endDate, 1));
+        $amount->setLiquid_waste($qDao->getUsageAmounts( $piId, $isotopeId, $startDate, $endDate, 1));
 
         //get scint vial amounts
-        $svSumDao = $this->getDao($amount);
-        $amount->setScint_vial_waste($svSumDao->getUsageAmounts( $startDate, $endDate, 3));
+        $amount->setScint_vial_waste($qDao->getUsageAmounts( $piId, $isotopeId, $startDate, $endDate, 3));
 
         //get solid amounts
-        $svSumDao = $this->getDao($amount);
-        $amount->setSolid_waste($svSumDao->getUsageAmounts( $startDate, $endDate, 5));
+        $amount->setSolid_waste($qDao->getUsageAmounts( $piId, $isotopeId, $startDate, $endDate, 5));
 
         //get other amounts
-        $solidSumDao = $this->getDao($amount);
-        $amount->getOther_waste($solidSumDao->getUsageAmounts( $startDate, $endDate, 4));
+        $amount->getOther_waste($qDao->getUsageAmounts( $piId, $isotopeId, $startDate, $endDate, 4));
 
         //calculate the amount currently on hand
         $totalIn = $amount->getStarting_amount() + $amount->getTransfer_in() + $amount->getTotal_ordered();
         $totalOut = $amount->getTransfer_out() + $amount->getSolid_waste() + $amount->getLiquid_waste() + $amount->getOther_waste() + $amount->getScint_vial_waste();
 
         $amount->setOn_hand($totalIn - $totalOut);
+        $LOG->trace($amount);
         return $amount;
 
     }
@@ -2836,7 +2864,11 @@ class Rad_ActionManager extends ActionManager {
         $inventoryDao = $this->getDao(new QuarterlyInventory());
         $mostRecentInv = end($inventoryDao->getAll("end_date"));
         $LOG->debug($mostRecentInv);
-        return $mostRecentInv;
+
+        if( $mostRecentInv )
+            return $mostRecentInv;
+
+        return new ActionError('No inventory exists', 404);
     }
 
 

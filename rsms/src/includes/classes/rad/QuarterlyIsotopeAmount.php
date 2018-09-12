@@ -28,7 +28,7 @@ include_once 'RadCrud.php';
     	"other_waste"				=> "float",
     	"on_hand"				    => "float",
 
-    	"authorization_id"			=> "int",
+    	"authorization_id"			=> "integer",
 
         //GenericCrud
         "key_id"                    => "integer",
@@ -43,7 +43,7 @@ include_once 'RadCrud.php';
     //access information
 
 	/** id of the PIQuarterlyInventory that is the parent of this amount **/
-	private $pi_quarterly_inventory_id;
+	private $quarterly_inventory_id;
 
 	/** amount of the isotope in inventory at the beginning of the quarter */
 	private $starting_amount;
@@ -93,12 +93,10 @@ include_once 'RadCrud.php';
     }
 
 	public function getQuarterly_inventory_id() {
-		$LOG = Logger::getLogger(__CLASS__);
-		$LOG->DEBUG($this);
-		return $this->pi_quarterly_inventory_id;
+		return $this->quarterly_inventory_id;
 	}
 	public function setQuarterly_inventory_id($quarterly_inventory_id) {
-		$this->pi_quarterly_inventory_id = $quarterly_inventory_id;
+		$this->quarterly_inventory_id = $quarterly_inventory_id;
 	}
 
 	public function getAuthorization_id() {

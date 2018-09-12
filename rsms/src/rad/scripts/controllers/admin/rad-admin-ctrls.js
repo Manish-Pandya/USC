@@ -1657,6 +1657,11 @@ angular.module('00RsmsAngularOrmApp')
     console.log("Inventories Controller", $scope);
     var af = actionFunctionsFactory;
     var getInventory = function () {
+        if( !$state.params.pi_inventory ){
+            // No PI selected
+            return;
+        }
+
         console.log("Get inventory with ID " + $state.params.pi_inventory);
         return af.getPIInventoryById($state.params.pi_inventory)
             .then(function(inventory){
