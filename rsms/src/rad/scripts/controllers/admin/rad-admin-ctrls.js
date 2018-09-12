@@ -3096,7 +3096,7 @@ angular.module('00RsmsAngularOrmApp')
     var af = actionFunctionsFactory;
     $scope.loading = af.getAllOtherWasteTypes().then(function () {
         console.log(dataStore);
-        $scope.otherWasteTypes = dataStore.OtherWasteType;
+        $scope.otherWasteTypes = dataStore.OtherWasteType || [];
     });
     $rootScope.switchActive = function (owt) {
         console.log(owt);
@@ -3119,11 +3119,9 @@ angular.module('00RsmsAngularOrmApp')
         });
         modalInstance.result.then(function (returned) {
             console.log(returned);
+            $scope.otherWasteTypes = dataStore.OtherWasteType || [];
             if (object && object.Key_id) {
                 angular.extend(object, returned);
-            }
-            else {
-                $scope.otherWasteTypes.push(returned);
             }
         });
     };
@@ -3136,6 +3134,10 @@ angular.module('00RsmsAngularOrmApp')
     $scope.save = function (owt) {
         console.log(owt);
         af.save(owt)
+            .then(function(saved){
+                dataStoreManager.store(saved);
+                return saved;
+            })
             .then($scope.close);
     };
     $scope.close = function (owt) {

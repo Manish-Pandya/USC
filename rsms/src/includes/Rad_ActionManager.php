@@ -3379,6 +3379,9 @@ class Rad_ActionManager extends ActionManager {
         if($decodedObject == null) $decodedObject = $this->convertInputJson();
         if($decodedObject == null)return new ActionError("No data read from input stream");
 
+        // Force Other Waste Types to always require clearing by RSO
+        $decodedObject->setClearable(true);
+
         $d = new GenericDAO($decodedObject);
         return $d->save();
 
