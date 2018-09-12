@@ -2526,10 +2526,12 @@ angular.module('00RsmsAngularOrmApp')
     var getParcels = function () {
         return af.getAllParcels()
             .then(function (parcels) {
-            dataStore.Parcel.forEach(function (p) {
-                p.loadAuthorization();
-            });
-            return $scope.parcels = dataStore.Parcel;
+                if( dataStore.Parcel ){
+                    dataStore.Parcel.forEach(function (p) {
+                        p.loadAuthorization();
+                    });
+                }
+                return $scope.parcels = dataStore.Parcel;
         });
     };
     var getAllPis = function () {
@@ -2586,6 +2588,7 @@ angular.module('00RsmsAngularOrmApp')
             templateUrl: 'views/admin/admin-modals/transfer-inventory-modal.html',
             controller: 'TransferModalCtrl'
         });
+        modalInstance.result.then(getParcels);
     };
     $scope.openTransferOutModal = function (object) {
         console.log(object);
@@ -2606,6 +2609,7 @@ angular.module('00RsmsAngularOrmApp')
                         templateUrl: 'views/admin/admin-modals/transfer-out-modal.html',
                         controller: 'TransferModalCtrl'
                     });
+                    modalInstance.result.then(getParcels);
                 });
             }
         }
@@ -2616,6 +2620,7 @@ angular.module('00RsmsAngularOrmApp')
                 templateUrl: 'views/admin/admin-modals/transfer-out-modal.html',
                 controller: 'TransferModalCtrl'
             });
+            modalInstance.result.then(getParcels);
         }
     };
     $scope.openTransferBetweenModal = function (object) {
@@ -2642,6 +2647,7 @@ angular.module('00RsmsAngularOrmApp')
                         templateUrl: 'views/admin/admin-modals/transfer-between-modal.html',
                         controller: 'TransferModalCtrl'
                     });
+                    modalInstance.result.then(getParcels);
                 });
             }
         }
@@ -2655,6 +2661,7 @@ angular.module('00RsmsAngularOrmApp')
                 templateUrl: 'views/admin/admin-modals/transfer-between-modal.html',
                 controller: 'TransferModalCtrl'
             });
+            modalInstance.result.then(getParcels);
         }
     };
 })
@@ -2683,6 +2690,7 @@ angular.module('00RsmsAngularOrmApp')
         $scope.saveTransferIn = function (copy, parcel) {
             console.log(parcel);
             copy.Transfer_in_date = convenienceMethods.setMysqlTime(af.getDate(copy.view_Transfer_in_date));
+            copy.Is_active = true;
             af.saveParcel(copy, parcel, $scope.modalData.PI)
                 .then($scope.close);
         };
@@ -2722,7 +2730,9 @@ angular.module('00RsmsAngularOrmApp')
         };
         $scope.getReceivingPi = function (use) {
             var pi = dataStoreManager.getById("PrincipalInvestigator", use.DestinationParcel.Principal_investigator_id);
-            $scope.selectReceivingPi(pi);
+            if( pi ) {
+                $scope.selectReceivingPi(pi);
+            }
             return pi;
         };
         $scope.saveTransferBetween = function (parcel, copy, use) {
@@ -2762,7 +2772,7 @@ angular.module('00RsmsAngularOrmApp')
         };
         $scope.getTransferNumberSuggestion = function (str) {
             console.log(str);
-            var parcels = dataStoreManager.get("Parcel");
+            var parcels = dataStoreManager.get("Parcel") || [];
             var num = 0;
             var finalNum = 1;
             parcels.forEach(function (p) {
@@ -3096,7 +3106,7 @@ angular.module('00RsmsAngularOrmApp')
     var af = actionFunctionsFactory;
     $scope.loading = af.getAllOtherWasteTypes().then(function () {
         console.log(dataStore);
-        $scope.otherWasteTypes = dataStore.OtherWasteType;
+        $scope.otherWasteTypes = dataStore.OtherWasteType || [];
     });
     $rootScope.switchActive = function (owt) {
         console.log(owt);
@@ -3119,11 +3129,9 @@ angular.module('00RsmsAngularOrmApp')
         });
         modalInstance.result.then(function (returned) {
             console.log(returned);
+            $scope.otherWasteTypes = dataStore.OtherWasteType || [];
             if (object && object.Key_id) {
                 angular.extend(object, returned);
-            }
-            else {
-                $scope.otherWasteTypes.push(returned);
             }
         });
     };
@@ -3136,6 +3144,10 @@ angular.module('00RsmsAngularOrmApp')
     $scope.save = function (owt) {
         console.log(owt);
         af.save(owt)
+            .then(function(saved){
+                dataStoreManager.store(saved);
+                return saved;
+            })
             .then($scope.close);
     };
     $scope.close = function (owt) {

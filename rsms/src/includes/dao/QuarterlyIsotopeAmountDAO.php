@@ -243,7 +243,13 @@ class QuarterlyIsotopeAmountDAO extends GenericDAO {
 	public function getTransferOutAmounts( $piId, $isotopeId, $startDate, $endDate ){
 		$sql = "SELECT SUM(`quantity`)
 				FROM `parcel_use`
-				where `parcel_id` in (select key_id from parcel where `authorization_id` IN (select key_id from authorization where principal_investigator_id = ? AND isotope_id = ?)
+				where `parcel_id` in (
+                    select key_id from parcel where `authorization_id` IN (
+                        SELECT auth.key_id
+                        FROM authorization auth JOIN pi_authorization pia ON auth.pi_authorization_id = pia.key_id
+                        WHERE pia.principal_investigator_id = ? AND auth.isotope_id = ?
+                    )
+                )
 				AND `date_transferred` BETWEEN ? AND ?";
 
 		$stmt = DBConnection::prepareStatement($sql);
