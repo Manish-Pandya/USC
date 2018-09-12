@@ -2813,10 +2813,13 @@ angular.module('00RsmsAngularOrmApp')
                     parcels = dataStoreManager.get('Parcel');
                 }
 
-            var i = parcels.length;
-            while (i--) {
-                parcels[i].loadPrincipalInvestigator();
+            if( parcels ){
+                var i = parcels.length;
+                while (i--) {
+                    parcels[i].loadPrincipalInvestigator();
+                }
             }
+
             $rootScope.parcels = dataStore.Parcel;
             return parcels;
         });
