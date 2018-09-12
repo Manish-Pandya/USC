@@ -107,12 +107,10 @@ include_once 'RadCrud.php';
 	}
 
 	public function getAuthorization(){
-		$LOG = Logger::getLogger(__CLASS__);
 		if($this->authorization == NULL  && $this->hasPrimaryKeyValue()){
 			$authDao = new GenericDAO(new Authorization());
 			$this->authorization = $authDao->getById($this->authorization_id);
 		}
-		$LOG->debug($this->authorization);
 
 		return $this->authorization;
 	}

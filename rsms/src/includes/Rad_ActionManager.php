@@ -2769,7 +2769,6 @@ class Rad_ActionManager extends ActionManager {
 
         $LOG->debug("Calculate PI #$piId inventory of isotope #$isotopeId between [$startDate and $endDate]");
         /**
-            TODO: Verify/implement
             starting_amount     -> 'Last Quarter Amount'        -> previous quarter's amount on_hand
             total_ordered       -> 'Total Ordered'              -> total amount which was received during this quarter
             transfer_in         -> 'Transfer In'                -> total amount transfered [to me?]
