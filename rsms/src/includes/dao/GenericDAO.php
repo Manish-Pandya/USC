@@ -1640,6 +1640,7 @@ class GenericDAO {
                 DELETE FROM quarterly_inventory WHERE key_id > 0;
                 DELETE FROM pi_wipe WHERE key_id > 0;
                 DELETE FROM pi_wipe_test WHERE key_id > 0;
+				DELETE FROM rad_condition WHERE key_id > 0;
 				';
 
 		$this->LOG->debug("Executing: $sql");
