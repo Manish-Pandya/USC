@@ -43,7 +43,7 @@ angular.module('00RsmsAngularOrmApp')
                 return classList;
             };
         },
-        controller: function ($scope, actionFunctionsFactory, roleBasedFactory, $rootScope) {
+        controller: function ($scope, actionFunctionsFactory, roleBasedFactory, $rootScope, radUtilitiesFactory) {
             console.log($rootScope.R);
             $scope.roleBasedFactory = roleBasedFactory;
             $scope.Constants = Constants;
@@ -63,6 +63,10 @@ angular.module('00RsmsAngularOrmApp')
                 return roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN], $rootScope.R[Constants.ROLE.NAME.ADMIN]]);
             };
             $scope.af = actionFunctionsFactory;
+            
+            $scope.isDisposed = function(container){
+                return radUtilitiesFactory.isContainerDisposed(container);
+            };
         }
     };
 });

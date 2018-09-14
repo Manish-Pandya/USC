@@ -17,6 +17,7 @@ angular.module('00RsmsAngularOrmApp')
 
         // Load pickups
         $rootScope.pickupsPromise = $rootScope.radModelsPromise
+            .then(af.getAllDrums)
             .then(af.getAllPickups)
             .then(function(){
                 $scope.pickups = dataStore.Pickup || [];
@@ -320,7 +321,17 @@ angular.module('00RsmsAngularOrmApp')
         }
     });
 
+    $scope.isDisposed = function(container){
+        var disp = radUtilitiesFactory.isContainerDisposed(container);
+        return disp;
+    };
+
     $scope.addOrRemoveContainer = function(container) {
+        if( $scope.isDisposed(container) ){
+            // Do not allow add/remove of Disposed container
+            return;
+        }
+
         container.isSelectedForPickup = !container.isSelectedForPickup;
         $scope.edited_pickup_contents = true;
         console.debug((container.isSelectedForPickup ? 'Add' : 'Remove') + " container from pickup", container);

@@ -26,11 +26,12 @@
                 </h3>
             </li>
 
-            <li ng-repeat="c in containersOfType = (group | orderBy:'ViewLabel')" ng-class="{'container-parent':true, 'inactive':!c.isSelectedForPickup}">
+            <li ng-repeat="c in containersOfType = (group | orderBy:'ViewLabel')" ng-class="{'container-parent':true, 'inactive':!c.isSelectedForPickup, 'container-disabled': isDisposed(c)}">
                 <ul>
                     <li class="labels" ng-click="addOrRemoveContainer(c)">
                         <div class="container-label">
                             <span>{{c.ViewLabel}}</span>
+                            <span ng-if="isDisposed(c)">(Disposed)</span>
                             <span ng-if="c.Trays">({{c.Trays}} Tray
                                 <span ng-if="c.Trays != 1">s</span>)</span>
                             <p ng-if="c.Description">{{c.Description}}</p>

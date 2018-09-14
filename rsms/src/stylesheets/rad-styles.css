@@ -372,6 +372,12 @@ i.at_rso:first-child    { color: rgb(151, 49, 58); }
         border-left: rgb(191, 83, 91) solid 6px;
     }
 
+.container-disabled {
+    cursor: not-allowed !important;
+    color: #666 !Important;
+    font-style: italic !important;
+}
+
 .card.wipe-tests {
     border-left: rgb(107, 86, 179) solid 6px
 }

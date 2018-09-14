@@ -166,7 +166,7 @@ angular.module('radUtilitiesModule', [
             /*
                 Disposed means:
                 carboy cycle is DRUMMED or POURED
-                generic container is drummed (and drum shipped?)
+                generic container is drummed (and drum shipped)
             */
 
             if( c.Class == 'OtherWasteContainer'){
