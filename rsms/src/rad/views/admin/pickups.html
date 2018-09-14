@@ -46,6 +46,11 @@
                     <button ng-if="pickup_group.allowComplete" ng-click="editPickup(pickup, 'AT_RSO')" class="btn btn-danger">Finish Pickup</button>
                 </div>
 
+                <div class="card super" ng-if="pickup.Notes">
+                    <h3 style="padding-bottom:10px;">Notes:</h3>
+                    <p>{{pickup.Notes}}</p>
+                </div>
+
                 <div ng-if="pickup_group.listIncludedContainers && pickup.includedContainers.length" class="card super picked-up">
                     <h3 class="card-header">Picked-up Containers</h3>
                     <containers containers="pickup.includedContainers" has-comments="true"></containers>
