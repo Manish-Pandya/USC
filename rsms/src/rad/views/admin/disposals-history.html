@@ -43,7 +43,7 @@
                 <h3 style="width:250px;">Contents</h3>
                 <h3>Comments</h3>
             </div>
-            <div class="table-row" ng-repeat="container in filteredContainers = (containers | filterInactiveTypes:wasteTypes | filterOnlyDisposedContainers:limitToDisposed | containerContainsText:searchText) track by container.Key_id">
+            <div class="table-row" ng-repeat="container in filteredContainers = (containers | filterInactiveTypes:wasteTypes | filterOnlyDisposedContainers:limitToDisposed | containerContainsText:searchText) track by (container.Class + ':' + container.Key_id)">
                 <div><i class="{{getIconClass(container)}}"></i></div>
                 <div>
                     <span>{{container.ViewLabel}}</span>
