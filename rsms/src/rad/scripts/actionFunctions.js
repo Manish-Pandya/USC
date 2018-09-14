@@ -1877,9 +1877,10 @@ angular
                 // remove any cyclic fields...
                 copy.rootScope = undefined;
 
-                if( copy.ParcelUseAmount ){
-                    copy.ParcelUseAmount.forEach(amt => {
+                if( copy.ParcelUseAmounts ){
+                    copy.ParcelUseAmounts.forEach(amt => {
                         amt.rootScope = undefined;
+                        amt.Carboy = undefined;
                     });
                 }
 
