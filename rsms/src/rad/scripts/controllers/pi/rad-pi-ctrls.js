@@ -916,15 +916,19 @@ angular.module('00RsmsAngularOrmApp')
  * Controller of the 00RsmsAngularOrmApp PI waste receptical/solids container view
  */
 angular.module('00RsmsAngularOrmApp')
-    .controller('ContainersCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, roleBasedFactory) {
+    .controller('ContainersCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, roleBasedFactory, radUtilitiesFactory) {
     $scope.roleBasedFactory = roleBasedFactory;
     $scope.stuff = { showClosed: false };
     var af = actionFunctionsFactory;
     $scope.af = af;
     $rootScope.piPromise = af.getRadPIById($stateParams.pi)
-        .then(function (pi) {
-        $scope.pi = pi;
-    }, function () { });
+        .then(
+            function (pi) {
+                $scope.pi = pi;
+            },
+            function () { }
+        )
+        .then(af.getAllDrums);
     $scope.openCloseContainerModal = function (container) {
         console.log(container);
         var modalData = { pi: null };
@@ -976,6 +980,10 @@ angular.module('00RsmsAngularOrmApp')
         });
     };
     $scope.reopenContainer = function (container) {
+        if( radUtilitiesFactory.isContainerDisposed(container) ){
+            return container;
+        }
+
         container.Close_date = null;
         return $rootScope.saving = af.save(container).then(function (r) {
             console.log(r, container);
