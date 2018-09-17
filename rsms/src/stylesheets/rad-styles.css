@@ -374,7 +374,8 @@ i.at_rso:first-child    { color: rgb(151, 49, 58); }
 
 .container-disabled {
     cursor: not-allowed !important;
-    color: #666 !Important;
+    color: #666 !important;
+    background-color: #ccc !important;
     font-style: italic !important;
 }
 
