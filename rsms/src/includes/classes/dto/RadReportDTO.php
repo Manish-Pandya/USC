@@ -12,7 +12,8 @@ class RadReportDTO
 {
     private $isotope_name;
     private $isotope_id;
-    private $ordered;
+	private $total_ordered;
+	private $total_unused;
     private $waste;
     private $shipped;
     private $poured;
@@ -30,12 +31,20 @@ class RadReportDTO
 		$this->total_quantity = $total_quantity;
 	}
 
-    public function getOrdered(){
-		return (float) $this->ordered;
+    public function getTotal_ordered(){
+		return (float) $this->total_ordered;
 	}
 
-	public function setOrdered($ordered){
-		$this->ordered = $ordered;
+	public function setTotal_ordered($total_ordered){
+		$this->total_ordered = $total_ordered;
+	}
+
+    public function getTotal_unused(){
+		return (float) $this->total_unused;
+	}
+
+	public function setTotal_unused($total_unused){
+		$this->total_unused = $total_unused;
 	}
 
 	public function getWaste(){

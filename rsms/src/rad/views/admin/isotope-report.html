@@ -14,11 +14,9 @@
                     <th>Total Activity</th>
                     <th>Limit</th>
                 </tr>
-                <tr class="table-row" ng-class="{'empty':report.Total_quantity == 0}" ng-repeat="report in reports">
-                    <td>
-                        {{report.Isotope_name}}
-                    </td>
-                    <td>{{report.Ordered}}</td>
+                <tr class="table-row" ng-class="{'empty':report.Total_quantity == 0}" ng-repeat="report in reports | orderBy:'Isotope_name' track by report.Isotope_id">
+                    <td>{{report.Isotope_name}}</td>
+                    <td>{{report.Total_unused}}</td>
                     <td>{{report.Waste}}</td>
                     <td>{{report.Total_quantity}}</td>
                     <td>{{report.Auth_limit}}<span ng-if="!report.Is_mass">mCi</span><span ng-if="report.Is_mass">g</span></td>

@@ -1453,77 +1453,89 @@ class GenericDAO {
     public function getIsotopeTotalsReport(){
 		$this->LOG->info('Building Isotope Report');
 
-        $queryString = "SELECT iso.name AS isotope_name,
-        iso.key_id AS isotope_id,
-        iso.auth_limit,
-		ROUND(SUM(parcel.quantity),7) AS total_quantity,
-        ROUND(SUM(collected_waste.waste_quantity),7) AS waste,
-        ROUND(COALESCE(SUM(parcel.quantity), 0) - COALESCE(SUM(collected_waste.waste_quantity), 0),7) AS ordered
-
-		-- Isotope
-		FROM isotope iso
-
-		-- Authorization
-		LEFT OUTER JOIN authorization auth
-			ON auth.isotope_id = iso.key_id
-
-		-- Parcel on-premise
-		LEFT OUTER JOIN parcel parcel
-			ON (parcel.authorization_id = auth.key_id AND parcel.status IN('Arrived', 'Wipe Tested', 'Delivered'))
-
-		-- Active Use Logs
-		LEFT OUTER JOIN (
-				SELECT
-				  SUM(parcel_use.quantity) AS waste,
-				  parcel_id
-				FROM parcel_use
-				WHERE is_active=1 AND parcel_id IS NOT NULL AND quantity IS NOT NULL GROUP BY parcel_id
-			) parcel_use
-			ON (parcel_use.parcel_id = parcel.key_id AND parcel.key_id IS NOT NULL)
-
-		-- Collected Waste
-		LEFT OUTER JOIN (
+        $queryString = "SELECT
+			isotope_id,
+			isotope_name,
+			auth_limit,
+			ROUND( COALESCE(SUM( parcel_quantity ), 0), 7) AS total_ordered,
+			ROUND( SUM( total_disposed ), 7) AS disposed,
+			ROUND( SUM( total_waste ), 7) AS waste,
+			ROUND( COALESCE(SUM( parcel_quantity ), 0) - SUM( total_disposed ), 7) AS total_quantity,
+			ROUND( COALESCE(SUM( parcel_quantity ), 0) - SUM( total_disposed ) - SUM( total_waste ), 7) AS total_unused
+		FROM (
 			SELECT
-				pu.parcel_id AS parcel_id,
-				SUM(amt.quantity) AS waste_quantity,
-				amt.container_id
-			FROM parcel_use pu
-			LEFT OUTER JOIN (
+				isotope_id,
+				isotope_name,
+				auth_limit,
+				parcel_id,
+				parcel_quantity,
+				COALESCE(SUM( use_quantity ), 0) AS amount,
+				COALESCE(SUM( disposed_amount ), 0) AS total_disposed,
+				COALESCE(SUM( waste_amount ), 0) AS total_waste
+			FROM(
 				SELECT
-					SUM(curie_level) AS quantity,
-                    COALESCE(waste_bag_id, scint_vial_collection_id, carboy_id, other_waste_container_id) AS container_id,
-					parcel_use_id
-				FROM parcel_use_amount
-				WHERE COALESCE(waste_bag_id, scint_vial_collection_id, carboy_id, other_waste_container_id) IN (
-					SELECT container_id FROM (
-						SELECT
-							all_waste.key_id AS container_id,
-							pickup.status AS pickup_status
-						FROM
-							( SELECT key_id, pickup_id, close_date FROM scint_vial_collection UNION
-							  SELECT key_id, pickup_id, close_date FROM waste_bag UNION
-							  SELECT key_id, pickup_id, close_date FROM carboy_use_cycle UNION
-							  SELECT key_id, pickup_id, close_date FROM other_waste_container
-							) AS all_waste
-							JOIN pickup ON (all_waste.pickup_id IS NULL OR pickup.key_id = all_waste.pickup_id)
-							WHERE close_date IS NOT NULL AND pickup.status IN ('PICKED UP', 'AT RSO')
-						) container
-					)
-				GROUP BY parcel_use_id, waste_bag_id
-			) amt
-			ON amt.parcel_use_id = pu.key_id
-            GROUP BY parcel_id
-		) collected_waste
-		ON (collected_waste.parcel_id = parcel.key_id)
+					iso.key_id AS isotope_id,
+					iso.name AS isotope_name,
+					iso.auth_limit AS auth_limit,
+					parcel.key_id AS parcel_id,
+					parcel.quantity AS parcel_quantity,
+					amt.curie_level AS use_quantity,
+					IF(container.is_disposed = 1, amt.curie_level, 0) AS disposed_amount,
+					IF(IFNULL(container.is_disposed, 0) = 0, amt.curie_level, 0) AS waste_amount
+				FROM isotope iso
+		
+				LEFT OUTER JOIN parcel parcel ON
+				parcel.authorization_id in (SELECT key_id FROM authorization WHERE isotope_id = iso.key_id)
+				AND parcel.status IN('Arrived', 'Wipe Tested', 'Delivered')
+	
+				LEFT OUTER JOIN parcel_use use_log ON parcel.key_id = use_log.parcel_id
 
-		GROUP BY iso.name, iso.key_id, iso.auth_limit
-		ORDER BY iso.name DESC";
+				-- Granulate to individual usage amounts
+				LEFT OUTER JOIN parcel_use_amount amt ON amt.is_active AND use_log.key_id = amt.parcel_use_id
+
+				-- Generalize container usages, determine if they're disposed or not
+				LEFT OUTER JOIN (
+					SELECT
+						c.type AS type,
+						c.key_id AS key_id,
+						c.close_date AS close_date,
+						c.pickup_id AS pickup_id,
+						c.drum_id AS drum_id,
+						c.carboy_pour_date AS carboy_pour_date,
+						drum.pickup_date AS drum_ship_date,
+						IF(c.carboy_pour_date IS NOT NULL OR (c.drum_id IS NOT NULL AND drum.pickup_date IS NOT NULL), 1, 0) AS is_disposed
+					FROM (
+						SELECT 'scint_vial_collection' AS type, key_id, pickup_id, close_date, drum_id, NULL AS carboy_status, NULL AS carboy_pour_date FROM scint_vial_collection   UNION ALL
+						SELECT 'waste_bag'             AS type, key_id, pickup_id, close_date, drum_id, NULL AS carboy_status, NULL AS carboy_pour_date FROM waste_bag               UNION ALL
+						SELECT 'other_waste_container' AS type, key_id, pickup_id, close_date, drum_id, NULL AS carboy_status, NULL AS carboy_pour_date FROM other_waste_container   UNION ALL
+						SELECT 'carboy_use_cycle'      AS type, key_id, pickup_id, close_date, drum_id, status AS carboy_status, pour_date AS carboy_pour_date FROM carboy_use_cycle 
+					) c
+					LEFT OUTER JOIN drum drum ON drum.key_id = c.drum_id
+		
+				) container ON (
+					(container.type = 'scint_vial_collection' AND container.key_id = amt.scint_vial_collection_id)
+					OR (container.type = 'waste_bag' AND container.key_id = amt.waste_bag_id)
+					OR (container.type = 'other_waste_container' AND container.key_id = amt.other_waste_container_id)
+					OR (container.type = 'carboy_use_cycle' AND container.key_id = amt.carboy_id)
+				)
+		
+			) package
+		
+			GROUP BY package.isotope_id, package.parcel_id
+		
+		) inventory
+		
+		GROUP BY isotope_id
+		ORDER BY isotope_name";
 
 		$this->LOG->debug("Executing: $queryString");
 
         $stmt = DBConnection::prepareStatement($queryString);
 
-        $stmt->execute();
+        if( !$stmt->execute() ){
+			$this->LOG->error("ERROR executing inventory report");
+			$this->LOG->error($stmt->errorInfo());
+		}
 		$inventories = $stmt->fetchAll(PDO::FETCH_CLASS, "RadReportDTO");
 
 		// 'close' the statement
