@@ -1503,7 +1503,9 @@ class GenericDAO {
 						c.drum_id AS drum_id,
 						c.carboy_pour_date AS carboy_pour_date,
 						drum.pickup_date AS drum_ship_date,
-						IF(c.carboy_pour_date IS NOT NULL OR (c.drum_id IS NOT NULL AND drum.pickup_date IS NOT NULL), 1, 0) AS is_disposed
+						IF(	c.carboy_pour_date IS NOT NULL
+							OR (c.drum_id IS NOT NULL AND drum.pickup_date IS NOT NULL)
+							OR (c.type = 'other_waste_container' AND c.close_date IS NOT NULL), 1, 0) AS is_disposed
 					FROM (
 						SELECT 'scint_vial_collection' AS type, key_id, pickup_id, close_date, drum_id, NULL AS carboy_status, NULL AS carboy_pour_date FROM scint_vial_collection   UNION ALL
 						SELECT 'waste_bag'             AS type, key_id, pickup_id, close_date, drum_id, NULL AS carboy_status, NULL AS carboy_pour_date FROM waste_bag               UNION ALL
