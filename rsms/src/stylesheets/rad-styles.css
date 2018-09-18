@@ -379,6 +379,10 @@ i.at_rso:first-child    { color: rgb(151, 49, 58); }
     font-style: italic !important;
 }
 
+.container-disabled .labels {
+    background: inherit;
+}
+
 .container-disabled .btn {
     cursor: not-allowed !important;
     background-color: #414141;
