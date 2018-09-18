@@ -170,8 +170,8 @@ angular.module('radUtilitiesModule', [
             */
 
             if( c.Class == 'OtherWasteContainer'){
-                // Other waste containers are always disposed
-                return true;
+                // Other waste containers disposed if they are closed ('cleared')
+                return c.Close_date != null;
             }
             else if( c.Class == 'CarboyUseCycle' ){
                 // Carboy is Disposed if...
