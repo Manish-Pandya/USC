@@ -298,12 +298,14 @@ class Parcel extends RadCrud {
                         ON a.carboy_id = d.key_id
                         left join scint_vial_collection e
                         ON a.scint_vial_collection_id = e.key_id
-                        join pickup f
+						left join other_waste_container owc
+							ON a.other_waste_container_id = owc.key_id
+                        left join pickup f
                         ON c.pickup_id = f.key_id
                         OR d.pickup_id = f.key_id
                         OR e.pickup_id = f.key_id
                         where b.is_active = 1 AND a.parcel_use_id IN(select key_id from parcel_use where parcel_id = ?)
-                        AND f.status != 'REQUESTED'";
+                        AND (f.status != 'REQUESTED' OR owc.close_date IS NOT NULL)";
 
 		$stmt = DBConnection::prepareStatement($queryString);
         $stmt->bindParam(1,$this->getKey_id(),PDO::PARAM_INT);
