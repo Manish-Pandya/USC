@@ -2535,7 +2535,7 @@ angular.module('00RsmsAngularOrmApp')
     var af = actionFunctionsFactory;
     $scope.af = af;
     $scope.dsm = dataStoreManager;
-    $scope.modalData = af.getRadModels();
+
     var getParcels = function () {
         return af.getAllParcels()
             .then(function (parcels) {
@@ -2544,28 +2544,30 @@ angular.module('00RsmsAngularOrmApp')
                         p.loadAuthorization();
                     });
                 }
-                return $scope.parcels = dataStore.Parcel;
         });
     };
     var getAllPis = function () {
-        return af.getAllPIs().then(function (pis) {
-            return $scope.pis = dataStore.PrincipalInvestigator;
-        });
+        return af.getAllPIs();
     };
     var getUses = function () {
-        return af.getAllParcelUses().then(function (pis) {
-            return $scope.uses = dataStore.ParcelUse;
-        });
+        return af.getAllParcelUses();
     };
     var getAuths = function () {
-        return af.getAllPIAuthorizations().then(function (pis) {
-            return $scope.auths = dataStore.PIAuthorization;
-        });
+        return af.getAllPIAuthorizations();
     };
-    $scope.loading = getAllPis()
-        .then(getUses)
+    $scope.loading = af.getRadModels()
+        .then(getAllPis)
         .then(getAuths)
-        .then(getParcels);
+        .then(getUses)
+        .then(getParcels)
+        .then( () => {
+            $scope.parcels = dataStore.Parcel;
+            $scope.pis = dataStore.PrincipalInvestigator;
+            $scope.uses = dataStore.ParcelUse;
+            $scope.auths = dataStore.PIAuthorization;
+
+            console.log("Done loading transfers data");
+        });
     $scope.openTransferInModal = function (object) {
         console.log(object);
         var modalData = {};
