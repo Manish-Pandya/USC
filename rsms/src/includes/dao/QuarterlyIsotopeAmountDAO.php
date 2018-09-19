@@ -25,10 +25,10 @@ class QuarterlyIsotopeAmountDAO extends GenericDAO {
             FROM (
                 SELECT key_id, pickup_id, 3 as waste_type_id FROM scint_vial_collection UNION
                 SELECT key_id, pickup_id, 5 as waste_type_id FROM waste_bag UNION
-                SELECT key_id, pickup_id, 1 as waste_type_id FROM carboy_use_cycle UNION
-                SELECT key_id, pickup_id, 4 as waste_type_id FROM other_waste_container
+                SELECT key_id, pickup_id, 1 as waste_type_id FROM carboy_use_cycle
             ) AS all_waste
-            INNER JOIN pickup ON (all_waste.pickup_id IS NOT NULL AND pickup.key_id = all_waste.pickup_id AND pickup.status != 'REQUESTED')";
+            INNER JOIN pickup ON (all_waste.pickup_id IS NOT NULL AND pickup.key_id = all_waste.pickup_id AND pickup.status != 'REQUESTED')
+            UNION SELECT key_id, 4 as waste_type_id FROM other_waste_container other WHERE other.close_date IS NOT NULL";
 
         $sql_select_usages = "SELECT
                 amt.curie_level,
