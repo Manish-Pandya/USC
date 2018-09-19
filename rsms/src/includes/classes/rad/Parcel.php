@@ -288,24 +288,42 @@ class Parcel extends RadCrud {
 
     public function getAmountOnHand(){
         $db = DBConnection::get();
-        $totalPickedUp = 0;
-		$queryString = "SELECT ROUND(SUM(a.curie_level),7) from parcel_use_amount a
-                        JOIN parcel_use b
-                        ON a.parcel_use_id = b.key_id
-                        left join waste_bag c
-                        ON a.waste_bag_id = c.key_id
-                        left join carboy_use_cycle d
-                        ON a.carboy_id = d.key_id
-                        left join scint_vial_collection e
-                        ON a.scint_vial_collection_id = e.key_id
-						left join other_waste_container owc
-							ON a.other_waste_container_id = owc.key_id
-                        left join pickup f
-                        ON c.pickup_id = f.key_id
-                        OR d.pickup_id = f.key_id
-                        OR e.pickup_id = f.key_id
-                        where b.is_active = 1 AND a.parcel_use_id IN(select key_id from parcel_use where parcel_id = ?)
-                        AND (f.status != 'REQUESTED' OR owc.close_date IS NOT NULL)";
+		$totalPickedUp = 0;
+
+		//Get the total amount which has LEFT THE LAB
+		//  either by Pickup or by Transfer
+		$queryString = "SELECT
+			ROUND(SUM(amt.curie_level),7)
+			FROM parcel_use_amount amt
+			JOIN parcel_use use_log
+				ON (
+					amt.parcel_use_id = use_log.key_id
+					AND use_log.parcel_id = ?
+				)
+
+			LEFT JOIN waste_bag wb
+				ON amt.waste_bag_id = wb.key_id
+
+			LEFT JOIN carboy_use_cycle cuc
+				ON amt.carboy_id = cuc.key_id
+
+			LEFT JOIN scint_vial_collection svc
+				ON amt.scint_vial_collection_id = svc.key_id
+
+			LEFT JOIN other_waste_container owc
+				ON amt.other_waste_container_id = owc.key_id
+
+			LEFT JOIN pickup pickup
+				ON wb.pickup_id = pickup.key_id
+				OR cuc.pickup_id = pickup.key_id
+				OR svc.pickup_id = pickup.key_id
+
+			WHERE
+				use_log.is_active = 1
+				AND (
+					(pickup.status != 'REQUESTED' OR owc.close_date IS NOT NULL)
+					OR use_log.date_transferred IS NOT NULL
+				)";
 
 		$stmt = DBConnection::prepareStatement($queryString);
         $stmt->bindParam(1,$this->getKey_id(),PDO::PARAM_INT);
