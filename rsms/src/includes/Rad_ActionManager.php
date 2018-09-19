@@ -2841,7 +2841,7 @@ class Rad_ActionManager extends ActionManager {
         $amount->setSolid_waste($qDao->getUsageAmounts( $piId, $isotopeId, $startDate, $endDate, 5));
 
         //get other amounts
-        $amount->getOther_waste($qDao->getUsageAmounts( $piId, $isotopeId, $startDate, $endDate, 4));
+        $amount->setOther_waste($qDao->getUsageAmounts( $piId, $isotopeId, $startDate, $endDate, 4));
 
         //calculate the amount currently on hand
         $totalIn = $amount->getStarting_amount() + $amount->getTransfer_in() + $amount->getTotal_ordered();
