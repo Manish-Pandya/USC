@@ -1393,7 +1393,7 @@ class Rad_ActionManager extends ActionManager {
     }
 
     function saveParcelUse($parcel = NULL) {
-        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         // check if this function was called from another action function
         if($parcel == NULL) {
@@ -1410,19 +1410,25 @@ class Rad_ActionManager extends ActionManager {
             return $decodedObject;
         }
         else {
+            // If is_active is not passed, assume it is true
+            $decodedObject->activateIfNotSet();
+
             $dao = $this->getDao(new ParcelUse());
 
             if($decodedObject->getDate_transferred() != null){
+                $LOG->debug("Saving transfer");
                 //this is a use for a transfer
                 if($decodedObject->getDestinationParcel() != null){
+                    $LOG->debug("Save transfer destination parcel");
                     $p =  $decodedObject->getDestinationParcel();
-                    $p->setIs_active(true);
+                    $p->activateIfNotSet();
                     $p->setArrival_date($p->getTransfer_in_date());
                     $authDao = $this->getDao(new Authorization());
                     $piAuthDao = $this->getDao(new PIAuthorization());
                     $auth = $authDao->getById($p->getAuthorization_id());
                     if($auth != null){
                         $piAuth = $piAuthDao->getById($auth->getPi_authorization_id());
+                        $LOG->debug("Destination authorization: $piAuth");
                         if($piAuth != null){
                             $p->setPrincipal_investigator_id($piAuth->getPrincipal_investigator_id());
                         }
@@ -1430,26 +1436,46 @@ class Rad_ActionManager extends ActionManager {
 
                     $parcelDao = new GenericDAO(new Parcel());
                     $p->setQuantity($decodedObject->getQuantity());
+
+                    // Set status as Delivered
+                    // TODO: Do we need to allow transitions?
+                    $p->setStatus('Delivered');
+
                     $dParcel = $parcelDao->save($p);
+                    $LOG->debug("Saved destination parcel for transfer: $dParcel");
                     $decodedObject->setDestination_parcel_id($dParcel->getKey_id());
                 }
+
                 $use = $dao->save($decodedObject);
+                $LOG->debug("Saved parcel use as transfer: $use");
+
                 if($dParcel != null){
                     $dParcel->setTransfer_amount_id($use->getKey_id());
                     $dParcel = $parcelDao->save($dParcel);
+                    $LOG->debug("Applied transferred amount to destination parcel: $dParcel");
                 }
+
                 //do we already have a parcelUseAmount for this parcel?
                 $amountDao = new GenericDAO(new ParcelUseAmount());
                 if($decodedObject->getParcelUseAmounts() != null){
+                    $LOG->debug("Read use-amount from incoming data");
                     $amount = end($decodedObject->getParcelUseAmounts());
                     if(is_array($amount)) $amount = JsonManager::assembleObjectFromDecodedArray($amount);
                 }else{
+                    $LOG->debug("Add new use-amount to destination parcel");
                     $amount = new ParcelUseAmount();
                 }
+
+                $amount->activateIfNotSet();
+                $LOG->debug("Use-amount: $amount");
+
                 $amount->setParcel_use_id($use->getKey_id());
                 $amount->setCurie_level($use->getQuantity());
                 $amount = $amountDao->save($amount);
+
+                $LOG->debug("Saved transfer use-amount; $amount");
             }else{
+                $LOG->debug("Save parcel use");
                 $use = $dao->save($decodedObject);
 
                 $amounts = $decodedObject->getParcelUseAmounts();

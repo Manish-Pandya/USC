@@ -40,7 +40,7 @@ abstract class GenericCrud {
 	protected $entityMaps;
 
 	public function __toString(){
-		return '[' .get_class($this) . " key_id=" . $this->getKey_Id() . "]";
+		return '[' .get_class($this) . " key_id=" . $this->getKey_Id() . ($this->is_active ? '' : ' is_active=false') . "]";
 	}
 
 	// Accessors / Mutators
@@ -157,6 +157,12 @@ abstract class GenericCrud {
 			// NOTE: DB returns $record as an instance of stdClass,
 			//  so we acces $field with -> instead of as an array
 			$this->$setterName( $record->$lowerField );
+		}
+	}
+
+	public function activateIfNotSet(){
+		if( $this->getIs_active() == NULL ){
+			$this->setIs_active(true);
 		}
 	}
 
