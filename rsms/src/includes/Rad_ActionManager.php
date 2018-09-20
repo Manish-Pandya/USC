@@ -3674,6 +3674,7 @@ class Rad_ActionManager extends ActionManager {
             $pickup = new Pickup();
             $pickup->setPrincipal_investigator_id($piId);
             $pickup->setStatus("REQUESTED");
+            $pickup->setRequested_date(date("Y-m-d H:i:s"));
             $pickup = $dao->save($pickup);
 
             $l->info("Saved pickup " . $pickup);
