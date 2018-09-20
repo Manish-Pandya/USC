@@ -48,7 +48,12 @@ class QuarterlyIsotopeAmountDAO extends GenericDAO {
             -- Join to Authorization's PIAuthorization
             LEFT JOIN pi_authorization pia     ON auth.pi_authorization_id = pia.key_id
             -- Join with all containers
-            INNER JOIN ($sql_select_all_waste) wastes ON wastes.container_id = COALESCE(amt.waste_bag_id, amt.scint_vial_collection_id, amt.carboy_id, amt.other_waste_container_id)
+            INNER JOIN ($sql_select_all_waste) wastes ON (
+                   (wastes.waste_type_id = 5 AND wastes.container_id = amt.waste_bag_id)
+                OR (wastes.waste_type_id = 3 AND wastes.container_id = amt.scint_vial_collection_id)
+                OR (wastes.waste_type_id = 1 AND wastes.container_id = amt.carboy_id)
+                OR (wastes.waste_type_id = 4 AND wastes.container_id = amt.other_waste_container_id)
+            )
 
             WHERE pu.is_active = 1
                 AND pia.principal_investigator_id = ?
