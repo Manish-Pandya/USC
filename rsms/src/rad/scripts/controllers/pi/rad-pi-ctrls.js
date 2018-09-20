@@ -426,20 +426,6 @@ angular.module('00RsmsAngularOrmApp')
             alert("This use is invalid and cannot be activated. Edit the entry and try again.");
         }
     };
-
-    $scope.pickupIncludesParcel = function(parcelUses, pickup_id){
-        if( parcelUses && pickup_id ){
-            // filter uses down to those who contain Amounts picked up in the specified Pickup
-            //    see ParcelUse#getIsPickedUp(), which lazy-loads ParcelUseAmount#IsPickedUp
-            var includedInPickup = parcelUses
-                .filter(use => use.getIsPickedUp()) // filter down to uses which are picked up
-                .filter(use => use.ParcelUseAmounts.filter(amt => amt.IsPickedUp == pickup_id).length > 0); // Filter down further to amounts in this pickup
-
-            return includedInPickup.length > 0;
-        }
-
-        return false;
-    };
 });
 angular.module('00RsmsAngularOrmApp')
     .controller('ModalParcelUseLogCtrl', function ($scope, $rootScope, $modalInstance, $modal, actionFunctionsFactory, convenienceMethods, roleBasedFactory, parcelUseValidationFactory) {

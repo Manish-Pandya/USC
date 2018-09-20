@@ -159,7 +159,7 @@
                 <td class="use-amount vials">S/V Waste</td>
                 <td>Other Waste</td>
             </tr>
-            <tr ng-repeat="pickup in pickups" class="pickup-tab" ng-if="pickupIncludesParcel(parcel.ParcelUses, pickup.Key_id)">
+            <tr ng-repeat="pickup in pickups" class="pickup-tab">
                 <td class="use-amount">{{pickup.Requested_date | dateToISO}}</td>
                 <td class="use-amount"><span ng-if="pickup.Pickup_date">{{pickup.Pickup_date | dateToISO}}</span></td>
                 <td class="use-amount solids">{{tabulateWaste(parcel.ParcelUses, constants.WASTE_TYPE.SOLID, pickup.Key_id)}}</td>
