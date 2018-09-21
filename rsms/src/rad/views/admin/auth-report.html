@@ -121,6 +121,17 @@
             </table>
 
         </div>
+
+        <div ng-if="piAuths.length" class="card full">
+            <table class="table striped" ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: 'PiName'">
+                <tr>
+                    <th>Conditions: {{piAuth.PiName}}</th>
+                </tr>
+                <tr ng-repeat="condition in piAuth.Conditions">
+                    <td style="padding-left: 25px;" ng-bind-html="condition.Text"></td>
+                </tr>
+            </table>
+        </div>
     </div>
 
 </div>
