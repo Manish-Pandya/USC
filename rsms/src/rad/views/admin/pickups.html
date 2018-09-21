@@ -51,8 +51,9 @@
                     <p>{{pickup.Notes}}</p>
                 </div>
 
-                <div ng-if="pickup_group.listIncludedContainers && pickup.includedContainers.length" class="card super picked-up">
+                <div ng-if="pickup_group.listIncludedContainers" class="card super picked-up">
                     <h3 class="card-header">Picked-up Containers</h3>
+                    <span ng-if="pickup.includedContainers.length == 0">No Container in Pickup</span>
                     <containers containers="pickup.includedContainers" has-comments="true"></containers>
                 </div>
 
