@@ -121,7 +121,18 @@
         </table>
     </div>
 
-    <div ng-if="piAuths.length" class="catd rso-signatures">
+    <div ng-if="piAuths.length" class="card full">
+        <table class="table striped" ng-repeat="piAuth in filtered | authsFilter:filterObj | orderBy: 'PiName'">
+            <tr>
+                <th>Conditions: {{piAuth.PiName}}</th>
+            </tr>
+            <tr ng-repeat="condition in piAuth.Conditions">
+                <td style="padding-left: 25px;" ng-bind-html="condition.Text"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div ng-if="piAuths.length" class="card full rso-signatures">
         <table style="border-spacing: 15px 10; border-collapse: separate;">
             <tr>
                 <th width="25%" style="text-align: right;">RSO Signatures</th>
