@@ -20,13 +20,6 @@ angular.module('radValidationFunctionsModule', [
                 error: null
             }
 
-            var count = containers.filter(c => c.isSelectedForPickup).length;
-
-            if( count == 0 ){
-                validContainers.isValid = false;
-                validContainers.error = "At least one Container must be selected.";
-            }
-
             // TODO: Validate each container?
 
             return validContainers;
