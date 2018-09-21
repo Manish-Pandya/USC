@@ -1452,7 +1452,7 @@ class GenericDAO {
                         ) as amount_transferred
                         ON amount_transferred.isotope_id = b.isotope_id
 
-                        where b.pi_authorization_id IN(select key_id from pi_authorization where principal_investigator_id = ?)
+                        where a.key_id = ?
                        
                         group by b.isotope_id ,c.name, c.key_id, a.principal_investigator_id";
 
@@ -1462,7 +1462,7 @@ class GenericDAO {
         $stmt->bindValue(2, $piId);
         $stmt->bindValue(3, $piId);
         $stmt->bindValue(4, $piId);
-        $stmt->bindValue(5, $piId);
+		$stmt->bindValue(5, $authId);
 
 		if( $this->LOG->isDebugEnabled()){
 			$this->LOG->debug("Executing SQL with params piId=$piId: " . $queryString);
