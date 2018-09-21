@@ -60,7 +60,7 @@ angular.module('radValidationFunctionsModule', [
 
         return pickupsValidationFactory;
     })
-    .factory('parcelUseValidationFactory', function parcelUseValidationFactory($rootScope, convenienceMethods, roleBasedFactory){
+    .factory('parcelUseValidationFactory', function parcelUseValidationFactory($rootScope, $modal, convenienceMethods, roleBasedFactory){
         var parcelUseValidationFactory = {};
 
         parcelUseValidationFactory.getAvailableQuantityForUseValidation = function(parcel, use){
