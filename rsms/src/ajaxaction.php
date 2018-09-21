@@ -47,14 +47,6 @@ $entityMappingOverrides = JsonManager::extractEntityMapOverrides($dataSource);
 // JSON-Encode result
 $json = JsonManager::encode($actionResult->actionFunctionResult, $entityMappingOverrides);
 
-$output = $json;
-
-//If a callback function is requested
-if( array_key_exists('callback', $_GET) ){
-	// Echo request-param 'callback' as function
-	$output = $_GET['callback'] . "($json)";
-}
-
 //if the user is not logged in or does not have permissions, the client will redirect to the login page.  prepare a message
 if($actionResult->statusCode == 401){
     $LOG->fatal('User is not authenticated');
@@ -82,5 +74,18 @@ if($rlog->isInfoEnabled()){
     $rlog->info($username . " <<< $actionResult->statusCode " . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . ' content-length:' . strlen($output));
 }
 
-echo $output;
+//If a callback function is requested
+if( array_key_exists('callback', $_GET) ){
+    // Echo request-param 'callback' as function
+    //    echo instead of concat to avoid large string manipulation
+    echo $_GET['callback'];
+    echo '(';
+    echo $json;
+    echo ')';
+}
+else{
+    // Simply echo the json
+    echo $json;
+}
+
 ?>
