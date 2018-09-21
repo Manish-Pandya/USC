@@ -71,7 +71,7 @@ if($actionResult->statusCode == 302){
 
 // Output JSON (with possible callback)
 if($rlog->isInfoEnabled()){
-    $rlog->info($username . " <<< $actionResult->statusCode " . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . ' content-length:' . strlen($output));
+    $rlog->info($username . " <<< $actionResult->statusCode " . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . ' content-length:' . strlen($json));
 }
 
 //If a callback function is requested
