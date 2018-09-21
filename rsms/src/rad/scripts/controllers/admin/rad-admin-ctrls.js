@@ -2682,6 +2682,7 @@ angular.module('00RsmsAngularOrmApp')
 })
     .controller('TransferModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', 'modelInflatorFactory', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods, modelInflatorFactory) {
         var af = actionFunctionsFactory;
+        af.clearError();
         $scope.af = af;
         $scope.dataStore = dataStore;
         $scope.dsm = dataStoreManager;
