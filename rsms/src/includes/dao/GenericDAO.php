@@ -1663,6 +1663,7 @@ class GenericDAO {
     public function deleteRadData(){
 		$this->LOG->warn("Preparing to delete radiation module data");
 
+		// TODO: Miscellaneous waste?
         $sql = 'DELETE FROM parcel_use_amount WHERE key_id > 0;
                 DELETE FROM parcel_use WHERE key_id > 0;
                 DELETE FROM waste_bag WHERE key_id > 0;
@@ -1686,6 +1687,14 @@ class GenericDAO {
                 DELETE FROM disposal_lot WHERE key_id > 0;
                 DELETE FROM pi_quarterly_inventory WHERE key_id > 0;
                 DELETE FROM quarterly_inventory WHERE key_id > 0;
+                DELETE FROM quarterly_isotope_amount WHERE key_id > 0;
+                DELETE FROM authorization WHERE key_id > 0;
+                DELETE FROM pi_authorization WHERE key_id > 0;
+                DELETE FROM pi_authorization_department WHERE key_id > 0;
+                DELETE FROM pi_authorization_rad_condition WHERE key_id > 0;
+                DELETE FROM pi_authorization_room WHERE key_id > 0;
+                DELETE FROM pi_authorization_user WHERE key_id > 0;
+                DELETE FROM purchase_order WHERE key_id > 0;
                 DELETE FROM pi_wipe WHERE key_id > 0;
                 DELETE FROM pi_wipe_test WHERE key_id > 0;
 				DELETE FROM rad_condition WHERE key_id > 0;
