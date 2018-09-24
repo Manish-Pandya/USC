@@ -138,8 +138,150 @@ class ActionManager {
         return $roles;
     }
 
+    /**
+     * Authenticate via LDAP
+     */
+    protected function loginLdap( $username, $password, $destination = NULL ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
+        $LOG->debug("Attempt LDAP authentication for $username");
+
+        $ldap = new LDAP();
+
+        // if successfully authenticates by LDAP:
+        if ($ldap->IsAuthenticated($username,$password)) {
+            return $this->handleUsernameAuthorization($username);
+        }
+        else {
+            $LOG->info("LDAP AUTHENTICATION FAILED");
+            return false;
+        }
+    }
+
+    /**
+     * Wrapper for non-production login.
+     * Because RSMS does not track passwords, this is a less-secure path
+     * than LDAP.
+     */
+    protected function loginDev( $username, $password, $destination = NULL ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
+        $LOG->debug("Attempt NON-PRODUCTION authentication for $username");
+        return $this->handleUsernameAuthorization($username);
+    }
+
+    /**
+     * Validate login for impersonatable test user with variable role
+     */
+    protected function loginAsRole($username, $password, $destination){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
+        $LOG->debug("Attempt DEV-ROLE authentication for $username");
+
+        // ROLE assignment will be based on username, if it directly matches a role name
+        $roles = array();
+        foreach($this->getAllRoles() as $role) {
+            $roles[] = $role->getName();
+        }
+
+        //the name of a real role was input in the form
+        //hardcoded password for mock role login...
+        if ( in_array($username, $roles) && $password == "correcthorsebatterystaple" ) {
+            // Look up test user and mix in requested role
+            // Default to Test User with ID 1
+            $user = $this->getUserById(1);
+
+            $roleDao = $this->getDao(new Role());
+            $whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
+            $fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
+
+            $user->setFirst_name("Test user with role:");
+            $user->setLast_name($username);
+
+            if($username != "Principal Investigator"){
+                $user->setSupervisor_id(1);
+                $user->setInspector_id(10);
+                $user->setInspector($this->getInspector(10));
+            }else{
+                $principalInvestigator = $this->getPIById(1);
+                $user->setPrincipalInvestigator($principalInvestigator);
+            }
+
+            $user->setRoles($fakeRoles);
+            $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
+
+            // put the USER into session
+            $_SESSION['USER'] = $user;
+
+            $LOG->debug($_SESSION['ROLE']['userRoles']);
+
+            //get the proper destination based on the user's role
+            $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
+            $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
+            if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
+                if($destination == NULL){
+                    $_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
+                }
+            }
+            else{
+                if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
+            }
+
+            if(isset($_SESSION["REDIRECT"])){
+                $LOG->fatal("should redirect");
+                $_SESSION['DESTINATION'] = $this->getDestination();
+            }
+
+            // return true to indicate success
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Login to hard-coded 'emergency' user
+     */
+    protected function loginEmergency($username, $password, $destination = NULL){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
+
+        // Hardcoded username and password for "emergency accounts"
+        if($username === "EmergencyUser" && $password === "RSMS911") {
+            return $this->handleUsernameAuthorization("EmergencyUser");
+        }
+
+        return false;
+    }
+
+    /**
+     * Perform final login actions for the given username.
+     * It is assumed that the requestor has already been authenticated
+     */
+    protected function handleUsernameAuthorization($username){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
+
+        // Make sure they're an Erasmus user by username lookup
+        $dao = $this->getDao(new User());
+        $user = $dao->getUserByUsername($username);
+
+        if ($user == null) {
+            // User does not exist
+            $LOG->info("No such user '$username'");
+            return false;
+        }
+        else {
+            //the name of a real role was NOT input in the form, get the actual user's roles
+            $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
+
+            // put the USER into session
+            $_SESSION['USER'] = $user;
+
+            $_SESSION['DESTINATION'] = $this->getDestination();
+
+            // return true to indicate success
+            return true;
+        }
+    }
+
      public function loginAction( $username = NULL ,$password = NULL, $destination = NULL ) {
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
 
         $username = $this->getValueFromRequest('username', $username);
         $password = $this->getValueFromRequest('password', $password);
@@ -147,165 +289,39 @@ class ActionManager {
 
         if($destination != NULL)$_SESSION['DESTINATION'] = $destination;
 
-        if(!isProduction()){
+        $loggedIn = false;
 
-            // Make sure they're an Erasmus user by username lookup
-            $dao = $this->getDao(new User());
-            $user = $this->getUserById(1);
+        // Handle special cases: hard-coded logins
+        $special = $this->loginEmergency($username, $password, $destination)
+            ||     $this->loginAsRole($username, $password, $destination);
 
-            if ($user != null) {
-                // ROLE assignment will be based on username, if it directly matches a role name
-                $roles = array();
-                foreach($this->getAllRoles() as $role) {
-                    $roles[] = $role->getName();
-                }
-                //the name of a real role was input in the form
-                if ( in_array($username, $roles) ) {
-                    $roleDao = $this->getDao(new Role());
-                    $whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
-                    $fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
+        if( $special ){
+            $LOG->warn("Handled hard-coded login of user '$username'");
+            $loggedIn = true;
+        }
+        else {
+            // Handle 'normal' login
 
-                    $user->setFirst_name("Test user with role:");
-                    $user->setLast_name($username);
-                    if($username != "Principal Investigator"){
-                        $user->setSupervisor_id(1);
-                    }else{
-                        $principalInvestigator = $this->getPIById(1);
-                        $user->setPrincipalInvestigator($principalInvestigator);
-                    }
-
-                    $user->setRoles($fakeRoles);
-                    $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
-
-                }
-                //the name of a real role was NOT input in the form, get the actual user's roles
-                else {
-                    $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
-                }
-
-                // put the USER into session
-                $_SESSION['USER'] = $user;
-
-                $LOG->debug($_SESSION['ROLE']['userRoles']);
-
-                //get the proper destination based on the user's role
-                $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
-                $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
-                if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
-                    if($destination == NULL){
-                        $_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
-                    }
-                }
-                else{
-                    if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
-                }
-
-                if(isset($_SESSION["REDIRECT"])){
-                	$LOG->fatal("should redirect");
-                	$_SESSION['DESTINATION'] = $this->getDestination();
-                }
-
-                // return true to indicate success
-                return true;
-            } else {
-                // successful LDAP login, but not an authorized Erasmus user, return false
-                $_SESSION['DESTINATION'] = LOGIN_PAGE;
-                return false;
-            }
-        }else{
-            // Hardcoded username and password for "emergency accounts"
-            if($username === "EmergencyUser" && $password === "RSMS911") {
-                $emergencyAccount = true;
+            if( isProduction() ){
+                // Log in via LDAP
+                $loggedIn = $this->loginLdap($username, $password, $destination);
             }
             else {
-                $emergencyAccount = false;
-            }
-
-            // ROLE assignment will be based on username, if it directly matches a role name
-            $roles = array();
-            foreach($this->getAllRoles() as $role) {
-                $roles[] = $role->getName();
-            }
-            //the name of a real role was input in the form
-            if ( in_array($username, $roles) || $username == "EmergencyUser") {
-
-                if($username != "EmergencyUser"){
-                    if($password != "correcthorsebatterystaple"){
-                        $_SESSION['ERROR'] = "The username or password you entered was incorrect.";
-                        return false;
-                    }
-                    $user = $this->getUserById(1);
-                    $roleDao = $this->getDao(new Role());
-                    $whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
-                    $fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
-
-
-
-                    if($username != "Principal Investigator"){
-                        $user->setSupervisor_id(1);
-                        $user->setInspector_id(10);
-                        $user->setInspector($this->getInspector(10));
-                    }else{
-                        $principalInvestigator = $this->getPIById(1);
-                        $user->setPrincipalInvestigator($principalInvestigator);
-                    }
-                    $user->setRoles(NULL);
-                    $user->setRoles($fakeRoles);
-                }else{
-                    $user = $this->getUserById(911);
-                }
-
-                $user->setFirst_name("Test user with role:");
-                $user->setLast_name($username);
-
-                $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
-                // put the USER into session
-                $_SESSION['USER'] = $user;
-
-                $_SESSION['DESTINATION'] = $this->getDestination();
-                // return true to indicate success
-                return true;
-
-            }
-
-            $ldap = new LDAP();
-
-            // if successfully authenticates by LDAP:
-            if ($ldap->IsAuthenticated($username,$password) || $emergencyAccount) {
-
-                // Make sure they're an Erasmus user by username lookup
-                $dao = $this->getDao(new User());
-                $user = $dao->getUserByUsername($username);
-                if ($user != null) {
-                    // ROLE assignment will be based on username, if it directly matches a role name
-                    $roles = array();
-                    foreach($this->getAllRoles() as $role) {
-                        $roles[] = $role->getName();
-                    }
-
-                    //the name of a real role was NOT input in the form, get the actual user's roles
-                    $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
-
-                    // put the USER into session
-                    $_SESSION['USER'] = $user;
-
-                    $_SESSION['DESTINATION'] = $this->getDestination();
-                    // return true to indicate success
-                    return true;
-                } else {
-                    $LOG->fatal("LOCAL AUTHENTICATION FAILED");
-                    // successful LDAP login, but not an authorized Erasmus user, return false
-                     $_SESSION['ERROR'] = "The username or password you entered was incorrect.";
-                     return false;
-                }
-            }else{
-                $LOG->fatal("LDAP AUTHENTICATION FAILED");
+                // Dev login
+                $loggedIn = $this->loginDev($username, $password, $destination);
             }
         }
 
-        // otherwise, return false to indicate failure
-        $_SESSION['ERROR'] = "The username or password you entered was incorrect.";
-        return false;
+        if( !$loggedIn ){
+            $LOG->info("Failed login attempt for '$username'");
+            // otherwise, return false to indicate failure
+            $_SESSION['ERROR'] = "The username or password you entered was incorrect.";
+            return false;
+        }
+        else{
+            $LOG->info("Successful login attempt for '$username'");
+            return true;
+        }
     }
 
     /**

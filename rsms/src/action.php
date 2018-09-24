@@ -50,20 +50,19 @@ else{
     }
     //successful login (ActionManager->loginAction() returned true)
     else{
-        $LOG->debug('action result truthy');
+        $LOG->debug('Login successful');
         unset($_SESSION['error']);
-		$LOG->debug( $_SESSION['DESTINATION'] );
-		$_SESSION['DESTINATION'] = str_replace("rsms/", "", $_SESSION['DESTINATION']);
+
+        $LOG->debug( 'Destination: ' . $_SESSION['DESTINATION'] );
+
+        $_SESSION['DESTINATION'] = str_replace("rsms/", "", $_SESSION['DESTINATION']);
 		$_SESSION['DESTINATION'] = str_replace("//", "", $_SESSION['DESTINATION']);
-        $LOG->debug(WEB_ROOT . $_SESSION['DESTINATION'] );
+
         $host  = $_SERVER['HTTP_HOST'];
         $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
         if(isset($_SESSION['REDIRECT'])){
-            $LOG->debug(WEB_ROOT . $_SESSION['DESTINATION'] );
             header("location:" . $_SESSION['REDIRECT']);
         }else{
-            $LOG->debug( $uri . $_SESSION['DESTINATION'] );
-
             header("location:"  . $uri  . '/' . $_SESSION['DESTINATION']);
         }
     }
