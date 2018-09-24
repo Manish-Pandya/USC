@@ -266,6 +266,14 @@ class ActionManager {
             $LOG->info("No such user '$username'");
             return false;
         }
+        else if( !$user->getIs_active() ){
+            // User is not active
+            $LOG->info("Local authentication succeeded, but the user is inactive: $user");
+
+            // successful LDAP login, but not an enabled Erasmus user, return false
+            $_SESSION['ERROR'] = "Your account has been disabled. If you believe this is in error, please contact your administrator.";
+            return false;
+        }
         else {
             //the name of a real role was NOT input in the form, get the actual user's roles
             $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
