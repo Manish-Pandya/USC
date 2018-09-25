@@ -165,6 +165,13 @@ dataLoader.loadManyToManyRelationship = function (parent, relationship) {
 
                     // get data
                     return parent.api.read(action).then(function (returned) {
+                        if( !returned ){
+                            console.debug("No data read from request");
+                            var d = parent.$q.defer();
+                            d.resolve(relationship.parentProperty);
+                            return d.promise;
+                        }
+
                         var instatedObjects = parent.inflator.instateAllObjectsFromJson(returned.data);
                         // add returned data to cache
                         dataStoreManager.store(instatedObjects);
