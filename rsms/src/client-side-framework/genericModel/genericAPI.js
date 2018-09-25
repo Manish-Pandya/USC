@@ -46,15 +46,12 @@ angular
             return $http.jsonp(url)
                     .then(function (response) {
                         if (typeof response.data == "undefined" || (response.data.Class && response.data.Class == "ActionError" && response.data.Message != "No rows returned")) {
-                            api.userLoggedOut(response.data);
+                            api.handleError(response.data);
                         } else if (response.data.Class == "ActionError" && response.data.Message == "No rows returned") {
                             return null;
                         }else{
                             return response;
                         }
-                    },
-                    function (response) {
-                        api.userLoggedOut(response.data);
                     });
 
         }
@@ -85,12 +82,25 @@ angular
                         return object;
                     },
                     function (response) {
-                        api.userLoggedOut(response.data);
+                        api.handleError(response.data);
                     })
                     
 
                 return promise;
 
+        }
+
+        api.handleError = function (data) {
+            if( !data ){
+                console.debug("No data");
+                throw 'No data'
+            }
+            else if( data.Class && data.Class == "ActionError" && data.Message != "No rows returned") {
+                console.debug("Empty data");
+                throw 'Empty dataset returned'
+            }
+
+            throw 'Error loading data';
         }
 
         api.userLoggedOut = function (data) {
