@@ -208,13 +208,11 @@ class ActionDispatcher {
             //Access Denied!
 
             //Dispatch as error
-            $this->dispatchError($this->result, $actionMapping);
+            // Override HTTP status code to not-authorized
+            $this->dispatchError($this->result, $actionMapping, 401);
 
             // Set value to error message
             $this->result->actionFunctionResult = new ActionError('Access denied');
-
-            // Override HTTP status code to not-authorized
-            $this->result->statusCode = 401;
         }
     }
 
