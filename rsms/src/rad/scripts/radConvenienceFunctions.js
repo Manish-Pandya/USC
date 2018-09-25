@@ -206,6 +206,23 @@ angular.module('radUtilitiesModule', [
             return drum.Pickup_date != null;
         }
 
+        radUtilitiesFactory.getPIAuthorization = function getPIAuthorization( pi ){
+            // Get the most-recent PIAuthorization
+            // TODO: Why not get 'current' auth from pi?
+            var piAuth = null;
+            if (pi.Pi_authorization && pi.Pi_authorization.length) {
+                var auths = _.sortBy(pi.Pi_authorization, [function (amendment) {
+                        return moment(amendment.Approval_date).valueOf();
+                    }]);
+                piAuth = auths[auths.length - 1];
+            }
+
+            if( piAuth && piAuth.Termination_date ){
+                console.debug("PI Authorization is terminated", piAuth);
+            }
+
+            return piAuth;
+        }
 
         return radUtilitiesFactory;
     });

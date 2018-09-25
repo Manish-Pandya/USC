@@ -3,8 +3,16 @@
 
 <div style="margin-top:70px;" ng-if="pi">
     <h1 class="alert alert-danger fixed-full" ng-if="error">{{error}}</h1>
+
     <h1>
-        {{pi.User.Name}}'s Orders <a class="btn btn-success left" ng-click="openModal()"><i class="icon-box"></i>Request Package</a>
+        {{pi.User.Name}}'s Orders
+
+        <a class="btn btn-success left" ng-click="openModal()" ng-if="piAuthorization && !piAuthorization.Termination_date">
+            <i class="icon-box"></i>Request Package
+        </a>
+        <a class="btn btn-danger left" ng-if="!piAuthorization || piAuthorization.Termination_date">
+            <i class="icon-box"></i>You have no active Authorizations.
+        </a>
     </h1>
     <h2 ng-show="!undelivered.length">
         You don't have any packages that haven't been delivered right now.

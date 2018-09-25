@@ -8,6 +8,14 @@
         <h3>You have uses within the last week, but haven't recorded a wipe test. <a ui-sref="lab-wipes({ pi: pi.Key_id})" class="btn">Your Wipe Tests</a></h3>
     </div>  
 
+    <div class="alert alert-danger inventory-due-message" ng-if="piAuth === null">
+        <h3>You have no Authorization. Functionality will be limited.</h3>
+    </div>
+
+    <div class="alert alert-danger inventory-due-message" ng-if="piAuth.Termination_date">
+        <h3>Your Authorization #{{piAuth.Authorization_number}} is Terminated. Functionality will be limited.</h3>
+    </div>
+
     <div class="centerIcons" ng-if="pi" ng-class="{'move-down': pi.Quarterly_inventories.length && !pi.Quarterly_inventories[0].Sign_off_date || (pi && getNeedsLabWipes(pi))}">      
       <div class="span2 rsmsCenterIconContainer">
         <a class="span12 parcels" style="background: rgb(122, 6, 109);" ui-sref="pi-orders({ pi: pi.Key_id})">

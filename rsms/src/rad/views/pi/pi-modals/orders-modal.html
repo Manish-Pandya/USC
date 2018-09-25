@@ -29,7 +29,7 @@
     <div class="control-group">
         <label class="control-label" ng-class="{'red' : !modalData.ParcelCopy.Authorization_id}">Isotope</label>
         <div class="controls">
-            <select data-ng-model="modalData.ParcelCopy.Authorization_id" ng-options="auth.Key_id as (auth.Isotope.Name + ':   (' + auth.Form + ')') for auth in getHighestAuth(modalData.pi).Authorizations" ng-change="onSelectAuthorization()">
+            <select data-ng-model="modalData.ParcelCopy.Authorization_id" ng-options="auth.Key_id as (auth.Isotope.Name + ':   (' + auth.Form + ')') for auth in piAuthorization.Authorizations" ng-change="onSelectAuthorization()">
                 <option selected="selected" value="">Select an authorization</option>
             </select>
         </div>

@@ -7,14 +7,17 @@
  * Controller of the 00RsmsAngularOrmApp PI dashboard
  */
 angular.module('00RsmsAngularOrmApp')
-    .controller('PiRadHomeCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods) {
+    .controller('PiRadHomeCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, convenienceMethods, radUtilitiesFactory) {
     var af = actionFunctionsFactory;
     $scope.af = af;
     $rootScope.piPromise = af.getRadPIById($stateParams.pi)
         .then(function (pi) {
-        console.log(pi);
-        $scope.pi = pi;
-    }, function () { });
+            console.log(pi);
+            $scope.pi = pi;
+        }, function () { })
+        .then(function(){
+            $scope.piAuth = radUtilitiesFactory.getPIAuthorization($scope.pi);
+        });
     $scope.getNeedsLabWipes = function (pi) {
         var d = new Date();
         var oneWeekAgo = convenienceMethods.setMysqlTime(new Date(d.setDate((d.getDate() - 7))).toLocaleString());
@@ -87,7 +90,7 @@ angular.module('00RsmsAngularOrmApp')
  * Controller of the 00RsmsAngularOrmApp PI waste receptical/solids container view
  */
 angular.module('00RsmsAngularOrmApp')
-    .controller('OrdersCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal) {
+    .controller('OrdersCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, radUtilitiesFactory) {
     var af = actionFunctionsFactory;
     $scope.af = af;
     $scope.constants = Constants;
@@ -97,8 +100,17 @@ angular.module('00RsmsAngularOrmApp')
         .then(function (pi) {
         console.log(pi);
         $scope.pi = pi;
-    }, function () { });
+    }, function () { })
+    .then(function(){
+        $scope.piAuthorization = radUtilitiesFactory.getPIAuthorization($scope.pi);
+    });
+
     $scope.openModal = function (object) {
+        if( !$scope.piAuthorization || $scope.piAuthorization.Termination_date ){
+            window.alert("Your current authorization is terminated. No new orders can be placed.");
+            return;
+        }
+
         var modalData = {};
         modalData.pi = $scope.pi;
         if (object)
@@ -110,21 +122,15 @@ angular.module('00RsmsAngularOrmApp')
         });
     };
 })
-    .controller('OrderModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
+    .controller('OrderModalCtrl', function ($scope, actionFunctionsFactory, $modalInstance, radUtilitiesFactory) {
     var af = actionFunctionsFactory;
     $scope.constants = Constants;
     $scope.af = af;
     $scope.modalData = af.getModalData();
     $scope.errors = {};
 
-    $scope.getHighestAuth = function (pi) {
-        if (pi.Pi_authorization && pi.Pi_authorization.length) {
-            var auths = _.sortBy(pi.Pi_authorization, [function (amendment) {
-                    return moment(amendment.Approval_date).valueOf();
-                }]);
-            return auths[auths.length - 1];
-        }
-    };
+    $scope.piAuthorization = radUtilitiesFactory.getPIAuthorization($scope.modalData.pi);
+
     if (!$scope.modalData.ParcelCopy) {
         $scope.modalData.ParcelCopy = {
             Class: 'Parcel',
