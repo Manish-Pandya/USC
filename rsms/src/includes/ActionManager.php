@@ -174,8 +174,13 @@ class ActionManager {
      * than LDAP.
      */
     protected function loginDev( $username, $password, $destination = NULL ){
+        if( !ApplicationConfiguration::get('server.auth.providers.dev.nopassword', false) ){
+            // Dev no-password auth is disabled
+            return false;
+        }
+
         $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
-        $LOG->debug("Attempt NON-PRODUCTION authentication for $username");
+        $LOG->warn("Attempt DEV-NO-PASSWORD authentication for '$username'");
         return $this->handleUsernameAuthorization($username);
     }
 
@@ -183,6 +188,11 @@ class ActionManager {
      * Validate login for impersonatable test user with variable role
      */
     protected function loginAsRole($username, $password, $destination){
+        if( !ApplicationConfiguration::get('server.auth.providers.dev.role', false) ){
+            // Dev-role auth is disabled
+            return false;
+        }
+
         $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
         $LOG->debug("Attempt DEV-ROLE authentication for $username");
 
@@ -320,15 +330,8 @@ class ActionManager {
         }
         else {
             // Handle 'normal' login
-
-            if( isProduction() ){
-                // Log in via LDAP
-                $loggedIn = $this->loginLdap($username, $password, $destination);
-            }
-            else {
-                // Dev login
-                $loggedIn = $this->loginDev($username, $password, $destination);
-            }
+            $loggedIn = $this->loginLdap($username, $password, $destination)
+                ||      $this->loginDev($username, $password, $destination);
         }
 
         if( !$loggedIn ){
