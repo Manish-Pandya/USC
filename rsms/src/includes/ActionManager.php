@@ -142,8 +142,19 @@ class ActionManager {
      * Authenticate via LDAP
      */
     protected function loginLdap( $username, $password, $destination = NULL ){
+        if( !ApplicationConfiguration::get('server.auth.providers.ldap', false) ){
+            // LDAP auth is disabled
+            return false;
+        }
+
         $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
         $LOG->debug("Attempt LDAP authentication for $username");
+
+        // LDAP may not be loaded
+        if( !class_exists('LDAP') ){
+            $LOG->error("Attempting LDAP authentication, but no LDAP provider has been defined");
+            return false;
+        }
 
         $ldap = new LDAP();
 
