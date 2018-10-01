@@ -2,7 +2,7 @@
 // Helper function to configure a logger without having to duplicate so much content...
 // See LOG4PHP-221: https://issues.apache.org/jira/browse/LOG4PHP-221
 //   Unless you provide appenders on a logger, they will not override the rootLogger config
-function configLogger($level, $appenders = array('logFileAppender', 'htmlFileAppender')){
+function configLogger($level, $appenders = array('logFileAppender')){
 	return array(
 		'level' => $level,
 		'appenders' => $appenders,
@@ -36,22 +36,7 @@ return array(
 				'file' => constant('RSMS_LOGS') . '/erasmus.log',
 				'append' => true
 			)
-		),
-
-		'htmlFileAppender' => array(
-			'class' => 'LoggerAppenderRollingFile',
-			'layout' => array(
-					'class' => 'LoggerLayoutHtml',
-					'params' => array(
-						'locationinfo' => 'true',
-						'title' => 'RSMS Log Messages'
-					)
-			),
-			'params' => array(
-					'file' => constant('RSMS_LOGS') . '/erasmus-log.html',
-					'append' => false
-			)
-		),
+		)
 	)
 );
 ?>
