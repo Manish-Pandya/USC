@@ -1,7 +1,12 @@
 <?php
 return array(
     // Authentication settings
-    "server.auth.enable_dev_logins" => true,
+    "server.auth.providers.emergency" => true,
+    "server.auth.providers.ldap" => false,
+
+    "server.auth.providers.dev.nopassword" => true,
+    "server.auth.providers.dev.role" => true,
+
     //"server.auth.include_script" => "",
 
     // DB Settings
