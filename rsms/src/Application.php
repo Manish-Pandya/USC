@@ -10,14 +10,14 @@ define('DIR_PATH', dirname(__FILE__) );
 define('URL_PATH', 'http://localhost');
 define('UPLOAD_DIR_PATH', getcwd());
 
-////////////////////////////////////////////////////////////////////////////////
-//
-// Set up Logging
-//
-////////////////////////////////////////////////////////////////////////////////
-require_once dirname(__FILE__) . '/logging/Logger.php';
-define('RSMS_LOGS', DIR_PATH . '/logs');
-Logger::configure( dirname(__FILE__) . '/includes/conf/log4php-config.php');
+function getLocalPath($path){
+	// If this is not an absolute path, prefix it with our path
+	if( $path != NULL && substr($path, 0, 1) !== '/' ){
+		return DIR_PATH . "/$path";
+	}
+
+	return $path;
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -25,14 +25,34 @@ Logger::configure( dirname(__FILE__) . '/includes/conf/log4php-config.php');
 //
 ////////////////////////////////////////////////////////////////////////////////
 require_once dirname(__FILE__) . '/ApplicationConfiguration.php';
-ApplicationConfiguration::configure( dirname(__FILE__) . "/config/rsms-config.php");
+ApplicationConfiguration::configure();
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Set up Logging
+//
+////////////////////////////////////////////////////////////////////////////////
+require_once dirname(__FILE__) . '/logging/Logger.php';
+$logs_root = ApplicationConfiguration::get("logging.outputdir", './logs');
+define('RSMS_LOGS', getLocalPath($logs_root));
+Logger::configure( getLocalPath( ApplicationConfiguration::get("logging.configfile") ));
 
 /////////////////////////////////////////////////////////////////////////////////
 //
-// Set local server config
+// Set authentication details
 //
-////////////////////////////////////////////////////////////////////////////////
-require_once dirname(__FILE__) . '/includes/conf/server.php';
+/////////////////////////////////////////////////////////////////////////////////
+
+// Load non-sourced script intended for per-instance specification of (LDAP) auth provider
+$auth_provider_include = ApplicationConfiguration::get('server.auth.include_script');
+if( $auth_provider_include ){
+	$authLog = Logger::getLogger('auth_provider');
+	if( $authLog->isTraceEnabled()){
+		$authLog->trace("Load auth provider script: $auth_provider_include");
+	}
+
+    require_once( getLocalPath( $auth_provider_include ));
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -40,10 +60,10 @@ require_once dirname(__FILE__) . '/includes/conf/server.php';
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-define('ADMIN_MAIL', ApplicationConfiguration::get()['server']['web']['ADMIN_MAIL']);
-define('WEB_ROOT', ApplicationConfiguration::get()['server']['web']['WEB_ROOT']);
-define('LOGIN_PAGE', ApplicationConfiguration::get()['server']['web']['LOGIN_PAGE']);
-define('BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR', ApplicationConfiguration::get()['server']['web']['BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR']);
+define('ADMIN_MAIL', ApplicationConfiguration::get('server.web.ADMIN_MAIL'));
+define('WEB_ROOT', ApplicationConfiguration::get('server.web.WEB_ROOT'));
+define('LOGIN_PAGE', ApplicationConfiguration::get('server.web.LOGIN_PAGE'));
+define('BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR', ApplicationConfiguration::get('server.web.BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR'));
 
 ////////////////////////////////////////////////////////////////////////////////
 //

@@ -3,17 +3,36 @@ class ApplicationConfiguration {
 
     private static $CONFIG;
 
-    public static function get(){
+    public static function get( $key = NULL, $defaultValue = NULL ){
+        if( $key != NULL ){
+            $val = @self::$CONFIG[$key];
+            if( $val === NULL ){
+                return $defaultValue;
+            }
+
+            return $val;
+        }
+
         return self::$CONFIG;
     }
 
-    public static function configure($path){
+    public static function configure(){
+        $path = self::resolveConfigurationFile();
         self::$CONFIG = self::readConfiguration($path);
     }
 
+    public static function resolveConfigurationFile(){
+        // Resolve configuration file
+        $configFile = dirname(__FILE__) . "/config/rsms-config.php";
+        if( !file_exists($configFile) ){
+            // Use default configuration file
+            $configFile = dirname(__FILE__) . "/config/rsms-config.default.php";
+        }
+
+        return $configFile;
+    }
+
     static function readConfiguration($url){
-        $LOG = Logger::getLogger(__CLASS__);
-        $LOG->debug("Read application configuration");
 
         if(!file_exists($url)){
             throw new Exception("File [$url] does not exist.");
@@ -27,7 +46,7 @@ class ApplicationConfiguration {
 
         $config = @eval('?>' . $data);
 
-		if ($config === false) {
+		if ($config === false || $config == NULL) {
 			$error = error_get_last();
 			throw new Exception("Error parsing configuration: " . $error['message']);
 		}
@@ -38,10 +57,10 @@ class ApplicationConfiguration {
 
 		if (!is_array($config)) {
 			throw new Exception("Invalid configuration: not an array.");
-		}
+        }
 
-        if( $LOG->isDebugEnabled() ){
-            $LOG->debug(ApplicationConfiguration::get());
+        if( count($config) === 0 ){
+            throw new Exception("EMPTY CONFIG ARRAY");
         }
 
         return $config;

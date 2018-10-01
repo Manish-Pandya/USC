@@ -4,6 +4,11 @@ class DBConnection {
 
     private static $STATEMENTS = array();
 
+    private static $CONFIG_READY = false;
+    private static $DB_CN;
+    private static $DB_UN;
+    private static $DB_PW;
+
     public static function &get(){
         if( !isset($GLOBALS['db']) ){
             DBConnection::connect();
@@ -12,17 +17,45 @@ class DBConnection {
         return $GLOBALS['db'];
     }
 
+    private static function configure(){
+        // Pull configuration
+        $LOG = Logger::getLogger(__CLASS__);
+        $LOG->debug("Configuring " . __CLASS__);
+
+        self::$DB_CN = ApplicationConfiguration::get()['server.db.connection'];
+        self::$DB_UN = ApplicationConfiguration::get()['server.db.username'];
+
+        /* WARNING:
+            There exists a bug in PDO (PHP <5.6) whereby if the password is empty or null,
+            the construction will cause an out of memory error.
+            Sipmly having the variable unset will prevent this issue
+        */
+        $pw = @ApplicationConfiguration::get()['server.db.password'];
+        if( isset($pw) && $pw !== '' ) {
+            self::$DB_PW = $pw;
+        }
+
+        self::$CONFIG_READY = true;
+    }
+
     public static function connect(){
+        if( !self::$CONFIG_READY ){
+            self::configure();
+        }
+
         Logger::getLogger(__CLASS__)->debug("Opening DB connection");
+
         $GLOBALS['db'] = new PDO(
-            getDBConnection(),
-            getDBUsername(),
-            getDBPassword(),
+            self::$DB_CN,
+            self::$DB_UN,
+            self::$DB_PW,
             array(
                 // Use Connection pooling
                 PDO::ATTR_PERSISTENT => true
             )
         );
+
+        Logger::getLogger(__CLASS__)->debug("Connection opened.");
 
         // After everything's done, disconnect the connection
         register_shutdown_function(function(){
@@ -65,6 +98,11 @@ class DBConnection {
         $stmt = $db->prepare($sql);
 
         self::$STATEMENTS[] &= $stmt;
+
+        $LOG = Logger::getLogger(__CLASS__);
+        if( $LOG->isTraceEnabled()){
+            $LOG->trace("Prepared statement: $sql");
+        }
 
         return $stmt;
     }
