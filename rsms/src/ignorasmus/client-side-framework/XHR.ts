@@ -58,13 +58,10 @@ abstract class XHR {
                     resolve(JSON.parse(xhr.responseText));
                 } else {
                     reject(xhr.statusText);
-                    if (location.href.indexOf("erasmus") == -1) {
-                        var pathArray = location.href.split('/');
-                        var protocol = pathArray[0];
-                        var host = pathArray[2];
-                        var url = protocol + '//';
-                        window.location.href = url + "radon.qa.sc.edu/rsms";
-                    }
+
+                    // Redirect to root
+                    // TODO: Get path from server
+                    window.location.href = "/rsms";
                 }
             }
 
@@ -74,13 +71,10 @@ abstract class XHR {
                     status: xhr.status,
                     statusText: xhr.statusText
                 });
-                if (location.href.indexOf("erasmus") == -1) {
-                    var pathArray = location.href.split('/');
-                    var protocol = pathArray[0];
-                    var host = pathArray[2];
-                    var url = protocol + '//';
-                    window.location.href = url + "radon.qa.sc.edu/rsms";
-                }
+
+                // Redirect to root
+                // TODO: Get path from server
+                window.location.href = "/rsms";
             };
             
             // handle posted data if needed, removing circular references
