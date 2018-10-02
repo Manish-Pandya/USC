@@ -15,6 +15,7 @@ return array(
     //"server.db.password" => '',
 
     // Web-server settings
+    "server.web.url" => 'http://rsms.graysail.com:9080',
     "server.web.ADMIN_MAIL" => 'mmartin@graysail.com',
     "server.web.WEB_ROOT" => '/rsms/src/',
     "server.web.LOGIN_PAGE" => '/rsms/src/',

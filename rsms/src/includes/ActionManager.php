@@ -4236,7 +4236,12 @@ class ActionManager {
                 $inspectorEmails[] = $user->getEmail();
             }
 
-            $footerText = "\n\n Access the results of this inspection, and document any corrective actions taken, by logging into the RSMS portal located at http://radon.qa.sc.edu/rsms with your university ID and password.";
+            // Construct login link from app config
+            $urlBase = ApplicationConfiguration::get('server.web.url');
+            $loginPath = ApplicationConfiguration::get('server.web.LOGIN_PAGE', '/rsms');
+            $loginUrl = $urlBase + $loginPath;
+
+            $footerText = "\n\n Access the results of this inspection, and document any corrective actions taken, by logging into the RSMS portal located at $loginUrl with your university ID and password.";
             // Send the email
             $LOG->fatal("'".implode("','", $recipientEmails)."'");
             $LOG->fatal($inspectorEmails);
