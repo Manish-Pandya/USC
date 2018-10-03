@@ -22,15 +22,15 @@ class DBConnection {
         $LOG = Logger::getLogger(__CLASS__);
         $LOG->debug("Configuring " . __CLASS__);
 
-        self::$DB_CN = ApplicationConfiguration::get()['server.db.connection'];
-        self::$DB_UN = ApplicationConfiguration::get()['server.db.username'];
+        self::$DB_CN = ApplicationConfiguration::get('server.db.connection');
+        self::$DB_UN = ApplicationConfiguration::get('server.db.username');
 
         /* WARNING:
             There exists a bug in PDO (PHP <5.6) whereby if the password is empty or null,
             the construction will cause an out of memory error.
             Sipmly having the variable unset will prevent this issue
         */
-        $pw = @ApplicationConfiguration::get()['server.db.password'];
+        $pw = @ApplicationConfiguration::get('server.db.password');
         if( isset($pw) && $pw !== '' ) {
             self::$DB_PW = $pw;
         }
