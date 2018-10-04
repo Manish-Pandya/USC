@@ -161,7 +161,7 @@ abstract class GenericCrud {
 	}
 
 	public function activateIfNotSet(){
-		if( $this->getIs_active() == NULL ){
+		if( $this->getIs_active() === NULL ){
 			$this->setIs_active(true);
 		}
 	}
