@@ -27,7 +27,7 @@ class ActionMappingFactory {
             "IBC_AND_LAB" 		    => array("Admin", "Radiation Admin", "IBC Member", "Principal Investigator", "Lab Contact"),
             "EHS"					=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector"),
             "EHS_AND_LAB"			=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "Lab Contact", "Principal Investigator", "Radiation User"),
-            "ALL_RAD_USERS"			=> array("Admin", "Radiation Admin", "Safety User", "Radiation Inspector"),
+            "ALL_RAD_USERS"			=> array("Admin", "Radiation Admin", "Safety User", "Radiation Inspector", "Principal Investigator"),
             "RSO"			        => array("Admin", "Radiation Admin", "Radiation Inspector"),
             "LAB_PERSONNEL"			=> array("Lab Contact", "Principal Investigator", "Radiation User"),
             "EXCLUDE_READ_ONLY"		=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "Lab Contact", "Principal Investigator", "Radiation User")
