@@ -17,6 +17,7 @@
         'User'                  : {getById: "getUserById"                  , getAll: "getAllUsers"                  , save: "saveUsers"                                     },
         'Hazard'                : {getById: "getHazardById"                , getAll: "getAllHazards"                , save: ""                                              },
         'Department'            : {getById: "getDepartmentById"            , getAll: "getAllDepartments"            , save: ""                                              },
+        'BioSafetyProtocol'     : {getById: "getProtocolById"              , getAll: "getAllProtocols"              , save: "saveProtocol"                                              },
         'BiosafetyProtocol'     : {getById: "getProtocolById"              , getAll: "getAllProtocols"              , save: "saveProtocol"                                              },
 
 };
