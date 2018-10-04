@@ -224,5 +224,19 @@ angular.module('radUtilitiesModule', [
             return piAuth;
         }
 
+        /**
+         * Returns true if the given ParcelUseAmount has been used (a container ID is set),
+         * or false if it has yet to be used (no container ID is set)
+         *
+         * @param {ParceUseAmount} amt
+         */
+        radUtilitiesFactory.isParcelUseAmountUsed = function isParcelUseAmountUsed(amt){
+            // UseAmount is unused if it has no container ID
+            return amt.Scint_vial_collection_id
+                || amt.Carboy_id
+                || amt.Waste_bag_id
+                || amt.Other_waste_container_id;
+        }
+
         return radUtilitiesFactory;
     });
