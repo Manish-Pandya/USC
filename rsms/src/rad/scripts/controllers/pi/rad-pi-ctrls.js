@@ -252,7 +252,7 @@ angular.module('00RsmsAngularOrmApp')
  * Controller of the 00RsmsAngularOrmApp PI Use Log
  */
 angular.module('00RsmsAngularOrmApp')
-    .controller('ParcelUseLogCtrl', function (convenienceMethods, $scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, roleBasedFactory, parcelUseValidationFactory) {
+    .controller('ParcelUseLogCtrl', function (convenienceMethods, $scope, actionFunctionsFactory, $stateParams, $rootScope, $modal, roleBasedFactory, parcelUseValidationFactory, radUtilitiesFactory) {
     var af = actionFunctionsFactory;
     $scope.af = af;
     $scope.roleBasedFactory = roleBasedFactory;
@@ -411,11 +411,24 @@ angular.module('00RsmsAngularOrmApp')
 
         if( allowAction ){
             // de/activate the usage
-            pu.Is_active = !pu.Is_active;
-            console.log(pu);
+            var activationStatus = !pu.Is_active;
+            var verb = activationStatus ? 'Activating' : 'Deactivating';
+
+            console.log(verb + " parcel use:", pu);
+            pu.Is_active = activationStatus;
 
             // de/activate the usage amounts
-            pu.ParcelUseAmounts.forEach(function (pua) { console.log(pua); pua.Is_active = !pua.Is_active; });
+            pu.ParcelUseAmounts.forEach(function (pua) {
+                // RSMS-683: When deactivating usages, we need to always ensure that non-disposed amount IS ALWAYS INACTIVE
+                if( radUtilitiesFactory.isParcelUseAmountUsed(pua) ){
+                    console.log(verb + " parcel use amount", pua);
+                    pua.Is_active = activationStatus;
+                }
+                else{
+                    console.debug("Parcel use amount is unused and must remain inactive", pua);
+                    pua.Is_active = false;
+                }
+            });
 
             // Save
             $scope.saving = af.saveParcelUse($rootScope.parcel, pu, pu).then(function (returned) {
