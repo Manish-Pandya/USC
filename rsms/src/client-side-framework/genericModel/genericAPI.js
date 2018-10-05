@@ -72,6 +72,10 @@ angular
                 if(!object.Class && object.className)object.Class = object.className;
                 if( !urlFragment )var urlFragment = api.fetchActionString( "save", object.Class );
                 var url = api.buildRequestUrl( urlFragment, false );
+
+                // Remove known cyclic references
+                api._removeKnownCyclicReferences(object);
+
                 console.log("Sending to ", url, "Data:", object);
                 if(saveChildren)url = url + "&saveChildren=true";
 
@@ -88,6 +92,39 @@ angular
 
                 return promise;
 
+        }
+
+        api._removeKnownCyclicReferences = function(obj){
+            if( !obj || !obj.Class ){
+                return obj;
+            }
+
+            // General
+            obj.rootScope = undefined;
+            obj.inflator = undefined;
+
+            switch( obj.Class ){
+                case "CarboyUseCycle":
+                    obj.Carboy = undefined;
+                    obj.Room = undefined;
+                    break;
+
+                case "ParcelUseAmount":
+                    obj.Carboy = undefined;
+                    break;
+
+                case "WasteBag":
+                    obj.Pickup = undefined;
+                    break;
+
+                case "ScintVialCollection":
+                    obj.Pickup = undefined;
+                    break;
+
+                default: break;
+            }
+
+            return obj;
         }
 
         api.handleError = function (data) {

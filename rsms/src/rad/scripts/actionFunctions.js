@@ -1687,6 +1687,7 @@ angular
                 // Remove cyclic references...
                 copy.rootScope = undefined;
                 copy.Carboy = undefined;
+                copy.Room = undefined;
 
                 console.log('Save CarboyUseCycle', copy);
 
