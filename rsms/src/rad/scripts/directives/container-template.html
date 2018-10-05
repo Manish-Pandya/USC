@@ -6,7 +6,7 @@
     <li ng-repeat="c in containersOfType = (group | filter:filterFunction | orderBy:'ViewLabel') track by c.Key_id" class="container-parent">
         <ul ng-class="{'container-disabled': isDisposed(c)}">
             <li class="labels">
-                <div class="container-label" ng-init="c.ViewLabel = c.ViewLabel ? c.ViewLabel : c.Name || c.Label || c.Carboy_number">
+                <div class="container-label" ng-init="c.ViewLabel = c.ViewLabel ? c.ViewLabel : c.Name || c.Label || c.Carboy_number || c.CarboyNumber">
                 {{c.ViewLabel}}
                     <span ng-if="isDisposed(c)">(Disposed)</span>
                     <span ng-if="c.Trays && c.Trays == 1">({{c.Trays}} Tray)</span>
