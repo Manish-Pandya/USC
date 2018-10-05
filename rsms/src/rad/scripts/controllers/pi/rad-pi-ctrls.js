@@ -414,6 +414,11 @@ angular.module('00RsmsAngularOrmApp')
             var activationStatus = !pu.Is_active;
             var verb = activationStatus ? 'Activating' : 'Deactivating';
 
+            if( !window.confirm("Are you sure you want to " + (activationStatus ? 'Reactivate' : 'Deactivate') + " this usage?") ){
+                console.debug("User canceled parcel-use de/activate action");
+                return;
+            }
+
             console.log(verb + " parcel use:", pu);
             pu.Is_active = activationStatus;
 
