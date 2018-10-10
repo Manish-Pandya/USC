@@ -388,7 +388,15 @@ angular.module('00RsmsAngularOrmApp')
                     sum += parseFloat(amt.Curie_level);
             });
         });
-        return sum.toString() + "mCi";
+
+        if( sum > 0 ) {
+            // Only display non-zero values to avoid misleading zeroes
+            return sum.toString() + "mCi";
+        }
+        else {
+            // n/a
+            return "";
+        }
     };
 
     /**
