@@ -4,8 +4,11 @@ return array(
     "server.auth.providers.emergency" => true,
     "server.auth.providers.ldap" => false,
 
-    "server.auth.providers.dev.nopassword" => true,
-    "server.auth.providers.dev.role" => true,
+    "server.auth.providers.dev.impersonate" => false,
+    "server.auth.providers.dev.impersonate.password" => NULL,
+
+    "server.auth.providers.dev.role" => false,
+    "server.auth.providers.dev.role.password" => NULL,
 
     //"server.auth.include_script" => "",
 

@@ -174,14 +174,19 @@ class ActionManager {
      * than LDAP.
      */
     protected function loginDev( $username, $password, $destination = NULL ){
-        if( !ApplicationConfiguration::get('server.auth.providers.dev.nopassword', false) ){
-            // Dev no-password auth is disabled
+        if( !ApplicationConfiguration::get('server.auth.providers.dev.impersonate', false) ){
+            // Dev impersonate auth is disabled
             return false;
         }
 
         $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
-        $LOG->warn("Attempt DEV-NO-PASSWORD authentication for '$username'");
-        return $this->handleUsernameAuthorization($username);
+        $LOG->warn("Attempt DEV-IMPERSONATE authentication for '$username'");
+        if( $password == ApplicationConfiguration::get('server.auth.providers.dev.impersonate.password') ){
+            return $this->handleUsernameAuthorization($username);
+        }
+
+        $LOG->info("DEV-IMPERSONATE AUTHENTICATION FAILED");
+        return false;
     }
 
     /**
@@ -204,7 +209,7 @@ class ActionManager {
 
         //the name of a real role was input in the form
         //hardcoded password for mock role login...
-        if ( in_array($username, $roles) && $password == "correcthorsebatterystaple" ) {
+        if ( in_array($username, $roles) && $password == ApplicationConfiguration::get('server.auth.providers.dev.role.password') ) {
             // Look up test user and mix in requested role
             // Default to Test User with ID 1
             $user = $this->getUserById(1);
