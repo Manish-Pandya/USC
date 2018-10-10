@@ -2,6 +2,8 @@
 return array(
     // Authentication settings
     "server.auth.providers.emergency" => true,
+    "server.auth.providers.emergency.password" => 'RSMS911',
+
     "server.auth.providers.ldap" => false,
 
     "server.auth.providers.dev.impersonate" => false,

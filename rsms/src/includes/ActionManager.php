@@ -266,10 +266,17 @@ class ActionManager {
      * Login to hard-coded 'emergency' user
      */
     protected function loginEmergency($username, $password, $destination = NULL){
+        // Check configured Emergency auth; enable by default
+        if( !ApplicationConfiguration::get('server.auth.providers.emergency', true) ){
+            // Emergency auth is disabled
+            return false;
+        }
+
         $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
+        $LOG->info("Attempt emergency-user authentication");
 
         // Hardcoded username and password for "emergency accounts"
-        if($username === "EmergencyUser" && $password === "RSMS911") {
+        if($username === "EmergencyUser" && $password === ApplicationConfiguration::get('server.auth.providers.emergency.password')) {
             return $this->handleUsernameAuthorization("EmergencyUser");
         }
 
