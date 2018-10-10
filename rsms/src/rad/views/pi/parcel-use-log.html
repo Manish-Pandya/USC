@@ -152,7 +152,8 @@
     <div class="card-content" style="padding-bottom:0">
         <table class="pickup-table table table-bordered" style="margin-bottom:0;">
             <tr ng-if="pi.Pickups" class="pickup-tab-header">
-                <td>Pickup Requested</td>
+                <td>Status</td>
+                <td>Requested</td>
                 <td>Picked Up</td>
                 <td class="use-amount solids">Solid Waste</td>
                 <td>Liquid Waste</td>
@@ -160,6 +161,7 @@
                 <td>Other Waste</td>
             </tr>
             <tr ng-repeat="pickup in pickups" class="pickup-tab">
+                <td>{{pickup.Status}}</td>
                 <td class="use-amount">{{pickup.Requested_date | dateToISO}}</td>
                 <td class="use-amount"><span ng-if="pickup.Pickup_date">{{pickup.Pickup_date | dateToISO}}</span></td>
                 <td class="use-amount solids">{{tabulateWaste(parcel.ParcelUses, constants.WASTE_TYPE.SOLID, pickup.Key_id)}}</td>
