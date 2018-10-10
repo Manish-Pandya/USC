@@ -273,10 +273,10 @@ class ActionManager {
         }
 
         $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
-        $LOG->info("Attempt emergency-user authentication");
 
         // Hardcoded username and password for "emergency accounts"
         if($username === "EmergencyUser" && $password === ApplicationConfiguration::get('server.auth.providers.emergency.password')) {
+            $LOG->info("Attempt emergency-user authentication");
             return $this->handleUsernameAuthorization("EmergencyUser");
         }
 
