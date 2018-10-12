@@ -2,6 +2,13 @@
 The Lab Inspection Summary provides a real-time report of the status of Inspections within a Department for a specified calendar year.
 The Department constraint is selected based on the User viewing the Report. Administrative users will be able to select the department which should be shown.
 
+## Report Table
+Principal Investigator
+Inspection Date
+Lab Inspection Status
+Compliance Score
+Inspection Report (link or 'n/a')
+
 # Details received from EHS prior to development:
 Add a Department Chair “Role” in the User Hub.  
 
