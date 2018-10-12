@@ -166,6 +166,11 @@ function isIBCEnabled(){
 	return false;
 }
 
+function isReportsEnabled(){
+	if(	stristr($_SERVER["HTTP_REFERER"], '/reports/' ) || isset($_GET['reports']) || isset($_GET['reports']))return true;
+	return false;
+}
+
 //////////////////////////////////////////////////
 
 

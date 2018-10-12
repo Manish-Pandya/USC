@@ -57,6 +57,9 @@ class ActionDispatcher {
         else if ( isIBCEnabled() ){
         	$this->actionManagerType = "IBC_ActionManager";
         }
+        else if( isReportsEnabled() ){
+            $this->actionManagerType = "Reports_ActionManager";
+        }
         else {
             $this->actionManagerType = "ActionManager";
         }
@@ -101,6 +104,10 @@ class ActionDispatcher {
 
             if( isIBCEnabled() ){
                 $actionMappings = array_merge($actionMappings, IBC_ActionMappingFactory::readActionConfig());
+            }
+
+            if( isReportsEnabled() ){
+                $actionMappings = array_merge($actionMappings, Reports_ActionMappingFactory::readActionConfig());
             }
 
             return $actionMappings;
