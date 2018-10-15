@@ -384,7 +384,7 @@ angular.module('00RsmsAngularOrmApp')
         var sum = 0;
         uses.forEach(function (u) {
             u.ParcelUseAmounts.forEach(function (amt) {
-                if ((!pickupId || pickupId == amt.IsPickedUp) && amt.Waste_type_id == type)
+                if (amt.Is_active && (!pickupId || pickupId == amt.IsPickedUp) && amt.Waste_type_id == type)
                     sum += parseFloat(amt.Curie_level);
             });
         });
