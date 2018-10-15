@@ -431,15 +431,6 @@ class Rad_ActionManager extends ActionManager {
             $entityMaps[] = new EntityMap("eager","getRooms");
         }
 
-        //all rad pis must have a waste bag for their solid waste
-        // || $pi->getCurrentWasteBag() == null
-        if($pi->getWasteBags() == null || $pi->getCurrentWasteBag() == null){
-            $bag = new WasteBag();
-            $bag->setPrincipal_investigator_id($pi->getKey_id());
-            $wasteBagDao = new GenericDAO($bag);
-            $bag = $wasteBagDao->save($bag);
-        }
-
         $entityMaps[] = new EntityMap("eager","getLabPersonnel");
         $entityMaps[] = new EntityMap("eager","getDepartments");
         $entityMaps[] = new EntityMap("eager","getUser");
