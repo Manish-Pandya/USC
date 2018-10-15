@@ -8,7 +8,7 @@
  * Main module of the application.
  */
 angular
-    .module('ng-InspectionsSummaryReport', [
+    .module('ng-Reports', [
     'cgBusy',
     'ui.bootstrap',
     'once',
@@ -19,9 +19,11 @@ angular
     'ngQuickDate'
 ])
     .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
-        console.debug("Configure ng-InspectionsSummaryReport");
+        console.debug("Configure ng-Reports");
 
         $urlRouterProvider.otherwise("/report");
+
+        // Inspection Summary Report routes
         $stateProvider
             .state('isr', {
             abstract: true,
@@ -38,7 +40,9 @@ angular
             templateUrl: "views/report.html",
             controller: "InspectionsSummaryReportCtrl"
         });
+
+        // TODO: Other reports?
     })
     .controller('AppCtrl', function ($rootScope, $q, convenienceMethods, $state) {
-        console.debug("ng-InspectionsSummaryReport running");
+        console.debug("ng-Reports running");
     });

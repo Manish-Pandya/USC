@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('ng-InspectionsSummaryReport')
+angular.module('ng-Reports')
     .controller('InspectionsSummaryReportCtrl', function(){
         console.debug("InspectionsSummaryReport running");
     });

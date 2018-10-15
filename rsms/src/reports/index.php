@@ -1,5 +1,5 @@
 <?php
-    require_once('../../Application.php');
+    require_once('../Application.php');
 
     session_start();
     // TODO: Check that user is logged in, or have the server do it...
@@ -68,8 +68,8 @@
 </head>
 <body>
 
-<div ng-app="ng-InspectionsSummaryReport" ng-controller="AppCtrl" class="container-fluid">
-    <div cg-busy="{promise:loading, message:'Loading...', templateUrl:'../../busy-templates/full-page-busy.html'}"></div>
+<div ng-app="ng-Reports" ng-controller="AppCtrl" class="container-fluid">
+    <div cg-busy="{promise:loading, message:'Loading...', templateUrl:'../busy-templates/full-page-busy.html'}"></div>
 
     <!-- NAVIGATION -->
     <div class="banner {{bannerClass}} radiation" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
