@@ -214,26 +214,7 @@ angular.module('radValidationFunctionsModule', [
                 validDate.isValid = false;
             }
 
-            //verify that the usage date isn't before the most recent picked-up pickup
-            var pu = $rootScope.pi.Pickups
-                .filter(p=>p.Pickup_date !== null)  // Pickup date shouldn't be null if it's picked up; could alternatively check status
-                .sort(function (a, b) { return a.Pickup_date > b.Pickup_date; })[0];
-
-            if (pu && convenienceMethods.dateIsBefore(usageDate, convenienceMethods.getDateString(pu.Pickup_date).formattedString)) {
-                validDate.error = "The date you entered is before your most recent pickup. If you need to make changes to uses that have already been picked up, please contact RSO.<br>";
-                validDate.isValid = false;
-                if (roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]])) {
-                    var mi = $modal.open({
-                        templateUrl: 'views/pi/pi-modals/parcel-use-log-override-modal.html',
-                        controller: 'ModalParcelUseLogOverrideCtrl'
-                    });
-                    mi.result.then(function (r) {
-                        $rootScope.parcelUses = {};
-                        $rootScope.parcelUses = $rootScope.mapUses($rootScope.parcel.ParcelUses);
-                        $modalInstance.close();
-                    });
-                }
-            }
+            // RSMS-714: No longer require validation against most-recent picked-up Pickup
 
             return validDate;
         }
