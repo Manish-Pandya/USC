@@ -125,8 +125,28 @@
             padding: 5px;
         }
 
-        .report-detail tbody tr:hover {
+        .report-detail th.sortable {
+            cursor: pointer;
+        }
+
+        .report-detail tr:hover {
             color: #49afcd !important;
+        }
+
+        /* Inspection Status-based Styles */
+        .report-detail tr.overdue-cap {
+            background-color: #ffff00 !important;
+            border-color: #ffff00 !important;
+            color: black;
+        }
+
+        .report-detail tr.overdue-cap:hover {
+            color: black !important;
+        }
+
+        .report-detail tr.inspection-completed {
+            font-style: italic;
+            color: #777;
         }
     </style>
 </head>
@@ -146,7 +166,13 @@
 
         <!-- NAVIGATION -->
         <div class="banner dashboard-banner no-print blueBg">
-            <h1>Reports <a style="float:right;margin: 11px 128px 0 0; color:black" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/inspections"><i class="icon-home" style="font-size:40px;"></i></a></h1>
+            <h1>
+                <i class="title-icon icon-clipboard-2"></i>
+                Reports
+                <a style="float:right;margin: 11px 128px 0 0; color:black" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/inspections">
+                    <i class="icon-home" style="font-size:40px;"></i>
+                </a>
+            </h1>
         </div>
 
         <!-- VIEW NESTING -->

@@ -1,8 +1,8 @@
 
 <div class="dashboard report-detail">
     <div class="card full">
-        <h1>
-            <i class="title-icon icon-clipboard-2"></i>Laboratory Safety Inspection Summary Report ({{selection.year}})
+        <h1 style="margin: 10px 0 0px 15px">
+            Laboratory Safety Inspection Summary Report ({{selection.year}})
         </h1>
 
         <hr/>
@@ -29,24 +29,25 @@
 
         <table ng-if="data.ReportItems">
             <tr>
-                <th ng-if="config.list_department" ng-click="reorder('Department_name');">
+                <th ng-if="config.list_department" ng-click="reorder('Department_name');" class="sortable">
                     Department <i class="icon-arrow"></i>
                 </th>
-                <th ng-click="reorder('Principal_investigator_name');">
+                <th ng-click="reorder('Principal_investigator_name');" class="sortable">
                     Principal Investigator <i class="icon-arrow"></i>
                 </th>
-                <th ng-click="reorder('Started_date');">
+                <th ng-click="reorder('Started_date');" class="sortable">
                     Inspection Date <i class="icon-arrow"></i>
                 </th>
-                <th ng-click="reorder('Inspection_status');">
+                <th ng-click="reorder('Inspection_status');" class="sortable">
                     Lab Inspection Status <i class="icon-arrow"></i>
                 </th>
-                <th ng-click="reorder('Score');">
+                <th ng-click="reorder('Score');" class="sortable">
                     Compliance Score <i class="icon-arrow"></i>
                 </th>
                 <th>Inspection Report</th>
             </tr>
-            <tr ng-repeat="item in data.ReportItems | orderBy : config.orderByField : config.reverseSort">
+            <tr ng-repeat="item in data.ReportItems | orderBy : config.orderByField : config.reverseSort"
+                ng-class="{'overdue-cap': item.Inspection_status == 'OVERDUE CAP', 'inspection-completed': item.Inspection_status == 'CLOSED OUT'}">
                 <td ng-if="config.list_department">{{item.Department_name}}</td>
                 <td>{{item.Principal_investigator_name}}</td>
                 <td>{{item.Started_date}}</td>
@@ -55,7 +56,9 @@
                     <span ng-if="item.Items_inspected > 0">{{item.Score}}%</span>
                 </td>
                 <td>
-                    <a ng-if="showInspectionLink(item)" target="_blank" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{item.Inspection_id}}">Inspection Report</a>
+                    <a ng-if="showInspectionLink(item)" target="_blank" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{item.Inspection_id}}">
+                        Inspection Report <i class="icon-out"></i>
+                    </a>
                     <span ng-if="!showInspectionLink(item)">N/A</span>
                 </td>
             </tr>
