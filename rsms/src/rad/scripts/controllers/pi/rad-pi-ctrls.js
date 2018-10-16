@@ -463,6 +463,49 @@ angular.module('00RsmsAngularOrmApp')
             alert("This use is invalid and cannot be activated. Edit the entry and try again.");
         }
     };
+
+    $scope.enableEditButton = function(use){
+        // Allow override if Admin user
+        if( roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]]) ){
+            return true;
+        }
+
+        //   it has any unused Activity
+        var unusedAmount = radUtilitiesFactory.getParcelUseUnusedAmount(use);
+        if( unusedAmount > 0 ){
+            return true;
+        }
+
+        //   OR
+        //   any of its waste references a container which is not Closed
+        var unclosedContainers = radUtilitiesFactory.getParcelUseContainers(use, $scope.pi)
+            .filter(c => !c.Close_date);
+
+        if( unclosedContainers.length ){
+            // At least one container is not closed
+            return true;
+        }
+
+        return false;
+    };
+
+    $scope.enableDisableButton = function(use){
+        // Allow override if Admin user
+        if( roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]]) ){
+            return true;
+        }
+
+        // An entry may be Enabled or Disabled if none of its waste references a Closed container
+        var closedContainers = radUtilitiesFactory.getParcelUseContainers(use, $scope.pi)
+            .filter(c => c.Close_date);
+
+        if( closedContainers.length ){
+            // At least one Container is closed; disallow enable or disable
+            return false;
+        }
+
+        return true;
+    };
 });
 angular.module('00RsmsAngularOrmApp')
     .controller('ModalParcelUseLogCtrl', function ($scope, $rootScope, $modalInstance, $modal, actionFunctionsFactory, convenienceMethods, roleBasedFactory, parcelUseValidationFactory) {
