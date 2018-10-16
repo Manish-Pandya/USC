@@ -313,18 +313,23 @@ angular.module('00RsmsAngularOrmApp')
             return false;
         return $rootScope.pi.Pickups.filter(function (p) { return p.Key_id == id; })[0];
     };
+
     $scope.getContainer = function (type, id) {
-        return "<small><br>" + $scope.pi[type + "s"].filter(function (c) { return c.Key_id == id; })[0].Label + "</small>" || null;
+        return radUtilitiesFactory.getContainerFromPi($scope.pi, type, id);
     };
+
+    $scope.describeContainer = function (type, id) {
+        var container = $scope.getContainer(type, id);
+        if( !container )
+            return "";
+
+        var label = container.CarboyNumber ? 'Carboy #' + container.CarboyNumber : container.Label;
+        var cls = container.Close_date ? ' class="red"' : '';
+        return "<small" + cls + "><br>" + label + "</small>" || null;
+    };
+
     $scope.getSampleAmount = function (use) {
-        var total = use.Quantity;
-        use.ParcelUseAmounts
-            .filter(pu => pu.Is_active)
-            .forEach(function (pu) {
-                total -= parseFloat(pu.Curie_level);
-            }
-        );
-        total = Math.round(total * 100000) / 100000;
+        var total = radUtilitiesFactory.getParcelUseUnusedAmount(use);
         if (total >= 0)
             return total + "mCi";
         return "N/A";
