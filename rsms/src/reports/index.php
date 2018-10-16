@@ -111,6 +111,23 @@
             width: auto;
             line-height: 43px;
         }
+
+        .report-detail ul {
+            list-style: none;
+            font-size: 25px;
+        }
+
+        .report-detail .title {
+            font-weight: bold;
+        }
+
+        .report-detail ul li {
+            padding: 5px;
+        }
+
+        .report-detail tbody tr:hover {
+            color: #49afcd !important;
+        }
     </style>
 </head>
 

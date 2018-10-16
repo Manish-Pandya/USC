@@ -55,6 +55,7 @@ angular.module('ng-Reports')
         friendlyText[Constants.INSPECTION.STATUS.NOT_SCHEDULED] = "Not Scheduled";
         friendlyText[Constants.INSPECTION.STATUS.SCHEDULED] = "Scheduled";
         friendlyText[Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION] = "Overdue for Inspection";
+        friendlyText[Constants.INSPECTION.STATUS.OVERDUE_CAP] = "Overdue Corrective Actions";
 
         /**
          * Gets the 'friendly' status text for a given status code

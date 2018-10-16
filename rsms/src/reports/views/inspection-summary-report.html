@@ -1,21 +1,32 @@
 
-<div class="dashboard">
+<div class="dashboard report-detail">
     <div class="card full">
         <h1>
             <i class="title-icon icon-clipboard-2"></i>Laboratory Safety Inspection Summary Report ({{selection.year}})
         </h1>
 
-        <div>
-            <pre>
-                <code>
-                    Deptartment: {{data.Department.Name}}
-                    Chair: {{data.Department.Chair_name}}
-                </code>
-            </pre>
+        <hr/>
+
+        <div ng-if="!data.Department" style="text-align: center; margin: 10px;">
+            <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
         </div>
+        <ul ng-if="data.Department">
+            <li>
+                <span class="title">Deptartment:</span>
+                <span ng-bind="data.Department.Name"></span>
+            </li>
+            <li>
+                <span class="title">Chair:</span>
+                <span ng-bind="data.Department.Chair_name"></span>
+            </li>
+        </ul>
     </div>
 
     <div class="card full">
+        <div ng-if="!data.ReportItems" style="text-align: center; margin: 10px;">
+            <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
+        </div>
+
         <table ng-if="data.ReportItems">
             <tr>
                 <th ng-if="config.list_department" ng-click="reorder('Department_name');">
