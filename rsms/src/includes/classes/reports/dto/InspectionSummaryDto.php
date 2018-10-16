@@ -8,11 +8,14 @@ class InspectionSummaryDto {
     private $principal_investigator_name;
     private $principal_investigator_id;
     private $schedule_year;
+    private $schedule_month;
     private $started_date;
     private $closed_date;
     private $notification_date;
     private $cap_submitted_date;
     private $inspection_status;
+    private $items_inspected;
+    private $items_compliant;
     private $department_id;
     private $department_name;
 
@@ -30,6 +33,10 @@ class InspectionSummaryDto {
     
     public function getSchedule_year(){
         return $this->schedule_year;
+    }
+
+    public function getSchedule_month(){
+        return $this->schedule_month;
     }
     
     public function getStarted_date(){
@@ -50,6 +57,14 @@ class InspectionSummaryDto {
     
     public function getInspection_status(){
         return $this->inspection_status;
+    }
+
+    public function getItems_inspected(){
+        return $this->items_inspected;
+    }
+
+    public function getItems_compliant(){
+        return $this->items_compliant;
     }
     
     public function getDepartment_id(){
@@ -75,7 +90,11 @@ class InspectionSummaryDto {
     public function setSchedule_year($val){
         $this->schedule_year = $val;
     }
-    
+
+    public function setSchedule_month($val){
+        $this->schedule_month = $val;
+    }
+
     public function setStarted_date($val){
         $this->started_date = $val;
     }
@@ -95,13 +114,25 @@ class InspectionSummaryDto {
     public function setInspection_status($val){
         $this->inspection_status = $val;
     }
-    
+
+    public function setItems_inspected($val){
+        $this->items_inspected = $val;
+    }
+
+    public function setItems_compliant($val){
+        $this->items_compliant = $val;
+    }
+
     public function setDepartment_id($val){
         $this->department_id = $val;
     }
     
     public function setDepartment_name($val){
         $this->department_name = $val;
+    }
+
+    public function getScore(){
+        return number_format(($this->getItems_compliant() / $this->getItems_inspected()) * 100);
     }
 }
 ?>

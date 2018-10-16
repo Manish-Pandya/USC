@@ -31,13 +31,13 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
             insp.principal_investigator_id AS principal_investigator_id,
             insp.schedule_year AS schedule_year,
             insp.schedule_month AS schedule_month,
-            insp.date_started AS inspection_started,
-            insp.date_closed AS closed,
+            insp.date_started AS started_date,
+            insp.date_closed AS closed_date,
             insp.notification_date AS notification_date,
             insp.cap_submitted_date AS cap_submitted_date,
             insp.cap_submitter_id AS cap_submitter_id,
 
-            -- Calculate inspection status
+            -- Calculate inspection status (Logically copied from Inspection#getStatus())
             (CASE
                 WHEN insp.date_closed IS NOT NULL THEN 'CLOSED OUT'
                 WHEN insp.cap_submitted_date IS NOT NULL THEN 'SUBMITTED CAP'
@@ -64,7 +64,11 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
                 ELSE 'NOT SCHEDULED'
             END) AS inspection_status,
 
-            piuser.name AS principal_investigator_name,
+            -- Inspection details
+            (SELECT count(*) FROM response resp WHERE resp.inspection_id = insp.key_id) as items_inspected,
+            (SELECT count(*) FROM response resp WHERE resp.inspection_id = insp.key_id AND resp.answer != 'no') as items_compliant,
+
+            (COALESCE(piuser.name, CONCAT_WS(', ', piuser.last_name, piuser.first_name))) AS principal_investigator_name,
             dept.key_id AS department_id,
             dept.name AS department_name
 
