@@ -8,12 +8,45 @@ class Reports_ActionManager extends ActionManager {
      * for Year and Department
      */
     public function getInspectionsSummaryReport($year, $department_id){
-		$LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $year = $this->getValueFromRequest('year', $year);
+        $department_id = $this->getValueFromRequest('department_id', $department_id);
 
         $LOG->debug("y:$year, d:$department_id");
 
         $dao = new LabInspectionSummaryReportDAO();
         return $dao->getInspections($year, $department_id);
+    }
+
+    /**
+     * Get basic reporting details about a Department
+     */
+    public function getDepartmentInfo($department_id = NULL){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $department_id = $this->getValueFromRequest('department_id', $department_id);
+
+        if( $department_id == NULL ){
+            // Get department for current user
+            $user = $this->getCurrentUser();
+            $department_id = $user->getPrimary_department_id();
+        }
+
+        if( $department_id == NULL ){
+            return new ActionError("No department was provided or mapped to this user", 400);
+        }
+
+        $deptDao = new GenericDAO(new Department());
+        $dept = $deptDao->getById($department_id);
+
+        // TODO: Retrieve Department Chair and include in DTO
+
+        return $dept;
+    }
+
+    public function getDepartmentChair($department_id){
+
     }
 }
 ?>
