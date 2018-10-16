@@ -115,7 +115,76 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
         }
         else {
             $error = $stmt->errorInfo();
-            $LOG->error("Error querying inspection summary (y=$year, d=$department_id): " . $error);
+            $LOG->error("Error querying inspection summary (y=$year, d=$department_id): " . $error[2]);
+
+			$result = new QueryError($error[2]);
+        }
+
+        // 'close' the statement
+        $stmt = null;
+        return $result;
+    }
+
+    public function getDepartmentDetails($department_id = NULL){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        // Prepare predicates to constrain (optionally) Department
+        $predicates = array();
+
+        if( $department_id != NULL ){
+            $predicates[] = "dept.key_id = :department_id";
+        }
+
+        $whereClause = '';
+        if( count($predicates) > 0 ){
+            $whereClause = 'WHERE ' . implode(' AND ', $predicates);
+        }
+
+        $sql = "SELECT
+                dept.key_id AS key_id,
+                dept.name AS name,
+                chair.primary_department_id AS chair_id,
+                (COALESCE(chair.name, CONCAT_WS(', ', chair.last_name, chair.first_name))) AS chair_name
+
+            FROM department dept
+
+            -- Join to department chair users
+            LEFT OUTER JOIN (
+                SELECT
+                    user.`key_id`,
+                    user.`username`,
+                    user.`first_name`,
+                    user.`last_name`,
+                    user.`name`,
+                    user.`primary_department_id`
+                FROM erasmus_user user WHERE user.key_id IN (
+                    SELECT ur.user_id FROM user_role ur WHERE ur.role_id = (
+                        SELECT r.key_id FROM `role` r WHERE r.name = 'Department Chair'
+                    )
+                )
+            ) chair
+                ON chair.primary_department_id = dept.key_id
+
+            $whereClause
+        ";
+
+        // Prepare statement
+        $stmt = DBConnection::prepareStatement($sql);
+        if( $department_id != NULL ){
+            $stmt->bindValue(':department_id', $department_id, PDO::PARAM_INT);
+        }
+
+        // Execute the statement
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace($sql);
+        }
+
+		if ($stmt->execute()) {
+            $result = $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentDetailDto");
+        }
+        else {
+            $error = $stmt->errorInfo();
+            $LOG->error("Error querying department details (d=$department_id): " . $error[2]);
 
 			$result = new QueryError($error[2]);
         }
