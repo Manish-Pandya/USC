@@ -74,22 +74,22 @@
                     <tr class="table-row top-align" ng-repeat="use in parcel.ParcelUses" ng-if="use && parcel.showActive == use.Is_active" ng-class="{'formError': use.error}" table-error="{{use.error}}" obj="use">
                         <td ng-init="use.loadParcelUseAmounts()">
                             <button class="btn btn-primary" 
-                                    ng-click="editUse(use)" 
-                                    ng-if="(!use.Date_transferred && !use.getIsPickedUp()) || roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])"><i class="icon-pencil"></i></button>
+                                    ng-click="!use.Date_transferred && editUse(use)"
+                                    ng-if="!use.Date_transferred && enableEditButton(use)"><i class="icon-pencil"></i></button>
                             <button class="btn" 
                                     ng-click="deactivate(use)" 
-                                    ng-if="(!use.Date_transferred && !use.getIsPickedUp()) || roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])"
+                                    ng-if="!use.Date_transferred && enableDisableButton(use)"
                                     ng-class="{'btn-danger':use.Is_active, 'btn-success':!use.Is_active}">
                             <i ng-class="{'icon-cancel-2':use.Is_active, 'icon-checkmark-2':!use.Is_active}"></i></button>
 
                             <button class="btn btn-primary disabled"
-                                    popover-placement="right" popover="Contact RSO if changes are needed." popover-title="This waste has already been picked up"
-                                    ng-if="!use.Date_transferred && use.getIsPickedUp() && !roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])">
+                                    popover-placement="right" popover="Contact RSO if changes are needed." popover-title="All of this waste has been placed in containers which have been closed and cannot be edited further."
+                                    ng-if="!use.Date_transferred && !enableEditButton(use)">
                                 <i class="icon-pencil"></i>
                             </button>
                             <button class="btn disabled"
-                                    popover-placement="right" popover="Contact RSO if changes are needed." popover-title="This waste has already been picked up"
-                                    ng-if="!use.Date_transferred && use.getIsPickedUp() && !roleBasedFactory.getHasPermission([R[Constants.ROLE.NAME.RADIATION_ADMIN]])"
+                                    popover-placement="right" popover="Contact RSO if changes are needed." popover-title="Some or all of this waste is placed in containers which have been closed and cannot be Disabled or Enabled."
+                                    ng-if="!use.Date_transferred && !enableDisableButton(use)"
                                     ng-class="{'btn-danger':use.Is_active, 'btn-success':!use.Is_active}">
                                 <i ng-class="{'icon-remove':use.Is_active, 'icon-checkmark-2':!use.Is_active}"></i>
                             </button>
@@ -112,26 +112,26 @@
 
                         <td class="use-amount solids">
                             <div ng-repeat="solid in use.solids = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.SOLID})">
-                                <span>{{solid.Curie_level}}mCi</span><span ng-bind-html="getContainer('WasteBag', solid.Waste_bag_id)"></span>
+                                <span>{{solid.Curie_level}}mCi</span><span ng-bind-html="describeContainer('WasteBag', solid.Waste_bag_id)"></span>
                             </div>
                             <div ng-if="!use.solids.length">No Solid Disposals</div>
                         </td>
                         <td class="use-amount liquids">
                             <div ng-repeat="liquid in liquids = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.LIQUID})">
-                                {{liquid.Curie_level}}mCi <small><br />Carboy #{{liquid.Carboy.CarboyNumber}}</small>
+                                {{liquid.Curie_level}}mCi <small><span ng-bind-html="describeContainer('CarboyUseCycle', liquid.Carboy_id)"></span>
                             </div>
                             <div ng-if="!liquids.length">No Liquid Disposals</div>
                         </td>
                         <td class="use-amount vials">
                             <div ng-repeat="vial in vials = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.VIAL})">
-                                <span>{{vial.Curie_level}}mCi</span><span ng-bind-html="getContainer('ScintVialCollection', vial.Scint_vial_collection_id)"></span>
+                                <span>{{vial.Curie_level}}mCi</span><span ng-bind-html="describeContainer('ScintVialCollection', vial.Scint_vial_collection_id)"></span>
                             </div>
                             <div ng-if="!vials.length">No vial Disposals</div>
                         </td>
                         <td class="use-amount others">
                             <div ng-show="!others.length">N/A</div>
                             <div ng-repeat="other in others = (use.ParcelUseAmounts | filter:{Waste_type_id:constants.WASTE_TYPE.OTHER})">
-                                <span>{{other.Curie_level}}mCi</span><span ng-bind-html="getContainer('OtherWasteContainer', other.Other_waste_container_id)"></span>
+                                <span>{{other.Curie_level}}mCi</span><span ng-bind-html="describeContainer('OtherWasteContainer', other.Other_waste_container_id)"></span>
                             </div>
                         </td>
                         <td class="use-amount vials">

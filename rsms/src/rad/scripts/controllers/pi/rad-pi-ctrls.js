@@ -313,18 +313,23 @@ angular.module('00RsmsAngularOrmApp')
             return false;
         return $rootScope.pi.Pickups.filter(function (p) { return p.Key_id == id; })[0];
     };
+
     $scope.getContainer = function (type, id) {
-        return "<small><br>" + $scope.pi[type + "s"].filter(function (c) { return c.Key_id == id; })[0].Label + "</small>" || null;
+        return radUtilitiesFactory.getContainerFromPi($scope.pi, type, id);
     };
+
+    $scope.describeContainer = function (type, id) {
+        var container = $scope.getContainer(type, id);
+        if( !container )
+            return "";
+
+        var label = container.CarboyNumber ? 'Carboy #' + container.CarboyNumber : container.Label;
+        var cls = container.Close_date ? ' class="red"' : '';
+        return "<small" + cls + "><br>" + label + "</small>" || null;
+    };
+
     $scope.getSampleAmount = function (use) {
-        var total = use.Quantity;
-        use.ParcelUseAmounts
-            .filter(pu => pu.Is_active)
-            .forEach(function (pu) {
-                total -= parseFloat(pu.Curie_level);
-            }
-        );
-        total = Math.round(total * 100000) / 100000;
+        var total = radUtilitiesFactory.getParcelUseUnusedAmount(use);
         if (total >= 0)
             return total + "mCi";
         return "N/A";
@@ -457,6 +462,49 @@ angular.module('00RsmsAngularOrmApp')
             // This usage is invalid
             alert("This use is invalid and cannot be activated. Edit the entry and try again.");
         }
+    };
+
+    $scope.enableEditButton = function(use){
+        // Allow override if Admin user
+        if( roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]]) ){
+            return true;
+        }
+
+        //   it has any unused Activity
+        var unusedAmount = radUtilitiesFactory.getParcelUseUnusedAmount(use);
+        if( unusedAmount > 0 ){
+            return true;
+        }
+
+        //   OR
+        //   any of its waste references a container which is not Closed
+        var unclosedContainers = radUtilitiesFactory.getParcelUseContainers(use, $scope.pi)
+            .filter(c => !c.Close_date);
+
+        if( unclosedContainers.length ){
+            // At least one container is not closed
+            return true;
+        }
+
+        return false;
+    };
+
+    $scope.enableDisableButton = function(use){
+        // Allow override if Admin user
+        if( roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]]) ){
+            return true;
+        }
+
+        // An entry may be Enabled or Disabled if none of its waste references a Closed container
+        var closedContainers = radUtilitiesFactory.getParcelUseContainers(use, $scope.pi)
+            .filter(c => c.Close_date);
+
+        if( closedContainers.length ){
+            // At least one Container is closed; disallow enable or disable
+            return false;
+        }
+
+        return true;
     };
 });
 angular.module('00RsmsAngularOrmApp')

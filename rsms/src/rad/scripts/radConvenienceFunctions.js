@@ -238,5 +238,52 @@ angular.module('radUtilitiesModule', [
                 || amt.Other_waste_container_id;
         }
 
+        radUtilitiesFactory.getParcelUseUnusedAmount = function getParcelUseUnusedAmount(use){
+            var total = use.Quantity;
+            use.ParcelUseAmounts
+                .filter(pu => pu.Is_active)
+                .forEach(function (pu) {
+                    total -= parseFloat(pu.Curie_level);
+                }
+            );
+            total = Math.round(total * 100000) / 100000;
+            return total;
+        }
+
+        radUtilitiesFactory.getParcelUseContainers = function getParcelUseContainers(use, pi){
+            var containers = [];
+            if( use.ParcelUseAmounts ){
+                for( var i = 0; i < use.ParcelUseAmounts.length; i++ ){
+                    var amt = use.ParcelUseAmounts[i];
+
+                    // Determine container type from waste_type ID
+                    var contType;
+                    switch( parseInt(amt.Waste_type_id) ){
+                        case Constants.WASTE_TYPE.SOLID: contType = 'WasteBag'; break;
+                        case Constants.WASTE_TYPE.LIQUID: contType = 'CarboyUseCycle'; break;
+                        case Constants.WASTE_TYPE.VIAL: contType = 'ScintVialCollection'; break;
+                        case Constants.WASTE_TYPE.OTHER: contType = 'OtherWasteContainer'; break;
+                        default: break;
+                    }
+
+                    // isParcelUseAmountUsed non-zero return value is ID of container
+                    var contId = radUtilitiesFactory.isParcelUseAmountUsed(amt);
+
+                    if( contId ){
+                        var container = radUtilitiesFactory.getContainerFromPi(pi, contType, contId);
+                        if( container ){
+                            containers.push(container);
+                        }
+                    }
+                }
+            }
+
+            return containers;
+        }
+
+        radUtilitiesFactory.getContainerFromPi = function getContainerFromPi(pi, type, id){
+            return pi[type + "s"].filter(function (c) { return c.Key_id == id; })[0] || null;
+        }
+
         return radUtilitiesFactory;
     });
