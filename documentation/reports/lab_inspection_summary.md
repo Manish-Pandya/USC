@@ -6,7 +6,7 @@ The Department constraint is selected based on the User viewing the Report. Admi
 Principal Investigator
 Inspection Date
 Lab Inspection Status
-Compliance Score
+Compliance Score (score displayed in post-inspection report)
 Inspection Report (link or 'n/a')
 
 # Details received from EHS prior to development:
