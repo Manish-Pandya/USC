@@ -35,12 +35,12 @@ angular
         $stateProvider
             .state('isr', {
             abstract: true,
-            url: '',
+            url: '/inspection-summary-report',
             template: '<ui-view/>'
         })
 
         .state('isr.report', {
-            url: "/inspection-summary-report/:year",
+            url: "/:year",
             templateUrl: "views/inspection-summary-report.html",
             controller: "InspectionsSummaryReportCtrl"
         });
