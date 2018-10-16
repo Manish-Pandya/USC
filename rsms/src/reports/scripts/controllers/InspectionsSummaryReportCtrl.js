@@ -49,6 +49,35 @@ angular.module('ng-Reports')
             // End param check
         };
 
+        // Helper mappings for generating 'friendly' status texts
+        var friendlyText = [];
+        friendlyText[Constants.INSPECTION.STATUS.NOT_ASSIGNED] = "Not Assigned";
+        friendlyText[Constants.INSPECTION.STATUS.NOT_SCHEDULED] = "Not Scheduled";
+        friendlyText[Constants.INSPECTION.STATUS.SCHEDULED] = "Scheduled";
+        friendlyText[Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION] = "Overdue for Inspection";
+
+        /**
+         * Gets the 'friendly' status text for a given status code
+         */
+        $scope.getStatusText = function getStatusText(inspection){
+            return friendlyText[inspection.Inspection_status] || inspection.Inspection_status;
+        };
+
+        /**
+         * Return true if a Link to the inspection should be shown in the report table
+         */
+        $scope.showInspectionLink = function showInspectionLink(inspection){
+            switch(inspection.Inspection_status){
+                case Constants.INSPECTION.STATUS.NOT_ASSIGNED:
+                case Constants.INSPECTION.STATUS.NOT_SCHEDULED:
+                case Constants.INSPECTION.STATUS.SCHEDULED:
+                case Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
         // Get parameters
         $scope.getReportParams();
 

@@ -9,7 +9,7 @@
             <pre>
                 <code>
                     Deptartment: {{data.Department.Name}}
-                    Chair:
+                    Chair: {{data.Department.Chair_name}}
                 </code>
             </pre>
         </div>
@@ -18,22 +18,35 @@
     <div class="card full">
         <table ng-if="data.ReportItems">
             <tr>
-                <th>Department</th>
-                <th>Principal Investigator</th>
-                <th>Inspection Date</th>
-                <th>Lab Inspection Status</th>
-                <th>Compliance Score</th>
-                <th>Inspection Report (link or 'n/a')</th>
+                <th ng-if="config.list_department" ng-click="reorder('Department_name');">
+                    Department <i class="icon-arrow"></i>
+                </th>
+                <th ng-click="reorder('Principal_investigator_name');">
+                    Principal Investigator <i class="icon-arrow"></i>
+                </th>
+                <th ng-click="reorder('Started_date');">
+                    Inspection Date <i class="icon-arrow"></i>
+                </th>
+                <th ng-click="reorder('Inspection_status');">
+                    Lab Inspection Status <i class="icon-arrow"></i>
+                </th>
+                <th ng-click="reorder('Score');">
+                    Compliance Score <i class="icon-arrow"></i>
+                </th>
+                <th>Inspection Report</th>
             </tr>
-            <tr ng-repeat="item in data.ReportItems">
-                <td>{{item.Department_name}}</td>
+            <tr ng-repeat="item in data.ReportItems | orderBy : config.orderByField : config.reverseSort">
+                <td ng-if="config.list_department">{{item.Department_name}}</td>
                 <td>{{item.Principal_investigator_name}}</td>
                 <td>{{item.Started_date}}</td>
-                <td>{{item.Inspection_status}}</td>
+                <td>{{getStatusText(item)}}</td>
                 <td>
                     <span ng-if="item.Items_inspected > 0">{{item.Score}}%</span>
                 </td>
-                <td>../views/inspection/InspectionConfirmation.php#/report?inspection={{item.Inspection_id}}</td>
+                <td>
+                    <a ng-if="showInspectionLink(item)" target="_blank" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{item.Inspection_id}}">Inspection Report</a>
+                    <span ng-if="!showInspectionLink(item)">N/A</span>
+                </td>
             </tr>
         </table>
     </div>
