@@ -9,6 +9,7 @@
  */
 angular
     .module('ng-Reports', [
+    'actionFunctionsModule',
     'cgBusy',
     'ui.bootstrap',
     'once',
@@ -21,7 +22,14 @@ angular
     .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
         console.debug("Configure ng-Reports");
 
-        $urlRouterProvider.otherwise("/report");
+        $urlRouterProvider.otherwise("/");
+
+        $stateProvider
+            .state('reports', {
+                url: "/",
+                templateUrl: "views/report-types.html",
+                controller: "ReportTypesCtrl"
+            });
 
         // Inspection Summary Report routes
         $stateProvider
@@ -30,14 +38,10 @@ angular
             url: '',
             template: '<ui-view/>'
         })
-        .state('isr.report-admin', {
-            url: "/report",
-            templateUrl: "views/report.html",
-            controller: "InspectionsSummaryReportCtrl"
-        })
-        .state('isr.report-department', {
-            url: "/report/:year/department/:departmentId",
-            templateUrl: "views/report.html",
+
+        .state('isr.report', {
+            url: "/inspection-summary-report/:year",
+            templateUrl: "views/inspection-summary-report.html",
             controller: "InspectionsSummaryReportCtrl"
         });
 

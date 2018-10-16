@@ -1,15 +1,40 @@
 
 <div class="dashboard">
-    <h1>
-        <i class="icon-clipboard-2"></i>Inspection Summary Report
-    </h1>
+    <div class="card full">
+        <h1>
+            <i class="title-icon icon-clipboard-2"></i>Laboratory Safety Inspection Summary Report ({{selection.year}})
+        </h1>
 
-    <div>
-        <pre>
-            <code>
-                Year: {{selectedYear}}
-                Dept: {{selectedDepartmentId}}
-            </code>
-        </pre>
+        <div>
+            <pre>
+                <code>
+                    Deptartment: {{data.Department.Name}}
+                    Chair:
+                </code>
+            </pre>
+        </div>
+    </div>
+
+    <div class="card full">
+        <table ng-if="data.ReportItems">
+            <tr>
+                <th>Department</th>
+                <th>Principal Investigator</th>
+                <th>Inspection Date</th>
+                <th>Lab Inspection Status</th>
+                <th>Compliance Score</th>
+                <th>Inspection Report (link or 'n/a')</th>
+            </tr>
+            <tr ng-repeat="item in data.ReportItems">
+                <td>{{item.Department_name}}</td>
+                <td>{{item.Principal_investigator_name}}</td>
+                <td>{{item.Started_date}}</td>
+                <td>{{item.Inspection_status}}</td>
+                <td>
+                    <span ng-if="item.Items_inspected > 0">{{item.Score}}%</span>
+                </td>
+                <td>../views/inspection/InspectionConfirmation.php#/report?inspection={{item.Inspection_id}}</td>
+            </tr>
+        </table>
     </div>
 </div>

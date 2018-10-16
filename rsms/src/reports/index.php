@@ -8,6 +8,14 @@
 <html lang="en">
 <head>
 
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/bootstrap.css"/>
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/bootstrap-responsive.css"/>
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/bootmetro.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/bootmetro-tiles.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/metro-ui-light.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/icomoon.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/datepicker.css"/>
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/font-awesome.min.css"/>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/10-18-2017-manual-bundle.min.css"/>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/angular-busy.css"/>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css" />
@@ -29,18 +37,24 @@
 
     <script src="<?php echo WEB_ROOT?>js/lib/angular.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/angular-route.min.js"></script>
+
     <script src="<?php echo WEB_ROOT?>js/lib/ui-bootstrap-custom-tpls-0.4.0.js"></script>
+
     <script src="<?php echo WEB_ROOT?>js/convenienceMethodsModule.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/ng-quick-date.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/angular-once.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/angular.filter.js"></script>
+
     <script src="<?php echo WEB_ROOT?>js/modalPosition.js"></script>
+
     <script src="<?php echo WEB_ROOT?>js/lib/angular-busy.min.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/angular-ui-router.min.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/cycle.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/select.min.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/angular-sanitize.min.js"></script>
+
     <script src="<?php echo WEB_ROOT?>js/roleBased.js"></script>
+
     <script src="<?php echo WEB_ROOT?>js/lib/contextMenu.min.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/ng-quick-date/ng-quick-date.js"></script>
 
@@ -51,8 +65,10 @@
     <script src="scripts/app.js"></script>
 
     <!-- business logic-->
+    <script src="scripts/actionFunctions.js"></script>
 
     <!-- controllers -->
+    <script src="scripts/controllers/ReportTypesCtrl.js"></script>
     <script src="scripts/controllers/InspectionsSummaryReportCtrl.js"></script>
 
     <!-- framework -->
@@ -65,20 +81,60 @@
     <script src="<?php echo WEB_ROOT?>ignorasmus/client-side-framework/models/FluxCompositerBase.js"></script>
     <script src="<?php echo WEB_ROOT?>ignorasmus/client-side-framework/models/ViewModelHolder.js"></script>
 
+    <!-- TODO: Extract to file -->
+    <style>
+        .banner {
+            margin-top: -2px;
+
+            background: white;
+            padding: 10px;
+            background-repeat: no-repeat !important;
+            background-size: 70px !Important;
+            padding-left: 80px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.7)
+        }
+
+        .banner.dashboard-banner {
+            position: fixed;
+            width: 100%;
+            left: 0;
+            z-index: 1040;
+        }
+
+        .dashboard {
+            padding-top: 75px;
+        }
+
+        .title-icon {
+            margin-right: 5px;
+            font-size: 35px;
+            width: auto;
+            line-height: 43px;
+        }
+    </style>
 </head>
+
 <body>
+    <?php if($_SESSION['USER'] != NULL){ ?>
+        <div class="user-info" ng-controller="roleBasedCtrl">
+            <div>
+                Signed in as <?php echo $_SESSION['USER']->getName(); ?>
+                <a style="float:right;" href="<?php echo WEB_ROOT?>action.php?action=logoutAction">Sign Out</a>
+            </div>
+        </div>
+    <?php }?>
 
-<div ng-app="ng-Reports" ng-controller="AppCtrl" class="container-fluid">
-    <div cg-busy="{promise:loading, message:'Loading...', templateUrl:'../busy-templates/full-page-busy.html'}"></div>
+    <div ng-app="ng-Reports" ng-controller="AppCtrl" class="container-fluid" style="margin-top:25px;">
+        <div cg-busy="{promise:loading, message:'Loading...', templateUrl:'../busy-templates/full-page-busy.html'}"></div>
 
-    <!-- NAVIGATION -->
-    <div class="banner {{bannerClass}} radiation" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
-        <h1>{{viewLabel}} <a style="float:right;margin: 11px 128px 0 0; color:black" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/safety-programs"><i class="icon-home" style="font-size:40px;"></i></a></h1>
+        <!-- NAVIGATION -->
+        <div class="banner dashboard-banner no-print blueBg">
+            <h1>Reports <a style="float:right;margin: 11px 128px 0 0; color:black" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/inspections"><i class="icon-home" style="font-size:40px;"></i></a></h1>
+        </div>
+
+        <!-- VIEW NESTING -->
+        <div ui-view class="noBg isr"></div>
     </div>
-
-    <!-- VIEW NESTING -->
-    <div ui-view class="noBg isr"></div>
-</div>
 
 </body>
 </html>
