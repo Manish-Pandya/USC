@@ -20,6 +20,18 @@ class Reports_ActionManager extends ActionManager {
     }
 
     /**
+     * Get basic reporting details about all Departments
+     */
+    public function getAllDepartmentInfo(){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $dao = new LabInspectionSummaryReportDAO();
+        $departments = $dao->getDepartmentDetails();
+
+        return $departments;
+    }
+
+    /**
      * Get basic reporting details about a Department
      */
     public function getDepartmentInfo($department_id = NULL){
@@ -37,16 +49,10 @@ class Reports_ActionManager extends ActionManager {
             return new ActionError("No department was provided or mapped to this user", 400);
         }
 
-        $deptDao = new GenericDAO(new Department());
-        $dept = $deptDao->getById($department_id);
+        $dao = new LabInspectionSummaryReportDAO();
+        $departments = $dao->getDepartmentDetails($department_id);
 
-        // TODO: Retrieve Department Chair and include in DTO
-
-        return $dept;
-    }
-
-    public function getDepartmentChair($department_id){
-
+        return $departments[0];
     }
 }
 ?>
