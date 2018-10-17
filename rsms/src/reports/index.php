@@ -118,7 +118,7 @@
             line-height: 43px;
         }
 
-        .report-detail ul {
+        .report-detail ul.report-info {
             list-style: none;
             font-size: 25px;
         }
@@ -127,7 +127,7 @@
             font-weight: bold;
         }
 
-        .report-detail ul li {
+        .report-detail ul.report-info li {
             padding: 5px;
         }
 
@@ -139,20 +139,18 @@
             color: #49afcd !important;
         }
 
+        .report-detail .nav-pills > li.label {
+            margin-top: 2px;
+            margin-bottom: 2px;
+            padding-right: 12px;
+            padding-left: 12px;
+            margin-right: 2px;
+            line-height: 14px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+
         /* Inspection Status-based Styles */
-        .report-detail tr.overdue {
-            color: black;
-        }
-
-        .report-detail tr.overdue:hover {
-            color: black !important;
-        }
-
-        .report-detail tr.overdue.overdue-cap {
-            background-color: #ffff00 !important;
-            border-color: #ffff00 !important;
-        }
-
         .report-detail tr.inspection-completed {
             font-style: italic;
             color: #777;

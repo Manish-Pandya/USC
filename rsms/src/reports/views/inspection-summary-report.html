@@ -1,16 +1,23 @@
 
 <div class="report-detail">
     <div class="card full">
+        <ul class="nav nav-pills no-print" style="margin-bottom:0px; padding: 2px 0 2px 18px; width:100%">
+            <li class="label">Inspection Year</li>
+            <li ng-if="!data.Department.AvailableInspectionYears"><i style="color:black;" class="spinner icon-spinnery-dealie small"></i></li>
+            <li ng-repeat="year in data.Department.AvailableInspectionYears" ng-class="{'active':year == selection.year}">
+                <a ui-sref="isr.report({year: year})">{{year}}</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card full">
         <h1 style="margin: 10px 0 0px 15px">
             Laboratory Safety Inspection Summary Report ({{selection.year}})
         </h1>
 
-        <hr/>
-
         <div ng-if="!data.Department" style="text-align: center; margin: 10px;">
             <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
         </div>
-        <ul ng-if="data.Department">
+        <ul class="report-info" ng-if="data.Department">
             <li>
                 <span class="title">Deptartment:</span>
                 <span ng-bind="data.Department.Name"></span>
@@ -47,17 +54,17 @@
                 <th>Inspection Report</th>
             </tr>
             <tr ng-repeat="item in data.ReportItems | orderBy : config.orderByField : config.reverseSort"
-                ng-class="{'overdue overdue-cap': item.Inspection_status == 'OVERDUE CAP', 'overdue overdue-inspection': item.Inspection_status == 'OVERDUE INSPECTION', 'inspection-completed': item.Inspection_status == 'CLOSED OUT'}">
+                ng-class="{'inactive': item.Inspection_status == 'OVERDUE CAP', 'inspection-completed': item.Inspection_status == 'CLOSED OUT'}">
                 <td ng-if="config.list_department">{{item.Department_name}}</td>
                 <td>{{item.Principal_investigator_name}}</td>
-                <td>{{item.Started_date}}</td>
+                <td>{{item.Started_date | dateToISO}}</td>
                 <td>{{getStatusText(item)}}</td>
                 <td>
                     <span ng-if="item.Items_inspected > 0">{{item.Score}}%</span>
                 </td>
                 <td>
-                    <a ng-if="showInspectionLink(item)" target="_blank" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{item.Inspection_id}}">
-                        Inspection Report <i class="icon-out"></i>
+                    <a class="btn btn-info" style="font-style: italic;" ng-if="showInspectionLink(item)" target="_blank" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{item.Inspection_id}}">
+                        View report <i class="icon-out"></i>
                     </a>
                     <span ng-if="!showInspectionLink(item)">N/A</span>
                 </td>
