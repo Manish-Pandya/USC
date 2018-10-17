@@ -24,9 +24,9 @@ angular
 
         $stateProvider
             .state('reports', {
+                abstract: true,
                 url: "/",
-                templateUrl: "views/report-types.html",
-                controller: "ReportTypesCtrl"
+                template: "<ui-view/>"
             });
 
         // Inspection Summary Report routes
