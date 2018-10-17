@@ -1,15 +1,6 @@
 
 <div class="report-detail">
     <div class="card full">
-        <ul class="nav nav-pills no-print" style="margin-bottom:0px; padding: 2px 0 2px 18px; width:100%">
-            <li class="label">Inspection Year</li>
-            <li ng-if="!data.Department.AvailableInspectionYears"><i style="color:black;" class="spinner icon-spinnery-dealie small"></i></li>
-            <li ng-repeat="year in data.Department.AvailableInspectionYears" ng-class="{'active':year == selection.year}">
-                <a ui-sref="isr.report({year: year})">{{year}}</a>
-            </li>
-        </ul>
-    </div>
-    <div class="card full">
         <h1 style="margin: 10px 0 0px 15px">
             Laboratory Safety Inspection Summary Report ({{selection.year}})
         </h1>
@@ -25,6 +16,16 @@
             <li>
                 <span class="title">Chair:</span>
                 <span ng-bind="data.Department.Chair_name"></span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="card full">
+        <ul class="nav nav-pills no-print" style="margin-bottom:0px; padding: 2px 0 2px 18px;">
+            <li class="label">Inspection Year</li>
+            <li ng-if="!data.Department.AvailableInspectionYears"><i style="color:black;" class="spinner icon-spinnery-dealie small"></i></li>
+            <li ng-repeat="year in data.Department.AvailableInspectionYears" ng-class="{'active':year == selection.year}">
+                <a ui-sref="isr.report({year: year})">{{year}}</a>
             </li>
         </ul>
     </div>
