@@ -102,12 +102,18 @@
         <!-- NAVIGATION -->
         <div class="no-print blueBg">
             <h1>
-                <i class="title-icon icon-clipboard-2"></i>
-                Reports <span ng-if="reportName"> / {{reportName}}</span>
-                <a style="float:right;margin: 11px 28px 0 0; color:white" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/inspections">
+                <i class="title-icon icon-clipboard-2" style="margin: 5px 0 0 5px;"></i>
+                Reports
+                <a style="float:right;margin: 15px 30px 0 0; color:white" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/inspections">
                     <i class="icon-home" style="font-size:40px;"></i>
                 </a>
             </h1>
+
+            <ul class="banner-nav">
+                <li>|</li>
+                <li><a ui-sref="isr.available()">Lab Inspection Summary</a></li>
+                <li>|</li>
+            </ul>
         </div>
 
         <!-- VIEW NESTING -->
