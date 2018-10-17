@@ -29,7 +29,9 @@ class Reports_ActionManager extends ActionManager {
         }
         else{
             // Non-admin user; just get their primary department
-            return $this->getDepartmentInfo();
+            return array(
+                $this->getDepartmentInfo()
+            );
         }
     }
 
@@ -46,7 +48,7 @@ class Reports_ActionManager extends ActionManager {
     }
 
     /**
-     * Get basic reporting details about a Department
+     * Get basic reporting details about a single Department
      */
     public function getDepartmentInfo($department_id = NULL){
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
