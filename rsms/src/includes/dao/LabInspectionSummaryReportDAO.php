@@ -191,6 +191,45 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
 
         // 'close' the statement
         $stmt = null;
+
+        // Insert available inspection years to each dept
+        foreach($result as $info){
+            $years = $this->getAvailableInspectionsForDepartment($info->getKey_id());
+            $info->setAvailableInspectionYears($years);
+        }
+
+        return $result;
+    }
+
+    public function getAvailableInspectionsForDepartment($department_id){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $sql = "SELECT DISTINCT schedule_year AS year FROM inspection
+        WHERE principal_investigator_id IN (
+            SELECT principal_investigator_id FROM principal_investigator_department WHERE department_id = :department_id
+        )";
+
+        // Prepare statement
+        $stmt = DBConnection::prepareStatement($sql);
+        $stmt->bindValue(':department_id', $department_id, PDO::PARAM_INT);
+
+        // Execute the statement
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace($sql);
+        }
+
+		if ($stmt->execute()) {
+            $result = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        }
+        else {
+            $error = $stmt->errorInfo();
+            $LOG->error("Error querying department inspection years (d=$department_id): " . $error[2]);
+
+			$result = new QueryError($error[2]);
+        }
+
+        // 'close' the statement
+        $stmt = null;
         return $result;
     }
 }
