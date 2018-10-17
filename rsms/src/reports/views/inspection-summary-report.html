@@ -2,7 +2,7 @@
 <div class="report-detail">
     <div class="card full">
         <h1 style="margin: 10px 0 0px 15px">
-            Laboratory Safety Inspection Summary Report ({{selection.year}})
+            Laboratory Safety Inspection Summary Report <span ng-if="selection.year">({{selection.year}})</span>
         </h1>
 
         <div ng-if="!data.Department" style="text-align: center; margin: 10px;">
@@ -25,17 +25,18 @@
             <li class="label">Inspection Year</li>
             <li ng-if="!data.Department.AvailableInspectionYears"><i style="color:black;" class="spinner icon-spinnery-dealie small"></i></li>
             <li ng-repeat="year in data.Department.AvailableInspectionYears" ng-class="{'active':year == selection.year}">
-                <a ui-sref="isr.report({year: year})">{{year}}</a>
+                <a ui-sref="isr.report({year: year, departmentId: data.Department.Key_id})">{{year}}</a>
             </li>
         </ul>
     </div>
 
     <div class="card full">
-        <div ng-if="!data.ReportItems" style="text-align: center; margin: 10px;">
-            <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
+        <div ng-if="!data.ReportItems.length" style="text-align: center; margin: 10px;">
+            <i ng-if="selection.year" style="color:black;" class="spinner icon-spinnery-dealie large"></i>
+            <span ng-if="!selection.year">No Year Selected</span>
         </div>
 
-        <table ng-if="data.ReportItems">
+        <table ng-if="data.ReportItems.length">
             <tr>
                 <th ng-if="config.list_department" ng-click="reorder('Department_name');" class="sortable">
                     Department <i class="icon-arrow"></i>

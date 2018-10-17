@@ -22,7 +22,7 @@ angular
     .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
         console.debug("Configure ng-Reports");
 
-        $urlRouterProvider.otherwise("/");
+        $urlRouterProvider.otherwise("/inspection-summary-report/");
 
         $stateProvider
             .state('reports', {
@@ -33,14 +33,20 @@ angular
 
         // Inspection Summary Report routes
         $stateProvider
-            .state('isr', {
+        .state('isr', {
             abstract: true,
             url: '/inspection-summary-report',
             template: '<ui-view/>'
         })
 
+        .state('isr.dept', {
+            url: "/:departmentId",
+            templateUrl: "views/inspection-summary-report.html",
+            controller: "InspectionsSummaryReportCtrl"
+        })
+
         .state('isr.report', {
-            url: "/:year",
+            url: "/:departmentId/:year",
             templateUrl: "views/inspection-summary-report.html",
             controller: "InspectionsSummaryReportCtrl"
         });
