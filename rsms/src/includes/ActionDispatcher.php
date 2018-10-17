@@ -42,25 +42,11 @@ class ActionDispatcher {
 
         // Which "ActionManager" class is used depends on whether the radiation
         // module is enabled.
-        if( isRadiationEnabled() ) {
-            $this->actionManagerType = "Rad_ActionManager";
-        }else if( isVerificationEnabled() ){
-            $this->actionManagerType = "Verification_ActionManager";
-        }else if ( isHazardInventoryEnabled() ){
-        	$this->actionManagerType = "HazardInventoryActionManager";
-        }else if ( isEquipmentEnabled() ){
-        	$this->actionManagerType = "Equipment_ActionManager";
+        $activeModule = ModuleManager::getActiveModule();
+        if( $activeModule != null ){
+            $this->actionManagerType = $activeModule->getActionManager();
         }
-        else if ( isCommitteesEnabled() ){
-        	$this->actionManagerType = "Committees_ActionManager";
-        }
-        else if ( isIBCEnabled() ){
-        	$this->actionManagerType = "IBC_ActionManager";
-        }
-        else if( isReportsEnabled() ){
-            $this->actionManagerType = "Reports_ActionManager";
-        }
-        else {
+        else{
             $this->actionManagerType = "ActionManager";
         }
 
@@ -78,39 +64,16 @@ class ActionDispatcher {
     public function getActionMappings(){
         if( $this->actionMappingFactory == NULL ){
 
-            $actionMappings = ActionMappingFactory::readActionConfig();
+            // Register base mappings
+            ActionMappings::register_all(ActionMappingFactory::readActionConfig());
 
-            if( isRadiationEnabled() ) {
-                $actionMappings = array_merge($actionMappings, Rad_ActionMappingFactory::readActionConfig());
+            // Register additional module mappings, if needed
+            $module = ModuleManager::getActiveModule();
+            if( $module != null ){
+                $module->registerActionMappings();
             }
 
-			//Verfication's server-side controller (VerificationActionManager extends HazardInventory's, so we "extend" the ActionMappings as well)
-            if( isVerificationEnabled() ) {
-            	$actionMappings = array_merge($actionMappings, Verification_ActionMappingFactory::readActionConfig());
-				$actionMappings = array_merge($actionMappings, HazardInventoryActionMappingFactory::readActionConfig());
-            }
-
-            if( isHazardInventoryEnabled() ) {
-            	$actionMappings = array_merge($actionMappings, HazardInventoryActionMappingFactory::readActionConfig());
-            }
-
-            if( isEquipmentEnabled() ) {
-            	$actionMappings = array_merge($actionMappings, Equipment_ActionMappingFactory::readActionConfig());
-            }
-
-            if( isCommitteesEnabled() ){
-            	$actionMappings = array_merge($actionMappings, Committees_ActionMappingFactory::readActionConfig());
-            }
-
-            if( isIBCEnabled() ){
-                $actionMappings = array_merge($actionMappings, IBC_ActionMappingFactory::readActionConfig());
-            }
-
-            if( isReportsEnabled() ){
-                $actionMappings = array_merge($actionMappings, Reports_ActionMappingFactory::readActionConfig());
-            }
-
-            return $actionMappings;
+            return ActionMappings::getMappings();
         }
         else{
             return $this->actionMappingFactory->getConfig();

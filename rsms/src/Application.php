@@ -135,40 +135,11 @@ function logout() {
 // DETECT WHICH MODULE WE ARE IN
 //
 ////////////////////////////////////////////////////////////////////////////////
-function isRadiationEnabled() {
-	if(	strstr($_SERVER["HTTP_REFERER"], '/rad/' ) || isset($_GET['rad']) )return true;
-	return false;
-}
 
-function isVerificationEnabled(){
-	if(	strstr($_SERVER["HTTP_REFERER"], '/verification/' ) || isset($_GET['verification']))return true;
-	return false;
-}
+$activeModule = ModuleManager::registerModules();
 
-function isHazardInventoryEnabled(){
-	if(	strstr($_SERVER["HTTP_REFERER"], '/hazard-inventory/' ) || isset($_GET['hazard-inventory']))return true;
-	return false;
-}
-
-function isEquipmentEnabled(){
-	if(	strstr($_SERVER["HTTP_REFERER"], '/equipment/' ) || isset($_GET['equipment']))return true;
-	return false;
-}
-
-function isCommitteesEnabled(){
-	if(	strstr($_SERVER["HTTP_REFERER"], '/biosafety-committees/' ) || isset($_GET['biosafety-committees']))return true;
-	return false;
-}
-
-
-function isIBCEnabled(){
-	if(	stristr($_SERVER["HTTP_REFERER"], '/ibc/' ) || isset($_GET['ibc']) || isset($_GET['IBC']))return true;
-	return false;
-}
-
-function isReportsEnabled(){
-	if(	stristr($_SERVER["HTTP_REFERER"], '/reports/' ) || isset($_GET['reports']) || isset($_GET['reports']))return true;
-	return false;
+if( $activeModule != null){
+	Logger::getRootLogger()->info("Active module is " . get_class($activeModule));
 }
 
 //////////////////////////////////////////////////
