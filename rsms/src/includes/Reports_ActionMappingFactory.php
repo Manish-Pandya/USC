@@ -11,9 +11,9 @@ class Reports_ActionMappingFactory extends ActionMappingFactory {
 	public function getConfig() {
         return array(
             // Lab Inspections Summary
-            'getInspectionsSummaryReport' => new ActionMapping('getInspectionsSummaryReport', '', '', ''),
-            'getDepartmentInfo'           => new ActionMapping('getDepartmentInfo', '', '', ''),
-            'getAllAvailableDepartments'  => new ActionMapping('getAllAvailableDepartments', '', '', '')
+            'getInspectionsSummaryReport' => new ActionMapping('getInspectionsSummaryReport', '', '', $this::$ROLE_GROUPS["REPORTS_ALL"]),
+            'getDepartmentInfo'           => new ActionMapping('getDepartmentInfo', '', '', $this::$ROLE_GROUPS["REPORTS_ALL"]),
+            'getAllAvailableDepartments'  => new ActionMapping('getAllAvailableDepartments', '', '', $this::$ROLE_GROUPS["REPORTS_ALL"])
         );
     }
 }
