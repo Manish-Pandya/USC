@@ -13,11 +13,9 @@ angular
     'cgBusy',
     'ui.bootstrap',
     'once',
-    'modalPosition',
     'convenienceMethodWithRoleBasedModule',
     'angular.filter',
-    'ui.router',
-    'ngQuickDate'
+    'ui.router'
 ])
     .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
         console.debug("Configure ng-Reports");

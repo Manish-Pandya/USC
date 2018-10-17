@@ -25,15 +25,6 @@
 
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/reports-styles.css" />
 
-    <link href="<?php echo WEB_ROOT?>js/lib/ng-quick-date/ng-quick-date.css" rel="stylesheet" />
-
-    <!-- included fonts
-     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
-    -->
-    <!-- included javascript libraries
-    -->
-    <script src="<?php echo WEB_ROOT?>js/lib/moment.js"></script>
-    <script src="<?php echo WEB_ROOT?>js/lib/lodash.4.17.3/content/Scripts/lodash.min.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/jQuery.3.1.1/Content/Scripts/jquery-3.1.1.min.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/promise.min.js"></script>
 
@@ -45,7 +36,6 @@
     <script src="<?php echo WEB_ROOT?>js/lib/ui-bootstrap-custom-tpls-0.4.0.js"></script>
 
     <script src="<?php echo WEB_ROOT?>js/convenienceMethodsModule.js"></script>
-    <script src="<?php echo WEB_ROOT?>js/lib/ng-quick-date.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/angular-once.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/angular.filter.js"></script>
 
@@ -59,12 +49,6 @@
 
     <script src="<?php echo WEB_ROOT?>js/roleBased.js"></script>
 
-    <script src="<?php echo WEB_ROOT?>js/lib/contextMenu.min.js"></script>
-    <script src="<?php echo WEB_ROOT?>js/lib/ng-quick-date/ng-quick-date.js"></script>
-
-
-    <!-- Required for the ORM framework -->
-    <!-- TODO include everything in certain directories by default -->
     <!-- app -->
     <script src="scripts/app.js"></script>
 
@@ -72,7 +56,6 @@
     <script src="scripts/actionFunctions.js"></script>
 
     <!-- controllers -->
-    <script src="scripts/controllers/ReportTypesCtrl.js"></script>
     <script src="scripts/controllers/inspection-summary/InspectionsSummaryReportCtrl.js"></script>
     <script src="scripts/controllers/inspection-summary/AvailableInspectionsSummaryReportsCtrl.js"></script>
 
