@@ -52,7 +52,7 @@
                 <th ng-click="reorder('Score');" class="sortable">
                     Compliance Score <i class="icon-arrow"></i>
                 </th>
-                <th>Inspection Report</th>
+                <th class="no-print">Inspection Report</th>
             </tr>
             <tr ng-repeat="item in data.ReportItems | orderBy : config.orderByField : config.reverseSort"
                 ng-class="{'inactive': item.Inspection_status == 'OVERDUE CAP', 'inspection-completed': item.Inspection_status == 'CLOSED OUT'}">
@@ -63,7 +63,7 @@
                 <td>
                     <span ng-if="item.Items_inspected > 0">{{item.Score}}%</span>
                 </td>
-                <td>
+                <td class="no-print">
                     <a class="btn btn-info" style="font-style: italic;" ng-if="showInspectionLink(item)" target="_blank" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{item.Inspection_id}}">
                         View report <i class="icon-out"></i>
                     </a>
