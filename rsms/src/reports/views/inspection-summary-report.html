@@ -1,5 +1,5 @@
 
-<div class="dashboard report-detail">
+<div class="report-detail">
     <div class="card full">
         <h1 style="margin: 10px 0 0px 15px">
             Laboratory Safety Inspection Summary Report ({{selection.year}})
@@ -47,7 +47,7 @@
                 <th>Inspection Report</th>
             </tr>
             <tr ng-repeat="item in data.ReportItems | orderBy : config.orderByField : config.reverseSort"
-                ng-class="{'overdue-cap': item.Inspection_status == 'OVERDUE CAP', 'inspection-completed': item.Inspection_status == 'CLOSED OUT'}">
+                ng-class="{'overdue overdue-cap': item.Inspection_status == 'OVERDUE CAP', 'overdue overdue-inspection': item.Inspection_status == 'OVERDUE INSPECTION', 'inspection-completed': item.Inspection_status == 'CLOSED OUT'}">
                 <td ng-if="config.list_department">{{item.Department_name}}</td>
                 <td>{{item.Principal_investigator_name}}</td>
                 <td>{{item.Started_date}}</td>

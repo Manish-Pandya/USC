@@ -83,6 +83,12 @@
 
     <!-- TODO: Extract to file -->
     <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+        }
+
         .banner {
             margin-top: -2px;
 
@@ -134,14 +140,17 @@
         }
 
         /* Inspection Status-based Styles */
-        .report-detail tr.overdue-cap {
-            background-color: #ffff00 !important;
-            border-color: #ffff00 !important;
+        .report-detail tr.overdue {
             color: black;
         }
 
-        .report-detail tr.overdue-cap:hover {
+        .report-detail tr.overdue:hover {
             color: black !important;
+        }
+
+        .report-detail tr.overdue.overdue-cap {
+            background-color: #ffff00 !important;
+            border-color: #ffff00 !important;
         }
 
         .report-detail tr.inspection-completed {
@@ -153,7 +162,7 @@
 
 <body>
     <?php if($_SESSION['USER'] != NULL){ ?>
-        <div class="user-info" ng-controller="roleBasedCtrl">
+        <div class="user-info no-print" ng-controller="roleBasedCtrl">
             <div>
                 Signed in as <?php echo $_SESSION['USER']->getName(); ?>
                 <a style="float:right;" href="<?php echo WEB_ROOT?>action.php?action=logoutAction">Sign Out</a>
@@ -165,11 +174,11 @@
         <div cg-busy="{promise:loading, message:'Loading...', templateUrl:'../busy-templates/full-page-busy.html'}"></div>
 
         <!-- NAVIGATION -->
-        <div class="banner dashboard-banner no-print blueBg">
+        <div class="no-print blueBg">
             <h1>
                 <i class="title-icon icon-clipboard-2"></i>
                 Reports
-                <a style="float:right;margin: 11px 128px 0 0; color:black" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/inspections">
+                <a style="float:right;margin: 11px 28px 0 0; color:white" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/inspections">
                     <i class="icon-home" style="font-size:40px;"></i>
                 </a>
             </h1>
