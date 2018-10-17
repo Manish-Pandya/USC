@@ -205,9 +205,9 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
         $sql = "SELECT DISTINCT schedule_year AS year FROM inspection
-        WHERE principal_investigator_id IN (
-            SELECT principal_investigator_id FROM principal_investigator_department WHERE department_id = :department_id
-        )";
+            WHERE principal_investigator_id IN
+                ( SELECT principal_investigator_id FROM principal_investigator_department WHERE department_id = :department_id )
+            ORDER BY schedule_year DESC";
 
         // Prepare statement
         $stmt = DBConnection::prepareStatement($sql);

@@ -24,7 +24,7 @@
                     <td>
                         <ul class="nav nav-pills no-print" style="margin-bottom:0px; padding: 2px 0 2px 18px;">
                             <li ng-repeat="year in dept.AvailableInspectionYears">
-                                <a ui-sref="isr.reports.detail({year: year, departmentId: dept.Key_id})">{{year}}</a>
+                                <a class="btn btn-info" ui-sref="isr.reports.detail({year: year, departmentId: dept.Key_id})">{{year}}</a>
                             </li>
                         </ul>
                     </td>
