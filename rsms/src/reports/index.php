@@ -69,7 +69,8 @@
 
     <!-- controllers -->
     <script src="scripts/controllers/ReportTypesCtrl.js"></script>
-    <script src="scripts/controllers/InspectionsSummaryReportCtrl.js"></script>
+    <script src="scripts/controllers/inspection-summary/InspectionsSummaryReportCtrl.js"></script>
+    <script src="scripts/controllers/inspection-summary/AvailableInspectionsSummaryReportsCtrl.js"></script>
 
     <!-- framework -->
     <script src="<?php echo WEB_ROOT?>ignorasmus/client-side-framework/DataStoreManager.js"></script>
@@ -175,7 +176,7 @@
         <div class="no-print blueBg">
             <h1>
                 <i class="title-icon icon-clipboard-2"></i>
-                Reports
+                Reports <span ng-if="reportName"> / {{reportName}}</span>
                 <a style="float:right;margin: 11px 28px 0 0; color:white" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/inspections">
                     <i class="icon-home" style="font-size:40px;"></i>
                 </a>

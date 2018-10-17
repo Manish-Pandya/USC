@@ -25,7 +25,7 @@
             <li class="label">Inspection Year</li>
             <li ng-if="!data.Department.AvailableInspectionYears"><i style="color:black;" class="spinner icon-spinnery-dealie small"></i></li>
             <li ng-repeat="year in data.Department.AvailableInspectionYears" ng-class="{'active':year == selection.year}">
-                <a ui-sref="isr.report({year: year, departmentId: data.Department.Key_id})">{{year}}</a>
+                <a ui-sref="isr.reports.detail({year: year, departmentId: data.Department.Key_id})">{{year}}</a>
             </li>
         </ul>
     </div>

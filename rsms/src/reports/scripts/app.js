@@ -22,7 +22,7 @@ angular
     .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
         console.debug("Configure ng-Reports");
 
-        $urlRouterProvider.otherwise("/inspection-summary-report/");
+        $urlRouterProvider.otherwise("/inspection-summary/available-reports");
 
         $stateProvider
             .state('reports', {
@@ -35,19 +35,34 @@ angular
         $stateProvider
         .state('isr', {
             abstract: true,
-            url: '/inspection-summary-report',
-            template: '<ui-view/>'
+            url: '/inspection-summary',
+            template: "<ui-view/>",
+            data: {
+                reportName: 'Inspections Summary'
+            }
         })
 
-        .state('isr.dept', {
+        .state('isr.available', {
+            url: '/available-reports',
+            templateUrl: "views/inspection-summary/available-reports.html",
+            controller: "AvailableInspectionsSummaryReportsCtrl"
+        })
+
+        .state('isr.reports', {
+            abstract: true,
+            url: "/reports",
+            template: "<ui-view/>"
+        })
+
+        .state('isr.reports.dept', {
             url: "/:departmentId",
-            templateUrl: "views/inspection-summary-report.html",
+            templateUrl: "views/inspection-summary/report.html",
             controller: "InspectionsSummaryReportCtrl"
         })
 
-        .state('isr.report', {
+        .state('isr.reports.detail', {
             url: "/:departmentId/:year",
-            templateUrl: "views/inspection-summary-report.html",
+            templateUrl: "views/inspection-summary/report.html",
             controller: "InspectionsSummaryReportCtrl"
         });
 
@@ -55,4 +70,14 @@ angular
     })
     .controller('AppCtrl', function ($rootScope, $q, convenienceMethods, $state) {
         console.debug("ng-Reports running");
+        $rootScope.$on('$stateChangeSuccess',
+            function (event, toState, toParams, fromState, fromParams) {
+                if( toState.data && toState.data.reportName ){
+                    $rootScope.reportName = toState.data.reportName;
+                }
+                else{
+                    $rootScope.reportName = '';
+                }
+            }
+        );
     });
