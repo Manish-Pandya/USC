@@ -58,7 +58,7 @@ angular.module('ng-Reports')
         friendlyText[Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION] = "Overdue for Inspection";
         friendlyText[Constants.INSPECTION.STATUS.OVERDUE_CAP] = "Overdue Corrective Actions";
         friendlyText[Constants.INSPECTION.STATUS.INCOMPLETE_INSPECTION] = "Incomplete Inspection";
-        friendlyText[Constants.INSPECTION.STATUS.INCOMPLETE_CAP] = "Incomplete Coreective Actions";
+        friendlyText[Constants.INSPECTION.STATUS.INCOMPLETE_CAP] = "Incomplete Corrective Actions";
         friendlyText[Constants.INSPECTION.STATUS.SUBMITTED_CAP] = "Submitted Corrective Actions";
         friendlyText[Constants.INSPECTION.STATUS.INSPECTED] = "Inspected";
 
