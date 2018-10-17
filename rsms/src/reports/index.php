@@ -2,7 +2,9 @@
     require_once('../Application.php');
 
     session_start();
-    // TODO: Check that user is logged in, or have the server do it...
+
+    // Check that user is logged in
+    require_once('../RequireUserLoggedIn.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
