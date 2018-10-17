@@ -16,7 +16,7 @@ class Reports_ActionManager extends ActionManager {
         $LOG->debug("y:$year, d:$department_id");
 
         $dao = new LabInspectionSummaryReportDAO();
-        return $dao->getInspections($year, $department_id);
+        return $dao->getInspectionsReport($year, $department_id);
     }
 
     /**

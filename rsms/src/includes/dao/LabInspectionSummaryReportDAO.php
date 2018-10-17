@@ -6,7 +6,7 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
         parent::__construct(new Inspection());
     }
 
-    public function getInspections($year, $department_id) {
+    public function getInspectionsReport($year, $department_id) {
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
         // Prepare predicates to constraint (optionally) on Year and/or Department
