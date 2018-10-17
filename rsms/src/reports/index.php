@@ -21,6 +21,8 @@
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css" />
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css" />
 
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/reports-styles.css" />
+
     <link href="<?php echo WEB_ROOT?>js/lib/ng-quick-date/ng-quick-date.css" rel="stylesheet" />
 
     <!-- included fonts
@@ -82,81 +84,6 @@
     <script src="<?php echo WEB_ROOT?>ignorasmus/client-side-framework/models/FluxCompositerBase.js"></script>
     <script src="<?php echo WEB_ROOT?>ignorasmus/client-side-framework/models/ViewModelHolder.js"></script>
 
-    <!-- TODO: Extract to file -->
-    <style>
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-        }
-
-        .banner {
-            margin-top: -2px;
-
-            background: white;
-            padding: 10px;
-            background-repeat: no-repeat !important;
-            background-size: 70px !Important;
-            padding-left: 80px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.7)
-        }
-
-        .banner.dashboard-banner {
-            position: fixed;
-            width: 100%;
-            left: 0;
-            z-index: 1040;
-        }
-
-        .dashboard {
-            padding-top: 75px;
-        }
-
-        .title-icon {
-            margin-right: 5px;
-            font-size: 35px;
-            width: auto;
-            line-height: 43px;
-        }
-
-        .report-detail ul.report-info {
-            list-style: none;
-            font-size: 25px;
-        }
-
-        .report-detail .title {
-            font-weight: bold;
-        }
-
-        .report-detail ul.report-info li {
-            padding: 5px;
-        }
-
-        .report-detail th.sortable {
-            cursor: pointer;
-        }
-
-        .report-detail tr:hover {
-            color: #49afcd !important;
-        }
-
-        .report-detail .nav-pills > li.label {
-            margin-top: 2px;
-            margin-bottom: 2px;
-            padding-right: 12px;
-            padding-left: 12px;
-            margin-right: 2px;
-            line-height: 14px;
-            padding-top: 8px;
-            padding-bottom: 8px;
-        }
-
-        /* Inspection Status-based Styles */
-        .report-detail tr.inspection-completed {
-            font-style: italic;
-            color: #777;
-        }
-    </style>
 </head>
 
 <body>
