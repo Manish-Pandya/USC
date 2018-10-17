@@ -5,6 +5,14 @@ angular
     .factory('reportsActionFunctionsFactory', function reportsActionFunctionsFactory(){
         var af = {};
 
+        af.getAllAvailableDepartments = function getAllAvailableDepartments(){
+            return XHR.GET('getAllAvailableDepartments')
+                .then( departments => {
+                    console.debug("Retrieved departments:", departments);
+                    return departments;
+                });
+        };
+
         af.getDepartmentInfo = function getDepartmentInfo(deptId){
             var action = "getDepartmentInfo";
             if( deptId ){

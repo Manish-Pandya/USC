@@ -13,7 +13,7 @@ class Reports_ActionMappingFactory extends ActionMappingFactory {
             // Lab Inspections Summary
             'getInspectionsSummaryReport' => new ActionMapping('getInspectionsSummaryReport', '', '', ''),
             'getDepartmentInfo'           => new ActionMapping('getDepartmentInfo', '', '', ''),
-            'getAllDepartmentInfo'        => new ActionMapping('getAllDepartmentInfo', '', '', '')
+            'getAllAvailableDepartments'  => new ActionMapping('getAllAvailableDepartments', '', '', '')
         );
     }
 }

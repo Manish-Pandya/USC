@@ -20,6 +20,20 @@ class Reports_ActionManager extends ActionManager {
     }
 
     /**
+     * Retrieves all departments which the user can review
+     */
+    public function getAllAvailableDepartments(){
+        if( in_array('Admin', $this->getCurrentRoles()) ){
+            // User is admin; get all Departments
+            return $this->getAllDepartmentInfo();
+        }
+        else{
+            // Non-admin user; just get their primary department
+            return $this->getDepartmentInfo();
+        }
+    }
+
+    /**
      * Get basic reporting details about all Departments
      */
     public function getAllDepartmentInfo(){

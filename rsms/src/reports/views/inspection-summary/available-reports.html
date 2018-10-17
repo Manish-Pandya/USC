@@ -1,1 +1,35 @@
-TODO
+<div class="report-detail">
+    <div class="card full">
+        <h1 style="margin: 10px 0 5px 15px">
+            Laboratory Inspections Summaries by Department
+        </h1>
+    </div>
+
+    <div class="card full">
+        <div ng-if="!Departments" style="text-align: center; margin: 10px;">
+            <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
+        </div>
+        <table ng-if="Departments">
+            <thead>
+                <tr>
+                    <th style="text-align: right">Deparment</th>
+                    <th>Deptartment Chair</th>
+                    <th>Inspection Summaries</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="dept in Departments track by dept.Key_id">
+                    <td style="text-align: right">{{dept.Name}}</td>
+                    <td>{{dept.Chair_name}}</td>
+                    <td>
+                        <ul class="nav nav-pills no-print" style="margin-bottom:0px; padding: 2px 0 2px 18px;">
+                            <li ng-repeat="year in dept.AvailableInspectionYears">
+                                <a ui-sref="isr.reports.detail({year: year, departmentId: dept.Key_id})">{{year}}</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
