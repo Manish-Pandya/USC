@@ -65,7 +65,7 @@ class ActionDispatcher {
         if( $this->actionMappingFactory == NULL ){
 
             // Register base mappings
-            ActionMappings::register_all(ActionMappingFactory::readActionConfig());
+            ActionMappingManager::register_all(ActionMappingFactory::readActionConfig());
 
             // Register additional module mappings, if needed
             $module = ModuleManager::getActiveModule();
@@ -73,7 +73,7 @@ class ActionDispatcher {
                 $module->registerActionMappings();
             }
 
-            return ActionMappings::getMappings();
+            return ActionMappingManager::getMappings();
         }
         else{
             return $this->actionMappingFactory->getConfig();

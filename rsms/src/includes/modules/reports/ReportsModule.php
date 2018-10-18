@@ -19,7 +19,7 @@ class ReportsModule implements RSMS_Module {
     }
 
     public function registerActionMappings(){
-        ActionMappings::register_all(Reports_ActionMappingFactory::readActionConfig());
+        ActionMappingManager::register_all(Reports_ActionMappingFactory::readActionConfig());
     }
 }
 ?>

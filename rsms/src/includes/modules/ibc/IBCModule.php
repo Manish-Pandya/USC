@@ -19,7 +19,7 @@ class IBCModule implements RSMS_Module {
     }
 
     public function registerActionMappings(){
-        ActionMappings::register_all(IBC_ActionMappingFactory::readActionConfig());
+        ActionMappingManager::register_all(IBC_ActionMappingFactory::readActionConfig());
     }
 }
 ?>

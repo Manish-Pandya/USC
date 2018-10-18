@@ -19,7 +19,7 @@ class CommitteesModule implements RSMS_Module {
     }
 
     public function registerActionMappings(){
-        ActionMappings::register_all(Committees_ActionMappingFactory::readActionConfig());
+        ActionMappingManager::register_all(Committees_ActionMappingFactory::readActionConfig());
     }
 }
 ?>

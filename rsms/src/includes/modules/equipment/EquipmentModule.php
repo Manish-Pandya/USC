@@ -19,7 +19,7 @@ class EquipmentModule implements RSMS_Module {
     }
 
     public function registerActionMappings(){
-        ActionMappings::register_all(Equipment_ActionMappingFactory::readActionConfig());
+        ActionMappingManager::register_all(Equipment_ActionMappingFactory::readActionConfig());
     }
 }
 ?>

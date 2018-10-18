@@ -20,8 +20,8 @@ class VerificationModule implements RSMS_Module {
 
     public function registerActionMappings(){
         //Verfication's server-side controller (VerificationActionManager extends HazardInventory's, so we "extend" the ActionMappings as well)
-        ActionMappings::register_all(Verification_ActionMappingFactory::readActionConfig());
-        ActionMappings::register_all(HazardInventoryActionMappingFactory::readActionConfig());
+        ActionMappingManager::register_all(Verification_ActionMappingFactory::readActionConfig());
+        ActionMappingManager::register_all(HazardInventoryActionMappingFactory::readActionConfig());
     }
 }
 ?>

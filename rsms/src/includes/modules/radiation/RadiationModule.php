@@ -19,7 +19,7 @@ class RadiationModule implements RSMS_Module {
     }
 
     public function registerActionMappings(){
-        ActionMappings::register_all(Rad_ActionMappingFactory::readActionConfig());
+        ActionMappingManager::register_all(Rad_ActionMappingFactory::readActionConfig());
     }
 }
 ?>
