@@ -5,7 +5,7 @@ class ModuleManager {
     private static $INITIALIZED = false;
     private static $MODULES = array();
 
-    private static $ACTIVE_MODULE;
+    private static $ACTIVE_MODULES;
 
     public static function registerModules(){
         if( !self::$INITIALIZED ){
@@ -13,7 +13,7 @@ class ModuleManager {
             self::scan_modules();
         }
 
-        return self::getActiveModule();
+        return self::getActiveModules();
     }
 
     static function registerModule( $module ){
@@ -40,17 +40,19 @@ class ModuleManager {
         }
     }
 
-    public static function getActiveModule(){
-        if( !self::$ACTIVE_MODULE ){
+    public static function getActiveModules(){
+        if( !self::$ACTIVE_MODULES ){
+            self::$ACTIVE_MODULES = array();
+
             foreach(self::$MODULES as $module ){
                 if( $module->isEnabled()){
-                    self::$ACTIVE_MODULE = $module;
-                    break;
+                    self::$ACTIVE_MODULES[] = $module;
+                    self::$LOG->debug( get_class($module) . ' is active');
                 }
             }
         }
 
-        return self::$ACTIVE_MODULE;
+        return self::$ACTIVE_MODULES;
     }
 
 }

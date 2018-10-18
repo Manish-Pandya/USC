@@ -15,11 +15,11 @@ class CommitteesModule implements RSMS_Module {
     }
 
     public function getActionManager(){
-        return 'Committees_ActionManager';
+        return new Committees_ActionManager();
     }
 
-    public function registerActionMappings(){
-        ActionMappingManager::register_all(Committees_ActionMappingFactory::readActionConfig());
+    public function getActionConfig(){
+        return Committees_ActionMappingFactory::readActionConfig();
     }
 }
 ?>

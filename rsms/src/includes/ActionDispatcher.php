@@ -13,9 +13,6 @@ class ActionDispatcher {
     //TODO: Revisit default error code
     private $defaultErrorCode = 500;
 
-    // name of actionManager class to use; depends on whether radiation is enabled.
-    private $actionManagerType;
-
     private $LOG;
 
     private $destinationPage;
@@ -39,18 +36,6 @@ class ActionDispatcher {
             $this->sessionSource = array();
         }
         $this->actionMappingFactory = $actionMappingFactory;
-
-        // Which "ActionManager" class is used depends on which
-        // module is enabled.
-        $activeModule = ModuleManager::getActiveModule();
-        if( $activeModule != null ){
-            $this->actionManagerType = $activeModule->getActionManager();
-        }
-        else{
-            $this->actionManagerType = "ActionManager";
-        }
-
-        $this->LOG->debug( 'getting action manager type: ' . $this->actionManagerType );
     }
 
     public function setDefaultErrorPage($errorPage){
@@ -59,25 +44,6 @@ class ActionDispatcher {
 
     public function getDefaultErrorPage(){
         return $this->defaultErrorPage;
-    }
-
-    public function getActionMappings(){
-        if( $this->actionMappingFactory == NULL ){
-
-            // Register base mappings
-            ActionMappingManager::register_all(ActionMappingFactory::readActionConfig());
-
-            // Register additional module mappings, if needed
-            $module = ModuleManager::getActiveModule();
-            if( $module != null ){
-                $module->registerActionMappings();
-            }
-
-            return ActionMappingManager::getMappings();
-        }
-        else{
-            return $this->actionMappingFactory->getConfig();
-        }
     }
 
     /**
@@ -110,11 +76,10 @@ class ActionDispatcher {
      * @param unknown $result
      */
     public function readActionConfigurationAndDispatch($actionName, & $result){
-        //Read action configuration
-        $actionConfig = $this->getActionMappings();
+        $actionConfig = ActionMappingManager::getAction($actionName);
 
         //Determine if we can dispatch the action
-        if( !array_key_exists($actionName, $actionConfig)){
+        if( $actionConfig == null ){
             $this->LOG->error("Invalid action name '$actionName' - No such action exists");
 
             // Send ActionError to client for debugging purposes
@@ -140,8 +105,7 @@ class ActionDispatcher {
      */
     public function dispatchValidAction($actionName, &$actionConfig, &$result, $checkRoles = true){
         // We have a valid action name, so retrieve the details from the config
-        $actionMapping = $actionConfig[$actionName];
-        $action_function = $actionMapping->actionFunctionName;
+        $actionMapping = $actionConfig['mapping'];
 
         //$this->LOG->debug("Checking user roles for action $actionName");
 
@@ -156,7 +120,7 @@ class ActionDispatcher {
         $this->LOG->debug("Granting user access to $actionName: $allowStr" );
 
         if( $allowActionExecution ){
-            $this->result->actionFunctionResult = $this->doAction($actionMapping);
+            $this->result->actionFunctionResult = $this->doAction($actionConfig);
 
             //NULL indicates something was wrong
             if( $this->result->actionFunctionResult === NULL  ){
@@ -274,9 +238,13 @@ class ActionDispatcher {
      * @return unknown: The return value of the called function,
      *  	or NULL if the if the function does not exist
      */
-    public function doAction( ActionMapping $actionMapping ){
+    public function doAction( $actionConfig ){
+        $actionModule = $actionConfig['module'];
+        $actionMapping = $actionConfig['mapping'];
+
         $action_function = $actionMapping->actionFunctionName;
-        $actions = new $this->actionManagerType();
+        $actions = $actionConfig['manager'];
+        $actionManagerType = get_class($actions);
 
         $pre_action = "pre_$action_function";
         if( method_exists( $actions, $pre_action ) ){
@@ -289,18 +257,18 @@ class ActionDispatcher {
             }
         }
 
-        $this->LOG->trace("doAction $action_function on $this->actionManagerType");
+        $this->LOG->trace("doAction [$actionModule] $action_function on $actionManagerType");
 
         if( method_exists( $actions, $action_function ) ){
             //call the specified action function
-            $this->LOG->trace("Executing action function '$this->actionManagerType::$action_function'");
+            $this->LOG->trace("Executing action function '$actionManagerType::$action_function'");
             $functionResult = $actions->$action_function();
 
             return $functionResult;
         }
         else{
             //TODO: Show critical error; function doesn't exist
-            $msg = "Mapped function '$action_function' does not exist on $this->actionManagerType";
+            $msg = "Mapped function '$action_function' does not exist on $actionManagerType";
             $this->LOG->error( $msg );
             return new ActionError( $msg );
         }

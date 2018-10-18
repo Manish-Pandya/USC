@@ -15,11 +15,11 @@ class EquipmentModule implements RSMS_Module {
     }
 
     public function getActionManager(){
-        return 'Equipment_ActionManager';
+        return new Equipment_ActionManager();
     }
 
-    public function registerActionMappings(){
-        ActionMappingManager::register_all(Equipment_ActionMappingFactory::readActionConfig());
+    public function getActionConfig(){
+        return Equipment_ActionMappingFactory::readActionConfig();
     }
 }
 ?>

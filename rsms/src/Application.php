@@ -137,11 +137,7 @@ function logout() {
 ////////////////////////////////////////////////////////////////////////////////
 
 require_once(dirname(__FILE__) . '/includes/ModuleManager.php');
-$activeModule = ModuleManager::registerModules();
-
-if( $activeModule != null){
-	Logger::getRootLogger()->info("Active module is " . get_class($activeModule));
-}
+ModuleManager::registerModules();
 
 //////////////////////////////////////////////////
 

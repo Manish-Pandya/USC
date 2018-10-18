@@ -15,11 +15,11 @@ class RadiationModule implements RSMS_Module {
     }
 
     public function getActionManager(){
-        return 'Rad_ActionManager';
+        return new Rad_ActionManager();
     }
 
-    public function registerActionMappings(){
-        ActionMappingManager::register_all(Rad_ActionMappingFactory::readActionConfig());
+    public function getActionConfig(){
+        return Rad_ActionMappingFactory::readActionConfig();
     }
 }
 ?>

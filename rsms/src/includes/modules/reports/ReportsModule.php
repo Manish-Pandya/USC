@@ -15,11 +15,11 @@ class ReportsModule implements RSMS_Module {
     }
 
     public function getActionManager(){
-        return 'Reports_ActionManager';
+        return new Reports_ActionManager();
     }
 
-    public function registerActionMappings(){
-        ActionMappingManager::register_all(Reports_ActionMappingFactory::readActionConfig());
+    public function getActionConfig(){
+        return Reports_ActionMappingFactory::readActionConfig();
     }
 }
 ?>

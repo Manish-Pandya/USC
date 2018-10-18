@@ -15,13 +15,15 @@ class VerificationModule implements RSMS_Module {
     }
 
     public function getActionManager(){
-        return 'Verification_ActionManager';
+        return new Verification_ActionManager();
     }
 
-    public function registerActionMappings(){
+    public function getActionConfig(){
         //Verfication's server-side controller (VerificationActionManager extends HazardInventory's, so we "extend" the ActionMappings as well)
-        ActionMappingManager::register_all(Verification_ActionMappingFactory::readActionConfig());
-        ActionMappingManager::register_all(HazardInventoryActionMappingFactory::readActionConfig());
+        return array_merge(
+            Verification_ActionMappingFactory::readActionConfig(),
+            HazardInventoryActionMappingFactory::readActionConfig()
+        );
     }
 }
 ?>

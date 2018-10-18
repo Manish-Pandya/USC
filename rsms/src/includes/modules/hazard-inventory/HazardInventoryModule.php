@@ -15,11 +15,11 @@ class HazardInventoryModule implements RSMS_Module {
     }
 
     public function getActionManager(){
-        return 'HazardInventoryActionManager';
+        return new HazardInventoryActionManager();
     }
 
-    public function registerActionMappings(){
-        ActionMappingManager::register_all(HazardInventoryActionMappingFactory::readActionConfig());
+    public function getActionConfig(){
+        return HazardInventoryActionMappingFactory::readActionConfig();
     }
 }
 ?>

@@ -4,27 +4,44 @@ class ActionMappingManager  {
 
     private static $MAPPINGS = array();
 
-    public static function getMappings() {
-        return self::$MAPPINGS;
-    }
+    public static function getAction( $actionName ){
+        $LOG = Logger::getLogger(__CLASS__);
+        $LOG->trace("Map action '$actionName'");
 
-    public static function register_all( $module, $mappings ){
-        self::$MAPPINGS = array_merge(self::$MAPPINGS, $mappings);
-    }
+        $actions = array();
 
-    public static function register( $module, ActionMapping $mapping, $name = NULL){
-        $actionName = $name != null ? $name : $mapping->actionFunctionName;
+        // Check each active module for this action
+        foreach( ModuleManager::getActiveModules() as $module ){
+            // Get actions for module;
+            $config = $module->getActionConfig();
+            if( array_key_exists($actionName, $config) ){
+                $moduleName = get_class($module);
+                $LOG->trace("Module $moduleName contains action mapping for '$actionName'");
 
-        self::$MAPPINGS[$actionName] = $mapping;
-    }
-
-    static function getModuleMappings($module){
-        if( !array_key_exists($module, self::$MAPPINGS) ){
-            // Register module mappings
-            self::$MAPPINGS[$module] = array();
+                // This module defines an action by this name
+                $actions[] = array(
+                    'module'  => $moduleName,
+                    'mapping' => $config[$actionName],
+                    'manager' => $module->getActionManager()
+                );
+            }
         }
 
-        return self::$MAPPINGS[$module];
+        $matchedActions = count($actions);
+
+        if( $matchedActions > 1 ){
+            // Multiple possible actions exist...
+            // TODO: What now?
+            $LOG->warn("$matchedActions modules define mapping for action '$actionName'");
+        }
+
+        if( $matchedActions > 0 ){
+            $LOG->debug("Action '$actionName' mapped to '" . $actions[0]['module'] . "'");
+            return $actions[0];
+        }
+
+        $LOG->error("No modules define mapping for action '$actionName'");
+        return null;
     }
 }
 ?>

@@ -15,11 +15,11 @@ class IBCModule implements RSMS_Module {
     }
 
     public function getActionManager(){
-        return 'IBC_ActionManager';
+        return new IBC_ActionManager();
     }
 
-    public function registerActionMappings(){
-        ActionMappingManager::register_all(IBC_ActionMappingFactory::readActionConfig());
+    public function getActionConfig(){
+        return IBC_ActionMappingFactory::readActionConfig();
     }
 }
 ?>
