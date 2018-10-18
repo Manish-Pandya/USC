@@ -26,11 +26,16 @@ class ModuleManager {
         self::$INITIALIZED = true;
         $dir = dirname(__FILE__) . '/modules';
 
-        foreach (glob("$dir/*Module.php") as $file) {
+        self::$LOG->debug("Scanning $dir for Modules");
+        foreach (glob("$dir/*/*Module.php") as $file) {
+            self::$LOG->debug("Found '$file'");
             $class = basename($file, '.php');
             if( class_exists($class) ){
                 $module = new $class;
                 self::registerModule($module);
+            }
+            else{
+                self::$LOG->warn("Class doesn't exist: $class");
             }
         }
     }
