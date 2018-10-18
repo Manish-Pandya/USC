@@ -26,9 +26,9 @@ class ModuleManager {
         self::$INITIALIZED = true;
         $dir = dirname(__FILE__) . '/modules';
 
-        self::$LOG->debug("Scanning $dir for Modules");
+        self::$LOG->trace("Scanning $dir for Modules");
         foreach (glob("$dir/*/*Module.php") as $file) {
-            self::$LOG->debug("Found '$file'");
+            self::$LOG->trace("Found '$file'");
             $class = basename($file, '.php');
             if( class_exists($class) ){
                 $module = new $class;
