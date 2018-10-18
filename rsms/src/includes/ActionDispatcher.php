@@ -40,7 +40,7 @@ class ActionDispatcher {
         }
         $this->actionMappingFactory = $actionMappingFactory;
 
-        // Which "ActionManager" class is used depends on whether the radiation
+        // Which "ActionManager" class is used depends on which
         // module is enabled.
         $activeModule = ModuleManager::getActiveModule();
         if( $activeModule != null ){
@@ -277,6 +277,17 @@ class ActionDispatcher {
     public function doAction( ActionMapping $actionMapping ){
         $action_function = $actionMapping->actionFunctionName;
         $actions = new $this->actionManagerType();
+
+        $pre_action = "pre_$action_function";
+        if( method_exists( $actions, $pre_action ) ){
+            $this->LOG->trace("Execute pre-action function $pre_action");
+            $preResult = $actions->$pre_action();
+
+            if( !$preResult ){
+                $this->LOG->error("Pre-Action disallows execution");
+                return new ActionError("Pre-Action disallows execution");
+            }
+        }
 
         $this->LOG->trace("doAction $action_function on $this->actionManagerType");
 
