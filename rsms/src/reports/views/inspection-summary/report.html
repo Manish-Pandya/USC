@@ -56,7 +56,7 @@
                 <th class="no-print">Inspection Report</th>
             </tr>
             <tr ng-repeat="item in data.ReportItems | orderBy : config.orderByField : config.reverseSort"
-                ng-class="{'inactive': item.Inspection_status == 'OVERDUE CAP', 'inspection-completed': item.Inspection_status == 'CLOSED OUT'}">
+                ng-class="{'overdue-cap': item.Inspection_status == 'OVERDUE CAP', 'inspection-completed': item.Inspection_status == 'CLOSED OUT'}">
                 <td ng-if="config.list_department">{{item.Department_name}}</td>
                 <td>{{item.Principal_investigator_name}}</td>
                 <td>{{item.Started_date | dateToISO}}</td>

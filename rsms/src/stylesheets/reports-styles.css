@@ -92,3 +92,8 @@ ul.banner-nav li a:hover {
     font-style: italic;
     color: #777;
 }
+
+.report-detail tr.overdue-cap {
+    background-color: #ffff00 !important;
+    border-color: #ffff00 !important;
+}
