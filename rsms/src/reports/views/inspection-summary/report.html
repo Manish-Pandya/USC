@@ -1,22 +1,30 @@
 
 <div class="report-detail">
     <div class="card full">
-        <h1 style="margin: 10px 0 0px 15px">
-            <span ng-if="selection.year">{{selection.year}} </span> Laboratory Safety Inspection Summary Report
-        </h1>
+        <div class="title-box pull-left">
+            <h1 style="margin: 10px 0 0px 15px">
+                <span ng-if="selection.year">{{selection.year}} </span> Laboratory Safety Inspection Summary Report
+            </h1>
 
-        <div ng-if="!data.Department" style="text-align: center; margin: 10px;">
-            <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
+            <div ng-if="!data.Department" style="text-align: center; margin: 10px;">
+                <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
+            </div>
+            <ul class="report-info" ng-if="data.Department">
+                <li>
+                    <span class="title">Deptartment:</span>
+                    <span ng-bind="data.Department.Name"></span>
+                </li>
+                <li>
+                    <span class="title">Chair:</span>
+                    <span ng-bind="data.Department.Chair_name"></span>
+                </li>
+            </ul>
         </div>
-        <ul class="report-info" ng-if="data.Department">
-            <li>
-                <span class="title">Deptartment:</span>
-                <span ng-bind="data.Department.Name"></span>
-            </li>
-            <li>
-                <span class="title">Chair:</span>
-                <span ng-bind="data.Department.Chair_name"></span>
-            </li>
+
+        <ul class="legend-box pull-right">
+            <li><span class="keyword">* Compliance scores</span> can be used to assess overall safety and compliance progress and can be used as a performance improvement metric.
+                <span class="keyword">Scores</span> are intended to provide a general assessment of potential risk. However, an accident or incident may occur in any laboratory.</li>
+            <li><span class="keyword overdue-cap">Highlighted inspections</span> represent labs that are overdue to submit their corrective actions for inspection deficiencies.</li>
         </ul>
     </div>
 
@@ -51,7 +59,7 @@
                     Lab Inspection Status <i class="icon-arrow"></i>
                 </th>
                 <th ng-click="reorder('Score');" class="sortable">
-                    Compliance Score <i class="icon-arrow"></i>
+                    Compliance Score* <i class="icon-arrow"></i>
                 </th>
                 <th class="no-print">Inspection Report</th>
             </tr>

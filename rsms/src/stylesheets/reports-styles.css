@@ -87,13 +87,34 @@ ul.banner-nav li a:hover {
     padding-bottom: 8px;
 }
 
+.report-detail .title-box {
+    width: 70%;
+}
+
+.report-detail .legend-box {
+    width: 25%;
+    padding: 5px;
+    margin: 0px;
+    background-color: #eee;
+    list-style: none;
+    font-style: italic;
+}
+
+.report-detail .legend-box > * {
+    padding-top: 15px;
+}
+
+.report-detail .legend-box .keyword {
+    font-weight: bold;
+}
+
 /* Inspection Status-based Styles */
 .report-detail tr.inspection-completed {
     font-style: italic;
     color: #777;
 }
 
-.report-detail tr.overdue-cap {
+.report-detail .overdue-cap {
     background-color: #ffff00 !important;
     border-color: #ffff00 !important;
 }
