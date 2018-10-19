@@ -59,5 +59,14 @@ class ModuleManager {
         return self::$MODULES;
     }
 
+    public static function getModuleByName( $name ){
+        foreach( self::getAllModules() as $module ){
+            if( $name == $module->getModuleName() ){
+                return $module;
+            }
+        }
+
+        return null;
+    }
 }
 ?>
