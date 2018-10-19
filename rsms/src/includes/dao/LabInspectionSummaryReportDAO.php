@@ -143,7 +143,7 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
         $sql = "SELECT
                 dept.key_id AS key_id,
                 dept.name AS name,
-                chair.primary_department_id AS chair_id,
+                chair.key_id AS chair_id,
                 (COALESCE(chair.name, CONCAT_WS(', ', chair.last_name, chair.first_name))) AS chair_name
 
             FROM department dept
