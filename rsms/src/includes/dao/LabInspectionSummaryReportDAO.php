@@ -207,6 +207,7 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
         $sql = "SELECT DISTINCT schedule_year AS year FROM inspection
             WHERE principal_investigator_id IN
                 ( SELECT principal_investigator_id FROM principal_investigator_department WHERE department_id = :department_id )
+            AND CAST(schedule_year AS UNSIGNED) > 2016
             ORDER BY schedule_year DESC";
 
         // Prepare statement
