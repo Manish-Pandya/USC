@@ -52,12 +52,12 @@ angular.module('ng-Reports')
         // Helper mappings for generating 'friendly' status texts
         var friendlyText = [];
         friendlyText[Constants.INSPECTION.STATUS.CLOSED_OUT] = "Closed Out";
-        friendlyText[Constants.INSPECTION.STATUS.NOT_ASSIGNED] = "Not Assigned";
-        friendlyText[Constants.INSPECTION.STATUS.NOT_SCHEDULED] = "Not Scheduled";
-        friendlyText[Constants.INSPECTION.STATUS.SCHEDULED] = "Scheduled";
-        friendlyText[Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION] = "Overdue for Inspection";
+        friendlyText[Constants.INSPECTION.STATUS.NOT_ASSIGNED] = "Not Yet Inspected";
+        friendlyText[Constants.INSPECTION.STATUS.NOT_SCHEDULED] = "Not Yet Inspected";
+        friendlyText[Constants.INSPECTION.STATUS.SCHEDULED] = "Not Yet Inspected";
+        friendlyText[Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION] = "Scheduling Inspection";
         friendlyText[Constants.INSPECTION.STATUS.OVERDUE_CAP] = "Overdue Corrective Actions";
-        friendlyText[Constants.INSPECTION.STATUS.INCOMPLETE_INSPECTION] = "Incomplete Inspection";
+        friendlyText[Constants.INSPECTION.STATUS.INCOMPLETE_INSPECTION] = "Inspection In Progress";
         friendlyText[Constants.INSPECTION.STATUS.INCOMPLETE_CAP] = "Incomplete Corrective Actions";
         friendlyText[Constants.INSPECTION.STATUS.SUBMITTED_CAP] = "Submitted Corrective Actions";
         friendlyText[Constants.INSPECTION.STATUS.INSPECTED] = "Inspected";
