@@ -94,10 +94,8 @@
                 </a>
             </h1>
 
-            <ul class="banner-nav">
-                <li>|</li>
-                <li><a ui-sref="isr.available()">Lab Inspection Summary</a></li>
-                <li>|</li>
+            <ul class="banner-nav" ng-if="moduleNavLinks.length">
+                <li ng-repeat="link in moduleNavLinks"><a ui-sref="{{link.expression}}" ng-bind="link.text"></a></li>
             </ul>
         </div>
 

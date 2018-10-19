@@ -68,6 +68,18 @@ angular
     })
     .controller('AppCtrl', function ($rootScope, $q, convenienceMethods, $state) {
         console.debug("ng-Reports running");
+        $rootScope.getNavLinks = function(){
+            var links = [
+                {
+                    text: 'Lab Inspection Summary',
+                    expression: 'isr.available()',
+                    name: 'isr.available'
+                }
+            ];
+
+            return links.filter( link => link.name != $state.current.name);
+        }
+
         $rootScope.$on('$stateChangeSuccess',
             function (event, toState, toParams, fromState, fromParams) {
                 if( toState.data && toState.data.reportName ){
@@ -76,6 +88,9 @@ angular
                 else{
                     $rootScope.reportName = '';
                 }
+
+                // Build nav links
+                $rootScope.moduleNavLinks = $rootScope.getNavLinks();
             }
         );
     });
