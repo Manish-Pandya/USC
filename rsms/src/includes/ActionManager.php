@@ -430,26 +430,54 @@ class ActionManager {
         return false;
     }
 
-    private function getDestination(){
-     $LOG = Logger::getLogger("" . __function__);
-     //get the proper destination based on the user's role
-     $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector");
-     if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
-         $destination = 'views/RSMSCenter.php';
-     }else{
-         if(in_array("Emergency Account", $_SESSION['ROLE']['userRoles'])){
-            $destination = "rsms/views/hubs/emergencyInformationHub.php";
-         }else{
-			 $destination = 'rsms/views/lab/MyLab.php';
-         }
-      }
-      $LOG->fatal('getting destination');
-      if($_SESSION["REDIRECT"] != null){
-      	$destination = str_replace("%23", "#", $_SESSION["REDIRECT"]);
-      	$destination = str_replace(LOGIN_PAGE, "", $destination);
-      }
+    private function sessionHasRoles($roles){
+        return count( array_intersect($_SESSION['ROLE']['userRoles'], $roles)) > 0;
+    }
 
-      return $destination;
+    private function getDestination(){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        if($_SESSION["REDIRECT"] != null){
+            $LOG->debug("User requested specific redirect");
+            $destination = str_replace("%23", "#", $_SESSION["REDIRECT"]);
+            $destination = str_replace(LOGIN_PAGE, "", $destination);
+        }
+        else{
+            $LOG->debug('Get default destination for user');
+
+            //get the proper destination based on the user's role
+            // TODO: Assign defaults to each role and select user's destination from those
+            //   This would keep these hard-coded role names out of here!
+
+            // Non-lab roles go to RSMSCenter
+            if( $this->sessionHasRoles(array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector")) ){
+                $destination = 'views/RSMSCenter.php';
+                $LOG->debug("User has non-lab roles");
+            }
+
+            // Emergency account goes to emergency hub
+            else if( $this->sessionHasRoles( array("Emergency Account")) ){
+                $destination = "rsms/views/hubs/emergencyInformationHub.php";
+                $LOG->debug("User has emergency role");
+            }
+
+            // non-PI Department Chair goes to Reports
+            else if( !$this->sessionHasRoles( array("Principal Investigator")) && $this->sessionHasRoles( array("Department Chair")) ){
+                $destination = "rsms/reports/";
+                $LOG->debug("User is a non-PI Department Chair");
+            }
+
+            // Otherwise, go to My Lab
+            else {
+                $destination = 'rsms/views/lab/MyLab.php';
+                $LOG->debug("User has no special-case roles");
+            }
+
+            $LOG->debug("User's default Destination: $destination");
+        }
+
+        $LOG->info("Direct user to $destination");
+        return $destination;
     }
 
     public function prepareRedirect(){
