@@ -1,6 +1,11 @@
 <?php
 
 class ReportsModule implements RSMS_Module {
+
+    public function getModuleName(){
+        return 'Reports';
+    }
+
     public function getUiRoot(){
         return '/reports';
     }

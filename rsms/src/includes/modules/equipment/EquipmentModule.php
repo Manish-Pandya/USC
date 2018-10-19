@@ -1,6 +1,10 @@
 <?php
 
 class EquipmentModule implements RSMS_Module {
+    public function getModuleName(){
+        return 'Equipment';
+    }
+
     public function getUiRoot(){
         return '/equipment';
     }

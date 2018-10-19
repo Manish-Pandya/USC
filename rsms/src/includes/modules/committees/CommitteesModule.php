@@ -1,6 +1,10 @@
 <?php
 
 class CommitteesModule implements RSMS_Module {
+    public function getModuleName(){
+        return 'Committees';
+    }
+
     public function getUiRoot(){
         return '/biosafety-committees';
     }

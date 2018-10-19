@@ -1,6 +1,10 @@
 <?php
 
 class HazardInventoryModule implements RSMS_Module {
+    public function getModuleName(){
+        return 'Hazard Inventory';
+    }
+
     public function getUiRoot(){
         return '/hazard-inventory';
     }

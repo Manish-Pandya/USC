@@ -1,6 +1,10 @@
 <?php
 
 class VerificationModule implements RSMS_Module {
+    public function getModuleName(){
+        return 'Verification';
+    }
+
     public function getUiRoot(){
         return '/verification';
     }

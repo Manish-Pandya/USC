@@ -1,6 +1,10 @@
 <?php
 
 class CoreModule implements RSMS_Module {
+    public function getModuleName(){
+        return 'Core';
+    }
+
     public function getUiRoot(){
         return '/';
     }

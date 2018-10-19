@@ -1,6 +1,10 @@
 <?php
 
 class RadiationModule implements RSMS_Module {
+    public function getModuleName(){
+        return 'Radiation';
+    }
+
     public function getUiRoot(){
         return '/rad';
     }

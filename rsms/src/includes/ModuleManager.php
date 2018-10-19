@@ -55,5 +55,9 @@ class ModuleManager {
         return self::$ACTIVE_MODULES;
     }
 
+    public static function getAllModules(){
+        return self::$MODULES;
+    }
+
 }
 ?>

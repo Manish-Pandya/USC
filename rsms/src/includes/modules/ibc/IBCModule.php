@@ -1,6 +1,10 @@
 <?php
 
 class IBCModule implements RSMS_Module {
+    public function getModuleName(){
+        return 'IBC';
+    }
+
     public function getUiRoot(){
         return '/ibc';
     }
