@@ -61,3 +61,11 @@ Crontab
 # Prune RSMS backups directory every night following backup
 30 0 * * * /var/rsms/scripts/prune-backups.sh > /var/rsms/rsms-backups.log
 ```
+
+## RSMS Scheduled Tasks
+RSMS `Scheduler` module manages tasks which should be run regularly. Because the RSMS server is scripted, we use Cron to ensure that these tasks are regularly executed:
+
+```
+# Execute RSMS Scheduler every 5 minutes
+*/5 * * * * php /var/rsms/scripts/run_scheduler.php >/dev/null 2>&1
+```
