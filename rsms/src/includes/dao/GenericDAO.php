@@ -336,9 +336,6 @@ class GenericDAO {
 			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
 			// ... otherwise, generate error message to be returned
 		} else {
-			// 'close' the statment
-			$stmt = null;
-
 			$error = $stmt->errorInfo();
 			$result = new QueryError($error);
 			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
