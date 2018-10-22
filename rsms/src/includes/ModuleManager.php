@@ -68,5 +68,40 @@ class ModuleManager {
 
         return null;
     }
+
+    /**
+     * Gets magically-mapped 'special' feature classes from a module
+     */
+    public static function getModuleFeatureClasses( $module, $subdir_name, $class_suffix ){
+        $moduleClass = get_class($module);
+        self::$LOG->debug("Find $class_suffix feature classes in '$subdir_name/' for $moduleClass");
+
+        $reflector = new ReflectionClass($moduleClass);
+        $specialDir = dirname($reflector->getFileName()) . "/$subdir_name";
+
+        // Magically map module subdirectory to special types
+        $candidate_types = array();
+        if( is_dir($specialDir) ){
+            self::$LOG->debug("$moduleClass includes '$subdir_name' directory");
+
+            // Validate each task type
+            foreach (glob("$specialDir/*$class_suffix.php") as $file) {
+                self::$LOG->trace("Found '$file'");
+                $class = basename($file, '.php');
+
+                if( class_exists($class) ){
+                    $candidate_types[] = $class;
+                }
+                else{
+                    self::$LOG->warn("$moduleClass includes $subdir_name file '$file', but expected Class '$class' doesn't exist");
+                }
+            }
+        }
+        else{
+            self::$LOG->debug("$moduleClass does not include feature directory '$subdir_name'");
+        }
+
+        return $candidate_types;
+    }
 }
 ?>
