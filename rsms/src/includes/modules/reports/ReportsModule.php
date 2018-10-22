@@ -2,8 +2,10 @@
 
 class ReportsModule implements RSMS_Module {
 
+    public static $NAME = 'Reports';
+
     public function getModuleName(){
-        return 'Reports';
+        return self::$NAME;
     }
 
     public function getUiRoot(){
