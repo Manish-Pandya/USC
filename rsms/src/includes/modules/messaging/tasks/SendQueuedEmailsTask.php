@@ -7,6 +7,9 @@ class SendQueuedEmailsTask implements ScheduledTask {
     }
 
     public function run(){
+        $LOG = Logger::getLogger(__CLASS__);
+        $LOG->info("Email Queue Processing");
+
         $messenger = new Messaging_ActionManager();
         $result = $messenger->sendAllQueuedEmails();
 

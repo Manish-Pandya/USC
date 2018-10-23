@@ -17,8 +17,8 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
         $LOG->info("Message Queue Processing");
         $messenger = new Messaging_ActionManager();
 
-        // Get all queued emails
-        $unsent = $messenger->getUnsentMessages();
+        // Get all queued emails whose send_on date has passed (or wasn't specified)
+        $unsent = $messenger->getAllReadyToSend();
 
         $LOG->info( count($unsent) . ' messages are enqueued');
 
@@ -90,7 +90,7 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
                     $LOG->info("Queued $queuedEmailsPerMessage emails to be sent for $message");
 
                     // Update message as processed
-                    $message->setSent_date(date());
+                    $message->setSent_date(date('Y-m-d H:i:s'));
 
                     $messageDao = new GenericDAO(new Message());
                     $messageDao->save($message);
@@ -100,8 +100,6 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
                 }
             }
         }
-
-        $LOG->info("Message Queue Processing completed");
 
         return "Enqueued $queuedEmailsCount emails to be sent";
     }

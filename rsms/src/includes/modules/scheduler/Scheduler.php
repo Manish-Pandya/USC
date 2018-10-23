@@ -58,7 +58,7 @@ class Scheduler {
     static function runTask($task){
         $name = get_class($task);
         try{
-            self::$LOG->debug("Running $name");
+            self::$LOG->info("Running $name");
             $taskResult = $task->run();
             self::$LOG->info("Completed $name: $taskResult");
         }

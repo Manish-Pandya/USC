@@ -55,9 +55,14 @@ class Messaging_ActionManager extends ActionManager {
         return $newMessages;
     }
 
-    public function getUnsentMessages(){
+    public function getAllUnsentMessages(){
         $messageDao = new MessageDAO();
         return $messageDao->getAllUnsent();
+    }
+
+    public function getAllReadyToSend(){
+        $messageDao = new MessageDAO();
+        return $messageDao->getAllReadyToSend();
     }
 
     public function getTemplatesForMessage( $message ){
