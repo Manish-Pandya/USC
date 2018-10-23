@@ -114,7 +114,7 @@ class LabInspectionSummaryReady_Task implements ScheduledTask {
 
                 // Prepare message context object
                 $contexts[] = new LabInspectionSummaryContext(
-                    $currentYear
+                    $currentYear,
                     $dept->getKey_id()
                 );
             }
