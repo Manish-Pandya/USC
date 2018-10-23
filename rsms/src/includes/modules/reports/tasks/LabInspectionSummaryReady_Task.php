@@ -113,7 +113,7 @@ class LabInspectionSummaryReady_Task implements ScheduledTask {
             if( $completion >= self::$COMPLETION_THRESHOLD ){
 
                 // Prepare message context object
-                $contexts[] = new LabInspectionSummaryReady_Context(
+                $contexts[] = new LabInspectionSummaryContext(
                     $currentYear
                     $dept->getKey_id()
                 );

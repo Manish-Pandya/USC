@@ -1,6 +1,6 @@
 <?php
 
-class LabInspectionSummaryReady_Context implements MessageContext {
+class LabInspectionSummaryContext implements MessageContext {
     public $department_id;
     public $report_year;
 
