@@ -34,6 +34,11 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
                 try {
                     // Get MessageProcessor based on type
                     $processor = $messenger->getMessageTypeProcessor($message->getModule(), $message->getMessage_type());
+                    if( $processor == null ){
+                        $LOG->warn("No matching processor for message type " . $message->getMessage_type());
+                        continue;
+                    }
+
                     $LOG->info("Found processor '" . get_class($processor) . "' for $message");
 
                     // Look up the Template(s) for this message type
@@ -69,7 +74,7 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
                         }
                     }
 
-                    // TODO: Persist each formattedEmail in the email queue
+                    // Persist each formattedEmail in the email queue
                     $emailQueueDao = new GenericDAO(new QueuedEmail());
                     foreach($queuedEmails as $email){
                         $emailQueueDao->save($email);

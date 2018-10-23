@@ -65,7 +65,7 @@ class Messaging_ActionManager extends ActionManager {
 
         if( $module != null ){
             // Assume processor class name based on messageType
-            $assumeTypeName = "$message_type" . '_Processor';
+            $assumeTypeName = $messageType . '_Processor';
 
             // Look for any of these types declared within the module
             $candidates = ModuleManager::getModuleFeatureClasses($module, 'message-processors', $assumeTypeName);
@@ -153,12 +153,13 @@ class Messaging_ActionManager extends ActionManager {
         $LOG = Logger::getLogger(__CLASS__);
 
         $dao = new QueuedEmailDAO();
-        $unsentEmails = $dao->getALlUnsent();
+        $unsentEmails = $dao->getAllUnsent();
 
         $sentCount = 0;
         $failedCount = 0;
 
         if( count($unsentEmails) > 0 ){
+            $LOG->debug("Sending all unsent emails");
             foreach($unsentEmails as $unsent){
                 if($this->sendQueuedEmail($unsent)){
                     $sentCount++;
@@ -167,6 +168,9 @@ class Messaging_ActionManager extends ActionManager {
                     $failedCount++;
                 }
             }
+        }
+        else{
+            $LOG->debug("No unsent emails in queue");
         }
 
         return array(

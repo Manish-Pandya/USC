@@ -29,7 +29,7 @@ class MessageTemplate extends GenericCrud {
     protected $module;
 
     public function __construct() {
-        $this->setIs_active(true));
+        $this->setIs_active(true);
     }
 
     // Required for GenericCrud //
