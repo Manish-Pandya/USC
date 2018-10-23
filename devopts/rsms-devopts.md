@@ -1,3 +1,17 @@
+## Source Control
+
+Core branches and their purpose:
+
+| Branch | Purpose |
+| :---- | :---- |
+| `master` | Main source branch, deployed to Prod server (and any other) |
+| `radon-support` | Support branch for legacy Radon server |
+| `develop` | Cutting-edge Development branch, deployed to any non-production server |
+
+Feature development should be peformed on a specific branch before being merged into `develop`.
+
+Generally, only `develop` should be merged into `master`
+
 ## Server operations
 
 DevOpts controls will be placed in `/var/rsms`
