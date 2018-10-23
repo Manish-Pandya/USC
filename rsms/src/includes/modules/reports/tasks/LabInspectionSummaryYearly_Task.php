@@ -37,7 +37,8 @@ class LabInspectionSummaryYearly_Task implements ScheduledTask {
         $enqueued = $messenger->enqueueMessages(
             ReportsModule::$NAME,
             self::$MESSAGE_TYPE_NAME,
-            $contexts
+            $contexts,
+            $sendOnDate
         );
 
         return count($enqueued) . ' ' . self::$MESSAGE_TYPE_NAME . " messages have been enqueued";
