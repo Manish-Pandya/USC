@@ -34,7 +34,7 @@ CREATE TABLE `message_template` (
 
     `title` varchar(128),
     `subject` varchar(256),
-    `corpus` varchar(1024),
+    `corpus` TEXT,
 
     PRIMARY KEY (`key_id`)
 );
@@ -52,9 +52,10 @@ CREATE TABLE `email_queue` (
     `template_id` int(11),
 
     `recipients` varchar(256),
+    `cc_recipients` varchar(256),
     `send_from` varchar(64),
     `subject` varchar(256),
-    `body` varchar(1024),
+    `body` TEXT,
 
     `sent_date` timestamp NULL DEFAULT NULL,
 
