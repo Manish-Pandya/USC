@@ -26,24 +26,37 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
 
         if( count($unsent) > 0 ){
 
+            $processor_map = array();
+
             foreach( $unsent as $message ){
                 $LOG->info("Processing queued message: $message");
 
                 $queuedEmailsPerMessage = 0;
 
                 try {
-                    // Get MessageProcessor based on type
-                    $processor = $messenger->getMessageTypeProcessor($message->getModule(), $message->getMessage_type());
+                    // Prime processor cache
+                    $proc_key = $message->getModule() . '/' . $message->getMessage_type();
+                    if( $processor_map[$proc_key] ){
+                        $processor = $processor_map[$proc_key];
+                    }
+                    else{
+                        // Get MessageProcessor based on type
+                        $processor = $messenger->getMessageTypeProcessor($message->getModule(), $message->getMessage_type());
+
+                        // Cache processor so we only look it up once
+                        $processor_map[$proc_key] = $processor;
+                    }
+
                     if( $processor == null ){
                         $LOG->warn("No matching processor for message type " . $message->getMessage_type());
                         continue;
                     }
 
-                    $LOG->info("Found processor '" . get_class($processor) . "' for $message");
+                    $LOG->debug("Found processor '" . get_class($processor) . "' for $message");
 
                     // Look up the Template(s) for this message type
                     $templates = $messenger->getTemplatesForMessage($message);
-                    $LOG->info("Found " . count($templates) . " templates for $message");
+                    $LOG->debug("Found " . count($templates) . " templates for $message");
 
                     if( count($templates) == 0 ){
                         $LOG->warn("No matching templates for message type: " . $message->getMessage_type());
