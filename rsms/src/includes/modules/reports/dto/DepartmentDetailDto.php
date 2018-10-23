@@ -8,6 +8,7 @@ class DepartmentDetailDto {
     private $name;
     private $chair_name;
     private $chair_id;
+    private $chair_email;
     private $availableInspectionYears;
 
     public function getKey_id(){
@@ -40,6 +41,14 @@ class DepartmentDetailDto {
 
     public function setChair_id( $val ){
         $this->chair_id = $val;
+    }
+
+    public function getChair_email(){
+        return $this->chair_email;
+    }
+
+    public function setChair_email( $val ){
+        $this->chair_email = $val;
     }
 
     public function getAvailableInspectionYears(){

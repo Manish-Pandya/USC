@@ -144,7 +144,8 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
                 dept.key_id AS key_id,
                 dept.name AS name,
                 chair.key_id AS chair_id,
-                (COALESCE(chair.name, CONCAT_WS(', ', chair.last_name, chair.first_name))) AS chair_name
+                (COALESCE(chair.name, CONCAT_WS(', ', chair.last_name, chair.first_name))) AS chair_name,
+                chair.email AS chair_email
 
             FROM department dept
 
@@ -156,7 +157,8 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
                     user.`first_name`,
                     user.`last_name`,
                     user.`name`,
-                    user.`primary_department_id`
+                    user.`primary_department_id`,
+                    user.`email`
                 FROM erasmus_user user WHERE user.key_id IN (
                     SELECT ur.user_id FROM user_role ur WHERE ur.role_id = (
                         SELECT r.key_id FROM `role` r WHERE r.name = 'Department Chair'
