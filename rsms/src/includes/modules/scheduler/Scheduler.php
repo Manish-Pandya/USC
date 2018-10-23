@@ -1,7 +1,5 @@
 <?php
 
-require_once 'Application.php';
-
 class Scheduler {
     static $LOG;
 
