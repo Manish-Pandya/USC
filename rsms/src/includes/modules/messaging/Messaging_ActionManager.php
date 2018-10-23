@@ -8,7 +8,12 @@ class Messaging_ActionManager extends ActionManager {
         return $context_json;
     }
 
-    public function enqueueMessages($module, $messageType, Array $contexts){
+    public function getContextFromMessage(Message $message){
+        $context = json_decode( $message->getContext_descriptor());
+        return $context;
+    }
+
+    public function enqueueMessages($module, $messageType, Array $contexts, $send_on = NULL){
         $LOG = Logger::getLogger(__CLASS__);
 
         $messageDao = new MessageDAO();
@@ -37,6 +42,10 @@ class Messaging_ActionManager extends ActionManager {
             $message->setModule( $module );
             $message->setMessage_type( $messageType );
             $message->setContext_descriptor($descriptor);
+
+            if( $send_on != NULL ){
+                $message->setSend_on($send_on);
+            }
 
             // Save & push onto reference array
             $newMessages[] = $messageDao->save($message);
