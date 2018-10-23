@@ -20,8 +20,6 @@ class LabInspectionSummaryReady_Processor implements MessageTypeProcessor {
         $departmentInfo = $this->getDepartment($departmentId);
         $LOG->debug("Department: $departmentInfo");
 
-        $email = $chairUser->getEmail();
-
         // Build link to summary report
         $link = $this->getReportLink($context->department_id, $context->report_year);
 
@@ -38,7 +36,7 @@ class LabInspectionSummaryReady_Processor implements MessageTypeProcessor {
         );
 
         $details = array(
-            "recipients" => array($email),
+            "recipients" => array($departmentInfo->getChair_email()),
             "from" => 'LabInspectionReports@ehs.sc.edu<RSMS Portal>',
             'macromap' => $macromap
         );
