@@ -7,6 +7,8 @@ class DepartmentDetailDto {
     private $key_id;
     private $name;
     private $chair_name;
+    private $chair_first_name;
+    private $chair_last_name;
     private $chair_id;
     private $chair_email;
     private $availableInspectionYears;
@@ -33,6 +35,22 @@ class DepartmentDetailDto {
 
     public function setChair_name( $val ){
         $this->chair_name = $val;
+    }
+
+    public function getChair_first_name(){
+        return $this->chair_first_name;
+    }
+
+    public function setChair_first_name($val){
+        $this->chair_first_name = $val;
+    }
+
+    public function getChair_last_name(){
+        return $this->chair_last_name;
+    }
+
+    public function setChair_last_name( $val ){
+        $this->chair_last_name = $val;
     }
 
     public function getChair_id(){

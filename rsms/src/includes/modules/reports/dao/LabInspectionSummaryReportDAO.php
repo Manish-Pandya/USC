@@ -144,6 +144,8 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
                 dept.key_id AS key_id,
                 dept.name AS name,
                 chair.key_id AS chair_id,
+                chair.first_name AS chair_first_name,
+                chair.last_name AS chair_last_name,
                 (COALESCE(chair.name, CONCAT_WS(', ', chair.last_name, chair.first_name))) AS chair_name,
                 chair.email AS chair_email
 
