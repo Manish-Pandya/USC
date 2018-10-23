@@ -14,32 +14,26 @@ class LabInspectionSummaryReady_Processor implements MessageTypeProcessor {
         //  Look up details from desscriptor
         $context = json_decode( $message->getContext_descriptor());
 
-        $deptChairUserId = $context->user_id;
         $departmentId = $context->department_id;
-        $reportYear = $context->report_year;
-
-        // Look up target user
-        $chairUser = $this->getDepartmentChairUser($deptChairUserId, $departmentId);
-        $LOG->debug("Department Chair user: $chairUser");
 
         // Look up department
-        $department = $this->getDepartment($departmentId);
-        $LOG->debug("Department: $department");
+        $departmentInfo = $this->getDepartment($departmentId);
+        $LOG->debug("Department: $departmentInfo");
 
         $email = $chairUser->getEmail();
 
         // Build link to summary report
-        $link = $this->getReportLink($departmentId, $reportYear);
+        $link = $this->getReportLink($context->department_id, $context->report_year);
 
         //  determine who to send to / from / etc
 
         //  Construct macromap
         $macromap = array(
-            '[Chair Name]' => $chairUser->getName(),
-            '[Chair First Name]' => $chairUser->getFirst_name(),
-            '[Chair Last Name]' => $chairUser->getLast_name(),
-            '[Department Name]' => $department->getName(),
-            '[Report Year]' => $reportYear,
+            '[Chair Name]' => $departmentInfo->getChair_name(),
+            '[Chair First Name]' => $departmentInfo->getChair_first_name(),
+            '[Chair Last Name]' => $departmentInfo->getChair_last_name(),
+            '[Department Name]' => $departmentInfo->getName(),
+            '[Report Year]' => $context->report_year,
             '[Report Link]' => $link
         );
 
@@ -64,15 +58,24 @@ class LabInspectionSummaryReady_Processor implements MessageTypeProcessor {
     function getDepartment($departmentId){
         $LOG = Logger::getLogger(__CLASS__);
         $LOG->debug("Look up Department with ID $departmentId");
-        $dao = new GenericDAO( new Department() );
-        $dept = $dao->getById($departmentId);
 
-        if( $dept == null ){
+        $reportManager = new Reports_ActionManager();
+        $info = $reportManager->getDepartmentInfo($departmentId);
+
+        if( $info == null ){
             // ERROR - Dept doesn't exist
             throw new Exception("Departmnet $departmentId does not exist");
         }
+        else if( $info instanceof ActionError ){
+            // ERROR - Something went wrong
+            throw new Exception("Error retrieving info for Department $departmentId: " . $info->getMessage());
+        }
 
-        return $dept;
+        if( $info->getChair_id() == null ){
+            throw new Exception("Department " . $info->getName() . "' has no Chair");
+        }
+
+        return $info;
     }
 
     function getDepartmentChairUser($deptChairUserId, $departmentId){
