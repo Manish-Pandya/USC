@@ -29,10 +29,7 @@ class LabInspectionSummaryReady_Processor implements MessageTypeProcessor {
         $email = $chairUser->getEmail();
 
         // Build link to summary report
-        $urlBase = ApplicationConfiguration::get('server.web.url');
-        $webRoot = WEB_ROOT;
-        $link =  "$urlBase$webRoot" . "reports/#/inspection-summary/reports/$departmentId/$reportYear";
-        $LOG->debug("Constructed report link: $link");
+        $link = $this->getReportLink($departmentId, $reportYear);
 
         //  determine who to send to / from / etc
 
@@ -104,6 +101,12 @@ class LabInspectionSummaryReady_Processor implements MessageTypeProcessor {
         }
 
         return $chairUser;
+    }
+
+    function getReportLink($departmentId, $reportYear){
+        $urlBase = ApplicationConfiguration::get('server.web.url');
+        $webRoot = WEB_ROOT;
+        return "$urlBase$webRoot" . "reports/#/inspection-summary/reports/$departmentId/$reportYear";
     }
 }
 
