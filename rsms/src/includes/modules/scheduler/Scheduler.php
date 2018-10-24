@@ -14,12 +14,12 @@ class Scheduler {
                 $_module_filters = array($moduleNames);
             }
 
-            self::$LOG->info("Limit to modules: " . implode(', ', $_module_filters));
+            self::$LOG->debug("Limit to modules: " . implode(', ', $_module_filters));
         }
 
         // Scheduler
         $all_tasks = self::getTasks($_module_filters);
-        self::$LOG->info("Found " . count($all_tasks) . " scheduled tasks");
+        self::$LOG->debug("Found " . count($all_tasks) . " scheduled tasks");
 
         foreach($all_tasks as $task){
             self::runTask($task);
@@ -45,7 +45,7 @@ class Scheduler {
 
                 // Type must be a ScheudledTask
                 if( $task instanceof ScheduledTask ){
-                    self::$LOG->info("Scheduling " . $module->getModuleName() . " / $class");
+                    self::$LOG->debug("Scheduling " . $module->getModuleName() . " / $class");
                     $all_tasks[] = $task;
                 }
                 else{
