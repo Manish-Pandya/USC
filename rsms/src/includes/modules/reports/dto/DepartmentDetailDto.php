@@ -5,6 +5,7 @@
  */
 class DepartmentDetailDto {
     private $key_id;
+    private $is_active;
     private $name;
     private $specialty_lab;
     private $chair_name;
@@ -20,6 +21,14 @@ class DepartmentDetailDto {
 
     public function setKey_id( $val ){
         $this->key_id = $val;
+    }
+
+    public function getIs_active(){
+        return $this->is_active;
+    }
+
+    public function setIs_active( $val ){
+        $this->is_active = $val;
     }
 
     public function getName(){

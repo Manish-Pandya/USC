@@ -129,7 +129,9 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
         // Prepare predicates to constrain (optionally) Department
-        $predicates = array();
+        $predicates = array(
+            'dept.is_active = true'
+        );
 
         if( $department_id != NULL ){
             $predicates[] = "dept.key_id = :department_id";
@@ -142,6 +144,7 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
 
         $sql = "SELECT
                 dept.key_id AS key_id,
+                dept.is_active AS is_active,
                 dept.name AS name,
                 COALESCE(dept.specialty_lab, false) AS specialty_lab,
                 chair.key_id AS chair_id,
