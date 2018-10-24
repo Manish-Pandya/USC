@@ -22,7 +22,7 @@ class LabInspectionSummaryYearly_Task implements ScheduledTask {
         // Send on Dec 1 of this year
         $sendOnDate = date('Y-m-d H:i:s', strtotime("12/01/$currentYear"));
 
-        // Build context for each deparment
+        // Build context for each department
         $contexts = array();
         $departments = $reportsManager->getAllDepartmentInfo();
         foreach($departments as $dept){
