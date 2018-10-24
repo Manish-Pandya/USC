@@ -108,7 +108,10 @@ class Messaging_ActionManager extends ActionManager {
             $macromap = $messageDetails['macromap'];
 
             // Parse template body
-            $body    = $this->replaceMacros($macromap, $template->getCorpus());
+            $body = $this->replaceMacros($macromap, $template->getCorpus());
+
+            // Append standard disclaimer
+            $body .= "\n\n***This is an automatic email notification. Please do not reply to this message.***";
 
             // Parse template subject
             $subject = $this->replaceMacros($macromap, $template->getSubject());
