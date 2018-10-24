@@ -14,7 +14,7 @@ Generally, only `develop` should be merged into `master`
 
 ## Server operations
 
-DevOpts controls will be placed in `/var/rsms`
+DevOps controls will be placed in `/var/rsms`
 
 ```
 $ ls -al /var/rsms/*
@@ -39,9 +39,9 @@ drwxrwsr-x 5 root   www-deploy 4096 Oct  8 14:55 ..
 
 `/var/rsms/conf/.rsms.erasmus.my.cnf` is a MySQL defaults-extra-file which is used to securely configure the credentials with which to perform RSMS database backups.
 
-## Initial setup of RSMS DevOpts
+## Initial setup of RSMS DevOps
 
-#### Create DevOpts directory
+#### Create DevOps directory
 On target server, create the directory and apply permissions to the www-deploy group
 ```
 sudo mkdir /var/rsms
@@ -53,7 +53,7 @@ mkdir /var/rsms/backup
 #### Upload controls
 Upload the controls from the RSMS repository
 ```
-scp -Pr 555 devopts/* mitchm@safety-compliance-prod-web1.sc.edu:/var/rsms
+scp -Pr 555 devops/* mitchm@safety-compliance-prod-web1.sc.edu:/var/rsms
 ```
 
 #### Secure and Configure the connection information
