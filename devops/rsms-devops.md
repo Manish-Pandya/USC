@@ -48,6 +48,7 @@ sudo mkdir /var/rsms
 sudo chown root:www-deploy /var/rsms
 sudo chmod 2775 /var/rsms
 mkdir /var/rsms/backup
+mkdir /var/rsms/deployments
 ```
 
 #### Upload controls
