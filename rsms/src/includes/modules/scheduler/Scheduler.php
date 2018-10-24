@@ -3,12 +3,22 @@
 class Scheduler {
     static $LOG;
 
-    static function run(){
+    static function run( $moduleNames = null ){
         self::$LOG = Logger::getLogger(__CLASS__);
         self::$LOG->info("RSMS Scheduler Running");
 
+        $_module_filters = $moduleNames;
+        if( $_module_filters != null ){
+            // ensure module filters is array of module names
+            if( !is_array($_module_filters) ){
+                $_module_filters = array($moduleNames);
+            }
+
+            self::$LOG->info("Limit to modules: " . implode(', ', $_module_filters));
+        }
+
         // Scheduler
-        $all_tasks = self::getTasks();
+        $all_tasks = self::getTasks($_module_filters);
         self::$LOG->info("Found " . count($all_tasks) . " scheduled tasks");
 
         foreach($all_tasks as $task){
@@ -18,11 +28,16 @@ class Scheduler {
         self::$LOG->info("Scheduler execution complete");
     }
 
-    static function getTasks(){
+    static function getTasks( $moduleFilters = null ){
         $all_tasks = array();
 
         // Check each module for Task definitions
         foreach( ModuleManager::getAllModules() as $module ){
+            if( $moduleFilters != null && !in_array($module->getModuleName(), $moduleFilters) ){
+                self::$LOG->debug("Exclude module " . $module->getModuleName());
+                continue;
+            }
+
             $moduleTaskClasses = ModuleManager::getModuleFeatureClasses($module, 'tasks', 'Task');
             foreach( $moduleTaskClasses as $class ){
                 // Create task instance
