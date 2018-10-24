@@ -131,8 +131,22 @@ class Messaging_ActionManager extends ActionManager {
 
         $headers = array();
 
+        $default_send_from = ApplicationConfiguration::get(MessagingModule::$CONFIG_EMAIL_DEFAULT_SEND_FROM, null);
+        $return_path = ApplicationConfiguration::get(MessagingModule::$CONFIG_EMAIL_DEFAULT_RETURN_PATH, null);
+
         if( $unsent->getSend_from() != null){
             $headers['From'] = $unsent->getSend_from();
+        }
+        else if($default_send_from != null ){
+            $headers['From'] = $default_send_from;
+        }
+
+        if( $return_path != null ){
+            $headers['Return-Path'] = $return_path;
+        }
+
+        if( $unsent->getCc_recipients() != null ){
+            $headers['Cc'] = $unsent->getCc_recipients();
         }
 
         // TODO: Support additional headers (like CC)
@@ -141,17 +155,25 @@ class Messaging_ActionManager extends ActionManager {
             $headers = null;
         }
 
-        $is_sent = mail(
-            $unsent->getRecipients(),
-            $unsent->getSubject(),
-            $unsent->getBody(),
-            $headers,
-            "Return-path: mmartin+returned@graysail.com"
-        );
+        // Allow for the suppression of email-sending
+        // Enabling this feature will result in the module not sending any email
+        // Instead, queued entries are updated as if they had been sent successfully
+        if( ApplicationConfiguration::get(MessagingModule::$CONFIG_EMAIL_SUPPRESS_ALL, false)){
+            $LOG->info("Suppressing sending of email due to configuration: " . MessagingModule::$CONFIG_EMAIL_SUPPRESS_ALL);
+            $is_sent = true;
+        }
+        else{
+            $is_sent = mail(
+                $unsent->getRecipients(),
+                $unsent->getSubject(),
+                $unsent->getBody(),
+                $headers
+            );
+        }
 
         if( $is_sent ){
             $dao = new QueuedEmailDAO();
-            $unsent->setSent_date(date());
+            $unsent->setSent_date(date('Y-m-d H:i:s'));
             $dao->save($unsent);
 
             return true;

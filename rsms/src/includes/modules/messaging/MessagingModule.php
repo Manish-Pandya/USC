@@ -1,6 +1,9 @@
 <?php
 
 class MessagingModule implements RSMS_Module {
+    public static $CONFIG_EMAIL_SUPPRESS_ALL = 'module.Messaging.email.suppress_all';
+    public static $CONFIG_EMAIL_DEFAULT_SEND_FROM = 'module.Messaging.email.defaults.send_from';
+    public static $CONFIG_EMAIL_DEFAULT_RETURN_PATH = 'module.Messaging.email.defaults.return_path';
 
     public function getModuleName(){
         return 'Messaging';

@@ -10,6 +10,7 @@ class QueuedEmail extends GenericCrud {
         "message_id"            => "integer",
         "template_id"           => "integer",
         "recipients"            => "text",
+        "cc_recipients"         => "text",
         "send_from"             => "text",
         "subject"               => "text",
         "body"                  => "text",
@@ -27,6 +28,7 @@ class QueuedEmail extends GenericCrud {
     private $message_id;
     private $template_id;
     private $recipients;
+    private $cc_recipients;
     private $from;
     private $subject;
     private $body;
@@ -51,6 +53,8 @@ class QueuedEmail extends GenericCrud {
     public function setTemplate_id( $val ) { $this->template_id = $val; }
     public function getRecipients() { return $this->recipients; }
     public function setRecipients( $val ) { $this->recipients = $val; }
+    public function getCc_recipients() { return $this->cc_recipients; }
+    public function setCc_recipients( $val ) { $this->cc_recipients = $val; }
     public function getSend_from() { return $this->from; }
     public function setSend_from( $val ) { $this->from = $val; }
     public function getSubject() { return $this->subject; }
