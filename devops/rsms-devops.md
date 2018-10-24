@@ -80,8 +80,11 @@ Crontab
 RSMS `Scheduler` module manages tasks which should be run regularly. Because the RSMS server is scripted, we use Cron to ensure that these tasks are regularly executed:
 
 ```
-# Execute RSMS Scheduler every 5 minutes
-*/5 * * * * php /var/rsms/scripts/run_scheduler.php >/dev/null 2>&1
+# Execute RSMS Scheduler (Messaging module only) every 5 minutes
+*/5 * * * * php /var/rsms/scripts/run_scheduler.php Messaging >/dev/null 2>&1
+
+# Execute RSMS Scheduler (All modules) daily at 1am
+0 1 * * * php /var/rsms/scripts/run_scheduler.php >/dev/null 2>&1
 ```
 
 ## SMTP Configuration
