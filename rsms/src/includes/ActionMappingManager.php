@@ -31,8 +31,33 @@ class ActionMappingManager  {
 
         if( $matchedActions > 1 ){
             // Multiple possible actions exist...
-            // TODO: What now?
             $LOG->warn("$matchedActions modules define mapping for action '$actionName'");
+            $LOG->debug("Attempt to find valid mapping from matches...");
+
+            // FIXME: sort Modules to identify the correct mapping
+            // This seems to stem from intersecting actions and mappings across multiple modules.
+            // This will attempt to find the first match with an existing function, but is no guarantee to find the 'right' one
+            // Really, we should only have ONE mapping
+            $firstLegalMatch = null;
+            foreach( $actions as $match ){
+                $mod = $match['module'];
+                $action_mgr = $match['manager'];
+                $mgr_class = get_class($action_mgr);
+                $fn_name = $match['mapping']->actionFunctionName;
+
+                if( method_exists( $action_mgr, $fn_name ) ){
+                    $LOG->debug("  Matched $mod/$mgr_class#$fn_name");
+                    $firstLegalMatch = $match;
+                    break;
+                }
+                else{
+                    $LOG->debug("  Method '$mod/$mgr_class#$fn_name' does not exist");
+                }
+            }
+
+            if( $firstLegalMatch != null ){
+                $actions = array($firstLegalMatch);
+            }
         }
 
         if( $matchedActions > 0 ){
