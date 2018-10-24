@@ -46,6 +46,15 @@ var getDate = function(time){
         }
 
 var manageInspections = angular.module('manageInspections', ['cgBusy','convenienceMethodWithRoleBasedModule', 'once', 'ui.bootstrap'])
+.filter('filterableInspectionStatus', function(){
+    return function (statuses) {
+        if( !statuses )
+            return statuses;
+
+        // RSMS-730: Omit 'Inspected' status from table filter
+        return statuses.filter( s => s != 'INSPECTED' );
+    }
+})
 .filter('toArray', function () {
     return function (object) {
         var array = [];

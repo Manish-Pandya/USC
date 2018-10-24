@@ -90,7 +90,7 @@ require_once '../top_view.php';
                 </th>
                 <th>
                     Status<br>
-                    <select ng-model="search.status" style="margin-bottom:0; max-width:185px;" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray)" ng-change="genericFilter()">
+                    <select ng-model="search.status" style="margin-bottom:0; max-width:185px;" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray | filterableInspectionStatus)" ng-change="genericFilter()">
                         <option value="">Select a status</option>
                     </select>
                 </th>
