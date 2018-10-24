@@ -6,6 +6,7 @@
 class DepartmentDetailDto {
     private $key_id;
     private $name;
+    private $specialty_lab;
     private $chair_name;
     private $chair_first_name;
     private $chair_last_name;
@@ -27,6 +28,14 @@ class DepartmentDetailDto {
 
     public function setName( $val ){
         $this->name = $val;
+    }
+
+    public function getSpecialty_lab(){
+        return $this->specialty_lab;
+    }
+
+    public function setSpecialty_lab( $val ){
+        $this->specialty_lab = $val;
     }
 
     public function getChair_name(){
