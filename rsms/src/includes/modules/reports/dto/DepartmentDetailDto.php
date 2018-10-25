@@ -14,6 +14,7 @@ class DepartmentDetailDto {
     private $chair_id;
     private $chair_email;
     private $availableInspectionYears;
+    private $campuses;
 
     public function getKey_id(){
         return $this->key_id;
@@ -93,6 +94,14 @@ class DepartmentDetailDto {
 
     public function setAvailableInspectionYears($val){
         $this->availableInspectionYears = $val;
+    }
+
+    public function getCampuses(){
+        return $this->campuses;
+    }
+
+    public function setCampuses($val){
+        $this->campuses = $val;
     }
 }
 ?>

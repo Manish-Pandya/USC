@@ -55,6 +55,10 @@ ul.banner-nav li a:hover {
     color: black;
 }
 
+.report-detail ul.info-list {
+    list-style: none;
+}
+
 .report-detail ul.report-info {
     list-style: none;
     font-size: 25px;

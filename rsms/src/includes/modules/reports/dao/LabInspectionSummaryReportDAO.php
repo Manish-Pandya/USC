@@ -204,8 +204,60 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
         foreach($result as $info){
             $years = $this->getAvailableInspectionsForDepartment($info->getKey_id());
             $info->setAvailableInspectionYears($years);
+
+            $campuses = $this->getCampusesForDepartment($info->getKey_id());
+            $info->setCampuses($campuses);
         }
 
+        return $result;
+    }
+
+    public function getCampusesForDepartment($department_id){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        //dept -> pi -> room -> building -> campus
+        $sql = "SELECT
+            campus.key_id,
+            campus.name
+        FROM principal_investigator_department pi_dept
+
+        JOIN principal_investigator_room pi_room
+            ON (pi_room.principal_investigator_id = pi_dept.principal_investigator_id)
+
+        JOIN room room
+            ON room.key_id = pi_room.room_id
+
+        JOIN building building
+            ON building.key_id = room.building_id
+
+        JOIN campus campus
+            ON campus.key_id = building.campus_id
+
+        WHERE pi_dept.department_id = :department_id
+        GROUP BY campus.key_id
+        ORDER BY campus.name";
+
+        // Prepare statement
+        $stmt = DBConnection::prepareStatement($sql);
+        $stmt->bindValue(':department_id', $department_id, PDO::PARAM_INT);
+
+        // Execute the statement
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace($sql);
+        }
+
+		if ($stmt->execute()) {
+            $result = $stmt->fetchAll(PDO::FETCH_CLASS, 'Campus');
+        }
+        else {
+            $error = $stmt->errorInfo();
+            $LOG->error("Error querying department campuses (d=$department_id): " . $error[2]);
+
+			$result = new QueryError($error[2]);
+        }
+
+        // 'close' the statement
+        $stmt = null;
         return $result;
     }
 

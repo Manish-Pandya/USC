@@ -5,19 +5,20 @@
         </h1>
     </div>
 
-    <div class="card full" style="padding-top: 30px;">
+    <div class="card full">
         <div ng-if="!Departments" style="text-align: center; margin: 10px;">
             <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
         </div>
-        <table ng-if="Departments" class="span12 table table-bordered table-hover table-striped">
+        <table ng-if="Departments" class="table table-bordered table-hover table-striped">
             <thead>
                 <tr>
-                    <th class="blueBg" colspan="3">
+                    <th class="blueBg" colspan="4">
                         <h3 class="card-header padding blueBg">Departments</h3>
                     </th>
                 </tr>
                 <tr>
                     <th style="text-align: right">Department</th>
+                    <th>Campuses</th>
                     <th>Department Chair</th>
                     <th>Inspection Summaries</th>
                 </tr>
@@ -25,6 +26,11 @@
             <tbody>
                 <tr ng-repeat="dept in Departments | filter:{ Specialty_lab: 0 } | orderBy:'Name' track by dept.Key_id">
                     <td style="text-align: right">{{dept.Name}}</td>
+                    <td>
+                        <ul class="info-list" ng-if="dept.Campuses">
+                            <li ng-repeat="campus in dept.Campuses | orderBy:'Name'">{{campus.Name}}</li>
+                        </ul>
+                    </td>
                     <td>{{dept.Chair_name}}</td>
                     <td>
                         <ul class="nav nav-pills no-print" style="margin-bottom:0px; padding: 2px 0 2px 18px;">
@@ -35,17 +41,23 @@
                     </td>
                 </tr>
                 <tr>
-                    <th class="blueBg" colspan="3">
+                    <th class="blueBg" colspan="4">
                         <h3 class="card-header padding blueBg">Specialty Labs</h3>
                     </th>
                 </tr>
                 <tr>
                     <th style="text-align: right">Specialty Lab</th>
+                    <th>Campuses</th>
                     <th></th>
                     <th>Inspection Summaries</th>
                 </tr>
                 <tr ng-repeat="dept in Departments | filter:{ Specialty_lab: 1 } | orderBy:'Name' track by dept.Key_id">
                     <td style="text-align: right">{{dept.Name}}</td>
+                    <td>
+                        <ul class="info-list" ng-if="dept.Campuses">
+                            <li ng-repeat="campus in dept.Campuses | orderBy:'Name'">{{campus.Name}}</li>
+                        </ul>
+                    </td>
                     <td></td>
                     <td>
                         <ul class="nav nav-pills no-print" style="margin-bottom:0px; padding: 2px 0 2px 18px;">
