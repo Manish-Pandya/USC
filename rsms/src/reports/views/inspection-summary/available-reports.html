@@ -23,7 +23,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="dept in Departments | filter:{ Specialty_lab: 0 } track by dept.Key_id">
+                <tr ng-repeat="dept in Departments | filter:{ Specialty_lab: 0 } | orderBy:'Name' track by dept.Key_id">
                     <td style="text-align: right">{{dept.Name}}</td>
                     <td>{{dept.Chair_name}}</td>
                     <td>
@@ -44,7 +44,7 @@
                     <th></th>
                     <th>Inspection Summaries</th>
                 </tr>
-                <tr ng-repeat="dept in Departments | filter:{ Specialty_lab: 1 } track by dept.Key_id">
+                <tr ng-repeat="dept in Departments | filter:{ Specialty_lab: 1 } | orderBy:'Name' track by dept.Key_id">
                     <td style="text-align: right">{{dept.Name}}</td>
                     <td></td>
                     <td>
