@@ -39,6 +39,30 @@ Logger::configure( getLocalPath( ApplicationConfiguration::get("logging.configfi
 
 /////////////////////////////////////////////////////////////////////////////////
 //
+// Read Version Info
+//
+////////////////////////////////////////////////////////////////////////////////
+$rsms_details = '';
+if( ApplicationConfiguration::get('server.display_version', false) ){
+	$details = array();
+
+	$serverName = ApplicationConfiguration::get('server.name', '');
+	if( $serverName ){
+		$details[] = $serverName;
+	}
+
+	$versionFile = dirname(__FILE__) . '/version';
+	if( file_exists($versionFile)){
+		$details[] = @file_get_contents($versionFile);
+	}
+
+	$rsms_details = implode(': ', $details);
+}
+
+define('RSMS_VERSION_DETAILS', $rsms_details);
+
+/////////////////////////////////////////////////////////////////////////////////
+//
 // Set authentication details
 //
 /////////////////////////////////////////////////////////////////////////////////
