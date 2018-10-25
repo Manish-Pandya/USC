@@ -42,6 +42,13 @@
         <p>Department Hub</p>
       </a>
     </div>
+
+    <div class="span2 rsmsCenterIconContainer " style=" margin-bottom:30px;"  ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN]])">
+      <a href="../email-hub" class="span12 bg-color-greenDark">
+        <i class="icon-email"></i>
+        <p>Email Hub</p>
+      </a>
+    </div>
 <!--
     <div class="span2 rsmsCenterIconContainer " style=" margin-bottom:30px;"  ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], ])">
       <a href="../rad/#/admin" class="span12 yellowBg" style="background-color: rgb(71, 71, 71);">
