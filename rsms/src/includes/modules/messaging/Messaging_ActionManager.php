@@ -132,6 +132,18 @@ class Messaging_ActionManager extends ActionManager {
         $LOG = Logger::getLogger(__CLASS__);
         $LOG->debug("Sending email $unsent");
 
+        // Prepare target email addresses
+        $recipients = $unsent->getRecipients();
+        $cc = $unsent->getCc_recipients();
+
+        $roleFilter = ApplicationConfiguration::get(MessagingModule::$CONFIG_EMAIL_SEND_TO_ROLE, null);
+        if( $roleFilter != null ){
+            $LOG->info("Filtering email recipients and CCs to users with role: '$roleFilter'");
+            // Filter target emails to only match users of a given role
+            $recipients = $this->filterToEmailsOfRole($recipients, $roleFilter);
+            $cc = $this->filterToEmailsOfRole($cc, $roleFilter);
+        }
+
         $headers = array();
 
         $default_send_from = ApplicationConfiguration::get(MessagingModule::$CONFIG_EMAIL_DEFAULT_SEND_FROM, null);
@@ -148,11 +160,11 @@ class Messaging_ActionManager extends ActionManager {
             $headers['Return-Path'] = $return_path;
         }
 
-        if( $unsent->getCc_recipients() != null ){
-            $headers['Cc'] = $unsent->getCc_recipients();
+        if( $cc != null ){
+            $headers['Cc'] = $cc;
         }
 
-        // TODO: Support additional headers (like CC)
+        // TODO: Support additional headers
 
         if( count($headers) == 0){
             $headers = null;
@@ -166,8 +178,10 @@ class Messaging_ActionManager extends ActionManager {
             $is_sent = true;
         }
         else{
+            $LOG->info("Sending email to '$recipients' (cc: '$cc')");
+
             $is_sent = mail(
-                $unsent->getRecipients(),
+                $recipients,
                 $unsent->getSubject(),
                 $unsent->getBody(),
                 $headers
@@ -184,6 +198,50 @@ class Messaging_ActionManager extends ActionManager {
         else {
             $LOG->error("Unable to send $unsent");
             return false;
+        }
+    }
+
+    private function filterToEmailsOfRole( $emailCsv, $rolename ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+        $array = explode(',', $emailCsv);
+
+        $params = array_merge(
+            array($rolename),
+            $array
+        );
+
+        $inArrayClause = implode(',', array_fill(0, count($array), '?'));
+
+        $sql = "SELECT user.email
+            FROM erasmus_user user
+            JOIN user_role ur oN user.key_id = ur.user_id
+            JOIN role r ON r.key_id = ur.role_id
+
+            WHERE r.name = ? AND user.email IN ($inArrayClause)";
+
+        $stmt = DBConnection::prepareStatement($sql);
+
+        // Execute the statement
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace($sql);
+        }
+
+        if ($stmt->execute($params)) {
+            $result = $stmt->fetchAll(PDO::FETCH_COLUMN, 'email');
+
+            // 'close' the statement
+            $stmt = null;
+
+            // Should be array of strings
+            return implode(',', $result);
+        }
+        else {
+            $error = $stmt->errorInfo();
+            $LOG->error("Error filtering $rolename emails in (" . implode(',', $array) . "): " . $error[2]);
+
+            // 'close' the statement
+            $stmt = null;
+            return new QueryError($error[2]);
         }
 
     }
