@@ -121,6 +121,6 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="<?php echo WEB_ROOT?>js/lib/tinymce.js"></script>
 </head>
 <body>
-    <?php require('./user_info_bar.php'); ?>
+    <?php require('user_info_bar.php'); ?>
 
 <div class="container-fluid " id="wrapper" style="margin-top:25px;">
