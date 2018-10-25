@@ -232,14 +232,8 @@ if(!isset($_SESSION["USER"])){ ?>
     </style>
 </head>
     <body>
-        <?php if($_SESSION['USER'] != NULL){ ?>
-        <div class="user-info" ng-controller="roleBasedCtrl">
-            <div>
-                Signed in as <?php echo $_SESSION['USER']->getName(); ?>
-                <a style="float:right;" href="<?php echo WEB_ROOT?>action.php?action=logoutAction">Sign Out</a>
-            </div>
-        </div>
-        <?php }?>
+        <?php require('../views/user_info_bar.php'); ?>
+
         <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid" style="margin-top:25px;">
             <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
             <div cg-busy="{promise:saving,message:'Saving...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>

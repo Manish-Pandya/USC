@@ -173,14 +173,8 @@ echo "</script>";
 </head>
 
 <body>
-    <?php if($_SESSION['USER'] != NULL){ ?>
-    <div class="user-info">
-        <div>
-            Signed in as <?php echo $_SESSION['USER']->getName(); ?>
-            <a style="float:right;" href="<?php echo WEB_ROOT?>action.php?action=logoutAction">Sign Out</a>
-        </div>
-    </div>
-    <?php }?>
+    <?php require('../views/user_info_bar.php'); ?>
+
     <div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" class="container-fluid" style="margin-top:25px;">
 
         <div cg-busy="{promise:hazardPromise,message:'Loading Hazards',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>

@@ -121,13 +121,6 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 <script src="<?php echo WEB_ROOT?>js/lib/tinymce.js"></script>
 </head>
 <body>
-    <?php if($_SESSION['USER'] != NULL){ ?>
-        <div class="user-info" ng-controller="roleBasedCtrl">
-            <div>
-                Signed in as <?php echo $_SESSION['USER']->getName(); ?>
-                <a style="float:right;" href="<?php echo WEB_ROOT?>action.php?action=logoutAction">Sign Out</a>
-            </div>
-        </div>
-    <?php }?>
+    <?php require('./user_info_bar.php'); ?>
 
 <div class="container-fluid " id="wrapper" style="margin-top:25px;">
