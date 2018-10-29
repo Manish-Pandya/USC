@@ -39,9 +39,9 @@ require_once '../top_view.php';
                     <th style="text-align:center;"># Lab Rooms</th>
                 </tr>
             </THEAD>
-            <tbody ng-repeat="department in filteredDepts = (departments | matchCampus:selectedCampus | specialtyLab_trueFalse:false | orderBy: ['Department_name'])">
+            <tbody ng-repeat="department in filteredDepts = (departments | matchDepartmentWithCampus:selectedCampus | specialtyLab_trueFalse:false | orderBy: ['Department_name'])">
                 <tr ng-class="{inactive:!department.Is_active}">
-                    <td rowspan="{{department.Campuses.length || 1}}" style="width:9%;">
+                    <td rowspan="{{deptCampuses.length || 1}}" style="width:9%;">
                         <a class="btn btn-primary left" ng-click="openModal(department)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
                         <a ng-click="handleActive(department)" class="btn" ng-class="{'btn-danger':department.Is_active,'btn-success':!department.Is_active}">
                             <span ng-if="department.Is_active" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></span>
@@ -49,24 +49,25 @@ require_once '../top_view.php';
                         </a>
                         <i class="icon-spinnery-dealie spinner small" style="margin-left:5px; margin-top:5px; position:absolute" ng-show="department.isDirty" />
                     </td>
-                    <td rowspan="{{department.Campuses.length || 1}}" style="width:27%;">
+                    <td rowspan="{{deptCampuses.length || 1}}" style="width:27%;">
                         {{department.Department_name}}
                     </td>
                     <td style="width:20%;">
-                        {{department.Campuses[0].Campus_name}}
+                        {{deptCampuses[0].Campus_name}}
                     </td>
-                    <td style="width:22%; text-align:center;">{{department.Campuses[0].Pi_count}}</td>
-                    <td style="width:10%; text-align:center;">{{department.Campuses[0].Room_count}}</td>
+                    <td style="width:22%; text-align:center;">{{deptCampuses[0].Pi_count}}</td>
+                    <td style="width:10%; text-align:center;">{{deptCampuses[0].Room_count}}</td>
                 </tr>
-                <tr ng-if="!$first" ng-repeat="campus in department.Campuses" class="center-block" ng-class="{inactive:!department.Is_active}">
+                <tr ng-if="!$first" ng-repeat="campus in deptCampuses = (department.Campuses | matchCampus:selectedCampus)" class="center-block" ng-class="{inactive:!department.Is_active}">
                     <td style="width:20%;">
                         {{campus.Campus_name}}
                     </td>
                     <td style="width:22%; text-align:center;">{{campus.Pi_count}}</td>
                     <td style="width:10%; text-align:center;">{{campus.Room_count}}</td>
                 </tr>
-                <tr ng-show="!filteredDepts.length"><td colspan="5"><h3>No Departments in {{selectedCampus}}</h3></td></tr>
-
+            </tbody>
+            <tbody ng-show="!filteredDepts.length">
+                <tr><td colspan="5"><h3>No Departments in {{selectedCampus}}</h3></td></tr>
             </tbody>
         </table>
 
@@ -87,9 +88,9 @@ require_once '../top_view.php';
                     <th style="text-align:center;"># Lab Rooms</th>
                 </tr>
             </THEAD>
-            <tbody ng-repeat="department in labs = (departments | matchCampus:selectedCampus | specialtyLab_trueFalse:true | orderBy: 'Department_name')">
-            <tr ng-repeat="campus in department.Campuses" class="center-block" ng-class="{inactive:!department.Is_active}">
-                    <td ng-if="$first" rowspan="{{department.Campuses.length}}" style="width:9%;">
+            <tbody ng-repeat="department in labs = (departments | matchDepartmentWithCampus:selectedCampus | specialtyLab_trueFalse:true | orderBy: 'Department_name')">
+                <tr ng-class="{inactive:!department.Is_active}">
+                    <td rowspan="{{labCampuses.length || 1}}" style="width:9%;">
                         <a class="btn btn-primary left" ng-click="openModal(department)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></a>
                         <a ng-click="handleActive(department)" class="btn" ng-class="{'btn-danger':department.Is_active,'btn-success':!department.Is_active}">
                             <span ng-if="department.Is_active" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></span>
@@ -97,17 +98,25 @@ require_once '../top_view.php';
                         </a>
                         <i class="icon-spinnery-dealie spinner small" style="margin-left:5px; margin-top:5px; position:absolute" ng-show="department.isDirty" />
                     </td>
-                    <td ng-if="$first" rowspan="{{department.Campuses.length}}" style="width:27%;">
+                    <td rowspan="{{labCampuses.length || 1}}" style="width:27%;">
                         {{department.Department_name}}
                     </td>
+                    <td style="width:20%;">
+                        {{labCampuses[0].Campus_name}}
+                    </td>
+                    <td style="width:22%; text-align:center;">{{labCampuses[0].Pi_count}}</td>
+                    <td style="width:10%; text-align:center;">{{labCampuses[0].Room_count}}</td>
+                </tr>
+                <tr ng-if="!$first" ng-repeat="campus in labCampuses = (department.Campuses | matchCampus:selectedCampus)" class="center-block" ng-class="{inactive:!department.Is_active}">
                     <td style="width:20%;">
                         {{campus.Campus_name}}
                     </td>
                     <td style="width:22%; text-align:center;">{{campus.Pi_count}}</td>
                     <td style="width:10%; text-align:center;">{{campus.Room_count}}</td>
                 </tr>
-                <tr ng-show="!labs.length"><td colspan="5"><h3>No Specialty Labs in {{selectedCampus}}</h3></td></tr>
-
+            </tbody>
+            <tbody ng-show="!labs.length">
+                <tr><td colspan="5"><h3>No Specialty Labs in {{selectedCampus}}</h3></td></tr>
             </tbody>
         </table>
 
