@@ -170,7 +170,8 @@ departmentHubController = function($scope,departmentFactory,convenienceMethods, 
             Class: "Department",
             Name: department.Department_name,
             Is_active: !department.Is_active,
-            Key_id: department.Department_id
+            Key_id: department.Department_id,
+            Specialty_lab: department.Specialty_lab
         }
         departmentFactory.saveDepartment(deptDto).then(
           function(promise){

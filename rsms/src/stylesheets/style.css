@@ -3765,6 +3765,24 @@ tbody tr:nth-child(even){
 
 tbody tr:hover{/* background:#BDC3C7; */color: #FFFFFF !important;}
 
+/** Table Striping for Rowspan tables (stripe tbody instead of just row) **/
+/* stripe/hover over rowspans using multiple tbody */
+.table-rowspan-stripe tbody:nth-child(even) {
+  background: #ECF0F1;
+}
+
+/* Hover over any/all tbody element rows */
+.table-rowspan-stripe tbody:hover td[rowspan], tr:hover td {
+  background: lightgray;
+}
+
+/* Reset the tr striping so we can stripe using tbody */
+.table-rowspan-stripe tbody tr:nth-child(even){
+  background:initial;
+}
+
+/*****/
+
 .fixed{
   position:fixed;
   width:auto;
