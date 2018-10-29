@@ -14,6 +14,23 @@ angular.module('departmentHub', ['ui.bootstrap', 'convenienceMethodWithRoleBased
     return changedThings;
   }
 })
+.filter("matchDepartmentWithCampus", function(){
+    return function(departments, campusName){
+        if(!departments)return;
+        if(!campusName)return departments;
+        var i = departments.length;
+        var matches = [];
+        while(i--){
+            var j = departments[i].Campuses.length;
+            while(j--){
+                if(departments[i].Campuses[j].Campus_name == campusName){
+                    matches.unshift(departments[i]);
+                }
+            }
+        }
+        return matches;
+    }
+})
 .filter("matchCampus", function(){
     return function(departments, campusName){
         if(!departments)return;
