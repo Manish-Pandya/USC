@@ -1064,6 +1064,49 @@ class GenericDAO {
 		return $locations;
 	}
 
+	function getCampusCountsForDepartment( $deptId ){
+		$LOG = Logger::getLogger(__CLASS__);
+
+		$queryString = "SELECT
+			dept.name as department_name,
+			dept.is_active as is_active,
+			campus.name as campus_name,
+			dept.key_id as department_id,
+			COALESCE(dept.specialty_lab, false) as specialty_lab,
+			campus.key_id as campus_id,
+			count(distinct room.key_id) room_count,
+			count(distinct pi_room.principal_investigator_id) pi_count,
+			count(distinct building.key_id) building_count
+
+		FROM department dept
+		LEFT OUTER JOIN principal_investigator_department pi_dept
+			ON (dept.key_id = pi_dept.department_id)
+		LEFT OUTER JOIN principal_investigator_room pi_room
+			ON (pi_room.principal_investigator_id = pi_dept.principal_investigator_id)
+		LEFT OUTER JOIN room room
+			ON (room.key_id = pi_room.room_id)
+		LEFT OUTER JOIN building building
+			ON (building.key_id = room.building_id)
+		LEFT OUTER JOIN campus campus
+			ON (campus.key_id = building.campus_id)
+
+		WHERE pi_room.room_id IS NOT NULL AND dept.key_id = :deptId
+
+		GROUP BY campus.name, dept.name
+		ORDER BY dept.name, campus.name";
+
+		$stmt = DBConnection::prepareStatement($queryString);
+		$stmt->bindParam(":deptId", $deptId, PDO::PARAM_INT);
+		$stmt->execute();
+		$data = $stmt->fetchAll(PDO::FETCH_CLASS, "DepartmentCampusInfoDto");
+
+		// 'close' the statment
+		$stmt = null;
+
+		return $data;
+	}
+
+	// FIXME: Deprecate this function
 	function getAllDepartmentsAndCounts(){
 		$LOG = Logger::getLogger(__CLASS__);
 
@@ -1094,6 +1137,7 @@ class GenericDAO {
 		return $data;
 	}
 
+	// FIXME: Deprecate this function
 	function getDepartmentDtoById( $id ){
 		$LOG = Logger::getLogger(__CLASS__);
 

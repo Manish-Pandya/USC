@@ -2465,7 +2465,29 @@ class ActionManager {
 
     public function getAllDepartmentsWithCounts(){
         $dao = $this->getDao(new Department());
-        return $dao->getAllDepartmentsAndCounts();
+        $allDepartments = $dao->getAll();
+
+        $deptCampusData = array();
+        foreach($allDepartments as $dept){
+            $deptInfo = new DepartmentDto($dept);
+
+            // Get campus info for this department
+            $campuses = $dao->getCampusCountsForDepartment($dept->getKey_id());
+
+            // If there is no info; add an empty descriptor
+            if( count($campuses) == 0 ){
+                $empty = new DepartmentCampusInfoDto();
+                $empty->setPi_count(0);
+                $empty->setRoom_count(0);
+                $campuses[] = $empty;
+            }
+
+            $deptInfo->setCampuses( $campuses );
+
+            $deptCampusData[] = $deptInfo;
+        }
+
+        return $deptCampusData;
     }
 
 
