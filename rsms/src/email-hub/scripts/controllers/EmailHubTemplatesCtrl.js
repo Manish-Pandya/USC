@@ -52,6 +52,22 @@ angular.module('ng-EmailHub')
             return $scope.MessageTypes.filter(t => t.TypeName == template.Message_type && t.Module == template.Module)[0];
         };
 
+        $scope.editTemplate = function editTemplate( template ){
+            // Close all templates
+            $scope.Templates.forEach( t => $scope.cancelEditTemplate(t));
+
+            // Open this one
+            template.EditCopy = angular.copy(template);
+        };
+
+        $scope.cancelEditTemplate = function cancelEditTemplate( template ){
+            template.EditCopy = undefined;
+        }
+
+        $scope.saveTemplate = function saveTemplate( template ){
+            // TODO: validate
+        };
+
         $scope.createNewTemplate = function createNewTemplate( messageType ){
             if( !messageType ){
                 console.warn("No message type selected");
