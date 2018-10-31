@@ -312,6 +312,31 @@ class Messaging_ActionManager extends ActionManager {
         );
     }
 
+    public function toggleTemplateActive( $templateId ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+        $templateId = $this->getValueFromRequest('templateId', $templateId);
+
+        if( $templateId == null ){
+            return new ActionError('No template was specified', 400);
+        }
+
+        $dao = new GenericDAO(new MessageTemplate());
+        $template = $dao->getById( $templateId );
+
+        if( $template == NULL ){
+            return new ActionError("Template does not exist", 404);
+        }
+
+        // Toggle active status
+        $LOG->debug("Toggle active status for: $template");
+        $LOG->trace("Template is active: " . $template->getIs_active());
+        $template->setIs_active( !$template->getIs_active() );
+        $template = $dao->save($template);
+        $LOG->trace("Template is active: " . $template->getIs_active());
+
+        return $template->getIs_active();
+    }
+
     function replaceMacros($macromap, $content){
         return str_replace(
             array_keys($macromap),
