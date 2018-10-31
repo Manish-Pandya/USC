@@ -51,4 +51,21 @@ angular.module('ng-EmailHub')
         $scope.getTypeForTemplate = function getTypeForTemplate( template ){
             return $scope.MessageTypes.filter(t => t.TypeName == template.Message_type && t.Module == template.Module)[0];
         };
+
+        $scope.createNewTemplate = function createNewTemplate( messageType ){
+            if( !messageType ){
+                console.warn("No message type selected");
+                return false;
+            }
+
+            $scope.saving = $q.when(XHR.POST('createNewTemplate', messageType))
+                .then(
+                    newTemplate => {
+                        $scope.Templates.push( newTemplate );
+                    },
+                    error => {
+                        console.error("Error saving new template", error);
+                    }
+                );
+        }
     });

@@ -340,6 +340,58 @@ class Messaging_ActionManager extends ActionManager {
         return $template->getIs_active();
     }
 
+    public function createNewTemplate( MessageTypeDto $typeDto = NULL ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        if( $typeDto == null ){
+            $typeDto = $this->convertInputJson();
+        }
+
+        if( !($typeDto instanceof MessageTypeDto) ){
+            $LOG->error("Provided message type is not a MessageTypeDto: $typeDto");
+            return new ActionError("Invalid message type", 400);
+        }
+
+        // Validate message type
+        $moduleName = $typeDto->getModule();
+        $module = ModuleManager::getModuleByName( $moduleName );
+        if( $module == null ){
+            $msg = "No such module: $moduleName";
+            $LOG->error($msg);
+            return new ActionError($msg, 404);
+        }
+
+        // Module is valid; match requested message type to Module's declarations
+        $messageTypeName = $typeDto->getTypeName();
+        $messageType = null;
+        foreach($module->getMessageTypes() as $moduleType) {
+            if( $moduleType->getTypeName() == $messageTypeName){
+                $messageType = $moduleType;
+                break;
+            }
+        }
+
+        if( $messageType == null ){
+            $msg = "No such message type '$messageTypeName' in module '$moduleName'";
+            $LOG->error($msg);
+            return new ActionError($msg, 404);
+        }
+
+        // Requested type/module is valid; create a new template
+        $LOG->debug("Creating new message template for $messageType");
+        $template = new MessageTemplate();
+        $template->setIs_active(true);
+        $template->setModule($messageType->getModule());
+        $template->setMessage_type($messageType->getTypeName());
+        $template->setTitle("New Template: $moduleName / $messageTypeName");
+
+        $dao = new GenericDAO($template);
+        $template = $dao->save($template);
+        $LOG->debug("Saved new template: $template");
+
+        return $template;
+    }
+
     function replaceMacros($macromap, $content){
         return str_replace(
             array_keys($macromap),
