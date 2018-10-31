@@ -32,7 +32,10 @@ class Messaging_ActionManager extends ActionManager {
 
         $dao = new GenericDAO(new MessageTemplate());
         $templates = $dao->getAllWhere($constraint);
-        $LOG->debug($templates);
+
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace($templates);
+        }
 
         // FIXME: Ensure that all content is UTF-8 encoded before JSONing
         return $templates;
