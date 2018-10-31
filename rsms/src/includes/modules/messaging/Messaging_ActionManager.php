@@ -392,6 +392,46 @@ class Messaging_ActionManager extends ActionManager {
         return $template;
     }
 
+    public function saveTemplate( $id, $templateDto = null){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $id = $this->getValueFromRequest('id', $id);
+
+        if( $templateDto == null ){
+            $templateDto = $this->convertInputJson();
+        }
+
+        if( !($templateDto instanceof MessageTemplate) ){
+            $LOG->error("Provided template is not a MessageTemplate: $templateDto");
+            return new ActionError("Invalid template", 400);
+        }
+
+        if( $id == null ){
+            $LOG->warn("Template ID was not provided; inferring from request entity");
+            $id = $templateDto->getKey_id();
+        }
+
+        $dao = new GenericDAO( new MessageTemplate() );
+        $template = $dao->getById( $id );
+
+        if( $template == null ){
+            $msg = "No such template: $id";
+            $LOG->error($msg);
+            return new ActionError($msg, 404);
+        }
+
+        // TODO: Validate Template content (UTF-8 chars, etc)
+
+        $template->setTitle( $templateDto->getTitle() );
+        $template->setCorpus( $templateDto->getCorpus() );
+        $template->setSubject( $templateDto->getSubject() );
+
+        $LOG->debug("Saving $template");
+        $template = $dao->save($template);
+
+        return $template;
+    }
+
     function replaceMacros($macromap, $content){
         return str_replace(
             array_keys($macromap),

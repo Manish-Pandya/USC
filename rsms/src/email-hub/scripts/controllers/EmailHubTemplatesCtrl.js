@@ -64,8 +64,30 @@ angular.module('ng-EmailHub')
             template.EditCopy = undefined;
         }
 
-        $scope.saveTemplate = function saveTemplate( template ){
+        $scope.validateTemplate = function validateTemplate( template ){
+            var valid = true;
+
             // TODO: validate
+
+            return valid;
+        }
+
+        $scope.saveTemplate = function saveTemplate( template ){
+            if( $scope.validateTemplate( template.EditCopy ) ){
+                $scope.saving = $q.when(XHR.POST('saveTemplate&id=' + template.Key_id, template.EditCopy))
+                    .then(
+                        saved => {
+                            console.debug("Saved template", saved);
+
+                            Object.assign(template, saved);
+                            $scope.editTemplate(template);
+                        },
+                        error => { console.error("Error saving template", template, error); }
+                    );
+            }
+            else{
+                console.warn("Template is invalid");
+            }
         };
 
         $scope.createNewTemplate = function createNewTemplate( messageType ){
