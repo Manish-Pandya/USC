@@ -34,19 +34,29 @@
                     <td colspan="4">
                         <div class="card span12" style="margin:15px; padding:15px;">
                             <div>
-                                <h4>Name:</h4>
+                                <span class="pull-right badge" ng-class="{'badge-warning': !template.Is_active, 'badge-info': template.Is_active}">
+                                    {{template.Is_active ? 'Active' : 'Inactive'}}
+                                </span>
+
+                                <h4>
+                                    Name:
+                                </h4>
                                 <input type="text" style="width:500px" ng-model="template.EditCopy.Title" />
+                                <i class="icon-help" popover-placement="right"
+                                    popover="Administrative name of this Template. Not used as part of the generated messages."></i>
 
                                 <hr/>
 
                                 <h4>Subject:</h4>
                                 <input type="text" style="width:500px" ng-model="template.EditCopy.Subject" />
 
-                                <h4>Template:</h4>
+                                <h4>Body:</h4>
                                 <textarea ui-tinymce="$root.tinymceOptions" ng-model="template.EditCopy.Corpus"></textarea>
                             </div>
                             <div class="modal-footer">
-                                <a class="btn btn-large btn-success left" ng-click="saveTemplate(template)"><i class="icon-checkmark"></i>Save</a>
+                                <span class="pull-left">Last Saved {{template.Date_last_modified | dateToIsoTime}}</span>
+                                <a class="btn btn-large btn-success left" ng-click="saveTemplate(template, true)"><i class="icon-checkmark"></i>Save</a>
+                                <a class="btn btn-large btn-success left" ng-click="saveTemplate(template, false)"><i class="icon-check-alt"></i>Save/Close</a>
                                 <a class="btn btn-large btn-info left" ng-click="previewTemplate(template)"><i class="icon-eye-4"></i>Preview</a>
                                 <a class="btn btn-large btn-danger left" ng-click="closeOrCancelEditTemplate(template)"><i class="icon-cancel"></i>Cancel</a>
                             </div>
