@@ -2,6 +2,42 @@
 
 class Messaging_ActionManager extends ActionManager {
 
+    public function getAllMessageTypes(){
+        // Get all Modules which declare message types
+        $allMessageTypes = array();
+        foreach(ModuleManager::getAllModules() as $module){
+            if( $module instanceof MessageTypeProvider ){
+                $allMessageTypes = array_merge($allMessageTypes, $module->getMessageTypes());
+            }
+        }
+
+        return $allMessageTypes;
+    }
+
+    public function getMessageTemplates($type = NULL){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $type = $this->getValueFromRequest('type', $type);
+
+        $LOG->debug("Get all templates for '$type'");
+
+        $constraint = new WhereClauseGroup();
+        if( $type != null ){
+            $constraint->setClauses(
+                array(
+                    new WhereClause('message_type','=', $type)
+                )
+            );
+        }
+
+        $dao = new GenericDAO(new MessageTemplate());
+        $templates = $dao->getAllWhere($constraint);
+        $LOG->debug($templates);
+
+        // FIXME: Ensure that all content is UTF-8 encoded before JSONing
+        return $templates;
+    }
+
     public function getContextDescriptor(MessageContext $context){
         $context_json = json_encode($context);
 

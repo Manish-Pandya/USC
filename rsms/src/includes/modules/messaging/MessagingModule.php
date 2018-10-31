@@ -28,7 +28,12 @@ class MessagingModule implements RSMS_Module {
     }
 
     public function getActionConfig(){
-        return array();
+        // TODO: do we need a factory type?
+        $ADMIN_ROLES = array("Admin");
+        return array(
+            'getAllMessageTypes' => new ActionMapping("getAllMessageTypes", "", $ADMIN_ROLES),
+            'getMessageTemplates' => new ActionMapping("getMessageTemplates", "", $ADMIN_ROLES)
+        );
     }
 }
 ?>
