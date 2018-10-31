@@ -54,13 +54,13 @@ angular.module('ng-EmailHub')
 
         $scope.editTemplate = function editTemplate( template ){
             // Close all templates
-            $scope.Templates.forEach( t => $scope.cancelEditTemplate(t));
+            $scope.Templates.forEach( t => $scope.closeOrCancelEditTemplate(t));
 
             // Open this one
             template.EditCopy = angular.copy(template);
         };
 
-        $scope.cancelEditTemplate = function cancelEditTemplate( template ){
+        $scope.closeOrCancelEditTemplate = function closeOrCancelEditTemplate( template ){
             template.EditCopy = undefined;
         }
 
@@ -72,15 +72,22 @@ angular.module('ng-EmailHub')
             return valid;
         }
 
-        $scope.saveTemplate = function saveTemplate( template ){
+        $scope.saveTemplate = function saveTemplate( template, continueEditing ){
             if( $scope.validateTemplate( template.EditCopy ) ){
                 $scope.saving = $q.when(XHR.POST('saveTemplate&id=' + template.Key_id, template.EditCopy))
                     .then(
                         saved => {
                             console.debug("Saved template", saved);
 
+                            // Apply updates to the model
                             Object.assign(template, saved);
-                            $scope.editTemplate(template);
+
+                            if( continueEditing ){
+                                $scope.editTemplate(template);
+                            }
+                            else{
+                                $scope.closeOrCancelEditTemplate(template);
+                            }
                         },
                         error => { console.error("Error saving template", template, error); }
                     );

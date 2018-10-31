@@ -20,7 +20,7 @@
                 <tr ng-class="{inactive: !template.Is_active, greenBg: template.EditCopy}">
                     <td>
                         <a ng-if="!template.EditCopy" class="btn btn-primary left" ng-click="editTemplate(template)"><i class="icon-pencil"></i></a>
-                        <a ng-if="template.EditCopy"  class="btn btn-primary left" ng-click="cancelEditTemplate(template)"><i class="icon-cancel"></i></a>
+                        <a ng-if="template.EditCopy"  class="btn btn-primary left" ng-click="closeOrCancelEditTemplate(template)"><i class="icon-cancel"></i></a>
 
                         <a class="btn left" ng-click="toggleActive(template)" ng-class="{'btn-danger': template.Is_active, 'btn-success': !template.Is_active}">
                             <i ng-class="{'icon-remove': template.Is_active, 'icon-checkmark': !template.Is_active}"></i>
@@ -48,7 +48,7 @@
                             <div class="modal-footer">
                                 <a class="btn btn-large btn-success left" ng-click="saveTemplate(template)"><i class="icon-checkmark"></i>Save</a>
                                 <a class="btn btn-large btn-info left" ng-click="previewTemplate(template)"><i class="icon-eye-4"></i>Preview</a>
-                                <a class="btn btn-large btn-danger left" ng-click="cancelEditTemplate(template)"><i class="icon-cancel"></i>Cancel</a>
+                                <a class="btn btn-large btn-danger left" ng-click="closeOrCancelEditTemplate(template)"><i class="icon-cancel"></i>Cancel</a>
                             </div>
                         </div>
 
