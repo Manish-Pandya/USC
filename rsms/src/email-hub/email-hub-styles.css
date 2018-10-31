@@ -45,12 +45,20 @@ ul.banner-nav li {
 ul.banner-nav li a {
     font-weight: bold;
     font-size: 12px;
-    color: rgba(51, 51, 51, 0.7);
+    color: #fff;
     display: block;
 }
 
 ul.banner-nav li a:hover {
-    color: black;
+    color: #ddd;
+}
+
+ul.banner-nav li span {
+    font-weight: bold;
+    font-size: 12px;
+    color: #fff;
+    display: block;
+    text-decoration: underline;
 }
 
 /* Templates table */

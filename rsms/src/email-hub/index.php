@@ -90,7 +90,10 @@
             </h1>
 
             <ul class="banner-nav" ng-if="moduleNavLinks.length">
-                <li ng-repeat="link in moduleNavLinks"><a ui-sref="{{link.expression}}" ng-bind="link.text"></a></li>
+                <li ng-repeat="link in moduleNavLinks">
+                    <span ng-if="link.active" ng-bind="link.text"></span>
+                    <a ng-if="!link.active" ui-sref="{{link.expression}}" ng-bind="link.text"></a>
+                </li>
             </ul>
         </div>
 

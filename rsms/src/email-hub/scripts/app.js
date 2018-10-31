@@ -60,21 +60,28 @@ angular
                 {
                     text: 'Home',
                     expression: 'email()',
-                    name: 'email'
+                    name: 'email',
+                    icon: 'icon-email'
                 },
                 {
                     text: 'Templates',
                     expression: 'templates()',
-                    name: 'templates'
+                    name: 'templates',
+                    icon: 'icon-code'
                 },
                 {
                     text: 'Queue',
                     expression: 'queue()',
-                    name: 'queue'
+                    name: 'queue',
+                    icon: 'icon-clock-2'
                 }
             ];
 
-            return links.filter( link => link.name != $state.current.name);
+            // Flag the current state so we can disable its link(s)
+            links.forEach(link => link.active = link.name == $state.current.name);
+
+            $rootScope.navLinks = links;
+            return $rootScope.navLinks;
         }
 
         $rootScope.$on('$stateChangeSuccess',
