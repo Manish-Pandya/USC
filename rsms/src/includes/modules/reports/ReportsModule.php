@@ -1,6 +1,6 @@
 <?php
 
-class ReportsModule implements RSMS_Module {
+class ReportsModule implements RSMS_Module, MessageTypeProvider {
 
     public static $NAME = 'Reports';
 
@@ -27,6 +27,13 @@ class ReportsModule implements RSMS_Module {
 
     public function getActionConfig(){
         return Reports_ActionMappingFactory::readActionConfig();
+    }
+
+    public function getMessageTypes(){
+        return array(
+            new MessageTypeDto(self::$NAME, 'LabInspectionSummaryReady', 'Description for LabInspectionSummaryReady message type'),
+            new MessageTypeDto(self::$NAME, 'LabInspectionSummaryYearly', 'Description for LabInspectionSummaryYearly message type')
+        );
     }
 }
 ?>
