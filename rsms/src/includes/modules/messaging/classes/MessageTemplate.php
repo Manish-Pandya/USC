@@ -28,9 +28,7 @@ class MessageTemplate extends GenericCrud {
     protected $title;
     protected $module;
 
-    public function __construct() {
-        $this->setIs_active(true);
-    }
+    public function __construct() {}
 
     // Required for GenericCrud //
     public function getTableName(){
