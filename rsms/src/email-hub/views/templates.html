@@ -63,26 +63,20 @@
                         </div>
 
                         <div class="card span5" style="margin:15px; padding:15px;" ng-init="mtype = getTypeForTemplate(template)">
-                            <div class="control-group">
-                                <label class="control-label">Module</label>
-                                {{mtype.Module}}
-                            </div>
-                            <div>
-                                <label>Type Name</label>
-                                {{mtype.TypeName}}
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Description</label>
-                                {{mtype.TypeDescription}}
-                            </div>
-                            <div>
-                                <label>Context</label>
-                                Context details
-                            </div>
-                            <div>
-                                <label>Macros</label>
-                                Macros
-                            </div>
+                            <h4>Module</h4>
+                            <span ng-bind="mtype.Module"></span>
+
+                            <h4>Type Name</h4>
+                            <span ng-bind="mtype.TypeName"></span>
+
+                            <h4>Description</h4>
+                            <span ng-bind="mtype.TypeDescription"></span>
+
+                            <h4>Context</h4>
+                            Context details
+
+                            <h4>Macros</h4>
+                            Macros
                         </div>
                     </td>
                 </tr>
