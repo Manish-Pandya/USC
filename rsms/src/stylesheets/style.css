@@ -3772,7 +3772,8 @@ tbody tr:hover{/* background:#BDC3C7; */color: #FFFFFF !important;}
 }
 
 /* Hover over any/all tbody element rows */
-.table-rowspan-stripe tbody:hover td[rowspan], tr:hover td {
+.table-rowspan-stripe tbody:hover td[rowspan],
+.table-rowspan-stripe tr:hover td {
   background: lightgray;
 }
 
