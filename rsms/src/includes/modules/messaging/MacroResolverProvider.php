@@ -2,8 +2,13 @@
 
 class MacroResolverProvider {
 
-    public static function build( ...$messageTypes ){
+    public static function build( $messageTypes ){
         $LOG = Logger::getLogger(__CLASS__);
+
+        if( !is_array($messageTypes) ){
+            $messageTypes = array($messageTypes);
+        }
+
         $LOG->debug("Build MacroResolverProvider for " . count($messageTypes) . ' message types');
         $resolvers = array();
 
@@ -40,7 +45,11 @@ class MacroResolverProvider {
         $this->resolvers = $resolvers;
     }
 
-    public function resolve( ...$contexts ){
+    public function resolve( $contexts ){
+        if( !is_array($contexts) ){
+            $contexts = array($contexts);
+        }
+
         $macros = array();
         // Resolve each context
         foreach($contexts as $context ){
