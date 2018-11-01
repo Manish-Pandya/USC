@@ -1,15 +1,15 @@
 <div cg-busy="{promise:loading, message:'Loading...', backdrop:true, templateUrl:'../busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:saving, message:'Saving...', backdrop:true, templateUrl:'../busy-templates/full-page-busy.html'}"></div>
 <div class="email-hub">
-    <div class="card full">
-        <h1 style="margin: 10px 0 5px 15px">
-            Message Templates
+
+    <div class="card full" ng-init="showTemplatesTable = true">
+        <h1 style="margin: 10px 15px 5px 15px; cursor: pointer;" ng-click="showTemplatesTable = !showTemplatesTable">
+            <i style="vertical-align: middle; font-size: inherit; margin-right:20px;" ng-class="{'icon-arrow-7':!showTemplatesTable, 'icon-arrow-8': showTemplatesTable}"></i>
+            <span>Message Templates</span>
+            <span class="pull-right" ng-if="Templates">({{Templates.length}})</span>
         </h1>
 
-        <div ng-if="!Templates" style="text-align: center; margin: 10px;">
-            <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
-        </div>
-        <table ng-if="Templates" class="table table-bordered templates">
+        <table ng-if="Templates && showTemplatesTable" class="table table-bordered templates">
             <thead>
                 <th></th>
                 <th>Template Name</th>
@@ -82,15 +82,14 @@
         </table>
     </div>
 
-    <div class="card full">
-        <h1 style="margin: 10px 0 5px 15px">
-            Message Types
+    <div class="card full" ng-init="showTypesTable = true">
+        <h1 style="margin: 10px 15px 5px 15px; cursor: pointer;" ng-click="showTypesTable = !showTypesTable">
+            <i style="vertical-align: middle; font-size: inherit; margin-right:20px;" ng-class="{'icon-arrow-7':!showTypesTable, 'icon-arrow-8': showTypesTable}"></i>
+            <span>Message Types</span>
+            <span class="pull-right" ng-if="MessageTypes">({{MessageTypes.length}})</span>
         </h1>
 
-        <div ng-if="!MessageTypes" style="text-align: center; margin: 10px;">
-            <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
-        </div>
-        <table ng-if="MessageTypes" class="table table-bordered table-hover table-striped">
+        <table ng-if="MessageTypes && showTypesTable" class="table table-bordered table-hover table-striped">
             <thead>
                 <tr>
                     <th rowspan="2"></th>
@@ -108,8 +107,13 @@
             <tbody>
                 <tr ng-repeat="mtype in MessageTypes" ng-click="mtype.EditCopy = !mtype.EditCopy">
                     <td>
-                        <a ng-class="{'btn-warning': mtype.numActiveTemplates > 0, 'btn-success': mtype.numActiveTemplates == 0}"
-                            class="btn left" style="margin-right:10px" ng-click="createNewTemplate(mtype)">
+                        <a ng-if="mtype.numActiveTemplates > 0" class="btn left btn-warning" style="margin-right:10px" ng-click="createNewTemplate(mtype)"
+                            popover="Each Active template for a given Message Type will generate its own email."
+                            popover-title="There is already at least one template for this Message Type.">
+                            <i class="icon-add"></i>
+                            Add Template
+                        </a>
+                        <a ng-if="mtype.numActiveTemplates == 0" class="btn left btn-success" style="margin-right:10px" ng-click="createNewTemplate(mtype)">
                             <i class="icon-plus-2"></i>
                             New Template
                         </a>
