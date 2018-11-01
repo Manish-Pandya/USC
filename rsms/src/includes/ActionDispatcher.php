@@ -124,6 +124,7 @@ class ActionDispatcher {
 
             //NULL indicates something was wrong
             if( $this->result->actionFunctionResult === NULL  ){
+                $this->LOG->warn("Null action result; forwarding to failure page");
                 // Forward to the failure page
                 $this->dispatchError($this->result, $actionMapping);
             }
