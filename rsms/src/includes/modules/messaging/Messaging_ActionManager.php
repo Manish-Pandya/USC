@@ -47,8 +47,8 @@ class Messaging_ActionManager extends ActionManager {
         return $context_json;
     }
 
-    public function getContextFromMessage(Message $message){
-        $context = json_decode( $message->getContext_descriptor());
+    public function getContextFromMessage(Message $message, $base = null){
+        $context = JsonManager::decode( $message->getContext_descriptor(), $base );
         return $context;
     }
 

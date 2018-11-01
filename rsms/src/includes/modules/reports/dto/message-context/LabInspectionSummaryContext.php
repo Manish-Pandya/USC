@@ -8,6 +8,9 @@ class LabInspectionSummaryContext implements MessageContext {
         $this->department_id = $dept;
         $this->report_year = $year;
     }
+
+    public function setDepartment_id($id){ $this->department_id = $id; }
+    public function setReport_year($year){ $this->report_year = $year; }
 }
 
 ?>
