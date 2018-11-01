@@ -76,3 +76,29 @@ ul.banner-nav li span {
 .templates.table tbody tr:nth-child(even){
     background:initial;
 }
+
+.inner.card {
+    margin: 15px;
+    padding: 15px;
+}
+
+.message-type-info li {
+    padding-top: 15px;
+}
+
+.message-type-info .desc {
+    padding-bottom: 15px;
+}
+
+.message-type-info .desc .boldword {
+    font-weight: bold;
+    padding-right: 15px;
+}
+
+.macro-list {
+    font-size: 14px;
+}
+
+.macro-list li {
+    padding-top: 10px;
+}

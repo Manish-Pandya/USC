@@ -1,6 +1,6 @@
 <div cg-busy="{promise:loading, message:'Loading...', backdrop:true, templateUrl:'../busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:saving, message:'Saving...', backdrop:true, templateUrl:'../busy-templates/full-page-busy.html'}"></div>
-<div>
+<div class="email-hub">
     <div class="card full">
         <h1 style="margin: 10px 0 5px 15px">
             Message Templates
@@ -32,15 +32,13 @@
                 </tr>
                 <tr ng-if="template.EditCopy">
                     <td colspan="4">
-                        <div class="card span12" style="margin:15px; padding:15px;">
+                        <div class="inner card span12">
                             <div>
                                 <span class="pull-right badge" ng-class="{'badge-warning': !template.Is_active, 'badge-info': template.Is_active}">
                                     {{template.Is_active ? 'Active' : 'Inactive'}}
                                 </span>
 
-                                <h4>
-                                    Name:
-                                </h4>
+                                <h4>Template Name:</h4>
                                 <input type="text" style="width:500px" ng-model="template.EditCopy.Title" />
                                 <i class="icon-help" popover-placement="right"
                                     popover="Administrative name of this Template. Not used as part of the generated messages."></i>
@@ -62,21 +60,25 @@
                             </div>
                         </div>
 
-                        <div class="card span5" style="margin:15px; padding:15px;" ng-init="mtype = getTypeForTemplate(template)">
+                        <div class="inner card span5 message-type-info" ng-init="mtype = getTypeForTemplate(template)">
+                            <i class="icon-help pull-right" popover-placement="left"
+                                popover="Macros placed in the template Subject or Body will be replaced with contextual details when this template is used to create an email."></i>
+
                             <h4>Module</h4>
-                            <span ng-bind="mtype.Module"></span>
+                            <div class="desc" ng-bind="mtype.Module"></div>
 
                             <h4>Type Name</h4>
-                            <span ng-bind="mtype.TypeName"></span>
+                            <div class="desc" ng-bind="mtype.TypeName"></div>
 
                             <h4>Description</h4>
-                            <span ng-bind="mtype.TypeDescription"></span>
-
-                            <h4>Context</h4>
-                            Context details
+                            <div class="desc" ng-bind="mtype.TypeDescription"></div>
 
                             <h4>Macros</h4>
-                            Macros
+                            <ul class="macro-list">
+                                <li ng-repeat="macro in mtype.MacroDescriptions">
+                                    <code>{{macro.Key}}</code> - {{macro.Value}}
+                                </li>
+                            </ul>
                         </div>
                     </td>
                 </tr>

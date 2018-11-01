@@ -7,7 +7,10 @@ class Messaging_ActionManager extends ActionManager {
         $allMessageTypes = array();
         foreach(ModuleManager::getAllModules() as $module){
             if( $module instanceof MessageTypeProvider ){
-                $allMessageTypes = array_merge($allMessageTypes, $module->getMessageTypes());
+                foreach( $module->getMessageTypes() as $mtype ){
+                    $mtype->setMacroDescriptions( MacroResolverProvider::build($mtype)->resolveDescriptions());
+                    $allMessageTypes[] = $mtype;
+                }
             }
         }
 
