@@ -102,7 +102,7 @@ class A_LabInspectionSummary_Processor implements MessageTypeProcessor {
         return $chairUser;
     }
 
-    function getReportLink($departmentId, $reportYear){
+    public static function getReportLink($departmentId, $reportYear){
         $urlBase = ApplicationConfiguration::get('server.web.url');
         $webRoot = WEB_ROOT;
         return "$urlBase$webRoot" . "reports/#/inspection-summary/reports/$departmentId/$reportYear";

@@ -35,5 +35,9 @@ class ReportsModule implements RSMS_Module, MessageTypeProvider {
             new MessageTypeDto(self::$NAME, 'LabInspectionSummaryYearly', 'Description for LabInspectionSummaryYearly message type')
         );
     }
+
+    public function getMacroResolvers(){
+        return ReportsMessageMacros::getResolvers();
+    }
 }
 ?>
