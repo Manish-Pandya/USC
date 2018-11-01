@@ -61,17 +61,13 @@
                         </div>
 
                         <div class="inner card span5 message-type-info" ng-init="mtype = getTypeForTemplate(template)">
+
+                            <h4 class="desc">{{mtype.Module}}: <code style="font-size: inherit">{{mtype.TypeName}}</code></h4>
+                            <div ng-bind="mtype.TypeDescription"></div>
+                            <hr/>
+
                             <i class="icon-help pull-right" popover-placement="left"
-                                popover="Macros placed in the template Subject or Body will be replaced with contextual details when this template is used to create an email."></i>
-
-                            <h4>Module</h4>
-                            <div class="desc" ng-bind="mtype.Module"></div>
-
-                            <h4>Type Name</h4>
-                            <div class="desc" ng-bind="mtype.TypeName"></div>
-
-                            <h4>Description</h4>
-                            <div class="desc" ng-bind="mtype.TypeDescription"></div>
+                                popover="Macros are special text which can be placed in the template Subject or Body. They will be replaced with contextual details when this template is used to create an email."></i>
 
                             <h4>Macros</h4>
                             <ul class="macro-list">

@@ -35,8 +35,8 @@ class ReportsModule implements RSMS_Module, MessageTypeProvider {
         return array(
             new MessageTypeDto(
                 self::$NAME,
-                'LabInspectionSummaryReady',
-                'Description for LabInspectionSummaryReady message type',
+                LabInspectionSummaryReady_Task::$MESSAGE_TYPE_NAME,
+                'Automatic email sent when ' . LabInspectionSummaryReady_Task::$COMPLETION_THRESHOLD . '% of the PIs in a department have been inspected.',
                 LabInspectionSummaryReady_Processor,
                 array(DepartmentDetailDto, LabInspectionSummaryContext)
             ),
@@ -44,7 +44,7 @@ class ReportsModule implements RSMS_Module, MessageTypeProvider {
             new MessageTypeDto(
                 self::$NAME,
                 'LabInspectionSummaryYearly',
-                'Description for LabInspectionSummaryYearly message type',
+                'Automatic email sent on December 1st each year.',
                 LabInspectionSummaryYearly_Processor,
                 array(DepartmentDetailDto, LabInspectionSummaryContext)
             )
