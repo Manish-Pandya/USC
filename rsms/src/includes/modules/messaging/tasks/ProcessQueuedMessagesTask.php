@@ -26,7 +26,7 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
 
         if( count($unsent) > 0 ){
 
-            $processor_map = array();
+            $_cache = array();
 
             foreach( $unsent as $message ){
                 $LOG->info("Processing queued message: $message");
@@ -36,15 +36,24 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
                 try {
                     // Prime processor cache
                     $proc_key = $message->getModule() . '/' . $message->getMessage_type();
-                    if( $processor_map[$proc_key] ){
-                        $processor = $processor_map[$proc_key];
+                    if( $_cache[$proc_key] ){
+                        $messageType = $_cache[$proc_key][0];
+                        $processor   = $_cache[$proc_key][1];
                     }
                     else{
                         // Get MessageProcessor based on type
-                        $processor = $messenger->getMessageTypeProcessor($message->getModule(), $message->getMessage_type());
 
-                        // Cache processor so we only look it up once
-                        $processor_map[$proc_key] = $processor;
+                        // Look up message type definition
+                        $messageType = $this->getMessageTypeDetails($message->getModule(), $message->getMessage_type());
+                        $LOG->trace("Matched message type: $messageType");
+
+                        if( $messageType->processorName != null ){
+                            $LOG->debug("Create processor '$messageType->processorName'");
+                            $processor = new $messageType->processorName;
+
+                            // Cache type/processor so we only look it up once
+                            $_cache[$proc_key] = array($messageType, $processor);
+                        }
                     }
 
                     if( $processor == null ){
@@ -52,6 +61,7 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
                         continue;
                     }
 
+                    $LOG->debug("Found message type: $messageType for $message");
                     $LOG->debug("Found processor '" . get_class($processor) . "' for $message");
 
                     // Look up the Template(s) for this message type
@@ -63,7 +73,11 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
                         continue;
                     }
 
-                    $messageDetails = $processor->process($message);
+                    // Get MacroResolvers from the Module
+                    $macroProvider = MacroResolverProvider::build( $messageType );
+
+                    // Process the message
+                    $messageDetails = $processor->process($message, $macroProvider);
 
                     $queuedEmails = array();
 
@@ -115,6 +129,33 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
         }
 
         return "Enqueued $queuedEmailsCount emails to be sent";
+    }
+
+    private function getMessageTypeDetails( $moduleName, $messageTypeName ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+        $module = ModuleManager::getModuleByName($moduleName);
+
+        if( $module != null ){
+            // Match message type to module's declarations
+            foreach( $module->getMessageTypes() as $messageType ){
+                if( $messageType->getTypeName() == $messageTypeName ){
+                    // Message type is matched
+                    break;
+                }
+            }
+
+            if( $messageType != null ){
+                return $messageType;
+            }
+            else{
+                throw new Exception("Module '$moduleName' does not declare message type '$messageTypeName'");
+            }
+        }
+        else{
+            throw new Exception("No such  module '$moduleName'");
+        }
+
+        return null;
     }
 }
 

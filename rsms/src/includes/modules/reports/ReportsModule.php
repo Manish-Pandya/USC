@@ -30,9 +30,24 @@ class ReportsModule implements RSMS_Module, MessageTypeProvider {
     }
 
     public function getMessageTypes(){
+        // completely describe a type:
+        //  Name, Processor, Context Types, Macro Resolvers
         return array(
-            new MessageTypeDto(self::$NAME, 'LabInspectionSummaryReady', 'Description for LabInspectionSummaryReady message type'),
-            new MessageTypeDto(self::$NAME, 'LabInspectionSummaryYearly', 'Description for LabInspectionSummaryYearly message type')
+            new MessageTypeDto(
+                self::$NAME,
+                'LabInspectionSummaryReady',
+                'Description for LabInspectionSummaryReady message type',
+                LabInspectionSummaryReady_Processor,
+                array(DepartmentDetailDto, LabInspectionSummaryContext)
+            ),
+
+            new MessageTypeDto(
+                self::$NAME,
+                'LabInspectionSummaryYearly',
+                'Description for LabInspectionSummaryYearly message type',
+                LabInspectionSummaryYearly_Processor,
+                array(DepartmentDetailDto, LabInspectionSummaryContext)
+            )
         );
     }
 

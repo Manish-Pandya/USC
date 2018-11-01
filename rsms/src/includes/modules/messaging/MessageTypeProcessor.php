@@ -16,6 +16,6 @@ interface MessageTypeProcessor {
      *   String from
      *   Array macromap
      */
-    public function process(Message $message);
+    public function process(Message $message, $macroResolverProvider);
 }
 ?>

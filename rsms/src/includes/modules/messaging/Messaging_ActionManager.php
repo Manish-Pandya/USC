@@ -112,31 +112,6 @@ class Messaging_ActionManager extends ActionManager {
         )));
     }
 
-    public function getMessageTypeProcessor( $moduleName, $messageType ){
-        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
-        $module = ModuleManager::getModuleByName($moduleName);
-
-        if( $module != null ){
-            // Assume processor class name based on messageType
-            $assumeTypeName = $messageType . '_Processor';
-
-            // Look for any of these types declared within the module
-            $candidates = ModuleManager::getModuleFeatureClasses($module, 'message-processors', $assumeTypeName);
-            if( class_exists($assumeTypeName )){
-                $LOG->debug("Module '$moduleName' declares message processor '$assumeTypeName'");
-                return new $assumeTypeName;
-            }
-            else{
-                $LOG->warn("Module '$moduleName' declares message type '$messageType' but does not include corresponding processor '$assumeTypeName'");
-            }
-        }
-        else{
-            $LOG->warn("No such  module '$moduleName'");
-        }
-
-        return null;
-    }
-
     /**
      * Generates a formatted message object for each Details array provided
      */

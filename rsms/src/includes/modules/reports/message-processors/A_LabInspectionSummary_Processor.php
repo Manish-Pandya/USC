@@ -6,31 +6,28 @@
  */
 class A_LabInspectionSummary_Processor implements MessageTypeProcessor {
 
-    public function process(Message $message){
+    public function process(Message $message, $macroResolverProvider){
         $LOG = Logger::getLogger(__CLASS__);
         $LOG->debug("Processing context for $message");
 
         // Processor should...
         //  Look up details from desscriptor
         $messenger = new Messaging_ActionManager();
-        $context = $messenger->getContextFromMessage($message);
+        $context = $messenger->getContextFromMessage($message, new LabInspectionSummaryContext());
 
         // Look up department
         $departmentInfo = $this->getDepartment($context->department_id);
         $LOG->debug("Department: $departmentInfo");
 
-        // Build link to summary report
-        $link = $this->getReportLink($context->department_id, $context->report_year);
+        $context_macros = $macroResolverProvider->resolve( $context );
+        $dept_macros = $macroResolverProvider->resolve( $departmentInfo );
 
         //  Construct macromap
-        $macromap = array(
-            '[Chair Name]' => $departmentInfo->getChair_name(),
-            '[Chair First Name]' => $departmentInfo->getChair_first_name(),
-            '[Chair Last Name]' => $departmentInfo->getChair_last_name(),
-            '[Department Name]' => $departmentInfo->getName(),
-            '[Report Year]' => $context->report_year,
-            '[Report Link]' => $link
-        );
+        $macromap = array_merge($context_macros, $dept_macros);
+
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace($macromap);
+        }
 
         // prepare email details
         $details = array(
@@ -68,7 +65,7 @@ class A_LabInspectionSummary_Processor implements MessageTypeProcessor {
         }
 
         if( $info->getChair_id() == null ){
-            throw new Exception("Department " . $info->getName() . "' has no Chair");
+            throw new Exception("Department '" . $info->getName() . "' has no Chair");
         }
 
         return $info;
