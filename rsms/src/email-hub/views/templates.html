@@ -49,7 +49,7 @@
                                 <input type="text" style="width:500px" ng-model="template.EditCopy.Subject" />
 
                                 <h4>Body:</h4>
-                                <textarea ui-tinymce="$root.tinymceOptions" ng-model="template.EditCopy.Corpus"></textarea>
+                                <textarea ui-tinymce="editorTinymceOptions" ng-model="template.EditCopy.Corpus"></textarea>
                             </div>
                             <div class="modal-footer">
                                 <span class="pull-left">Last Saved {{template.Date_last_modified | dateToIsoTime}}</span>

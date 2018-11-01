@@ -56,6 +56,30 @@ angular.module('ng-EmailHub')
             // Close all templates
             $scope.Templates.forEach( t => $scope.closeOrCancelEditTemplate(t));
 
+            // Get the message type for the requested template
+            $scope.mtype = $scope.getTypeForTemplate(template);
+
+            // Prepare the editor
+            $scope.editorTinymceOptions = angular.copy($rootScope.tinymceOptions);
+
+            // Add Macro menu if we have macro definitions
+            if( $scope.mtype.MacroDescriptions && $scope.mtype.MacroDescriptions.length ){
+                $scope.editorTinymceOptions.contextmenu = 'macros';
+                $scope.editorTinymceOptions.setup = function(editor){
+                    editor.addMenuItem('macros', {
+                        text: 'Insert Macro',
+                        menu: $scope.mtype.MacroDescriptions.map( macro => {
+                            return {
+                                text: macro.Key,
+                                onclick: function(){ editor.insertContent(macro.Key); }
+                            };
+                        })
+                    });
+                };
+            }
+
+            console.debug("Configure TinyMCE for template editing:", $scope.editorTinymceOptions);
+
             // Open this one
             template.EditCopy = angular.copy(template);
         };
@@ -112,5 +136,5 @@ angular.module('ng-EmailHub')
                         console.error("Error saving new template", error);
                     }
                 );
-        }
+        };
     });
