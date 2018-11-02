@@ -2846,8 +2846,14 @@ class ActionManager {
 
             $dao = $this->getDao(new Inspection());
 
+            // Retrieve existing Inspection, if any
+            if( $decodedObject->hasPrimaryKeyValue() ){
+                $beforeSaved = $dao->getById($decodedObject->getKey_id());
+            }
+
             // Save the Inspection
             $inspection = $dao->save($decodedObject);
+            HooksManager::hook('after_inspection_saved', array($inspection, $beforeSaved));
 
             return $inspection;
         }
