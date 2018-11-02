@@ -16,7 +16,7 @@ class MessagingModule implements RSMS_Module {
 
     public function isEnabled() {
         // Enabled if the referer comes from our UI Root
-        // OR if the 'reports' param is set
+        // OR if the 'email-hub' param is set
         if(	stristr($_SERVER["HTTP_REFERER"], '/email-hub/' ) || isset($_GET['email-hub']))
             return true;
 
