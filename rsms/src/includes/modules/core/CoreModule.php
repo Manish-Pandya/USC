@@ -39,7 +39,12 @@ class CoreModule implements RSMS_Module, MessageTypeProvider {
             new MessageTypeDto(self::$NAME, 'LabInspectionApprovedCAP',
                 'Automatic email event is sent when corrective action plan is approved by EHS.',
                 LabInspectionReminder_Processor,
-                array(Inspection, LabInspectionReminderContext))
+                array(Inspection, LabInspectionReminderContext)),
+
+            // RSMS-739: Refactor existing Inspections email generation to be handled by Email Hub
+            new MessageTypeDto(self::$NAME, 'PostInspectionNoDeficiencies', '[TODO]'),
+            new MessageTypeDto(self::$NAME, 'PostInspectionDeficienciesFound', '[TODO]'),
+            new MessageTypeDto(self::$NAME, 'PostInspectionDeficienciesCorrected', '[TODO]')
         );
     }
 
