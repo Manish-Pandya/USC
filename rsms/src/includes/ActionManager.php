@@ -3874,6 +3874,61 @@ class ActionManager {
         }
     }
 
+    public function getInspectionReportEmail( $id = NULL ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        $id = $this->getValueFromRequest('id', $id);
+
+        if( $id !== NULL ){
+            // get inspection
+            $inspectionDao = new GenericDAO(new Inspection());
+            $inspection = $inspectionDao->getById($id);
+
+            $LOG->debug("Retrieve inspection report email for $inspection");
+
+            //TODO: compute status details for email template identification instead of passing from view
+            $inspectionState = JsonManager::readRawJsonFromInputStream();
+
+            // Get Inspection Email Template for requested inspection
+            // Identify message type based on inspection state
+            $messageType = null;
+            if( $inspectionState['totals'] == 0){
+                $messageType = 'PostInspectionNoDeficiencies';
+            }
+            else if( $inspectionState['totals'] > $inspectionState['correcteds']){
+                $messageType = 'PostInspectionDeficienciesFound';
+            }
+            else {
+                $messageType = 'PostInspectionDeficienciesCorrected';
+            }
+
+            $LOG->debug("Build preview for message type: $messageType");
+
+            // Create a message to use to look up Template(s)
+            $message = new Message();
+            $message->setModule( CoreModule::$NAME );
+            $message->setMessage_type( $messageType );
+
+            $messenger = new Messaging_ActionManager();
+            $previews = $messenger->previewMessage( $message, $inspection );
+
+            if( count($previews) < 1 ){
+                return new ActionError("Unable to preview inspection", 404);
+            }
+
+            // Should only be one, but just read the first
+            $preview = $previews[0];
+
+            return $preview;
+        }
+        else{
+            //error
+            return new ActionError("No request parameter 'id' was provided", 404);
+        }
+
+        return true;
+    }
+
     public function getInspectionsByPIId( $id = NULL ){
         //Get responses for Inspection
         $LOG = Logger::getLogger( 'Action:' . __function__ );

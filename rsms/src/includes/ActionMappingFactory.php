@@ -209,6 +209,8 @@ class ActionMappingFactory {
                 "getInspectionById"=>new ActionMapping("getInspectionById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
                 "getResponseById"=>new ActionMapping("getResponseById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
+                "getInspectionReportEmail"=>new ActionMapping("getInspectionReportEmail", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+
                 // EMERGENCY INFO HUB
                 "getPIsByRoomId"=>new ActionMapping("getPIsByRoomId", "", ""),
                 "getRoomsByBuildingId"=>new ActionMapping("getRoomsByBuildingId", "", ""),
