@@ -451,6 +451,7 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
 
     factory.getIsReadyToSubmit = function (inspection) {
         var ready = {
+            Class: 'LabInspectionStateDto',
             totals: 0, 
             pendings: 0, 
             completes:0, 

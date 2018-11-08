@@ -425,6 +425,9 @@ class Messaging_ActionManager extends ActionManager {
 
             // Ensure $contexts is an array
             $_ctxs = is_array($contexts) ? $contexts : array($contexts);
+            if($LOG->isTraceEnabled()){
+                $LOG->trace($_ctxs);
+            }
 
             $previews = array();
 
@@ -433,7 +436,11 @@ class Messaging_ActionManager extends ActionManager {
                 $macromap = array();
 
                 foreach($_ctxs as $ctx){
-                    $macromap = array_merge( $macroProvider->resolve($ctx) );
+                    $macromap = array_merge($macromap, $macroProvider->resolve($ctx) );
+                }
+
+                if($LOG->isTraceEnabled()){
+                    $LOG->trace($macromap);
                 }
 
                 $details = array(

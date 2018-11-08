@@ -3887,15 +3887,15 @@ class ActionManager {
             $LOG->debug("Retrieve inspection report email for $inspection");
 
             //TODO: compute status details for email template identification instead of passing from view
-            $inspectionState = JsonManager::readRawJsonFromInputStream();
+            $inspectionState = $this->convertInputJson();
 
             // Get Inspection Email Template for requested inspection
             // Identify message type based on inspection state
             $messageType = null;
-            if( $inspectionState['totals'] == 0){
+            if( $inspectionState->getTotals() == 0){
                 $messageType = 'PostInspectionNoDeficiencies';
             }
-            else if( $inspectionState['totals'] > $inspectionState['correcteds']){
+            else if( $inspectionState->getTotals() > $inspectionState->getCorrecteds()){
                 $messageType = 'PostInspectionDeficienciesFound';
             }
             else {
@@ -3910,7 +3910,7 @@ class ActionManager {
             $message->setMessage_type( $messageType );
 
             $messenger = new Messaging_ActionManager();
-            $previews = $messenger->previewMessage( $message, $inspection );
+            $previews = $messenger->previewMessage( $message, array($inspection, $inspectionState) );
 
             if( count($previews) < 1 ){
                 return new ActionError("Unable to preview inspection", 404);
