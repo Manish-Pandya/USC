@@ -42,9 +42,22 @@ class CoreModule implements RSMS_Module, MessageTypeProvider {
                 array(Inspection, LabInspectionReminderContext)),
 
             // RSMS-739: Refactor existing Inspections email generation to be handled by Email Hub
-            new MessageTypeDto(self::$NAME, 'PostInspectionNoDeficiencies', '[TODO]'),
-            new MessageTypeDto(self::$NAME, 'PostInspectionDeficienciesFound', '[TODO]'),
-            new MessageTypeDto(self::$NAME, 'PostInspectionDeficienciesCorrected', '[TODO]')
+            // These message types have no processor as they are used to preview default content
+            //   which is then sent via user action
+            new MessageTypeDto(self::$NAME, 'PostInspectionNoDeficiencies',
+                'Inspection Report Email template - No Deficiencies Found during inspection',
+                null,
+                array(Inspection, LabInspectionStateDto)),
+
+            new MessageTypeDto(self::$NAME, 'PostInspectionDeficienciesFound',
+                'Inspection Report Email template - Deficiencies Found during inspection',
+                null,
+                array(Inspection, LabInspectionStateDto)),
+
+            new MessageTypeDto(self::$NAME, 'PostInspectionDeficienciesCorrected',
+                'Inspection Report Email template - Deficiencies Found and Corrected during inspection',
+                null,
+                array(Inspection, LabInspectionStateDto))
         );
     }
 
