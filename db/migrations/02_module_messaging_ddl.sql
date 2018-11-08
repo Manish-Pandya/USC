@@ -14,7 +14,7 @@ CREATE TABLE `message_queue` (
     `module` varchar(16),
     `message_type` varchar(64),
 
-    `context_descriptor` varchar(128),
+    `context_descriptor` TEXT,
     `sent_date` timestamp NULL DEFAULT NULL,
     `send_on` timestamp NULL DEFAULT NULL,
     PRIMARY KEY (`key_id`)
