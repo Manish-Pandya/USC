@@ -610,36 +610,75 @@ inspectionDetailsController = function ($scope, $location, $anchorScroll, conven
 
 }
 
-inspectionConfirmationController = function ($scope, $location, $anchorScroll, convenienceMethods, postInspectionFactory, $rootScope) {
+inspectionConfirmationController = function ($scope, $location, $anchorScroll, convenienceMethods, postInspectionFactory, $rootScope, $q) {
     if ($location.search().inspection) {
         var id = $location.search().inspection;
 
+        // Retrieve Inspection
+        var inspectionWillLoad = $q.defer();
+
         if (!postInspectionFactory.getInspection()) {
-            $scope.doneLoading = false;
+            // Load Inspection
             convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById&id=' + id + '&callback=JSON_CALLBACK', onFailGetInspeciton)
               .then(function (promise) {
                   $rootScope.inspection = promise.data;
-                  if (promise.data.Date_started) promise.data = postInspectionFactory.setDateForView(promise.data, "Date_started");
-                  //console.log(promise.data);
-                  //set view init values for email
-                  $scope.others = [{ email: '' }];
-                  $scope.defaultNote = {};
-                  var date = new Date($scope.inspection.viewDate_started).toLocaleDateString();
+
+                  if (promise.data.Date_started){
+                      promise.data = postInspectionFactory.setDateForView(promise.data, "Date_started");
+                  }
+
                   postInspectionFactory.setInspection($rootScope.inspection);
 
-                  setEmailText(postInspectionFactory.getIsReadyToSubmit());
-
-                  $scope.doneLoading = true;
-                  // call the manager's setter to store the inspection in the local model
-                  $scope.doneLoading = true;
+                  inspectionWillLoad.resolve();
               });
-        } else {
-            //set view init values for email
-            $scope.others = [{ email: '' }];
-            $scope.defaultNote = {};
-            $scope.inspection = postInspectionFactory.getInspection();
-            setEmailText(postInspectionFactory.getIsReadyToSubmit());
         }
+
+        // Load Inspection Email Message
+        var templateWillLoad = $q.defer();
+
+        // Get all data
+        $scope.doneLoading = false;
+        inspectionWillLoad.promise
+            .then( function(){
+                // TODO: Move inspection stat collection server-side
+                var inspinfo = postInspectionFactory.getIsReadyToSubmit();
+
+                var templateLoaded = function(data){
+                    // Strip HTML
+                    data.Body = new DOMParser().parseFromString(data.Body, 'text/html').body.textContent || "";
+                    $scope.inspectionEmail = data;
+
+                    console.debug("Loaded inspection report email template:", $scope.inspectionEmail);
+                    templateWillLoad.resolve(data);
+                };
+
+                var templateFailed = function(){
+                    console.error("Failed to load email template");
+                    templateWillLoad.reject();
+                };
+
+                // Load default email content, call callback
+                convenienceMethods.getDataFromPostRequest(
+                    '../../ajaxaction.php?action=getInspectionReportEmail&id=' + id,
+                    inspinfo,
+                    templateLoaded,
+                    templateFailed);
+
+                return templateWillLoad.promise;
+            })
+            .then( function(){
+                // Prepare View
+                $scope.others = [{ email: '' }];
+                $scope.defaultNote = {};
+                $scope.inspection = postInspectionFactory.getInspection();
+
+                // Set the default email text
+                $scope.defaultNote.Text = $scope.inspectionEmail.Body;
+            })
+            .then(function(){
+                // Stop loading
+                $scope.doneLoading = true;
+            });
     } else {
         $scope.error = 'No inspection has been specified';
     }
@@ -647,47 +686,6 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
     function onFailGetInspeciton() {
         $scope.doneLoading = true;
         $scope.error = "The system couldn't find the inspection.  Check your internet connection."
-    }
-
-
-    function setEmailText(inspectionState) {
-        var dateStarted = moment($scope.inspection.Date_started)
-        var date = dateStarted.format("MMMM Do, YYYY");
-        var id = postInspectionFactory.getInspection().Key_id;
-
-        var link = window.location.origin + "/rsms/views/inspection/InspectionConfirmation.php#/report?inspection=" + id;
-
-        console.log(date);
-        if (inspectionState.totals == 0) {
-            
-            $scope.defaultNote.Text = "We appreciate you taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". Overall your lab was in excellent compliance with the research safety policies and procedures, and no deficiencies were identified during this inspection. No further actions are required at this time. You can access the lab inspection report using your University username and password at the following link: " + link + ". \n\n"
-                                      + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all the University's faculty, staff, and students.\n\n"
-                                       + "Best regards,\n"
-                                        + "EHS Research Safety\n"
-        }
-        else if (inspectionState.totals > inspectionState.correcteds) {
-            var dateSent;
-            $scope.inspection.Notification_date ? dateSent = moment($scope.inspection.Notification_date) : dateSent = moment();
-            var dueDate = dateSent.add(14, "days").format("MMMM Do, YYYY");
-            $scope.defaultNote.Text = "We appreciate you taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". You can access the lab safety inspection report using your University username and password at the following link: " + link + ". \n\n"
-                                 + "Please submit your lab's corrective action plan for each deficiency included in the report on or before "+ dueDate +".\n\n"
-                + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all of the University's faculty, staff, and students.\n\n"
-                                 + "Best regards,\n"
-                                 + "EHS Research Safety\n"
-        }
-        //all corrected
-        else {
-            var deficiencyCount = postInspectionFactory.getIsReadyToSubmit();
-            var ending = deficiencyCount.correcteds === 1 ? "y" : "ies";
-            var lingIter = ending == "y" ? "it" : "each deficiency";
-
-            $scope.defaultNote.Text = "We appreciate you taking the time to meet with EHS for your annual laboratory safety inspection on " + date + ". During this inspection EHS identified " + deficiencyCount.correcteds +  " deficienc" + ending +", but "+ lingIter +" was appropriately corrected during the time we were conducting the inspection. No further actions are required at this time. You can access the lab inspection report using your University username and password at the following link: " + link + " .\n\n"
-                + "Thank you for supporting our efforts to maintain compliance and ensure a safe research environment for all the University's faculty, staff, and students.\n\n"
-                                      + "Best regards,\n" 
-                                      + "EHS Research Safety\n"
-        }
-
-
     }
 
     $scope.contactList = [];
