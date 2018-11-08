@@ -410,11 +410,80 @@ class Messaging_ActionManager extends ActionManager {
         return $template;
     }
 
+    function previewMessage($message, $contexts){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+        $LOG->trace("Build preview for $message");
+
+        $messageType = $this->getMessageTypeDetails($message->getModule(), $message->getMessage_type());
+        $LOG->trace("Previewing message of type: $messageType");
+
+        $templates = $this->getTemplatesForMessage( $message );
+
+        if( count($templates) > 0 ){
+            $LOG->trace("Found " . count($templates) . " templates");
+            $macroProvider = MacroResolverProvider::build( $messageType );
+
+            // Ensure $contexts is an array
+            $_ctxs = is_array($contexts) ? $contexts : array($contexts);
+
+            $previews = array();
+
+            foreach($templates as $template){
+                // Process macros for pre-filled message
+                $macromap = array();
+
+                foreach($_ctxs as $ctx){
+                    $macromap = array_merge( $macroProvider->resolve($ctx) );
+                }
+
+                $details = array(
+                    'macromap' => $macromap,
+                    'recipients' => array(),
+                    'from' => ''
+                );
+
+                $previews = array_merge($previews, $this->buildFormattedMessages($template, array($details)));
+            }
+
+            return $previews;
+        }
+
+        $LOG->warn("No templates found for $message");
+        return array();
+    }
+
     function replaceMacros($macromap, $content){
         return str_replace(
             array_keys($macromap),
             array_values($macromap),
             $content);
+    }
+
+    function getMessageTypeDetails( $moduleName, $messageTypeName ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+        $module = ModuleManager::getModuleByName($moduleName);
+
+        if( $module != null ){
+            // Match message type to module's declarations
+            foreach( $module->getMessageTypes() as $messageType ){
+                if( $messageType->getTypeName() == $messageTypeName ){
+                    // Message type is matched
+                    break;
+                }
+            }
+
+            if( $messageType != null ){
+                return $messageType;
+            }
+            else{
+                throw new Exception("Module '$moduleName' does not declare message type '$messageTypeName'");
+            }
+        }
+        else{
+            throw new Exception("No such  module '$moduleName'");
+        }
+
+        return null;
     }
 }
 ?>

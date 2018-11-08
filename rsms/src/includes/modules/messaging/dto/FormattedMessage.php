@@ -14,6 +14,13 @@ class FormattedMessage {
         $this->from = $from;
         $this->cc = $cc;
     }
+
+    public function getTo(){ return $this->to; }
+    public function getFrom(){ return $this->from; }
+    public function getSubject(){ return $this->subject; }
+    public function getBody(){ return $this->body; }
+    public function getCc(){ return $this->cc; }
+
 }
 
 ?>

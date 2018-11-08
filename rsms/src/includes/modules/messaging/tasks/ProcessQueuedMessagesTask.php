@@ -44,7 +44,7 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
                         // Get MessageProcessor based on type
 
                         // Look up message type definition
-                        $messageType = $this->getMessageTypeDetails($message->getModule(), $message->getMessage_type());
+                        $messageType = $messenger->getMessageTypeDetails($message->getModule(), $message->getMessage_type());
                         $LOG->trace("Matched message type: $messageType");
 
                         if( $messageType->processorName != null ){
@@ -131,32 +131,6 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
         return "Enqueued $queuedEmailsCount emails to be sent";
     }
 
-    private function getMessageTypeDetails( $moduleName, $messageTypeName ){
-        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
-        $module = ModuleManager::getModuleByName($moduleName);
-
-        if( $module != null ){
-            // Match message type to module's declarations
-            foreach( $module->getMessageTypes() as $messageType ){
-                if( $messageType->getTypeName() == $messageTypeName ){
-                    // Message type is matched
-                    break;
-                }
-            }
-
-            if( $messageType != null ){
-                return $messageType;
-            }
-            else{
-                throw new Exception("Module '$moduleName' does not declare message type '$messageTypeName'");
-            }
-        }
-        else{
-            throw new Exception("No such  module '$moduleName'");
-        }
-
-        return null;
-    }
 }
 
 ?>
