@@ -1,9 +1,9 @@
 <?php
 class EmailDto {
-	private $entity_id;
-	private $recipient_ids;
-	private $text;
-	private $other_emails;
+	public $entity_id;
+	public $recipient_ids;
+	public $text;
+	public $other_emails;
 
 	
 	public function getEntity_id(){ return $this->entity_id; }
