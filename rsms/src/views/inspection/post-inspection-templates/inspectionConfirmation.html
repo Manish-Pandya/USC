@@ -1,8 +1,8 @@
-<div class="loading" ng-show='!inspection' >
+<div class="loading" ng-show='!inspection && !inspectionEmailContext' >
   <img class="" src="../../img/loading.gif"/>
  Building List
 </div>
-<div ng-if='inspection'>
+<div ng-if='inspection && inspectionEmailContext'>
  <h3 style="margin:20px 0 15px;">Please select personnel to receive the lab safety inspection report:</h3>
 
 <form class="form" style="margin-top:15px;">
