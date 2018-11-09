@@ -4310,67 +4310,42 @@ class ActionManager {
     }
 
     public function sendInspectionEmail(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
-        $decodedObject = $this->convertInputJson();
-        if( $decodedObject === NULL ){
-            return new ActionError('Error converting input stream to EmailDto');
+        $context = $this->convertInputJson();
+        if( $context === NULL ){
+            return new ActionError('Error converting input stream');
         }
-        else if( $decodedObject instanceof ActionError){
-            return $decodedObject;
+        else if( $context instanceof ActionError){
+            return $context;
         }
-        else{
-            // Get this inspection
-            $dao = $this->getDao(new Inspection());
-            $inspection = $dao->getById($decodedObject->getEntity_id());
+        else {
+            // RSMS-739: Instead of directly sending an email here, queue a Message
+            $dao = new GenericDAO(new Inspection());
+            $inspection = $dao->getById($context->getInspection_id());
 
-            //get the client side email text
-            $text = "*** Please do not reply to this message.  This email address is not checked. *** \n\n " . $decodedObject->getText();
+            // TODO: VALIDATE CONTEXT?
 
-            // Init an array of recipient Email addresses and another of inspector email addresses
-            $recipientEmails = array();
-            $inspectorEmails = array();
+            // Enqueue this message to be sent
+            $messenger = new Messaging_ActionManager();
+            $messageType = InspectionEmailMessage_Processor::getMessageTypeName($context->getInspectionState());
+            $queued = $messenger->enqueueMessages( CoreModule::$NAME, $messageType, array($context) );
 
-            // We'll need a user Dao to get Users and find their email addresses
-            $userDao = $this->getDao(new User());
+            if( count($queued) > 0 ){
+                // Successfully queued message
 
-            // Iterate the recipients list and add their email addresses to our array
-            foreach ($decodedObject->getRecipient_ids() as $id){
-                $user = $userDao->getById($id);
-                $recipientEmails[] = $user->getEmail();
+                // TODO: Trigger immediate proccessing of this queued message
+
+                // Set Notification Date, if not already set
+                if($inspection->getNotification_date() == null){
+                    $inspection->setNotification_date(date("Y-m-d H:i:s"));
+                    $dao->save($inspection);
+                }
             }
+            // Else the message is already enqueued, so nothing is needed
 
-            $otherEmails = $decodedObject->getOther_emails();
-
-            if (!empty($otherEmails)) {
-                $recipientEmails = array_merge($recipientEmails,$otherEmails);
-            }
-            // Iterate the inspectors and add their email addresses to our array
-            foreach ($inspection->getInspectors() as $inspector){
-                $user = $inspector->getUser();
-                $inspectorEmails[] = $user->getEmail();
-            }
-
-            // Construct login link from app config
-            $urlBase = ApplicationConfiguration::get('server.web.url');
-            $loginPath = ApplicationConfiguration::get('server.web.LOGIN_PAGE', '/rsms');
-            $loginUrl = $urlBase + $loginPath;
-
-            $footerText = "\n\n Access the results of this inspection, and document any corrective actions taken, by logging into the RSMS portal located at $loginUrl with your university ID and password.";
-            // Send the email
-            $LOG->fatal("'".implode("','", $recipientEmails)."'");
-            $LOG->fatal($inspectorEmails);
-            //"'".implode("','", $recipientEmails)."'"
-            if(!mail(implode(",", $recipientEmails),'EHS Laboratory Safety Inspection Results',$text ,'From:LabInspectionReports@ehs.sc.edu<RSMS Portal>' . "\r\nCc:" . implode(",", $inspectorEmails),"Return-path: breeden@gnuidea.net")){
-                $LOG->fatal("Couldn't send");
-                return new ActionError("Couldn't send");
-            };
-
-            if($inspection->getNotification_date() == null)$inspection->setNotification_date(date("Y-m-d H:i:s"));
-            $dao->save($inspection);
             return true;
         }
-
     }
 
     public function makeFancyNames(){

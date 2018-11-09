@@ -3,6 +3,10 @@
 class CoreModule implements RSMS_Module, MessageTypeProvider {
     public static $NAME = 'Core';
 
+    public static $MTYPE_NO_DEFICIENCIES = 'PostInspectionNoDeficiencies';
+    public static $MTYPE_DEFICIENCIES_FOUND = 'PostInspectionDeficienciesFound';
+    public static $MTYPE_DEFICIENCIES_CORRECTED = 'PostInspectionDeficienciesCorrected';
+
     public function getModuleName(){
         return self::$NAME;
     }
@@ -42,21 +46,19 @@ class CoreModule implements RSMS_Module, MessageTypeProvider {
                 array(Inspection, LabInspectionReminderContext)),
 
             // RSMS-739: Refactor existing Inspections email generation to be handled by Email Hub
-            // These message types have no processor as they are used to preview default content
-            //   which is then sent via user action
-            new MessageTypeDto(self::$NAME, 'PostInspectionNoDeficiencies',
+            new MessageTypeDto(self::$NAME, self::$MTYPE_NO_DEFICIENCIES,
                 'Inspection Report Email template - No Deficiencies Found during inspection',
-                null,
+                InspectionEmailMessage_Processor,
                 array(Inspection, LabInspectionStateDto)),
 
-            new MessageTypeDto(self::$NAME, 'PostInspectionDeficienciesFound',
+            new MessageTypeDto(self::$NAME, self::$MTYPE_DEFICIENCIES_FOUND,
                 'Inspection Report Email template - Deficiencies Found during inspection',
-                null,
+                InspectionEmailMessage_Processor,
                 array(Inspection, LabInspectionStateDto)),
 
-            new MessageTypeDto(self::$NAME, 'PostInspectionDeficienciesCorrected',
+            new MessageTypeDto(self::$NAME, self::$MTYPE_DEFICIENCIES_CORRECTED,
                 'Inspection Report Email template - Deficiencies Found and Corrected during inspection',
-                null,
+                InspectionEmailMessage_Processor,
                 array(Inspection, LabInspectionStateDto))
         );
     }
