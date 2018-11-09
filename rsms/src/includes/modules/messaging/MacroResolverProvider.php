@@ -21,7 +21,7 @@ class MacroResolverProvider {
                 // Get all resolvers from Module
                 // Filter to just this message type's contexts
                 foreach($module->getMacroResolvers() as $resolver){
-                    if( in_array($resolver->class, $messageType->contextTypes) ){
+                    if( $resolver->class == null || in_array($resolver->class, $messageType->contextTypes) ){
                         // Resolver is appropriate for this message; add to array
                         $resolvers[] = $resolver;
                     }
@@ -59,6 +59,13 @@ class MacroResolverProvider {
                 if( $resolver->class == $context_type ){
                     $macros[$resolver->key] = $resolver->resolve($context);
                 }
+            }
+        }
+
+        // Resolve constant Macros
+        foreach( $this->resolvers as $resolver ){
+            if( $resolver->class == null ){
+                $macros[$resolver->key] = $resolver->resolve(null);
             }
         }
 
