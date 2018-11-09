@@ -41,12 +41,13 @@ class InspectionEmailMessage_Processor implements MessageTypeProcessor {
         $userDao = new GenericDAO(new User());
 
         // Iterate the recipients list and add their email addresses to our array
-        foreach ($context->getEmail()['recipient_ids'] as $id){
+        $email = $context->getEmail();
+        foreach ($email['recipient_ids'] as $id){
             $user = $userDao->getById($id);
             $recipientEmails[] = $user->getEmail();
         }
 
-        $otherEmails = $context->getEmail()['other_emails'];
+        $otherEmails = $email['other_emails'];
 
         if (!empty($otherEmails)) {
             $recipientEmails = array_merge($recipientEmails,$otherEmails);
@@ -73,8 +74,8 @@ class InspectionEmailMessage_Processor implements MessageTypeProcessor {
         );
 
         // Override the email body, if specified
-        if( $context->getEmail()['text'] != null ){
-            $details['body'] = $context->getEmail()['text'];
+        if( $email['text'] != null ){
+            $details['body'] = $email['text'];
         }
 
         return array(
