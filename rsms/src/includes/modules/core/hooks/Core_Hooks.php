@@ -25,7 +25,7 @@ class Core_Hooks {
     /**
      * RSMS-752: Trigger email when EHS approves a CAP
      */
-    private static detectInspectionPlanApproval($beforeSaved, $afterSaved){
+    private static function detectInspectionPlanApproval($beforeSaved, $afterSaved){
         // was unapproved if: CAP was submitted but inspection is NOT closed
         $previouslyUnapproved = $beforeSaved->getCap_submitted_date() != null && $beforeSaved->getDate_closed() == null;
 
