@@ -124,11 +124,14 @@ class Messaging_ActionManager extends ActionManager {
         foreach($details as $messageDetails){
             $macromap = $messageDetails['macromap'];
 
-            // Parse template body
-            $body = $this->replaceMacros($macromap, $template->getCorpus());
+            $corpus = $template->getCorpus();
+            if( array_key_exists('body', $messageDetails) ){
+                // Override Templated Body
+                $corpus = $messageDetails['body'];
+            }
 
-            // Append standard disclaimer
-            $body .= "\n\n***This is an automatic email notification. Please do not reply to this message.***";
+            // Parse template body
+            $body = $this->replaceMacros($macromap, $corpus);
 
             // Parse template subject
             $subject = $this->replaceMacros($macromap, $template->getSubject());
@@ -160,6 +163,10 @@ class Messaging_ActionManager extends ActionManager {
             $recipients = $this->filterToEmailsOfRole($recipients, $roleFilter);
             $cc = $this->filterToEmailsOfRole($cc, $roleFilter);
         }
+
+        // Append standard disclaimer
+        $body = $unsent->getBody();
+        $body .= "\n\n***This is an automatic email notification. Please do not reply to this message.***";
 
         $headers = array();
 
@@ -200,7 +207,7 @@ class Messaging_ActionManager extends ActionManager {
             $is_sent = mail(
                 $recipients,
                 $unsent->getSubject(),
-                $unsent->getBody(),
+                $body,
                 $headers
             );
         }
