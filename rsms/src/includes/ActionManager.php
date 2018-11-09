@@ -3891,17 +3891,7 @@ class ActionManager {
 
             // Get Inspection Email Template for requested inspection
             // Identify message type based on inspection state
-            $messageType = null;
-            if( $inspectionState->getTotals() == 0){
-                $messageType = 'PostInspectionNoDeficiencies';
-            }
-            else if( $inspectionState->getTotals() > $inspectionState->getCorrecteds()){
-                $messageType = 'PostInspectionDeficienciesFound';
-            }
-            else {
-                $messageType = 'PostInspectionDeficienciesCorrected';
-            }
-
+            $messageType = InspectionEmailMessage_Processor::getMessageTypeName($inspectionState);
             $LOG->debug("Build preview for message type: $messageType");
 
             // Create a message to use to look up Template(s)
@@ -3919,7 +3909,9 @@ class ActionManager {
             // Should only be one, but just read the first
             $preview = $previews[0];
 
-            return $preview;
+            $context = new InspectionReportMessageContext($id, $inspectionState, $preview);
+
+            return $context;
         }
         else{
             //error

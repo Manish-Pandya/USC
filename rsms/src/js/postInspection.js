@@ -644,11 +644,14 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
                 var inspinfo = postInspectionFactory.getIsReadyToSubmit();
 
                 var templateLoaded = function(data){
-                    // Strip HTML
-                    data.Body = new DOMParser().parseFromString(data.Body, 'text/html').body.textContent || "";
-                    $scope.inspectionEmail = data;
+                    console.debug(data);
 
-                    console.debug("Loaded inspection report email template:", $scope.inspectionEmail);
+                    // Strip HTML
+                    data.Email.Body = new DOMParser().parseFromString(data.Email.Body, 'text/html').body.textContent || "";
+
+                    $scope.inspectionEmailContext = data;
+
+                    console.debug("Loaded inspection report email template:", $scope.inspectionEmailContext);
                     templateWillLoad.resolve(data);
                 };
 
@@ -673,7 +676,7 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
                 $scope.inspection = postInspectionFactory.getInspection();
 
                 // Set the default email text
-                $scope.defaultNote.Text = $scope.inspectionEmail.Body;
+                $scope.defaultNote.Text = $scope.inspectionEmailContext.Email.Body;
             })
             .then(function(){
                 // Stop loading
@@ -714,9 +717,22 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
             Other_emails: othersToSendTo,
             Text: $scope.defaultNote.Text
         }
+
+
+        if( $scope.inspectionEmailContext.Email.Body == emailDto.Text ){
+            // If no change was made to the email body, omit it and let the tamplating engine generate it
+            console.debug("No changes were made to email Body");
+            emailDto.Text = undefined;
+        }
+
         console.log(emailDto);
+
+        // Clone the context and replace the email preview with DTO
+        var dto = angular.copy($scope.inspectionEmailContext);
+        dto.Email = emailDto;
+
         var url = '../../ajaxaction.php?action=sendInspectionEmail';
-        convenienceMethods.sendEmail(emailDto, onSendEmail, onFailSendEmail, url);
+        convenienceMethods.sendEmail(dto, onSendEmail, onFailSendEmail, url);
         $scope.sending = true;
     }
 
