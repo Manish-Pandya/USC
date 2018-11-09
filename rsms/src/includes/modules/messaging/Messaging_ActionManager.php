@@ -193,6 +193,13 @@ class Messaging_ActionManager extends ActionManager {
         if( count($headers) == 0){
             $headers = null;
         }
+        else{
+            // Headers is populated; implode and reassign so that this is a string
+            $headers_str = '';
+            foreach($headers as $k => $v){
+                $headers_str .= "$k: $v\r\n";
+            }
+        }
 
         // Allow for the suppression of email-sending
         // Enabling this feature will result in the module not sending any email
@@ -208,7 +215,7 @@ class Messaging_ActionManager extends ActionManager {
                 $recipients,
                 $unsent->getSubject(),
                 $body,
-                $headers
+                $headers_str
             );
         }
 
