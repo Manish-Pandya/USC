@@ -4334,7 +4334,9 @@ class ActionManager {
             if( count($queued) > 0 ){
                 // Successfully queued message
 
-                // TODO: Trigger immediate proccessing of this queued message
+                // Trigger immediate proccessing of this queued message
+                // TODO: Filter processing to just these messages?
+                HooksManager::hook('after_inspection_report_message_queued', null);
 
                 // Set Notification Date, if not already set
                 if($inspection->getNotification_date() == null){

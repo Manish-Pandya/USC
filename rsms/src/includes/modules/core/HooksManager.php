@@ -4,6 +4,7 @@ class HooksManager {
 
     public static function hook($hookName, $params){
         $LOG = Logger::getLogger(__CLASS__);
+        $LOG->info("Processing Hook: '$hookName'");
 
         foreach( ModuleManager::getAllModules() as $module ){
             $moduleHooks = ModuleManager::getModuleFeatureClasses($module, 'hooks', '_Hooks');

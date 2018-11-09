@@ -2,6 +2,10 @@
 
 class Core_Hooks {
 
+    public static function after_inspection_report_message_queued($params){
+        Scheduler::run( MessagingModule::$NAME );
+    }
+
     /**
      * $params should contain 2 values:
      * [0] => saved inspection
