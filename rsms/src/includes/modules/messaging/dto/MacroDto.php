@@ -6,7 +6,6 @@ class MacroDto {
     public function __construct($key, $val){
         $this->key = $key;
         $this->value = $val;
-        Logger::getRootLogger()->info("Created MacroDto: $this->key = $this->value");
     }
 
     public function getKey(){ return $this->key; }
