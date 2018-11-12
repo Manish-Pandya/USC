@@ -29,7 +29,7 @@ class QueuedEmail extends GenericCrud {
     private $template_id;
     private $recipients;
     private $cc_recipients;
-    private $from;
+    private $send_from;
     private $subject;
     private $body;
 
@@ -55,8 +55,8 @@ class QueuedEmail extends GenericCrud {
     public function setRecipients( $val ) { $this->recipients = $val; }
     public function getCc_recipients() { return $this->cc_recipients; }
     public function setCc_recipients( $val ) { $this->cc_recipients = $val; }
-    public function getSend_from() { return $this->from; }
-    public function setSend_from( $val ) { $this->from = $val; }
+    public function getSend_from() { return $this->send_from; }
+    public function setSend_from( $val ) { $this->send_from = $val; }
     public function getSubject() { return $this->subject; }
     public function setSubject( $val ) { $this->subject = $val; }
     public function getBody() { return $this->body; }
