@@ -1,1 +1,98 @@
-Message Queue
+<div cg-busy="{promise:loading, message:'Loading...', backdrop:true, templateUrl:'../busy-templates/full-page-busy.html'}"></div>
+<div class="email-hub">
+
+    <div class="card full">
+        <h1 style="margin: 10px 15px 5px 15px;">
+            <span>Email Queue</span>
+            <span class="pull-right" ng-if="QueuedEmailsPage">({{QueuedEmailsPage.TotalCount}})</span>
+        </h1>
+    </div>
+
+    <div class="card full">
+        <pagination class="nav nav-pills"
+            page="Pager.currentPage"
+            items-per-page="Pager.numPerPage"
+            on-select-page="loadPage(page)"
+            total-items="QueuedEmailsPage.TotalCount">
+        </pagination>
+
+        <table ng-if="QueuedEmailsPage" class="table table-bordered">
+            <thead>
+                <th>Module</th>
+                <th>Message Type</th>
+                <th>Template</th>
+                <th>Queue Date</th>
+                <th>Sent</th>
+                <th>Subject</th>
+            </thead>
+            <tbody ng-repeat="email in QueuedEmailsPage.Results" ng-class="{closed: !email.ShowBody}">
+                <tr ng-click="email.ShowBody = !email.ShowBody" ng-class="{greyBg: !email.Email_id}">
+                    <td>{{email.Module}}</td>
+                    <td>{{email.Message_type}}</td>
+                    <td>{{email.Template_name}}</td>
+                    <td>{{email.Queued_date || email.Scheduled_date | dateToIsoTime}}</td>
+                    <td ng-class="{orangeBg: !email.Sent_date && email.Email_id}">
+                        <span ng-if="email.Sent_date">{{email.Sent_date | dateToIsoTime}}</span>
+                        <span ng-if="!email.Sent_date && email.Email_id">
+                            <i class="icon-help" popover="This email has been enqueued, but has not yet been sent."></i>
+                        </span>
+                    </td>
+                    <td>{{email.Subject}}</td>
+                </tr>
+                <tr ng-if="email.ShowBody">
+                    <td colspan="7">
+                        <div class="inner card span12">
+                            <div class="label label-warning" style="margin-bottom: 15px" ng-if="email.Email_id && !email.Sent_date">
+                                This email is enqueued, but has not yet been sent.
+                            </div>
+
+                            <div ng-if="!email.Email_id && email.Scheduled_date">
+                                <span ng-if="email.Scheduled_date">This message is scheduled to be generated and sent on {{email.Scheduled_date | dateToISO}}</span>
+                            </div>
+
+                            <div ng-if="email.Body">
+                                <h3>Email Subject</h3>
+                                <pre ng-bind-html="email.Subject"></pre>
+
+                                <h3>Email Body</h3>
+                                <pre ng-bind-html="email.Body"></pre>
+                            </div>
+
+                            <div>
+                            </div>
+                        </div>
+
+                        <div class="inner card span5 message-type-info">
+                            <h4>Email Recipients</h4>
+                            <ul class="macro-list">
+                                <li><code>TO:</code> {{email.Recipients}}</li>
+                                <li><code>CC:</code> {{email.Cc_recipients}}</li>
+                                <li><code>FROM:</code>{{email.Send_from}}</li>
+                            </ul>
+
+                            <div ng-if="email.Context_descriptor" >
+                                <hr/>
+                                <h4>
+                                    Technical Context
+                                    <i class="icon-help"
+                                        popover="This context can be used to diagnose and troubleshoot problems if an email is unable to be sent."></i>
+                                    <span class="badge pull-right">{{email.Queue_item_id}}</span>
+                                </h4>
+
+                                <pre><code ng-bind="email.Context_descriptor"></code></pre>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <pagination class="nav nav-pills"
+            page="Pager.currentPage"
+            items-per-page="Pager.numPerPage"
+            on-select-page="loadPage(page)"
+            total-items="QueuedEmailsPage.TotalCount">
+        </pagination>
+    </div>
+
+</div>

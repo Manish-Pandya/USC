@@ -60,6 +60,7 @@
     <!-- controllers -->
     <script src="scripts/controllers/EmailHubHomeCtrl.js"></script>
     <script src="scripts/controllers/EmailHubTemplatesCtrl.js"></script>
+    <script src="scripts/controllers/EmailHubQueueCtrl.js"></script>
 
     <!-- framework -->
     <script src="<?php echo WEB_ROOT?>ignorasmus/client-side-framework/DataStoreManager.js"></script>
