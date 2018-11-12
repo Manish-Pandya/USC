@@ -28,7 +28,7 @@ angular
             })
 
             .state('templates', {
-                url: '/templates',
+                url: '/templates?tid',
                 templateUrl: "views/templates.html",
                 controller: 'EmailHubTemplateCtrl'
             })

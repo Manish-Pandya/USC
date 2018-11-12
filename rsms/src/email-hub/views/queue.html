@@ -51,6 +51,9 @@
                             </div>
 
                             <div ng-if="email.Body">
+                                <span class="badge pull-right">
+                                    <a ui-sref="templates({tid:email.Template_id})" target="_blank">View Template</a>
+                                </span>
                                 <h3>Email Subject</h3>
                                 <pre ng-bind-html="email.Subject"></pre>
 

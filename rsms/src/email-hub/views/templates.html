@@ -17,7 +17,7 @@
                 <th>Module</th>
             </thead>
             <tbody ng-repeat="template in Templates" ng-class="{closed: !template.EditCopy}">
-                <tr ng-class="{inactive: !template.Is_active, greenBg: template.EditCopy}">
+                <tr ng-class="{blueBg: HighlightTemplate && template.Key_id == HighlightTemplate, inactive: !template.Is_active, greenBg: template.EditCopy}">
                     <td>
                         <a ng-if="!template.EditCopy" class="btn btn-primary left" ng-click="editTemplate(template)"><i class="icon-pencil"></i></a>
                         <a ng-if="template.EditCopy"  class="btn btn-primary left" ng-click="closeOrCancelEditTemplate(template)"><i class="icon-cancel"></i></a>

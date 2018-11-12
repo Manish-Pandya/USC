@@ -4,6 +4,10 @@ angular.module('ng-EmailHub')
     .controller('EmailHubTemplateCtrl', function($rootScope, $scope, $q, $stateParams){
         console.debug("EmailHubTemplateCtrl running");
 
+        if( $stateParams.tid ){
+            $scope.HighlightTemplate = $stateParams.tid;
+        }
+
         $scope.loading = $q.all([
             XHR.GET('getAllMessageTypes').then( mtypes => {
                 console.debug("Retrieved message types:", mtypes);
