@@ -188,6 +188,10 @@ class Messaging_ActionManager extends ActionManager {
             $headers['Cc'] = $cc;
         }
 
+        // Enable HTML emails
+        $headers['MIME-Version'] = "1.0";
+        $headers['Content-Type'] = "text/html; charset=UTF-8";
+
         // TODO: Support additional headers
 
         if( count($headers) == 0){
