@@ -47,6 +47,7 @@ angular
 
         // Initialize tinymce options
         $rootScope.tinymceOptions = {
+            branding: false,
             plugins: ['link lists', 'autoresize', 'contextmenu'],
             contextmenu_never_use_native: true,
             toolbar: 'bold | italic | underline | link | lists | bullist | numlist',
