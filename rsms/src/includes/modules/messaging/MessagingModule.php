@@ -36,7 +36,8 @@ class MessagingModule implements RSMS_Module {
             'getMessageTemplates' => new ActionMapping("getMessageTemplates", "", $ADMIN_ROLES),
             'toggleTemplateActive' => new ActionMapping("toggleTemplateActive", "", $ADMIN_ROLES),
             'createNewTemplate' => new ActionMapping("createNewTemplate", "", $ADMIN_ROLES),
-            'saveTemplate' => new ActionMapping("saveTemplate", "", $ADMIN_ROLES)
+            'saveTemplate' => new ActionMapping("saveTemplate", "", $ADMIN_ROLES),
+            'getEmails' => new ActionMapping("getEmails", "", $ADMIN_ROLES),
         );
     }
 }

@@ -181,6 +181,60 @@ class GenericDAO {
 		return $result;
 	}
 
+	function getPage( $paging, $sortColumn = NULL, $sortDescending = FALSE, $activeOnly = FALSE ) {
+		$this->LOG->debug("Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
+
+		//Prepare to query all from the table
+		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' ' . ($activeOnly ? 'WHERE is_active = 1 ' : '') .
+				($sortColumn == NULL ? '' : " ORDER BY  CAST($sortColumn AS UNSIGNED), $sortColumn " . ($sortDescending ? 'DESC' : 'ASC'));
+
+		$transformToType = $this->modelClassName;
+		return $this->queryPage( $paging, $sql, function($stmt){
+            return $stmt->fetchAll(PDO::FETCH_CLASS, $transformToTypee);
+		});
+	}
+
+	/**
+	 * Helper function which executes a query limited to a specific page
+	 */
+	function queryPage( $paging, $sql, $fetch_fn ){
+		if( $paging != null ){
+			// First, count the records
+			$count_stmt = DBConnection::prepareStatement($sql);
+			$count_stmt->execute();
+			$total_results_count = $count_stmt->rowCount();
+
+			$page = $paging['page'];
+			$recordsPerPage = $paging['size'] ? $paging['size'] : 100;
+			$fromRecordNum = ($recordsPerPage * $page) - $recordsPerPage;
+
+			// Amend the data selection to limit to a page
+			$sql .= " LIMIT $fromRecordNum, $recordsPerPage";
+
+			// 'close' the statment
+			$count_stmt = null;
+		}
+
+		$stmt = DBConnection::prepareStatement($sql);
+
+		$this->LOG->debug("Executing: $sql");
+		if ($stmt->execute() ) {
+			$result = call_user_func($fetch_fn, $stmt);
+		} else {
+			$error = $stmt->errorInfo();
+			$result = new QueryError($error);
+			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
+		}
+
+		// 'close' the statment
+		$stmt = null;
+
+		$this->LOG->trace("Result: " . count($result));
+
+		// Wrap result object with Paging info
+		return new ResultPage($result, $total_results_count, $page, $recordsPerPage);
+	}
+
     function cacheIfNeeded(GenericCrud $target){
         return;
         $db = DBConnection::get();

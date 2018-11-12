@@ -424,6 +424,23 @@ class Messaging_ActionManager extends ActionManager {
         return $template;
     }
 
+    public function getEmails( $page, $size ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $pageNum = $this->getValueFromRequest('page', $page);
+        $pageSize = $this->getValueFromRequest('size', $size);
+
+        $paging = array(
+            'page' => $pageNum,
+            'size' => $pageSize
+        );
+
+        $emailDao = new QueuedEmailDAO();
+        $resultPage = $emailDao->getQueue($paging, null, false, false);
+
+        return $resultPage;
+    }
+
     function previewMessage($message, $contexts){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->trace("Build preview for $message");
