@@ -38,8 +38,6 @@ class LabInspectionReminder_Processor implements MessageTypeProcessor {
         // prepare email details
         $details = array(
             'recipients' => $recipients,
-            // TODO: Who to send from?
-            'from' => 'LabInspectionReports@ehs.sc.edu<RSMS Portal>',
             'macromap' => $macromap
         );
 

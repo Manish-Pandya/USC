@@ -69,7 +69,6 @@ class InspectionEmailMessage_Processor implements MessageTypeProcessor {
         $details = array(
             'recipients' => implode(",", $recipientEmails),
             'cc' => implode(",", $inspectorEmails),
-            'from' => 'LabInspectionReports@ehs.sc.edu<RSMS Portal>',
             'macromap' => $macromap
         );
 

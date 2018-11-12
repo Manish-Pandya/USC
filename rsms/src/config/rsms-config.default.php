@@ -29,5 +29,7 @@ return array(
     // Logging settings
     "logging.configfile" => "./includes/conf/log4php-config.php",
     "logging.outputdir" => "./logs"
+
+    "module.Messaging.email.defaults.send_from" => '"RSMS Portal" <LabInspectionReports@ehs.sc.edu>',
 );
 ?>

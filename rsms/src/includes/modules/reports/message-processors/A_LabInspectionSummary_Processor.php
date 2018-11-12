@@ -32,7 +32,6 @@ class A_LabInspectionSummary_Processor implements MessageTypeProcessor {
         // prepare email details
         $details = array(
             'recipients' => array($departmentInfo->getChair_email()),
-            'from' => 'LabInspectionReports@ehs.sc.edu<RSMS Portal>',
             'macromap' => $macromap
         );
 
