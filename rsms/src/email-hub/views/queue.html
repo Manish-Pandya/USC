@@ -16,7 +16,7 @@
             total-items="QueuedEmailsPage.TotalCount">
         </pagination>
 
-        <table ng-if="QueuedEmailsPage" class="table table-bordered">
+        <table ng-if="QueuedEmailsPage" class="table table-bordered templates">
             <thead>
                 <th>Module</th>
                 <th>Message Type</th>
@@ -26,7 +26,7 @@
                 <th>Subject</th>
             </thead>
             <tbody ng-repeat="email in QueuedEmailsPage.Results" ng-class="{closed: !email.ShowBody}">
-                <tr ng-click="email.ShowBody = !email.ShowBody" ng-class="{greyBg: !email.Email_id}">
+                <tr ng-click="toggleMessageContent(email)" ng-class="{greenBg: email.ShowBody, greyBg: !email.Email_id}">
                     <td>{{email.Module}}</td>
                     <td>{{email.Message_type}}</td>
                     <td>{{email.Template_name}}</td>
