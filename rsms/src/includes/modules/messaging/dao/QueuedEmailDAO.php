@@ -35,7 +35,8 @@ class QueuedEmailDAO extends GenericDAO {
             CONCAT('m', mq.key_id, 'e', COALESCE(eq.key_id, '')) as queue_item_id
         FROM message_queue mq
         LEFT OUTER JOIN email_queue eq ON eq.message_id = mq.key_id
-        LEFT OUTER JOIN message_template template ON template.key_id = eq.template_id";
+        LEFT OUTER JOIN message_template template ON template.key_id = eq.template_id
+        ORDER BY eq.date_created DESC, mq.date_created DESC";
 
         // TODO: Query PAGE as QueueItemDto
         return $this->queryPage( $paging, $sql, function($stmt){
