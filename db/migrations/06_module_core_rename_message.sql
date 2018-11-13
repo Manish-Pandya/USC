@@ -1,0 +1,1 @@
+UPDATE message_template SET message_type = 'LabInspectionReminderCAPOverdue' WHERE message_type = 'LabInspectionReminderCAPOverdueDue';
