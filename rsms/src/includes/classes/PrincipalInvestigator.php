@@ -293,7 +293,11 @@ class PrincipalInvestigator extends GenericCrud {
 	public function getLabPersonnel(){
 		if($this->labPersonnel === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->labPersonnel = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$LABPERSONNEL_RELATIONSHIP));
+			// Get only Active related users
+			$this->labPersonnel = $thisDAO->getRelatedItemsById(
+				$this->getKey_id(),
+				DataRelationship::fromArray(self::$LABPERSONNEL_RELATIONSHIP),
+				null, false, true);
 		}
 		return $this->labPersonnel;
 	}
