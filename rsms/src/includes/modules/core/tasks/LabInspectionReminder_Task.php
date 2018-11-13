@@ -70,21 +70,29 @@ class LabInspectionReminder_Task implements ScheduledTask {
     }
 
     private function getContextObjects($sql){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
         $stmt = DBConnection::prepareStatement($sql);
         $contexts = null;
 
         if( $stmt->execute() ){
             // Fetch as context objects
-            $contexts = $stmt->fetchAll(PDO::FETCH_CLASS, 'LabInspectionReminderContext');
+            // NOTE: FETCH_PROPS_LATE is required here because our target type sets properties via constructor
+            //   Because PDO by default sets properties BEFORE executing constructor... we need to tell it to do it after
+            $contexts = $stmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'LabInspectionReminderContext');
         }
         else{
             // TODO: HANDLE ERROR
+            $LOG->error($stmt->errorInfo());
             throw new Exception('Error retrieving context objects');
         }
 
         // 'Close' the statement
         $stmt = null;
 
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace('Contexts:');
+            $LOG->trace($contexts);
+        }
         // Return context objects
         return $contexts;
     }

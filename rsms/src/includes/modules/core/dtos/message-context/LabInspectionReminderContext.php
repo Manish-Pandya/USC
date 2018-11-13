@@ -9,6 +9,9 @@ class LabInspectionReminderContext implements MessageContext {
         $this->reminder_date = $reminder_date;
     }
 
+    /** Magic Setter to prevent setting non-declared properties via PDO */
+    public function __set($name, $val){}
+
     public function setInspection_id($id){ $this->inspection_id = $id; }
     public function setReminder_date($reminder_date){ $this->reminder_date = $reminder_date; }
 }
