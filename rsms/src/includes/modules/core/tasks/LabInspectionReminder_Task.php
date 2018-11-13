@@ -9,9 +9,6 @@ class LabInspectionReminder_Task implements ScheduledTask {
     }
 
     public function run(){
-        // 'LabInspectionReminderCAPDue' - one week before CAP due date, if not submitted
-        $reminders = $this->getReminderInspections();
-
         $this->messenger = new Messaging_ActionManager();
 
         $reminders = $this->getReminderInspections();
