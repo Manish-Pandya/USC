@@ -76,7 +76,10 @@ class LabInspectionReminder_Processor implements MessageTypeProcessor {
             // Implode array to csv
             $recipients = implode(',', $recipients);
             $cc = null;
+
         }
+
+        $LOG->info("Recipients($recipients) CC($cc)");
 
         // prepare email details
         $details = array(
