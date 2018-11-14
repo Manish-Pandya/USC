@@ -2940,11 +2940,18 @@ class ActionManager {
             $verificationDao =  new GenericDAO(new Verification());
 
             $verifications = $verificationDao->getAllWhere($whereClauseGroup);
-            $LOG->fatal($verifications);
+
+            $LOG->info( count($verifications) . "Existing Verifications for $inspection");
+            if( $LOG->isTraceEnabled()) {
+                $LOG->trace($verifications);
+            }
+
             if(!empty($verifications)){
                 $verification = $verifications[0];
+                $LOG->info("Updating Verification $verification for $inspection");
             }else{
                 $verification = new Verification();
+                $LOG->info("Create new Verification for $inspection");
             }
 
             //the verification is due one month before the first day of the scheduled month of the inspection

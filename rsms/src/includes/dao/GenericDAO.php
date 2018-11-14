@@ -45,7 +45,7 @@ class GenericDAO {
 		$this->modelClassName = get_class($new_model_object);
 		$this->logprefix = "[$this->modelClassName" . "DAO]";
 
-		$this->LOG = Logger::getLogger( __CLASS__ . ":" . $this->modelClassName );
+		$this->LOG = Logger::getLogger( __CLASS__ . "." . $this->modelClassName );
 	}
 
 	/**
@@ -633,7 +633,7 @@ class GenericDAO {
 	 * @return unknown
 	 */
 	function addRelatedItems($key_id, $foreignKey_id, DataRelationship $relationship, $index = null) {
-		$this->LOG->fatal("$this->logprefix Inserting new related item for entity with id=$foreignKey_id and key_id=$key_id");
+		$this->LOG->debug("Inserting new related item: fkey=$foreignKey_id and key_id=$key_id: $relationship");
 
 		//print_r($relationship);
 		// get the relationship parameters needed to build the query
@@ -1243,7 +1243,7 @@ class GenericDAO {
 
 	function getHazardRoomDtosByPIId( $pIId, $roomIds = null ){
 		$LOG = Logger::getLogger(__CLASS__);
-        $LOG->fatal($roomIds);
+        $LOG->info( "Get Hazard Rooms (" . implode(', ', $roomIds) . ") for PI #$pIId");
 
 		//get this pi's rooms
 		if($roomIds == null){
