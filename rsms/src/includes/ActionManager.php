@@ -2860,7 +2860,7 @@ class ActionManager {
     }
 
     public function scheduleInspection(){
-        $LOG = Logger::getLogger('Action:' . __function__);
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
         $decodedObject = $this->convertInputJson();
         $inspectionDao = $this->getDao( new Inspection() );
         if( $decodedObject->getInspections()->getKey_id() != NULL ){
@@ -2874,6 +2874,36 @@ class ActionManager {
 
         $inspection->setPrincipal_investigator_id($decodedObject->getPi_key_id());
         $inspection = $inspectionDao->save( $inspection );
+
+        // remove old lab contact relationship
+        if($inspection->getLabPersonnel() != null){
+            foreach($inspection->getLabPersonnel() as $contact){
+                $inspectionDao->removeRelatedItems(
+                    $contact->getKey_id(),
+                    $inspection->getKey_id(),
+                    DataRelationship::fromArray(Inspection::$INSPECTION_LAB_PERSONNEL_RELATIONSHIP));
+            }
+        }
+
+        // Save Personnel relationships
+        $pi = $inspection->getPrincipalInvestigator();
+        foreach($pi->getLabPersonnel() as $contact){
+            // Ensure that this user is a 'Lab Contact'
+            $hasContactRole = count(array_filter( $contact->getRoles(), function($role){
+                return $role->getName() == 'Lab Contact';
+            }));
+
+            if( $hasContactRole ){
+                $LOG->debug("Add Lab Contact $contact to $inspection");
+                $inspectionDao->addRelatedItems(
+                    $contact->getKey_id(),
+                    $inspection->getKey_id(),
+                    DataRelationship::fromArray(Inspection::$INSPECTION_LAB_PERSONNEL_RELATIONSHIP ));
+            }
+            else {
+                $LOG->trace("Personnel $contact is not a lab contact");
+            }
+        }
 
         if($inspection->getRooms() != null){
             foreach($inspection->getRooms() as $room){
