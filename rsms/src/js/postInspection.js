@@ -632,6 +632,10 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
                   inspectionWillLoad.resolve();
               });
         }
+        else{
+            // Inspection is already loaded
+            inspectionWillLoad.resolve();
+        }
 
         // Load Inspection Email Message
         var templateWillLoad = $q.defer();
