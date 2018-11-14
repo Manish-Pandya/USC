@@ -26,6 +26,7 @@
                 <th>Year</th>
                 <th>Month</th>
                 <th>Inspector(s)</th>
+                <th>Lab Contact(s)</th>
                 <th>Hazards</th>
                 <th>Status / Action</th>
             </tr>
@@ -52,6 +53,11 @@
                 <td>
                     <ul>
                         <li ng-repeat='inspector in inspection.Inspectors' once-text='inspector.Name'></li>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <li ng-repeat='contact in inspection.LabPersonnel' once-text='contact.Name'></li>
                     </ul>
                 </td>
                 <td>

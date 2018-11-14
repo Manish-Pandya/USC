@@ -14,7 +14,7 @@
       </div>
   </div>
 
-  <div class="control-group" ng-repeat="contact in contacts = (inspection.PrincipalInvestigator.LabPersonnel | isContact)">
+  <div class="control-group" ng-repeat="contact in contacts = (inspection.LabPersonnel | isContact)">
       <div class="controls">
         <label class="checkbox">
            <input type="checkbox" ng-model="contact.include" ng-init="contact.include = true" ng-change="handleContactList(contact)"><span class="metro-checkbox">{{contact.Name}} (Lab Contact)</span>
