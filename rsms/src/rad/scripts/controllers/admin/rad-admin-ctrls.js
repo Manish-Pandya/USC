@@ -2736,6 +2736,18 @@ angular.module('00RsmsAngularOrmApp')
                     .then($scope.close);
             });
         };
+
+        $scope.selectParcelForTransfer = function (parcel, use){
+            $scope.modalData.forceSelectParcel = false;
+            $scope.modalData.ParcelUseCopy.Parcel_id = parcel.Key_id;
+            $scope.modalData.selectedParcel = dataStoreManager.getById('Parcel', $scope.modalData.ParcelUseCopy.Parcel_id);
+
+            if( use ){
+                $scope.modalData.selectedParcelUse = dataStoreManager.getById('ParcelUse', use.Key_id);
+                console.debug("Select ParcelUse to transform to a Transfer:", $scope.modalData.selectedParcelUse);
+            }
+        };
+
         $scope.selectReceivingPi = function (pi) {
             $scope.loading = pi.loadPIAuthorizations().then(function () {
                 console.log(pi);

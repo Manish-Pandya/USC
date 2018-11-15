@@ -22,10 +22,20 @@
             <div class="control-group parcel-list" ng-if="!modalData.selectedParcel || modalData.forceSelectParcel">
                 <label class="control-label">Select Package:</label>
                 <div class="controls">
-                    <ul class="header"><li>RS/Transfer #</li><li>Isotope</li><li>Unused Amount</li></ul>
+                    <ul class="header"><li>RS/Transfer #</li><li>Isotope</li><li>Amount</li></ul>
                     <ul class="scroll-container">
-                        <li ng-repeat="parcel in modalData.pi.ActiveParcels" class="parcel-row" ng-class="{'green':parcel.Key_id == modalData.selectedParcel.Key_id}" ng-click="modalData.forceSelectParcel = false; modalData.ParcelUseCopy.Parcel_id = parcel.Key_id; modalData.selectedParcel = dsm.getById('Parcel',modalData.ParcelUseCopy.Parcel_id)">
-                            <ul><li>{{parcel.Rs_number}}</li><li>{{parcel.Authorization.IsotopeName}}</li><li>{{parcel.Remainder}}</li></ul>
+                        <li ng-repeat-start="parcel in modalData.pi.ActiveParcels"
+                            class="parcel-row" ng-class="{'green':parcel.Key_id == modalData.selectedParcel.Key_id}"
+                            ng-click="parcel._showUses = !parcel._showUses">
+                            <ul><li>{{parcel.Rs_number}}</li><li>{{parcel.Authorization.IsotopeName}}</li><li>{{parcel.Remainder}} / {{parcel.Quantity}}</li></ul>
+                        </li>
+                        <li ng-if="parcel._showUses" class="parcel-row parcel-detail-row" ng-click="selectParcelForTransfer(parcel, null)">
+                            <ul><li class="sub-label">&nbsp;</li><li>Unsed</li><li>{{parcel.Remainder}}</li></ul>
+                        </li>
+                        <li ng-repeat-end ng-repeat="use in parcel.ParcelUses"
+                            ng-if="parcel._showUses" ng-click="selectParcelForTransfer(parcel, use)"
+                            class="parcel-row parcel-use-row parcel-detail-row" ng-class="{'yellow':parcel.Key_id == modalData.selectedParcel.Key_id}">
+                            <ul><li class="sub-label">&nbsp;</li><li><i class="icon-help pull-left" ng-if="use.Experiment_use" popover="{{use.Experiment_use}}"></i>Used: {{use.Date_used | dateToISO}}</li><li>{{use.Quantity}}</li></ul>
                         </li>
                     </ul>
                 </div>

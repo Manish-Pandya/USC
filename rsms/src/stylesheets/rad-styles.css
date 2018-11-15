@@ -1133,6 +1133,23 @@ div.fake-table .table-row > div div.pickup-comments {
             cursor: pointer;
         }
 
+        .parcel-list .parcel-detail-row {
+            text-align: right;
+        }
+
+        .parcel-list .parcel-use-row {
+            font-style: italic;
+        }
+
+        .parcel-list ul.scroll-container li.parcel-use-row:hover {
+            background: #eeee00;
+        }
+
+        .parcel-list .sub-label {
+            text-align: right;
+            font-style: italic;
+        }
+
 .parcel-label {
     background: rgba(203, 203, 203, 0.13);
     padding: 10px;
