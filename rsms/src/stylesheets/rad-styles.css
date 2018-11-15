@@ -1177,6 +1177,13 @@ div.fake-table .table-row > div div.pickup-comments {
     margin: 0 !important;
 }
 
+.waste-transfer-notes {
+    font-size: 12px;
+    display: block;
+    margin: 0;
+    font-style: italic;
+}
+
 .use-log-form, .parcel-info {
     width: 101px;
     box-sizing: border-box;

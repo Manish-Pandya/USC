@@ -1,4 +1,4 @@
-﻿<form class="form" ng-submit="saveTransferOut(modalData.selectedParcel, modalData.ParcelUseCopy, modalData.ParcelUse)">
+﻿<form class="form" ng-submit="saveTransferOut(modalData.selectedParcel, modalData.ParcelUseCopy, modalData.ParcelUse, modalData.selectedParcelUse)">
     <div class="modal-header" style="padding:0;">
         <h2 ng-show="!addRoom" style="padding:5px; background:rgb(26, 109, 168); color:white">Transfer a package to another institution</h2>
     </div>
@@ -33,30 +33,43 @@
                             <ul><li class="sub-label">&nbsp;</li><li>Unsed</li><li>{{parcel.Remainder}}</li></ul>
                         </li>
                         <li ng-repeat-end ng-repeat="use in parcel.ParcelUses"
-                            ng-if="parcel._showUses" ng-click="selectParcelForTransfer(parcel, use)"
-                            class="parcel-row parcel-use-row parcel-detail-row" ng-class="{'yellow':parcel.Key_id == modalData.selectedParcel.Key_id}">
-                            <ul><li class="sub-label">&nbsp;</li><li><i class="icon-help pull-left" ng-if="use.Experiment_use" popover="{{use.Experiment_use}}"></i>Used: {{use.Date_used | dateToISO}}</li><li>{{use.Quantity}}</li></ul>
+                            ng-if="parcel._showUses" ng-click="!use.Is_transfer && selectParcelForTransfer(parcel, use)"
+                            class="parcel-row parcel-use-row parcel-detail-row" ng-class="{'yellow':parcel.Key_id == modalData.selectedParcel.Key_id, 'inactive':use.Is_transfer}">
+                            <ul><li class="sub-label">{{use.Is_transfer ? 'Transferred' : '&nbsp;'}}</li><li><i class="icon-help pull-left" ng-if="use.Experiment_use" popover="{{use.Experiment_use}}"></i>Used: {{use.Date_used | dateToISO}}</li><li>{{use.Quantity}}</li></ul>
                         </li>
                     </ul>
                 </div>
             </div>
             <div ng-show="modalData.ParcelUseCopy.Parcel_id && !modalData.forceSelectParcel">
                 <div class="parcel-label" ng-init="modalData.selectedParcel = dsm.getById('Parcel',modalData.ParcelUseCopy.Parcel_id)">
-                    <h3><i class="primary icon-pencil redo-select-parcel" ng-click="modalData.forceSelectParcel = true;"></i>Selected Package:</h3>
+                    <h3>
+                        <i class="primary icon-pencil redo-select-parcel" style="cursor:pointer;" ng-click="modalData.forceSelectParcel = true;"></i>
+                        Selected Package:</h3>
                     <p><span class="bold">RS/Transfer Number: </span>{{modalData.selectedParcel.Rs_number}}</p>
                     <p><span class="bold">Isotope </span>{{modalData.selectedParcel.Authorization.IsotopeName}}</p>
                     <p><span class="bold">Unused Amount: </span>{{modalData.selectedParcel.Remainder | unit:modalData.selectedParcel}}</p>
+
+                    <div ng-if="modalData.ParcelUseCopy.ParcelUseAmounts.length > 1">
+                        <h3>Selected Use:</h3>
+                        <p><span class="bold">Date Used: </span>{{modalData.ParcelUseCopy.Date_used | dateToISO}}</p>
+                        <p><span class="bold">Used Amount: </span>{{modalData.ParcelUseCopy.Quantity}}</p>
+                        <p><span class="bold">Description: </span>{{modalData.ParcelUseCopy.Experiment_use}}</p>
+                    </div>
                 </div>
 
                 <div class="control-group">
                     <label>Transfer Quantity</label>
+
                     <div class="controls input-append">
-                        <input style="max-width:50%;" name="quantity" ng-model="modalData.ParcelUseCopy.Quantity">
+                        <input style="max-width:50%;" name="quantity" ng-model="modalData.ParcelUseCopy.Quantity" ng-disabled="modalData.ParcelUseCopy.ParcelUseAmounts.length > 1">
                         <span class="add-on" style="">{{"" | unit:modalData.ParcelUseCopy}}</span>
                         <span ng-if="modalData.tooMuch" class="red error too-much">{{modalData.tooMuch}}</span>
+                        <span ng-if="modalData.ParcelUseCopy.ParcelUseAmounts.length > 1" class="waste-transfer-notes">
+                            <i class="icon-warning"></i>
+                            This Transfer Quantity cannot be editied as it consists of multiple amounts.
+                        </span>
                     </div>
                 </div>
-                
 
                 <div class="control-group">
                     <label class="control-label" for="inputEmail">Date Transfered</label>
