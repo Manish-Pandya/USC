@@ -1873,7 +1873,11 @@ angular
 
             af.saveParcelUse = function(parcel, copy, use){
                 af.clearError();
-                copy.Date_used = convenienceMethods.setMysqlTime(af.getDate(copy.view_Date_used));
+                var view_dateUsed = af.getDate(copy.view_Date_used);
+                if( !isNaN(view_dateUsed) ){
+                    console.debug("Overwriting ParcelUse.Date_used", copy.Date_used, view_dateUsed);
+                    copy.Date_used = convenienceMethods.setMysqlTime(view_dateUsed);
+                }
 
                 // remove any cyclic fields...
                 copy.rootScope = undefined;
