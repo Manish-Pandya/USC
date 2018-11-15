@@ -27,7 +27,7 @@
                         <li ng-repeat-start="parcel in modalData.pi.ActiveParcels"
                             class="parcel-row" ng-class="{'green':parcel.Key_id == modalData.selectedParcel.Key_id}"
                             ng-click="parcel._showUses = !parcel._showUses">
-                            <ul><li>{{parcel.Rs_number}}</li><li>{{parcel.Authorization.IsotopeName}}</li><li>{{parcel.Remainder}} / {{parcel.Quantity}}</li></ul>
+                            <ul><li><i class="pull-left" ng-class="{'icon-arrow-down': parcel._showUses, 'icon-arrow-right': !parcel.showUses}"></i> {{parcel.Rs_number}}</li><li>{{parcel.Authorization.IsotopeName}}</li><li>{{parcel.Remainder}} / {{parcel.Quantity}}</li></ul>
                         </li>
                         <li ng-if="parcel._showUses" class="parcel-row parcel-detail-row" ng-click="selectParcelForTransfer(parcel, null)">
                             <ul><li class="sub-label">&nbsp;</li><li>Unsed</li><li>{{parcel.Remainder}}</li></ul>
