@@ -1446,25 +1446,48 @@ class Rad_ActionManager extends ActionManager {
                     $LOG->debug("Applied transferred amount to destination parcel: $dParcel");
                 }
 
+                // Save ALL ParcelUseAmounts to support Transfer of existing Waste uses
                 //do we already have a parcelUseAmount for this parcel?
                 $amountDao = new GenericDAO(new ParcelUseAmount());
                 if($decodedObject->getParcelUseAmounts() != null){
-                    $LOG->debug("Read use-amount from incoming data");
-                    $amount = end($decodedObject->getParcelUseAmounts());
-                    if(is_array($amount)) $amount = JsonManager::assembleObjectFromDecodedArray($amount);
+                    $LOG->trace("Reading use-amounts from incoming data");
+                    $amounts = array_map( function($amt){
+                        // Ensure these have been decoded...
+                        if(is_array($amt))
+                            return JsonManager::assembleObjectFromDecodedArray($amt);
+                        else return $amt;
+                    }, $decodedObject->getParcelUseAmounts());
+
+                    $LOG->debug('Read ' . count($amounts) . ' ParcelUseAmounts');
                 }else{
                     $LOG->debug("Add new use-amount to destination parcel");
-                    $amount = new ParcelUseAmount();
+                    $amounts = array(new ParcelUseAmount());
+                    $amount->setParcel_use_id($use->getKey_id());
+                    $amount->setCurie_level($use->getQuantity());
+                    $LOG->trace($amount);
                 }
 
-                $amount->activateIfNotSet();
-                $LOG->debug("Use-amount: $amount");
+                $totalTransferQuantity = 0;
+                foreach( $amounts as $amount ){
+                    $amount->activateIfNotSet();
+                    $LOG->debug("Use-amount: $amount");
 
-                $amount->setParcel_use_id($use->getKey_id());
-                $amount->setCurie_level($use->getQuantity());
-                $amount = $amountDao->save($amount);
+                    $totalTransferQuantity += $amount->getCurie_level();
+                }
 
-                $LOG->debug("Saved transfer use-amount; $amount");
+                if( $totalTransferQuantity != $use->getQuantity() ){
+                    $LOG->error("Transfer Amounts do not sum to Use Quantity! Expected:" . $use->getQuantity() . " Total:$totalTransferQuantity");
+                    $LOG->error($use);
+                    $LOG->error($amounts);
+                }
+
+                // Save
+                foreach( $amounts as $amount ){
+                    $LOG->debug("Save $amount");
+                    $amount = $amountDao->save($amount);
+                }
+
+                $LOG->debug("Saved " . count($amounts) . " transfer use-amount(s)");
             }else{
                 $LOG->debug("Save parcel use");
                 $use = $dao->save($decodedObject);
