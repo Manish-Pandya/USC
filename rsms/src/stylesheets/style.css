@@ -19,6 +19,11 @@ tr.formError td{
   padding: 1px 13px;
   box-sizing: border-box;
 }
+
+.user-info.env-test {
+  background: #7fffd4;
+}
+
 /* line 13, ../sass/style.scss */
 .blueBg {
   background-color: #49afcd !important;
