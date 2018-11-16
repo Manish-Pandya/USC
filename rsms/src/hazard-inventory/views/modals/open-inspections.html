@@ -57,7 +57,9 @@
                 </td>
                 <td>
                     <ul>
-                        <li ng-repeat='contact in inspection.LabPersonnel' once-text='contact.Name'></li>
+                        <li ng-repeat='contact in inspection.LabPersonnel' once-text='contact.Name'>
+                            <span once-text="contact.Name" ng-class="{'inactive-contact':!contact.Is_active}"></span>
+                        </li>
                     </ul>
                 </td>
                 <td>
