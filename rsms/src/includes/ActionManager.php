@@ -2681,14 +2681,13 @@ class ActionManager {
     }
 
     public function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NULL,$rad = NULL, $roomIds=null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
         $piId = $this->getValueFromRequest('piId', $piId);
         $inspectorIds = $this->getValueFromRequest('inspectorIds', $inspectorIds);
         $rad = $this->getValueFromRequest('rad', $rad);
         $roomIds = $this->getValueFromRequest('roomIds', $roomIds);
-
 
         if( $piId !== NULL && $inspectorIds !== null ){
 
@@ -2707,11 +2706,13 @@ class ActionManager {
             if($inspection->getSchedule_year() == NULL){
                 $year = $this->getCurrentYear();
                 $inspection->setSchedule_year($year);
+                $LOG->trace("Inspection Year: $year");
             }
 
             if($inspection->getSchedule_month() == null){
                 $month = date('m');
                 $inspection->setSchedule_month($month);
+                $LOG->trace("Inspection Month: $month");
             }
 
             $inspection->setPrincipal_investigator_id($piId);
@@ -2721,6 +2722,7 @@ class ActionManager {
             $dao->save($inspection);
 
             // Remove previous rooms and add the default rooms for this PI.
+            $LOG->trace("Update inspection rooms");
             if($roomIds){
                 $oldRooms = $inspection->getRooms();
                 if (!empty($oldRooms)) {
@@ -2736,6 +2738,7 @@ class ActionManager {
             }
 
             // Remove previous inspectors and add the submitted inspectors.
+            $LOG->trace("Update inspection inspectors");
             $oldInspectors = $inspection->getInspectors();
             if (!empty($oldInspectors)) {
                 // remove the old inspectors
@@ -2748,6 +2751,37 @@ class ActionManager {
                 $dao->addRelatedItems($insp,$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
             }
 
+            // Remove previous lab contacts
+            $LOG->trace("Update inspection Lab Contacts");
+            $oldContacts = $inspection->getLabPersonnel();
+            if( !empty($oldContacts) ){
+                foreach($oldContacts as $contact){
+                    $dao->removeRelatedItems(
+                        $contact->getKey_id(),
+                        $inspection->getKey_id(),
+                        DataRelationship::fromArray(Inspection::$INSPECTION_LAB_PERSONNEL_RELATIONSHIP));
+                }
+            }
+
+            // add contacts from Principal Investigator
+            $pi = $inspection->getPrincipalInvestigator();
+            foreach($pi->getLabPersonnel() as $contact){
+                // Ensure that this user is a 'Lab Contact'
+                $hasContactRole = count(array_filter( $contact->getRoles(), function($role){
+                    return $role->getName() == 'Lab Contact';
+                }));
+
+                if( $hasContactRole ){
+                    $LOG->debug("Add Lab Contact $contact to $inspection");
+                    $dao->addRelatedItems(
+                        $contact->getKey_id(),
+                        $inspection->getKey_id(),
+                        DataRelationship::fromArray(Inspection::$INSPECTION_LAB_PERSONNEL_RELATIONSHIP ));
+                }
+                else {
+                    $LOG->trace("Personnel $contact is not a lab contact");
+                }
+            }
 
         } else {
             //error
@@ -2764,6 +2798,7 @@ class ActionManager {
 
         $inspection->setEntityMaps($entityMaps);
 
+        $LOG->debug("Inspection initiated: $inspection");
         return $inspection;
     }
 
