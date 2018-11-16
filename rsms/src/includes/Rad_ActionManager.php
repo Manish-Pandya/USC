@@ -3502,12 +3502,16 @@ class Rad_ActionManager extends ActionManager {
 
     public function resetRadData(){
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-        $LOG->warn("User requested reset of Rad data");
-        $dao = new GenericDAO(new User());
-        if($dao->deleteRadData()){
-            return true;
+        if( ApplicationConfiguration::get("module.Radiation.zap.enabled", false) ){
+            $LOG->warn("User requested reset of Rad data");
+            $dao = new GenericDAO(new User());
+            if($dao->deleteRadData()){
+                return true;
+            }
+            return new ActionError('Failed to delete data');
         }
-        return new ActionError('Failed to delete data');
+
+        return new ActionError('This Feature is Not Enabled', 404);
     }
 
     public function getAllRadConditions() {

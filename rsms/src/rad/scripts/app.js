@@ -114,11 +114,6 @@ angular
             templateUrl: "views/admin/conditions.html",
             controller: "ConditionsCtrl"
       })
-      .state('radmin.zap', {
-           url: "/zap",
-           templateUrl: "views/admin/zap.html",
-           controller: "ZapCtrl"
-      })
       .state('radmin.admin-pickups', {
         url: "/pickups",
         templateUrl: "views/admin/pickups.html",
@@ -193,8 +188,17 @@ angular
         url: "/inspection-wipes:inspection",
         templateUrl: "views/inspection/inspection-wipes.html",
         controller: "InspectionWipeCtrl"
-      })
+      });
 
+      // Conditionally enable Zap tool
+      if( window.enableZapTool ){
+        console.debug("Enabling Zap Tool");
+        $stateProvider.state('radmin.zap', {
+          url: "/zap",
+          templateUrl: "views/admin/zap.html",
+          controller: "ZapCtrl"
+        })
+      }
 
 
        $provide.decorator('$q', function ($delegate) {
@@ -218,6 +222,9 @@ angular
   })
   .controller('NavCtrl', function ($rootScope, actionFunctionsFactory, $state) {
       $rootScope.constants = Constants;
+
+      // Features
+      $rootScope.enableZapTool = window.enableZapTool;
     $rootScope.$on('$stateChangeStart ',function(){
       $rootScope.loading = true;
     });

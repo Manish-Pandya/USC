@@ -14,7 +14,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 	}
 
 	public function getConfig() {
-		return array(
+		$radMappings = array(
 
 				// get functions
 				"getIsotopeById" 				=> new ActionMapping("getIsotopeById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"] ),
@@ -173,10 +173,16 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 
 				"getRadInventoryReport"	=> new ActionMapping("getRadInventoryReport","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
 				"getRadModels"	        => new ActionMapping("getRadModels","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"resetRadData"	        => new ActionMapping("resetRadData","","", $this::$ROLE_GROUPS["RADMIN"]),
                 "removeFromPickup" 	    => new ActionMapping("removeFromPickup", "", "", $this::$ROLE_GROUPS["EHS"] ),
 
 		);
+
+		if( ApplicationConfiguration::get("module.Radiation.zap.enabled", false) ){
+			Logger::getLogger(__CLASS__)->trace("Zap Tool is Enabled");
+			$radMappings["resetRadData"] = new ActionMapping("resetRadData","","", $this::$ROLE_GROUPS["RADMIN"]);
+		}
+
+		return $radMappings;
 	}
 }
 ?>
