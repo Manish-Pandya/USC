@@ -141,7 +141,8 @@ class Messaging_ActionManager extends ActionManager {
                 $subject,
                 $body,
                 $messageDetails['recipients'],
-                $messageDetails['from']
+                $messageDetails['from'],
+                $messageDetails['cc']
             );
         }
 

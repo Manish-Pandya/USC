@@ -41,7 +41,13 @@ class InspectionEmailMessage_Processor implements MessageTypeProcessor {
         $userDao = new GenericDAO(new User());
 
         // Iterate the recipients list and add their email addresses to our array
-        $email = $context->getEmail();
+        // TODO: Get the email details from the already-decoded object
+        // Decode the context value AGAIN as an associative array since our JsonManager expects
+        //   object classes to be specified in content
+        $ctx_array = json_decode($message->getContext_descriptor(), true);
+
+        $email = $ctx_array['email'];
+
         foreach ($email['recipient_ids'] as $id){
             $user = $userDao->getById($id);
             $recipientEmails[] = $user->getEmail();

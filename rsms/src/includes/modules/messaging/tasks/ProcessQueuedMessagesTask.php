@@ -88,14 +88,23 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
                         $LOG->info("Generated " . count($formattedTemplateEmails) . " emails to send for $message");
 
                         foreach($formattedTemplateEmails as $email){
-                            $recipients_str = implode(',', $email->to);
+                            if( $LOG->isTraceEnabled()){
+                                $LOG->trace("$email");
+                            }
+
                             $queuedEmail = new QueuedEmail();
                             $queuedEmail->setMessage_id($message->getKey_id());
                             $queuedEmail->setTemplate_id($template->getKey_id());
-                            $queuedEmail->setRecipients( $recipients_str );
+                            $queuedEmail->setRecipients( $email->to );
+                            $queuedEmail->setCc_recipients( $email->cc );
                             $queuedEmail->setSend_from($email->from);
                             $queuedEmail->setSubject($email->subject);
                             $queuedEmail->setBody($email->body);
+
+                            if( $LOG->isTraceEnabled()){
+                                $LOG->trace("Prepare to enqueue:");
+                                $LOG->trace($queuedEmail);
+                            }
 
                             $queuedEmails[] = $queuedEmail;
                         }
@@ -104,6 +113,10 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
                     // Persist each formattedEmail in the email queue
                     $emailQueueDao = new GenericDAO(new QueuedEmail());
                     foreach($queuedEmails as $email){
+                        if( $LOG->isTraceEnabled()){
+                            $LOG->trace("$email");
+                        }
+
                         $emailQueueDao->save($email);
                         if( $email->getKey_id() != null ){
                             $queuedEmailsPerMessage++;
