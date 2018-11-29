@@ -4309,3 +4309,10 @@ table.quickdate-calendar td:hover {
 .clear-float{
   clear:both;
 }
+
+.inactive-contact {
+  font-style: italic;
+}
+.inactive-contact::after {
+  content: " (Inactive)";
+}
