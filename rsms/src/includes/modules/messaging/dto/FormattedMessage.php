@@ -21,6 +21,9 @@ class FormattedMessage {
     public function getBody(){ return $this->body; }
     public function getCc(){ return $this->cc; }
 
+    public function __toString(){
+        return "FormattedMessage[$this->to | $this->cc | $this->from | $this->subject]";
+    }
 }
 
 ?>
