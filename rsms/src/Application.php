@@ -54,7 +54,7 @@ if( ApplicationConfiguration::get('server.env.display_details', false) ){
 	if( ApplicationConfiguration::get('server.env.display_version', false) ){
 		$versionFile = dirname(__FILE__) . '/version';
 		if( file_exists($versionFile)){
-			$details[] = 'v' . @file_get_contents($versionFile);
+			$details[] = @file_get_contents($versionFile);
 		}
 	}
 
