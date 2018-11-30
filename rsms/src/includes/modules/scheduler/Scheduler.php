@@ -2,10 +2,14 @@
 
 class Scheduler {
     static $LOG;
+    static $DISABLED_TASKS;
 
     static function run( $moduleNames = null ){
         self::$LOG = Logger::getLogger(__CLASS__);
         self::$LOG->info("RSMS Scheduler Running");
+
+        // Read configuration
+        self::$DISABLED_TASKS = ApplicationConfiguration::get('module.Scheduler.tasks.disabled', array());
 
         $_module_filters = $moduleNames;
         if( $_module_filters != null ){
@@ -40,6 +44,13 @@ class Scheduler {
 
             $moduleTaskClasses = ModuleManager::getModuleFeatureClasses($module, 'tasks', 'Task');
             foreach( $moduleTaskClasses as $class ){
+                // Check if this is configured to be disabled
+                if( in_array($class, self::$DISABLED_TASKS) ){
+                    // Task is disabled; ignore it!
+                    self::$LOG->debug("$class is Disabled in Scheduler configuration");
+                    continue;
+                }
+
                 // Create task instance
                 $task = new $class;
 
