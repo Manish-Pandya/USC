@@ -22,7 +22,7 @@ class LabInspectionReminder_Processor implements MessageTypeProcessor {
         $LOG->debug("Inspection: $inspection");
 
         //  Construct macromap
-        $macromap = $macroResolverProvider->resolve( $context );
+        $macromap = $macroResolverProvider->resolve( array($context, $inspection) );
 
         if( $LOG->isTraceEnabled() ){
             $LOG->trace($macromap);
