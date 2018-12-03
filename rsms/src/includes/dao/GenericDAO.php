@@ -741,7 +741,8 @@ class GenericDAO {
 			//$this->LOG->debug("Binding $key (a $value) as PDO type $type");
 
 			// build the binding statement.
-			$stmt->bindParam(":" . $key,$object->$getter(),$type);
+			$getter_value = $object->$getter();
+			$stmt->bindParam(":" . $key, $getter_value, $type);
 			//echo $col . ":" . $this->$col . " - " . $this->types[$index] . "<br/>";
 		}
 		return $stmt;
