@@ -97,7 +97,12 @@ class DBConnection {
         $db = DBConnection::get();
         $stmt = $db->prepare($sql);
 
-        self::$STATEMENTS[] &= $stmt;
+
+        if( $stmt == false ){
+            throw new Exception(print_r($db->errorInfo(), 1) . PHP_EOL . $sql);
+        }
+
+        self::$STATEMENTS[] = $stmt;
 
         $LOG = Logger::getLogger(__CLASS__);
         if( $LOG->isTraceEnabled()){
