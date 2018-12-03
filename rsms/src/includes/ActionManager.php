@@ -98,13 +98,7 @@ class ActionManager {
      */
 
     public function getDao( $modelObject = NULL ){
-        //FIXME: Remove MockDAO
-        if( $modelObject === NULL ){
-            return new MockDAO();
-        }
-        else{
-            return new GenericDAO( $modelObject );
-        }
+        return new GenericDAO( $modelObject );
     }
 
     public function getCurrentUserRoles( $user = NULL ){
