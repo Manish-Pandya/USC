@@ -546,8 +546,8 @@ class GenericDAO {
 	 * @param Boolean $activeOnlyRelated
 	 * @return Array:
 	 */
-	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumns = null, $activeOnly = false, $activeOnlyRelated = false){
-		$this->LOG->debug("getRelatedItemsById($id, $relationship, $sortColumns, $activeOnly, $activeOnlyRelated)");
+	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumns = null, $activeOnly = false, $activeOnlyRelated = false, $limit=0){
+		$this->LOG->debug("getRelatedItemsById($id, $relationship, $sortColumns, $activeOnly, $activeOnlyRelated, $limit)");
 		if (empty($id)) { return array();}
 
 		// get the relationship parameters needed to build the query
@@ -604,6 +604,10 @@ class GenericDAO {
 					$sql .= ",";
 				}
 			}
+		}
+
+		if( $limit > 0 ){
+			$sql .= " LIMIT $limit";
 		}
 
 		$this->LOG->debug("Executing: $sql");
