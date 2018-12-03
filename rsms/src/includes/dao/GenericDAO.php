@@ -102,7 +102,10 @@ class GenericDAO {
 				return new ActionError('No rows returned');
 			}
 
-			$this->LOG->trace("Result: " . count($result));
+			if( $this->LOG->isTraceEnabled() ){
+				$cnt = is_array($result) ? count($result) : $result != null ? 1 : 0;
+				$this->LOG->trace("Result count: $cnt");
+			}
 		// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
