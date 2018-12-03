@@ -30,9 +30,9 @@ class ActionManager {
      *
      * If $valueName is not present in $_REQUEST, NULL is returned.
      *
-     * @param string|unkown $valueName
-     * @param string $paramValue
-     * @return string|unknown|NULL
+     * @param string|NULL $valueName
+     * @param string|NULL $paramValue
+     * @return string|object|false|NULL
      */
     public function getValueFromRequest( $valueName, $paramValue = NULL ){
         $LOG = Logger::getLogger('Action:' . __function__);

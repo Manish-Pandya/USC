@@ -249,9 +249,9 @@ class JsonManager {
 	 * instantiates it, and returns it. If $object is given and not null,
 	 * the object is returned unchanged.
 	 *
-	 * @param unknown $decodedJsonArray
-	 * @param string $object
-	 * @return unknown|string
+	 * @param array $decodedJsonArray
+	 * @param string|null $object
+	 * @return object|string
 	 */
 	public static function buildModelObject($decodedJsonArray, $object = NULL){
 

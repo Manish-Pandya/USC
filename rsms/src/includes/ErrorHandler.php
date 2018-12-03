@@ -41,10 +41,10 @@ class ErrorHandler {
 	
 	/**
 	 * 
-	 * @param unknown $num
-	 * @param unknown $str
-	 * @param unknown $file
-	 * @param unknown $line
+	 * @param int $num
+	 * @param string $str
+	 * @param string $file
+	 * @param int $line
 	 * @param string $context
 	 */
 	function handleError($num, $str, $file, $line, $context = null){
