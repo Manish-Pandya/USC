@@ -2,6 +2,7 @@
 
 class DBConnection {
 
+    private static $STATEMENT_COUNT = 0;
     private static $STATEMENTS = array();
 
     private static $CONFIG_READY = false;
@@ -65,7 +66,7 @@ class DBConnection {
 
     static function shutdown(){
         $LOG = Logger::getLogger(__CLASS__);
-        $LOG->debug("Shutdown " . count(self::$STATEMENTS) . " DB statement(s) and connection");
+        $LOG->info("Prepared " . self::$STATEMENT_COUNT . " Queries during this request");
 
         $LOG->trace( $GLOBALS['db'] );
         $LOG->trace( self::$STATEMENTS );
@@ -97,12 +98,11 @@ class DBConnection {
         $db = DBConnection::get();
         $stmt = $db->prepare($sql);
 
-
         if( $stmt == false ){
             throw new Exception(print_r($db->errorInfo(), 1) . PHP_EOL . $sql);
         }
 
-        self::$STATEMENTS[] = $stmt;
+        self::$STATEMENT_COUNT++;
 
         $LOG = Logger::getLogger(__CLASS__);
         if( $LOG->isTraceEnabled()){
