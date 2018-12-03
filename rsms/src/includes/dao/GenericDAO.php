@@ -786,7 +786,7 @@ class GenericDAO {
 	// TODO: The following are not generic functions, and should be moved into their own DAO type
 
 	function getUserByUsername($username){
-		$this->LOG->debug("$this->logprefix Looking up entity with keyid $id");
+		$this->LOG->debug("Looking up user with username $username");
 
 		$user = new User();
 
@@ -799,7 +799,7 @@ class GenericDAO {
 			// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
-			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
+			$this->LOG->error('Returning QueryError with message: ' . $error->getMessage());
 
 			$result = new QueryError($error[2]);
 		}
@@ -1010,8 +1010,6 @@ class GenericDAO {
 	 */
 
 	function getRelationships( RelationMapping $relationship ){
-		$this->LOG->debug("about to get relationships from $tableName");
-
 		//sometimes, in many to many relationships, we are asking for what we usually think of as the child objects to get their collection of parents
 		//in those cases, we reverse the relationships
 		if($relationship->getIsReversed()){
