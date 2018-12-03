@@ -179,7 +179,7 @@ class HazardInventoryActionManager extends ActionManager {
 		return $relations;
 	}
 
-	public function getBuildingsByPIID(){
+	public function getBuildingsByPIID($id, $roomId){
 		$LOG = Logger::getLogger(__CLASS__);
 		$id = $this->getValueFromRequest("id", $id);
 		$roomId = $this->getValueFromRequest("roomId", $roomId);
