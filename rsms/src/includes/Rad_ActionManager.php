@@ -1078,7 +1078,7 @@ class Rad_ActionManager extends ActionManager {
         }
 
         if( !$retireDate ){
-            $retireDate = date();
+            $retireDate = date('Y-m-d H:i:s');
         }
 
         $LOG->info("Request to retire carboy $carboyId on $retireDate");
