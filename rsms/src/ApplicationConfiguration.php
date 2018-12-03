@@ -4,8 +4,13 @@ class ApplicationConfiguration {
     private static $CONFIG;
 
     public static function get( $key = NULL, $defaultValue = NULL ){
+        // If key provided, attempt to retrieve configured value
         if( $key != NULL ){
-            $val = @self::$CONFIG[$key];
+            $val = $defaultValue;
+            if( array_key_exists($key, @self::$CONFIG) ){
+                $val = @self::$CONFIG[$key];
+            }
+
             if( $val === NULL ){
                 return $defaultValue;
             }
@@ -13,6 +18,7 @@ class ApplicationConfiguration {
             return $val;
         }
 
+        // Return all configuration if no Key is provided
         return self::$CONFIG;
     }
 
