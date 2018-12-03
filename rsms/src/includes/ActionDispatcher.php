@@ -262,9 +262,25 @@ class ActionDispatcher {
         $this->LOG->trace("doAction [$actionModule] $action_function on $actionManagerType");
 
         if( method_exists( $actions, $action_function ) ){
+            // Attempt to extract parameters from request
+            $reflected = new ReflectionMethod($actions, $action_function);
+            $param_names = array();
+            $func_args = array();
+            foreach( $reflected->getParameters() as $arg ){
+                $param_names[] = $arg->name;
+                if( $_REQUEST[ $arg->name ] )
+                    $func_args[ $arg->name ] = $_REQUEST[ $arg->name ];
+                else
+                    $func_args[ $arg->name ] = null;
+            }
+
+            if( $this->LOG->isTraceEnabled() ){
+                $this->LOG->trace("Executing action function '$actionManagerType::$action_function(" . implode(', ', $param_names) . ")'");
+            }
+
             //call the specified action function
-            $this->LOG->trace("Executing action function '$actionManagerType::$action_function'");
-            $functionResult = $actions->$action_function();
+            // Passing arguments by name
+            $functionResult = call_user_func_array( array($actions, $action_function), $func_args);
 
             return $functionResult;
         }
