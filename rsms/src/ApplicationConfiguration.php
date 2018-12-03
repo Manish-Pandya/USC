@@ -40,15 +40,15 @@ class ApplicationConfiguration {
 
         $data = @file_get_contents($url);
         if($data === false){
-            $error = error_get_last();
-            throw new Exception("Error loading application config file [$url]: " . $error['message']);
+            $error = self::getLastErrorMessage();
+            throw new Exception("Error loading application config file [$url]: $error");
         }
 
         $config = @eval('?>' . $data);
 
 		if ($config === false || $config == NULL) {
-			$error = error_get_last();
-			throw new Exception("Error parsing configuration: " . $error['message']);
+			$error = self::getLastErrorMessage();
+			throw new Exception("Error parsing configuration: $error");
 		}
 
 		if (empty($config)) {
@@ -64,6 +64,15 @@ class ApplicationConfiguration {
         }
 
         return $config;
+    }
+
+    /**
+     * Retrieves the message of the last error, if any
+     * @return string
+     */
+    static function getLastErrorMessage(){
+        $error = error_get_last();
+        return $error == NULL ? '' : $error['message'];
     }
 }
 ?>
