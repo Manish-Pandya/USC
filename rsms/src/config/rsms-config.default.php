@@ -33,7 +33,7 @@ return array(
 
     // Logging settings
     "logging.configfile" => "./includes/conf/log4php-config.php",
-    "logging.outputdir" => "./logs"
+    "logging.outputdir" => "./logs",
 
     "module.Messaging.email.send_only_to_role" => null,
     "module.Messaging.email.suppress_all" => false,
