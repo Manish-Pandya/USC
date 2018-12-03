@@ -31,12 +31,12 @@ class ErrorHandler {
 	 * 
 	 * @param unknown $exception
 	 */
-	function handleException(Exception $exception){
+	function handleException(Throwable $exception){
 		//Logger::getLogger(__CLASS__)->debug('Handling Exception');
 		$message = "Exception '" . get_class($exception) . "' occurred at " . $exception->getFile() . ":" . $exception->getLine() . ". Message: " . $exception->getMessage();
 		
 		$log = Logger::getLogger( basename($exception->getFile(), ".php") );
-		//$log->fatal($message);
+		$log->error($message);
 	}
 	
 	/**
