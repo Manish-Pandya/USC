@@ -268,7 +268,7 @@ class ActionDispatcher {
             $func_args = array();
             foreach( $reflected->getParameters() as $arg ){
                 $param_names[] = $arg->name;
-                if( $_REQUEST[ $arg->name ] )
+                if( array_key_exists($arg->name, $_REQUEST) )
                     $func_args[ $arg->name ] = $_REQUEST[ $arg->name ];
                 else
                     $func_args[ $arg->name ] = null;
