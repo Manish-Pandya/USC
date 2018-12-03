@@ -24,7 +24,10 @@ if($rlog->isInfoEnabled()){
         if( $key == 'action' || $key == 'callback')
             continue;
 
-        $params .= "[$key : $value] ";
+        // Implode array if necessary
+        $pval = is_array($value) ? implode(", ", $value) : $value;
+
+        $params .= "[$key : $pval] ";
     }
 
     $rlog->info($username . ' >>>     ' . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . " $params");
