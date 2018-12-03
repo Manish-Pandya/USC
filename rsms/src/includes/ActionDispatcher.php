@@ -72,8 +72,8 @@ class ActionDispatcher {
     /**
      * Reads the available action mappings and verifies that $actionName is mapped.
      *
-     * @param unknown $actionName
-     * @param unknown $result
+     * @param string $actionName
+     * @param ActionResult|ActionError $result
      */
     public function readActionConfigurationAndDispatch($actionName, & $result){
         $actionConfig = ActionMappingManager::getAction($actionName);
@@ -156,7 +156,8 @@ class ActionDispatcher {
      * to their respecive error values
      *
      * @param ActionResult $result
-     * @param ActionMapping $actionMapping
+     * @param ActionMapping|null $actionMapping
+     * @param int $errorCode
      *
      * @see ActionMapping
      */
@@ -236,7 +237,7 @@ class ActionDispatcher {
      *
      * @param ActionMapping $actionMapping
      *
-     * @return unknown: The return value of the called function,
+     * @return ActionResult|ActionError|null: The return value of the called function,
      *  	or NULL if the if the function does not exist
      */
     public function doAction( $actionConfig ){
