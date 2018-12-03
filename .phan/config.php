@@ -5,7 +5,7 @@ use Phan\Config;
 return [
     "allow_missing_properties" => true,
     "null_casts_as_any_type" => true,
-    'backward_compatibility_checks' => false,
+    'backward_compatibility_checks' => true,
     "quick_mode" => true,
     "minimum_severity" => 5,
     'directory_list' => [
