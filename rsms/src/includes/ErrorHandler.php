@@ -33,10 +33,16 @@ class ErrorHandler {
 	 */
 	function handleException(Throwable $exception){
 		//Logger::getLogger(__CLASS__)->debug('Handling Exception');
-		$message = "Exception '" . get_class($exception) . "' occurred at " . $exception->getFile() . ":" . $exception->getLine() . ". Message: " . $exception->getMessage();
+		$severity = ($exception instanceof ErrorException) ? $exception->getSeverity() : E_NOTICE;
+		$message = "Exception ($severity) '" . get_class($exception) . "' occurred at " . $exception->getFile() . ":" . $exception->getLine() . ". Message: " . $exception->getMessage();
 		
 		$log = Logger::getLogger( basename($exception->getFile(), ".php") );
-		$log->error($message);
+		if( $severity == E_NOTICE ){
+			$log->warn($message);
+		}
+		else {
+			$log->error($message);
+		}
 	}
 	
 	/**
