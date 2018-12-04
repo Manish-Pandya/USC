@@ -3330,7 +3330,7 @@ class Rad_ActionManager extends ActionManager {
         if($decodedObject == null)$decodedObject = $this->convertInputJson();
         if($decodedObject == null)return new ActionError("No data read from input stream");
         //find whatever pickup-able container this ParcelUseAmount is currently in
-        $l = Logger::getLogger(_FUNCTION__);
+        $l = Logger::getLogger(__FUNCTION__);
         if($decodedObject->getWaste_bag_id() != null){
             //persevere current bag's id
             $bag = $this->getWasteBagById($decodedObject->getWaste_bag_id());
