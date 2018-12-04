@@ -412,7 +412,7 @@ class JsonManager {
 	}
 
 	public static function extractEntityMapOverrides(&$dataSource){
-		$entityMappingOverrides = null;
+		$entityMappingOverrides = array();
 		foreach( array(EntityMap::$TYPE_EAGER, EntityMap::$TYPE_LAZY) as $type){
 			if( array_key_exists($type, $dataSource) ){
 				$overrides = explode(',', $dataSource[$type]);
@@ -420,6 +420,10 @@ class JsonManager {
 					$entityMappingOverrides[] = new EntityMap($type, $accessor);
 				}
 			}
+		}
+
+		if( empty($entityMappingOverrides) ){
+			$entityMappingOverrides = null;
 		}
 
 		return $entityMappingOverrides;
