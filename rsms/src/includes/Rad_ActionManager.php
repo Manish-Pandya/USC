@@ -503,7 +503,7 @@ class Rad_ActionManager extends ActionManager {
         }
 
         foreach($pi->getCarboyUseCycles() as $cycle){
-            $cycle->setEntityMaps(eager);
+            $cycle->setEntityMaps($cycleMaps);
         }
 
         if($pi->getCurrentWasteBag() != null){
