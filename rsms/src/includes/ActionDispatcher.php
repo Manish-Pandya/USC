@@ -235,7 +235,7 @@ class ActionDispatcher {
     /**
      * Calls the action function specified in the given action mapping.
      *
-     * @param ActionMapping $actionMapping
+     * @param array $actionConfig
      *
      * @return ActionResult|ActionError|null: The return value of the called function,
      *  	or NULL if the if the function does not exist

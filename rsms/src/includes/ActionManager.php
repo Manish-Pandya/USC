@@ -355,7 +355,7 @@ class ActionManager {
     /**
      * Determines if the currently logged in user's lab has permissions to run a method, based on the object type being retrieved, altered or created by that method
      *
-     * @param unknown $object
+     * @param object $object
      * @return boolean
      */
     private function getByLab($object){
@@ -378,8 +378,8 @@ class ActionManager {
     /**
      * Gets the key_id of the PrincipalInvestigator associated with a method call.  Used to determine if a User can make a call for a particular object instance.
      *
-     * @param unkonwn object
-     * @return integer $value| boolean
+     * @param object object
+     * @return integer|boolean $value
      */
     protected function getPIIDFromObject($object){
         $LOG = Logger::getLogger('Action:' . __function__);
