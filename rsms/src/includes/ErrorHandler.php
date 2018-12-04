@@ -41,7 +41,7 @@ class ErrorHandler {
 			$log->warn($message);
 		}
 		else {
-			$log->error($message);
+			$log->error("$message\n    " . str_replace("\n", "\n    ", $exception->getTraceAsString()));
 		}
 	}
 	
