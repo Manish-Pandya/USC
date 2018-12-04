@@ -71,7 +71,7 @@ class PendingChange extends GenericCrud {
 	public function setVerification_id($verification_id){$this->verification_id = $verification_id;}
 	
 	public function getParent_id(){
-		$LOG = Logger::getLogger(_Class_);
+		$LOG = Logger::getLogger(__CLASS__);
 		//$LOG->fatal('calling it');
 		//$LOG->fatal($this->parent_id);
 		return $this->parent_id;
