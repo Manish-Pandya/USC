@@ -56,7 +56,12 @@ class Committees_ActionManager extends ActionManager {
 		else{
 			$dao = $this->getDao(new BioSafetyProtocol());
 			$decodedObject = $dao->save($decodedObject);
-			$LOG->fatal($decodedObject);
+			
+			$LOG->info("Saved protocol: $decodedObject");
+			if( $LOG->isTraceEnabled()) {
+				$LOG->trace($decodedObject);
+			}
+
 			return $decodedObject;
 		}
 	}
