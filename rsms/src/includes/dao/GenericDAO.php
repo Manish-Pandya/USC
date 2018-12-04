@@ -72,7 +72,7 @@ class GenericDAO {
 	/**
 	 * Populates this entity with the data for the entity with the given ID
 	 *
-	 * @param unknown $id
+	 * @param string|integer $id
 	 * @return GenericCrud
 	 */
 	function getById($id){
