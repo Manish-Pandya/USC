@@ -1408,6 +1408,10 @@ class Rad_ActionManager extends ActionManager {
 
             if($decodedObject->getDate_transferred() != null){
                 $LOG->debug("Saving transfer");
+
+                // Init delievered parcel var
+                $dParcel = null;
+
                 //this is a use for a transfer
                 if($decodedObject->getDestinationParcel() != null){
                     $LOG->debug("Save transfer destination parcel");
