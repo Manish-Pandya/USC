@@ -230,7 +230,7 @@ class Checklist extends GenericCrud {
     }
 
     public function getIsOrdered(){return $this->getIsOrdered;}
-    public function setIsOrdered($is){$this->isOrdered = $id;}
+    public function setIsOrdered($is){$this->isOrdered = $is;}
 
     public function getIsPresent(){return $this->isPresent;}
 }
