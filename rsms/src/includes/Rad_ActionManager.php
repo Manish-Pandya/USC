@@ -1478,21 +1478,23 @@ class Rad_ActionManager extends ActionManager {
                 foreach($amounts as $amount){
                     $amountDao = $this->getDao(new ParcelUseAmount());
                     $newAmount = new ParcelUseAmount();
-                    if($amount['Curie_level'] != NULL && $amount['Curie_level'] > 0){
+                    if(!empty($amount['Curie_level']) && $amount['Curie_level'] > 0){
                         $newAmount->setParcel_use_id($use->getKey_id());
                         $newAmount->setCurie_level($amount['Curie_level']);
                         $newAmount->setIs_active($amount['Is_active']);
 
-                        if($amount['Key_id'] != NULL)$newAmount->setKey_id($amount['Key_id']);
+                        if( !empty($amount['Key_id']) ){
+                            $newAmount->setKey_id($amount['Key_id']);
+                        }
 
-                        if($amount['Waste_bag_id'] != NULL){
+                        if(!empty($amount['Waste_bag_id'])){
                             $newAmount->setWaste_bag_id($amount['Waste_bag_id']);
                             $entityMaps = array();
                             $entityMaps[] = new EntityMap("lazy", "getWaste_type");
                             $entityMaps[] = new EntityMap("lazy", "getContainer_name");
                             $newAmount->setEntityMaps($entityMaps);
                         }
-                        if($amount['Carboy_id'] != NULL){
+                        if(!empty($amount['Carboy_id'])){
                             $newAmount->setCarboy_id($amount['Carboy_id']);
                             $entityMaps = array();
                             $entityMaps[] = new EntityMap("eager", "getCarboy");
@@ -1500,7 +1502,7 @@ class Rad_ActionManager extends ActionManager {
                             $entityMaps[] = new EntityMap("lazy", "getContainer_name");
                             $newAmount->setEntityMaps($entityMaps);
                         }
-                        if($amount['Other_waste_container_id'] != NULL){
+                        if(!empty($amount['Other_waste_container_id'])){
                             $newAmount->setOther_waste_container_id($amount['Other_waste_container_id']);
                             $newAmount->setOther_waste_type_id($amount['Other_waste_type_id']);
                             $entityMaps = array();
@@ -1509,7 +1511,11 @@ class Rad_ActionManager extends ActionManager {
                             $entityMaps[] = new EntityMap("lazy", "getContainer_name");
                             $newAmount->setEntityMaps($entityMaps);
                         }
-                        if($amount['Comments'] != NULL)$newAmount->setComments($amount['Comments']);
+
+                        if(!empty($amount['Comments'])) {
+                            $newAmount->setComments($amount['Comments']);
+                        }
+
                         $newAmount->setWaste_type_id($amount['Waste_type_id']);
 
                         if($newAmount->getWaste_type()->getName() == "Vial"){
@@ -1545,7 +1551,7 @@ class Rad_ActionManager extends ActionManager {
                     }
                     //if a ParcelUseAmount has no activity, we assume it's supposed to be deleted
                     else{
-                        if($amount['Key_id'] != NULL){
+                        if(!empty($amount['Key_id'])){
                             $amountDao = $this->getDao(new ParcelUseAmount());
                             $amountDao->deleteById($amount['Key_id']);
                         }
@@ -1807,9 +1813,11 @@ class Rad_ActionManager extends ActionManager {
             $decodedObject = $dao->save($decodedObject);
 
             $lotDao = new GenericDAO(new PickupLot());
-            foreach($lots as $lot){
-                if(is_array($lot))$lot = JsonManager::assembleObjectFromDecodedArray($lot);
-                $lot = $lotDao->save($lot);
+            if( !empty($lots) ){
+                foreach($lots as $lot){
+                    if(is_array($lot))$lot = JsonManager::assembleObjectFromDecodedArray($lot);
+                    $lot = $lotDao->save($lot);
+                }
             }
             return $this->getWasteBagById($decodedObject->getKey_id());
         }
