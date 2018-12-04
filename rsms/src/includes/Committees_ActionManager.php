@@ -68,7 +68,7 @@ class Committees_ActionManager extends ActionManager {
 		//verify that this file is of a type we consider safe
 
 		// Make sure the file upload didn't throw a PHP error
-		if ($_FILES[0]['error'] != 0) {
+		if ( isset($_FILES[0]) && $_FILES[0]['error'] != 0) {
 			return new ActionError("File upload error.");
 		}
 		/*
