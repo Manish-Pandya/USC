@@ -454,13 +454,16 @@ class GenericDAO {
 	 * @return GenericCrud
 	 */
 	function save(GenericCrud $object = NULL){
-		//$this->LOG->trace("$this->logprefix Saving entity");
-		//$this->LOG->trace($object);
+		$this->LOG->debug("Saving entity: $object");
+		if( $this->LOG->isTraceEnabled()){
+			$this->LOG->trace($object);
+		}
 
 		//Make sure we have an object to save
 		if( $object == NULL ){
 			$object = $this->modelObject;
 		}
+
 		//If $object is given, make sure it's the right type
 		else if( get_class($object) != $this->modelClassName ){
 			// we have a problem!
@@ -477,42 +480,44 @@ class GenericDAO {
 		$object->setDate_last_modified(date("Y-m-d H:i:s"));
 
 		// Add the creation timestamp
-		if ($object->getDate_created() == null) {$object->setDate_created(date("Y-m-d H:i:s"));}
+		if ($object->getDate_created() == null) {
+			$object->setDate_created(date("Y-m-d H:i:s"));
+		}
 
 		//set created user and last modified user ids if we can and need to
 		if(isset($_SESSION["USER"]) && $_SESSION["USER"]->getKey_id() != null){
 			$object->setLast_modified_user_id($_SESSION["USER"]->getKey_id());
-			if($object->getCreated_user_id() == null)$object->setCreated_user_id($_SESSION["USER"]->getKey_id());
+			if($object->getCreated_user_id() == null)
+				$object->setCreated_user_id($_SESSION["USER"]->getKey_id());
 		}
 
 		// Check to see if this item has a key_id
 		//  If it does, we assume it's an existing record and issue an UPDATE
 		if ($object->getKey_id() != null) {
-
-		    $_SESSION["DEBUG"] = "Calling db update...";
+			$this->LOG->debug("Entity exists; UPDATE");
 			$stmt = $this->createUpdateStatement($db,$object);
 			$stmt = $this->bindColumns($stmt,$object);
 			$success = $stmt->execute();
 		// Otherwise, issue an INSERT
 		} else {
-	    	$_SESSION["DEBUG"] = "Calling db insert...";
-			 //echo  "Calling db insert...";
+			$this->LOG->debug("Entity does not exist; INSERT");
 
 	    	// Add the creation timestamp
 	    	$object->setDate_created(date("Y-m-d H:i:s"));
 
 			$stmt = $this->createInsertStatement($db,$object);
-		   	$stmt = $this->bindColumns($stmt,$object);
+			$stmt = $this->bindColumns($stmt,$object);
 			$success = $stmt->execute();
 
 			// since this is a new record, get the new key_id issued by the database and add it to this object.
+			$this->LOG->debug("Set key ID of new entity");
 			$object->setKey_id($db->lastInsertId());
 		}
 
 		// Look for db errors
 		// If no errors, update and return the object
 		if($success && $object->getKey_Id() > 0) {
-			//$this->LOG->trace("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
+			$this->LOG->trace("Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
 
 			// Re-load the whole record so that updated Date fields (and any field auto-set by DB) are updated
 			//$this->LOG->trace("$this->logprefix Reloading updated/inserted entity with key_id=" . $object->getKey_Id() );
@@ -520,7 +525,7 @@ class GenericDAO {
 
 		// Otherwise, the statement failed to execute, so return an error
 		} else {
-			//$this->LOG->trace("$this->logprefix Object had a key_id of " . $object->getKey_Id());
+			$this->LOG->trace("Failed to update/insert entity. Object had a key_id of " . $object->getKey_Id());
 			$errorInfo = $stmt->errorInfo();
 
 			$object = new ModifyError($errorInfo[2], $object);
@@ -768,10 +773,12 @@ class GenericDAO {
 		$sql = rtrim($sql,",");
 		$sql .= ")";
 
-		//$this->LOG->trace("Preparing insert statement [$sql]");
+		if( $this->LOG->isTraceEnabled() ){
+			$this->LOG->trace("Preparing insert statement [$sql]");
+		}
 
 		$stmt = DBConnection::prepareStatement($sql);
-		//var_export($stmt->queryString);
+
 		return $stmt;
 	}
 
