@@ -567,8 +567,9 @@ class PrincipalInvestigator extends GenericCrud {
             $group = new WhereClauseGroup(array(
                 new WhereClause("principal_investigator_id","=",$this->key_id),
                 new WhereClause("pickup_id","IS","NULL")
-            ));
-            $this->currentWasteBag = end($bagDao->getAllWhere($group));
+			));
+			$bags = $bagDao->getAllWhere($group);
+            $this->currentWasteBag = end($bags);
 		}
 		return $this->currentWasteBag;
 	}
