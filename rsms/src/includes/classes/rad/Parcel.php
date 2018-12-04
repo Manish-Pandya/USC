@@ -99,7 +99,7 @@ class Parcel extends RadCrud {
 	private $svIsotopeAmounts;
 
 	/** wipe test done on this parcel **/
-	private $wipe_test;
+	private $wipe_tests;
 
 	/** id of the authorization that allows PI to have this parcel **/
 	private $authorization_id;

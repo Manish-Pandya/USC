@@ -79,6 +79,7 @@ class WasteBag extends Container {
 	/** IsotopeAmountDTOs in this bag **/
 	private $contents;
 
+	private $pickupLots;
 
 	public function __construct() {
 		$entityMaps = array();
