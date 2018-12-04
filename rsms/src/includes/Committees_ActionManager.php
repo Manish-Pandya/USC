@@ -102,7 +102,8 @@ class Committees_ActionManager extends ActionManager {
 		// Start by creating a unique filename using timestamp.  If it's
 		// already in use, keep incrementing the timstamp until we find an unused filename.
 		// 99.999% of the time, this should work the first time, but better safe than sorry.
-        $LOG->fatal(str_replace("#","",$_FILES['file']));
+		$LOG->info("Process file upload: " . $_FILES['file']['name']);
+        $LOG->debug(str_replace("#","",$_FILES['file']));
 		$now = time();
 		while(file_exists($filename = BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR . $now.'-'.str_replace("#","",$_FILES['file']['name'])))
 		{
@@ -125,17 +126,21 @@ class Committees_ActionManager extends ActionManager {
 		if($id == NULL){
 			$id = $this->getValueFromRequest('id', $id);
 		}
-		$LOG->fatal($filename);
+		$LOG->info("Save file to $filename");
 		//get just the name of the file
 		$name = basename($filename);
 
 		//if so, update the path of that protocol now and save it.
 		if($id != NULL){
+			$LOG->info("Attach document to protocol $id");
 			$protocolDao = $this->getDao( new BioSafetyProtocol() );
 			$protocol = $this->getProtocolById( $id );
 			$protocol->setReport_path( $name );
-			$LOG->fatal($protocol);
 			$protocolDao->save($protocol);
+			$LOG->info("Saved $protocol");
+			if( $LOG->isTraceEnabled() ){
+				$LOG->trace($protocol);
+			}
 		}
 
 		//either way, return the name of the saved document so that it can be added to the client
