@@ -326,7 +326,7 @@ class Parcel extends RadCrud {
 				)";
 
 		$stmt = DBConnection::prepareStatement($queryString);
-        $stmt->bindParam(1,$this->getKey_id(),PDO::PARAM_INT);
+        $stmt->bindValue(1,$this->getKey_id(),PDO::PARAM_INT);
 		$stmt->execute();
 		while($sum = $stmt->fetchColumn()){
 			$totalPickedUp = $sum;
