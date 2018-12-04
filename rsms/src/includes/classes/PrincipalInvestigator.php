@@ -77,7 +77,7 @@ class PrincipalInvestigator extends GenericCrud {
 			"foreignKeyName" => "principal_investigator_id"
 	);
 
-	public static $CABOY_USE_CYCLES_RELATIONSHIP = array(
+	public static $CARBOY_USE_CYCLES_RELATIONSHIP = array(
 			"className" => "CarboyUseCycle",
 			"tableName" => "carboy_use_cycle",
 			"keyName"   => "key_id",
@@ -344,7 +344,7 @@ class PrincipalInvestigator extends GenericCrud {
 	public function getCarboyUseCycles(){
 		if($this->carboyUseCycles === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->carboyUseCycles = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$CABOY_USE_CYCLES_RELATIONSHIP));
+			$this->carboyUseCycles = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$CARBOY_USE_CYCLES_RELATIONSHIP));
 		}
 		return $this->carboyUseCycles;
 	}

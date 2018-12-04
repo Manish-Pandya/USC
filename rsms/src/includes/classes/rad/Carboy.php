@@ -37,7 +37,7 @@ class Carboy extends RadCrud {
 	}
 	
 	/** Relationships */
-	protected static $CABOY_USE_CYCLES_RELATIONSHIP = array(
+	protected static $CARBOY_USE_CYCLES_RELATIONSHIP = array(
 			"className" => "CarboyUseCycle",
 			"tableName" => "carboy_use_cycle",
 			"keyName"	=> "key_id",
@@ -54,7 +54,7 @@ class Carboy extends RadCrud {
 	private $retirement_date;
 
 	/** all use cycles this carboy has ever had **/
-	private $caboy_use_cycles;
+	private $carboy_use_cycles;
 	
 	/** the carboy use cycle this carboy is currently in */
 	private $current_carboy_use_cycle;
@@ -90,7 +90,7 @@ class Carboy extends RadCrud {
 	public function getCarboy_use_cycles(){
 		if($this->carboy_use_cycles === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->carboy_use_cycles = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$CABOY_USE_CYCLES_RELATIONSHIP));
+			$this->carboy_use_cycles = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$CARBOY_USE_CYCLES_RELATIONSHIP));
 		}
 		return $this->carboy_use_cycles;
 	}
