@@ -99,7 +99,7 @@ class DBConnection {
         $stmt = $db->prepare($sql);
 
         if( $stmt == false ){
-            throw new Exception(print_r($db->errorInfo(), 1) . PHP_EOL . $sql);
+            throw new Exception(print_r($db->errorInfo(), true) . PHP_EOL . $sql);
         }
 
         self::$STATEMENT_COUNT++;
