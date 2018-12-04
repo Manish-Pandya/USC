@@ -1450,7 +1450,8 @@ class Rad_ActionManager extends ActionManager {
                 $amountDao = new GenericDAO(new ParcelUseAmount());
                 if($decodedObject->getParcelUseAmounts() != null){
                     $LOG->debug("Read use-amount from incoming data");
-                    $amount = end($decodedObject->getParcelUseAmounts());
+                    $amts = $decodedObject->getParcelUseAmounts();
+                    $amount = end($amts);
                     if(is_array($amount)) $amount = JsonManager::assembleObjectFromDecodedArray($amount);
                 }else{
                     $LOG->debug("Add new use-amount to destination parcel");
@@ -1530,7 +1531,8 @@ class Rad_ActionManager extends ActionManager {
 
                                 $newAmount->setScint_vial_collection_id($collection->getKey_id());
                             }else{
-                                $id = end($pi->getCurrentScintVialCollections())->getKey_id();
+                                $svcs = $pi->getCurrentScintVialCollections();
+                                $id = end($svcs)->getKey_id();
                                 $newAmount->setScint_vial_collection_id($id);
                             }
                         }
@@ -2706,7 +2708,8 @@ class Rad_ActionManager extends ActionManager {
 
         //get the most recent inventory for this PI so we can use the quantities of its QuarterlyIsotopeAmounts to set new ones
         //$pi->getQuarterly_inventories()'s query is ordered by date_modified column, so the last in the array will be the most recent
-        $mostRecentIntentory = end($pi->getQuarterly_inventories());
+        $pi_qinvs = $pi->getQuarterly_inventories();
+        $mostRecentIntentory = end($pi_qinvs);
 
 
 
@@ -2878,7 +2881,8 @@ class Rad_ActionManager extends ActionManager {
         $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
 
         $inventoryDao = $this->getDao(new QuarterlyInventory());
-        $mostRecentInv = end($inventoryDao->getAll("end_date"));
+        $invs = $inventoryDao->getAll("end_date");
+        $mostRecentInv = end($invs);
         $LOG->debug($mostRecentInv);
 
         if( $mostRecentInv )
@@ -2964,8 +2968,9 @@ class Rad_ActionManager extends ActionManager {
 
     	$inventoriesDao = $this->getDao(new PIAuthorization());
     	$clauses = array(new WhereClause("principal_investigator_id", "=", $id));
-    	$whereClauseGroup = new WhereClauseGroup($clauses);
-    	$auth =  reset($inventoriesDao->getAllWhere($whereClauseGroup));
+        $whereClauseGroup = new WhereClauseGroup($clauses);
+        $invs = $inventoriesDao->getAllWhere($whereClauseGroup);
+        $auth =  reset($invs);
     	return $auth;
     }
 

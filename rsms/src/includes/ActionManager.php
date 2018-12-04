@@ -3832,7 +3832,8 @@ class ActionManager {
             return $decodedObject;
         }
         else{
-            $action = end($decodedObject->getCorrectiveActions());
+            $correctiveActions = $decodedObject->getCorrectiveActions();
+            $action = end($correctiveActions);
             $dao = new GenericDAO(new CorrectiveAction());
             if($dao->deleteById($action["Key_id"])){
                 $decodedObject->setCorrectiveActions(null);
