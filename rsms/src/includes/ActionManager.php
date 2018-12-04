@@ -407,7 +407,7 @@ class ActionManager {
     private function getPIIDFromUser(){
         $LOG = Logger::getLogger('Action:' . __function__);
         $user = $this->getCurrentUser();
-        $roles = getCurrentUserRoles();
+        $roles = $this->getCurrentUserRoles();
 
         if(in_array("Principal Investigator", $roles['userRoles'])){
             if($user->getPrincipalInvestigator() != NULL){
