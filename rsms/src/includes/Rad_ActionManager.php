@@ -2993,7 +2993,7 @@ class Rad_ActionManager extends ActionManager {
     }
 
     public function savePIAuthorization(){
-    	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
     	$decodedObject = $this->convertInputJson();
 
     	if( $decodedObject === NULL ) {
@@ -3007,6 +3007,10 @@ class Rad_ActionManager extends ActionManager {
             $users = $decodedObject->getUsers();
             $conditions = $decodedObject->getConditions();
             $departments = $decodedObject->getDepartments();
+
+            if( $conditions == null ){
+                $conditions = array();
+            }
 
     		//remove all the departments and rooms from the Authorization, if it is an old one
     		if($decodedObject->getKey_id() != NULL){
@@ -3052,10 +3056,9 @@ class Rad_ActionManager extends ActionManager {
     		foreach($users as $user){
     			$dao->addRelatedItems($user["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$USERS_RELATIONSHIP));
     		}
-            $l= Logger::getLogger(__FUNCTION__);
 
     		foreach($conditions as $condition){
-                $l->fatal($condition);
+                $LOG->debug("Add to auth: $condition");
     			$dao->addRelatedItems($condition["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$CONDITIONS_RELATIONSHIP), $condition["Order_index"]);
     		}
 
