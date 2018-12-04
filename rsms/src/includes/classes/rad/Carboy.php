@@ -112,6 +112,13 @@ class Carboy extends RadCrud {
 
 		return null;
 	}
-	
+
+	public function __toString(){
+		return '[' . get_class($this)
+			. " key_id=" . $this->getKey_Id()
+			. ($this->is_active ? '' : ' is_active=false')
+			. " label=$this->carboy_number"
+			. "]";
+	}
 }
 ?>
