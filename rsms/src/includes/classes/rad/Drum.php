@@ -315,7 +315,8 @@ class Drum extends RadCrud {
     public function getWipe_test() {
 		if($this->wipe_test == null && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->wipe_test = end($thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$WIPE_TEST_RELATIONSHIP)));
+			$tests = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$WIPE_TEST_RELATIONSHIP));
+			$this->wipe_test = end($tests);
 		}
 		return $this->wipe_test;
 	}
