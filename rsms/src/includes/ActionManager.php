@@ -474,7 +474,7 @@ class ActionManager {
         return $destination;
     }
 
-    public function prepareRedirect(){
+    public function prepareRedirect( $redirect ){
     	$LOG = Logger::getLogger("redirect");
     	$redirect = $this->getValueFromRequest('redirect', $redirect);
 
