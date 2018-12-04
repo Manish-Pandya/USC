@@ -71,7 +71,7 @@ class JsonManager {
 
 	private static function readInputStream( $stream ){
 		if( empty( $stream ) ){
-			$LOG->debug("No stream specified");
+			Logger::getLogger(__CLASS__)->warn("No stream specified");
 			return NULL;
 		}
 
@@ -88,7 +88,7 @@ class JsonManager {
 		}
 		else {
 			//No data read from input stream.
-			$LOG->warn( "Nothing to JSON-decode; no data read from input stream: $stream" );
+			Logger::getLogger(__CLASS__)->warn( "Nothing to JSON-decode; no data read from input stream: $stream" );
 			return NULL;
 		}
 	}
