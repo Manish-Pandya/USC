@@ -15,7 +15,7 @@ class ReportsModule implements RSMS_Module, MessageTypeProvider {
     public function isEnabled() {
         // Enabled if the referer comes from our UI Root
         // OR if the 'reports' param is set
-        if(	stristr($_SERVER["HTTP_REFERER"], '/reports/' ) || isset($_GET['reports']))
+        if(	( isset($_SERVER["HTTP_REFERER"]) && stristr($_SERVER["HTTP_REFERER"], '/reports/' ) ) || isset($_GET['reports']))
             return true;
 
         return false;

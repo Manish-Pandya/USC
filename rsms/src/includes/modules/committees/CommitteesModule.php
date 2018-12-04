@@ -12,7 +12,7 @@ class CommitteesModule implements RSMS_Module {
     public function isEnabled() {
         // Enabled if the referer comes from our UI Root
         // OR if the 'reports' param is set
-        if(	strstr($_SERVER["HTTP_REFERER"], '/biosafety-committees/' ) || isset($_GET['biosafety-committees']))
+        if(	( isset($_SERVER["HTTP_REFERER"]) && strstr($_SERVER["HTTP_REFERER"], '/biosafety-committees/' ) ) || isset($_GET['biosafety-committees']))
             return true;
 
         return false;
