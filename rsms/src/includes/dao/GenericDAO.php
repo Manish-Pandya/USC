@@ -552,7 +552,7 @@ class GenericDAO {
 	 * @return Array:
 	 */
 	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumns = null, $activeOnly = false, $activeOnlyRelated = false, $limit=0){
-		$this->LOG->debug("getRelatedItemsById($id, $relationship, $sortColumns, $activeOnly, $activeOnlyRelated, $limit)");
+
 		if (empty($id)) { return array();}
 
 		// get the relationship parameters needed to build the query
