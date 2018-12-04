@@ -729,6 +729,7 @@ class GenericDAO {
 	}
 
 	function bindColumns($stmt,$object) {
+		$this->LOG->debug("Binding columns for $object");
 		foreach ($object->getColumnData() as $key=>$value){
 			if ($value == "integer") {$type = PDO::PARAM_INT;}
 			if ($value == "text") {$type = PDO::PARAM_STR;}
@@ -742,12 +743,11 @@ class GenericDAO {
 			$key2[0] = strtoupper($key2[0]);
 			$getter = "get" . $key2;
 
-			//$this->LOG->debug("Binding $key (a $value) as PDO type $type");
-
 			// build the binding statement.
 			$getter_value = $object->$getter();
-			$stmt->bindParam(":" . $key, $getter_value, $type);
-			//echo $col . ":" . $this->$col . " - " . $this->types[$index] . "<br/>";
+
+			$this->LOG->trace("Binding $key (a $value) as PDO type $type");
+			$stmt->bindValue(":" . $key, $getter_value, $type);
 		}
 		return $stmt;
 	}
