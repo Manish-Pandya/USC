@@ -431,7 +431,7 @@ class ActionManager {
     private function getDestination(){
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
-        if($_SESSION["REDIRECT"] != null){
+        if( isset($_SESSION["REDIRECT"]) ){
             $LOG->debug("User requested specific redirect");
             $destination = str_replace("%23", "#", $_SESSION["REDIRECT"]);
             $destination = str_replace(LOGIN_PAGE, "", $destination);
