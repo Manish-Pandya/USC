@@ -1322,10 +1322,14 @@ class ActionManager {
             if(is_array( $decodedObject->getPrincipalInvestigators() )){
                 $LOG->debug($decodedObject);
 
-                foreach ($room->getPrincipalInvestigators() as $child){
-                    $dao->removeRelatedItems($child->getKey_id(),$room->getKey_id(),DataRelationship::fromArray(Room::$PIS_RELATIONSHIP));
+                if( $room->getPrincipalInvestigators() != null ){
+                    // Remove any existing
+                    foreach ($room->getPrincipalInvestigators() as $child){
+                        $dao->removeRelatedItems($child->getKey_id(),$room->getKey_id(),DataRelationship::fromArray(Room::$PIS_RELATIONSHIP));
+                    }
                 }
 
+                // Add any new
                 foreach($decodedObject->getPrincipalInvestigators() as $pi){
                     //$LOG->fatal($pi["Key_id"] . ' | room: ' . $room->getKey_id());
                     if(gettype($pi) == "array"){

@@ -171,15 +171,17 @@ class Checklist extends GenericCrud {
 		$roomDao = new GenericDAO(new Room());
 		//$LOG->debug($roomDao);
 
-		foreach ($inspectionRooms as $rm){
-			//if the hazard has been received from an API call, each of its inspection rooms will be an array instead of an object, because PHP\
-			//If so, we set the key id by index instead of calling the getter
-			if(!is_object($rm)){
-				$key_id = $rm['Key_id'];
-			}else{
-				$key_id = $rm->getKey_id();
+		if( isset($inspectionRooms) ){
+			foreach ($inspectionRooms as $rm){
+				//if the hazard has been received from an API call, each of its inspection rooms will be an array instead of an object, because PHP\
+				//If so, we set the key id by index instead of calling the getter
+				if(!is_object($rm)){
+					$key_id = $rm['Key_id'];
+				}else{
+					$key_id = $rm->getKey_id();
+				}
+				$this->inspectionRooms[] = $roomDao->getById($key_id);
 			}
-			$this->inspectionRooms[] = $roomDao->getById($key_id);
 		}
 	}
     public function pushInspectionRoom($room){
