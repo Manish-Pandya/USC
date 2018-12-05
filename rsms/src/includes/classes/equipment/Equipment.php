@@ -5,7 +5,6 @@
  *
  * @author David Hamiter
  */
-include '../GenericCrud.php';
 
 abstract class Equipment extends GenericCrud{
 
