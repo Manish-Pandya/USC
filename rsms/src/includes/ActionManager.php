@@ -2665,7 +2665,6 @@ class ActionManager {
             }
             // make sure this building is loaded with the lazy loading rooms
             // ... and make sure that the rooms themselves are loaded eagerly
-            $building->setEntityMaps($bldgMaps);
 
             return $rooms;
         }
