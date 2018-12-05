@@ -300,7 +300,8 @@ class Hazard extends GenericCrud {
 	public function getHasMultiplePIs(){
 		if($this->hasMultiplePIs == NULL){
 			$this->hasMultiplePIs = false;
-			if(count($this->getPrincipalInvestigators()) > 1) $this->hasMultiplePIs = true;
+			$pis = $this->getPrincipalInvestigators();
+			if( !empty($pis) && count($pis) > 1) $this->hasMultiplePIs = true;
 		}
 		return $this->hasMultiplePIs;
 	}
