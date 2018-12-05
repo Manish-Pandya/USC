@@ -245,8 +245,8 @@ class ActionManager {
             }
 
             if(isset($_SESSION["REDIRECT"])){
-                $LOG->fatal("should redirect");
                 $_SESSION['DESTINATION'] = $this->getDestination();
+                $LOG->info("should redirect to " . $_SESSION['DESTINATION']);
             }
 
             // return true to indicate success
@@ -479,7 +479,7 @@ class ActionManager {
     	$redirect = $this->getValueFromRequest('redirect', $redirect);
 
     	$_SESSION["REDIRECT"] = $redirect;
-    	$LOG->fatal($_SESSION["REDIRECT"]);
+        $LOG->info("Prepare redirect to " . $_SESSION["REDIRECT"]);
        	return true;
 
     }
@@ -820,7 +820,7 @@ class ActionManager {
                         $hazardDao = $this->getDao ($hazard);
                         $masterHazard = $hazardDao->getById($masterHazardId);
                         $master_hazard = $masterHazard->getName();
-                        $LOG->fatal($master_hazard . ' | ' . $masterHazardId);
+                        $LOG->debug($master_hazard . ' | ' . $masterHazardId);
                     }else{
                         //if we don't have a parent hazard, other than Root, we set the master hazard to be the hazard
                         //i.e. Biological Hazards' checklist should have Biological Hazards as its master hazard
@@ -990,7 +990,7 @@ class ActionManager {
             // if roomIds were provided then save them
             if (!empty($roomIds)){
                 foreach ($roomIds as $id){
-                    $LOG->fatal($id);
+                    $LOG->debug($id);
                     $dao->addRelatedItems($id,$sd->getKey_id(),DataRelationship::fromArray(SupplementalDeficiency::$ROOMS_RELATIONSHIP));
                 }
 
@@ -1308,7 +1308,7 @@ class ActionManager {
             $dao = $this->getDao(new Room());
             $room = $this->getRoomById($decodedObject->getKey_id());
             if(is_array( $decodedObject->getPrincipalInvestigators() )){
-                $LOG->fatal($decodedObject);
+                $LOG->debug($decodedObject);
 
                 foreach ($room->getPrincipalInvestigators() as $child){
                     $dao->removeRelatedItems($child->getKey_id(),$room->getKey_id(),DataRelationship::fromArray(Room::$PIS_RELATIONSHIP));
@@ -3730,7 +3730,7 @@ class ActionManager {
             // start by saving or updating the object.
             $dao = $this->getDao(new DeficiencySelection());
             $ds = $dao->save($decodedObject);
-            $LOG->fatal($decodedObject);
+            $LOG->debug($decodedObject);
             // remove the old rooms. if any
             foreach ($ds->getRooms() as $room){
                 $dao->removeRelatedItems($room->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
@@ -3866,7 +3866,7 @@ class ActionManager {
             $masterHazards = array();
             //iterate the rooms and find the hazards present
 
-            $LOG->fatal($inspection->getPrincipal_investigator_id);
+            $LOG->debug($inspection->getPrincipal_investigator_id());
             foreach ($orderedRooms as $room){
                 $hazardlist = $this->getHazardsInRoomByPi($room->getKey_id(), $inspection->getPrincipal_investigator_id());
                 // get each hazard present in the room
@@ -4059,12 +4059,12 @@ class ActionManager {
 
             // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
             if($report == null){
-                $LOG->fatal('should be getting new list of checklists');
+                $LOG->debug('should be getting new list of checklists');
                 $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
             }
             //if we are loading a report instead of a list of checklists for an inspection, we don't update the list of checklists
             else{
-                $LOG->fatal('should be retrieving old checklists');
+                $LOG->debug('should be retrieving old checklists');
                 $checklists = $oldChecklists;
             }
 
@@ -4539,7 +4539,7 @@ class ActionManager {
             $year = $this->getCurrentYear();
         }
                 // Call the database
-		$LOG->fatal('getting schedule for ' . $year);
+		$LOG->info('getting schedule for ' . $year);
         $dao = $this->getDao(new Inspection());
         $inspectionSchedules = $dao->getNeededInspectionsByYear($year);
 
@@ -4967,7 +4967,7 @@ class ActionManager {
 		// Get the db connection
 		$db = DBConnection::get();
         $inQuery = implode(',', array_fill(0, count($piIds), '?'));
-        $l->fatal($inQuery);
+        $l->debug($inQuery);
 		//Prepare to query all from the table
 		$sql = "SELECT COUNT(key_id) FROM principal_investigator_hazard_room where room_id = ?
                              AND principal_investigator_id IN($inQuery)";
@@ -4998,7 +4998,7 @@ class ActionManager {
         if($id == null)$id = $this->getValueFromRequest('id', $id);
         $l = Logger::getLogger(__FUNCTION__);
 
-        $l->fatal('PASSED ID IS: ' . $id);
+        $l->debug('PASSED ID IS: ' . $id);
 
         $dao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation());
         $group =  new WhereClauseGroup(array(new WhereClause("hazard_id","=",$id)));
