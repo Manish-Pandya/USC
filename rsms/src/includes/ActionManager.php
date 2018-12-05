@@ -2942,6 +2942,7 @@ class ActionManager {
         }
 
         if($inspection->getRooms() != null){
+            $LOG->debug("Remove old Rooms for $inspection");
             foreach($inspection->getRooms() as $room){
                 //remove old room relationship
                 $this->saveInspectionRoomRelation($room->getKey_id(),$inspection->getKey_id(),false);
@@ -2954,21 +2955,26 @@ class ActionManager {
         }
 
         if($inspection->getInspectors() != null){
+            $LOG->debug("Remove old Inspectors for $inspection");
             foreach($inspection->getInspectors() as $inspector){
                 //remove old inspector relationships
-                $LOG->debug($inspector);
+                $LOG->debug("Remove $inspector");
                 $inspectionDao->removeRelatedItems($inspector->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
             }
             $inspection->setInspectors(null);
         }
 
+        $LOG->debug("Save new Inspectors for $inspection");
         foreach($decodedObject->getInspections()->getInspectors() as $inspector){
+            $LOG->debug("Link inspector: $inspector");
             //save inspector relationships
             $inspectionDao->addRelatedItems($inspector["Key_id"],$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP ));
         }
 
         //When an Inspection is scheduled, labs should complete a verification before the inspection takes place
         if($inspection->getSchedule_month() != null){
+            $LOG->debug("Process lab Verifications for $inspection");
+
             //first, see if this verification has already been created
             $whereClauseGroup = new WhereClauseGroup(
                 array(new WhereClause("inspection_id","=",$inspection->getKey_id()))
