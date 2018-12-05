@@ -3147,7 +3147,7 @@ class ActionManager {
         $hazard->setInspectionRooms($rooms);
         $hazard->filterRooms();
 
-        if(stristr($hazard->getName, 'general hazard') || $generalHazard){
+        if(stristr($hazard->getName(), 'general hazard') || $generalHazard){
                 $generalHazard = true;
                 if($hazard->getIsPresent() != true){
                     $this->saveHazardRoomRelations( $hazard, $rooms );
