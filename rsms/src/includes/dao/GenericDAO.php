@@ -1221,7 +1221,7 @@ class GenericDAO {
 
 	function getHazardRoomDtosByPIId( $pIId, $roomIds = null ){
 		$LOG = Logger::getLogger(__CLASS__);
-        $LOG->info( "Get Hazard Rooms (" . implode(', ', $roomIds) . ") for PI #$pIId");
+        $LOG->info( "Get Hazard Rooms (" . ($roomIds == null ? '' : implode(', ', $roomIds)) . ") for PI #$pIId");
 
 		//get this pi's rooms
 		if($roomIds == null){
