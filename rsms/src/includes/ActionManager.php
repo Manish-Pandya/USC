@@ -1291,7 +1291,7 @@ class ActionManager {
     }
 
     public function saveRoom($room = null){
-        $LOG = Logger::getLogger('Action:' . __function__);
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         if($room == null){
             $decodedObject = $this->convertInputJson();
         }else{

@@ -43,7 +43,7 @@ class HazardInventoryActionManager extends ActionManager {
 	 * @return HazardDto $decodedObject
 	 */
 	public function savePIHazardRoomMappings($decodedObject = NULL){
-		$LOG = Logger::getLogger("asdfasdfasdf");
+		$LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
 		if($decodedObject == null){
 			$decodedObject = $this->convertInputJson();
