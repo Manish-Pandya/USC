@@ -1306,7 +1306,19 @@ class ActionManager {
         }
         else{
             $dao = $this->getDao(new Room());
-            $room = $this->getRoomById($decodedObject->getKey_id());
+
+            $room = null;
+            if( $decodedObject->hasPrimaryKeyValue() ){
+                // Update existing room
+                $room = $this->getRoomById($decodedObject->getKey_id());
+                $LOG->info("Update existing room $room");
+            }
+            else{
+                // Create new room
+                $room = new Room();
+                $LOG->info("Create new Room");
+            }
+
             if(is_array( $decodedObject->getPrincipalInvestigators() )){
                 $LOG->debug($decodedObject);
 
