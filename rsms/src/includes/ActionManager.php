@@ -1342,6 +1342,7 @@ class ActionManager {
                 }
             }
 
+            $LOG->info("Saving... $decodedObject");
             $room = $dao->save($decodedObject);
 
 
@@ -1354,6 +1355,7 @@ class ActionManager {
             $entityMaps[] = new EntityMap("lazy","getSolidsContainers");
             $room->setEntityMaps($entityMaps);
 
+            $LOG->info("Saved $room");
             return $room;
         }
     }
