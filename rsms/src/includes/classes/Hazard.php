@@ -312,7 +312,7 @@ class Hazard extends GenericCrud {
 	{
 		return (bool) $this->is_equipment;
 	}	
-	public function setIs_equipment(Boolean  $is_equipment)
+	public function setIs_equipment($is_equipment)
 	{
 		$this->is_equipment = $is_equipment;
 	}

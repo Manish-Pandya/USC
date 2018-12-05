@@ -60,13 +60,13 @@ class HazardInventoryActionManager extends ActionManager {
 		return $rels;
 	}
 
-	/*
+	/**
 	* Creates, updates or deletes a PIHazardRoomDto object, depending on its ContainsHazard property and whether or not it already exists or needs to be created anew
-	* @ param PIHazardRoomDto decodedObject
-	* @ return PIHazardRoomDto dto
+	* @param PIHazardRoomDto|array decodedObject
+	* @return PIHazardRoomDto dto
 	*/
-    public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $decodedObject = null ){
-		$LOG = Logger::getLogger("asdfaf");
+    public function savePrincipalInvestigatorHazardRoomRelation( $decodedObject = null ){
+		$LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
 		if($decodedObject == null){
 			$decodedObject = $this->convertInputJson();
