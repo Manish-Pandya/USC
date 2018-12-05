@@ -132,7 +132,12 @@ class InspectionSummaryDto {
     }
 
     public function getScore(){
-        return number_format(($this->getItems_compliant() / $this->getItems_inspected()) * 100);
+        $val = 0;
+        if( $this->getItems_inspected() > 0 ){
+            $val = ($this->getItems_compliant() / $this->getItems_inspected()) * 100;
+        }
+
+        return number_format($val);
     }
 }
 ?>
