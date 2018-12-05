@@ -3064,9 +3064,8 @@ class ActionManager {
         $roomIdsCsv = $this->getValueFromRequest('roomIds', $roomIds);
 
         if( $roomIdsCsv !== NULL ){
-            $LOG->debug("Retrieving Hazard-Room mappings for Rooms: $roomIdsCsv");
+            $LOG->debug("Retrieving Hazard-Room mappings for Rooms: " . implode(', ', $roomIdsCsv));
             $LOG->debug('Identified ' . count($roomIdsCsv) . ' Rooms');
-            $LOG->debug($roomIdsCsv);
             //Get all hazards
             if($hazard != null){
               $allHazards = $hazard;

@@ -243,7 +243,7 @@ class Hazard extends GenericCrud {
 		foreach ($this->inspectionRooms as $room){
 			$room->setContainsHazard(false);
 			$LOG->debug('roomId:  '.$roomId);
-			$LOG->debug('rooms: '. $rooms);
+			$LOG->debug('rooms: '. $roomIds);
 			$LOG->debug(in_array ( $room->getKey_id() , $roomIdsToEval ));
 			if(in_array ( $room->getKey_id() , $roomIdsToEval )){
 				$room->setContainsHazard(true);
