@@ -2889,11 +2889,17 @@ class ActionManager {
 
     public function scheduleInspection(){
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
         $decodedObject = $this->convertInputJson();
         $inspectionDao = $this->getDao( new Inspection() );
         if( $decodedObject->getInspections()->getKey_id() != NULL ){
+            $LOG->info("Updating Scheduled Inspection");
             $inspection = $inspectionDao->getById( $decodedObject->getInspections()->getKey_id() );
+            if( $LOG->isTraceEnabled() ){
+                $LOG->trace($inspection);
+            }
         }else{
+            $LOG->info("Scheduling New Inspection");
             $inspection = new Inspection();
         }
 
@@ -2905,6 +2911,7 @@ class ActionManager {
 
         // remove old lab contact relationship
         if($inspection->getLabPersonnel() != null){
+            $LOG->trace("Remove old lab personnel from $inspection");
             foreach($inspection->getLabPersonnel() as $contact){
                 $inspectionDao->removeRelatedItems(
                     $contact->getKey_id(),
@@ -2914,6 +2921,7 @@ class ActionManager {
         }
 
         // Save Personnel relationships
+        $LOG->debug("Save lab personnel for $inspection");
         $pi = $inspection->getPrincipalInvestigator();
         foreach($pi->getLabPersonnel() as $contact){
             // Ensure that this user is a 'Lab Contact'
@@ -2969,7 +2977,7 @@ class ActionManager {
 
             $verifications = $verificationDao->getAllWhere($whereClauseGroup);
 
-            $LOG->info( count($verifications) . "Existing Verifications for $inspection");
+            $LOG->info( count($verifications) . " Existing Verifications for $inspection");
             if( $LOG->isTraceEnabled()) {
                 $LOG->trace($verifications);
             }
