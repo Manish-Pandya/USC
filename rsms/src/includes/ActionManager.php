@@ -2949,9 +2949,12 @@ class ActionManager {
             }
         }
 
-        foreach($decodedObject->getBuilding_rooms() as $room){
-            //save room relationships
-            $this->saveInspectionRoomRelation($room["Key_id"],$inspection->getKey_id(),true);
+        if( $decodedObject->getBuilding_rooms() != null ){
+            $LOG->debug("Save new Rooms for $inspection");
+            foreach($decodedObject->getBuilding_rooms() as $room){
+                //save room relationships
+                $this->saveInspectionRoomRelation($room["Key_id"],$inspection->getKey_id(),true);
+            }
         }
 
         if($inspection->getInspectors() != null){
