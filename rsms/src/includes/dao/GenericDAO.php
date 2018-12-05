@@ -1039,12 +1039,13 @@ class GenericDAO {
 		//$sql = "SELECT * FROM " . $modelObject->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
 		$sql = "SELECT * FROM principal_investigator WHERE key_id";
 
-		if(!isset($roomsCSV)){
+		if(!isset($roomsCSV) || empty($roomsCSV)){
 			$sql .= " IN(SELECT principal_investigator_id from principal_investigator_room WHERE room_id IN(SELECT room_id FROM hazard_room WHERE hazard_id = ".$hazard->getKey_id().") )";
 		}else{
 			$sql .= " IN(SELECT principal_investigator_id from principal_investigator_room WHERE room_id IN($roomsCSV))";
 		}
 
+		$this->LOG->debug("Preparing SQL: $sql");
 		$stmt = DBConnection::prepareStatement($sql);
 
 		// Query the db and return an array of $this type of object
