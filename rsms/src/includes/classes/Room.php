@@ -437,6 +437,11 @@ class Room extends GenericCrud {
     }
 
     public function getAnimal_facility(){
+		if( !$this->hasPrimaryKeyValue() ){
+			// If we don't have a pkey, then we can't determine if we are a special lab.
+			return false;
+		}
+
         $db = DBConnection::get();
 
         $queryString = "select count(*)
