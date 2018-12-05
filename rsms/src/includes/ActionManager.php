@@ -3847,7 +3847,7 @@ class ActionManager {
     }
 
     public function getChecklistsForInspection( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $id = $this->getValueFromRequest('id', $id);
         if( $id !== NULL ){
             $dao = $this->getDao(new Inspection());
@@ -4029,7 +4029,7 @@ class ActionManager {
     }
 
     public function resetChecklists( $id = NULL, $report = null  ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
         $report = $this->getValueFromRequest('report', $report);
