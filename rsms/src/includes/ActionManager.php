@@ -3307,7 +3307,7 @@ class ActionManager {
         }
     }
 
-    public function getHazardsInRoomByPi( $roomId = NULL, $piId ){
+    public function getHazardsInRoomByPi( $roomId = NULL, $piId = NULL, $subHazards = NULL ){
         $LOG = Logger::getLogger( 'Action:' . __function__ );
         $roomId = $this->getValueFromRequest('roomId', $roomId);
         $subHazards = $this->getValueFromRequest('subHazards', $subHazards);
