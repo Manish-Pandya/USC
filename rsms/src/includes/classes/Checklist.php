@@ -70,7 +70,8 @@ class Checklist extends GenericCrud {
 	/** Array of Room entities relevant to a particular inspection */
 	private $inspectionRooms;
 
-    private $isOrdered;
+	private $isOrdered;
+	private $isPresent;
 
 	public function __construct(){
 
@@ -229,7 +230,7 @@ class Checklist extends GenericCrud {
         $this->orderIndex = $idx;
     }
 
-    public function getIsOrdered(){return $this->getIsOrdered;}
+    public function getIsOrdered(){return $this->isOrdered;}
     public function setIsOrdered($is){$this->isOrdered = $is;}
 
     public function getIsPresent(){return $this->isPresent;}
