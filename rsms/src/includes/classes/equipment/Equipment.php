@@ -14,7 +14,7 @@ abstract class Equipment extends GenericCrud{
     protected $frequency;
     protected $serial_number;
     protected $equipmentInspections; //array\
-    protected $principaInvestigatorId;
+    protected $principalInvestigatorId;
     protected $roomId;
     protected $comments;
 	private $certification_date;
@@ -142,7 +142,7 @@ abstract class Equipment extends GenericCrud{
                 $query->bindParam(":date",$date,PDO::PARAM_STR);
 
 
-                $this->principaInvestigatorId = $inspection->getPrincipal_investigator_id();
+                $this->principalInvestigatorId = $inspection->getPrincipal_investigator_id();
 
                 $query->setFetchMode(PDO::FETCH_CLASS, "EquipmentInspection");			// Query the db and return one user
                 if ($query->execute()) {
