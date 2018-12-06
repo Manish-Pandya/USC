@@ -4796,6 +4796,7 @@ class ActionManager {
 
         }
         fclose($output);
+        return '';
     }
 
     public function getMyLab($id = null){
