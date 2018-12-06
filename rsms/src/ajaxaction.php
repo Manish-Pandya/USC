@@ -64,9 +64,6 @@ if($actionResult->statusCode == 401){
 }
 
 // begin output
-// TODO: Will we ever need to use a different header?
-header('Access-Control-Allow-Origin: *');
-header('content-type: application/javascript');
 
 // Set the HTTP status code. ActionResult defaults this to 200
 //set_http_response_code( $actionResult->statusCode );
