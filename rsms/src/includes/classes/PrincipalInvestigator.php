@@ -446,7 +446,7 @@ class PrincipalInvestigator extends GenericCrud {
 	}
 
 	public function getCurrentVerifications(){
-		if($this->getCurrentVerifications === NULL && $this->hasPrimaryKeyValue()) {
+		if($this->currentVerifications === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO(new Verification());
 			$whereClauseGroup = new WhereClauseGroup(
 				array(
@@ -455,9 +455,9 @@ class PrincipalInvestigator extends GenericCrud {
 						new WhereClause("notification_date", "IS NOT", NULL)
 				)
 			);
-			$this->getCurrentVerifications = $thisDAO->getAllWhere($whereClauseGroup);
+			$this->currentVerifications = $thisDAO->getAllWhere($whereClauseGroup);
 		}
-		return $this->getCurrentVerifications;
+		return $this->currentVerifications;
 	}
 
 	public function getPi_authorization(){
