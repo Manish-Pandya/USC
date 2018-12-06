@@ -112,7 +112,7 @@ class Verification extends GenericCrud{
 	}
 	
 	public function getPendingHazardDtoChanges(){
-		if($this->pendingHazardChanges === NULL && $this->hasPrimaryKeyValue()) {
+		if($this->pendingHazardDtoChanges === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO(new PendingHazardDtoChange());
 			$whereClauseGroup = new WhereClauseGroup(
 				array(
