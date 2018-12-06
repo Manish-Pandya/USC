@@ -73,10 +73,12 @@ class Verification_ActionManager extends HazardInventoryActionManager {
     	}
     }
 
-    public function getPIForVerification(){
+    public function getPIForVerification( $id = NULL ){
     	$LOG = Logger::getLogger( 'Action:' . __function__ );
     	//$LOG->fatal('called it');
-    	if($id == NULL)$id = $this->getValueFromRequest('id', $id);
+        if($id == NULL){
+			$id = $this->getValueFromRequest('id', $id);
+		}
 
     	if( $id !== NULL ){
     		$dao = $this->getDao(new PrincipalInvestigator());
