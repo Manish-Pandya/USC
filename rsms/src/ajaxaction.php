@@ -36,6 +36,11 @@ if($rlog->isInfoEnabled()){
 // Create Dispatcher (based on $_SESSION)
 $sessionSource = $_SESSION;
 
+// Write standard headers before calling action.
+//   Some actions (such as attachment download) may trigger sending
+//     of headers.
+header('Access-Control-Allow-Origin: *');
+header('content-type: application/javascript');
 
 $actionDispatcher = new ActionDispatcher($dataSource, $sessionSource);
 
