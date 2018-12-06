@@ -66,10 +66,12 @@ class DBConnection {
 
     static function shutdown(){
         $LOG = Logger::getLogger(__CLASS__);
-        $LOG->info("Prepared " . self::$STATEMENT_COUNT . " Queries during this request");
+        $LOG->debug("Prepared " . self::$STATEMENT_COUNT . " Queries during this request");
 
-        $LOG->trace( $GLOBALS['db'] );
-        $LOG->trace( self::$STATEMENTS );
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace( $GLOBALS['db'] );
+            $LOG->trace( self::$STATEMENTS );
+        }
 
         // Ensure all statements are closed
         foreach(self::$STATEMENTS as &$stmt){
@@ -82,8 +84,10 @@ class DBConnection {
             $GLOBALS['db'] = null;
         }
 
-        $LOG->trace( $GLOBALS['db'] );
-        $LOG->trace( self::$STATEMENTS );
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace( $GLOBALS['db'] );
+            $LOG->trace( self::$STATEMENTS );
+        }
     }
 
     public static function closeStatement(&$stmt){
