@@ -397,7 +397,7 @@ class PrincipalInvestigator extends GenericCrud {
 		// Get the db connection
 		$db = DBConnection::get();
 
-		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
 
 		$queryString = "SELECT * FROM inspection WHERE principal_investigator_id =  $this->key_id AND date_closed IS NULL";

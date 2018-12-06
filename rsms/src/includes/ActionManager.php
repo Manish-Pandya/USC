@@ -541,7 +541,7 @@ class ActionManager {
 
     // Users Hub
     public function getAllUsers(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $userDao = $this->getDao( new User() );
         $allUsers = $userDao->getAll('last_name');
@@ -550,7 +550,7 @@ class ActionManager {
     }
 
     public function getUserById( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -565,7 +565,7 @@ class ActionManager {
     }
 
     public function getSupervisorByUserId( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -610,7 +610,7 @@ class ActionManager {
     }
 
     public function getRoleById( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -749,7 +749,7 @@ class ActionManager {
     }
 
     public function getChecklistByHazardId( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $id = $this->getValueFromRequest('id', $id);
 
         if( $id !== NULL ){
@@ -773,7 +773,7 @@ class ActionManager {
     }
 
     public function getAllQuestions(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $questions = array();
 
         $dao = $this->getDao(new Question());
@@ -1009,7 +1009,7 @@ class ActionManager {
 
     // Hazards Hub
     public function getAllHazardsAsTree() {
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $dao = $this->getDao(new Hazard());
         // get the Root of the hazard tree
         $root = $dao->getById(10000);
@@ -1030,7 +1030,7 @@ class ActionManager {
 
     public function getAllHazards(){
         //FIXME: This public function should return a FLAT COLLECTION of ALL HAZARDS; not a Tree
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $dao = $this->getDao(new Hazard());
         $hazards = $dao->getAll();
 
@@ -1095,7 +1095,7 @@ class ActionManager {
 
     //FIXME: Remove $name
     public function getHazardById( $id = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -1114,7 +1114,7 @@ class ActionManager {
      * Moves specified hazard to the specified parent
      */
     public function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         //Get ids
         $hazardId = $this->getValueFromRequest('hazardId', $hazardId);
@@ -1618,7 +1618,7 @@ class ActionManager {
 
     public function saveRecommendationRelation(){
 
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $decodedObject = $this->convertInputJson();
 
@@ -1658,7 +1658,7 @@ class ActionManager {
 
     public function saveObservationRelation(){
 
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $decodedObject = $this->convertInputJson();
 
@@ -1710,7 +1710,7 @@ class ActionManager {
     }
 
     public function getAllInspectors(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new Inspector());
 
@@ -1759,7 +1759,7 @@ class ActionManager {
 
     // Inspection, step 1 (PI / Room assessment)
     public function getPiForHazardInventory( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $id = $this->getValueFromRequest('id', $id);
 
         if( $id !== NULL ){
@@ -1836,7 +1836,7 @@ class ActionManager {
     }
 
     public function getAllPIs($rooms = null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $rooms = $this->getValueFromRequest("rooms", $rooms);
 
@@ -1987,7 +1987,7 @@ class ActionManager {
     }
 
     public function getAllRooms($allLazy = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new Room());
 
@@ -2060,7 +2060,7 @@ class ActionManager {
     }
 
     public function getAllPrincipalInvestigatorRoomRelations(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new PrincipalInvestigatorRoomRelation());
 
@@ -2069,7 +2069,7 @@ class ActionManager {
 
     public function getRoomsByPIId( $id = NULL ){
         //Get responses for Inspection
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $piId = $this->getValueFromRequest('piId', $id);
 
@@ -2090,7 +2090,7 @@ class ActionManager {
     public function getRoomById( $id = NULL ){
         $id = $this->getValueFromRequest('id', $id);
 
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->trace('getting room');
 
         if( $id !== NULL ){
@@ -2105,7 +2105,7 @@ class ActionManager {
     public function getPIsByRoomId( $id = NULL ){
         $id = $this->getValueFromRequest('id', $id);
 
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->trace('getting room');
 
         if( $id !== NULL ){
@@ -2119,7 +2119,7 @@ class ActionManager {
     }
 
     public function getPIsByClassInstance( $decodedObject = NULL ){
-     $LOG = Logger::getLogger( 'Action:' . __function__ );
+     $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $decodedObject = $this->convertInputJson();
 
@@ -2201,7 +2201,7 @@ class ActionManager {
     }
 
     public function savePIRoomRelation($PIId = NULL,$roomId = NULL,$add= NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         if($PIId == NULL && $roomId == NULL && $add == NULL){
             $decodedObject = $this->convertInputJson();
         }else{
@@ -2267,7 +2267,7 @@ class ActionManager {
     }
 
     public function savePIContactRelation($PIId = NULL,$contactId = NULL,$add= NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $decodedObject = $this->convertInputJson();
 
@@ -2307,7 +2307,7 @@ class ActionManager {
     public function savePIDepartmentRelations($piId = NULL, $departmentIds = NULL){
         $piId = $this->getValueFromRequest('piId', $piId);
         $departmentIds = $this->getValueFromRequest('departmentIds', $departmentIds);
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->debug($this->getValueFromRequest('departmentIds', $departmentIds));
         foreach($departmentIds as $departmentId){
             $relation = new RelationshipDto();
@@ -2320,7 +2320,7 @@ class ActionManager {
     }
 
     public function savePIDepartmentRelation($decodedObject){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         if($decodedObject == null)$decodedObject = $this->convertInputJson();
 
@@ -2365,7 +2365,7 @@ class ActionManager {
     }
 
     public function saveUserRoleRelations($userId = null, $roleIds = null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $userId = $this->getValueFromRequest('userId', $userId);
         $roleIds = $this->getValueFromRequest('roleIds', $roleIds);
@@ -2381,7 +2381,7 @@ class ActionManager {
     }
 
     public function saveUserRoleRelation($relation = null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         if($relation == null){
             $decodedObject = $this->convertInputJson();
@@ -2505,7 +2505,7 @@ class ActionManager {
     public function getRoomDtoByRoomId( $id = NULL, $roomName = null, $containsHazard = null, $isAllowed = null ) {
         $id = $this->getValueFromRequest('id', $id);
 
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->trace('getting room');
 
         if( $id !== NULL ){
@@ -2522,7 +2522,7 @@ class ActionManager {
     }
 
     public function getAllDepartments(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new Department());
 
@@ -2558,7 +2558,7 @@ class ActionManager {
 
 
     public function getAllActiveDepartments(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new Department());
 
@@ -2600,7 +2600,7 @@ class ActionManager {
     }
 
     public function getAllBuildings( $id = NULL, $skipRooms = null, $skipPis = null ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $skipRooms = $this->getValueFromRequest('skipRooms', $skipRooms);
         $skipPis = $this->getValueFromRequest('skipPis', $skipPis);
 
@@ -2646,7 +2646,7 @@ class ActionManager {
     }
 
     public function getAllCampuses(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new Campus());
         return $dao->getAll();
@@ -2815,7 +2815,7 @@ class ActionManager {
 
     //Appropriately sets relationships for an inspection if an inspector is not inspecting all of a PI's rooms
     public function resetInspectionRooms($inspectionId = NULL, $roomIds = null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
         $roomIds = $this->getValueFromRequest('roomIds', $roomIds);
@@ -2841,7 +2841,7 @@ class ActionManager {
     }
 
     public function removeAllInspectionRooms(&$inspectionDao){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $inspectionId = $inspectionDao->getKey_id();
 
@@ -2852,7 +2852,7 @@ class ActionManager {
     }
 
     public function saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $roomId = $this->getValueFromRequest('roomId', $roomId);
         $inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
@@ -3095,7 +3095,7 @@ class ActionManager {
      * @return Associative array: [Hazard KeyId] => array( HazardTreeNodeDto )
      */
     public function getHazardRoomMappingsAsTree( $roomIds = NULL, $hazard = null ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $roomIdsCsv = $this->getValueFromRequest('roomIds', $roomIds);
 
         if( $roomIdsCsv !== NULL ){
@@ -3167,7 +3167,7 @@ class ActionManager {
     }
 
     public function filterHazards (&$hazard, $rooms, $generalHazard = null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->debug($hazard->getName());
         $entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getSubHazards");
@@ -3244,7 +3244,7 @@ class ActionManager {
     //UTILITY public function FOR getHazardRoomMappingsAsTree
     public function getHazardRoomMappings($hazard, $rooms, $searchRoomIds, $parentIds = null){
         $searchRoomIds = $searchRoomIds;
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->trace("Getting room mappings for $hazard");
         $relevantRooms = array();
 
@@ -3298,7 +3298,7 @@ class ActionManager {
     }
 
     public function getHazardsInRoom( $roomId = NULL, $subHazards ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $roomId = $this->getValueFromRequest('roomId', $roomId);
         $subHazards = $this->getValueFromRequest('subHazards', $subHazards);
         $LOG->debug("subHazards is $subHazards, roomId is $roomId");
@@ -3343,7 +3343,7 @@ class ActionManager {
     }
 
     public function getHazardsInRoomByPi( $roomId = NULL, $piId = NULL, $subHazards = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $roomId = $this->getValueFromRequest('roomId', $roomId);
         $subHazards = $this->getValueFromRequest('subHazards', $subHazards);
         $LOG->debug("subHazards is $subHazards, roomId is $roomId");
@@ -3439,7 +3439,7 @@ class ActionManager {
      * @return array $hazards
      */
     private function getFlatHazardBranch($hazard, &$hazards = null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         if($hazards == null){
             $hazards = array($hazard);
@@ -3586,7 +3586,7 @@ class ActionManager {
 
     public function getGrandma($hazard){
         $parentBranchIds = array(1,10009,10010);
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->debug('hazard id is '.$hazardId);
         $parentDao = $this->getDao(new Hazard());
         $granny    = $parentDao->getById($hazard->getParent_hazard_id());
@@ -3600,7 +3600,7 @@ class ActionManager {
     }
 
     public function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL, $recurse = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         if($roomId == null)$roomId = $this->getValueFromRequest('roomId', $roomId);
         if($hazardId == null)$hazardId = $this->getValueFromRequest('hazardId', $hazardId);
@@ -3703,7 +3703,7 @@ class ActionManager {
     // Inspection, step 3 (Checklist)
     //public function getQuestions(){ }	//DUPLICATE public function
     public function getDeficiencyById( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -3943,7 +3943,7 @@ class ActionManager {
     }
 
     public function getInspectionById( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -4023,7 +4023,7 @@ class ActionManager {
 
     public function getInspectionsByPIId( $piId = NULL ){
         //Get responses for Inspection
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $piId = $this->getValueFromRequest('id', $piId);
 
@@ -4043,7 +4043,7 @@ class ActionManager {
 
     public function getArchivedInspectionsByPIId( $id = NULL){
         //Get responses for Inspection
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $piId = $this->getValueFromRequest('piId', $piId);
 
@@ -4188,7 +4188,7 @@ class ActionManager {
     }
 
     private function  recurseHazardTreeForChecklists( &$checklists, $hazardIds, &$orderedChecklists, $hazard = null ) {
-    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    	$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
     	if($hazard == null){
     		//get the "Root hazard".  It's key_id is 10000, hence the magic number
@@ -4222,7 +4222,7 @@ class ActionManager {
 	}
 
     public function getDeficiencySelectionById( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -4260,7 +4260,7 @@ class ActionManager {
     //TODO: Observations?
 
     public function getRecommendationById( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -4297,7 +4297,7 @@ class ActionManager {
     }
 
     public function getObservationById( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -4312,7 +4312,7 @@ class ActionManager {
     }
 
     public function getObservationsForResponse( $responseId = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         //get Observations for Response
 
         $responseId = $this->getValueFromRequest('responseId', $responseId);
@@ -4340,7 +4340,7 @@ class ActionManager {
 
     //TODO: remove HACK specifying inspection ID
     public function getResponseById( $id = NULL, $inspectionId = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -4360,7 +4360,7 @@ class ActionManager {
     // Inspection, step 5 (Details, Full Report)
     public function getResponsesForInspection( $inspectionId = NULL){
         //Get responses for Inspection
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
 
@@ -4391,7 +4391,7 @@ class ActionManager {
 
     public function lookupUser($username = NULL) {
         //Get responses for Inspection
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $username = $this->getValueFromRequest('username', $username);
 
@@ -4473,7 +4473,7 @@ class ActionManager {
     }
 
     public function createOrderIndicesForHazards(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $hazards = $this->getHazardTreeNode(10000);
         foreach($hazards as $hazard){
             $this->setOrderIndicesForSubHazards( $hazard );
@@ -4482,7 +4482,7 @@ class ActionManager {
     }
 
     public function setOrderIndicesForSubHazards( $hazard = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         //if we have passed a hazard, use it, if not, use the input stream
         if($hazard == null){
@@ -4513,7 +4513,7 @@ class ActionManager {
 
     //reorder hazards
     public function reorderHazards($hazardId = null, $beforeHazardId = null, $afterHazardId = null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $hazardId = $this->getValueFromRequest('hazardId', $hazardId);
         $beforeHazardId = $this->getValueFromRequest('beforeHazardId', $beforeHazardId);
@@ -4564,7 +4564,7 @@ class ActionManager {
     }
 
     public function getInspectionSchedule($year = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         // read the Year value from the request.
         $year = $this->getValueFromRequest('year', $year);
@@ -4632,7 +4632,7 @@ class ActionManager {
     }
 
     public function getInspectionsByYear($year = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         // read the Year value from the request.
         $year = $this->getValueFromRequest('year', $year);
@@ -4663,7 +4663,7 @@ class ActionManager {
     }
 
     public function getAllLabLocations(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new Inspection());
         $rooms = $dao->getAllLocations();
@@ -4718,7 +4718,7 @@ class ActionManager {
      */
     public function swapQuestions($id1 = NULL, $id2 = NULL) {
 
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $firstKeyId = $this->getValueFromRequest('firstKeyId', $id1);
         $secondKeyId = $this->getValueFromRequest('secondKeyId', $id2);
 
@@ -4748,7 +4748,7 @@ class ActionManager {
     }
 
     public function getLocationCSV(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $roomDao = $this->getDao(new Room());
         $rooms = $roomDao->getAll(NULL,NULL,true);
 

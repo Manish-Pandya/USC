@@ -130,7 +130,7 @@ class Hazard extends GenericCrud {
 
 	public function getInspectionRooms() { return $this->inspectionRooms; }
 	public function setInspectionRooms($inspectionRooms){
-		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
 		$this->inspectionRooms = array();
 		$roomDao = new GenericDAO(new Room());
@@ -205,7 +205,7 @@ class Hazard extends GenericCrud {
 	}
 
 	public function filterRooms(){
-		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 		$LOG->debug("Filtering rooms for hazard: " . $this->getName() . ", key_id " . $this->getKey_id());
 		$this->isPresent = false;
 /*		foreach ( $this->inspectionRooms as $room){

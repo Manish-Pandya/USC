@@ -132,7 +132,7 @@ class Checklist extends GenericCrud {
 
 	private function filterQuestionsForInspection($questions){
 
-		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 		$LOG->debug("about to init ".  count($questions) . " Question objects with inspection filter info.");
 
 		if(!empty($this->inspectionId)) {
@@ -165,7 +165,7 @@ class Checklist extends GenericCrud {
 
 	public function getInspectionRooms() { return $this->inspectionRooms; }
 	public function setInspectionRooms($inspectionRooms){
-		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
 		$this->inspectionRooms = array();
 		$roomDao = new GenericDAO(new Room());
@@ -193,7 +193,7 @@ class Checklist extends GenericCrud {
 
 	public function filterRooms($piId = null){
         if($piId == null)return null;
-		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 		$LOG->debug("Filtering rooms for checklist: " . $this->getName() . ", key_id " . $this->getKey_id());
 
 		// Get the db connection

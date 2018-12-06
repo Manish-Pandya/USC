@@ -21,7 +21,7 @@ class Equipment_ActionManager extends ActionManager {
     }
 
     public function getEquipmentInspectionById( $id = NULL ){
-    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    	$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
     	$id = $this->getValueFromRequest('id', $id);
 
@@ -184,7 +184,7 @@ class Equipment_ActionManager extends ActionManager {
     }
 
     public function getBioSafetyCabinetById( $id = NULL ){
-    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    	$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
     	$id = $this->getValueFromRequest('id', $id);
 
@@ -345,7 +345,7 @@ class Equipment_ActionManager extends ActionManager {
 	}
 
     public function getAllEquipmentPis(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
 
         $dao = $this->getDao(new PrincipalInvestigator());

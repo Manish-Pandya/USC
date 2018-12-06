@@ -826,7 +826,7 @@ class GenericDAO {
 	}
 
 	public function getInspectionSchedule($year = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         // read the Year value from the request.
         $year = $this->getValueFromRequest('year', $year);

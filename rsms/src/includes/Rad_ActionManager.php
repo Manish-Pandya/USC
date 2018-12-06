@@ -15,7 +15,7 @@ class Rad_ActionManager extends ActionManager {
     \*****************************************************************************/
 
     function getRadInspectionById($id = NULL) {
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -40,7 +40,7 @@ class Rad_ActionManager extends ActionManager {
         }
     }
     public function getAllRadRooms($allLazy = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new Room());
 
@@ -63,7 +63,7 @@ class Rad_ActionManager extends ActionManager {
         return $rooms;
     }
     function getIsotopeById($id = NULL) {
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -91,7 +91,7 @@ class Rad_ActionManager extends ActionManager {
     }
 
     function getCarboyUseCycleById($id = NULL) {
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -341,7 +341,7 @@ class Rad_ActionManager extends ActionManager {
     }
 
     public function getAllRadPis(){
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $dao = $this->getDao(new PrincipalInvestigator());
         $pis = $dao->getAll();
 
@@ -2860,7 +2860,7 @@ class Rad_ActionManager extends ActionManager {
     }
 
     public function getCurrentPIInventory($piId){
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $piId = $this->getValueFromRequest('piId', $piId);
 
@@ -2890,7 +2890,7 @@ class Rad_ActionManager extends ActionManager {
     }
 
     public function getMostRecentInventory(){
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $inventoryDao = $this->getDao(new QuarterlyInventory());
         $invs = $inventoryDao->getAll("end_date");
@@ -2905,7 +2905,7 @@ class Rad_ActionManager extends ActionManager {
 
 
     public function getInventoriesByPiId( $piId = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $piId = $this->getValueFromRequest("piId", $piId);
         $LOG->debug("Get inventories for PI #$piId");
 
@@ -2927,7 +2927,7 @@ class Rad_ActionManager extends ActionManager {
     }
 
     public function getPIInventoryById( $piId = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $piId = $this->getValueFromRequest("piId", $piId);
 
         $inventoriesDao = $this->getDao(new PIQuarterlyInventory());
@@ -2975,7 +2975,7 @@ class Rad_ActionManager extends ActionManager {
     }
 
     public function getPIAuthorizationByPIId(){
-    	$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+    	$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
     	$id = $this->getValueFromRequest("id", $id);
 
     	$inventoriesDao = $this->getDao(new PIAuthorization());
@@ -2987,7 +2987,7 @@ class Rad_ActionManager extends ActionManager {
     }
 
     public function getPIAuthorizationById($id = null){
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         if( $id == NULL ){
             $id = $this->getValueFromRequest('id', $id);
@@ -3307,7 +3307,7 @@ class Rad_ActionManager extends ActionManager {
      *@return MiscellaneousWaste $savedWasted
      */
     function saveMiscellaneousWaste(MiscellaneousWaste $waste){
-        $LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         if($waste == null){
             $waste = $this->convertInputJson();
         }
