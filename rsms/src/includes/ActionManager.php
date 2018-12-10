@@ -4154,7 +4154,8 @@ class ActionManager {
                     //evaluate what rooms we need.  any room a checklist for a child of this one has should be pushed
                     $childLists =  $this->getChildLists($list, $orderedChecklists);
                     foreach($childLists as $childList){
-                        if( !empty($childList->getInspectionRooms()) ){
+                        $childInspectionRooms = $childList->getInspectionRooms();
+                        if( !empty($childInspectionRooms) ){
                             foreach($childList->getInspectionRooms() as $room){
                                 if(!in_array($room->getKey_id(), $neededRoomIds)){
                                     array_push($neededRoomIds, $room->getKey_id());
