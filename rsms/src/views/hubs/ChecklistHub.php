@@ -49,8 +49,8 @@ require_once '../top_view.php';
         <tr ng-repeat="question in (filteredQuestions = (checklist.Questions | orderBy: [order] | filter: showInactive))"  ng-class="{inactive: question.Is_active == false}">
           <td style="width:90%">
             <div class="span1" style="width:40px;" ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])">
-              <button ng-disabled="$first || !rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" ng-class="{'disabled':$first}"  class="btn btn-mini btn-info upvote" style="margin-bottom:1px;" ng-click="moveQuestion('UP', $index)"><i class="icon-arrow-up"></i></button><br>
-              <button ng-disabled="$last" ng-class="{'disabled':$last}" class="btn btn-mini btn-info upvote" ng-click="moveQuestion('DOWN', $index)"><i class="icon-arrow-down"></i></button>
+              <button ng-disabled="$first || !rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" ng-class="{'disabled':$first}"  class="btn btn-mini btn-info upvote" style="margin-bottom:1px;" ng-click="moveQuestion(filteredQuestions, 'UP', $index)"><i class="icon-arrow-up"></i></button><br>
+              <button ng-disabled="$last" ng-class="{'disabled':$last}" class="btn btn-mini btn-info upvote" ng-click="moveQuestion(filteredQuestions, 'DOWN', $index)"><i class="icon-arrow-down"></i></button>
             </div>
             <h2 style="width:90%;"><span once-text="question.Text"></span>
             <i ng-click="question.show = !question.show;" ng-class="{'icon-plus success':!question.show,'icon-minus danger':question.show}"></i>
