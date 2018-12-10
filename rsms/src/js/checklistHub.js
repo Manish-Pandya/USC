@@ -105,23 +105,23 @@ function ChecklistHubController($scope, $rootElement, $location, convenienceMeth
     }
 
     // moves question up or down in the list
-    $scope.moveQuestion = function(direction, index) {
+    $scope.moveQuestion = function(filteredQuestions, direction, index) {
         direction = direction.toUpperCase();
-        $scope.filteredQuestions[index].IsDirty=true;
+        filteredQuestions[index].IsDirty=true;
         if(typeof index !== "number") {
             console.log("ERROR: index is not a number, given "+index);
         }
 
         // get key id of the question we're moving
-        var initialId = $scope.filteredQuestions[index].Key_id;
+        var initialId = filteredQuestions[index].Key_id;
         var newId;
 
         // determine which item we're swapping with
         if(direction === "UP") {
-            newId = $scope.filteredQuestions[index - 1].Key_id;
+            newId = filteredQuestions[index - 1].Key_id;
         }
         else if(direction === "DOWN") {
-            newId = $scope.filteredQuestions[index + 1].Key_id;
+            newId = filteredQuestions[index + 1].Key_id;
         }
         else {
             console.log("ERROR: Movement direction was detected as neither UP nor DOWN");
