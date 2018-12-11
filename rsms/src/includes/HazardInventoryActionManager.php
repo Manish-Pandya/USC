@@ -278,7 +278,7 @@ class HazardInventoryActionManager extends ActionManager {
 		}
 
         if($principalInvestigatorId == NULL){
-			$principalInvestigatorId = $this->getValueFromRequest('piId', $piId);
+			$principalInvestigatorId = $this->getValueFromRequest('piId', $principalInvestigatorId);
 		}
 
         $db = DBConnection::get();
