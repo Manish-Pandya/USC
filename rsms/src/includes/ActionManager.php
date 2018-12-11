@@ -2987,7 +2987,7 @@ class ActionManager {
 
         $LOG->debug("Save new Inspectors for $inspection");
         foreach($decodedObject->getInspections()->getInspectors() as $inspector){
-            $LOG->debug("Link inspector: $inspector");
+            $LOG->debug("Link inspector: " . $inspector["Key_id"]);
             //save inspector relationships
             $inspectionDao->addRelatedItems($inspector["Key_id"],$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP ));
         }
