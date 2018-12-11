@@ -58,6 +58,10 @@ if( ApplicationConfiguration::get('server.env.display_details', false) ){
 		}
 	}
 
+	if( ApplicationConfiguration::get('server.env.display_php_version', false) ){
+		$details[] = 'PHP ' . phpversion();
+	}
+
 	$rsms_details = implode(' | ', $details);
 }
 

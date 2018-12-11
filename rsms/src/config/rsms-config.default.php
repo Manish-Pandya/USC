@@ -28,6 +28,7 @@ return array(
 
     "server.env.display_details" => false,
     "server.env.display_version" => false,
+    "server.env.display_php_version" => false,
     "server.env.name" => NULL,
     "server.env.style_name" => NULL,
 
