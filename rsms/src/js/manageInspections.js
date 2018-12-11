@@ -870,7 +870,8 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
     }
 
     $scope.getRoomUrlString = function (dto) {
-        if (!dto.Inspection_rooms || !dto.Inspection_rooms.length) return;
+        if (!dto.Inspection_rooms || !dto.Inspection_rooms.length)
+            return dto;
         roomIds = [];
         //console.log(dto);
         dto.Inspection_rooms.forEach(function (r) {
