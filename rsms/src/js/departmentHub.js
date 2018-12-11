@@ -241,6 +241,11 @@ modalCtrl = function($scope, departmentDto, specialtyLab, $modalInstance, depart
         $scope.department.Name =   departmentDto.Department_name;
         $scope.department.Key_id = departmentDto.Department_id;
         $scope.deptName = departmentDto.Department_name;
+
+        // incoming Specialty_lab flag is a STRING with an Integer value representing a Boolean...
+        // Parse as an int, then convert to boolean.
+        // Integer parsing is important, as the string "0" is truthy!
+        $scope.department.Specialty_lab = Boolean( parseInt(departmentDto.Specialty_lab) );
     }
     // overwrites department with modified $scope.departmentCopy
     // note that the department parameter is the department to be overwritten.
