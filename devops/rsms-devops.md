@@ -90,3 +90,10 @@ RSMS `Scheduler` module manages tasks which should be run regularly. Because the
 
 ## SMTP Configuration
 USC SMTP relay server is `smtp.sc.edu`. Postfix must be configured by updating the `relayhost` property in `/etc/postfix/main.cf` to `[smtp.sc.edu]`
+
+## Document Uploads
+Ensure that the document uploads directory has group write permissions
+
+```
+chmod g+rwx /var/www/html/rsms/biosafety-committees/protocol-documents/
+```
