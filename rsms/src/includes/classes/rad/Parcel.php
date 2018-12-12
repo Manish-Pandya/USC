@@ -369,7 +369,9 @@ class Parcel extends RadCrud {
     public function getIs_mass(){
         if($this->is_mass === null){
             $isotope = $this->getIsotope();
-            $this->is_mass = $isotope->getIs_mass();
+            if( isset($isotope) ){
+				$this->is_mass = $isotope->getIs_mass();
+			}
         }
         return $this->is_mass;
     }
