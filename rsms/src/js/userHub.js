@@ -683,6 +683,7 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
             if(userHubFactory.roles[i].Name.indexOf(Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR)>-1) pi.Roles.push(userHubFactory.roles[i]);
           }
         }
+
         userHubFactory.setModalData(pi);
 
         var modalInstance = $modal.open({
@@ -949,7 +950,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
 
     $scope.modalError="";
     //make a copy without reference to the modalData so we can manipulate our object without applying changes until we save
-    $scope.modalData = convenienceMethods.copyObject( userHubFactory.getModalData() );
+    $scope.modalData = angular.copy( userHubFactory.getModalData() );
     $scope.order="Last_name";
     $scope.phoneNumberPattern = /^\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}$/;
     $scope.phoneNumberErrorMsg = "E.G. 123-555-5555 or (123) 555-5555";
