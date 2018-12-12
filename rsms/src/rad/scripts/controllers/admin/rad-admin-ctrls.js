@@ -2321,14 +2321,14 @@ angular.module('00RsmsAngularOrmApp')
             af.deleteModalData();
             af.saveAuthorization(piAuth, copy, auth).then(function (returnedAuth) { return $modalInstance.close(returnedAuth); });
         };
-        $scope.saveParcel = function (pi, copy, parcel) {
+        $scope.saveParcel = function (copy, parcel, pi) {
             af.deleteModalData();
-            af.saveParcel(pi, copy, parcel).then(function (r) {
+            af.saveParcel(copy, parcel, pi).then(function (r) {
                 if (parcel) {
                     console.log(r);
                     _.assign(parcel, r);
-                    $modalInstance.close(r);
                 }
+                $modalInstance.close(r);
             });
         };
         $scope.savePO = function (pi, copy, po) {
