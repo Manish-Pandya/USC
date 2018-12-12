@@ -722,9 +722,13 @@ class ActionManager {
                     $pi->setUser_id($user->getKey_id());
                 }
 
+                // Look up the old PI (if any)
+                $pi_dao = new GenericDAO(new PrincipalInvestigator());
+                $old_pi = $pi_dao->getById( $pi->getKey_id() );
+                $LOG->debug("Old PI: $old_pi");
+
                 $pi->setUser_id($user->getKey_id());
                 $pi->setIs_active($user->getIs_active());
-                $depts = $pi->getDepartments();
 
                 $LOG->debug("Save PI details");
                 $newPi = $this->savePI($pi);
@@ -735,14 +739,33 @@ class ActionManager {
 
                     $room->getHazardTypesArePresent();
                     $room = $this->saveRoom($room);
+                    $LOG->debug("Saved $room");
                 }
 
-                foreach($depts as $department){
-                	$dto = new RelationshipDto();
-                	$dto->setAdd(true);
-                	$dto->setMaster_id($newPi->getKey_id());
-                	$dto->setRelation_id($department["Key_id"]);
-                	$this->savePIDepartmentRelation($dto);
+                // TODO: Only remove department if it isn't incoming
+                if( isset($old_pi) ){
+                    $LOG->debug("Removing old departments from PI #" . $old_pi->getKey_id());
+                    // Remove all pre-existing departments
+                    $old_depts = $old_pi->getDepartments();
+                    if( isset($old_depts) ){
+                        foreach($old_depts as $dept){
+                            $LOG->debug("Unlink $dept");
+                            $pi_dao->removeRelatedItems($dept->getKey_id(), $old_pi->getKey_id(), DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
+                        }
+                    }
+                }
+                else{
+                    $LOG->debug("No old departments");
+                }
+
+                // Save incoming Departments
+                $depts = $pi->getDepartments();
+                if( isset($depts) ){
+                    $LOG->debug("Link " . count($depts) . " incoming departments");
+                    foreach($depts as $dept){
+                        $LOG->debug("Linking dept #" . $dept['Key_id']);
+                        $pi_dao->addRelatedItems($dept['Key_id'], $pi->getKey_id(), DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
+                    }
                 }
 
                 $newPi->setDepartments($pi->getDepartments());
