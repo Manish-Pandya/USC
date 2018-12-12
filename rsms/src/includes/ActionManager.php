@@ -631,8 +631,9 @@ class ActionManager {
     }
 
     public function saveUser(){
-        $LOG = Logger::getLogger('Action:' . __function__);
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $decodedObject = $this->convertInputJson();
+
         if( $decodedObject === NULL ){
             return new ActionError('Error converting input stream to User');
         }
@@ -640,6 +641,7 @@ class ActionManager {
             return $decodedObject;
         }
         else{
+            $LOG->debug("Prepare to save user");
             $dao = $this->getDao( new User() );
             //if this user is new, make sure it's active
             if($decodedObject->getKey_id() == NULL){
@@ -649,19 +651,26 @@ class ActionManager {
 
             //see if we need to save a PI or Inspector object
             if($decodedObject->getRoles() != NULL){
+                $LOG->debug("Check roles for special-cases");
+                $savePI = false;
+                $saveInspector = false;
                 foreach($decodedObject->getRoles() as $role){
                     $role = $this->getRoleById($role['Key_id']);
                     if($role->getName() == "Principal Investigator")$savePI 	   = true;
                     if($role->getName() == "Safety Inspector")      $saveInspector = true;
                 }
+                $LOG->debug("PI:$savePI | inspector:$saveInspector");
             }
 
             //user was sent from client with Principal Investigator in roles array
-            if(isset($savePI)){
+            if($savePI){
+                $LOG->debug("Processing PI details");
                  //we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
                 if($decodedObject->getPrincipalInvestigator() != null){
+                    $LOG->debug("Retrieve PI details from incoming data");
                     $pi = $decodedObject->getPrincipalInvestigator();
                 }else{
+                    $LOG->debug("Create new PI entity");
                     $pi = new PrincipalInvestigator();
                     $pi->setUser_id($user->getKey_id());
                 }
@@ -670,9 +679,11 @@ class ActionManager {
                 $pi->setIs_active($user->getIs_active());
                 $depts = $pi->getDepartments();
 
+                $LOG->debug("Save PI details");
                 $newPi = $this->savePI($pi);
 
                 //set hazard relationships for any rooms the pi has
+                $LOG->debug("Process rooms");
                 foreach($newPi->getRooms() as $room){
 
                     $room->getHazardTypesArePresent();
@@ -692,7 +703,8 @@ class ActionManager {
             }
 
             //user was sent from client with Saftey Inspector in roles array
-            if(isset($saveInspector)){
+            if($saveInspector){
+                $LOG->debug("Processing Inspector details");
 
                 //we have an inspector for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
                 if($user->getInspector() != null){
@@ -1314,7 +1326,7 @@ class ActionManager {
             $dao = $this->getDao(new Room());
             $room = $this->getRoomById($decodedObject->getKey_id());
             if(is_array( $decodedObject->getPrincipalInvestigators() )){
-                $LOG->fatal($decodedObject);
+                $LOG->debug($decodedObject);
 
                 foreach ($room->getPrincipalInvestigators() as $child){
                     $dao->removeRelatedItems($child->getKey_id(),$room->getKey_id(),DataRelationship::fromArray(Room::$PIS_RELATIONSHIP));
