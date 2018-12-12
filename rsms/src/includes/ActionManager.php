@@ -649,6 +649,53 @@ class ActionManager {
             }
             $user = $dao->save( $decodedObject );
 
+            // Save Roles
+            if($decodedObject->getRoles() != NULL){
+                $LOG->debug("Updating user roles...");
+
+                // Collect IDs of existing & new roles
+                function fn_getRoleId($r){
+                    if( is_array($r) ){
+                        return $r['Key_id'];
+                    }
+                    else{
+                        return $r->getKey_id();
+                    }
+                };
+
+                function updateRole($actionman, $rid, $uid, $add){
+                    $rel = new RelationshipDto();
+                    $rel->setMaster_id($uid);
+                    $rel->setRelation_id($rid);
+                    $rel->setAdd($add);
+                    $actionman->saveUserRoleRelation($rel);
+                }
+
+                $newRoleIds = array_map( 'fn_getRoleId', $decodedObject->getRoles() );
+                $oldRoleIds = array_map( 'fn_getRoleId', $user->getRoles());
+
+                /** Roles present in old entity which should be removed */
+                $rolesToUnlink = array_diff($oldRoleIds, $newRoleIds);
+
+                /** Roles not present in old entity which should be added */
+                $rolesToAdd = array_diff($newRoleIds, $oldRoleIds);
+
+                $LOG->debug("Roles requiring update: " . (count($rolesToUnlink) + count($rolesToAdd)));
+                if( !empty($rolesToUnlink) ){
+                    foreach($rolesToUnlink as $r){
+                        $LOG->debug("Unlink Role #$r from User #" . $user->getKey_id());
+                        updateRole($this, $r, $user->getKey_id(), false);
+                    }
+                }
+
+                if( !empty($rolesToAdd) ){
+                    foreach($rolesToAdd as $r){
+                        $LOG->debug("Link Role #$r from User #" . $user->getKey_id());
+                        updateRole($this, $r, $user->getKey_id(), true);
+                    }
+                }
+            }
+
             //see if we need to save a PI or Inspector object
             if($decodedObject->getRoles() != NULL){
                 $LOG->debug("Check roles for special-cases");
