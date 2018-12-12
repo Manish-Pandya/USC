@@ -1014,41 +1014,16 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
 
     $scope.onSelectRole = function(role, $model, $label, id){
       $scope.modalError=""
-      //console.log('we are in the role branch');
+
       if(userHubFactory.getModalData().Class=="PrincipalInvestigator"){
           var user = $scope.modalData.User;
       }else{
           var user = $scope.modalData;
       }
-      if(userHubFactory.getModalData().Key_id){
-          userHubFactory.saveUserRoleRelation(user, role, true)
-          .then(
-              function(){
-                user.Roles.push(role);
-                //all lab contacts are also lab personnel.  Server side application logic automatically adds the role, but saveUserRoleRelation on the server only returns a boolean, so we add here as well
-                if(role.Name == Constants.ROLE.NAME.LAB_CONTACT){
-                    var i = userHubFactory.roles.length;
-                    while(i--){
-                        if(userHubFactory.roles[i].Name.indexOf(Constants.ROLE.NAME.LAB_PERSONNEL)>-1) user.Roles.push(userHubFactory.roles[i]);
-                    }
-                }
-                if(user.Is_incategorized){
-                  userHubFactory.placeUser(user);
-                }
-                $model.IsDirty=false;
-              },
-              function(){
-                $scope.modalError = 'The role could not be added.  Please check your internet connection and try again.'
-              }
-            )
-       }
 
-       //we don't have a user, because we are creating a new one.  cache the roles for save on callback when the user is saved.
-       else{
-          if($model)$model.IsDirty = false;
-          if(!user.Roles)user.Roles = [];
-          user.Roles.push(role);
-       }
+      if($model)$model.IsDirty = false;
+      if(!user.Roles)user.Roles = [];
+      user.Roles.push(role);
     }
 
     $scope.saveUser = function(){
@@ -1068,79 +1043,44 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     }
 
     $scope.onAddDepartmentToPi = function(department){
-        console.log(department);
+      console.debug("Add department to PI", $scope.modalData.PrincipalInvestigator, department);
         $scope.modalError=""
         var deptToAdd = convenienceMethods.copyObject(department);
         $scope.modalData.PrincipalInvestigator.Departments.push(deptToAdd);
-        if($scope.modalData.Key_id){
-          deptToAdd.IsDirty=true;
-          userHubFactory.savePIDepartmentRelation($scope.modalData.PrincipalInvestigator, deptToAdd, true)
-            .then(
-              function(){
-                deptToAdd.IsDirty=false;
-                userHubFactory.setModalData($scope.modalData.PrincipalInvestigator);
-              },
-              function(){
-                deptToAdd.IsDirty=false;
-                var i = $scope.modalData.PrincipalInvestigator.Departments;
-                while(i--){
-                  if($scope.modalData.PrincipalInvestigator.Departments[i].Key_id == deptToAdd.Key_id)$scope.modalData.PrincipalInvestigator.Departments(i,1);
-                }
-                $scope.modalError="The department could not be added to the Principal Investigator.  Please check your internet connection and try again."
-              }
-            )
-        }
     }
 
     $scope.removeDepartment = function(department){
         $scope.modalError="";
         var pi = $scope.modalData;
         var i = pi.PrincipalInvestigator.Departments.length;
-        console.log(pi);
-        if(!pi.PrincipalInvestigator.Key_id){
-          while(i--){
-            if(pi.PrincipalInvestigator.Departments[i].Key_id == department.Key_id)pi.PrincipalInvestigator.Departments.splice(i,1);
+
+        console.debug("Remove department from PI", pi, department);
+
+        var removed = false;
+
+        while(i--){
+          if(pi.PrincipalInvestigator.Departments[i].Key_id == department.Key_id) {
+            // remove department from PI.Departments
+            pi.PrincipalInvestigator.Departments.splice(i,1);
+            console.debug("Department removed");
+            removed = true;
           }
-        }else{
-          department.IsDirty = true;
-          userHubFactory.savePIDepartmentRelation(pi.PrincipalInvestigator, department, false)
-            .then(
-              function(){
-                  department.IsDirty = false;
-                  while(i--){
-                    if(pi.PrincipalInvestigator.Departments[i].Key_id == department.Key_id)pi.PrincipalInvestigator.Departments.splice(i,1);
-                  }
-              },
-              function(){
-                department.IsDirty = false;
-                $scope.modalError = "The department could not be removed.  Please check your internet connection and try again.";
-              }
-            )
         }
+
+        if( !removed ){
+          console.warn("Failed to remove department from PI");
+        }
+
     }
 
     $scope.removeRole = function(user, role){
+        console.debug("Remove role from user", user, role);
         $scope.modalError="";
         var i = user.Roles.length;
-        if(!user.Key_id){
-          while(i--){
-            if(user.Roles[i].Key_id == role.Key_id)user.Roles.splice(i,1);
+        while(i--){
+          if(user.Roles[i].Key_id == role.Key_id){
+            user.Roles.splice(i,1);
           }
-        }else{
-          role.IsDirty = true;
-          userHubFactory.saveUserRoleRelation(user, role, false)
-            .then(
-              function(){
-                  role.IsDirty = false;
-                  while(i--){
-                    if(user.Roles[i].Key_id == role.Key_id)user.Roles.splice(i,1);
-                  }
-              },
-              function(){
-                role.IsDirty = false;
-                $scope.modalError = "The role could not be removed.  Please check your internet connection and try again.";
-              }
-            )
         }
     }
 
