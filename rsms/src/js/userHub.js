@@ -693,7 +693,7 @@ var piController = function($scope, $modal, userHubFactory, $rootScope, convenie
 
         modalInstance.result.then(function (returnedPi) {
           if(pi.Key_id){
-            console.log(returnedPi)
+            console.debug("Saved PI:", returnedPi);
             angular.extend(pi, returnedPi);
           }else{
             userHubFactory.users.push(returnedPi);
