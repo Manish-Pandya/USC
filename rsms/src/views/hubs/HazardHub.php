@@ -32,9 +32,9 @@
     </div>
         <div class="live" ng-hide="!SubHazards.length">
           <select ng-model="hazardFilterSetting.Is_active" style="margin:21px 19px 0;" ng-init="hazardFilterSetting.Is_active = 'active'">
-            <option value="active">Display Active Hazards</option>
-            <option value="inactive">Display Inactive Hazards</option>
-            <option value="both">Display Active & Inactive Hazards</option>
+            <option value="active">Active Hazards</option>
+            <option value="inactive">Inactive Hazards</option>
+            <option value="both">Active & Inactive Hazards</option>
           </select>
           <ol id="hazardTree" style="padding-top:0">
             <li ng-repeat="child in SubHazards | orderBy:['Order_index','Name']" id="hazard{{child.Key_id}}" ng-class="{minimized:child.minimized, inactive: child.Is_active == false, lastSub: child.lastSub == true}" ng-init="child.minimized=true"  buttonGroup>
