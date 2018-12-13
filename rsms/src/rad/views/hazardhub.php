@@ -63,9 +63,9 @@
 </script>	
 
 <select ng-model="hazardFilterSetting.Is_active" style="margin:21px 19px 0;" ng-show="hazards" ng-init="hazardFilterSetting.Is_active = 'active'">
-	<option value="active">Display Active Hazards</option>
-	<option value="inactive">Display Inactive Hazards</option>
-	<option value="both">Display Active & Inactive Hazards</option>
+	<option value="active">Active Hazards</option>
+	<option value="inactive">Inactive Hazards</option>
+	<option value="both">Active & Inactive Hazards</option>
 </select>
 
 <ul id="hazardTree">
