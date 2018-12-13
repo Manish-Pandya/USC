@@ -1082,7 +1082,13 @@ angular.module('00RsmsAngularOrmApp')
     var af = actionFunctionsFactory;
     $scope.af = af;
     $scope.modalData = af.getModalData();
-    $scope.types = Constants.CONTAINTER_TYPE.concat($scope.modalData.pi.OtherWasteTypes.filter(function (c) { return !c.Clearable || roleBasedFactory.getHasPermission([$rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]]); }).map(function (c) { return { Label: c.Name, Class: "OtherWasteContainer", Other_waste_type_id: c.Key_id }; }));
+    $scope.types = Constants.CONTAINTER_TYPE.concat(
+        $scope.modalData.pi.OtherWasteTypes.map(
+            function (c) {
+                return { Label: c.Name, Class: "OtherWasteContainer", Other_waste_type_id: c.Key_id };
+            }
+        )
+    );
     if (!$scope.modalData.SolidsContainerCopy) {
         $scope.modalData.SolidsContainerCopy = {
             Class: 'SolidsContainer',

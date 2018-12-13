@@ -159,6 +159,13 @@ angular.module('radValidationFunctionsModule', [
                 else{
                     total += value;
                 }
+
+                // validate that waste container is selected (by verifying selected waste type)
+                var wasteTypeId = parseInt( amt.Waste_type_id );
+                if( wasteTypeId < 1 ){
+                    validUsages.isValid = false;
+                    validUsages.error = "All Disposals must specify Container";
+                }
             });
 
             // Validate total if each usage is individually valid
