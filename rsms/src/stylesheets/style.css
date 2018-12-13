@@ -20,10 +20,6 @@ tr.formError td{
   box-sizing: border-box;
 }
 
-.user-info.env-test {
-  background: #fcff7f;
-}
-
 /* line 13, ../sass/style.scss */
 .blueBg {
   background-color: #49afcd !important;
