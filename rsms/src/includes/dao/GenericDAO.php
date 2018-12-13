@@ -1488,6 +1488,7 @@ class GenericDAO {
 				WHERE i.principal_investigator_id = ?
 					AND (i.status != 'REQUESTED' OR owc.close_date IS NOT NULL)
 					AND b.is_active = 1
+					AND a.is_active = 1
 				group by e.name, e.key_id, d.isotope_id
 			) as picked_up
 			ON picked_up.isotope_id = b.isotope_id
@@ -1508,6 +1509,8 @@ class GenericDAO {
 				join other_waste_container owc
 					ON a.other_waste_container_id = owc.key_id AND owc.close_date IS NOT NULL
 				WHERE c.principal_investigator_id = ?
+					AND b.is_active = 1
+					AND a.is_active = 1
 				group by e.name, e.key_id, d.isotope_id
 			) other_disposed
 			ON other_disposed.isotope_id = b.isotope_id
@@ -1527,6 +1530,8 @@ class GenericDAO {
 					ON d.isotope_id = e.key_id
 				WHERE c.principal_investigator_id = ?
 					AND b.is_active = 1
+					-- Only include INACTIVE use amounts, as these represent the total amount included in an experiment (RSMS-780)
+					AND a.is_active = 0
 				group by e.name, e.key_id, d.isotope_id
 			) as total_used
 			ON total_used.isotope_id = b.isotope_id
