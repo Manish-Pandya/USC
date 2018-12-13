@@ -1505,7 +1505,13 @@ class Rad_ActionManager extends ActionManager {
                             $newAmount->setEntityMaps($entityMaps);
                         }
                         if($amount['Comments'] != NULL)$newAmount->setComments($amount['Comments']);
+
+                        // Validate waste type
                         $newAmount->setWaste_type_id($amount['Waste_type_id']);
+                        if( $newAmount->getWaste_type_id() < 1 ){
+                            $LOG->error("Invalid Waste Type Id given for $newAmount: " . $newAmount->getWaste_type_id());
+                            return new ActionError("Invalid waste type " . $newAmount->getWaste_type_id(), 400);
+                        }
 
                         if($newAmount->getWaste_type()->getName() == "Vial"){
                             //get the pi
