@@ -1493,13 +1493,12 @@ class GenericDAO {
 			) other_disposed
 			ON other_disposed.isotope_id = b.isotope_id
 
+			-- RSMS-780 Join to experiment uses (do not check parcel_use_amount, as this is too granular since parcel_use specifis enough)
 			LEFT OUTER JOIN (
-				select sum(a.curie_level) as amount_used,
+				select sum(b.quantity) as amount_used,
 				e.name as isotope,
 				e.key_id as isotope_id
-				from parcel_use_amount a
-				join parcel_use b
-					on a.parcel_use_id = b.key_id AND (b.date_transferred IS NULL)
+				from parcel_use b
 				JOIN parcel c
 					ON b.parcel_id = c.key_id
 				JOIN authorization d
@@ -1507,9 +1506,8 @@ class GenericDAO {
 				JOIN isotope e
 					ON d.isotope_id = e.key_id
 				WHERE c.principal_investigator_id = ?
+					AND b.date_transferred IS NULL
 					AND b.is_active = 1
-					-- Only include INACTIVE use amounts, as these represent the total amount included in an experiment (RSMS-780)
-					AND a.is_active = 0
 				group by e.name, e.key_id, d.isotope_id
 			) as total_used
 			ON total_used.isotope_id = b.isotope_id
