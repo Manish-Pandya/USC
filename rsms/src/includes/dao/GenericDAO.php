@@ -1431,132 +1431,132 @@ class GenericDAO {
     function getCurrentInvetoriesByPiId($piId, $authId){
 
 		$queryString = "SELECT
-			a.principal_investigator_id as principal_investigator_id,
-			b.isotope_id,
-			b.key_id as authorization_id,
-			ROUND(SUM(d.quantity) ,7) as ordered,
-			c.name as isotope_name,
-			ROUND(b.max_quantity, 7) as auth_limit,
-			ROUND( b.max_quantity - (SUM(d.quantity) - picked_up.amount_picked_up-amount_transferred.amount_used) ) as max_order,
+		pi_auth.principal_investigator_id as principal_investigator_id,
+		authorization.isotope_id,
+		authorization.key_id as authorization_id,
+		ROUND(SUM(parcel.quantity) ,7) as ordered,
+		isotope.name as isotope_name,
+		ROUND(authorization.max_quantity, 7) as auth_limit,
+		ROUND( authorization.max_quantity - (SUM(parcel.quantity) - picked_up.amount_picked_up-amount_transferred.amount_used) ) as max_order,
 
-			other_disposed.other_amount_disposed as _other_disposed,
-			picked_up.amount_picked_up as _picked_up,
-			amount_transferred.amount_used as _transferred,
+		other_disposed.other_amount_disposed as _other_disposed,
+		picked_up.amount_picked_up as _picked_up,
+		amount_transferred.amount_used as _transferred,
 
-			ROUND(COALESCE(picked_up.amount_picked_up, 0) + COALESCE(other_disposed.other_amount_disposed, 0), 7) as amount_picked_up,
-			ROUND(SUM(d.quantity) - picked_up.amount_picked_up, 7) as amount_on_hand,
-			ROUND(total_used.amount_used, 7) as amount_disposed,
-			ROUND(SUM(d.quantity) - total_used.amount_used, 7) as usable_amount,
-			ROUND(amount_transferred.amount_used, 7) as amount_transferred
+		ROUND(COALESCE(picked_up.amount_picked_up, 0) + COALESCE(other_disposed.other_amount_disposed, 0), 7) as amount_picked_up,
+		ROUND(SUM(parcel.quantity) - picked_up.amount_picked_up, 7) as amount_on_hand,
+		ROUND(total_used.amount_used, 7) as amount_disposed,
+		ROUND(SUM(parcel.quantity) - total_used.amount_used, 7) as usable_amount,
+		ROUND(amount_transferred.amount_used, 7) as amount_transferred
 
-			from pi_authorization a
+		from pi_authorization pi_auth
 
-			LEFT OUTER JOIN authorization b
-			ON b.pi_authorization_id = a.key_id
+		LEFT OUTER JOIN authorization authorization
+		ON authorization.pi_authorization_id = pi_auth.key_id
 
-			LEFT OUTER JOIN isotope c
-			ON c.key_id = b.isotope_id
+		LEFT OUTER JOIN isotope isotope
+		ON isotope.key_id = authorization.isotope_id
 
-			LEFT OUTER JOIN parcel d
-			ON d.authorization_id = b.key_id AND d.status IN ('Delivered')
+		LEFT OUTER JOIN parcel parcel
+		ON parcel.authorization_id = authorization.key_id AND parcel.status IN ('Delivered')
 
-			LEFT OUTER JOIN (
-				select sum(a.curie_level) as amount_picked_up,
-				e.name as isotope,
-				e.key_id as isotope_id
-				from parcel_use_amount a
-				join parcel_use b
-					on a.parcel_use_id = b.key_id
-				JOIN parcel c
-					ON b.parcel_id = c.key_id
-				JOIN authorization d
-					ON c.authorization_id = d.key_id
-				JOIN isotope e
-					ON d.isotope_id = e.key_id
-				left join waste_bag f
-					ON a.waste_bag_id = f.key_id
-				left join carboy_use_cycle g
-					ON a.carboy_id = g.key_id
-				left join scint_vial_collection h
-					ON a.scint_vial_collection_id = h.key_id
-				left join other_waste_container owc
-					ON a.other_waste_container_id = owc.key_id
-				left join pickup i
-					ON f.pickup_id = i.key_id
-					OR g.pickup_id = i.key_id
-					OR h.pickup_id = i.key_id
-				WHERE i.principal_investigator_id = ?
-					AND (i.status != 'REQUESTED' OR owc.close_date IS NOT NULL)
-					AND b.is_active = 1
-					AND a.is_active = 1
-				group by e.name, e.key_id, d.isotope_id
-			) as picked_up
-			ON picked_up.isotope_id = b.isotope_id
+		LEFT OUTER JOIN (
+			select sum(amt.curie_level) as amount_picked_up,
+			iso.name as isotope,
+			iso.key_id as isotope_id
+			from parcel_use_amount amt
+			join parcel_use parcel_use
+				on amt.parcel_use_id = parcel_use.key_id
+			JOIN parcel parcel
+				ON parcel_use.parcel_id = parcel.key_id
+			JOIN authorization auth
+				ON parcel.authorization_id = auth.key_id
+			JOIN isotope iso
+				ON auth.isotope_id = iso.key_id
+			left join waste_bag waste_bag
+				ON amt.waste_bag_id = waste_bag.key_id
+			left join carboy_use_cycle cycle
+				ON amt.carboy_id = cycle.key_id
+			left join scint_vial_collection svc
+				ON amt.scint_vial_collection_id = svc.key_id
+			left join other_waste_container owc
+				ON amt.other_waste_container_id = owc.key_id
+			left join pickup pickup
+				ON waste_bag.pickup_id = pickup.key_id
+				OR cycle.pickup_id = pickup.key_id
+				OR svc.pickup_id = pickup.key_id
+			WHERE pickup.principal_investigator_id = ?
+				AND (pickup.status != 'REQUESTED' OR owc.close_date IS NOT NULL)
+				AND parcel_use.is_active = 1
+				AND amt.is_active = 1
+			group by iso.name, iso.key_id, auth.isotope_id
+		) as picked_up
+		ON picked_up.isotope_id = authorization.isotope_id
 
-			LEFT OUTER JOIN (
-				select sum(a.curie_level) as other_amount_disposed,
-				e.name as isotope,
-				e.key_id as isotope_id
-				from parcel_use_amount a
-				join parcel_use b
-					on a.parcel_use_id = b.key_id AND b.is_active = 1
-				JOIN parcel c
-					ON b.parcel_id = c.key_id
-				JOIN authorization d
-					ON c.authorization_id = d.key_id
-				JOIN isotope e
-					ON d.isotope_id = e.key_id
-				join other_waste_container owc
-					ON a.other_waste_container_id = owc.key_id AND owc.close_date IS NOT NULL
-				WHERE c.principal_investigator_id = ?
-					AND b.is_active = 1
-					AND a.is_active = 1
-				group by e.name, e.key_id, d.isotope_id
-			) other_disposed
-			ON other_disposed.isotope_id = b.isotope_id
+		LEFT OUTER JOIN (
+			select sum(amt.curie_level) as other_amount_disposed,
+			iso.name as isotope,
+			iso.key_id as isotope_id
+			from parcel_use_amount amt
+			join parcel_use parcel_use
+				on amt.parcel_use_id = parcel_use.key_id AND parcel_use.is_active = 1
+			JOIN parcel parcel
+				ON parcel_use.parcel_id = parcel.key_id
+			JOIN authorization auth
+				ON parcel.authorization_id = auth.key_id
+			JOIN isotope iso
+				ON auth.isotope_id = iso.key_id
+			join other_waste_container owc
+				ON amt.other_waste_container_id = owc.key_id AND owc.close_date IS NOT NULL
+			WHERE parcel.principal_investigator_id = ?
+				AND parcel_use.is_active = 1
+				AND amt.is_active = 1
+			group by iso.name, iso.key_id, auth.isotope_id
+		) other_disposed
+		ON other_disposed.isotope_id = authorization.isotope_id
 
-			-- RSMS-780 Join to experiment uses (do not check parcel_use_amount, as this is too granular since parcel_use specifis enough)
-			LEFT OUTER JOIN (
-				select sum(b.quantity) as amount_used,
-				e.name as isotope,
-				e.key_id as isotope_id
-				from parcel_use b
-				JOIN parcel c
-					ON b.parcel_id = c.key_id
-				JOIN authorization d
-					ON c.authorization_id = d.key_id
-				JOIN isotope e
-					ON d.isotope_id = e.key_id
-				WHERE c.principal_investigator_id = ?
-					AND b.date_transferred IS NULL
-					AND b.is_active = 1
-				group by e.name, e.key_id, d.isotope_id
-			) as total_used
-			ON total_used.isotope_id = b.isotope_id
+		-- RSMS-780 Join to experiment uses (do not check parcel_use_amount, as this is too granular since parcel_use specifis enough)
+		LEFT OUTER JOIN (
+			select sum(parcel_use.quantity) as amount_used,
+			iso.name as isotope,
+			iso.key_id as isotope_id
+			from parcel_use parcel_use
+			JOIN parcel parcel
+				ON parcel_use.parcel_id = parcel.key_id
+			JOIN authorization auth
+				ON parcel.authorization_id = auth.key_id
+			JOIN isotope iso
+				ON auth.isotope_id = iso.key_id
+			WHERE parcel.principal_investigator_id = ?
+				AND parcel_use.date_transferred IS NULL
+				AND parcel_use.is_active = 1
+			group by iso.name, iso.key_id, auth.isotope_id
+		) as total_used
+		ON total_used.isotope_id = authorization.isotope_id
 
 
-			LEFT OUTER JOIN (
-				select sum(a.curie_level) as amount_used,
-				e.name as isotope,
-				e.key_id as isotope_id
-				from parcel_use_amount a
-				join parcel_use b
-					on a.parcel_use_id = b.key_id
-				JOIN parcel c
-					ON b.parcel_id = c.key_id
-				JOIN authorization d
-					ON c.authorization_id = d.key_id
-				JOIN isotope e
-					ON d.isotope_id = e.key_id
-				WHERE c.principal_investigator_id = ?
-					AND a.waste_type_id = 6
-				group by e.name, e.key_id, d.isotope_id
-			) as amount_transferred
-			ON amount_transferred.isotope_id = b.isotope_id
+		LEFT OUTER JOIN (
+			select sum(amt.curie_level) as amount_used,
+			iso.name as isotope,
+			iso.key_id as isotope_id
+			from parcel_use_amount amt
+			join parcel_use parcel_use
+				on amt.parcel_use_id = parcel_use.key_id
+			JOIN parcel parcel
+				ON parcel_use.parcel_id = parcel.key_id
+			JOIN authorization auth
+				ON parcel.authorization_id = auth.key_id
+			JOIN isotope iso
+				ON auth.isotope_id = iso.key_id
+			WHERE parcel.principal_investigator_id = ?
+				AND amt.waste_type_id = 6
+			group by iso.name, iso.key_id, auth.isotope_id
+		) as amount_transferred
+		ON amount_transferred.isotope_id = authorization.isotope_id
 
-			where a.key_id = ?
+		where pi_auth.key_id = ?
 
-			group by b.isotope_id ,c.name, c.key_id, a.principal_investigator_id";
+		group by authorization.isotope_id, isotope.name, isotope.key_id, pi_auth.principal_investigator_id";
 
         $stmt = DBConnection::prepareStatement($queryString);
 
