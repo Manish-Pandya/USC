@@ -7,7 +7,7 @@ class ReportsMessageMacros {
 
         // DepartmentDetailDto
         $resolvers[] = new MacroResolver(
-            DepartmentDetailDto,
+            'DepartmentDetailDto',
             '[Chair Name]', 'Full name of the department chair',
             function(DepartmentDetailDto $departmentInfo){
                 return $departmentInfo->getChair_name();
@@ -15,7 +15,7 @@ class ReportsMessageMacros {
         );
 
         $resolvers[] = new MacroResolver(
-            DepartmentDetailDto,
+            'DepartmentDetailDto',
             '[Chair First Name]', 'First name of the department chair',
             function(DepartmentDetailDto $departmentInfo){
                 return $departmentInfo->getChair_first_name();
@@ -23,7 +23,7 @@ class ReportsMessageMacros {
         );
 
         $resolvers[] = new MacroResolver(
-            DepartmentDetailDto,
+            'DepartmentDetailDto',
             '[Chair Last Name]', 'Last name of the department chair',
             function(DepartmentDetailDto $departmentInfo){
                 return $departmentInfo->getChair_last_name();
@@ -31,7 +31,7 @@ class ReportsMessageMacros {
         );
 
         $resolvers[] = new MacroResolver(
-            DepartmentDetailDto,
+            'DepartmentDetailDto',
             '[Department Name]', 'Name of the Department',
             function(DepartmentDetailDto $departmentInfo){
                 return $departmentInfo->getName();
@@ -39,7 +39,7 @@ class ReportsMessageMacros {
         );
 
         $resolvers[] = new MacroResolver(
-            LabInspectionSummaryContext,
+            'LabInspectionSummaryContext',
             '[Report Year]', 'Year of the Summary Report',
             function(LabInspectionSummaryContext $context){
                 return $context->report_year;
@@ -47,7 +47,7 @@ class ReportsMessageMacros {
         );
 
         $resolvers[] = new MacroResolver(
-            LabInspectionSummaryContext,
+            'LabInspectionSummaryContext',
             '[Report Link]', 'URL of the Summary Report page',
             function(LabInspectionSummaryContext $context){
                 return A_LabInspectionSummary_Processor::getReportLink(

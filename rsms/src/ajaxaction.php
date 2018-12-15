@@ -24,7 +24,10 @@ if($rlog->isInfoEnabled()){
         if( $key == 'action' || $key == 'callback')
             continue;
 
-        $params .= "[$key : $value] ";
+        // Implode array if necessary
+        $pval = is_array($value) ? implode(", ", $value) : $value;
+
+        $params .= "[$key : $pval] ";
     }
 
     $rlog->info($username . ' >>>     ' . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . " $params");
@@ -33,6 +36,11 @@ if($rlog->isInfoEnabled()){
 // Create Dispatcher (based on $_SESSION)
 $sessionSource = $_SESSION;
 
+// Write standard headers before calling action.
+//   Some actions (such as attachment download) may trigger sending
+//     of headers.
+header('Access-Control-Allow-Origin: *');
+header('content-type: application/javascript');
 
 $actionDispatcher = new ActionDispatcher($dataSource, $sessionSource);
 
@@ -56,9 +64,6 @@ if($actionResult->statusCode == 401){
 }
 
 // begin output
-// TODO: Will we ever need to use a different header?
-header('Access-Control-Allow-Origin: *');
-header('content-type: application/javascript');
 
 // Set the HTTP status code. ActionResult defaults this to 200
 //set_http_response_code( $actionResult->statusCode );

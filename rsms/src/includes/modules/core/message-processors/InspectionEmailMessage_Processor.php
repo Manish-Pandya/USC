@@ -23,7 +23,7 @@ class InspectionEmailMessage_Processor implements MessageTypeProcessor {
 
         //  Look up details from desscriptor
         $messenger = new Messaging_ActionManager();
-        $context = $messenger->getContextFromMessage($message, new InspectionReportMessageContext());
+        $context = $messenger->getContextFromMessage($message, new InspectionReportMessageContext(null, null, null));
 
         // Look up Inspection
         $actionManager = new ActionManager();

@@ -16,11 +16,7 @@ class HazardInventoryActionMappingFactory extends ActionMappingFactory {
 
     public function __construct(){
     }
-    /**
-     * Retrieves array of ActionMappings
-     *
-     * @return multitype:ActionMapping
-     */
+
     public function getConfig(){
         return array(
 

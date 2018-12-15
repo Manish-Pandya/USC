@@ -71,7 +71,7 @@ class JsonManager {
 
 	private static function readInputStream( $stream ){
 		if( empty( $stream ) ){
-			$LOG->debug("No stream specified");
+			Logger::getLogger(__CLASS__)->warn("No stream specified");
 			return NULL;
 		}
 
@@ -88,7 +88,7 @@ class JsonManager {
 		}
 		else {
 			//No data read from input stream.
-			$LOG->warn( "Nothing to JSON-decode; no data read from input stream: $stream" );
+			Logger::getLogger(__CLASS__)->warn( "Nothing to JSON-decode; no data read from input stream: $stream" );
 			return NULL;
 		}
 	}
@@ -249,9 +249,9 @@ class JsonManager {
 	 * instantiates it, and returns it. If $object is given and not null,
 	 * the object is returned unchanged.
 	 *
-	 * @param unknown $decodedJsonArray
-	 * @param string $object
-	 * @return unknown|string
+	 * @param array $decodedJsonArray
+	 * @param string|null $object
+	 * @return object|string
 	 */
 	public static function buildModelObject($decodedJsonArray, $object = NULL){
 
@@ -412,7 +412,7 @@ class JsonManager {
 	}
 
 	public static function extractEntityMapOverrides(&$dataSource){
-		$entityMappingOverrides = null;
+		$entityMappingOverrides = array();
 		foreach( array(EntityMap::$TYPE_EAGER, EntityMap::$TYPE_LAZY) as $type){
 			if( array_key_exists($type, $dataSource) ){
 				$overrides = explode(',', $dataSource[$type]);
@@ -420,6 +420,10 @@ class JsonManager {
 					$entityMappingOverrides[] = new EntityMap($type, $accessor);
 				}
 			}
+		}
+
+		if( empty($entityMappingOverrides) ){
+			$entityMappingOverrides = null;
 		}
 
 		return $entityMappingOverrides;

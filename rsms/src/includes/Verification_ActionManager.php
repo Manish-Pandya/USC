@@ -41,7 +41,7 @@ class Verification_ActionManager extends HazardInventoryActionManager {
 
     //since labs can't create verifications, they call this function when they are finished with one
     public function closeVerification($id = NULL, $timestamp = NULL){
-    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    	$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
     	if($id == NULL)$id = $this->getValueFromRequest('id', $id);
     	if($timestamp == NULL)$timestamp = $this->getValueFromRequest('date', $id);
@@ -59,7 +59,7 @@ class Verification_ActionManager extends HazardInventoryActionManager {
     }
 
     public function getVerificationById($id = NULL){
-    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    	$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
     	if($id == NULL)$id = $this->getValueFromRequest('id', $id);
 
@@ -73,10 +73,12 @@ class Verification_ActionManager extends HazardInventoryActionManager {
     	}
     }
 
-    public function getPIForVerification(){
-    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    public function getPIForVerification( $id = NULL ){
+    	$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
     	//$LOG->fatal('called it');
-    	if($id == NULL)$id = $this->getValueFromRequest('id', $id);
+        if($id == NULL){
+			$id = $this->getValueFromRequest('id', $id);
+		}
 
     	if( $id !== NULL ){
     		$dao = $this->getDao(new PrincipalInvestigator());

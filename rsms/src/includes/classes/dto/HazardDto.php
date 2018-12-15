@@ -74,9 +74,7 @@ class HazardDto {
                         WHERE b.is_active = 1 AND a.room_id IN ( $roomIds ) group by a.principal_investigator_id";
 
 		$stmt = DBConnection::prepareStatement($queryString);
-        foreach ($roomIds as $k => $id){
-		    $stmt->bindValue(($k+1), $id);
-		}
+
 		$stmt->execute();
 		$piIds = array();
 

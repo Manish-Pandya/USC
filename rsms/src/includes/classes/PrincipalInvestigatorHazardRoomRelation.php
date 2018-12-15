@@ -34,7 +34,8 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 	private $hasMultiplePis;
     private $piName;
     private $buildingName;
-    private $roomName;
+	private $roomName;
+	private $equipment_id;
 
 	public function __construct(){
 

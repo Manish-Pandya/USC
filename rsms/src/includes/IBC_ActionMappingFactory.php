@@ -17,7 +17,7 @@ class IBC_ActionMappingFactory extends ActionMappingFactory {
 		return array(
 				"getAllProtocols" 				=> new ActionMapping("getAllProtocols", "", "", $this::$ROLE_GROUPS["IBC_COMMITTEE"] ),
 				"getProtocolById" 				=> new ActionMapping("getProtocolById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),
-				"saveProtocol" 					=> new ActionMapping("saveProtocol", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB "]),
+				"saveProtocol" 					=> new ActionMapping("saveProtocol", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"]),
 
                 "getAllProtocolRevisions" 		=> new ActionMapping("getAllProtocolRevisions", "", "", $this::$ROLE_GROUPS["IBC_COMMITTEE"] ),
 				"getProtocolRevisionById" 		=> new ActionMapping("getProtocolRevisionById", "", "", $this::$ROLE_GROUPS["IBC_AND_LAB"] ),

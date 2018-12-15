@@ -1,6 +1,5 @@
 <?php
 
-include_once 'GenericCrud.php';
 
 /**
  *

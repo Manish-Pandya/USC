@@ -130,25 +130,27 @@ class Hazard extends GenericCrud {
 
 	public function getInspectionRooms() { return $this->inspectionRooms; }
 	public function setInspectionRooms($inspectionRooms){
-		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
 		$this->inspectionRooms = array();
 		$roomDao = new GenericDAO(new Room());
 		//$LOG->debug($roomDao);
 
-		foreach ($inspectionRooms as $rm){
-			//if the hazard has been received from an API call, each of its inspection rooms will be an array instead of an object, because PHP\
-			//If so, we set the key id by index instead of calling the getter
-			if(!is_object($rm)){
-				$key_id = $rm['Key_id'];
-				if(isset($rm['ContainsHazard']))$containsHazard = $rm['ContainsHazard'];
-			}else{
-				$key_id = $rm->getKey_id();
+		if( isset($inspectionRooms) ){
+			foreach ($inspectionRooms as $rm){
+				//if the hazard has been received from an API call, each of its inspection rooms will be an array instead of an object, because PHP\
+				//If so, we set the key id by index instead of calling the getter
+				if(!is_object($rm)){
+					$key_id = $rm['Key_id'];
+					if(isset($rm['ContainsHazard']))$containsHazard = $rm['ContainsHazard'];
+				}else{
+					$key_id = $rm->getKey_id();
+				}
+				$room = $roomDao->getById($key_id);
+				if( isset($containsHazard) )$room->setContainsHazard($containsHazard);
+
+				$this->inspectionRooms[] = $room;
 			}
-			$room = $roomDao->getById($key_id);
-			if( isset($containsHazard) )$room->setContainsHazard($containsHazard);
-				
-			$this->inspectionRooms[] = $room;
 		}
 	}
 
@@ -203,7 +205,7 @@ class Hazard extends GenericCrud {
 	}
 
 	public function filterRooms(){
-		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 		$LOG->debug("Filtering rooms for hazard: " . $this->getName() . ", key_id " . $this->getKey_id());
 		$this->isPresent = false;
 /*		foreach ( $this->inspectionRooms as $room){
@@ -243,7 +245,7 @@ class Hazard extends GenericCrud {
 		foreach ($this->inspectionRooms as $room){
 			$room->setContainsHazard(false);
 			$LOG->debug('roomId:  '.$roomId);
-			$LOG->debug('rooms: '. $rooms);
+			$LOG->debug('rooms: '. $roomIds);
 			$LOG->debug(in_array ( $room->getKey_id() , $roomIdsToEval ));
 			if(in_array ( $room->getKey_id() , $roomIdsToEval )){
 				$room->setContainsHazard(true);
@@ -300,7 +302,8 @@ class Hazard extends GenericCrud {
 	public function getHasMultiplePIs(){
 		if($this->hasMultiplePIs == NULL){
 			$this->hasMultiplePIs = false;
-			if(count($this->getPrincipalInvestigators()) > 1) $this->hasMultiplePIs = true;
+			$pis = $this->getPrincipalInvestigators();
+			if( !empty($pis) && count($pis) > 1) $this->hasMultiplePIs = true;
 		}
 		return $this->hasMultiplePIs;
 	}
@@ -309,7 +312,7 @@ class Hazard extends GenericCrud {
 	{
 		return (bool) $this->is_equipment;
 	}	
-	public function setIs_equipment(Boolean  $is_equipment)
+	public function setIs_equipment($is_equipment)
 	{
 		$this->is_equipment = $is_equipment;
 	}

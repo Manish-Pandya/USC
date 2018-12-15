@@ -72,7 +72,7 @@ class GenericDAO {
 	/**
 	 * Populates this entity with the data for the entity with the given ID
 	 *
-	 * @param unknown $id
+	 * @param string|integer $id
 	 * @return GenericCrud
 	 */
 	function getById($id){
@@ -102,7 +102,10 @@ class GenericDAO {
 				return new ActionError('No rows returned');
 			}
 
-			$this->LOG->trace("Result: " . count($result));
+			if( $this->LOG->isTraceEnabled() ){
+				$cnt = is_array($result) ? count($result) : $result != null ? 1 : 0;
+				$this->LOG->trace("Result count: $cnt");
+			}
 		// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
@@ -451,13 +454,16 @@ class GenericDAO {
 	 * @return GenericCrud
 	 */
 	function save(GenericCrud $object = NULL){
-		//$this->LOG->trace("$this->logprefix Saving entity");
-		//$this->LOG->trace($object);
+		$this->LOG->debug("Saving entity: $object");
+		if( $this->LOG->isTraceEnabled()){
+			$this->LOG->trace($object);
+		}
 
 		//Make sure we have an object to save
 		if( $object == NULL ){
 			$object = $this->modelObject;
 		}
+
 		//If $object is given, make sure it's the right type
 		else if( get_class($object) != $this->modelClassName ){
 			// we have a problem!
@@ -474,42 +480,44 @@ class GenericDAO {
 		$object->setDate_last_modified(date("Y-m-d H:i:s"));
 
 		// Add the creation timestamp
-		if ($object->getDate_created() == null) {$object->setDate_created(date("Y-m-d H:i:s"));}
+		if ($object->getDate_created() == null) {
+			$object->setDate_created(date("Y-m-d H:i:s"));
+		}
 
 		//set created user and last modified user ids if we can and need to
 		if(isset($_SESSION["USER"]) && $_SESSION["USER"]->getKey_id() != null){
 			$object->setLast_modified_user_id($_SESSION["USER"]->getKey_id());
-			if($object->getCreated_user_id() == null)$object->setCreated_user_id($_SESSION["USER"]->getKey_id());
+			if($object->getCreated_user_id() == null)
+				$object->setCreated_user_id($_SESSION["USER"]->getKey_id());
 		}
 
 		// Check to see if this item has a key_id
 		//  If it does, we assume it's an existing record and issue an UPDATE
 		if ($object->getKey_id() != null) {
-
-		    $_SESSION["DEBUG"] = "Calling db update...";
+			$this->LOG->debug("Entity exists; UPDATE");
 			$stmt = $this->createUpdateStatement($db,$object);
 			$stmt = $this->bindColumns($stmt,$object);
 			$success = $stmt->execute();
 		// Otherwise, issue an INSERT
 		} else {
-	    	$_SESSION["DEBUG"] = "Calling db insert...";
-			 //echo  "Calling db insert...";
+			$this->LOG->debug("Entity does not exist; INSERT");
 
 	    	// Add the creation timestamp
 	    	$object->setDate_created(date("Y-m-d H:i:s"));
 
 			$stmt = $this->createInsertStatement($db,$object);
-		   	$stmt = $this->bindColumns($stmt,$object);
+			$stmt = $this->bindColumns($stmt,$object);
 			$success = $stmt->execute();
 
 			// since this is a new record, get the new key_id issued by the database and add it to this object.
+			$this->LOG->debug("Set key ID of new entity");
 			$object->setKey_id($db->lastInsertId());
 		}
 
 		// Look for db errors
 		// If no errors, update and return the object
 		if($success && $object->getKey_Id() > 0) {
-			//$this->LOG->trace("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
+			$this->LOG->trace("Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
 
 			// Re-load the whole record so that updated Date fields (and any field auto-set by DB) are updated
 			//$this->LOG->trace("$this->logprefix Reloading updated/inserted entity with key_id=" . $object->getKey_Id() );
@@ -517,7 +525,7 @@ class GenericDAO {
 
 		// Otherwise, the statement failed to execute, so return an error
 		} else {
-			//$this->LOG->trace("$this->logprefix Object had a key_id of " . $object->getKey_Id());
+			$this->LOG->trace("Failed to update/insert entity. Object had a key_id of " . $object->getKey_Id());
 			$errorInfo = $stmt->errorInfo();
 
 			$object = new ModifyError($errorInfo[2], $object);
@@ -543,8 +551,8 @@ class GenericDAO {
 	 * @param Boolean $activeOnlyRelated
 	 * @return Array:
 	 */
-	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumns = null, $activeOnly = false, $activeOnlyRelated = false){
-		$this->LOG->debug("getRelatedItemsById($id, $relationship, $sortColumns, $activeOnly, $activeOnlyRelated)");
+	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumns = null, $activeOnly = false, $activeOnlyRelated = false, $limit=0){
+
 		if (empty($id)) { return array();}
 
 		// get the relationship parameters needed to build the query
@@ -601,6 +609,10 @@ class GenericDAO {
 					$sql .= ",";
 				}
 			}
+		}
+
+		if( $limit > 0 ){
+			$sql .= " LIMIT $limit";
 		}
 
 		$this->LOG->debug("Executing: $sql");
@@ -722,6 +734,7 @@ class GenericDAO {
 	}
 
 	function bindColumns($stmt,$object) {
+		$this->LOG->debug("Binding columns for $object");
 		foreach ($object->getColumnData() as $key=>$value){
 			if ($value == "integer") {$type = PDO::PARAM_INT;}
 			if ($value == "text") {$type = PDO::PARAM_STR;}
@@ -735,11 +748,11 @@ class GenericDAO {
 			$key2[0] = strtoupper($key2[0]);
 			$getter = "get" . $key2;
 
-			//$this->LOG->debug("Binding $key (a $value) as PDO type $type");
-
 			// build the binding statement.
-			$stmt->bindParam(":" . $key,$object->$getter(),$type);
-			//echo $col . ":" . $this->$col . " - " . $this->types[$index] . "<br/>";
+			$getter_value = $object->$getter();
+
+			$this->LOG->trace("Binding $key (a $value) as PDO type $type");
+			$stmt->bindValue(":" . $key, $getter_value, $type);
 		}
 		return $stmt;
 	}
@@ -760,10 +773,12 @@ class GenericDAO {
 		$sql = rtrim($sql,",");
 		$sql .= ")";
 
-		//$this->LOG->trace("Preparing insert statement [$sql]");
+		if( $this->LOG->isTraceEnabled() ){
+			$this->LOG->trace("Preparing insert statement [$sql]");
+		}
 
 		$stmt = DBConnection::prepareStatement($sql);
-		//var_export($stmt->queryString);
+
 		return $stmt;
 	}
 
@@ -786,7 +801,7 @@ class GenericDAO {
 	// TODO: The following are not generic functions, and should be moved into their own DAO type
 
 	function getUserByUsername($username){
-		$this->LOG->debug("$this->logprefix Looking up entity with keyid $id");
+		$this->LOG->debug("Looking up user with username $username");
 
 		$user = new User();
 
@@ -799,7 +814,7 @@ class GenericDAO {
 			// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
-			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
+			$this->LOG->error('Returning QueryError with message: ' . $error->getMessage());
 
 			$result = new QueryError($error[2]);
 		}
@@ -811,7 +826,7 @@ class GenericDAO {
 	}
 
 	public function getInspectionSchedule($year = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         // read the Year value from the request.
         $year = $this->getValueFromRequest('year', $year);
@@ -1005,44 +1020,6 @@ class GenericDAO {
 		return $result;
     }
 
-	/*
-	 * @param RelationMapping relationship
-	 */
-
-	function getRelationships( RelationMapping $relationship ){
-		$this->LOG->debug("about to get relationships from $tableName");
-
-		//sometimes, in many to many relationships, we are asking for what we usually think of as the child objects to get their collection of parents
-		//in those cases, we reverse the relationships
-		if($relationship->getIsReversed()){
-			$parentColumn = $relationship->getChildColumn();
-			$childColumn  = $relationship->getParentColumn();
-		}else{
-			$parentColumn = $relationship->getParentColumn();
-			$childColumn  = $relationship->getChildColumn();
-		}
-		$stmt = "SELECT $parentColumn as parentId, $childColumn as childId FROM " . $relationship->getTableName();
-		$stmt = DBConnection::prepareStatement($stmt);
-
-		// Query the db and return an array of $this type of object
-		if ($stmt->execute() ) {
-			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "RelationDto");
-			foreach($result as &$dto){
-				$dto->setTable($relationship->getTableName());
-			}
-			//$this->LOG->trace($result);
-			// ... otherwise, die and echo the db error
-		} else {
-			$error = $stmt->errorInfo();
-			die($error[2]);
-		}
-		
-		// 'close' the statment
-		$stmt = null;
-
-		return $result;
-	}
-
 	function getPIsByHazard($rooms = NULL){
 
 		// get the relationship parameters needed to build the query
@@ -1062,12 +1039,13 @@ class GenericDAO {
 		//$sql = "SELECT * FROM " . $modelObject->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
 		$sql = "SELECT * FROM principal_investigator WHERE key_id";
 
-		if(!isset($roomsCSV)){
+		if(!isset($roomsCSV) || empty($roomsCSV)){
 			$sql .= " IN(SELECT principal_investigator_id from principal_investigator_room WHERE room_id IN(SELECT room_id FROM hazard_room WHERE hazard_id = ".$hazard->getKey_id().") )";
 		}else{
 			$sql .= " IN(SELECT principal_investigator_id from principal_investigator_room WHERE room_id IN($roomsCSV))";
 		}
 
+		$this->LOG->debug("Preparing SQL: $sql");
 		$stmt = DBConnection::prepareStatement($sql);
 
 		// Query the db and return an array of $this type of object
@@ -1243,7 +1221,7 @@ class GenericDAO {
 
 	function getHazardRoomDtosByPIId( $pIId, $roomIds = null ){
 		$LOG = Logger::getLogger(__CLASS__);
-        $LOG->info( "Get Hazard Rooms (" . implode(', ', $roomIds) . ") for PI #$pIId");
+        $LOG->info( "Get Hazard Rooms (" . ($roomIds == null ? '' : implode(', ', $roomIds)) . ") for PI #$pIId");
 
 		//get this pi's rooms
 		if($roomIds == null){

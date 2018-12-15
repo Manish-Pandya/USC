@@ -13,7 +13,7 @@ class LabInspectionReminder_Processor implements MessageTypeProcessor {
         // Processor should...
         //  Look up details from desscriptor
         $messenger = new Messaging_ActionManager();
-        $context = $messenger->getContextFromMessage($message, new LabInspectionReminderContext());
+        $context = $messenger->getContextFromMessage($message, new LabInspectionReminderContext(null, null));
 
         // Look up Inspection
         $actionManager = new ActionManager();

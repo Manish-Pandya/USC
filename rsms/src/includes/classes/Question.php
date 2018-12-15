@@ -210,7 +210,7 @@ class Question extends GenericCrud {
 	public function setInspectionId($inspectionId){ $this->inspectionId = $inspectionId; }
 
 	public function getChecklistName(){
-		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 	
 		if($this->checklistName == null && $this->getChecklist_id() != null){
 			$dao = new GenericDAO(new Checklist());

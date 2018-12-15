@@ -4,8 +4,13 @@ class ApplicationConfiguration {
     private static $CONFIG;
 
     public static function get( $key = NULL, $defaultValue = NULL ){
+        // If key provided, attempt to retrieve configured value
         if( $key != NULL ){
-            $val = @self::$CONFIG[$key];
+            $val = $defaultValue;
+            if( array_key_exists($key, @self::$CONFIG) ){
+                $val = @self::$CONFIG[$key];
+            }
+
             if( $val === NULL ){
                 return $defaultValue;
             }
@@ -13,6 +18,7 @@ class ApplicationConfiguration {
             return $val;
         }
 
+        // Return all configuration if no Key is provided
         return self::$CONFIG;
     }
 
@@ -40,15 +46,15 @@ class ApplicationConfiguration {
 
         $data = @file_get_contents($url);
         if($data === false){
-            $error = error_get_last();
-            throw new Exception("Error loading application config file [$url]: " . $error['message']);
+            $error = self::getLastErrorMessage();
+            throw new Exception("Error loading application config file [$url]: $error");
         }
 
         $config = @eval('?>' . $data);
 
 		if ($config === false || $config == NULL) {
-			$error = error_get_last();
-			throw new Exception("Error parsing configuration: " . $error['message']);
+			$error = self::getLastErrorMessage();
+			throw new Exception("Error parsing configuration: $error");
 		}
 
 		if (empty($config)) {
@@ -64,6 +70,15 @@ class ApplicationConfiguration {
         }
 
         return $config;
+    }
+
+    /**
+     * Retrieves the message of the last error, if any
+     * @return string
+     */
+    static function getLastErrorMessage(){
+        $error = error_get_last();
+        return $error == NULL ? '' : $error['message'];
     }
 }
 ?>

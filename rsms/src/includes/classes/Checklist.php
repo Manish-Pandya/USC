@@ -70,7 +70,8 @@ class Checklist extends GenericCrud {
 	/** Array of Room entities relevant to a particular inspection */
 	private $inspectionRooms;
 
-    private $isOrdered;
+	private $isOrdered;
+	private $isPresent;
 
 	public function __construct(){
 
@@ -131,7 +132,7 @@ class Checklist extends GenericCrud {
 
 	private function filterQuestionsForInspection($questions){
 
-		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 		$LOG->debug("about to init ".  count($questions) . " Question objects with inspection filter info.");
 
 		if(!empty($this->inspectionId)) {
@@ -164,21 +165,23 @@ class Checklist extends GenericCrud {
 
 	public function getInspectionRooms() { return $this->inspectionRooms; }
 	public function setInspectionRooms($inspectionRooms){
-		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
 		$this->inspectionRooms = array();
 		$roomDao = new GenericDAO(new Room());
 		//$LOG->debug($roomDao);
 
-		foreach ($inspectionRooms as $rm){
-			//if the hazard has been received from an API call, each of its inspection rooms will be an array instead of an object, because PHP\
-			//If so, we set the key id by index instead of calling the getter
-			if(!is_object($rm)){
-				$key_id = $rm['Key_id'];
-			}else{
-				$key_id = $rm->getKey_id();
+		if( isset($inspectionRooms) ){
+			foreach ($inspectionRooms as $rm){
+				//if the hazard has been received from an API call, each of its inspection rooms will be an array instead of an object, because PHP\
+				//If so, we set the key id by index instead of calling the getter
+				if(!is_object($rm)){
+					$key_id = $rm['Key_id'];
+				}else{
+					$key_id = $rm->getKey_id();
+				}
+				$this->inspectionRooms[] = $roomDao->getById($key_id);
 			}
-			$this->inspectionRooms[] = $roomDao->getById($key_id);
 		}
 	}
     public function pushInspectionRoom($room){
@@ -190,7 +193,7 @@ class Checklist extends GenericCrud {
 
 	public function filterRooms($piId = null){
         if($piId == null)return null;
-		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 		$LOG->debug("Filtering rooms for checklist: " . $this->getName() . ", key_id " . $this->getKey_id());
 
 		// Get the db connection
@@ -229,8 +232,8 @@ class Checklist extends GenericCrud {
         $this->orderIndex = $idx;
     }
 
-    public function getIsOrdered(){return $this->getIsOrdered;}
-    public function setIsOrdered($is){$this->isOrdered = $id;}
+    public function getIsOrdered(){return $this->isOrdered;}
+    public function setIsOrdered($is){$this->isOrdered = $is;}
 
     public function getIsPresent(){return $this->isPresent;}
 }

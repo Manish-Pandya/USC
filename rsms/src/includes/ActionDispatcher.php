@@ -72,8 +72,8 @@ class ActionDispatcher {
     /**
      * Reads the available action mappings and verifies that $actionName is mapped.
      *
-     * @param unknown $actionName
-     * @param unknown $result
+     * @param string $actionName
+     * @param ActionResult|ActionError $result
      */
     public function readActionConfigurationAndDispatch($actionName, & $result){
         $actionConfig = ActionMappingManager::getAction($actionName);
@@ -156,7 +156,8 @@ class ActionDispatcher {
      * to their respecive error values
      *
      * @param ActionResult $result
-     * @param ActionMapping $actionMapping
+     * @param ActionMapping|null $actionMapping
+     * @param int $errorCode
      *
      * @see ActionMapping
      */
@@ -234,9 +235,9 @@ class ActionDispatcher {
     /**
      * Calls the action function specified in the given action mapping.
      *
-     * @param ActionMapping $actionMapping
+     * @param array $actionConfig
      *
-     * @return unknown: The return value of the called function,
+     * @return ActionResult|ActionError|null: The return value of the called function,
      *  	or NULL if the if the function does not exist
      */
     public function doAction( $actionConfig ){
@@ -261,9 +262,25 @@ class ActionDispatcher {
         $this->LOG->trace("doAction [$actionModule] $action_function on $actionManagerType");
 
         if( method_exists( $actions, $action_function ) ){
+            // Attempt to extract parameters from request
+            $reflected = new ReflectionMethod($actions, $action_function);
+            $param_names = array();
+            $func_args = array();
+            foreach( $reflected->getParameters() as $arg ){
+                $param_names[] = $arg->name;
+                if( array_key_exists($arg->name, $_REQUEST) )
+                    $func_args[ $arg->name ] = $_REQUEST[ $arg->name ];
+                else
+                    $func_args[ $arg->name ] = null;
+            }
+
+            if( $this->LOG->isTraceEnabled() ){
+                $this->LOG->trace("Executing action function '$actionManagerType::$action_function(" . implode(', ', $param_names) . ")'");
+            }
+
             //call the specified action function
-            $this->LOG->trace("Executing action function '$actionManagerType::$action_function'");
-            $functionResult = $actions->$action_function();
+            // Passing arguments by name
+            $functionResult = call_user_func_array( array($actions, $action_function), $func_args);
 
             return $functionResult;
         }

@@ -29,7 +29,7 @@ class MacroResolverProvider {
             }
             else {
                 // Module is not a message provider...
-                throw new Exception("$moduleName is not a MessageTypeProvider");
+                throw new Exception( $messageType->getModule() . " is not a MessageTypeProvider");
             }
         }
 

@@ -30,11 +30,7 @@ class Verification_ActionMappingFactory extends HazardInventoryActionMappingFact
 
 	public function __construct(){
 	}
-	/**
-	 * Retrieves array of ActionMappings
-	 *
-	 * @return multitype:ActionMapping
-	 */
+
 	public function getConfig(){
 		return array(
 

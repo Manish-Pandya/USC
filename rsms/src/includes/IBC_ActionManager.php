@@ -444,7 +444,7 @@ class IBC_ActionManager extends ActionManager {
     }
 
     public function getAllIBCPIs(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
 
         $dao = $this->getDao(new PrincipalInvestigator());

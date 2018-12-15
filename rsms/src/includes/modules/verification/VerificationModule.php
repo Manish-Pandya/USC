@@ -12,7 +12,7 @@ class VerificationModule implements RSMS_Module {
     public function isEnabled() {
         // Enabled if the referer comes from our UI Root
         // OR if the 'reports' param is set
-        if(	strstr($_SERVER["HTTP_REFERER"], '/verification/' ) || isset($_GET['verification']))
+        if(	( isset($_SERVER["HTTP_REFERER"]) && strstr($_SERVER["HTTP_REFERER"], '/verification/' ) ) || isset($_GET['verification']))
             return true;
 
         return false;

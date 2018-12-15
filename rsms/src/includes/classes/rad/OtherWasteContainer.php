@@ -88,6 +88,8 @@ class OtherWasteContainer extends Container {
     private $clearable;
     private $description;
 
+	private $pickupLots;
+
 	public function __construct() {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getContainer");

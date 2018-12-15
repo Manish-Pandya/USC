@@ -18,7 +18,7 @@ class CoreMessageMacros {
 
         // Inspection
         $resolvers[] = new MacroResolver(
-            Inspection,
+            'Inspection',
             '[PI Name]', 'Full name of the Principal Investigator',
             function(Inspection $inspection){
                 return $inspection->getPrincipalInvestigator()->getUser()->getName();
@@ -26,7 +26,7 @@ class CoreMessageMacros {
         );
 
         $resolvers[] = new MacroResolver(
-            Inspection,
+            'Inspection',
             '[CAP Due Date]', 'Due Date of the inspection\'s Corrective Action Plan',
             function(Inspection $inspection){
                 // Add 14 days to the Notification date to get the Due date
@@ -37,7 +37,7 @@ class CoreMessageMacros {
         );
 
         $resolvers[] = new MacroResolver(
-            Inspection,
+            'Inspection',
             '[Start Date]', 'Date on which the Inspection was started',
             function(Inspection $inspection){
                 $date = strtotime($inspection->getDate_started());
@@ -46,7 +46,7 @@ class CoreMessageMacros {
         );
 
         $resolvers[] = new MacroResolver(
-            Inspection,
+            'Inspection',
             '[Link]', 'URL of the Inspection Report page',
             function(Inspection $inspection){
                 return LabInspectionReminder_Processor::getInspectionReportLink(
@@ -56,7 +56,7 @@ class CoreMessageMacros {
         );
 
         $resolvers[] = new MacroResolver(
-            LabInspectionReminderContext,
+            'LabInspectionReminderContext',
             '[Inspection Report Link]', 'URL of the Inspection Report page',
             function(LabInspectionReminderContext $context){
                 return LabInspectionReminder_Processor::getInspectionReportLink(
@@ -66,7 +66,7 @@ class CoreMessageMacros {
         );
 
         $resolvers[] = new MacroResolver(
-            LabInspectionStateDto,
+            'LabInspectionStateDto',
             '[Corrected Deficiencies]', 'Number of deficiencies Corrected during Inspection',
             function(LabInspectionStateDto $state){
                 return $state->getCorrecteds();
@@ -74,7 +74,7 @@ class CoreMessageMacros {
         );
 
         $resolvers[] = new MacroResolver(
-            LabInspectionStateDto,
+            'LabInspectionStateDto',
             '[Deficiency or Deficiencies]', 'Plural form ("Deficiency" or "Deficiencies") based on [Corrected Deficiencies]',
             function(LabInspectionStateDto $state){
                 return $state->getCorrecteds() == 1 ? 'Deficiency' : 'Deficiencies';
@@ -82,7 +82,7 @@ class CoreMessageMacros {
         );
 
         $resolvers[] = new MacroResolver(
-            LabInspectionStateDto,
+            'LabInspectionStateDto',
             '[It or Each]', 'Plural form ("it" or "each deficiency") based on [Corrected Deficiencies]',
             function(LabInspectionStateDto $state){
                 return $state->getCorrecteds() == 1 ? 'it' : 'Each deficiency';

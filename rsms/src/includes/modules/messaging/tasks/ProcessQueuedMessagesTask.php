@@ -36,7 +36,7 @@ class ProcessQueuedMessagesTask implements ScheduledTask {
                 try {
                     // Prime processor cache
                     $proc_key = $message->getModule() . '/' . $message->getMessage_type();
-                    if( $_cache[$proc_key] ){
+                    if( isset($_cache[$proc_key]) ){
                         $messageType = $_cache[$proc_key][0];
                         $processor   = $_cache[$proc_key][1];
                     }

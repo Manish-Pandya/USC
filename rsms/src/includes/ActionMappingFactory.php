@@ -37,10 +37,11 @@ class ActionMappingFactory {
 
     public function __construct(){
     }
+
     /**
      * Retrieves array of ActionMappings
      *
-     * @return multitype:ActionMapping
+     * @return array<string,ActionMapping>
      */
     public function getConfig(){
         return array(

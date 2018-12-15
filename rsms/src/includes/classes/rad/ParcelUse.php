@@ -174,7 +174,7 @@ class ParcelUse extends RadCrud {
     }
 
     public function getPiName(){
-        if($this->getPiName == null){
+        if($this->piName == null){
             $p = $this->getParcel();
             if($p->getPrincipal_investigator() != null)
                 $this->piName = $p->getPrincipal_investigator()->getName();

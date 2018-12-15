@@ -11,7 +11,7 @@
 class WhereClauseGroup {
 	
 	/** an array of WhereClauses objects **/
-	private $clauses;
+	private $clauses = array();
 	
 	public function __construct( $clauses = null ){
 		if($clauses != NULL && is_array($clauses)){

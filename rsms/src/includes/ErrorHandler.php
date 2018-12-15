@@ -31,20 +31,26 @@ class ErrorHandler {
 	 * 
 	 * @param unknown $exception
 	 */
-	function handleException(Exception $exception){
+	function handleException(Throwable $exception){
 		//Logger::getLogger(__CLASS__)->debug('Handling Exception');
-		$message = "Exception '" . get_class($exception) . "' occurred at " . $exception->getFile() . ":" . $exception->getLine() . ". Message: " . $exception->getMessage();
+		$severity = ($exception instanceof ErrorException) ? $exception->getSeverity() : E_NOTICE;
+		$message = "Exception ($severity) '" . get_class($exception) . "' occurred at " . $exception->getFile() . ":" . $exception->getLine() . ". Message: " . $exception->getMessage();
 		
 		$log = Logger::getLogger( basename($exception->getFile(), ".php") );
-		//$log->fatal($message);
+		if( $severity == E_NOTICE ){
+			$log->warn($message);
+		}
+		else {
+			$log->error("$message\n    " . str_replace("\n", "\n    ", $exception->getTraceAsString()));
+		}
 	}
 	
 	/**
 	 * 
-	 * @param unknown $num
-	 * @param unknown $str
-	 * @param unknown $file
-	 * @param unknown $line
+	 * @param int $num
+	 * @param string $str
+	 * @param string $file
+	 * @param int $line
 	 * @param string $context
 	 */
 	function handleError($num, $str, $file, $line, $context = null){
