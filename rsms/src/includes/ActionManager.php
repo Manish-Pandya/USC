@@ -40,16 +40,8 @@ class ActionManager {
         if( $paramValue !== NULL ){
             return $paramValue;
         }
-        else if( array_key_exists($valueName, $_REQUEST)){
-            if(stristr($_REQUEST[ $valueName ], "null"))return null;
-            if(stristr($_REQUEST[ $valueName ], "false")){
-                $LOG->debug('value: '.$paramValue);
-                return false;
-            }
-            return $_REQUEST[ $valueName ];
-        }
-        else{
-            return NULL;
+        else {
+            return ActionDispatcher::getValueFromRequest( $valueName );
         }
     }
 

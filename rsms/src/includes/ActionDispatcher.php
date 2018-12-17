@@ -268,10 +268,7 @@ class ActionDispatcher {
             $func_args = array();
             foreach( $reflected->getParameters() as $arg ){
                 $param_names[] = $arg->name;
-                if( array_key_exists($arg->name, $_REQUEST) )
-                    $func_args[ $arg->name ] = $_REQUEST[ $arg->name ];
-                else
-                    $func_args[ $arg->name ] = null;
+                $func_args[ $arg->name ] = self::getValueFromRequest($arg->name);
             }
 
             if( $this->LOG->isTraceEnabled() ){
@@ -293,5 +290,28 @@ class ActionDispatcher {
 
     }
 
+    /**
+     * Utility function for retrieving a request parameter by name.
+     * Special conversions (such as for 'null' and 'false' strings) are performed.
+     */
+    public static function getValueFromRequest( $valueName ){
+
+        if( array_key_exists($valueName, $_REQUEST) ){
+            $val = $_REQUEST[ $valueName ];
+
+            // convert 'null' and 'false' strings to NULL and FALSE constants
+            if( stristr($val, "null") ){
+                $val = NULL;
+            }
+            else if( stristr($val, "false") ){
+                $val = false;
+            }
+
+            return $val;
+        }
+        else{
+            return null;
+        }
+    }
 }
 ?>
