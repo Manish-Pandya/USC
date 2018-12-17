@@ -300,11 +300,13 @@ class ActionDispatcher {
             $val = $_REQUEST[ $valueName ];
 
             // convert 'null' and 'false' strings to NULL and FALSE constants
-            if( stristr($val, "null") ){
-                $val = NULL;
-            }
-            else if( stristr($val, "false") ){
-                $val = false;
+            if( is_string($val) ){
+                if( stristr($val, "null") ){
+                    $val = NULL;
+                }
+                else if( stristr($val, "false") ){
+                    $val = false;
+                }
             }
 
             return $val;
