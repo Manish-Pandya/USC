@@ -92,4 +92,19 @@ angular
                 $rootScope.moduleNavLinks = $rootScope.getNavLinks();
             }
         );
+    })
+
+    // Filters
+    .filter('splitStr', function(){
+        return function(str, delim){
+            if( !str ){
+                return [];
+            }
+
+            if( !delim ){
+                delim = ',';
+            }
+
+            return str.split(delim).filter(i => i.length > 0);
+        }
     });
