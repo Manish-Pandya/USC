@@ -115,10 +115,14 @@ ul.banner-nav li a:hover {
 /* Inspection Status-based Styles */
 .report-detail tr.inspection-completed {
     font-style: italic;
-    color: #777;
+    color: #aaa;
 }
 
 .report-detail .overdue-cap {
     background-color: #ffff00 !important;
     border-color: #ffff00 !important;
+}
+
+.report-detail table.available-reports {
+    font-size: 3em;
 }
