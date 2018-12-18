@@ -19,6 +19,7 @@ tr.formError td{
   padding: 1px 13px;
   box-sizing: border-box;
 }
+
 /* line 13, ../sass/style.scss */
 .blueBg {
   background-color: #49afcd !important;
@@ -4303,4 +4304,11 @@ table.quickdate-calendar td:hover {
 }
 .clear-float{
   clear:both;
+}
+
+.inactive-contact {
+  font-style: italic;
+}
+.inactive-contact::after {
+  content: " (Inactive)";
 }

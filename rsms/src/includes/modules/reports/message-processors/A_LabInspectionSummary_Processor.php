@@ -13,7 +13,7 @@ class A_LabInspectionSummary_Processor implements MessageTypeProcessor {
         // Processor should...
         //  Look up details from desscriptor
         $messenger = new Messaging_ActionManager();
-        $context = $messenger->getContextFromMessage($message, new LabInspectionSummaryContext());
+        $context = $messenger->getContextFromMessage($message, new LabInspectionSummaryContext(null, null));
 
         // Look up department
         $departmentInfo = $this->getDepartment($context->department_id);

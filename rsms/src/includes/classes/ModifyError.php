@@ -4,7 +4,7 @@
 class ModifyError extends ActionError {
 	public $attemptedObject;
 
-	public function __construct($message, $attemptedObject) {
+	public function __construct($message, $attemptedObject = NULL) {
 		parent::__construct($message);
 		$this->attemptedObject = $attemptedObject;
 	}

@@ -7,8 +7,6 @@ if( isset($_SESSION) && !isset($_SESSION['error']) ){
     if(isset($_SESSION["REDIRECT"])){
         $redirect = $_SESSION["REDIRECT"];
     }
-    //session_destroy();
-    $_SESSION["REDIRECT"] = $redirect;
 }
 
 ?>

@@ -43,23 +43,29 @@ Logger::configure( getLocalPath( ApplicationConfiguration::get("logging.configfi
 //
 ////////////////////////////////////////////////////////////////////////////////
 $rsms_details = '';
-if( ApplicationConfiguration::get('server.display_version', false) ){
+if( ApplicationConfiguration::get('server.env.display_details', false) ){
 	$details = array();
 
-	$serverName = ApplicationConfiguration::get('server.name', '');
+	$serverName = ApplicationConfiguration::get('server.env.name', '');
 	if( $serverName ){
 		$details[] = $serverName;
 	}
 
-	$versionFile = dirname(__FILE__) . '/version';
-	if( file_exists($versionFile)){
-		$details[] = @file_get_contents($versionFile);
+	if( ApplicationConfiguration::get('server.env.display_version', false) ){
+		$versionFile = dirname(__FILE__) . '/version';
+		if( file_exists($versionFile)){
+			$details[] = @file_get_contents($versionFile);
+		}
 	}
 
-	$rsms_details = implode(': ', $details);
+	if( ApplicationConfiguration::get('server.env.display_php_version', false) ){
+		$details[] = 'PHP ' . phpversion();
+	}
+
+	$rsms_details = implode(' | ', $details);
 }
 
-define('RSMS_VERSION_DETAILS', $rsms_details);
+define('RSMS_ENV_DETAILS', $rsms_details);
 
 /////////////////////////////////////////////////////////////////////////////////
 //

@@ -43,7 +43,7 @@ class HazardInventoryActionManager extends ActionManager {
 	 * @return HazardDto $decodedObject
 	 */
 	public function savePIHazardRoomMappings($decodedObject = NULL){
-		$LOG = Logger::getLogger("asdfasdfasdf");
+		$LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
 		if($decodedObject == null){
 			$decodedObject = $this->convertInputJson();
@@ -52,6 +52,7 @@ class HazardInventoryActionManager extends ActionManager {
 		if($decodedObject == null){
 			return new ActionError("No DTO");
 		}
+
         $rels = array();
 		foreach($decodedObject->getInspectionRooms() as $roomDto){
 			$rels[] = $this->savePrincipalInvestigatorHazardRoomRelation($roomDto);
@@ -60,13 +61,13 @@ class HazardInventoryActionManager extends ActionManager {
 		return $rels;
 	}
 
-	/*
+	/**
 	* Creates, updates or deletes a PIHazardRoomDto object, depending on its ContainsHazard property and whether or not it already exists or needs to be created anew
-	* @ param PIHazardRoomDto decodedObject
-	* @ return PIHazardRoomDto dto
+	* @param PIHazardRoomDto|array decodedObject
+	* @return PIHazardRoomDto dto
 	*/
-    public function savePrincipalInvestigatorHazardRoomRelation( PIHazardRoomDto $decodedObject = null ){
-		$LOG = Logger::getLogger("asdfaf");
+    public function savePrincipalInvestigatorHazardRoomRelation( $decodedObject = null ){
+		$LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
 		if($decodedObject == null){
 			$decodedObject = $this->convertInputJson();
@@ -131,7 +132,7 @@ class HazardInventoryActionManager extends ActionManager {
 				$relation->setRoom_id($decodedObject->getRoom_id());
 				$relation->setStatus($decodedObject->getStatus());
 				$relation = $piHazardRoomDao->save($relation);
-                $LOG->fatal($relation);
+                $LOG->debug($relation);
 
 			}
 			//if we have set the status to "STORED_ONLY", we must also set the status to for each child hazard in this room
@@ -179,7 +180,7 @@ class HazardInventoryActionManager extends ActionManager {
 		return $relations;
 	}
 
-	public function getBuildingsByPIID(){
+	public function getBuildingsByPIID($id, $roomId){
 		$LOG = Logger::getLogger(__CLASS__);
 		$id = $this->getValueFromRequest("id", $id);
 		$roomId = $this->getValueFromRequest("roomId", $roomId);
@@ -277,7 +278,7 @@ class HazardInventoryActionManager extends ActionManager {
 		}
 
         if($principalInvestigatorId == NULL){
-			$principalInvestigatorId = $this->getValueFromRequest('piId', $piId);
+			$principalInvestigatorId = $this->getValueFromRequest('piId', $principalInvestigatorId);
 		}
 
         $db = DBConnection::get();

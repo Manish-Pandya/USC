@@ -53,7 +53,7 @@ angular
             toolbar: 'bold | italic | underline | link | lists | bullist | numlist',
             menubar: false,
             elementpath: false,
-            content_style: "p,ul li, ol li {font-size:14px}"
+            content_style: "p,ul li, ol li {font-size:14px} p {margin:0px}"
         };
 
         $rootScope.getNavLinks = function(){

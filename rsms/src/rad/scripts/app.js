@@ -220,7 +220,7 @@ angular
       });
 
   })
-  .controller('NavCtrl', function ($rootScope, actionFunctionsFactory, $state) {
+  .controller('NavCtrl', function ($rootScope, actionFunctionsFactory, $state, roleBasedFactory) {
       $rootScope.constants = Constants;
 
       // Features
@@ -270,31 +270,19 @@ angular
         }
     }
 
-  })
-  .controller('RadHomePageRoutingCtrl', function($rootScope, $state, $location, roleBasedFactory){
-    // Map home page routes to rad roles
-    var home_views = [];
-    home_views[Constants.ROLE.NAME.ADMIN] = 'radmin';
-    home_views[Constants.ROLE.NAME.RADIATION_ADMIN] = 'radmin';
-
-    home_views[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR] = 'pi-rad-management';
-    home_views[Constants.ROLE.NAME.RADIATION_USER] = 'pi-rad-management';
-
-    var roleBasedDestination = undefined;
-    GLOBAL_SESSION_ROLES.userRoles.forEach(r => {
-      if(home_views[r]){
-        roleBasedDestination = home_views[r];
-      }
-    });
-
-    if(roleBasedDestination){
-      // If the user has a role mapped to a RAD home page, send them there
-      $state.go(roleBasedDestination, {pi: $rootScope.navPi});
+    $rootScope.isAdminUser = function(){
+      return roleBasedFactory.getHasPermission([
+        $rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN],
+        $rootScope.R[Constants.ROLE.NAME.ADMIN]]
+      );
     }
-    else{
-      // Otherwise send them to RSMSCenter
+
+    $rootScope.rsmsCenter = function(){
       window.location.href = GLOBAL_WEB_ROOT + 'views/RSMSCenter.php';
     }
+  })
+  .controller('RadHomePageRoutingCtrl', function($rootScope, $state, $location, roleBasedFactory){
+    //noop
   })
   .config(function (ngQuickDateDefaultsProvider) {
     return ngQuickDateDefaultsProvider.set({

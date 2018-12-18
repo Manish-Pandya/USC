@@ -77,7 +77,7 @@ class PrincipalInvestigator extends GenericCrud {
 			"foreignKeyName" => "principal_investigator_id"
 	);
 
-	public static $CABOY_USE_CYCLES_RELATIONSHIP = array(
+	public static $CARBOY_USE_CYCLES_RELATIONSHIP = array(
 			"className" => "CarboyUseCycle",
 			"tableName" => "carboy_use_cycle",
 			"keyName"   => "key_id",
@@ -293,7 +293,11 @@ class PrincipalInvestigator extends GenericCrud {
 	public function getLabPersonnel(){
 		if($this->labPersonnel === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->labPersonnel = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$LABPERSONNEL_RELATIONSHIP));
+			// Get only Active related users
+			$this->labPersonnel = $thisDAO->getRelatedItemsById(
+				$this->getKey_id(),
+				DataRelationship::fromArray(self::$LABPERSONNEL_RELATIONSHIP),
+				null, false, true);
 		}
 		return $this->labPersonnel;
 	}
@@ -340,7 +344,7 @@ class PrincipalInvestigator extends GenericCrud {
 	public function getCarboyUseCycles(){
 		if($this->carboyUseCycles === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->carboyUseCycles = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$CABOY_USE_CYCLES_RELATIONSHIP));
+			$this->carboyUseCycles = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$CARBOY_USE_CYCLES_RELATIONSHIP));
 		}
 		return $this->carboyUseCycles;
 	}
@@ -393,7 +397,7 @@ class PrincipalInvestigator extends GenericCrud {
 		// Get the db connection
 		$db = DBConnection::get();
 
-		$LOG = Logger::getLogger( 'Action:' . __FUNCTION__ );
+		$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
 
 		$queryString = "SELECT * FROM inspection WHERE principal_investigator_id =  $this->key_id AND date_closed IS NULL";
@@ -442,7 +446,7 @@ class PrincipalInvestigator extends GenericCrud {
 	}
 
 	public function getCurrentVerifications(){
-		if($this->getCurrentVerifications === NULL && $this->hasPrimaryKeyValue()) {
+		if($this->currentVerifications === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO(new Verification());
 			$whereClauseGroup = new WhereClauseGroup(
 				array(
@@ -451,9 +455,9 @@ class PrincipalInvestigator extends GenericCrud {
 						new WhereClause("notification_date", "IS NOT", NULL)
 				)
 			);
-			$this->getCurrentVerifications = $thisDAO->getAllWhere($whereClauseGroup);
+			$this->currentVerifications = $thisDAO->getAllWhere($whereClauseGroup);
 		}
-		return $this->getCurrentVerifications;
+		return $this->currentVerifications;
 	}
 
 	public function getPi_authorization(){
@@ -563,8 +567,9 @@ class PrincipalInvestigator extends GenericCrud {
             $group = new WhereClauseGroup(array(
                 new WhereClause("principal_investigator_id","=",$this->key_id),
                 new WhereClause("pickup_id","IS","NULL")
-            ));
-            $this->currentWasteBag = end($bagDao->getAllWhere($group));
+			));
+			$bags = $bagDao->getAllWhere($group);
+            $this->currentWasteBag = end($bags);
 		}
 		return $this->currentWasteBag;
 	}

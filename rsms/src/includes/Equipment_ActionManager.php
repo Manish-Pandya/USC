@@ -21,7 +21,7 @@ class Equipment_ActionManager extends ActionManager {
     }
 
     public function getEquipmentInspectionById( $id = NULL ){
-    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    	$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
     	$id = $this->getValueFromRequest('id', $id);
 
@@ -184,7 +184,7 @@ class Equipment_ActionManager extends ActionManager {
     }
 
     public function getBioSafetyCabinetById( $id = NULL ){
-    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    	$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
     	$id = $this->getValueFromRequest('id', $id);
 
@@ -345,7 +345,7 @@ class Equipment_ActionManager extends ActionManager {
 	}
 
     public function getAllEquipmentPis(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
 
         $dao = $this->getDao(new PrincipalInvestigator());
@@ -413,72 +413,26 @@ class Equipment_ActionManager extends ActionManager {
     }
 
 	function uploadDocument(){
-		$LOG = Logger::getLogger(__CLASS__);
-		//verify that this file is of a type we consider safe
+        $LOG = Logger::getLogger(__CLASS__);
 
-		// Make sure the file upload didn't throw a PHP error
-		if ($_FILES[0]['error'] != 0) {
-			return new ActionError("File upload error.");
-		}
+        try{
+            $filename = DocumentManager::processFileUpload();
 
-        //validate the file, make sure it's a .doc or .pdf
-        $valid_file_types = array(
-            'pdf'  => 'application/pdf',
-            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'doc'  => 'application/msword',
-        );
+            //get just the name of the file
+            $name = basename($filename);
 
-		//check the extension
-		$file_extension = strtolower( substr( $_FILES['file']["name"], strpos($_FILES['file']["name"], "." ) + 1) ) ;
-
-		if (!array_key_exists($file_extension, $valid_file_types)) {
-            $LOG->fatal("Not a valid file extension: $file_extension");
-			return new ActionError("Not a valid file extension: $file_extension", 415);
-		}
-		else{
-			//make sure the file actually matches the extension, as best we can
-			$finfo = new finfo(FILEINFO_MIME);
-			$type = $finfo->file($_FILES['file']["tmp_name"]);
-            $match = false;
-            $LOG->debug("Checking file type '$type' against our valid extensions");
-			foreach($valid_file_types as $ext => $mime){
-				if(strstr($type, $mime)){
-					$match = true;
-                }
-
-                $LOG->trace("$type = $mime" . ($match ? ' : MATCHED' : ''));
-
-                if($match){
-                    break;
-                }
-            }
-
-			if($match == false){
-				return new ActionError("Not a valid file", 415);
-			}
-		}
-
-		// Start by creating a unique filename using timestamp.  If it's
-		// already in use, keep incrementing the timstamp until we find an unused filename.
-		// 99.999% of the time, this should work the first time, but better safe than sorry.
-		$now = time();
-		while(file_exists($filename = BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR . $now.'-'.$_FILES['file']['name']))
-		{
-			$now++;
-		}
-
-		// Write the file
-		if (move_uploaded_file($_FILES['file']['tmp_name'], $filename) != true) {
-			return new ActionError("Directory permissions error for " . BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR);
-		}
-
-		$LOG->info("Saved document: $filename");
-
-		//get just the name of the file
-		$name = basename($filename);
-
-		//return the name of the saved document
-		return $name;
+            //return the name of the saved document
+            return $name;
+        }
+        catch( FailedUploadException $e ){
+			return new ActionError($e->getMessage());
+        }
+        catch( UnsupportedFileTypeException $e ){
+			return new ActionError($e->getMessage(), $e->getCode());
+        }
+        catch( IOException $e ){
+			return new ActionError($e->getMessage(), $e->getCode());
+        }
 	}
 }
 

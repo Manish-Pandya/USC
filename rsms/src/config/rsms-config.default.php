@@ -26,10 +26,21 @@ return array(
     "server.web.LOGIN_PAGE" => '/rsms/src/',
     "server.web.BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR" => '~/rsmsuploads/',
 
+    "server.env.display_details" => false,
+    "server.env.display_version" => false,
+    "server.env.display_php_version" => false,
+    "server.env.name" => NULL,
+    "server.env.style_name" => NULL,
+
     // Logging settings
     "logging.configfile" => "./includes/conf/log4php-config.php",
-    "logging.outputdir" => "./logs"
+    "logging.outputdir" => "./logs",
 
+    "module.Messaging.email.send_only_to_role" => null,
+    "module.Messaging.email.suppress_all" => false,
     "module.Messaging.email.defaults.send_from" => '"RSMS Portal" <LabInspectionReports@ehs.sc.edu>',
+    "module.Messaging.email.defaults.return_path" => NULL,
+
+    "module.Scheduler.tasks.disabled" => NULL
 );
 ?>

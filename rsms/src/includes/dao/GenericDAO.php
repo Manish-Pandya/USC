@@ -45,7 +45,7 @@ class GenericDAO {
 		$this->modelClassName = get_class($new_model_object);
 		$this->logprefix = "[$this->modelClassName" . "DAO]";
 
-		$this->LOG = Logger::getLogger( __CLASS__ . ":" . $this->modelClassName );
+		$this->LOG = Logger::getLogger( __CLASS__ . "." . $this->modelClassName );
 	}
 
 	/**
@@ -72,7 +72,7 @@ class GenericDAO {
 	/**
 	 * Populates this entity with the data for the entity with the given ID
 	 *
-	 * @param unknown $id
+	 * @param string|integer $id
 	 * @return GenericCrud
 	 */
 	function getById($id){
@@ -102,7 +102,10 @@ class GenericDAO {
 				return new ActionError('No rows returned');
 			}
 
-			$this->LOG->trace("Result: " . count($result));
+			if( $this->LOG->isTraceEnabled() ){
+				$cnt = is_array($result) ? count($result) : $result != null ? 1 : 0;
+				$this->LOG->trace("Result count: $cnt");
+			}
 		// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
@@ -451,13 +454,16 @@ class GenericDAO {
 	 * @return GenericCrud
 	 */
 	function save(GenericCrud $object = NULL){
-		//$this->LOG->trace("$this->logprefix Saving entity");
-		//$this->LOG->trace($object);
+		$this->LOG->debug("Saving entity: $object");
+		if( $this->LOG->isTraceEnabled()){
+			$this->LOG->trace($object);
+		}
 
 		//Make sure we have an object to save
 		if( $object == NULL ){
 			$object = $this->modelObject;
 		}
+
 		//If $object is given, make sure it's the right type
 		else if( get_class($object) != $this->modelClassName ){
 			// we have a problem!
@@ -474,42 +480,44 @@ class GenericDAO {
 		$object->setDate_last_modified(date("Y-m-d H:i:s"));
 
 		// Add the creation timestamp
-		if ($object->getDate_created() == null) {$object->setDate_created(date("Y-m-d H:i:s"));}
+		if ($object->getDate_created() == null) {
+			$object->setDate_created(date("Y-m-d H:i:s"));
+		}
 
 		//set created user and last modified user ids if we can and need to
 		if(isset($_SESSION["USER"]) && $_SESSION["USER"]->getKey_id() != null){
 			$object->setLast_modified_user_id($_SESSION["USER"]->getKey_id());
-			if($object->getCreated_user_id() == null)$object->setCreated_user_id($_SESSION["USER"]->getKey_id());
+			if($object->getCreated_user_id() == null)
+				$object->setCreated_user_id($_SESSION["USER"]->getKey_id());
 		}
 
 		// Check to see if this item has a key_id
 		//  If it does, we assume it's an existing record and issue an UPDATE
 		if ($object->getKey_id() != null) {
-
-		    $_SESSION["DEBUG"] = "Calling db update...";
+			$this->LOG->debug("Entity exists; UPDATE");
 			$stmt = $this->createUpdateStatement($db,$object);
 			$stmt = $this->bindColumns($stmt,$object);
 			$success = $stmt->execute();
 		// Otherwise, issue an INSERT
 		} else {
-	    	$_SESSION["DEBUG"] = "Calling db insert...";
-			 //echo  "Calling db insert...";
+			$this->LOG->debug("Entity does not exist; INSERT");
 
 	    	// Add the creation timestamp
 	    	$object->setDate_created(date("Y-m-d H:i:s"));
 
 			$stmt = $this->createInsertStatement($db,$object);
-		   	$stmt = $this->bindColumns($stmt,$object);
+			$stmt = $this->bindColumns($stmt,$object);
 			$success = $stmt->execute();
 
 			// since this is a new record, get the new key_id issued by the database and add it to this object.
+			$this->LOG->debug("Set key ID of new entity");
 			$object->setKey_id($db->lastInsertId());
 		}
 
 		// Look for db errors
 		// If no errors, update and return the object
 		if($success && $object->getKey_Id() > 0) {
-			//$this->LOG->trace("$this->logprefix Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
+			$this->LOG->trace("Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
 
 			// Re-load the whole record so that updated Date fields (and any field auto-set by DB) are updated
 			//$this->LOG->trace("$this->logprefix Reloading updated/inserted entity with key_id=" . $object->getKey_Id() );
@@ -517,7 +525,7 @@ class GenericDAO {
 
 		// Otherwise, the statement failed to execute, so return an error
 		} else {
-			//$this->LOG->trace("$this->logprefix Object had a key_id of " . $object->getKey_Id());
+			$this->LOG->trace("Failed to update/insert entity. Object had a key_id of " . $object->getKey_Id());
 			$errorInfo = $stmt->errorInfo();
 
 			$object = new ModifyError($errorInfo[2], $object);
@@ -543,8 +551,8 @@ class GenericDAO {
 	 * @param Boolean $activeOnlyRelated
 	 * @return Array:
 	 */
-	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumns = null, $activeOnly = false, $activeOnlyRelated = false){
-		$this->LOG->debug("getRelatedItemsById($id, $relationship, $sortColumns, $activeOnly, $activeOnlyRelated)");
+	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumns = null, $activeOnly = false, $activeOnlyRelated = false, $limit=0){
+
 		if (empty($id)) { return array();}
 
 		// get the relationship parameters needed to build the query
@@ -603,6 +611,10 @@ class GenericDAO {
 			}
 		}
 
+		if( $limit > 0 ){
+			$sql .= " LIMIT $limit";
+		}
+
 		$this->LOG->debug("Executing: $sql");
 		$stmt = DBConnection::prepareStatement($sql);
 
@@ -633,7 +645,7 @@ class GenericDAO {
 	 * @return unknown
 	 */
 	function addRelatedItems($key_id, $foreignKey_id, DataRelationship $relationship, $index = null) {
-		$this->LOG->fatal("$this->logprefix Inserting new related item for entity with id=$foreignKey_id and key_id=$key_id");
+		$this->LOG->debug("Inserting new related item: fkey=$foreignKey_id and key_id=$key_id: $relationship");
 
 		//print_r($relationship);
 		// get the relationship parameters needed to build the query
@@ -722,6 +734,7 @@ class GenericDAO {
 	}
 
 	function bindColumns($stmt,$object) {
+		$this->LOG->debug("Binding columns for $object");
 		foreach ($object->getColumnData() as $key=>$value){
 			if ($value == "integer") {$type = PDO::PARAM_INT;}
 			if ($value == "text") {$type = PDO::PARAM_STR;}
@@ -735,11 +748,11 @@ class GenericDAO {
 			$key2[0] = strtoupper($key2[0]);
 			$getter = "get" . $key2;
 
-			//$this->LOG->debug("Binding $key (a $value) as PDO type $type");
-
 			// build the binding statement.
-			$stmt->bindParam(":" . $key,$object->$getter(),$type);
-			//echo $col . ":" . $this->$col . " - " . $this->types[$index] . "<br/>";
+			$getter_value = $object->$getter();
+
+			$this->LOG->trace("Binding $key (a $value) as PDO type $type");
+			$stmt->bindValue(":" . $key, $getter_value, $type);
 		}
 		return $stmt;
 	}
@@ -760,10 +773,12 @@ class GenericDAO {
 		$sql = rtrim($sql,",");
 		$sql .= ")";
 
-		//$this->LOG->trace("Preparing insert statement [$sql]");
+		if( $this->LOG->isTraceEnabled() ){
+			$this->LOG->trace("Preparing insert statement [$sql]");
+		}
 
 		$stmt = DBConnection::prepareStatement($sql);
-		//var_export($stmt->queryString);
+
 		return $stmt;
 	}
 
@@ -786,7 +801,7 @@ class GenericDAO {
 	// TODO: The following are not generic functions, and should be moved into their own DAO type
 
 	function getUserByUsername($username){
-		$this->LOG->debug("$this->logprefix Looking up entity with keyid $id");
+		$this->LOG->debug("Looking up user with username $username");
 
 		$user = new User();
 
@@ -799,7 +814,7 @@ class GenericDAO {
 			// ... otherwise, generate error message to be returned
 		} else {
 			$error = $stmt->errorInfo();
-			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
+			$this->LOG->error('Returning QueryError with message: ' . $error->getMessage());
 
 			$result = new QueryError($error[2]);
 		}
@@ -811,7 +826,7 @@ class GenericDAO {
 	}
 
 	public function getInspectionSchedule($year = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         // read the Year value from the request.
         $year = $this->getValueFromRequest('year', $year);
@@ -1005,44 +1020,6 @@ class GenericDAO {
 		return $result;
     }
 
-	/*
-	 * @param RelationMapping relationship
-	 */
-
-	function getRelationships( RelationMapping $relationship ){
-		$this->LOG->debug("about to get relationships from $tableName");
-
-		//sometimes, in many to many relationships, we are asking for what we usually think of as the child objects to get their collection of parents
-		//in those cases, we reverse the relationships
-		if($relationship->getIsReversed()){
-			$parentColumn = $relationship->getChildColumn();
-			$childColumn  = $relationship->getParentColumn();
-		}else{
-			$parentColumn = $relationship->getParentColumn();
-			$childColumn  = $relationship->getChildColumn();
-		}
-		$stmt = "SELECT $parentColumn as parentId, $childColumn as childId FROM " . $relationship->getTableName();
-		$stmt = DBConnection::prepareStatement($stmt);
-
-		// Query the db and return an array of $this type of object
-		if ($stmt->execute() ) {
-			$result = $stmt->fetchAll(PDO::FETCH_CLASS, "RelationDto");
-			foreach($result as &$dto){
-				$dto->setTable($relationship->getTableName());
-			}
-			//$this->LOG->trace($result);
-			// ... otherwise, die and echo the db error
-		} else {
-			$error = $stmt->errorInfo();
-			die($error[2]);
-		}
-		
-		// 'close' the statment
-		$stmt = null;
-
-		return $result;
-	}
-
 	function getPIsByHazard($rooms = NULL){
 
 		// get the relationship parameters needed to build the query
@@ -1062,12 +1039,13 @@ class GenericDAO {
 		//$sql = "SELECT * FROM " . $modelObject->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
 		$sql = "SELECT * FROM principal_investigator WHERE key_id";
 
-		if(!isset($roomsCSV)){
+		if(!isset($roomsCSV) || empty($roomsCSV)){
 			$sql .= " IN(SELECT principal_investigator_id from principal_investigator_room WHERE room_id IN(SELECT room_id FROM hazard_room WHERE hazard_id = ".$hazard->getKey_id().") )";
 		}else{
 			$sql .= " IN(SELECT principal_investigator_id from principal_investigator_room WHERE room_id IN($roomsCSV))";
 		}
 
+		$this->LOG->debug("Preparing SQL: $sql");
 		$stmt = DBConnection::prepareStatement($sql);
 
 		// Query the db and return an array of $this type of object
@@ -1243,7 +1221,7 @@ class GenericDAO {
 
 	function getHazardRoomDtosByPIId( $pIId, $roomIds = null ){
 		$LOG = Logger::getLogger(__CLASS__);
-        $LOG->fatal($roomIds);
+        $LOG->info( "Get Hazard Rooms (" . ($roomIds == null ? '' : implode(', ', $roomIds)) . ") for PI #$pIId");
 
 		//get this pi's rooms
 		if($roomIds == null){
@@ -1430,126 +1408,133 @@ class GenericDAO {
 
     function getCurrentInvetoriesByPiId($piId, $authId){
 
-        $queryString = "SELECT a.principal_investigator_id as principal_investigator_id,
-                        b.isotope_id,
-                        b.key_id as authorization_id,
-                        ROUND(SUM(d.quantity) ,7) as ordered,
-                        c.name as isotope_name,
-                        ROUND(b.max_quantity, 7) as auth_limit,
-                        ROUND( b.max_quantity - (SUM(d.quantity) - picked_up.amount_picked_up-amount_transferred.amount_used) ) as max_order,
+		$queryString = "SELECT
+		pi_auth.principal_investigator_id as principal_investigator_id,
+		authorization.isotope_id,
+		authorization.key_id as authorization_id,
+		ROUND(SUM(parcel.quantity) ,7) as ordered,
+		isotope.name as isotope_name,
+		ROUND(authorization.max_quantity, 7) as auth_limit,
+		ROUND( authorization.max_quantity - (SUM(parcel.quantity) - picked_up.amount_picked_up-amount_transferred.amount_used) ) as max_order,
 
-						other_disposed.other_amount_disposed as _other_disposed,
-						picked_up.amount_picked_up as _picked_up,
-						amount_transferred.amount_used as _transferred,
+		other_disposed.other_amount_disposed as _other_disposed,
+		picked_up.amount_picked_up as _picked_up,
+		amount_transferred.amount_used as _transferred,
 
-                        ROUND(COALESCE(picked_up.amount_picked_up, 0) + COALESCE(other_disposed.other_amount_disposed, 0), 7) as amount_picked_up,
-                        ROUND(SUM(d.quantity) - picked_up.amount_picked_up, 7) as amount_on_hand,
-                        ROUND(total_used.amount_used, 7) as amount_disposed,
-                        ROUND(SUM(d.quantity) - total_used.amount_used, 7) as usable_amount,
-                        ROUND(amount_transferred.amount_used, 7) as amount_transferred
-                        from pi_authorization a
-                        LEFT OUTER JOIN authorization b
-                        ON b.pi_authorization_id = a.key_id
-                        LEFT OUTER JOIN isotope c
-                        ON c.key_id = b.isotope_id
-                        LEFT OUTER JOIN parcel d
-                        ON d.authorization_id = b.key_id AND d.status IN ('Delivered')
+		ROUND(COALESCE(picked_up.amount_picked_up, 0) + COALESCE(other_disposed.other_amount_disposed, 0), 7) as amount_picked_up,
+		ROUND(SUM(parcel.quantity) - picked_up.amount_picked_up, 7) as amount_on_hand,
+		ROUND(total_used.amount_used, 7) as amount_disposed,
+		ROUND(SUM(parcel.quantity) - total_used.amount_used, 7) as usable_amount,
+		ROUND(amount_transferred.amount_used, 7) as amount_transferred
+
+		from pi_authorization pi_auth
+
+		LEFT OUTER JOIN authorization authorization
+		ON authorization.pi_authorization_id = pi_auth.key_id
+
+		LEFT OUTER JOIN isotope isotope
+		ON isotope.key_id = authorization.isotope_id
+
+		LEFT OUTER JOIN parcel parcel
+		ON parcel.authorization_id = authorization.key_id AND parcel.status IN ('Delivered')
+
+		LEFT OUTER JOIN (
+			select sum(amt.curie_level) as amount_picked_up,
+			iso.name as isotope,
+			iso.key_id as isotope_id
+			from parcel_use_amount amt
+			join parcel_use parcel_use
+				on amt.parcel_use_id = parcel_use.key_id
+			JOIN parcel parcel
+				ON parcel_use.parcel_id = parcel.key_id
+			JOIN authorization auth
+				ON parcel.authorization_id = auth.key_id
+			JOIN isotope iso
+				ON auth.isotope_id = iso.key_id
+			left join waste_bag waste_bag
+				ON amt.waste_bag_id = waste_bag.key_id
+			left join carboy_use_cycle cycle
+				ON amt.carboy_id = cycle.key_id
+			left join scint_vial_collection svc
+				ON amt.scint_vial_collection_id = svc.key_id
+			left join other_waste_container owc
+				ON amt.other_waste_container_id = owc.key_id
+			left join pickup pickup
+				ON waste_bag.pickup_id = pickup.key_id
+				OR cycle.pickup_id = pickup.key_id
+				OR svc.pickup_id = pickup.key_id
+			WHERE pickup.principal_investigator_id = ?
+				AND (pickup.status != 'REQUESTED' OR owc.close_date IS NOT NULL)
+				AND parcel_use.is_active = 1
+				AND amt.is_active = 1
+			group by iso.name, iso.key_id, auth.isotope_id
+		) as picked_up
+		ON picked_up.isotope_id = authorization.isotope_id
+
+		LEFT OUTER JOIN (
+			select sum(amt.curie_level) as other_amount_disposed,
+			iso.name as isotope,
+			iso.key_id as isotope_id
+			from parcel_use_amount amt
+			join parcel_use parcel_use
+				on amt.parcel_use_id = parcel_use.key_id AND parcel_use.is_active = 1
+			JOIN parcel parcel
+				ON parcel_use.parcel_id = parcel.key_id
+			JOIN authorization auth
+				ON parcel.authorization_id = auth.key_id
+			JOIN isotope iso
+				ON auth.isotope_id = iso.key_id
+			join other_waste_container owc
+				ON amt.other_waste_container_id = owc.key_id AND owc.close_date IS NOT NULL
+			WHERE parcel.principal_investigator_id = ?
+				AND parcel_use.is_active = 1
+				AND amt.is_active = 1
+			group by iso.name, iso.key_id, auth.isotope_id
+		) other_disposed
+		ON other_disposed.isotope_id = authorization.isotope_id
+
+		-- RSMS-780 Join to experiment uses (do not check parcel_use_amount, as this is too granular since parcel_use specifis enough)
+		LEFT OUTER JOIN (
+			select sum(parcel_use.quantity) as amount_used,
+			iso.name as isotope,
+			iso.key_id as isotope_id
+			from parcel_use parcel_use
+			JOIN parcel parcel
+				ON parcel_use.parcel_id = parcel.key_id
+			JOIN authorization auth
+				ON parcel.authorization_id = auth.key_id
+			JOIN isotope iso
+				ON auth.isotope_id = iso.key_id
+			WHERE parcel.principal_investigator_id = ?
+				AND parcel_use.date_transferred IS NULL
+				AND parcel_use.is_active = 1
+			group by iso.name, iso.key_id, auth.isotope_id
+		) as total_used
+		ON total_used.isotope_id = authorization.isotope_id
 
 
-                        LEFT OUTER JOIN (
-	                        select sum(a.curie_level) as amount_picked_up,
-                            e.name as isotope,
-                            e.key_id as isotope_id
-	                        from parcel_use_amount a
-	                        join parcel_use b
-	                        on a.parcel_use_id = b.key_id
-	                        JOIN parcel c
-	                        ON b.parcel_id = c.key_id
-	                        JOIN authorization d
-	                        ON c.authorization_id = d.key_id
-	                        JOIN isotope e
-	                        ON d.isotope_id = e.key_id
-	                        left join waste_bag f
-	                        ON a.waste_bag_id = f.key_id
-	                        left join carboy_use_cycle g
-	                        ON a.carboy_id = g.key_id
-	                        left join scint_vial_collection h
-	                        ON a.scint_vial_collection_id = h.key_id
-							left join other_waste_container owc
-							ON a.other_waste_container_id = owc.key_id
-	                        left join pickup i
-	                        ON f.pickup_id = i.key_id
-	                        OR g.pickup_id = i.key_id
-	                        OR h.pickup_id = i.key_id
-                            WHERE i.principal_investigator_id = ?
-							AND (i.status != 'REQUESTED' OR owc.close_date IS NOT NULL)
-                            AND b.is_active = 1
-	                        group by e.name, e.key_id, d.isotope_id
-                        ) as picked_up
-                        ON picked_up.isotope_id = b.isotope_id
+		LEFT OUTER JOIN (
+			select sum(amt.curie_level) as amount_used,
+			iso.name as isotope,
+			iso.key_id as isotope_id
+			from parcel_use_amount amt
+			join parcel_use parcel_use
+				on amt.parcel_use_id = parcel_use.key_id
+			JOIN parcel parcel
+				ON parcel_use.parcel_id = parcel.key_id
+			JOIN authorization auth
+				ON parcel.authorization_id = auth.key_id
+			JOIN isotope iso
+				ON auth.isotope_id = iso.key_id
+			WHERE parcel.principal_investigator_id = ?
+				AND amt.waste_type_id = 6
+			group by iso.name, iso.key_id, auth.isotope_id
+		) as amount_transferred
+		ON amount_transferred.isotope_id = authorization.isotope_id
 
-						LEFT OUTER JOIN (
-	                        select sum(a.curie_level) as other_amount_disposed,
-                            e.name as isotope,
-                            e.key_id as isotope_id
-	                        from parcel_use_amount a
-	                        join parcel_use b
-	                        on a.parcel_use_id = b.key_id AND b.is_active = 1
-	                        JOIN parcel c
-	                        ON b.parcel_id = c.key_id
-	                        JOIN authorization d
-	                        ON c.authorization_id = d.key_id
-	                        JOIN isotope e
-	                        ON d.isotope_id = e.key_id
-	                        join other_waste_container owc
-							ON a.other_waste_container_id = owc.key_id AND owc.close_date IS NOT NULL
-                            WHERE c.principal_investigator_id = ?
-	                        group by e.name, e.key_id, d.isotope_id
-						) other_disposed
-                        ON other_disposed.isotope_id = b.isotope_id
+		where pi_auth.key_id = ?
 
-                        LEFT OUTER JOIN (
-	                        select sum(a.curie_level) as amount_used,
-                            e.name as isotope,
-                            e.key_id as isotope_id
-	                        from parcel_use_amount a
-	                        join parcel_use b
-	                        on a.parcel_use_id = b.key_id AND (b.date_transferred IS NULL)
-	                        JOIN parcel c
-	                        ON b.parcel_id = c.key_id
-	                        JOIN authorization d
-	                        ON c.authorization_id = d.key_id
-	                        JOIN isotope e
-	                        ON d.isotope_id = e.key_id
-                            WHERE c.principal_investigator_id = ?
-                            AND b.is_active = 1
-	                        group by e.name, e.key_id, d.isotope_id
-                        ) as total_used
-                        ON total_used.isotope_id = b.isotope_id
-
-
-                        LEFT OUTER JOIN (
-	                        select sum(a.curie_level) as amount_used,
-                            e.name as isotope,
-                            e.key_id as isotope_id
-	                        from parcel_use_amount a
-	                        join parcel_use b
-	                        on a.parcel_use_id = b.key_id
-	                        JOIN parcel c
-	                        ON b.parcel_id = c.key_id
-	                        JOIN authorization d
-	                        ON c.authorization_id = d.key_id
-	                        JOIN isotope e
-	                        ON d.isotope_id = e.key_id
-                            WHERE c.principal_investigator_id = ?
-                            AND a.waste_type_id = 6
-	                        group by e.name, e.key_id, d.isotope_id
-                        ) as amount_transferred
-                        ON amount_transferred.isotope_id = b.isotope_id
-
-                        where a.key_id = ?
-                       
-                        group by b.isotope_id ,c.name, c.key_id, a.principal_investigator_id";
+		group by authorization.isotope_id, isotope.name, isotope.key_id, pi_auth.principal_investigator_id";
 
         $stmt = DBConnection::prepareStatement($queryString);
 

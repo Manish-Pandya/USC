@@ -1,7 +1,5 @@
 <?php
 
-include_once 'GenericCrud.php';
-
 /**
  *
  * @author Perry Cate, GraySail LLC

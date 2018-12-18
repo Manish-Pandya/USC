@@ -99,7 +99,7 @@ class Parcel extends RadCrud {
 	private $svIsotopeAmounts;
 
 	/** wipe test done on this parcel **/
-	private $wipe_test;
+	private $wipe_tests;
 
 	/** id of the authorization that allows PI to have this parcel **/
 	private $authorization_id;
@@ -326,7 +326,7 @@ class Parcel extends RadCrud {
 				)";
 
 		$stmt = DBConnection::prepareStatement($queryString);
-        $stmt->bindParam(1,$this->getKey_id(),PDO::PARAM_INT);
+        $stmt->bindValue(1,$this->getKey_id(),PDO::PARAM_INT);
 		$stmt->execute();
 		while($sum = $stmt->fetchColumn()){
 			$totalPickedUp = $sum;
@@ -369,7 +369,9 @@ class Parcel extends RadCrud {
     public function getIs_mass(){
         if($this->is_mass === null){
             $isotope = $this->getIsotope();
-            $this->is_mass = $isotope->getIs_mass();
+            if( isset($isotope) ){
+				$this->is_mass = $isotope->getIs_mass();
+			}
         }
         return $this->is_mass;
     }

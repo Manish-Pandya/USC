@@ -2,6 +2,7 @@
 
 class DBConnection {
 
+    private static $STATEMENT_COUNT = 0;
     private static $STATEMENTS = array();
 
     private static $CONFIG_READY = false;
@@ -65,10 +66,12 @@ class DBConnection {
 
     static function shutdown(){
         $LOG = Logger::getLogger(__CLASS__);
-        $LOG->debug("Shutdown " . count(self::$STATEMENTS) . " DB statement(s) and connection");
+        $LOG->debug("Prepared " . self::$STATEMENT_COUNT . " Queries during this request");
 
-        $LOG->trace( $GLOBALS['db'] );
-        $LOG->trace( self::$STATEMENTS );
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace( $GLOBALS['db'] );
+            $LOG->trace( self::$STATEMENTS );
+        }
 
         // Ensure all statements are closed
         foreach(self::$STATEMENTS as &$stmt){
@@ -81,8 +84,10 @@ class DBConnection {
             $GLOBALS['db'] = null;
         }
 
-        $LOG->trace( $GLOBALS['db'] );
-        $LOG->trace( self::$STATEMENTS );
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace( $GLOBALS['db'] );
+            $LOG->trace( self::$STATEMENTS );
+        }
     }
 
     public static function closeStatement(&$stmt){
@@ -97,7 +102,11 @@ class DBConnection {
         $db = DBConnection::get();
         $stmt = $db->prepare($sql);
 
-        self::$STATEMENTS[] &= $stmt;
+        if( $stmt == false ){
+            throw new Exception(print_r($db->errorInfo(), true) . PHP_EOL . $sql);
+        }
+
+        self::$STATEMENT_COUNT++;
 
         $LOG = Logger::getLogger(__CLASS__);
         if( $LOG->isTraceEnabled()){

@@ -137,11 +137,14 @@ class Messaging_ActionManager extends ActionManager {
             $subject = $this->replaceMacros($macromap, $template->getSubject());
 
             // get recipients, from, etc
+            $from = array_key_exists('from', $messageDetails) ? $messageDetails['from'] : null;
+            $cc = array_key_exists('cc', $messageDetails) ? $messageDetails['cc'] : null;
             $formattedMessages[] = new FormattedMessage(
                 $subject,
                 $body,
                 $messageDetails['recipients'],
-                $messageDetails['from']
+                $from,
+                $cc
             );
         }
 

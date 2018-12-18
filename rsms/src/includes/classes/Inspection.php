@@ -71,6 +71,13 @@ class Inspection extends GenericCrud {
             "foreignKeyName"	=>	"inspection_id"
     );
 
+    public static $INSPECTION_LAB_PERSONNEL_RELATIONSHIP = array(
+            "className"	=>	"User",
+            "tableName"	=>	"inspection_personnel",
+            "keyName"	=>	"personnel_id",
+            "foreignKeyName"	=>	"inspection_id"
+    );
+
 
     /** Array of Inspector entities that took part in this Inspection */
     private $inspectors;
@@ -78,6 +85,9 @@ class Inspection extends GenericCrud {
     /** Reference to the PrincipalInvestigator being inspected */
     private $principalInvestigator;
     private $principal_investigator_id;
+
+    /** Array of User entities which took part in this Inspection as Lab Personnel (Contacts) */
+    private $labPersonnel;
 
     /** Array of Response entities */
     private $responses;
@@ -136,6 +146,7 @@ class Inspection extends GenericCrud {
         // Define which subentities to load
         $entityMaps = array();
         $entityMaps[] = new EntityMap("eager","getInspectors");
+        $entityMaps[] = new EntityMap("eager","getLabPersonnel");
         $entityMaps[] = new EntityMap("eager","getRooms");
         $entityMaps[] = new EntityMap("eager","getResponses");
         $entityMaps[] = new EntityMap("eager","getDeficiency_selections");
@@ -164,6 +175,20 @@ class Inspection extends GenericCrud {
         return $this->inspectors;
     }
     public function setInspectors($inspectors){ $this->inspectors = $inspectors; }
+
+    public function getLabPersonnel(){
+        if( $this->labPersonnel == null ){
+            // Read lab personnel (include inactive users for historical purposes)
+            $thisDAO = new GenericDAO($this);
+            $this->labPersonnel = $thisDAO->getRelatedItemsById(
+                $this->getKey_id(),
+                DataRelationship::fromArray(self::$INSPECTION_LAB_PERSONNEL_RELATIONSHIP)
+            );
+        }
+
+        return $this->labPersonnel;
+    }
+    public function setLabPersonnel( $personnel ){ $this->labPersonnel = $personnel; }
 
     public function getChecklists(){
         $thisDAO = new GenericDAO($this);

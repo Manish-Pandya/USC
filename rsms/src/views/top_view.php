@@ -47,7 +47,7 @@ session_start();
 }
 ?>
 <!-- init authenticated user's role before we even mess with angular so that we can store the roles in a global var -->
-<?php if($_SESSION["USER"] != null){ ?>
+<?php if( isset($_SESSION["USER"]) ){ ?>
 <script>
     var GLOBAL_SESSION_ROLES = <?php echo json_encode($_SESSION['ROLE']); ?>;
     //grab usable properties from the session user object

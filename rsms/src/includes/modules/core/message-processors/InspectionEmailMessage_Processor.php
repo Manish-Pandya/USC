@@ -23,7 +23,7 @@ class InspectionEmailMessage_Processor implements MessageTypeProcessor {
 
         //  Look up details from desscriptor
         $messenger = new Messaging_ActionManager();
-        $context = $messenger->getContextFromMessage($message, new InspectionReportMessageContext());
+        $context = $messenger->getContextFromMessage($message, new InspectionReportMessageContext(null, null, null));
 
         // Look up Inspection
         $actionManager = new ActionManager();
@@ -40,8 +40,19 @@ class InspectionEmailMessage_Processor implements MessageTypeProcessor {
         // We'll need a user Dao to get Users and find their email addresses
         $userDao = new GenericDAO(new User());
 
+        // TODO: Get state details from the already-decoded object
+        // Decode the context value AGAIN as an associative array since our JsonManager expects
+        //   object classes to be specified in content
+        $inspectionState = JsonManager::assembleObjectFromDecodedArray($context->getInspectionState(), new LabInspectionStateDto());
+
         // Iterate the recipients list and add their email addresses to our array
-        $email = $context->getEmail();
+        // TODO: Get the email details from the already-decoded object
+        // Decode the context value AGAIN as an associative array since our JsonManager expects
+        //   object classes to be specified in content
+        $ctx_array = json_decode($message->getContext_descriptor(), true);
+
+        $email = $ctx_array['email'];
+
         foreach ($email['recipient_ids'] as $id){
             $user = $userDao->getById($id);
             $recipientEmails[] = $user->getEmail();
@@ -63,7 +74,7 @@ class InspectionEmailMessage_Processor implements MessageTypeProcessor {
         //////////////////////////////////////////////////////////////////////
 
         //  Construct macromap
-        $macromap = $macroResolverProvider->resolve( array($inspection, $context) );
+        $macromap = $macroResolverProvider->resolve( array($inspection, $inspectionState, $context) );
 
         // prepare email details
         $details = array(

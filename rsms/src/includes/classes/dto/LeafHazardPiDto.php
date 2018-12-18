@@ -46,7 +46,7 @@
 		if($this->piHas == null){
 			$this->piHas = false;
 			if($this->getRoomIds() != null){
-				$this->piHas = count($this->getRoomIds() > 0);
+				$this->piHas = count($this->getRoomIds()) > 0;
 			}
 		}
 		return (bool) $this->piHas;

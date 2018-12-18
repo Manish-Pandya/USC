@@ -18,6 +18,7 @@
 
         <table ng-if="QueuedEmailsPage" class="table table-bordered templates">
             <thead>
+                <th></th>
                 <th>Module</th>
                 <th>Message Type</th>
                 <th>Template</th>
@@ -26,7 +27,12 @@
                 <th>Subject</th>
             </thead>
             <tbody ng-repeat="email in QueuedEmailsPage.Results" ng-class="{closed: !email.ShowBody}">
-                <tr ng-click="toggleMessageContent(email)" ng-class="{greenBg: email.ShowBody, greyBg: !email.Email_id}">
+                <tr ng-class="{greenBg: email.ShowBody, greyBg: !email.Email_id}">
+                    <td>
+                        <a ng-class="{'btn-primary' : email.ShowBody, 'btn-inverse' : !email.ShowBody}" class="btn left" ng-click="toggleMessageContent(email)">
+                            <i ng-class="{'icon-search': !email.ShowBody, 'icon-cancel': email.ShowBody}"></i>
+                        </a>
+                    </td>
                     <td>{{email.Module}}</td>
                     <td>{{email.Message_type}}</td>
                     <td>{{email.Template_name}}</td>
@@ -58,7 +64,7 @@
                                 <pre ng-bind-html="email.Subject"></pre>
 
                                 <h3>Email Body</h3>
-                                <pre ng-bind-html="email.Body"></pre>
+                                <pre ng-bind-html="email.Body" class="email-content"></pre>
                             </div>
 
                             <div>

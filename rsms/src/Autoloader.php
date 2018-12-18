@@ -63,10 +63,10 @@ class Autoloader {
 	 * Recursive function that scans the named directory and adds directory names
 	 * to the given array
 	 * 
-	 * @param unknown $dir
+	 * @param string $dir
 	 * @param Array $list
 	 */
-	static function scanDirectoriesToArray( $dir, Array &$list ){
+	static function scanDirectoriesToArray( string $dir, Array &$list ){
 		$results = scandir($dir);
 	
 		foreach ($results as $result){

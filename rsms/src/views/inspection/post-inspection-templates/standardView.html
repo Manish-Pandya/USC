@@ -51,12 +51,12 @@
             <span class="span3 pull-right">
                 <h3>Lab Safety Contact:</h3>
                 <p style="width:154px;margin-top:3px;">
-                    <span ng-if="inspection.PrincipalInvestigator.LabPersonnel.length">
-                        <span ng-repeat="contact in inspection.PrincipalInvestigator.LabPersonnel">
+                    <span ng-if="inspection.LabPersonnel.length">
+                        <span ng-repeat="contact in inspection.LabPersonnel" ng-class="{'inactive-contact': !contact.Is_active}">
                             {{contact.Name}}<span ng-show="!$last">, </span>
                         </span>
                     </span>
-                    <span ng-if="!inspection.PrincipalInvestigator.LabPersonnel.length">
+                    <span ng-if="!inspection.LabPersonnel.length">
                         {{inspection.PrincipalInvestigator.User.Name}}
                     </span>
                 </p>

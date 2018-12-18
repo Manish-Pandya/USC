@@ -207,7 +207,8 @@ class User extends GenericCrud{
 		if($this->getSupervisor_id() != NULL && $this->hasPrimaryKeyValue()) {
             $super = $this->getSupervisor();
             if($super != null){
-                $this->primary_department = reset($super->getDepartments());
+				$superDao = new PrincipalInvestigatorDAO();
+                $this->primary_department = $superDao->getPrimaryDepartment($this->getSupervisor_id());
             }
 		}
 		return $this->primary_department;

@@ -30,9 +30,9 @@ class ActionManager {
      *
      * If $valueName is not present in $_REQUEST, NULL is returned.
      *
-     * @param string|unkown $valueName
-     * @param string $paramValue
-     * @return string|unknown|NULL
+     * @param string|NULL $valueName
+     * @param string|NULL $paramValue
+     * @return string|object|false|NULL
      */
     public function getValueFromRequest( $valueName, $paramValue = NULL ){
         $LOG = Logger::getLogger('Action:' . __function__);
@@ -40,16 +40,8 @@ class ActionManager {
         if( $paramValue !== NULL ){
             return $paramValue;
         }
-        else if( array_key_exists($valueName, $_REQUEST)){
-            if(stristr($_REQUEST[ $valueName ], "null"))return null;
-            if(stristr($_REQUEST[ $valueName ], "false")){
-                $LOG->debug('value: '.$paramValue);
-                return false;
-            }
-            return $_REQUEST[ $valueName ];
-        }
-        else{
-            return NULL;
+        else {
+            return ActionDispatcher::getValueFromRequest( $valueName );
         }
     }
 
@@ -98,13 +90,7 @@ class ActionManager {
      */
 
     public function getDao( $modelObject = NULL ){
-        //FIXME: Remove MockDAO
-        if( $modelObject === NULL ){
-            return new MockDAO();
-        }
-        else{
-            return new GenericDAO( $modelObject );
-        }
+        return new GenericDAO( $modelObject );
     }
 
     public function getCurrentUserRoles( $user = NULL ){
@@ -251,8 +237,8 @@ class ActionManager {
             }
 
             if(isset($_SESSION["REDIRECT"])){
-                $LOG->fatal("should redirect");
                 $_SESSION['DESTINATION'] = $this->getDestination();
+                $LOG->info("should redirect to " . $_SESSION['DESTINATION']);
             }
 
             // return true to indicate success
@@ -361,7 +347,7 @@ class ActionManager {
     /**
      * Determines if the currently logged in user's lab has permissions to run a method, based on the object type being retrieved, altered or created by that method
      *
-     * @param unknown $object
+     * @param object $object
      * @return boolean
      */
     private function getByLab($object){
@@ -384,8 +370,8 @@ class ActionManager {
     /**
      * Gets the key_id of the PrincipalInvestigator associated with a method call.  Used to determine if a User can make a call for a particular object instance.
      *
-     * @param unkonwn object
-     * @return integer $value| boolean
+     * @param object object
+     * @return integer|boolean $value
      */
     protected function getPIIDFromObject($object){
         $LOG = Logger::getLogger('Action:' . __function__);
@@ -413,7 +399,7 @@ class ActionManager {
     private function getPIIDFromUser(){
         $LOG = Logger::getLogger('Action:' . __function__);
         $user = $this->getCurrentUser();
-        $roles = getCurrentUserRoles();
+        $roles = $this->getCurrentUserRoles();
 
         if(in_array("Principal Investigator", $roles['userRoles'])){
             if($user->getPrincipalInvestigator() != NULL){
@@ -437,7 +423,7 @@ class ActionManager {
     private function getDestination(){
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
-        if($_SESSION["REDIRECT"] != null){
+        if( isset($_SESSION["REDIRECT"]) ){
             $LOG->debug("User requested specific redirect");
             $destination = str_replace("%23", "#", $_SESSION["REDIRECT"]);
             $destination = str_replace(LOGIN_PAGE, "", $destination);
@@ -480,12 +466,12 @@ class ActionManager {
         return $destination;
     }
 
-    public function prepareRedirect(){
+    public function prepareRedirect( $redirect ){
     	$LOG = Logger::getLogger("redirect");
     	$redirect = $this->getValueFromRequest('redirect', $redirect);
 
     	$_SESSION["REDIRECT"] = $redirect;
-    	$LOG->fatal($_SESSION["REDIRECT"]);
+        $LOG->info("Prepare redirect to " . $_SESSION["REDIRECT"]);
        	return true;
 
     }
@@ -547,7 +533,7 @@ class ActionManager {
 
     // Users Hub
     public function getAllUsers(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $userDao = $this->getDao( new User() );
         $allUsers = $userDao->getAll('last_name');
@@ -556,7 +542,7 @@ class ActionManager {
     }
 
     public function getUserById( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -571,7 +557,7 @@ class ActionManager {
     }
 
     public function getSupervisorByUserId( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -616,7 +602,7 @@ class ActionManager {
     }
 
     public function getRoleById( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -631,8 +617,9 @@ class ActionManager {
     }
 
     public function saveUser(){
-        $LOG = Logger::getLogger('Action:' . __function__);
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $decodedObject = $this->convertInputJson();
+
         if( $decodedObject === NULL ){
             return new ActionError('Error converting input stream to User');
         }
@@ -640,6 +627,7 @@ class ActionManager {
             return $decodedObject;
         }
         else{
+            $LOG->debug("Prepare to save user");
             $dao = $this->getDao( new User() );
             //if this user is new, make sure it's active
             if($decodedObject->getKey_id() == NULL){
@@ -647,44 +635,123 @@ class ActionManager {
             }
             $user = $dao->save( $decodedObject );
 
+            // Save Roles
+            if($decodedObject->getRoles() != NULL){
+                $LOG->debug("Updating user roles...");
+
+                // Collect IDs of existing & new roles
+                function fn_getRoleId($r){
+                    if( is_array($r) ){
+                        return $r['Key_id'];
+                    }
+                    else{
+                        return $r->getKey_id();
+                    }
+                };
+
+                function updateRole($actionman, $rid, $uid, $add){
+                    $rel = new RelationshipDto();
+                    $rel->setMaster_id($uid);
+                    $rel->setRelation_id($rid);
+                    $rel->setAdd($add);
+                    $actionman->saveUserRoleRelation($rel);
+                }
+
+                $newRoleIds = array_map( 'fn_getRoleId', $decodedObject->getRoles() );
+                $oldRoleIds = array_map( 'fn_getRoleId', $user->getRoles());
+
+                /** Roles present in old entity which should be removed */
+                $rolesToUnlink = array_diff($oldRoleIds, $newRoleIds);
+
+                /** Roles not present in old entity which should be added */
+                $rolesToAdd = array_diff($newRoleIds, $oldRoleIds);
+
+                $LOG->debug("Roles requiring update: " . (count($rolesToUnlink) + count($rolesToAdd)));
+                if( !empty($rolesToUnlink) ){
+                    foreach($rolesToUnlink as $r){
+                        $LOG->debug("Unlink Role #$r from User #" . $user->getKey_id());
+                        updateRole($this, $r, $user->getKey_id(), false);
+                    }
+                }
+
+                if( !empty($rolesToAdd) ){
+                    foreach($rolesToAdd as $r){
+                        $LOG->debug("Link Role #$r from User #" . $user->getKey_id());
+                        updateRole($this, $r, $user->getKey_id(), true);
+                    }
+                }
+            }
+
             //see if we need to save a PI or Inspector object
             if($decodedObject->getRoles() != NULL){
+                $LOG->debug("Check roles for special-cases");
+                $savePI = false;
+                $saveInspector = false;
                 foreach($decodedObject->getRoles() as $role){
                     $role = $this->getRoleById($role['Key_id']);
                     if($role->getName() == "Principal Investigator")$savePI 	   = true;
                     if($role->getName() == "Safety Inspector")      $saveInspector = true;
                 }
+                $LOG->debug("PI:$savePI | inspector:$saveInspector");
             }
 
             //user was sent from client with Principal Investigator in roles array
-            if(isset($savePI)){
+            if($savePI){
+                $LOG->debug("Processing PI details");
                  //we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
                 if($decodedObject->getPrincipalInvestigator() != null){
+                    $LOG->debug("Retrieve PI details from incoming data");
                     $pi = $decodedObject->getPrincipalInvestigator();
                 }else{
+                    $LOG->debug("Create new PI entity");
                     $pi = new PrincipalInvestigator();
                     $pi->setUser_id($user->getKey_id());
                 }
 
+                // Look up the old PI (if any)
+                $pi_dao = new GenericDAO(new PrincipalInvestigator());
+                $old_pi = $pi_dao->getById( $pi->getKey_id() );
+                $LOG->debug("Old PI: $old_pi");
+
                 $pi->setUser_id($user->getKey_id());
                 $pi->setIs_active($user->getIs_active());
-                $depts = $pi->getDepartments();
 
+                $LOG->debug("Save PI details");
                 $newPi = $this->savePI($pi);
 
                 //set hazard relationships for any rooms the pi has
+                $LOG->debug("Process rooms");
                 foreach($newPi->getRooms() as $room){
 
                     $room->getHazardTypesArePresent();
                     $room = $this->saveRoom($room);
+                    $LOG->debug("Saved $room");
                 }
 
-                foreach($depts as $department){
-                	$dto = new RelationshipDto();
-                	$dto->setAdd(true);
-                	$dto->setMaster_id($newPi->getKey_id());
-                	$dto->setRelation_id($department["Key_id"]);
-                	$this->savePIDepartmentRelation($dto);
+                // TODO: Only remove department if it isn't incoming
+                if( isset($old_pi) ){
+                    $LOG->debug("Removing old departments from PI #" . $old_pi->getKey_id());
+                    // Remove all pre-existing departments
+                    $old_depts = $old_pi->getDepartments();
+                    if( isset($old_depts) ){
+                        foreach($old_depts as $dept){
+                            $LOG->debug("Unlink $dept");
+                            $pi_dao->removeRelatedItems($dept->getKey_id(), $old_pi->getKey_id(), DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
+                        }
+                    }
+                }
+                else{
+                    $LOG->debug("No old departments");
+                }
+
+                // Save incoming Departments
+                $depts = $pi->getDepartments();
+                if( isset($depts) ){
+                    $LOG->debug("Link " . count($depts) . " incoming departments");
+                    foreach($depts as $dept){
+                        $LOG->debug("Linking dept #" . $dept['Key_id']);
+                        $pi_dao->addRelatedItems($dept['Key_id'], $pi->getKey_id(), DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
+                    }
                 }
 
                 $newPi->setDepartments($pi->getDepartments());
@@ -692,7 +759,8 @@ class ActionManager {
             }
 
             //user was sent from client with Saftey Inspector in roles array
-            if(isset($saveInspector)){
+            if($saveInspector){
+                $LOG->debug("Processing Inspector details");
 
                 //we have an inspector for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
                 if($user->getInspector() != null){
@@ -755,7 +823,7 @@ class ActionManager {
     }
 
     public function getChecklistByHazardId( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $id = $this->getValueFromRequest('id', $id);
 
         if( $id !== NULL ){
@@ -779,7 +847,7 @@ class ActionManager {
     }
 
     public function getAllQuestions(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $questions = array();
 
         $dao = $this->getDao(new Question());
@@ -826,7 +894,7 @@ class ActionManager {
                         $hazardDao = $this->getDao ($hazard);
                         $masterHazard = $hazardDao->getById($masterHazardId);
                         $master_hazard = $masterHazard->getName();
-                        $LOG->fatal($master_hazard . ' | ' . $masterHazardId);
+                        $LOG->debug($master_hazard . ' | ' . $masterHazardId);
                     }else{
                         //if we don't have a parent hazard, other than Root, we set the master hazard to be the hazard
                         //i.e. Biological Hazards' checklist should have Biological Hazards as its master hazard
@@ -996,7 +1064,7 @@ class ActionManager {
             // if roomIds were provided then save them
             if (!empty($roomIds)){
                 foreach ($roomIds as $id){
-                    $LOG->fatal($id);
+                    $LOG->debug($id);
                     $dao->addRelatedItems($id,$sd->getKey_id(),DataRelationship::fromArray(SupplementalDeficiency::$ROOMS_RELATIONSHIP));
                 }
 
@@ -1015,7 +1083,7 @@ class ActionManager {
 
     // Hazards Hub
     public function getAllHazardsAsTree() {
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $dao = $this->getDao(new Hazard());
         // get the Root of the hazard tree
         $root = $dao->getById(10000);
@@ -1036,7 +1104,7 @@ class ActionManager {
 
     public function getAllHazards(){
         //FIXME: This public function should return a FLAT COLLECTION of ALL HAZARDS; not a Tree
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $dao = $this->getDao(new Hazard());
         $hazards = $dao->getAll();
 
@@ -1101,7 +1169,7 @@ class ActionManager {
 
     //FIXME: Remove $name
     public function getHazardById( $id = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -1120,7 +1188,7 @@ class ActionManager {
      * Moves specified hazard to the specified parent
      */
     public function moveHazardToParent($hazardId = NULL, $parentHazardId = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         //Get ids
         $hazardId = $this->getValueFromRequest('hazardId', $hazardId);
@@ -1297,7 +1365,7 @@ class ActionManager {
     }
 
     public function saveRoom($room = null){
-        $LOG = Logger::getLogger('Action:' . __function__);
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         if($room == null){
             $decodedObject = $this->convertInputJson();
         }else{
@@ -1312,14 +1380,30 @@ class ActionManager {
         }
         else{
             $dao = $this->getDao(new Room());
-            $room = $this->getRoomById($decodedObject->getKey_id());
-            if(is_array( $decodedObject->getPrincipalInvestigators() )){
-                $LOG->fatal($decodedObject);
 
-                foreach ($room->getPrincipalInvestigators() as $child){
-                    $dao->removeRelatedItems($child->getKey_id(),$room->getKey_id(),DataRelationship::fromArray(Room::$PIS_RELATIONSHIP));
+            $room = null;
+            if( $decodedObject->hasPrimaryKeyValue() ){
+                // Update existing room
+                $room = $this->getRoomById($decodedObject->getKey_id());
+                $LOG->info("Update existing room $room");
+            }
+            else{
+                // Create new room
+                $room = new Room();
+                $LOG->info("Create new Room");
+            }
+
+            if(is_array( $decodedObject->getPrincipalInvestigators() )){
+                $LOG->debug($decodedObject);
+
+                if( $room->getPrincipalInvestigators() != null ){
+                    // Remove any existing
+                    foreach ($room->getPrincipalInvestigators() as $child){
+                        $dao->removeRelatedItems($child->getKey_id(),$room->getKey_id(),DataRelationship::fromArray(Room::$PIS_RELATIONSHIP));
+                    }
                 }
 
+                // Add any new
                 foreach($decodedObject->getPrincipalInvestigators() as $pi){
                     //$LOG->fatal($pi["Key_id"] . ' | room: ' . $room->getKey_id());
                     if(gettype($pi) == "array"){
@@ -1332,6 +1416,7 @@ class ActionManager {
                 }
             }
 
+            $LOG->info("Saving... $decodedObject");
             $room = $dao->save($decodedObject);
 
 
@@ -1344,6 +1429,7 @@ class ActionManager {
             $entityMaps[] = new EntityMap("lazy","getSolidsContainers");
             $room->setEntityMaps($entityMaps);
 
+            $LOG->info("Saved $room");
             return $room;
         }
     }
@@ -1606,7 +1692,7 @@ class ActionManager {
 
     public function saveRecommendationRelation(){
 
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $decodedObject = $this->convertInputJson();
 
@@ -1646,7 +1732,7 @@ class ActionManager {
 
     public function saveObservationRelation(){
 
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $decodedObject = $this->convertInputJson();
 
@@ -1698,7 +1784,7 @@ class ActionManager {
     }
 
     public function getAllInspectors(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new Inspector());
 
@@ -1747,7 +1833,7 @@ class ActionManager {
 
     // Inspection, step 1 (PI / Room assessment)
     public function getPiForHazardInventory( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $id = $this->getValueFromRequest('id', $id);
 
         if( $id !== NULL ){
@@ -1824,7 +1910,7 @@ class ActionManager {
     }
 
     public function getAllPIs($rooms = null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $rooms = $this->getValueFromRequest("rooms", $rooms);
 
@@ -1975,7 +2061,7 @@ class ActionManager {
     }
 
     public function getAllRooms($allLazy = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new Room());
 
@@ -2048,7 +2134,7 @@ class ActionManager {
     }
 
     public function getAllPrincipalInvestigatorRoomRelations(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new PrincipalInvestigatorRoomRelation());
 
@@ -2057,9 +2143,9 @@ class ActionManager {
 
     public function getRoomsByPIId( $id = NULL ){
         //Get responses for Inspection
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
-        $piId = $this->getValueFromRequest('piId', $piId);
+        $piId = $this->getValueFromRequest('piId', $id);
 
         if( $piId !== NULL ){
 
@@ -2078,7 +2164,7 @@ class ActionManager {
     public function getRoomById( $id = NULL ){
         $id = $this->getValueFromRequest('id', $id);
 
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->trace('getting room');
 
         if( $id !== NULL ){
@@ -2093,7 +2179,7 @@ class ActionManager {
     public function getPIsByRoomId( $id = NULL ){
         $id = $this->getValueFromRequest('id', $id);
 
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->trace('getting room');
 
         if( $id !== NULL ){
@@ -2107,7 +2193,7 @@ class ActionManager {
     }
 
     public function getPIsByClassInstance( $decodedObject = NULL ){
-     $LOG = Logger::getLogger( 'Action:' . __function__ );
+     $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $decodedObject = $this->convertInputJson();
 
@@ -2189,7 +2275,7 @@ class ActionManager {
     }
 
     public function savePIRoomRelation($PIId = NULL,$roomId = NULL,$add= NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         if($PIId == NULL && $roomId == NULL && $add == NULL){
             $decodedObject = $this->convertInputJson();
         }else{
@@ -2255,7 +2341,7 @@ class ActionManager {
     }
 
     public function savePIContactRelation($PIId = NULL,$contactId = NULL,$add= NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $decodedObject = $this->convertInputJson();
 
@@ -2295,7 +2381,7 @@ class ActionManager {
     public function savePIDepartmentRelations($piId = NULL, $departmentIds = NULL){
         $piId = $this->getValueFromRequest('piId', $piId);
         $departmentIds = $this->getValueFromRequest('departmentIds', $departmentIds);
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->debug($this->getValueFromRequest('departmentIds', $departmentIds));
         foreach($departmentIds as $departmentId){
             $relation = new RelationshipDto();
@@ -2308,7 +2394,7 @@ class ActionManager {
     }
 
     public function savePIDepartmentRelation($decodedObject){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         if($decodedObject == null)$decodedObject = $this->convertInputJson();
 
@@ -2353,7 +2439,7 @@ class ActionManager {
     }
 
     public function saveUserRoleRelations($userId = null, $roleIds = null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $userId = $this->getValueFromRequest('userId', $userId);
         $roleIds = $this->getValueFromRequest('roleIds', $roleIds);
@@ -2369,7 +2455,7 @@ class ActionManager {
     }
 
     public function saveUserRoleRelation($relation = null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         if($relation == null){
             $decodedObject = $this->convertInputJson();
@@ -2493,7 +2579,7 @@ class ActionManager {
     public function getRoomDtoByRoomId( $id = NULL, $roomName = null, $containsHazard = null, $isAllowed = null ) {
         $id = $this->getValueFromRequest('id', $id);
 
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->trace('getting room');
 
         if( $id !== NULL ){
@@ -2510,7 +2596,7 @@ class ActionManager {
     }
 
     public function getAllDepartments(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new Department());
 
@@ -2546,7 +2632,7 @@ class ActionManager {
 
 
     public function getAllActiveDepartments(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new Department());
 
@@ -2588,7 +2674,7 @@ class ActionManager {
     }
 
     public function getAllBuildings( $id = NULL, $skipRooms = null, $skipPis = null ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $skipRooms = $this->getValueFromRequest('skipRooms', $skipRooms);
         $skipPis = $this->getValueFromRequest('skipPis', $skipPis);
 
@@ -2634,7 +2720,7 @@ class ActionManager {
     }
 
     public function getAllCampuses(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new Campus());
         return $dao->getAll();
@@ -2671,7 +2757,6 @@ class ActionManager {
             }
             // make sure this building is loaded with the lazy loading rooms
             // ... and make sure that the rooms themselves are loaded eagerly
-            $building->setEntityMaps($bldgMaps);
 
             return $rooms;
         }
@@ -2681,14 +2766,13 @@ class ActionManager {
     }
 
     public function initiateInspection($inspectionId = NULL,$piId = NULL,$inspectorIds= NULL,$rad = NULL, $roomIds=null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
         $piId = $this->getValueFromRequest('piId', $piId);
         $inspectorIds = $this->getValueFromRequest('inspectorIds', $inspectorIds);
         $rad = $this->getValueFromRequest('rad', $rad);
         $roomIds = $this->getValueFromRequest('roomIds', $roomIds);
-
 
         if( $piId !== NULL && $inspectorIds !== null ){
 
@@ -2707,11 +2791,13 @@ class ActionManager {
             if($inspection->getSchedule_year() == NULL){
                 $year = $this->getCurrentYear();
                 $inspection->setSchedule_year($year);
+                $LOG->trace("Inspection Year: $year");
             }
 
             if($inspection->getSchedule_month() == null){
                 $month = date('m');
                 $inspection->setSchedule_month($month);
+                $LOG->trace("Inspection Month: $month");
             }
 
             $inspection->setPrincipal_investigator_id($piId);
@@ -2721,6 +2807,7 @@ class ActionManager {
             $dao->save($inspection);
 
             // Remove previous rooms and add the default rooms for this PI.
+            $LOG->trace("Update inspection rooms");
             if($roomIds){
                 $oldRooms = $inspection->getRooms();
                 if (!empty($oldRooms)) {
@@ -2736,6 +2823,7 @@ class ActionManager {
             }
 
             // Remove previous inspectors and add the submitted inspectors.
+            $LOG->trace("Update inspection inspectors");
             $oldInspectors = $inspection->getInspectors();
             if (!empty($oldInspectors)) {
                 // remove the old inspectors
@@ -2748,6 +2836,37 @@ class ActionManager {
                 $dao->addRelatedItems($insp,$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
             }
 
+            // Remove previous lab contacts
+            $LOG->trace("Update inspection Lab Contacts");
+            $oldContacts = $inspection->getLabPersonnel();
+            if( !empty($oldContacts) ){
+                foreach($oldContacts as $contact){
+                    $dao->removeRelatedItems(
+                        $contact->getKey_id(),
+                        $inspection->getKey_id(),
+                        DataRelationship::fromArray(Inspection::$INSPECTION_LAB_PERSONNEL_RELATIONSHIP));
+                }
+            }
+
+            // add contacts from Principal Investigator
+            $pi = $inspection->getPrincipalInvestigator();
+            foreach($pi->getLabPersonnel() as $contact){
+                // Ensure that this user is a 'Lab Contact'
+                $hasContactRole = count(array_filter( $contact->getRoles(), function($role){
+                    return $role->getName() == 'Lab Contact';
+                }));
+
+                if( $hasContactRole ){
+                    $LOG->debug("Add Lab Contact $contact to $inspection");
+                    $dao->addRelatedItems(
+                        $contact->getKey_id(),
+                        $inspection->getKey_id(),
+                        DataRelationship::fromArray(Inspection::$INSPECTION_LAB_PERSONNEL_RELATIONSHIP ));
+                }
+                else {
+                    $LOG->trace("Personnel $contact is not a lab contact");
+                }
+            }
 
         } else {
             //error
@@ -2764,12 +2883,13 @@ class ActionManager {
 
         $inspection->setEntityMaps($entityMaps);
 
+        $LOG->debug("Inspection initiated: $inspection");
         return $inspection;
     }
 
     //Appropriately sets relationships for an inspection if an inspector is not inspecting all of a PI's rooms
     public function resetInspectionRooms($inspectionId = NULL, $roomIds = null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
         $roomIds = $this->getValueFromRequest('roomIds', $roomIds);
@@ -2795,7 +2915,7 @@ class ActionManager {
     }
 
     public function removeAllInspectionRooms(&$inspectionDao){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $inspectionId = $inspectionDao->getKey_id();
 
@@ -2806,7 +2926,7 @@ class ActionManager {
     }
 
     public function saveInspectionRoomRelation($roomId = NULL,$inspectionId = NULL,$add= NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $roomId = $this->getValueFromRequest('roomId', $roomId);
         $inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
@@ -2860,12 +2980,18 @@ class ActionManager {
     }
 
     public function scheduleInspection(){
-        $LOG = Logger::getLogger('Action:' . __function__);
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
         $decodedObject = $this->convertInputJson();
         $inspectionDao = $this->getDao( new Inspection() );
         if( $decodedObject->getInspections()->getKey_id() != NULL ){
+            $LOG->info("Updating Scheduled Inspection");
             $inspection = $inspectionDao->getById( $decodedObject->getInspections()->getKey_id() );
+            if( $LOG->isTraceEnabled() ){
+                $LOG->trace($inspection);
+            }
         }else{
+            $LOG->info("Scheduling New Inspection");
             $inspection = new Inspection();
         }
 
@@ -2875,34 +3001,75 @@ class ActionManager {
         $inspection->setPrincipal_investigator_id($decodedObject->getPi_key_id());
         $inspection = $inspectionDao->save( $inspection );
 
+        // remove old lab contact relationship
+        if($inspection->getLabPersonnel() != null){
+            $LOG->trace("Remove old lab personnel from $inspection");
+            foreach($inspection->getLabPersonnel() as $contact){
+                $inspectionDao->removeRelatedItems(
+                    $contact->getKey_id(),
+                    $inspection->getKey_id(),
+                    DataRelationship::fromArray(Inspection::$INSPECTION_LAB_PERSONNEL_RELATIONSHIP));
+            }
+        }
+
+        // Save Personnel relationships
+        $LOG->debug("Save lab personnel for $inspection");
+        $pi = $inspection->getPrincipalInvestigator();
+        foreach($pi->getLabPersonnel() as $contact){
+            // Ensure that this user is a 'Lab Contact'
+            $hasContactRole = count(array_filter( $contact->getRoles(), function($role){
+                return $role->getName() == 'Lab Contact';
+            }));
+
+            if( $hasContactRole ){
+                $LOG->debug("Add Lab Contact $contact to $inspection");
+                $inspectionDao->addRelatedItems(
+                    $contact->getKey_id(),
+                    $inspection->getKey_id(),
+                    DataRelationship::fromArray(Inspection::$INSPECTION_LAB_PERSONNEL_RELATIONSHIP ));
+            }
+            else {
+                $LOG->trace("Personnel $contact is not a lab contact");
+            }
+        }
+
         if($inspection->getRooms() != null){
+            $LOG->debug("Remove old Rooms for $inspection");
             foreach($inspection->getRooms() as $room){
                 //remove old room relationship
                 $this->saveInspectionRoomRelation($room->getKey_id(),$inspection->getKey_id(),false);
             }
         }
 
-        foreach($decodedObject->getBuilding_rooms() as $room){
-            //save room relationships
-            $this->saveInspectionRoomRelation($room["Key_id"],$inspection->getKey_id(),true);
+        if( $decodedObject->getBuilding_rooms() != null ){
+            $LOG->debug("Save new Rooms for $inspection");
+            foreach($decodedObject->getBuilding_rooms() as $room){
+                //save room relationships
+                $this->saveInspectionRoomRelation($room["Key_id"],$inspection->getKey_id(),true);
+            }
         }
 
         if($inspection->getInspectors() != null){
+            $LOG->debug("Remove old Inspectors for $inspection");
             foreach($inspection->getInspectors() as $inspector){
                 //remove old inspector relationships
-                $LOG->debug($inspector);
+                $LOG->debug("Remove $inspector");
                 $inspectionDao->removeRelatedItems($inspector->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
             }
             $inspection->setInspectors(null);
         }
 
+        $LOG->debug("Save new Inspectors for $inspection");
         foreach($decodedObject->getInspections()->getInspectors() as $inspector){
+            $LOG->debug("Link inspector: " . $inspector["Key_id"]);
             //save inspector relationships
             $inspectionDao->addRelatedItems($inspector["Key_id"],$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP ));
         }
 
         //When an Inspection is scheduled, labs should complete a verification before the inspection takes place
         if($inspection->getSchedule_month() != null){
+            $LOG->debug("Process lab Verifications for $inspection");
+
             //first, see if this verification has already been created
             $whereClauseGroup = new WhereClauseGroup(
                 array(new WhereClause("inspection_id","=",$inspection->getKey_id()))
@@ -2910,11 +3077,18 @@ class ActionManager {
             $verificationDao =  new GenericDAO(new Verification());
 
             $verifications = $verificationDao->getAllWhere($whereClauseGroup);
-            $LOG->fatal($verifications);
+
+            $LOG->info( count($verifications) . " Existing Verifications for $inspection");
+            if( $LOG->isTraceEnabled()) {
+                $LOG->trace($verifications);
+            }
+
             if(!empty($verifications)){
                 $verification = $verifications[0];
+                $LOG->info("Updating Verification $verification for $inspection");
             }else{
                 $verification = new Verification();
+                $LOG->info("Create new Verification for $inspection");
             }
 
             //the verification is due one month before the first day of the scheduled month of the inspection
@@ -2995,13 +3169,12 @@ class ActionManager {
      * @return Associative array: [Hazard KeyId] => array( HazardTreeNodeDto )
      */
     public function getHazardRoomMappingsAsTree( $roomIds = NULL, $hazard = null ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $roomIdsCsv = $this->getValueFromRequest('roomIds', $roomIds);
 
         if( $roomIdsCsv !== NULL ){
-            $LOG->debug("Retrieving Hazard-Room mappings for Rooms: $roomIdsCsv");
+            $LOG->debug("Retrieving Hazard-Room mappings for Rooms: " . implode(', ', $roomIdsCsv));
             $LOG->debug('Identified ' . count($roomIdsCsv) . ' Rooms');
-            $LOG->debug($roomIdsCsv);
             //Get all hazards
             if($hazard != null){
               $allHazards = $hazard;
@@ -3068,7 +3241,7 @@ class ActionManager {
     }
 
     public function filterHazards (&$hazard, $rooms, $generalHazard = null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->debug($hazard->getName());
         $entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getSubHazards");
@@ -3083,7 +3256,7 @@ class ActionManager {
         $hazard->setInspectionRooms($rooms);
         $hazard->filterRooms();
 
-        if(stristr($hazard->getName, 'general hazard') || $generalHazard){
+        if(stristr($hazard->getName(), 'general hazard') || $generalHazard){
                 $generalHazard = true;
                 if($hazard->getIsPresent() != true){
                     $this->saveHazardRoomRelations( $hazard, $rooms );
@@ -3145,7 +3318,7 @@ class ActionManager {
     //UTILITY public function FOR getHazardRoomMappingsAsTree
     public function getHazardRoomMappings($hazard, $rooms, $searchRoomIds, $parentIds = null){
         $searchRoomIds = $searchRoomIds;
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->trace("Getting room mappings for $hazard");
         $relevantRooms = array();
 
@@ -3199,7 +3372,7 @@ class ActionManager {
     }
 
     public function getHazardsInRoom( $roomId = NULL, $subHazards ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $roomId = $this->getValueFromRequest('roomId', $roomId);
         $subHazards = $this->getValueFromRequest('subHazards', $subHazards);
         $LOG->debug("subHazards is $subHazards, roomId is $roomId");
@@ -3243,8 +3416,8 @@ class ActionManager {
         }
     }
 
-    public function getHazardsInRoomByPi( $roomId = NULL, $piId ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+    public function getHazardsInRoomByPi( $roomId = NULL, $piId = NULL, $subHazards = NULL ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $roomId = $this->getValueFromRequest('roomId', $roomId);
         $subHazards = $this->getValueFromRequest('subHazards', $subHazards);
         $LOG->debug("subHazards is $subHazards, roomId is $roomId");
@@ -3340,7 +3513,7 @@ class ActionManager {
      * @return array $hazards
      */
     private function getFlatHazardBranch($hazard, &$hazards = null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         if($hazards == null){
             $hazards = array($hazard);
@@ -3487,7 +3660,7 @@ class ActionManager {
 
     public function getGrandma($hazard){
         $parentBranchIds = array(1,10009,10010);
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->debug('hazard id is '.$hazardId);
         $parentDao = $this->getDao(new Hazard());
         $granny    = $parentDao->getById($hazard->getParent_hazard_id());
@@ -3501,7 +3674,7 @@ class ActionManager {
     }
 
     public function saveHazardRelation($roomId = NULL,$hazardId = NULL,$add= NULL, $recurse = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         if($roomId == null)$roomId = $this->getValueFromRequest('roomId', $roomId);
         if($hazardId == null)$hazardId = $this->getValueFromRequest('hazardId', $hazardId);
@@ -3604,7 +3777,7 @@ class ActionManager {
     // Inspection, step 3 (Checklist)
     //public function getQuestions(){ }	//DUPLICATE public function
     public function getDeficiencyById( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -3666,7 +3839,7 @@ class ActionManager {
             // start by saving or updating the object.
             $dao = $this->getDao(new DeficiencySelection());
             $ds = $dao->save($decodedObject);
-            $LOG->fatal($decodedObject);
+            $LOG->debug($decodedObject);
             // remove the old rooms. if any
             foreach ($ds->getRooms() as $room){
                 $dao->removeRelatedItems($room->getKey_id(),$ds->getKey_id(),DataRelationship::fromArray(DeficiencySelection::$ROOMS_RELATIONSHIP));
@@ -3766,7 +3939,8 @@ class ActionManager {
             return $decodedObject;
         }
         else{
-            $action = end($decodedObject->getCorrectiveActions());
+            $correctiveActions = $decodedObject->getCorrectiveActions();
+            $action = end($correctiveActions);
             $dao = new GenericDAO(new CorrectiveAction());
             if($dao->deleteById($action["Key_id"])){
                 $decodedObject->setCorrectiveActions(null);
@@ -3782,7 +3956,7 @@ class ActionManager {
     }
 
     public function getChecklistsForInspection( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $id = $this->getValueFromRequest('id', $id);
         if( $id !== NULL ){
             $dao = $this->getDao(new Inspection());
@@ -3801,7 +3975,7 @@ class ActionManager {
             $masterHazards = array();
             //iterate the rooms and find the hazards present
 
-            $LOG->fatal($inspection->getPrincipal_investigator_id);
+            $LOG->debug($inspection->getPrincipal_investigator_id());
             foreach ($orderedRooms as $room){
                 $hazardlist = $this->getHazardsInRoomByPi($room->getKey_id(), $inspection->getPrincipal_investigator_id());
                 // get each hazard present in the room
@@ -3843,7 +4017,7 @@ class ActionManager {
     }
 
     public function getInspectionById( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -3921,9 +4095,9 @@ class ActionManager {
         return true;
     }
 
-    public function getInspectionsByPIId( $id = NULL ){
+    public function getInspectionsByPIId( $piId = NULL ){
         //Get responses for Inspection
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $piId = $this->getValueFromRequest('id', $piId);
 
@@ -3943,7 +4117,7 @@ class ActionManager {
 
     public function getArchivedInspectionsByPIId( $id = NULL){
         //Get responses for Inspection
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $piId = $this->getValueFromRequest('piId', $piId);
 
@@ -3964,7 +4138,7 @@ class ActionManager {
     }
 
     public function resetChecklists( $id = NULL, $report = null  ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
         $report = $this->getValueFromRequest('report', $report);
@@ -3994,12 +4168,12 @@ class ActionManager {
 
             // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
             if($report == null){
-                $LOG->fatal('should be getting new list of checklists');
+                $LOG->debug('should be getting new list of checklists');
                 $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
             }
             //if we are loading a report instead of a list of checklists for an inspection, we don't update the list of checklists
             else{
-                $LOG->fatal('should be retrieving old checklists');
+                $LOG->debug('should be retrieving old checklists');
                 $checklists = $oldChecklists;
             }
 
@@ -4054,10 +4228,13 @@ class ActionManager {
                     //evaluate what rooms we need.  any room a checklist for a child of this one has should be pushed
                     $childLists =  $this->getChildLists($list, $orderedChecklists);
                     foreach($childLists as $childList){
-                        foreach($childList->getInspectionRooms() as $room){
-                            if(!in_array($room->getKey_id(), $neededRoomIds)){
-                                array_push($neededRoomIds, $room->getKey_id());
-                                array_push($neededRooms, $room);
+                        $childInspectionRooms = $childList->getInspectionRooms();
+                        if( !empty($childInspectionRooms) ){
+                            foreach($childList->getInspectionRooms() as $room){
+                                if(!in_array($room->getKey_id(), $neededRoomIds)){
+                                    array_push($neededRoomIds, $room->getKey_id());
+                                    array_push($neededRooms, $room);
+                                }
                             }
                         }
                     }
@@ -4086,7 +4263,7 @@ class ActionManager {
     }
 
     private function  recurseHazardTreeForChecklists( &$checklists, $hazardIds, &$orderedChecklists, $hazard = null ) {
-    	$LOG = Logger::getLogger( 'Action:' . __function__ );
+    	$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
     	if($hazard == null){
     		//get the "Root hazard".  It's key_id is 10000, hence the magic number
@@ -4120,7 +4297,7 @@ class ActionManager {
 	}
 
     public function getDeficiencySelectionById( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -4158,7 +4335,7 @@ class ActionManager {
     //TODO: Observations?
 
     public function getRecommendationById( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -4195,7 +4372,7 @@ class ActionManager {
     }
 
     public function getObservationById( $id = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -4210,7 +4387,7 @@ class ActionManager {
     }
 
     public function getObservationsForResponse( $responseId = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         //get Observations for Response
 
         $responseId = $this->getValueFromRequest('responseId', $responseId);
@@ -4238,7 +4415,7 @@ class ActionManager {
 
     //TODO: remove HACK specifying inspection ID
     public function getResponseById( $id = NULL, $inspectionId = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $id = $this->getValueFromRequest('id', $id);
 
@@ -4258,7 +4435,7 @@ class ActionManager {
     // Inspection, step 5 (Details, Full Report)
     public function getResponsesForInspection( $inspectionId = NULL){
         //Get responses for Inspection
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $inspectionId = $this->getValueFromRequest('inspectionId', $inspectionId);
 
@@ -4289,7 +4466,7 @@ class ActionManager {
 
     public function lookupUser($username = NULL) {
         //Get responses for Inspection
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $username = $this->getValueFromRequest('username', $username);
 
@@ -4371,7 +4548,7 @@ class ActionManager {
     }
 
     public function createOrderIndicesForHazards(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $hazards = $this->getHazardTreeNode(10000);
         foreach($hazards as $hazard){
             $this->setOrderIndicesForSubHazards( $hazard );
@@ -4380,7 +4557,7 @@ class ActionManager {
     }
 
     public function setOrderIndicesForSubHazards( $hazard = NULL ){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         //if we have passed a hazard, use it, if not, use the input stream
         if($hazard == null){
@@ -4411,7 +4588,7 @@ class ActionManager {
 
     //reorder hazards
     public function reorderHazards($hazardId = null, $beforeHazardId = null, $afterHazardId = null){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $hazardId = $this->getValueFromRequest('hazardId', $hazardId);
         $beforeHazardId = $this->getValueFromRequest('beforeHazardId', $beforeHazardId);
@@ -4462,7 +4639,7 @@ class ActionManager {
     }
 
     public function getInspectionSchedule($year = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         // read the Year value from the request.
         $year = $this->getValueFromRequest('year', $year);
@@ -4472,7 +4649,7 @@ class ActionManager {
             $year = $this->getCurrentYear();
         }
                 // Call the database
-		$LOG->fatal('getting schedule for ' . $year);
+		$LOG->info('getting schedule for ' . $year);
         $dao = $this->getDao(new Inspection());
         $inspectionSchedules = $dao->getNeededInspectionsByYear($year);
 
@@ -4530,7 +4707,7 @@ class ActionManager {
     }
 
     public function getInspectionsByYear($year = NULL){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         // read the Year value from the request.
         $year = $this->getValueFromRequest('year', $year);
@@ -4561,7 +4738,7 @@ class ActionManager {
     }
 
     public function getAllLabLocations(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = $this->getDao(new Inspection());
         $rooms = $dao->getAllLocations();
@@ -4616,7 +4793,7 @@ class ActionManager {
      */
     public function swapQuestions($id1 = NULL, $id2 = NULL) {
 
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $firstKeyId = $this->getValueFromRequest('firstKeyId', $id1);
         $secondKeyId = $this->getValueFromRequest('secondKeyId', $id2);
 
@@ -4646,7 +4823,7 @@ class ActionManager {
     }
 
     public function getLocationCSV(){
-        $LOG = Logger::getLogger( 'Action:' . __function__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $roomDao = $this->getDao(new Room());
         $rooms = $roomDao->getAll(NULL,NULL,true);
 
@@ -4694,6 +4871,7 @@ class ActionManager {
 
         }
         fclose($output);
+        return '';
     }
 
     public function getMyLab($id = null){
@@ -4757,8 +4935,6 @@ class ActionManager {
     }
 
     public function getRelationships( $class1 = NULL, $class2 = NULL, $override = NULL ){
-    	$LOG = Logger::getLogger( 'Action:' . __function__ );
-
     	if($class1==NULL)$class1 = $this->getValueFromRequest('class1', $class1);
     	if($class2==NULL)$class2 = $this->getValueFromRequest('class2', $class2);
         if($override==NULL)$override = $this->getValueFromRequest('override', $override);
@@ -4775,10 +4951,9 @@ class ActionManager {
     		return $relationship;
     	}
 
-    	$dao = new GenericDAO(new RelationDto());
+        $dao = new RelationshipDAO();
+        $relationships = $dao->getRelationships($relationship);
 
-    	$relationships = $dao->getRelationships($relationship);
-    	//$LOG->fatal($relationships);
     	return $relationships;
     }
 
@@ -4903,7 +5078,7 @@ class ActionManager {
 		// Get the db connection
 		$db = DBConnection::get();
         $inQuery = implode(',', array_fill(0, count($piIds), '?'));
-        $l->fatal($inQuery);
+        $l->debug($inQuery);
 		//Prepare to query all from the table
 		$sql = "SELECT COUNT(key_id) FROM principal_investigator_hazard_room where room_id = ?
                              AND principal_investigator_id IN($inQuery)";
@@ -4934,7 +5109,7 @@ class ActionManager {
         if($id == null)$id = $this->getValueFromRequest('id', $id);
         $l = Logger::getLogger(__FUNCTION__);
 
-        $l->fatal('PASSED ID IS: ' . $id);
+        $l->debug('PASSED ID IS: ' . $id);
 
         $dao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation());
         $group =  new WhereClauseGroup(array(new WhereClause("hazard_id","=",$id)));

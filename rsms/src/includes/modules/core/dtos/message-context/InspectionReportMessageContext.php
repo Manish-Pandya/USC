@@ -5,7 +5,7 @@ class InspectionReportMessageContext implements MessageContext {
     public $inspectionState;
     public $email;
 
-    public function __construct($id, $state, $email){
+    public function __construct($id = NULL, $state = NULL, $email = NULL){
         $this->inspection_id = $id;
         $this->inspectionState = $state;
         $this->email = $email;
