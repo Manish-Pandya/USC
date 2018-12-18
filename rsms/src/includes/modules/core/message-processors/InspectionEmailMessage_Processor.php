@@ -40,6 +40,11 @@ class InspectionEmailMessage_Processor implements MessageTypeProcessor {
         // We'll need a user Dao to get Users and find their email addresses
         $userDao = new GenericDAO(new User());
 
+        // TODO: Get state details from the already-decoded object
+        // Decode the context value AGAIN as an associative array since our JsonManager expects
+        //   object classes to be specified in content
+        $inspectionState = JsonManager::assembleObjectFromDecodedArray($context->getInspectionState(), new LabInspectionStateDto());
+
         // Iterate the recipients list and add their email addresses to our array
         // TODO: Get the email details from the already-decoded object
         // Decode the context value AGAIN as an associative array since our JsonManager expects
@@ -69,7 +74,7 @@ class InspectionEmailMessage_Processor implements MessageTypeProcessor {
         //////////////////////////////////////////////////////////////////////
 
         //  Construct macromap
-        $macromap = $macroResolverProvider->resolve( array($inspection, $context) );
+        $macromap = $macroResolverProvider->resolve( array($inspection, $inspectionState, $context) );
 
         // prepare email details
         $details = array(
