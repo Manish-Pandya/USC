@@ -78,7 +78,7 @@
                         </ui-select>
 
                         <ul style="margin-top:3px;">
-                            <li ng-repeat="role in modalData.Roles | orderBy:'Name'"><button type="button" class="btn btn-danger btn-mini" ng-disabled="modalData.isContact && role.Name == Constants.ROLE.NAME.LAB_PERSONNEL'" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></button>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif" />
+                            <li ng-repeat="role in modalData.Roles | orderBy:'Name'"><button type="button" class="btn btn-danger btn-mini" ng-disabled="modalData.isContact && role.Name == Constants.ROLE.NAME.LAB_PERSONNEL" ng-click="removeRole(modalData,role)"><i class="icon-cancel"></i></button>{{role.Name}}<img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif" />
                             </li>
                         </ul>
                     </div>
