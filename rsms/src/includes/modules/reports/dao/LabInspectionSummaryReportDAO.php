@@ -143,13 +143,16 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
                     user.`first_name`,
                     user.`last_name`,
                     user.`name`,
-                    user.`primary_department_id`,
+                    COALESCE (
+                        user.`primary_department_id`,
+                        (SELECT department_id FROM principal_investigator_department pi_dept WHERE pi_dept.principal_investigator_id = pi.key_id LIMIT 1),
+                        NULL
+                    ) as `primary_department_id`,
                     user.`email`
-                FROM erasmus_user user WHERE user.key_id IN (
-                    SELECT ur.user_id FROM user_role ur WHERE ur.role_id = (
-                        SELECT r.key_id FROM `role` r WHERE r.name = 'Department Chair'
-                    )
-                )
+                FROM erasmus_user user
+                JOIN user_role ur ON ur.user_id = user.key_id
+                JOIN `role` r ON r.name = 'Department Chair' AND r.key_id = ur.role_id
+                LEFT OUTER JOIN principal_investigator pi ON pi.user_id = user.key_id
             ) chair
                 ON chair.primary_department_id = dept.key_id
 
