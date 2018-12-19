@@ -68,6 +68,8 @@ angular
     })
     .controller('AppCtrl', function ($rootScope, $q, convenienceMethods, $state) {
         console.debug("ng-Reports running");
+        $rootScope.webRoot = GLOBAL_WEB_ROOT;
+
         $rootScope.getNavLinks = function(){
             var links = [
                 {

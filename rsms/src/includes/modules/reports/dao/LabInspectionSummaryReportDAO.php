@@ -41,6 +41,18 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
             insp.cap_submitter_id AS cap_submitter_id,
             insp_status.inspection_status AS inspection_status,
 
+            inspection_hazards.bio_hazards_present as bio_hazards_present,
+            inspection_hazards.chem_hazards_present as chem_hazards_present,
+            inspection_hazards.rad_hazards_present as rad_hazards_present,
+            inspection_hazards.lasers_present as lasers_present,
+            inspection_hazards.xrays_present as xrays_present,
+            inspection_hazards.recombinant_dna_present as recombinant_dna_present,
+            inspection_hazards.toxic_gas_present as toxic_gas_present,
+            inspection_hazards.corrosive_gas_present as corrosive_gas_present,
+            inspection_hazards.flammable_gas_present as flammable_gas_present,
+            inspection_hazards.hf_present as hf_present,
+            inspection_hazards.animal_facility as animal_facility,
+
             -- Inspection details
             (SELECT count(*) FROM response resp WHERE resp.inspection_id = insp.key_id) as items_inspected,
             (SELECT count(*) FROM response resp WHERE resp.inspection_id = insp.key_id AND resp.answer != 'no') as items_compliant,
@@ -65,6 +77,9 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
 
         JOIN erasmus_user piuser
             ON piuser.key_id = pi.user_id
+
+        JOIN inspection_hazards inspection_hazards
+            ON inspection_hazards.inspection_id = insp.key_id
 
         -- add predicates as necessary
         $whereClause
