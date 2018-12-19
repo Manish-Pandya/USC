@@ -169,6 +169,7 @@ class Messaging_ActionManager extends ActionManager {
 
         // Append standard disclaimer
         $body = $unsent->getBody();
+        $body .= "\n\n***NOTE: The Research Safety Management System (RSMS) is only accessible when connected to the USC network.***";
         $body .= "\n\n***This is an automatic email notification. Please do not reply to this message.***";
 
         $headers = array();
