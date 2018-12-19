@@ -123,6 +123,7 @@ ul.banner-nav li a:hover {
     border-color: #ffff00 !important;
 }
 
+/* Report tables sizing */
 .report-detail table.report-table {
     font-size: 3em;
 }
@@ -139,4 +140,24 @@ ul.banner-nav li a:hover {
 
 .report-detail table.report-table td{
     padding: 10px;
+}
+
+/** Available Reports */
+.report-detail table.available-reports {
+    font-size: 1.4em;
+}
+
+.report-detail table.available-reports ul {
+    margin-left: 0px;
+}
+
+.report-detail table.available-reports ul li {
+    padding-top: 5px;
+}
+
+.report-detail table.available-reports td {
+    padding: 10px;
+}
+.report-detail table.available-reports th {
+    margin: 10px;
 }
