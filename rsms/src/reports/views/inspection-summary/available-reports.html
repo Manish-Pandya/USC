@@ -9,7 +9,7 @@
         <div ng-if="!Departments" style="text-align: center; margin: 10px;">
             <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
         </div>
-        <table ng-if="Departments" class="table table-bordered table-hover table-striped">
+        <table ng-if="Departments" class="available-reports table table-bordered table-hover table-striped">
             <thead>
                 <tr>
                     <th class="blueBg" colspan="4">
@@ -24,7 +24,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="dept in Departments | filter:{ Specialty_lab: 0 } | orderBy:'Name' track by dept.Key_id">
+                <tr ng-repeat="dept in Departments | filter:{ Specialty_lab: 0 } | orderBy:'Name' track by (dept.Key_id + '_' + dept.Chair_id)">
                     <td style="text-align: right">{{dept.Name}}</td>
                     <td>
                         <ul class="info-list" ng-if="dept.Campuses">

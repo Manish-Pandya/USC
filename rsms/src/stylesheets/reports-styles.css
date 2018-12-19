@@ -115,10 +115,49 @@ ul.banner-nav li a:hover {
 /* Inspection Status-based Styles */
 .report-detail tr.inspection-completed {
     font-style: italic;
-    color: #777;
+    color: #aaa;
 }
 
 .report-detail .overdue-cap {
     background-color: #ffff00 !important;
     border-color: #ffff00 !important;
+}
+
+/* Report tables sizing */
+.report-detail table.report-table {
+    font-size: 3em;
+}
+
+.report-detail table.report-table th {
+    font-size: 30px;
+    padding: 10px;
+}
+
+.report-detail table.report-table th i {
+    font-size: 30px;
+    padding-top: 10px;
+}
+
+.report-detail table.report-table td{
+    padding: 10px;
+}
+
+/** Available Reports */
+.report-detail table.available-reports {
+    font-size: 1.4em;
+}
+
+.report-detail table.available-reports ul {
+    margin-left: 0px;
+}
+
+.report-detail table.available-reports ul li {
+    padding-top: 10px;
+}
+
+.report-detail table.available-reports td {
+    padding: 10px;
+}
+.report-detail table.available-reports th {
+    margin: 10px;
 }

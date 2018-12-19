@@ -29,7 +29,7 @@ require_once '../top_view.php';
                 <a class="btn btn-info btn-large" ng-click="searchType = 'pi'"><h2>Search by Principal Investigator</h2></a>
             </div>
             <div class="center" ng-show="showingHazards">
-                <a class="btn btn-info left btn-large"  ng-click="showingHazards = !showingHazards; selectedRoom = null; searchType = null; room=null;building=null;"><i class="icon-redo"></i>Search Again</a>
+                <a class="btn btn-info left btn-large"  ng-click="resetSearch()"><i class="icon-redo"></i>Search Again</a>
             </div>
             <div class="spacer large"></div>
             <div class="spacer small"></div>
@@ -52,7 +52,7 @@ require_once '../top_view.php';
                         <input  style="" type="text" typeahead-on-select='onSelectRoom($item)' ng-model="selectedRoom" placeholder="Select a Room" typeahead="room as room.roomText for room in rooms | filter:{roomText: $viewValue}">-->
                         <ui-select ng-if="rooms" style="width:250px;" ng-model="room.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectRoom($item)">
                             <ui-select-match placeholder="Select Room">{{$select.selected.roomText}}</ui-select-match>
-                            <ui-select-choices repeat="room in rooms | propsFilter: {Name: $select.search}">
+                            <ui-select-choices repeat="room in rooms | propsFilter: {Name: $select.search} | orderBy: 'Name'">
                               <div ng-bind-html="room.roomText | highlight: $select.search"></div>
                             </ui-select-choices>
                         </ui-select>
@@ -76,7 +76,7 @@ require_once '../top_view.php';
                         <label>Location:</label>
                         <ui-select ng-if="rooms && !gettingRoomsForPI" style="width:500px;" ng-model="room.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectRoom($item)">
                             <ui-select-match placeholder="Select Room">{{$select.selected.roomText}}</ui-select-match>
-                            <ui-select-choices repeat="room in rooms | propsFilter: {Name: $select.search}">
+                            <ui-select-choices repeat="room in rooms | propsFilter: {Name: $select.search} | orderBy: 'Name'">
                               <div ng-bind-html="room.roomText | highlight: $select.search"></div>
                             </ui-select-choices>
                         </ui-select>

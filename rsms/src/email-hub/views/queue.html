@@ -72,12 +72,31 @@
                         </div>
 
                         <div class="inner card span5 message-type-info">
-                            <h4>Email Recipients</h4>
-                            <ul class="macro-list">
-                                <li><code>TO:</code> {{email.Recipients}}</li>
-                                <li><code>CC:</code> {{email.Cc_recipients}}</li>
-                                <li><code>FROM:</code>{{email.Send_from}}</li>
-                            </ul>
+                            <table class="macro-list">
+                                <thead>
+                                    <tr>
+                                        <td colspan="2"><h4>Email Recipients</h4></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="item in email.Recipients | splitStr">
+                                        <td><code>TO</code></td>
+                                        <td>{{item}}</td>
+                                    </tr>
+                                </tbody>
+                                <tbody>
+                                    <tr ng-repeat="item in email.Cc_recipients | splitStr">
+                                        <td><code>CC</code></td>
+                                        <td>{{item}}</td>
+                                    </tr>
+                                </tbody>
+                                <tbody>
+                                    <tr ng-repeat="item in email.Send_from | splitStr">
+                                        <td><code>FROM</code></td>
+                                        <td>{{item}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
                             <div ng-if="email.Context_descriptor" >
                                 <hr/>

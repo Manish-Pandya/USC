@@ -44,7 +44,7 @@
             <span ng-if="!selection.year">No Year Selected</span>
         </div>
 
-        <table ng-if="data.ReportItems.length">
+        <table ng-if="data.ReportItems.length" class="report-table">
             <tr>
                 <th ng-if="config.list_department" ng-click="reorder('Department_name');" class="sortable">
                     Department <i class="icon-arrow"></i>
