@@ -123,20 +123,20 @@ ul.banner-nav li a:hover {
     border-color: #ffff00 !important;
 }
 
-.report-detail table.available-reports {
+.report-detail table.report-table {
     font-size: 3em;
 }
 
-.report-detail table.available-reports th {
+.report-detail table.report-table th {
     font-size: 30px;
     padding: 10px;
 }
 
-.report-detail table.available-reports th i {
+.report-detail table.report-table th i {
     font-size: 30px;
     padding-top: 10px;
 }
 
-.report-detail table.available-reports td{
+.report-detail table.report-table td{
     padding: 10px;
 }
