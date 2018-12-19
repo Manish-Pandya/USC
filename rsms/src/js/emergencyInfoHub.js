@@ -213,6 +213,15 @@ function emergencyInfoController(  $scope, $rootScope, convenienceMethods, emerg
    $scope.error = 'Something went wrong when we tried to build the list of buildings.';
   }
 
+  $scope.resetSearch = function(){
+    $scope.showingHazards = !$scope.showingHazards;
+    $scope.selectedRoom = null;
+    $scope.searchType = null;
+    $scope.room = null;
+    $scope.building = null;
+    $scope.rooms = null;
+  };
+
   $scope.onSelectRoom = function( room )
   {
         $scope.loading = true;

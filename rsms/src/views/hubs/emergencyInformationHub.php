@@ -29,7 +29,7 @@ require_once '../top_view.php';
                 <a class="btn btn-info btn-large" ng-click="searchType = 'pi'"><h2>Search by Principal Investigator</h2></a>
             </div>
             <div class="center" ng-show="showingHazards">
-                <a class="btn btn-info left btn-large"  ng-click="showingHazards = !showingHazards; selectedRoom = null; searchType = null; room=null;building=null;"><i class="icon-redo"></i>Search Again</a>
+                <a class="btn btn-info left btn-large"  ng-click="resetSearch()"><i class="icon-redo"></i>Search Again</a>
             </div>
             <div class="spacer large"></div>
             <div class="spacer small"></div>
