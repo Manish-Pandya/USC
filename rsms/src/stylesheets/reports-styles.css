@@ -126,3 +126,17 @@ ul.banner-nav li a:hover {
 .report-detail table.available-reports {
     font-size: 3em;
 }
+
+.report-detail table.available-reports th {
+    font-size: 30px;
+    padding: 10px;
+}
+
+.report-detail table.available-reports th i {
+    font-size: 30px;
+    padding-top: 10px;
+}
+
+.report-detail table.available-reports td{
+    padding: 10px;
+}
