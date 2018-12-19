@@ -1073,7 +1073,26 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
 
     }
 
+    $scope.allowRoleRemove = function (user, role){
+      // Lab Personnel cannot be removed from a Lab Contact
+      if( role.Name == Constants.ROLE.NAME.LAB_PERSONNEL ){
+        for( var i = 0; i < user.Roles.length; i++ ){
+          if( user.Roles[i].Name == Constants.ROLE.NAME.LAB_CONTACT ){
+            // User is a Contact; disallow removal of Personnel role
+            return false;
+          }
+        }
+      }
+
+      return true;
+    };
+
     $scope.removeRole = function(user, role){
+        if( !$scope.allowRoleRemove(user, role) ){
+          $scope.modalError = role.Name + " cannot be removed from this user";
+          return;
+        }
+
         console.debug("Remove role from user", user, role);
         $scope.modalError="";
         var i = user.Roles.length;

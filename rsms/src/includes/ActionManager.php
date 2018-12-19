@@ -680,6 +680,29 @@ class ActionManager {
                         updateRole($this, $r, $user->getKey_id(), true);
                     }
                 }
+
+                // Special-case: If user is assigned Lab Contact, make sure they also have Lab Personnel
+                $allRoles = $this->getAllRoles();
+                $_contactRole = null;
+                $_personnelRole = null;
+                foreach ($allRoles as $role){
+                    if( $role->getName() == 'Lab Contact'){
+                        $_contactRole = $role;
+                    }
+                    else if( $role->getName() == 'Lab Personnel'){
+                        $_personnelRole = $role;
+                    }
+                }
+
+                $_roles = $user->getRoles();
+                $_isContact = in_array($_contactRole, $_roles);
+                $_isPersonnel = in_array($_personnelRole, $_roles);
+
+                if( $_isContact && !$_isPersonnel ){
+                    $LOG->warn("User is assigned Lab Contact role but not Lab Peronnel role");
+                    $LOG->info("Adding Lab Personnel role to user " . $user->getKey_id());
+                    updateRole($this, $_personnelRole->getKey_id(), $user->getKey_id(), true);
+                }
             }
 
             //see if we need to save a PI or Inspector object
