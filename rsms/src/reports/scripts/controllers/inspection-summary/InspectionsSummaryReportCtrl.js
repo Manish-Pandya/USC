@@ -49,6 +49,10 @@ angular.module('ng-Reports')
             // End param check
         };
 
+        $scope.hasHazard = function hasHazard( item, field ){
+            return parseInt( item[field] ) > 0;
+        };
+
         // Helper mappings for generating 'friendly' status texts
         var friendlyText = [];
         friendlyText[Constants.INSPECTION.STATUS.CLOSED_OUT] = "Closed Out";
