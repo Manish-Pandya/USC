@@ -133,9 +133,7 @@ require_once '../top_view.php';
             <h1 class="hazardHeader" ng-if="hazards">LABORATORY HAZARDS</h1>
             <ul class="modalHazardList">
                 <li ng-if="hazards" data-ng-repeat="hazard in hazards" class="modalHazard{{hazard.Key_id}}">
-                    <h1>
-                        <span ng-if="hazard.Name == 'Biological Safety'">Biological Hazards</span><span ng-if="hazard.Name == 'Chemical/Physical Safety' || hazard.Name == 'Chemical and Physical Safety'">Chemical/Physical Hazards</span><span ng-if="hazard.Name == 'Radiation Safety'">Radiation Hazards</span>
-                    </h1>
+                    <h1>{{hazard.Name}}</h1>
                     <h3 style="margin-left:32px" ng-if="eif.noSubHazardsPresent(hazard)">No {{hazard.Name}} hazards.</h3>
                     <ul ng-if="hazard.ActiveSubHazards">
                         <div ng-include="'EmergencyInfoList.php'" ng-init="SubHazards = hazard.ActiveSubHazards"></div>
