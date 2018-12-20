@@ -75,18 +75,18 @@
                 <td class="hazard-icons no-print" style="text-align: right;">
                     <span ng-if="!showInspectionLink(item)">N/A</span>
                     <span ng-if="showInspectionLink(item)">
-                        <span ng-if="item.Bio_hazards_present" ><img ng-src="{{webRoot}}/img/biohazard-largeicon.png" /></span>
-                        <span ng-if="item.Chem_hazards_present" ><img ng-src="{{webRoot}}/img/chemical-blue-icon.png" /></span>
-                        <span ng-if="item.Rad_hazards_present" ><img ng-src="{{webRoot}}/img/radiation-large-icon.png" /></span>
-                        <span ng-if="item.Recombinant_dna_present" ><img ng-src="{{webRoot}}/img/dna.png" /></span>
+                        <span ng-if="item.Bio_hazards_present"     ng-class="{'grayed-out': item.Is_rad}"><img ng-src="{{webRoot}}/img/biohazard-largeicon.png" /></span>
+                        <span ng-if="item.Chem_hazards_present"    ng-class="{'grayed-out': item.Is_rad}"><img ng-src="{{webRoot}}/img/chemical-blue-icon.png" /></span>
+                        <span ng-if="item.Rad_hazards_present"     ng-class="{'grayed-out': !item.Is_rad}"><img ng-src="{{webRoot}}/img/radiation-large-icon.png" /></span>
+                        <span ng-if="item.Recombinant_dna_present" ng-class="{'grayed-out': item.Is_rad}"><img ng-src="{{webRoot}}/img/dna.png" /></span>
 
-                        <span ng-if="item.Corrosive_gas_present" ><img ng-src="{{webRoot}}/img/corrosive-gas.png" /></span>
-                        <span ng-if="item.Flammable_gas_present" ><img ng-src="{{webRoot}}/img/flammable-gas.png" /></span>
-                        <span ng-if="item.Toxic_gas_present" ><img ng-src="{{webRoot}}/img/toxic-gas.png" /></span>
-                        <span ng-if="item.Hf_present" ><img ng-src="{{webRoot}}/img/hf.jpg" /></span>
+                        <span ng-if="item.Corrosive_gas_present"   ng-class="{'grayed-out': item.Is_rad}"><img ng-src="{{webRoot}}/img/corrosive-gas.png" /></span>
+                        <span ng-if="item.Flammable_gas_present"   ng-class="{'grayed-out': item.Is_rad}"><img ng-src="{{webRoot}}/img/flammable-gas.png" /></span>
+                        <span ng-if="item.Toxic_gas_present"       ng-class="{'grayed-out': item.Is_rad}"><img ng-src="{{webRoot}}/img/toxic-gas.png" /></span>
+                        <span ng-if="item.Hf_present"              ng-class="{'grayed-out': item.Is_rad}"><img ng-src="{{webRoot}}/img/hf.jpg" /></span>
 
-                        <span ng-if="item.Lasers_present" ><img ng-src="{{webRoot}}/img/laser.png" /></span>
-                        <span ng-if="item.Xrays_present" ><img ng-src="{{webRoot}}/img/xray.png" /></span>
+                        <span ng-if="item.Lasers_present"          ng-class="{'grayed-out': !item.Is_rad}"><img ng-src="{{webRoot}}/img/laser.png" /></span>
+                        <span ng-if="item.Xrays_present"           ng-class="{'grayed-out': !item.Is_rad}"><img ng-src="{{webRoot}}/img/xray.png" /></span>
 
                         <a title="View Report" class="btn btn-info" style="font-style: italic;" ng-if="showInspectionLink(item)" target="_blank" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{item.Inspection_id}}">
                             <i class="icon-out"></i>

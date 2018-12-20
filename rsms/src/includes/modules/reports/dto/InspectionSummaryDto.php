@@ -19,6 +19,7 @@ class InspectionSummaryDto {
     private $department_id;
     private $department_name;
 
+    private $is_rad;
     private $bio_hazards_present;
 	private $chem_hazards_present;
 	private $rad_hazards_present;
@@ -142,6 +143,8 @@ class InspectionSummaryDto {
         $this->department_name = $val;
     }
 
+    public function getIs_rad(){ return $this->is_rad; }
+    public function setIs_rad($val){ $this->is_rad = $val; }
     public function getBio_hazards_present() { return $this->bio_hazards_present; }
     public function setBio_hazards_present( $val ) { $this->bio_hazards_present = $val; }
 

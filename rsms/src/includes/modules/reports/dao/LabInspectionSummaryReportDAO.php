@@ -41,6 +41,7 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
             insp.cap_submitter_id AS cap_submitter_id,
             insp_status.inspection_status AS inspection_status,
 
+            insp.is_rad AS is_rad,
             inspection_hazards.bio_hazards_present as bio_hazards_present,
             inspection_hazards.chem_hazards_present as chem_hazards_present,
             inspection_hazards.rad_hazards_present as rad_hazards_present,
