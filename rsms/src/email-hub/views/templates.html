@@ -50,6 +50,13 @@
 
                                 <h4>Body:</h4>
                                 <textarea ui-tinymce="editorTinymceOptions" ng-model="template.EditCopy.Corpus"></textarea>
+
+                                <div style="padding-top:15px;">
+                                    <i class="icon-help pull-right" style="margin: 10px 10px 0px 0px;"
+                                        popover-placement="left"
+                                        popover="This disclaimer is added automatically to the end of all emails sent through RSMS."></i>
+                                    <pre><code>{{EmailDisclaimer}}</code></pre>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <span class="pull-left">Last Saved {{template.Date_last_modified | dateToIsoTime}}</span>

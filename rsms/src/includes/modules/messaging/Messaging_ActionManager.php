@@ -151,6 +151,10 @@ class Messaging_ActionManager extends ActionManager {
         return $formattedMessages;
     }
 
+    public function getEmailDisclaimers(){
+        return ApplicationConfiguration::get('module.Messaging.email.disclaimers', array());
+    }
+
     public function sendQueuedEmail($unsent) {
         $LOG = Logger::getLogger(__CLASS__);
         $LOG->debug("Sending email $unsent");
@@ -169,8 +173,13 @@ class Messaging_ActionManager extends ActionManager {
 
         // Append standard disclaimer
         $body = $unsent->getBody();
-        $body .= "\n\n***This is an automatic email notification. Please do not reply to this message.***";
-        $body .= "\n\n***NOTE: The Research Safety Management System (RSMS) is only accessible when connected to the USC network.***";
+
+        $disclaimers = $this->getEmailDisclaimers();
+        if( isset($disclaimers) ){
+            foreach( $disclaimers as $disclaimer ){
+                $body .= "\n\n$disclaimer";
+            }
+        }
 
         $headers = array();
 

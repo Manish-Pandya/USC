@@ -19,6 +19,12 @@ angular.module('ng-EmailHub')
 
                 $scope.Templates = templates;
                 return templates;
+            }),
+            XHR.GET('getEmailDisclaimers').then( disclaimers => {
+                console.debug("Retrieved email disclaimers:", disclaimers);
+                // Concat disclaimers into one string
+                $scope.EmailDisclaimer = (disclaimers || []).join('\n\n');
+                return $scope.EmailDisclaimer;
             })
         ]);
 

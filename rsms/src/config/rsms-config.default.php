@@ -40,6 +40,10 @@ return array(
     "module.Messaging.email.suppress_all" => false,
     "module.Messaging.email.defaults.send_from" => '"RSMS Portal" <LabInspectionReports@ehs.sc.edu>',
     "module.Messaging.email.defaults.return_path" => NULL,
+    "module.Messaging.email.disclaimers" => array(
+        "***This is an automatic email notification. Please do not reply to this message.***",
+        "***NOTE: The Research Safety Management System (RSMS) is only accessible when connected to the USC network.***"
+    ),
 
     "module.Scheduler.tasks.disabled" => NULL
 );
