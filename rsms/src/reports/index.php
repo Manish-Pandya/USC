@@ -69,6 +69,9 @@
     <script src="<?php echo WEB_ROOT?>ignorasmus/client-side-framework/models/FluxCompositerBase.js"></script>
     <script src="<?php echo WEB_ROOT?>ignorasmus/client-side-framework/models/ViewModelHolder.js"></script>
 
+    <script>
+        var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
+    </script>
 </head>
 
 <body>
