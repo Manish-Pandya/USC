@@ -219,7 +219,7 @@ function emergencyInfoController(  $scope, $rootScope, convenienceMethods, emerg
     $scope.searchType = null;
     $scope.room = null;
     $scope.building = null;
-    $scope.rooms = null;
+    $rootScope.rooms = null;
   };
 
   $scope.onSelectRoom = function( room )
