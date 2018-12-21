@@ -249,6 +249,42 @@ class Messaging_ActionManager extends ActionManager {
         }
     }
 
+    public function adminTestSendEmailTemplate( $templateId ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $email = $this->getCurrentUser()->getEmail();
+
+        if( $email == NULL ){
+            return new ActionError("", 401);
+        }
+
+        if( $templateId == NULL ){
+            return new ActionError("ID is required", 400);
+        }
+
+        $LOG->info("Sending test email for Template $templateId to $email");
+
+        $templateDao = new GenericDAO( new MessageTemplate() );
+        $template = $templateDao->getById( $templateId );
+        if( $template == NULL ){
+            return new ActionError("No such template $templateId", 404);
+        }
+
+        $headers = array();
+        $headers['MIME-Version'] = "1.0";
+        $headers['Content-Type'] = "text/html; charset=UTF-8";
+        $headers_str = '';
+        foreach($headers as $k => $v){
+            $headers_str .= "$k: $v\r\n";
+        }
+
+        $subject = "[Admin Test] " . $template->getSubject();
+        $body = $template->getCorpus();
+
+        // Semd email
+        return mail($email, $subject, $body, $headers_str);
+    }
+
     private function filterToEmailsOfRole( $emailCsv, $rolename ){
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
         $array = explode(',', $emailCsv);
