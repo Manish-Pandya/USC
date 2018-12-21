@@ -172,14 +172,7 @@ class Messaging_ActionManager extends ActionManager {
         }
 
         // Append standard disclaimer
-        $body = $unsent->getBody();
-
-        $disclaimers = $this->getEmailDisclaimers();
-        if( isset($disclaimers) ){
-            foreach( $disclaimers as $disclaimer ){
-                $body .= "\n\n$disclaimer";
-            }
-        }
+        $body = $this->addDisclaimersToEmailBody( $unsent->getBody() );
 
         $headers = array();
 
@@ -207,16 +200,7 @@ class Messaging_ActionManager extends ActionManager {
 
         // TODO: Support additional headers
 
-        if( count($headers) == 0){
-            $headers = null;
-        }
-        else{
-            // Headers is populated; implode and reassign so that this is a string
-            $headers_str = '';
-            foreach($headers as $k => $v){
-                $headers_str .= "$k: $v\r\n";
-            }
-        }
+        $headers_str = $this->buildEmailHeadersString($headers);
 
         // Allow for the suppression of email-sending
         // Enabling this feature will result in the module not sending any email
@@ -271,18 +255,47 @@ class Messaging_ActionManager extends ActionManager {
         }
 
         $headers = array();
-        $headers['MIME-Version'] = "1.0";
-        $headers['Content-Type'] = "text/html; charset=UTF-8";
-        $headers_str = '';
-        foreach($headers as $k => $v){
-            $headers_str .= "$k: $v\r\n";
+
+        $default_send_from = ApplicationConfiguration::get(MessagingModule::$CONFIG_EMAIL_DEFAULT_SEND_FROM, null);
+        if( isset($default_send_from) ){
+            $headers['From'] = $default_send_from;
         }
 
+        $headers['MIME-Version'] = "1.0";
+        $headers['Content-Type'] = "text/html; charset=UTF-8";
+
+        $headers_str = $this->buildEmailHeadersString($headers);
+
         $subject = "[Admin Test] " . $template->getSubject();
-        $body = $template->getCorpus();
+        $body = $this->addDisclaimersToEmailBody($template->getCorpus());
+        $LOG->info($body);
 
         // Semd email
         return mail($email, $subject, $body, $headers_str);
+    }
+
+    private function buildEmailHeadersString( Array &$headers ){
+        $headers_str = '';
+
+        if( count($headers) > 0) {
+            // Headers is populated; implode and reassign so that this is a string
+            foreach($headers as $k => $v){
+                $headers_str .= "$k: $v\r\n";
+            }
+        }
+
+        return $headers_str;
+    }
+
+    private function addDisclaimersToEmailBody( &$body ){
+        $disclaimers = $this->getEmailDisclaimers();
+        if( isset($disclaimers) ){
+            foreach( $disclaimers as $disclaimer ){
+                $body .= "\n\n$disclaimer";
+            }
+        }
+
+        return $body;
     }
 
     private function filterToEmailsOfRole( $emailCsv, $rolename ){
