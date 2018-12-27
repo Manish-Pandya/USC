@@ -217,6 +217,15 @@ angular.module('HazardInventory')
             });
         }
 
+        $scope.isHazardBiosafetyCabinets = function isHazardBiosafetyCabinets (hazard) {
+            if(!hazard){
+                return false;
+            }
+
+            // TODO: Logically determine this based on data other than name
+            return hazard.Hazard_name == 'Biosafety Cabinets';
+        };
+
         $scope.getDisabled = function (hazard) {
             if(!dataStore.HazardDto)return false;
             var parent = dataStoreManager.getById("HazardDto", hazard.Parent_hazard_id);
