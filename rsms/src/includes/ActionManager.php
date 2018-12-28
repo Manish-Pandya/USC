@@ -4676,6 +4676,19 @@ class ActionManager {
         $dao = $this->getDao(new Inspection());
         $inspectionSchedules = $dao->getNeededInspectionsByYear($year);
 
+        $LOG->debug('Retrieved ' . count($inspectionSchedules) . " inspections for $year schedule");
+
+        $piDao = $this->getDao(new PrincipalInvestigator());
+
+        $inspectionMaps = array();
+        $inspectionMaps[] = new EntityMap("eager","getInspectors");
+        $inspectionMaps[] = new EntityMap("lazy","getRooms");
+        $inspectionMaps[] = new EntityMap("lazy","getResponses");
+        $inspectionMaps[] = new EntityMap("lazy","getDeficiency_selections");
+        $inspectionMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
+        $inspectionMaps[] = new EntityMap("lazy","getChecklists");
+        $inspectionMaps[] = new EntityMap("eager","getStatus");
+
         $roomMaps = array();
         $roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
         $roomMaps[] = new EntityMap("lazy","getHazards");
@@ -4686,19 +4699,11 @@ class ActionManager {
         $roomMaps[] = new EntityMap("lazy","getHazardTypesArePresent");
 
         foreach ($inspectionSchedules as &$is){
+            $LOG->trace("Processing $is...");
             if ($is->getInspection_id() !== null){
                 $inspection = $dao->getById($is->getInspection_id());
 
-                $entityMaps = array();
-                $entityMaps[] = new EntityMap("eager","getInspectors");
-                $entityMaps[] = new EntityMap("lazy","getRooms");
-                $entityMaps[] = new EntityMap("lazy","getResponses");
-                $entityMaps[] = new EntityMap("lazy","getDeficiency_selections");
-                $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
-                $entityMaps[] = new EntityMap("lazy","getChecklists");
-                $entityMaps[] = new EntityMap("eager","getStatus");
-
-                $inspection->setEntityMaps($entityMaps);
+                $inspection->setEntityMaps($inspectionMaps);
 
                 $filteredRooms = array();
                 $rooms = $inspection->getRooms();
@@ -4709,11 +4714,8 @@ class ActionManager {
                 	}
                 }
                 $is->setInspection_rooms($filteredRooms);
-               // $LOG->fatal($is);
-                //return $is;
             }
 
-            $piDao = $this->getDao(new PrincipalInvestigator());
             $pi = $piDao->getById($is->getPi_key_id());
             $rooms = $pi->getRooms();
             $pi_bldg_rooms = array();
@@ -4726,6 +4728,8 @@ class ActionManager {
             }
             $is->setBuilding_rooms($pi_bldg_rooms);
         }
+
+        $LOG->debug("Retrieved and populated $year inspection schedule");
         return $inspectionSchedules;
     }
 

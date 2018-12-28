@@ -40,7 +40,11 @@ class InspectionScheduleDto {
     private $hf_present;
     private $lasers_present;
     private $animal_facility;
-    private $xrays_present;
+	private $xrays_present;
+
+	public function __toString(){
+		return "[" . get_class($this) . " pi:$this->pi_key_id inspection:$this->inspection_id]";
+	}
 
 	public function getPi_name(){return $this->pi_name;}
 	public function getPi_key_id(){return $this->pi_key_id;}
