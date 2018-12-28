@@ -29,7 +29,16 @@ class JsonManager {
 	 * @return string
 	 */
 	public static function encode($value, $entityMaps = NULL){
+		// Time how long it takes to encode this
+		$start = time();
 		$jsonable = JsonManager::buildJsonableValue($value, $entityMaps);
+		$t = time() - $start;
+
+		// Warn for long-running encodings
+		if( $t > 10 ){
+			$l = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+			$l->warn("Building JSON-able value took $t seconds");
+		}
 
 		return json_encode($jsonable);
 	}
