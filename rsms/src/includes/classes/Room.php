@@ -108,6 +108,8 @@ class Room extends GenericCrud {
 	/** Boolean to indicate whether this Room has relationships with more than 1 PrincipalInvestigator */
 	private $hasMultiplePIs;
 
+	private $_hazardTypesComputed = false;
+
 	public function __construct(){
 
 		// Define which subentities to load
@@ -347,6 +349,10 @@ class Room extends GenericCrud {
 	}
 
     public function getHazardTypesArePresent(){
+		if( $this->_hazardTypesComputed ){
+			return $this->_hazardTypesComputed;
+		}
+
         $LOG = Logger::getLogger(__CLASS__ );
         //IDS of the direct children of the root hazard, except General Hazards, which are present in all rooms
         //Per EHS request, added constants for Lasers (10016), Recombinant DNA (2), and X-Rays (10015), as displaying icons for these hazard types per room is useful
@@ -434,6 +440,9 @@ class Room extends GenericCrud {
                 $this->hf_present = true;
             }
 		}
+
+		$this->_hazardTypesComputed = true;
+		return $this->_hazardTypesComputed;
     }
 
     public function getAnimal_facility(){
