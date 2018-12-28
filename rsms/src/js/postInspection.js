@@ -906,7 +906,29 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         }
         return false;
     }
+
+    $scope.userCanEditInspectionDate = function userCanEditInspectionDate(){
+        //Does this user have the roles to edit the date?
+        if( GLOBAL_SESSION_ROLES && GLOBAL_SESSION_ROLES.userRoles ){
+            var _roles = [
+                Constants.ROLE.NAME.ADMIN,
+                Constants.ROLE.NAME.SAFETY_INSPECTOR,
+            ];
+            for( var i = 0; i < _roles.length; i++){
+                if( GLOBAL_SESSION_ROLES.userRoles.includes(_roles[i]) ){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    };
+
     $scope.updateInspectionDate = function () {
+        if( !$scope.userCanEditInspectionDate() ){
+            return;
+        }
+
         var inspectionDto = angular.copy($scope.inspection);
         inspectionDto.Date_started = convenienceMethods.setMysqlTime($scope.inspection.view_Date_started);
         console.log(inspectionDto);
