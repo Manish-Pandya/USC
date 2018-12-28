@@ -38,7 +38,7 @@ class JsonManager {
 	 * Constructs a 'JSON-able' value based on the parameter. The returned value is either of a PHP primitive type,
 	 * or an array of such information that can be easily JSON-encoded.
 	 */
-	public static function buildJsonableValue($value, $entityMaps = NULL){
+	public static function buildJsonableValue(&$value, &$entityMaps = NULL){
 		$jsonable = $value;
 
 		//Differentiate Objects and Arrays
@@ -295,7 +295,7 @@ class JsonManager {
         return true;
     }
 
-	public static function objectToBasicArray($object, $entityMaps = NULL){
+	public static function objectToBasicArray(&$object, &$entityMaps = NULL){
 		//Call Accessors
 		$objectVars = JsonManager::callObjectAccessors($object, $entityMaps);
 
@@ -313,7 +313,7 @@ class JsonManager {
 	 * @param mixed $object
 	 * @return Array
 	 */
-	public static function callObjectAccessors($object, $overrideEntityMaps = NULL){
+	public static function callObjectAccessors(&$object, &$overrideEntityMaps = NULL){
 		$classname = get_class($object);
 
 		$functions = get_class_methods( $classname);
@@ -375,7 +375,7 @@ class JsonManager {
 		return $objectVars;
 	}
 
-	static function mergeEntityMaps($maps, $overrides = null){
+	static function mergeEntityMaps($maps, &$overrides = null){
 		$LOG = Logger::getLogger(__CLASS__);
 
 		// Copy $maps to a new array, $merged
