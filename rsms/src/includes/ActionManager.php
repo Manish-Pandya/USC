@@ -24,6 +24,10 @@ class ActionManager {
 		return array();
 	}
 
+    public function getUserDefaultPage() {
+        return $this->getDestination();
+    }
+
     /**
      * Chooses a return value based on the parameters. If $paramValue
      * is specified, it is returned. Otherwise, $valueName is taken from $_REQUEST.
