@@ -1162,19 +1162,17 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         switch( inspection.Status ){
             case Constants.INSPECTION.STATUS.CLOSED_OUT:
                 // No edits allowed after approval
-                console.debug("No edits allowed after approval")
                 ctrls = null;
                 break;
 
             case Constants.INSPECTION.STATUS.SUBMITTED_CAP:
-                console.debug("Allow all for Admin; allow Edit for non-admin");
                 // Allow only Edit for non-admin; Allow all for Admin
                 ctrls.edit = true;
                 ctrls.delete = isAdmin;
                 break;
 
             default:
-                console.debug("Allow all CAP controls");
+                // Allow all CAP controls
                 ctrls.edit = true;
                 ctrls.delete = true;
                 break;
