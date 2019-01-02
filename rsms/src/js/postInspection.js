@@ -828,7 +828,7 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
 
 }
 
-inspectionReviewController = function ($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modal) {
+inspectionReviewController = function ($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modal, roleBasedFactory) {
     $scope.getNumberOfRoomsForQuestionByChecklist = postInspectionFactory.getNumberOfRoomsForQuestionByChecklist;
     function init() {
         if ($location.search().inspection) {
@@ -1145,6 +1145,43 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
           );
     }
 
+    $scope.getDeficiencyCAPControls = function getDeficiencyCAPControls(inspection, def){
+        var ctrls = {
+            edit: false,
+            delete: false
+        };
+
+        // check user role
+        var isAdmin = roleBasedFactory.getHasPermission([
+            $rootScope.R[Constants.ROLE.NAME.ADMIN],
+            $rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN],
+            $rootScope.R[Constants.ROLE.NAME.SAFETY_INSPECTOR],
+            $rootScope.R[Constants.ROLE.NAME.RADIATION_INSPECTOR]
+        ]);
+
+        switch( inspection.Status ){
+            case Constants.INSPECTION.STATUS.CLOSED_OUT:
+                // No edits allowed after approval
+                console.debug("No edits allowed after approval")
+                ctrls = null;
+                break;
+
+            case Constants.INSPECTION.STATUS.SUBMITTED_CAP:
+                console.debug("Allow all for Admin; allow Edit for non-admin");
+                // Allow only Edit for non-admin; Allow all for Admin
+                ctrls.edit = true;
+                ctrls.delete = isAdmin;
+                break;
+
+            default:
+                console.debug("Allow all CAP controls");
+                ctrls.edit = true;
+                ctrls.delete = true;
+                break;
+        }
+
+        return ctrls;
+    }
 }
 
 modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modalInstance) {

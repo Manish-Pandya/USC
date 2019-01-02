@@ -5,7 +5,7 @@
         <tr ng-if="!question.Responses.DeficiencySelections.length && !question.Responses.SupplementalDeficiencies.length">
             <td colspan=4>Unknown Deficiency</td>
         </tr>
-        <tr ng-repeat="def in question.Responses.DeficiencySelections">
+        <tr ng-repeat="def in question.Responses.DeficiencySelections" ng-init="defCtrls = getDeficiencyCAPControls(inspection, def)">
             <td ng-if="def.Deficiency.Text" style="padding:16px !important;width:58%">
                 <span ng-if="def.Deficiency.Text != 'Other'">
                     {{def.Deficiency.Text}}<span ng-if="def.Rooms.length && def.Show_rooms" style="display:inline"> (Room<span ng-if="def.Rooms.length>1">s</span>: <span ng-repeat="room in def.Rooms">{{room.Name}}<span ng-if="!$last">, </span></span>)</span>
@@ -57,9 +57,9 @@
                         <p>{{def.CorrectiveActions[0].Completion_date | dateToISO:def.CorrectiveActions[0]:'Completion_date'}}</p>
                     </div>
                 </div>
-                <div class="lower-right-buttons" ng-if="def.CorrectiveActions[0] && !inspection.Date_closed">
-                    <a class="btn btn-small btn-primary" ng-click="openModal(question, def)"><i class="icon-pencil"></i></a>
-                    <a class="btn btn-small btn-danger" ng-click="openDeleteModal(def)"><i class="icon-remove"></i></a>
+                <div class="lower-right-buttons" ng-if="defCtrls">
+                    <a class="btn btn-small btn-primary" ng-if="defCtrls.edit" ng-click="openModal(question, def)"><i class="icon-pencil"></i></a>
+                    <a class="btn btn-small btn-danger"  ng-if="defCtrls.delete" ng-click="openDeleteModal(def)"><i class="icon-remove"></i></a>
                 </div>
             </td>
             <td style="padding:15px !important;" class="corrective-action corrected-during-inspection" ng-if="def.Corrected_in_inspection > 0" >
@@ -68,7 +68,7 @@
                 </h3>              
             </td>
         </tr>
-        <tr ng-repeat="def in question.Responses.SupplementalDeficiencies | activeOnly">
+        <tr ng-repeat="def in question.Responses.SupplementalDeficiencies | activeOnly" ng-init="defCtrls = getDeficiencyCAPControls(inspection, def)">
             <td ng-if="def.Text" style="padding:16px !important;width:58%">
                 {{def.Text}}<span ng-if="def.Rooms.length && def.Show_rooms" style="display:inline"> (Room<span ng-if="def.Rooms.length>1">s</span>: <span ng-repeat="room in def.Rooms">{{room.Name}}<span ng-if="!$last">, </span></span>)</span>
             </td>
@@ -119,9 +119,9 @@
                     </div>
 
                 </div>
-                <div class="lower-right-buttons" ng-if="def.CorrectiveActions[0] && !inspection.Date_closed">
-                    <a class="btn btn-small btn-primary" ng-click="openModal(question, def)"><i class="icon-pencil"></i></a>
-                    <a class="btn btn-small btn-danger" ng-click="openDeleteModal(def)"><i class="icon-remove"></i></a>
+                <div class="lower-right-buttons" ng-if="defCtrls">
+                    <a class="btn btn-small btn-primary" ng-if="defCtrls.edit" ng-click="openModal(question, def)"><i class="icon-pencil"></i></a>
+                    <a class="btn btn-small btn-danger"  ng-if="defCtrls.delete" ng-click="openDeleteModal(def)"><i class="icon-remove"></i></a>
                 </div>
 
                 
