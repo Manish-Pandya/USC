@@ -447,19 +447,19 @@ class ActionManager {
 
             // Emergency account goes to emergency hub
             else if( $this->sessionHasRoles( array("Emergency Account")) ){
-                $destination = "rsms/views/hubs/emergencyInformationHub.php";
+                $destination = "views/hubs/emergencyInformationHub.php";
                 $LOG->debug("User has emergency role");
             }
 
             // non-PI Department Chair goes to Reports
             else if( !$this->sessionHasRoles( array("Principal Investigator")) && $this->sessionHasRoles( array("Department Chair")) ){
-                $destination = "rsms/reports/";
+                $destination = "reports/";
                 $LOG->debug("User is a non-PI Department Chair");
             }
 
             // Otherwise, go to My Lab
             else {
-                $destination = 'rsms/views/lab/MyLab.php';
+                $destination = 'views/lab/MyLab.php';
                 $LOG->debug("User has no special-case roles");
             }
 
