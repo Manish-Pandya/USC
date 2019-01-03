@@ -1047,6 +1047,9 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
                 templateUrl: 'post-inspection-templates/cap-submitted.html',
                 controller: modalCtrl
             });
+            modalInstance.result.then(function(){
+                location.reload();
+            });
         }
     }
 
@@ -1094,7 +1097,11 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
             Is_rad: postInspectionFactory.inspection.Is_rad,
             Class: "Inspection"
         };
-        postInspectionFactory.saveInspection(inspection, inspectionDto).then(function () { $scope.handlingInspectionOpen = false; });
+        postInspectionFactory.saveInspection(inspection, inspectionDto).then(function () {
+            $scope.handlingInspectionOpen = false;
+            //...
+            location.reload();
+        });
     }
 
     
@@ -1310,6 +1317,10 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
                 $scope.validationError = "The corrective action could not be removed.  Please check your internet connection and try again."
             }
           )
+    }
+
+    $scope.closeModal = function(){
+        $modalInstance.close();
     }
 
     $scope.cancel = function () {
