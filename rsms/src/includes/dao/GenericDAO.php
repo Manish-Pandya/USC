@@ -541,6 +541,33 @@ class GenericDAO {
 
 	}
 
+	public function getRelatedItemKeysById($id, DataRelationship $relationship){
+		if (empty($id)) { return array();}
+
+		// get the relationship parameters needed to build the query
+		$tableName		= $relationship->getTableName();
+		$keyName		= $relationship->getKeyName();
+		$foreignKeyName	= $relationship->getForeignKeyName();
+
+		$sql = "SELECT $keyName FROM $tableName WHERE $foreignKeyName=:id";
+		$stmt = DBConnection::prepareStatement($sql);
+		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		if ($stmt->execute() ) {
+			$result = $stmt->fetchAll(PDO::FETCH_COLUMN, $keyName);
+			// ... otherwise, generate error message to be returned
+		} else {
+			$result = array();
+			$error = $stmt->errorInfo();
+			$resultError = new QueryError($error);
+			$this->LOG->error('Returning QueryError with message: ' . $resultError->getMessage());
+		}
+
+		// 'close' the statment
+		$stmt = null;
+
+		$this->LOG->debug("Retrieved " . count($result) . " results");
+		return $result;
+	}
 	/**
 	 * Retrieves a list of related items for the entity of this type with the given ID.
 	 *

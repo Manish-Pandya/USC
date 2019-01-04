@@ -83,9 +83,18 @@ class Inspector extends GenericCrud {
 	public function setInspections($inspections){ $this->inspections = $inspections; }
 
     public function getName(){
-        if($this->getUser() != null){
+        if($this->user != null){
             $this->name = $this->getUser()->getName();
-        }
+		}
+		else {
+			// Query for just the user's Name; no need to pull in the whole User entity
+			$sql = "SELECT CONCAT_WS(' ', COALESCE(first_name, ''), last_name) as full_name FROM erasmus_user WHERE key_id=:userId";
+			$stmt = DBConnection::prepareStatement($sql);
+			$stmt->bindParam(':userId', $this->user_id);
+			$stmt->execute();
+			$this->name = $stmt->fetchColumn();
+		}
+
         return  $this->name;
     }
 

@@ -139,6 +139,7 @@ class Inspection extends GenericCrud {
     private $cap_submitter_id;
     private $cap_submitter_name;
 
+    private $rooms;
     private $roomIds;
 
     public function __construct(){
@@ -213,12 +214,15 @@ class Inspection extends GenericCrud {
     public function setPrincipal_investigator_id($principal_investigator_id){ $this->principal_investigator_id = $principal_investigator_id; }
 
     public function getRooms(){
-        $thisDAO = new GenericDAO($this);
-        $this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
+        if( $this->rooms == null ){
+            $thisDAO = new GenericDAO($this);
+            $this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
+        }
+
         return $this->rooms;
     }
     public function setRooms($rooms){
-        $this->getRooms = $rooms;
+        $this->rooms = $rooms;
     }
 
     public function getResponses(){
@@ -382,11 +386,21 @@ class Inspection extends GenericCrud {
 
     public function getRoomIds(){
         if($this->roomIds == null && $this->hasPrimaryKeyValue()){
-            $this->roomIds = array();
-            foreach($this->getRooms() as $room){
-                $this->roomIds[] = $room->getKey_id();
+            if( $this->rooms != null ){
+                // We already have our Rooms; just grab the IDs from them
+                $this->roomIds = array();
+                foreach($this->rooms as $room){
+                    $this->roomIds[] = $room->getKey_id();
+                }
             }
+            else {
+                // Just query for the IDs; no need to get whole rooms
+                $thisDao = new GenericDAO($this);
+                $this->roomIds = $thisDao->getRelatedItemKeysById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
+            }
+
         }
+
         return $this->roomIds;
     }
 }
