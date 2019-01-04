@@ -291,7 +291,7 @@ class Messaging_ActionManager extends ActionManager {
         $disclaimers = $this->getEmailDisclaimers();
         if( isset($disclaimers) ){
             foreach( $disclaimers as $disclaimer ){
-                $body .= "\n\n$disclaimer";
+                $body .= "<p>$disclaimer</p>";
             }
         }
 
