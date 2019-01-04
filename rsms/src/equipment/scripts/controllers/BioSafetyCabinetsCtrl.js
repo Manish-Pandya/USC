@@ -297,6 +297,10 @@ angular.module('EquipmentModule')
     $scope.modalData = DataStoreManager.ModalData;
     $rootScope.modalClosed = false;
     console.log($scope.modalData);
+    $scope.onBuildingSelected = function onBuildingSelected(){
+        // Remove any selected Room
+        $scope.modalData.selectedRoom = null;
+    };
     $scope.getBuilding = function (id) {
         $rootScope.Buildings.data.forEach(function (b) {
             if (b.UID == id)
