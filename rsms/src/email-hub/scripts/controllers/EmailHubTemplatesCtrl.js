@@ -147,4 +147,17 @@ angular.module('ng-EmailHub')
                     }
                 );
         };
+
+        $scope.sendTestEmail = function sendTestEmail( template ){
+            console.debug("Sending test email for ", template);
+            $q.when(XHR.POST('adminTestSendEmailTemplate' + '&templateId=' + template.Key_id).
+            then(
+                result => {
+                    console.log("Test Result: ", result);
+                },
+                error => {
+                    console.error("Unable to send email", error);
+                }
+            ));
+        }
     });
