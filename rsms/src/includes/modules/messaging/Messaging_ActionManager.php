@@ -287,7 +287,7 @@ class Messaging_ActionManager extends ActionManager {
         return $headers_str;
     }
 
-    private function addDisclaimersToEmailBody( &$body ){
+    private function addDisclaimersToEmailBody( $body ){
         $disclaimers = $this->getEmailDisclaimers();
         if( isset($disclaimers) ){
             foreach( $disclaimers as $disclaimer ){
