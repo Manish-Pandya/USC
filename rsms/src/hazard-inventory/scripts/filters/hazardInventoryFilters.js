@@ -81,3 +81,34 @@ angular
             return relevantRooms;
         }
     })
+
+    .filter("displayableHazards", function () {
+        return function (hazards) {
+            if( !hazards ) return;
+            // Do not display 'General' hazards
+            return hazards.filter(h => parseInt(h.Key_id) != 9999);
+        };
+    })
+
+    .filter("hazardEquipmentHeaderName", function () {
+        return function (hazard) {
+            // No title for non-top-level hazard
+            if( !hazard || parseInt(hazard.Parent_hazard_id) != 10000 ){
+                return '';
+            }
+
+            // Top-level hazard equipment titles
+
+            // Special omission for General
+            if( parseInt(hazard.Key_id) == 9999 ){
+                return '';
+            }
+
+            // Special case for Radiation
+            if( hazard.Hazard_name.indexOf('adiation') > -1){
+                return 'Equipment/Device';
+            }
+
+            return 'Safety Equipment';
+        };
+    })

@@ -264,11 +264,11 @@ echo "</script>";
             <h4 class="other"><i class="icon-box"></i>Stored only by other PI(s)</h4>
         </div>
         <ul class="allHazardList">
-            <li class="hazardList" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazard.ActiveSubHazards | orderBy: 'Name'" ng-if="hazard.Hazard_name != 'General Safety'">
+            <li class="hazardList" ng-class="{narrow: hazard.hidden}" data-ng-repeat="hazard in hazard.ActiveSubHazards | displayableHazards | orderBy: 'Name'">
                 <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" ng-if="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
                 <span ng-if="!hazard.hidden">
-    <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id">
-        <span ng-if="hazard.Hazard_name == 'Biological Safety'">Biological Hazards</span><span ng-if="hazard.Hazard_name == 'Chemical/Physical Safety' || hazard.Hazard_name == 'Chemical and Physical Safety'">Chemical/Physical Hazards</span><span ng-if="hazard.Hazard_name == 'Radiation Safety'">Radiation Hazards</span>
+                <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id">
+                    <span>{{hazard.Hazard_name}}</span>
                 </h1>
                 </span>
                 <hr ng-if="!hazard.hidden">
@@ -331,12 +331,14 @@ echo "</script>";
                 <br ng-if="!hazard.hidden" />
                 <br ng-if="!hazard.hidden" />
                 <br ng-if="!hazard.hidden" />
-                <h1 ng-if="!hazard.hidden" ng-class="{narrow: hazard.hidden}" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" style="margin-bottom:-12px;"><span ng-if="hazard.Hazard_name == 'Biological Safety' || hazard.Hazard_name == 'Chemical and Physical Safety' || hazard.Hazard_name == 'Chemical/Physical Safety'">Safety Equipment</span><span ng-if="hazard.Hazard_name.indexOf('adiation') > -1">Equipment/Device</span></h1>
+                <h1 ng-if="!hazard.hidden" ng-class="{narrow: hazard.hidden}" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" style="margin-bottom:-12px;">
+                    <span once-text="hazard | hazardEquipmentHeaderName"></span>
+                </h1>
                 <hr style="margin-bottom:4px;" ng-if="!hazard.hidden">
                 <ul ng-if="!hazard.hidden" class="topChildren equipment-list" ng-init="hazard.loadSubhazards()">
                     <li ng-class="{'yellowed': child.Stored_only}" ng-repeat="(key, child) in hazard.ActiveSubHazards | filter: {Is_equipment: true} | orderBy: 'Order_index'" class="hazardLi topChild" id="id-{{hazard.Key_Id}}" ng-if="child.IsPresent || !hazard.hideUnselected">
                         <label class="checkbox inline">
-                            <input type="checkbox" ng-model="child.IsPresent" ng-disabled="child.Hazard_name == 'Biosafety Cabinets' || getDisabled(child)" ng-change="af.handleHazardChecked(child, hazard)" />
+                            <input type="checkbox" ng-model="child.IsPresent" ng-disabled="isHazardBiosafetyCabinets(child) || getDisabled(child)" ng-change="af.handleHazardChecked(child, hazard)" />
                             <span class="metro-checkbox"></span>
                         </label>
                         <span style="font-size: 14px;font-weight: normal;line-height: 20px;">
@@ -356,7 +358,7 @@ echo "</script>";
                             <span ng-if="child.BelongsToOtherPI || (child.IsPresent && child.HasMultiplePis)" ng-class="{'other':child.BelongsToOtherPI  && !child.IsPresent, 'shared':child.IsPresent && child.HasMultiplePis}">
                                 <i class="icon-users" ng-click="openMultiplePIHazardsModal(child)"></i>
                             </span>
-                            <span ng-if="child.IsPresent && child.Hazard_name == 'Biosafety Cabinets'" 
+                            <span ng-if="child.IsPresent && isHazardBiosafetyCabinets(child)" 
                                   ng-class="{'other':child.BelongsToOtherPI  && !child.IsPresent, 
                                   'shared':child.IsPresent && child.HasMultiplePis}">
                                 <i class="icon-info" ng-click="openBiosafetyCabinetInfoModal(PI)"></i>

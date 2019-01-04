@@ -98,7 +98,7 @@ require_once '../top_view.php';
                     <h1 class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id" ng-if="hazard.hidden" ng-click="hazard.hidden = !hazard.hidden">&nbsp;</h1>
                     <span ng-if="!hazard.hidden">
                     <h1 ng-click="hazard.hidden = !hazard.hidden" class="hazardListHeader" once-id="'hazardListHeader'+hazard.Key_id">
-                        <span ng-if="hazard.Name == 'Biological Safety'">Biological Hazards</span><span ng-if="hazard.Name == 'Chemical/Physical Safety' || hazard.Name == 'Chemical and Physical Safety'">Chemical/Physical Hazards</span><span ng-if="hazard.Name == 'Radiation Safety'">Radiation Hazards</span>
+                        <span>{{hazard.Hazard_name}}</span>
                     </h1>
                     <hr>
                     <ul class="topChildren">
