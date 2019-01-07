@@ -355,7 +355,7 @@ class ActionManager {
 
         $userDao = new GenericDAO(new User());
         // Get all ACTIVE users; no sort
-        $allUsers = $userDao->getAll(null, false, true);
+        $allUsers = $userDao->getAll("last_name", false, true);
 
         return array_map( function($u){ return new ImpersonatableUser($u); }, $allUsers);
     }
