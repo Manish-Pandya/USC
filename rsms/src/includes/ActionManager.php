@@ -311,6 +311,55 @@ class ActionManager {
         }
     }
 
+    public function impersonateUserAction($impersonateUsername = NULL, $currentPassword = NULL) {
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+        $LOG->info("User " . $this->getCurrentUser()->getUsername() . " attempting to impersonate $impersonateUsername");
+
+        if( $impersonateUsername == $this->getCurrentUser()->getUsername() ){
+            return new ActionError("Cannot impersonate yourself", 400);
+        }
+
+        if( isset($_SESSION['IMPERSONATOR']) ){
+            return new ActionError("Cannot impersonate another user while impersonation session is active", 400);
+        }
+
+        // TODO: Verify current user's password
+        // copy current-user info into session
+        $_SESSION['IMPERSONATOR'] = array(
+            'USER' => $_SESSION['USER'],
+            'ROLE' => $_SESSION['ROLE']
+        );
+
+        return $this->handleUsernameAuthorization( $impersonateUsername );
+    }
+
+    public function stopImpersonating(){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        if( isset($_SESSION['IMPERSONATOR']) ){
+            $LOG->info("Closing impersonation session...");
+            $_SESSION['USER'] = $_SESSION['IMPERSONATOR']['USER'];
+            $_SESSION['ROLE'] = $_SESSION['IMPERSONATOR']['ROLE'];
+            $_SESSION['IMPERSONATOR'] = null;
+            $LOG->info("Impersonation session closed");
+
+            return true;
+        }
+
+        // No one to stop impersonating
+        return false;
+    }
+
+    public function getImpersonatableUsernames(){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        $userDao = new GenericDAO(new User());
+        // Get all ACTIVE users; no sort
+        $allUsers = $userDao->getAll(null, false, true);
+
+        return array_map( function($u){ return new ImpersonatableUser($u); }, $allUsers);
+    }
+
      public function loginAction( $username = NULL ,$password = NULL, $destination = NULL ) {
         $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
 

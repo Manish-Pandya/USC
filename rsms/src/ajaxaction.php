@@ -18,6 +18,10 @@ $rlog = Logger::getLogger('request.ajax');
 $LOG = Logger::getLogger('ajaxaction.' . $actionName);
 
 $username = $_SESSION['USER'] ? $_SESSION['USER']->getUsername() : '';
+if( isset($_SESSION['IMPERSONATOR']) ){
+    $username = $_SESSION['IMPERSONATOR']['USER']->getUsername() . " (as $username)";
+}
+
 if($rlog->isInfoEnabled()){
     $params = "";
     foreach( $dataSource as $key=>$value){

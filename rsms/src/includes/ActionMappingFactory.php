@@ -56,6 +56,9 @@ class ActionMappingFactory {
 				"getCurrentRoles"=>new ActionMapping("getCurrentRoles","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getPropertyByName"=>new ActionMapping("getPropertyByName","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
+                "impersonateUserAction" => new ActionMapping("impersonateUserAction", "", "", array("Admin")),
+                "getImpersonatableUsernames" => new ActionMapping("getImpersonatableUsernames", "", "", array("Admin")),
+                "stopImpersonating" => new ActionMapping("stopImpersonating", LOGIN_PAGE, LOGIN_PAGE, array(), false),
 
                 //Generic
                 "activate"=>new ActionMapping("activate", "", "", $this::$ROLE_GROUPS["ADMIN"]),

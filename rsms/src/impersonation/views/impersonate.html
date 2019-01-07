@@ -1,0 +1,42 @@
+<div cg-busy="{promise:loading, message:(busyMessage || 'Loading') + '...', backdrop:true, templateUrl:'../busy-templates/full-page-busy.html'}"></div>
+<div class="impersonate-tool">
+    <div class="card" ng-if="ImpersonationSessionActive">
+        <h3 class="label label-important">An Impersonation Session is already Active.</h3>
+    </div>
+
+    <div class="card" ng-if="!ImpersonationSessionActive">
+        <span ng-if="!ImpersonatableUsers">
+            <input class="span8" style="background:white;border-color:#999"  type="text"  placeholder="Getting Users..." disabled="disabled">
+            <i class="icon-spinnery-dealie spinner small" style="position:absolute;right:5px;top:0px"></i>
+        </span>
+        <span ng-if="ImpersonatableUsers">
+            <ui-select ng-model="user.selected" theme="selectize" ng-disabled="disabled" on-select="selectUser($item)" class="span8" >
+                <ui-select-match placeholder="Select or search for a User">{{$select.selected.Username}}</ui-select-match>
+                <ui-select-choices repeat="user in ImpersonatableUsers | filter: $select.search">
+                    <span ng-bind-html="user.Username "></span>
+                    <span style="padding-left:10px; font-style:italic;float:right;">
+                        <span ng-bind-html="user.Last_name"></span>,
+                        <span ng-bind-html="user.First_name"></span>
+                    </span>
+                </ui-select-choices>
+            </ui-select>
+        </span>
+
+        <form class="form" ng-submit="impersonateUser()">
+            <div ng-if="ImpersonateUser" style="padding-top: 20px;">
+                <hr/>
+                <h3>You are about to impersonate <span style="font-style:italic">{{ImpersonateUser.First_name + ' ' + ImpersonateUser.Last_name}} ({{ImpersonateUser.Username}})</span>.</h3>
+                <button ng-disabled="!ImpersonateUser || ImpersonationSuccessful" type="submit" name="submit" class="btn btn-large btn-warning" id="impersonate" style="padding:0 20px; margin:20px 0;">
+                    Impersonate
+                </button>
+
+                <div ng-if="ImpersonationSuccessful != null">
+                    <span class="label label-success" ng-if="ImpersonationSuccessful">
+                        You are now impersonating {{ImpersonateUser.Username}}. You will be redirected to their <a ng-click="goToDefaultPage()">default page</a>
+                    </span>
+                    <span class="label label-important" ng-if="!ImpersonationSuccessful">Impersonation failed. Try again, or contact your administrator.</span>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
