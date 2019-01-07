@@ -248,17 +248,6 @@ class ActionDispatcher {
         $actions = $actionConfig['manager'];
         $actionManagerType = get_class($actions);
 
-        $pre_action = "pre_$action_function";
-        if( method_exists( $actions, $pre_action ) ){
-            $this->LOG->trace("Execute pre-action function $pre_action");
-            $preResult = $actions->$pre_action();
-
-            if( !$preResult ){
-                $this->LOG->error("Pre-Action disallows execution");
-                return new ActionError("Pre-Action disallows execution");
-            }
-        }
-
         $this->LOG->trace("doAction [$actionModule] $action_function on $actionManagerType");
 
         if( method_exists( $actions, $action_function ) ){
@@ -271,11 +260,38 @@ class ActionDispatcher {
                 $func_args[ $arg->name ] = self::getValueFromRequest($arg->name);
             }
 
+            ////
+            // Before calling pre-function, check for security fn
+            if( $actionMapping instanceof SecuredActionMapping ){
+                $this->LOG->trace("Execute Security condition function $actionMapping->preconditionFunction");
+                $preResult = call_user_func_array($actionMapping->preconditionFunction, $func_args);
+
+                if( !$preResult ){
+                    $this->LOG->error("Security condition '$actionMapping->preconditionFunction' failed");
+                    return new ActionError("Unauthorized by Security condition failure", 401);
+                }
+            }
+
+            ////
+            // Before calling action, check for preconditions
+            $pre_action = "pre_$action_function";
+            if( method_exists( $actions, $pre_action ) ){
+                $this->LOG->trace("Execute pre-action function $pre_action");
+                $preResult = call_user_func_array( array($actions, $pre_action), $func_args);
+                $preResult = $actions->$pre_action();
+
+                if( !$preResult ){
+                    $this->LOG->error("Pre-Action disallows execution");
+                    return new ActionError("Pre-Action disallows execution");
+                }
+            }
+
+            ////
+            // Call the specified action function
             if( $this->LOG->isTraceEnabled() ){
                 $this->LOG->trace("Executing action function '$actionManagerType::$action_function(" . implode(', ', $param_names) . ")'");
             }
 
-            //call the specified action function
             // Passing arguments by name
             $functionResult = call_user_func_array( array($actions, $action_function), $func_args);
 
