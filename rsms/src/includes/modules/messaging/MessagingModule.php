@@ -32,14 +32,13 @@ class MessagingModule implements RSMS_Module {
         // TODO: do we need a factory type?
         $ADMIN_ROLES = array("Admin");
         return array(
-            'getAllMessageTypes' => new ActionMapping("getAllMessageTypes", "", $ADMIN_ROLES),
-            'getMessageTemplates' => new ActionMapping("getMessageTemplates", "", $ADMIN_ROLES),
-            'toggleTemplateActive' => new ActionMapping("toggleTemplateActive", "", $ADMIN_ROLES),
-            'createNewTemplate' => new ActionMapping("createNewTemplate", "", $ADMIN_ROLES),
-            'saveTemplate' => new ActionMapping("saveTemplate", "", $ADMIN_ROLES),
-            'getEmails' => new ActionMapping("getEmails", "", $ADMIN_ROLES),
-            'getEmailDisclaimers' => new ActionMapping("getEmailDisclaimers", "", $ADMIN_ROLES),
-            "adminTestSendEmailTemplate" => new ActionMapping("adminTestSendEmailTemplate", "", $ADMIN_ROLES)
+            'getAllMessageTypes' => new SecuredActionMapping("getAllMessageTypes", $ADMIN_ROLES),
+            'getMessageTemplates' => new SecuredActionMapping("getMessageTemplates", $ADMIN_ROLES),
+            'toggleTemplateActive' => new SecuredActionMapping("toggleTemplateActive", $ADMIN_ROLES),
+            'createNewTemplate' => new SecuredActionMapping("createNewTemplate", $ADMIN_ROLES),
+            'saveTemplate' => new SecuredActionMapping("saveTemplate", $ADMIN_ROLES),
+            'getEmails' => new SecuredActionMapping("getEmails", $ADMIN_ROLES),
+            'getEmailDisclaimers' => new SecuredActionMapping("getEmailDisclaimers", $ADMIN_ROLES)
         );
     }
 }
