@@ -30,7 +30,7 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
                 "getMiscellaneousWasteById"				=> new ActionMapping("getMiscellaneousWasteById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
 				"getSolidsContainerById"		=> new ActionMapping("getSolidsContainerById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-				"getRadPIById"					=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+				"getRadPIById"					=> new SecuredActionMapping("getRadPIById", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'RadSecurity::userCanViewRadPI'),
 				"getInspectionWipeTestById"		=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getInspectionWipeById"			=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getParcelWipeTestById"			=> new ActionMapping("getRadPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
