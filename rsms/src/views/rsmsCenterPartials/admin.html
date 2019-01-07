@@ -50,7 +50,7 @@
       </a>
     </div>
 
-    <div class="span2 rsmsCenterIconContainer " style=" margin-bottom:30px;"  ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN]])">
+    <div ng-if="RSMSCenterConfig.impersonation" class="span2 rsmsCenterIconContainer " style=" margin-bottom:30px;"  ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN]])">
       <a href="../impersonation" class="span12 bg-color-darken">
         <i class="icon-users"></i>
         <p>Impersonate User</p>

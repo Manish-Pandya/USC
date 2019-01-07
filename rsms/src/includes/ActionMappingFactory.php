@@ -44,7 +44,7 @@ class ActionMappingFactory {
      * @return array<string,ActionMapping>
      */
     public function getConfig(){
-        return array(
+        $mappings = array(
                 //TODO: Correct action names
                 //TODO: Assign locations
                 //TODO: Assign roles
@@ -55,10 +55,6 @@ class ActionMappingFactory {
 				"getPropertyByName"=>new ActionMapping("getPropertyByName","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getCurrentRoles"=>new ActionMapping("getCurrentRoles","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getPropertyByName"=>new ActionMapping("getPropertyByName","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-
-                "impersonateUserAction" => new ActionMapping("impersonateUserAction", "", "", array("Admin")),
-                "getImpersonatableUsernames" => new ActionMapping("getImpersonatableUsernames", "", "", array("Admin")),
-                "stopImpersonating" => new ActionMapping("stopImpersonating", LOGIN_PAGE, LOGIN_PAGE, array(), false),
 
                 //Generic
                 "activate"=>new ActionMapping("activate", "", "", $this::$ROLE_GROUPS["ADMIN"]),
@@ -250,6 +246,15 @@ class ActionMappingFactory {
         		"sendTestEmail"=>new ActionMapping("sendTestEmail", "", "")
 
         );
+
+        // Only include Impersonation mappings if the feature is enabled
+        if( ApplicationConfiguration::get("module.Core.feature.impersonation", false) ){
+            $mappings["impersonateUserAction"] = new ActionMapping("impersonateUserAction", "", "", array("Admin"));
+            $mappings["getImpersonatableUsernames"] = new ActionMapping("getImpersonatableUsernames", "", "", array("Admin"));
+            $mappings["stopImpersonating"] = new ActionMapping("stopImpersonating", LOGIN_PAGE, LOGIN_PAGE, array(), false);
+        }
+
+        return $mappings;
     }
 }
 ?>

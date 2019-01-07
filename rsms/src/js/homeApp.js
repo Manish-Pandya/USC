@@ -58,6 +58,7 @@ var homeController = function($location, $scope, $rootScope){
 }
 
 var adminController = function($location, $scope){
+    $scope.RSMSCenterConfig = window.RSMSCenterConfig;
     $scope.view = 'home';
     $scope.setRoute = function(route){
         $location.path(route);
