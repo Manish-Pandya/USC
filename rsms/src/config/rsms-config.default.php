@@ -45,6 +45,9 @@ return array(
         "***NOTE: The Research Safety Management System (RSMS) is only accessible when connected to the USC network.***"
     ),
 
-    "module.Scheduler.tasks.disabled" => NULL
+    "module.Scheduler.tasks.disabled" => NULL,
+
+    // User-Impersonation
+    "module.Core.feature.impersonation" => false
 );
 ?>
