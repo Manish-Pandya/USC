@@ -120,14 +120,36 @@ class CoreSecurity {
     }
 
     public static function userCanSaveInspection(){
-        // TODO: Is request body an inspection which this user can save?
-        // CoreSecurity::userCanViewInspection( input->Key_id )
-        return true;
+        // Is request body an inspection which this user can save?
+        $inspectionToSave = JsonManager::decodeInputStream();
+        if( isset($inspectionToSave) ){
+            // Inspection exists; ensure they have access to it
+            return CoreSecurity::_userCanSaveInspectionById( $inspectionToSave->getKey_id() );
+        }
+
+        // Nothing to save...
+        return false;
     }
 
     public static function userCanSaveCorrectiveAction(){
-        // TODO: Is request body a corrective action which this user can save?
-        return true;
+        // Is request body a corrective action which this user can save?
+        $correctiveActionToSave = JsonManager::decodeInputStream();
+        if( isset($correctiveActionToSave) ){
+            // Get the deficiency (either Selection or Supplemental)
+            $def = $correctiveActionToSave->getDeficiencySelection();
+            if( !isset($def) ){
+                $def = $correctiveActionToSave->getSupplementalDeficiency();
+            }
+
+            // Map defeciency to response to get the Inspection ID
+            $inspection_id = $def->getResponse()->getInspection_id();
+
+            // ensure they have access to the inspection
+            return CoreSecurity::_userCanSaveInspectionById($inspection_id);
+        }
+
+        // Nothing to save...
+        return false;
     }
 }
 ?>
