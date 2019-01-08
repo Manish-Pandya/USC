@@ -1,14 +1,27 @@
 <?php
 class ReportsSecurity {
 
+    public static function userCanViewSummaryReport($year, $department_id){
+        return ReportsSecurity::userIsChairOfDepartment($department_id);
+    }
+
     public static function userIsChairOfDepartment($department_id){
-        if( !CoreSecurity::userHasAnyRole($_SESSION['USER'], array('Admin', 'Department Chair')) ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        if( CoreSecurity::userHasRoles($_SESSION['USER'], array('Admin')) ){
+            $LOG->debug("User is Admin");
+            return true;
+        }
+
+        if( !CoreSecurity::userHasRoles($_SESSION['USER'], array('Department Chair')) ){
             // User is not a department chair or admin
+            $LOG->debug("User is not a Department Chair");
             return false;
         }
 
         if( $_SESSION['USER']->getPrimary_department_id() == $department_id ){
             // current user's primary department is deptarment_id
+            $LOG->debug("Department Chair Users's primary department is $department_id");
             return true;
         }
 
