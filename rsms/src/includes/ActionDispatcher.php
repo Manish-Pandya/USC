@@ -268,7 +268,7 @@ class ActionDispatcher {
 
                 if( !$preResult ){
                     $this->LOG->error("Security condition '$actionMapping->preconditionFunction' failed");
-                    return new ActionError("Unauthorized by Security condition failure", 401);
+                    return new ActionError("Unauthorized by Security condition failure", 403);
                 }
             }
 
