@@ -1,5 +1,9 @@
 <div class="alert alert-error" ng-if="error" style="margin-top:10px;">
     <h2>{{error}}</h2>
+    <span ng-if="errorCauses">This error is commonly caused by:</span>
+    <ul   ng-if="errorCauses">
+        <li ng-repeat="cause in errorCauses">{{cause}}</li>
+    </ul>
 </div>
 
 <div class="loading" ng-show='!doneLoading' style="margin-left:24px;">
