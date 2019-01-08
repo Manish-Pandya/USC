@@ -4175,6 +4175,10 @@ class ActionManager {
             //get inspection
             $inspection = $dao->getById($id);
 
+            if( !isset($inspection) || ($inspection instanceof ActionError) ){
+                return new ActionError("No such Inspection $id", 404);
+            }
+
             // check if this is an inspection we're just starting
             if( $inspection->getDate_started() == NULL ) {
                 $inspection->setDate_started(date("Y-m-d H:i:s"));
