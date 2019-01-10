@@ -1093,6 +1093,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
             Schedule_month: postInspectionFactory.inspection.Schedule_month,
             Schedule_year: postInspectionFactory.inspection.Schedule_year,
             Cap_submitted_date: isReopen ? null : postInspectionFactory.inspection.Cap_submitted_date,
+            Cap_submitter_id: postInspectionFactory.inspection.Cap_submitter_id,
             Cap_complete: isReopen ? null : postInspectionFactory.inspection.Cap_complete,
             Is_rad: postInspectionFactory.inspection.Is_rad,
             Class: "Inspection"
