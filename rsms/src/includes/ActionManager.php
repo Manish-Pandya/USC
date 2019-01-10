@@ -3240,6 +3240,30 @@ class ActionManager {
         }
     }
 
+    public function approveCAP( $id = NULL ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $id = $this->getValueFromRequest('id', $id);
+        if( $id == NULL ){
+            return new ActionError("No CAP to approve", 404);
+        }
+
+        $dao = $this->getDao(new Inspection());
+
+        $inspection = $dao->getById($id);
+        if( !isset($inspection) ){
+            return new ActionError("No such inspection $id", 404);
+        }
+
+        $now = date("Y-m-d H:i:s");
+        $inspection->setDate_closed( $now );
+        // TODO: Store user as approver?
+
+        $LOG->info("Approving CAP for $inspection");
+        $inspection = $dao->save($inspection);
+        return $inspection;
+    }
+
       // Inspection, step 2 (Hazard Assessment)
 
       /**

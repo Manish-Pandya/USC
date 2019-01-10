@@ -434,6 +434,21 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
         return deferred.promise
     }
 
+    factory.approveCAP = function (inspection) {
+        var url = "../../ajaxaction.php?action=approveCAP&id=" + inspection.Key_id;
+        var deferred = $q.defer();
+
+        convenienceMethods.saveDataAndDefer(url).then(
+          function (promise) {
+              deferred.resolve(promise);
+          },
+          function (promise) {
+              deferred.reject(promise);
+          }
+        );
+        return deferred.promise
+    }
+
     factory.getHotWipes = function (inspection) {
         inspection.hotWipes = 0;
         if (!inspection.Inspection_wipe_tests[0]) return
@@ -1078,6 +1093,15 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
             $scope.readyToSubmit = false;
             angular.extend($rootScope.inspection, returnedInspection);
             postInspectionFactory.setInspection($rootScope.inspection);
+        });
+    }
+
+    $scope.approveCAP = function( inspection ){
+        $scope.handlingInspectionOpen = true;
+        postInspectionFactory.approveCAP(inspection).then(function () {
+            $scope.handlingInspectionOpen = false;
+            //...
+            location.reload();
         });
     }
 
