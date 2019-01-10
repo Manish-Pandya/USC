@@ -85,15 +85,23 @@
         </div>
     </div>
 
-<div class="cap-status" style="margin:30px 0;" ng-if="inspection.Cap_submitted_date">
-    <h3 style="display:inline;width:200px;background: #c5d8f1;padding: 5px; margin-right:5px;">Corrective Action Plan Submitted By:</h3>
-    <span style="font-size: 14pt">{{inspection.Cap_submitter_name}} on {{inspection.Cap_submitted_date | dateToISO}}</span>
-</div>
+    <table ng-if="inspection.Cap_submitted_date || inspection.Date_closed" class="table table-bordered inspectionReportTable" style="width: 50%">
+        <tr class="cap-status" style="margin:30px 0;" ng-if="inspection.Cap_submitted_date">
+            <td style="background: #c5d8f1;padding: 5px;">
+                <h3>Corrective Action Plan Submitted By:</h3>
+            </td>
+            <td style="font-size: 14pt">{{inspection.Cap_submitter_name}}</td>
+            <td style="font-size: 14pt">{{inspection.Cap_submitted_date | dateToISO}}</td>
+        </tr>
 
-<div class="cap-status" style="margin:30px 0;" ng-if="inspection.Date_closed">
-    <h3 style="display:inline;width:200px;background: #c5d8f1;padding: 5px; margin-right:5px;">Corrective Action Plan Approved By:</h3>
-    <span style="font-size: 14pt">{{inspection.Cap_approver_name}} on {{inspection.Date_closed | dateToISO}}</span>
-</div>
+        <tr class="cap-status" style="margin:30px 0;" ng-if="inspection.Date_closed">
+            <td style="background: #c5d8f1;padding: 5px;">
+                <h3 >Corrective Action Plan Approved By:</h3>
+            </td>
+            <td style="font-size: 14pt">{{inspection.Cap_approver_name}}</td>
+            <td style="font-size: 14pt">{{inspection.Date_closed | dateToISO}}</td>
+        </tr>
+    </table>
 
 <h2 class="alert alert-info" ng-if="inspection.Cap_submitted_date && rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_INSPECTOR]])">
     <span ng-if="!inspection.Date_closed">The corrective action plan for this inspection was submitted on {{inspection.Cap_submitted_date | dateToISO}}</span>
