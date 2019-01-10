@@ -84,6 +84,17 @@
 </span>
         </div>
     </div>
+
+<div class="cap-status" style="margin:30px 0;" ng-if="inspection.Cap_submitted_date">
+    <h3 style="display:inline;width:200px;background: #c5d8f1;padding: 5px; margin-right:5px;">Corrective Action Plan Submitted By:</h3>
+    <span style="font-size: 14pt">{{inspection.Cap_submitter_name}} on {{inspection.Cap_submitted_date | dateToISO}}</span>
+</div>
+
+<div class="cap-status" style="margin:30px 0;" ng-if="inspection.Date_closed">
+    <h3 style="display:inline;width:200px;background: #c5d8f1;padding: 5px; margin-right:5px;">Corrective Action Plan Approved By:</h3>
+    <span style="font-size: 14pt">{{inspection.Cap_approver_name}} on {{inspection.Date_closed | dateToISO}}</span>
+</div>
+
 <h2 class="alert alert-info" ng-if="inspection.Cap_submitted_date && rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_INSPECTOR]])">
     <span ng-if="!inspection.Date_closed">The corrective action plan for this inspection was submitted on {{inspection.Cap_submitted_date | dateToISO}}</span>
     <span ng-if="inspection.Date_closed">This inspection was closed out on {{inspection.Date_closed | dateToISO}}</span>
@@ -184,9 +195,6 @@
     <tr><th style="background:#355f91;color:white; text-align:center;width:30%; padding: 7px; border-bottom:2px solid black;" valign="top">AUDIT CRITERIA</th><th style="background:#355f91;color:white; text-align:center; padding: 7px; border-bottom:2px solid black;" align="center">EH&S RECOMMENDATIONS</th></tr>
     <tr ng-repeat="rec in recommendations" ng-if="rec.Is_active"><td style="font-size:1.5em; text-align:center" valign="top">{{rec.Question}}</td><td valign="top">{{rec.Text}}</td></tr>
 </table>
-<div style="margin:30px 0;">
-    <h3 style="display:inline;width:200px;background: #c5d8f1;padding: 5px; margin-right:5px;">Corrective Action Plan Submitted By:</h3><span style="font-size: 14pt" ng-if="!inspection.Date_closed">{{inspection.Cap_submitter_name}}</span>
-</div>
 
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:100%;">
     <tr>
