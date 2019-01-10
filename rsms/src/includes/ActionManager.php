@@ -3257,9 +3257,9 @@ class ActionManager {
 
         $now = date("Y-m-d H:i:s");
         $inspection->setDate_closed( $now );
-        // TODO: Store user as approver?
+        $inspection->setCap_approver_id( $this->getCurrentUser()->getKey_id() );
 
-        $LOG->info("Approving CAP for $inspection");
+        $LOG->info("Approving CAP for $inspection: approver:" . $inspection->getCap_approver_id() . " date:" . $inspection->getDate_closed());
         $inspection = $dao->save($inspection);
         return $inspection;
     }
