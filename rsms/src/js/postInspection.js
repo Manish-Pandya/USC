@@ -1169,7 +1169,8 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         switch( inspection.Status ){
             case Constants.INSPECTION.STATUS.CLOSED_OUT:
                 // No edits allowed after approval
-                ctrls = null;
+                ctrls.edit = isAdmin;
+                ctrls.delete = isAdmin;
                 break;
 
             case Constants.INSPECTION.STATUS.SUBMITTED_CAP:
