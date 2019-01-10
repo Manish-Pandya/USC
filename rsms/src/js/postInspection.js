@@ -420,10 +420,10 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
         inspectionDto.Cap_submitted_date = convenienceMethods.setMysqlTime(Date());
         inspectionDto.Cap_submitter_id = GLOBAL_SESSION_USER.Key_id;
 
-        var url = "../../ajaxaction.php?action=submitCAP";
+        var url = "../../ajaxaction.php?action=submitCAP&id=" + inspection.Key_id;
         var deferred = $q.defer();
 
-        convenienceMethods.saveDataAndDefer(url, inspectionDto).then(
+        convenienceMethods.saveDataAndDefer(url).then(
           function (promise) {
               deferred.resolve(promise);
           },
