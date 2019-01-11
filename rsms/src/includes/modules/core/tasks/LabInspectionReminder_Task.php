@@ -58,13 +58,18 @@ class LabInspectionReminder_Task implements ScheduledTask {
                 insp_status.inspection_id,
                 insp_status.inspection_status,
                 DATE(insp.notification_date) as notification_date,
-                DATE_ADD(DATE(insp.notification_date), INTERVAL 15 DAY) as reminder_date
+                CURDATE() as reminder_date
             FROM inspection_status insp_status
             JOIN inspection insp ON insp.key_id = insp_status.inspection_id
 
-            -- Constrain to overdue CAPs with a reminder date (two weeks + one day after notification) of today
             WHERE insp_status.inspection_status = 'OVERDUE CAP'
-                AND CURDATE() = DATE_ADD(DATE(insp.notification_date), INTERVAL 15 DAY)";
+                AND (
+                    -- Constrain to overdue CAPs with a reminder date (two weeks + one day after notification) of today
+                    CURDATE() = DATE_ADD(DATE(insp.notification_date), INTERVAL 15 DAY)
+                    OR
+                    -- OR every week following the initial two week period
+                    DATEDIFF(CURDATE(), DATE_ADD(DATE(insp.notification_date), INTERVAL 15 DAY)) % 7 = 0
+                )";
 
         return $this->getContextObjects($sql);
     }
