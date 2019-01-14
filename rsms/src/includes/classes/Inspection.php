@@ -403,5 +403,63 @@ class Inspection extends GenericCrud {
 
         return $this->roomIds;
     }
+
+    /**
+     * Retrieves the unique statuses of all associated CorrectiveActions
+     * contained within this Inspection's Responses
+     */
+    public function collectAllCorrectiveActionStatuses(){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        // Reduce to all CAPs
+        $LOG->debug("Reduce $this responses to their CAPs");
+        $allCaps = array_reduce(
+            $this->getResponses(),
+            function($caps, $response){
+                // Collect both DeficiencySelection and SupplementalDeficiencies
+                //   into single array
+                $defs = array();
+                if( $response->getDeficiencySelections() != null ){
+                    $defs = array_merge($defs, $response->getDeficiencySelections());
+                }
+
+                if( $response->getSupplementalDeficiencies() != null ){
+                    $defs = array_merge($defs, $response->getSupplementalDeficiencies());
+                }
+
+                // don't bother mapping if empty
+                if( count($defs) > 0){
+                    // Map each response to its deficiency CAPs
+                    foreach($defs as $def){
+                        $caps = array_merge($caps, $def->getCorrectiveActions());
+                    }
+                }
+
+                return $caps;
+            },
+            array()
+        );
+
+        // Further reduce to all Statuses
+        $LOG->debug("Reduce " . count($allCaps) . " CAPs to their unique statuses");
+        $allCapStatuses = array_reduce(
+            $allCaps,
+            function($statuses, $cap){
+                if( $statuses == null ){
+                    $statuses = array();
+                }
+
+                if(!in_array($cap->getStatus(), $statuses)){
+                    $statuses[] = $cap->getStatus();
+                }
+
+                return $statuses;
+            },
+            array()
+        );
+
+        $LOG->debug("$this contains CAP statuses: " . implode(', ', $allCapStatuses));
+        return $allCapStatuses;
+    }
 }
 ?>
