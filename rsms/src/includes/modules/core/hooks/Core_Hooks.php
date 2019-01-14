@@ -40,14 +40,7 @@ class Core_Hooks {
                 $LOG->info("All corrective actions in $inspection have been Completed");
 
                 // Enqueue message
-                $messenger = new Messaging_ActionManager();
-                $messenger->enqueueMessages(
-                    CoreModule::$NAME,
-                    CoreModule::$MTYPE_CAP_SUBMITTED_ALL_COMPLETE,
-                    array(
-                        new LabInspectionReminderContext($inspection->getKey_id(), date('Y-m-d'))
-                    )
-                );
+                self::enqueueLabInspectionReminderMessage($inspection->getKey_id(), CoreModule::$MTYPE_CAP_SUBMITTED_ALL_COMPLETE);
             }
         }
     }
@@ -69,15 +62,20 @@ class Core_Hooks {
             $LOG->info("Inspection CAP was approved " . $afterSaved->getDate_closed());
 
             // Enqueue message
-            $messenger = new Messaging_ActionManager();
-            $messenger->enqueueMessages(
-                CoreModule::$NAME,
-                'LabInspectionApprovedCAP',
-                array(
-                    new LabInspectionReminderContext($afterSaved->getKey_id(), date('Y-m-d'))
-                )
-            );
+            self::enqueueLabInspectionReminderMessage($inspection->getKey_id(), CoreModule::$MTYPE_CAP_APPROVED);
         }
+    }
+
+    private static function enqueueLabInspectionReminderMessage( $inspection_id, $mtype ){
+        $messenger = new Messaging_ActionManager();
+        $messenger->enqueueMessages(
+            CoreModule::$NAME,
+            $mtype,
+            array(
+                new LabInspectionReminderContext($inspection_id, date('Y-m-d'))
+            )
+        );
+
     }
 }
 
