@@ -7,6 +7,11 @@
  */
 class CorrectiveAction extends GenericCrud {
 
+	public static $STATUS_INCOMPLETE = 'Incomplete';
+	public static $STATUS_PENDING = 'Pending';
+	public static $STATUS_COMPLETE = 'Complete';
+	public static $STATUS_ACCEPTED = 'Accepted';
+
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "corrective_action";
 
