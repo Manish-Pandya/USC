@@ -11,6 +11,8 @@ class CoreModule implements RSMS_Module, MessageTypeProvider {
     public static $MTYPE_DEFICIENCIES_FOUND = 'PostInspectionDeficienciesFound';
     public static $MTYPE_DEFICIENCIES_CORRECTED = 'PostInspectionDeficienciesCorrected';
 
+    public static $MTYPE_CAP_SUBMITTED_ALL_COMPLETE = 'LabInspectionAllCompletedCAPSubmitted';
+
     public function getModuleName(){
         return self::$NAME;
     }
@@ -47,6 +49,12 @@ class CoreModule implements RSMS_Module, MessageTypeProvider {
             new MessageTypeDto(self::$NAME, self::$MTYPE_CAP_APPROVED,
                 'Automatic email event is sent when corrective action plan is approved by EHS.',
                 'LabInspectionReminder_Processor',
+                array('Inspection', 'LabInspectionReminderContext')),
+
+            // RSMS-827: Send email on submission of fully-completed CAP
+            new MessageTypeDto(self::$NAME, self::$MTYPE_CAP_SUBMITTED_ALL_COMPLETE,
+                'Automatic confirmation email is sent after PI submits CAP that has no pending (all Completed).',
+                'InspectionEmailMessage_Processor',
                 array('Inspection', 'LabInspectionReminderContext')),
 
             // RSMS-739: Refactor existing Inspections email generation to be handled by Email Hub
