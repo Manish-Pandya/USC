@@ -3228,6 +3228,9 @@ class ActionManager {
             // Save the Inspection
             $inspection = $dao->save($decodedObject);
 
+            //RSMS-827
+            HooksManager::hook('after_cap_submitted', $inspection);
+
             return $inspection;
         }
       }
