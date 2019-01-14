@@ -26,6 +26,32 @@ class Core_Hooks {
         }
     }
 
+    public static function after_cap_submitted( &$inspection ) {
+        if( isset($inspection) ){
+            $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+            $LOG->debug("Post-submit hook for $inspection");
+
+            // Verify that all corrective-actions have been completed
+            $LOG->debug("Check status of all Corrective Actions");
+            $allCapStatuses = $inspection->collectAllCorrectiveActionStatuses();
+
+            if( count($allCapStatuses) == 1 && in_array(CorrectiveAction::$STATUS_COMPLETE, $allCapStatuses) ){
+                // All CAPs are completed
+                $LOG->info("All corrective actions in $inspection have been Completed");
+
+                // Enqueue message
+                $messenger = new Messaging_ActionManager();
+                $messenger->enqueueMessages(
+                    CoreModule::$NAME,
+                    CoreModule::$MTYPE_CAP_SUBMITTED_ALL_COMPLETE,
+                    array(
+                        new LabInspectionReminderContext($inspection->getKey_id(), date('Y-m-d'))
+                    )
+                );
+            }
+        }
+    }
+
     /**
      * RSMS-752: Trigger email when EHS approves a CAP
      */
