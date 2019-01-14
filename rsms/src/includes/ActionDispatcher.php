@@ -262,7 +262,7 @@ class ActionDispatcher {
 
             ////
             // Before calling pre-function, check for security fn
-            if( $actionMapping instanceof SecuredActionMapping ){
+            if( $actionMapping instanceof SecuredActionMapping && $actionMapping->preconditionFunction != null){
                 $this->LOG->trace("Execute Security condition function $actionMapping->preconditionFunction");
                 $preResult = call_user_func_array($actionMapping->preconditionFunction, $func_args);
 
