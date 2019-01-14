@@ -42,6 +42,14 @@ class Core_Hooks {
                 // Enqueue message
                 self::enqueueLabInspectionReminderMessage($inspection->getKey_id(), CoreModule::$MTYPE_CAP_SUBMITTED_ALL_COMPLETE);
             }
+
+            if( in_array(CorrectiveAction::$MTYPE_CAP_SUBMITTED_PENDING, $allCapStatuses) ){
+                // At least one CAP is Pending
+                $LOG->info("At least one corrective action in $inspection is Pending");
+
+                // Enqueue message
+                self::enqueueLabInspectionReminderMessage($inspection->getKey_id(), CoreModule::$MTYPE_CAP_SUBMITTED_PENDING);
+            }
         }
     }
 
