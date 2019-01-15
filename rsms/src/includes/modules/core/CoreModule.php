@@ -55,13 +55,13 @@ class CoreModule implements RSMS_Module, MessageTypeProvider {
             // RSMS-827: Send email on submission of fully-completed CAP
             new MessageTypeDto(self::$NAME, self::$MTYPE_CAP_SUBMITTED_ALL_COMPLETE,
                 'Automatic confirmation email is sent after PI submits CAP that has no pending (all Completed).',
-                'InspectionEmailMessage_Processor',
+                'LabInspectionReminder_Processor',
                 array('Inspection', 'LabInspectionReminderContext')),
 
             // RSMS-828: Send email on submission of Pending CAP
             new MessageTypeDto(self::$NAME, self::$MTYPE_CAP_SUBMITTED_PENDING,
                 'Automatic confirmation email is sent after PI submits CAP that has one or more pending.',
-                'InspectionEmailMessage_Processor',
+                'LabInspectionReminder_Processor',
                 array('Inspection', 'LabInspectionReminderContext')),
 
             // RSMS-739: Refactor existing Inspections email generation to be handled by Email Hub
