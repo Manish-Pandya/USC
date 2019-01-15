@@ -402,7 +402,8 @@ class Messaging_ActionManager extends ActionManager {
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
         if( $typeDto == null ){
-            $typeDto = $this->convertInputJson();
+            // We are expecting a MessageTypeDto; create an empty one as a model
+            $typeDto = $this->convertInputJson( new MessageTypeDto(null, null, null, null, null) );
         }
 
         if( !($typeDto instanceof MessageTypeDto) ){
