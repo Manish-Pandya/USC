@@ -609,7 +609,12 @@ inspectionDetailsController = function ($scope, $location, $anchorScroll, conven
 
     function onFailGetInspeciton() {
         $scope.doneLoading = true;
-        $scope.error = "The system couldn't find the inspection.  Check your internet connection."
+        $scope.error = "The system couldn't find this inspection.";
+        $scope.errorCauses = [
+            "Requesting an inspection you do not have access to view (did you follow a link to someone else's inspection?)",
+            "Requesting an inspection that does not exist (did you type in the URL by hand?)",
+            "Unstable internet connection"
+        ];
     }
 
     $scope.someAnswers = function (checklist) {
@@ -707,7 +712,12 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
 
     function onFailGetInspeciton() {
         $scope.doneLoading = true;
-        $scope.error = "The system couldn't find the inspection.  Check your internet connection."
+        $scope.error = "The system couldn't find this inspection.";
+        $scope.errorCauses = [
+            "Requesting an inspection you do not have access to view (did you follow a link to someone else's inspection?)",
+            "Requesting an inspection that does not exist (did you type in the URL by hand?)",
+            "Unstable internet connection"
+        ];
     }
 
     $scope.contactList = [];
@@ -907,7 +917,12 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
 
     function onFailGetInspeciton() {
         $scope.doneLoading = true;
-        $scope.error = "The system couldn't find the inspection.  Check your internet connection."
+        $scope.error = "The system couldn't find this inspection.";
+        $scope.errorCauses = [
+            "Requesting an inspection you do not have access to view (did you follow a link to someone else's inspection?)",
+            "Requesting an inspection that does not exist (did you type in the URL by hand?)",
+            "Unstable internet connection"
+        ];
     }
 
     //parse function to ensure that users cannot set the date for a corrective action before the date of the inspection
