@@ -110,7 +110,7 @@ class JsonManager {
 	 * @throws Exception
 	 * @return Ambigous <object, NULL>|NULL
 	 */
-	public static function decodeInputStream( $stream='php://input' ){
+	public static function decodeInputStream( $modelObject=null, $stream='php://input' ){
 		$LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
 		$input = JsonManager::readInputStream($stream);
@@ -120,7 +120,7 @@ class JsonManager {
 
 			//decode JSON to object
 			try{
-				$decodedObject = JsonManager::decode($input);
+				$decodedObject = JsonManager::decode($input, $modelObject);
 
 				//$this->LOG->trace( 'Decoded to: ' . $decodedObject);
 

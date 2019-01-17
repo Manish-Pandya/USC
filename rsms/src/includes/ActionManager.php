@@ -49,9 +49,9 @@ class ActionManager {
         }
     }
 
-    public function convertInputJson(){
+    public function convertInputJson( $modelObject = null){
         try{
-            $decodedObject = JsonManager::decodeInputStream();
+            $decodedObject = JsonManager::decodeInputStream($modelObject);
 
             if( $decodedObject === NULL ){
                 return new ActionError('No data read from input stream');
