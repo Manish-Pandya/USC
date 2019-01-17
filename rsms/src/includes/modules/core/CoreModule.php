@@ -44,7 +44,7 @@ class CoreModule implements RSMS_Module, MessageTypeProvider {
                 array('Inspection', 'LabInspectionReminderContext')),
 
             new MessageTypeDto(self::$NAME, self::$MTYPE_CAP_REMINDER_OVERDUE,
-                'Automatic email is sent the day after the corrective action plan due date if the CAP has not already been submitted (i.e. two weeks plus one day after the lab inspection report is sent).',
+                'Automatic email is sent the day after the corrective action plan due date if the CAP has not already been submitted (i.e. two weeks plus one day after the lab inspection report is sent), and every week thereafter until it is submitted.',
                 'LabInspectionReminder_Processor',
                 array('Inspection', 'LabInspectionReminderContext')),
 
