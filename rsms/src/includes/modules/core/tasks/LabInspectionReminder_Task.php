@@ -62,7 +62,8 @@ class LabInspectionReminder_Task implements ScheduledTask {
             FROM inspection_status insp_status
             JOIN inspection insp ON insp.key_id = insp_status.inspection_id
 
-            WHERE insp_status.inspection_status = 'OVERDUE CAP'
+            WHERE insp.schedule_year = YEAR(CURDATE())
+                AND insp_status.inspection_status = 'OVERDUE CAP'
                 AND (
                     -- Constrain to overdue CAPs with a reminder date (two weeks + one day after notification) of today
                     CURDATE() = DATE_ADD(DATE(insp.notification_date), INTERVAL 15 DAY)
