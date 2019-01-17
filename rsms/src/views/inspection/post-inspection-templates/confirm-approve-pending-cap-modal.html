@@ -1,0 +1,14 @@
+﻿<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px" class="redBg">Approve Pending CAP</h2>
+</div>
+<div class="modal-body">
+    <h4 ng-if="pendingActionCount != 1">This inspection report has {{pendingActionCount}} pending corrective actions that have not yet been completed.</h4>
+    <h4 ng-if="pendingActionCount == 1">This inspection report has {{pendingActionCount}} pending corrective action that has not yet been completed.</h4>
+    <br/>
+    <h4>Are you sure you want to approve this CAP?</h4>
+</div>
+<div class="modal-footer">
+    <i class="icon-spinnery-dealie spinner small" ng-if="dirty"></i>
+    <a class="btn btn-large hazardBtn btn-warning left" ng-click="confirm()"><i class="icon-checkmark"></i>Approve</a>
+    <a class="btn btn-danger hazardBtn btn-large left" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
+</div>

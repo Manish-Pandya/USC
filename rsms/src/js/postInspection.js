@@ -853,7 +853,7 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
 
 }
 
-inspectionReviewController = function ($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modal, roleBasedFactory) {
+inspectionReviewController = function ($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modal, roleBasedFactory, $q) {
     $scope.getNumberOfRoomsForQuestionByChecklist = postInspectionFactory.getNumberOfRoomsForQuestionByChecklist;
     function init() {
         if ($location.search().inspection) {
@@ -1111,12 +1111,74 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         });
     }
 
+    $scope.getPendingCorrectiveActions = function getPendingCorrectiveActions( inspection ){
+        // Reduce the checklists to any Pending CorrectiveActions
+        return inspection.Checklists.reduce((acc, chk) => {
+            if( !acc ){
+                acc = [];
+            }
+            chk.Questions.forEach( q => {
+                if( q.Responses ){
+                    q.Responses.DeficiencySelections
+                        .concat(q.Responses.SupplementalDeficiencies)
+                        .forEach(ds => ds.CorrectiveActions
+                            .filter(ca => ca.Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING)
+                            .forEach(ca => acc.push(ca)));
+                }
+            });
+
+            return acc;
+        }, []);
+    }
+
     $scope.approveCAP = function( inspection ){
-        $scope.handlingApproveCap = true;
-        postInspectionFactory.approveCAP(inspection).then(function () {
-            //...
-            location.reload();
+        // Ask for confirmation if required
+        $scope._confirmApproveCAP( inspection )
+        .then(function () {
+            $scope.handlingApproveCap = true;
+            postInspectionFactory.approveCAP(inspection).then(function () {
+                //...
+                location.reload();
+            });
         });
+    }
+
+    $scope._confirmApproveCAP = function (inspection) {
+        var deferred = $q.defer();
+        // Check if there are Pending actions
+        var pendingActions = $scope.getPendingCorrectiveActions(inspection);
+        var requireApproval = pendingActions.length;
+
+        if( requireApproval ){
+            console.debug("Inspection approval requires user confirmation");
+            postInspectionFactory.setModalData({
+                inspection: inspection,
+                pendingActions: pendingActions
+            });
+
+            var modalInstance = $modal.open({
+                templateUrl: 'post-inspection-templates/confirm-approve-pending-cap-modal.html',
+                controller: modalConfirmCtrl
+            });
+
+            modalInstance.result.then(
+                function (inspection) {
+                    console.log("User confirmed CAP approval");
+                    deferred.resolve();
+                },
+                function(err){
+                    console.log("User rejected CAP approval");
+                    deferred.reject();
+                }
+            );
+        }
+        else {
+            console.debug("No confirmation required for inspection approval");
+            // No approval required
+            deferred.resolve();
+        }
+
+        return deferred.promise;
     }
 
     $scope.handleInspectionOpen = function (inspection, isReopen) {
@@ -1226,6 +1288,21 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         }
 
         return ctrls;
+    }
+}
+
+modalConfirmCtrl = function($scope, $modalInstance, postInspectionFactory){
+    var data = postInspectionFactory.getModalData();
+    $scope.inspection = data.inspection;
+    $scope.pendingActions = data.pendingActions;
+    $scope.pendingActionCount = data.pendingActions.length;
+
+    $scope.confirm = function(){
+        $modalInstance.close();
+    }
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss();
     }
 }
 
