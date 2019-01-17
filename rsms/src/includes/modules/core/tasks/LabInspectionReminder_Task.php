@@ -92,9 +92,10 @@ class LabInspectionReminder_Task implements ScheduledTask {
                 cap.supplemental_deficiency_id IS NOT NULL AND cap.supplemental_deficiency_id = supdef.key_id
             )
 
-            WHERE cap.status = '$STATUS_PENDING' AND 
-                CURDATE() > DATE(inspection.cap_submitted_date) AND
-                DATEDIFF(CURDATE(), DATE(inspection.cap_submitted_date)) % 14 = 0
+            WHERE inspection.schedule_year = YEAR(CURDATE())
+                AND cap.status = '$STATUS_PENDING'
+                AND CURDATE() > DATE(inspection.cap_submitted_date)
+                AND DATEDIFF(CURDATE(), DATE(inspection.cap_submitted_date)) % 14 = 0
 
             GROUP BY inspection.key_id";
 
