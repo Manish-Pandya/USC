@@ -1112,9 +1112,8 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
     }
 
     $scope.approveCAP = function( inspection ){
-        $scope.handlingInspectionOpen = true;
+        $scope.handlingApproveCap = true;
         postInspectionFactory.approveCAP(inspection).then(function () {
-            $scope.handlingInspectionOpen = false;
             //...
             location.reload();
         });
