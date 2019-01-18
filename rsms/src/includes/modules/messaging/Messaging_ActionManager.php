@@ -73,7 +73,7 @@ class Messaging_ActionManager extends ActionManager {
             // TODO: Optionally allow for repeat emails (with repeat threshold)
 
             if( $matches != null && count($matches) > 0){
-                $LOG->debug("$description is already queued: " . $matches[0]);
+                $LOG->info("$description is already queued: " . $matches[0]);
                 continue;
             }
 
