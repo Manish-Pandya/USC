@@ -3264,6 +3264,9 @@ class ActionManager {
 
         $LOG->info("Approving CAP for $inspection: approver:" . $inspection->getCap_approver_id() . " date:" . $inspection->getDate_closed());
         $inspection = $dao->save($inspection);
+
+        HooksManager::hook('after_cap_approved', $inspection);
+
         return $inspection;
     }
 

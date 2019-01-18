@@ -53,6 +53,15 @@ class Core_Hooks {
         }
     }
 
+    public static function after_cap_approved( &$inspection ){
+        if( isset($inspection) && $inspection->getDate_closed() != null ){
+            $LOG->info("Inspection CAP was approved " . $inspection->getDate_closed());
+
+            // Enqueue message
+            self::enqueueLabInspectionReminderMessage($inspection->getKey_id(), CoreModule::$MTYPE_CAP_APPROVED);
+        }
+    }
+
     /**
      * RSMS-752: Trigger email when EHS approves a CAP
      */
@@ -66,11 +75,8 @@ class Core_Hooks {
         $approvedAfterSave = $afterSaved->getDate_closed() != null;
 
         if( $previouslyUnapproved && $approvedAfterSave ){
-            // This inspection was just approved
-            $LOG->info("Inspection CAP was approved " . $afterSaved->getDate_closed());
-
-            // Enqueue message
-            self::enqueueLabInspectionReminderMessage($inspection->getKey_id(), CoreModule::$MTYPE_CAP_APPROVED);
+            // This inspection was just approved; trigger after_cap_approved hook
+            self::after_cap_approved($afterSaved);
         }
     }
 
