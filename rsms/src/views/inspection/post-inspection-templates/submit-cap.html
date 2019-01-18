@@ -1,5 +1,8 @@
 <div class="modal-header" style="padding:0;" class="">
-    <h2 style="padding:5px" ng-if="!modalData.Key_id" class="redBg">Submit Corrective Action Plan?</h2>
+    <h2 style="padding:5px" ng-if="!modalData.Key_id" class="redBg">
+        <span ng-if="!inspection.Cap_submitted_date">Submit Corrective Action Plan?</span>
+        <span ng-if="inspection.Cap_submitted_date">Submit updates to Pending corrective action plans?</span>
+    </h2>
 </div>
 <div class="modal-body">
     <h4 ng-if="validationError" class="alert alert-danger">{{validationError}}</h4>
@@ -37,9 +40,12 @@
 <div class="modal-footer" ng-if="data.totals">
     <a ng-if="!data.totals" class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel-2"></i>Close</a>
     <span ng-if="data.totals">
-        <span ng-if="!inspection.Cap_submitted_date || inspection.Cap_submitted_date == '0000-00-00 00:00:00'">
+        <span>
             <i class="icon-spinnery-dealie spinner small" ng-if="dirty"></i>
-            <a class="btn btn-success left btn-large" ng-click="closeOut()"><i class="icon-checkmark"></i>Submit</a>
+            <a class="btn btn-success left btn-large" ng-click="closeOut()"><i class="icon-checkmark"></i>
+                <span ng-if="!inspection.Cap_submitted_date || inspection.Cap_submitted_date == '0000-00-00 00:00:00'">Submit</span>
+                <span ng-if="inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">Submit Update</span>
+            </a>
         </span>
         <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel-2"></i><span ng-if="!inspection.Cap_submitted_date || inspection.Cap_submitted_date == '0000-00-00 00:00:00'">Not Yet</span><span ng-if="inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">Close</span></a>
     </span>

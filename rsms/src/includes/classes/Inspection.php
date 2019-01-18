@@ -21,6 +21,7 @@ class Inspection extends GenericCrud {
         "notification_date"	=> "timestamp",
         "cap_submitted_date"	=> "timestamp",
         "cap_submitter_id"      => "integer",
+        "cap_approver_id"       => "integer",
         "schedule_month"	=> "text",
         "schedule_year"		=> "text",
         "note"			=> "text",
@@ -138,6 +139,9 @@ class Inspection extends GenericCrud {
      */
     private $cap_submitter_id;
     private $cap_submitter_name;
+
+    private $cap_approver_id;
+    private $cap_approver_name;
 
     private $rooms;
     private $roomIds;
@@ -382,6 +386,20 @@ class Inspection extends GenericCrud {
             }
         }
 		return $this->cap_submitter_name;
+	}
+
+	public function getCap_approver_id(){return $this->cap_approver_id;}
+	public function setCap_approver_id($cap_approver_id){$this->cap_approver_id = $cap_approver_id;}
+
+	public function getCap_approver_name(){
+        if($this->getCap_approver_id() != null && $this->cap_approver_name == null){
+            $thisDao = new GenericDAO(new User());
+            $user = $thisDao->getById($this->cap_approver_id);
+            if($user != null){
+                $this->cap_approver_name = $user->getName();
+            }
+        }
+		return $this->cap_approver_name;
 	}
 
     public function getRoomIds(){

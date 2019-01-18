@@ -3212,29 +3212,60 @@ class ActionManager {
         }
     }
 
-      public function submitCAP(){
-        $LOG = Logger::getLogger('Action:' . __function__);
-        $decodedObject = $this->convertInputJson();
-        if( $decodedObject === NULL ){
-            return new ActionError('Error converting input stream to Inspection');
-        }
-        else if( $decodedObject instanceof ActionError){
-            return $decodedObject;
+    public function submitCAP( $id = NULL ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $id = $this->getValueFromRequest('id', $id);
+        if( $id == NULL ){
+            return new ActionError("No CAP to submit", 404);
         }
         else{
-
             $dao = $this->getDao(new Inspection());
 
+            $inspection = $dao->getById($id);
+            if( !isset($inspection) ){
+                return new ActionError("No such inspection $id", 404);
+            }
+
+            // Only thing that needs to change is to track the user & date of submission...
+            $inspection->setCap_submitter_id( $this->getCurrentUser()->getKey_id() );
+            $inspection->setCap_submitted_date( date("Y-m-d H:i:s") );
+
+            $LOG->info("Submitting CAP for $inspection: user:" . $inspection->getCap_submitter_id() . " date:" . $inspection->getCap_submitted_date());
+
             // Save the Inspection
-            $inspection = $dao->save($decodedObject);
+            $inspection = $dao->save($inspection);
 
             //RSMS-827
             HooksManager::hook('after_cap_submitted', $inspection);
 
             return $inspection;
         }
-      }
+    }
 
+    public function approveCAP( $id = NULL ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $id = $this->getValueFromRequest('id', $id);
+        if( $id == NULL ){
+            return new ActionError("No CAP to approve", 404);
+        }
+
+        $dao = $this->getDao(new Inspection());
+
+        $inspection = $dao->getById($id);
+        if( !isset($inspection) ){
+            return new ActionError("No such inspection $id", 404);
+        }
+
+        $now = date("Y-m-d H:i:s");
+        $inspection->setDate_closed( $now );
+        $inspection->setCap_approver_id( $this->getCurrentUser()->getKey_id() );
+
+        $LOG->info("Approving CAP for $inspection: approver:" . $inspection->getCap_approver_id() . " date:" . $inspection->getDate_closed());
+        $inspection = $dao->save($inspection);
+        return $inspection;
+    }
 
       // Inspection, step 2 (Hazard Assessment)
 
@@ -4226,6 +4257,10 @@ class ActionManager {
 
             //get inspection
             $inspection = $dao->getById($id);
+
+            if( !isset($inspection) || ($inspection instanceof ActionError) ){
+                return new ActionError("No such Inspection $id", 404);
+            }
 
             // check if this is an inspection we're just starting
             if( $inspection->getDate_started() == NULL ) {

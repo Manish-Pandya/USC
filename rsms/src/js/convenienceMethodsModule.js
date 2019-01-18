@@ -461,12 +461,8 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
         },
 
         userLoggedOut: function (data) {
-            if (data.Class && data.Class == "ActionError") {
+            if (data && data.Class && data.Class == "ActionError") {
                 $rootScope.requestError = data.Message;
-                console.log(location)
-                alert("Your session has expired. Please login again.");
-                //window.location.replace( location.host + location.port + "/rsms" );
-                window.location = "http://" + location.host + "/rsms";
             }
         },
         dateToIso: function (input, object, propertyName, setToString, nullable) {

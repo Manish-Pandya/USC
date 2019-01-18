@@ -1,5 +1,9 @@
 <div class="alert alert-error" ng-if="error" style="margin-top:10px;">
     <h2>{{error}}</h2>
+    <span ng-if="errorCauses">This error is commonly caused by:</span>
+    <ul   ng-if="errorCauses">
+        <li ng-repeat="cause in errorCauses">{{cause}}</li>
+    </ul>
 </div>
 
 <div class="loading" ng-show='!doneLoading' style="margin-left:24px;">
@@ -84,21 +88,35 @@
 </span>
         </div>
     </div>
-<h2 class="alert alert-info" ng-if="inspection.Cap_submitted_date && rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_INSPECTOR]])">
-    <span ng-if="!inspection.Date_closed">The corrective action plan for this inspection was submitted on {{inspection.Cap_submitted_date | dateToISO}}</span>
-    <span ng-if="inspection.Date_closed">This inspection was closed out on {{inspection.Date_closed | dateToISO}}</span>
-    <a class="btn" ng-click="handleInspectionOpen(inspection)" ng-if="!inspection.Date_closed && inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">
-        <span>Approve CAP</span>
-    </a>
 
-    <a class="btn" ng-click="handleInspectionOpen(inspection, true)" ng-if="inspection.Date_closed && inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'">
-        <span>Reopen CAP</span>
-    </a>
+    <table ng-if="inspection.Cap_submitted_date || inspection.Date_closed" class="table table-bordered inspectionReportTable" style="width: 50%">
+        <tr class="cap-status" style="margin:30px 0;" ng-if="inspection.Cap_submitted_date">
+            <td style="background: #c5d8f1;padding: 5px;">
+                <h3>Corrective Action Plan Submitted By:</h3>
+            </td>
+            <td style="font-size: 14pt">{{inspection.Cap_submitter_name}}</td>
+            <td style="font-size: 14pt">
+                <span>{{inspection.Cap_submitted_date | dateToISO}}</span>
+                <a class="btn btn-success btn-default-focus" ng-click="approveCAP(inspection)" ng-if="!handlingApproveCap && !inspection.Date_closed && inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'
+                    && rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_INSPECTOR]])">
+                    <span>Approve CAP</span>
+                </a>
+                <span ng-if="handlingApproveCap" class="loading" style="margin-left:3px;">
+                    Approving...
+                    <i class="icon-spinnery-dealie spinner small" style="margin-top:5px"></i>
+                </span>
+            </td>
+        </tr>
 
-    <span class="loading" ng-if='handlingInspectionOpen' style="margin-left:3px;">
-        <i class="icon-spinnery-dealie spinner small" style="color:white;margin-top:5px"></i>
-    </span>
-</h2>
+        <tr class="cap-status" style="margin:30px 0;" ng-if="inspection.Date_closed">
+            <td style="background: #c5d8f1;padding: 5px;">
+                <h3 >Corrective Action Plan Approved By:</h3>
+            </td>
+            <td style="font-size: 14pt">{{inspection.Cap_approver_name}}</td>
+            <td style="font-size: 14pt">{{inspection.Date_closed | dateToISO}}</td>
+        </tr>
+    </table>
+
 <div ng-if="(pf.getIsReadyToSubmit().totals && !pf.getIsReadyToSubmit().readyToSubmit) || (pf.getIsReadyToSubmit().totals && pf.getIsReadyToSubmit().totals == pf.getIsReadyToSubmit().correcteds)" style="background: #989898 !important;border-color: #989898;" class="alert submit-cap-info" ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.LAB_CONTACT], R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR], R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_INSPECTOR]])">
     
     <h4 ng-if="validationError" class="alert alert-danger">{{validationError}}</h4>
@@ -129,7 +147,8 @@
 </div>
 <div class="alert alert-info submit-cap" style="box-shadow: 0 0 17px rgba(0,0,0,0.4); left:0; right:0; width:auto !important; position:absolute;text-align:center" sticky offset="45" ng-if="pf.getIsReadyToSubmit().totals != pf.getIsReadyToSubmit().correcteds && pf.getIsReadyToSubmit().readyToSubmit && (!inspection.Cap_submitted_date || inspection.Cap_submitted_date == '0000-00-00 00:00:00')">
     <h2 style="padding:5px">
-    Submit Corrective Action Plan?
+        <span ng-if="!inspection.Cap_submitted_date">Submit Corrective Action Plan?</span>
+        <span ng-if="inspection.Cap_submitted_date">Submit updates to Pending corrective action plans?</span>
         <span>
             <a class="btn btn-success left" ng-click="closeOut()"><i class="icon-checkmark"></i>Submit</a>
             <i ng-if="dirty" class="icon-spinnery-dealie spinner small" style="margin-top: 12px;color: rgba(255, 255, 255, 0.61) !important;"></i>
@@ -187,9 +206,6 @@
     <tr><th style="background:#355f91;color:white; text-align:center;width:30%; padding: 7px; border-bottom:2px solid black;" valign="top">AUDIT CRITERIA</th><th style="background:#355f91;color:white; text-align:center; padding: 7px; border-bottom:2px solid black;" align="center">EH&S RECOMMENDATIONS</th></tr>
     <tr ng-repeat="rec in recommendations" ng-if="rec.Is_active"><td style="font-size:1.5em; text-align:center" valign="top">{{rec.Question}}</td><td valign="top">{{rec.Text}}</td></tr>
 </table>
-<div style="margin:30px 0;">
-    <h3 style="display:inline;width:200px;background: #c5d8f1;padding: 5px; margin-right:5px;">Corrective Action Plan Submitted By:</h3><span style="font-size: 14pt" ng-if="!inspection.Date_closed">{{inspection.Cap_submitter_name}}</span>
-</div>
 
 <table class="table table-bordered table-striped table-responsive inspectionReportTable" style="width:100%;">
     <tr>
