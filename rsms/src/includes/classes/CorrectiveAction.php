@@ -55,6 +55,10 @@ class CorrectiveAction extends GenericCrud {
     private $insuficient_funds;
     private $other_reason;
 
+	private $status;
+	private $promised_date;
+	private $completion_date;
+
 	public function __construct(){
 
 		// Define which subentities to load
