@@ -1343,8 +1343,11 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
                 Supplemental_deficiency_id: $scope.def.Class == "SupplementalDeficiency" ? $scope.def.Key_id : null,
             }
         }
-        if ($scope.copy && $scope.copy.Promised_date) $scope.dates.promisedDate = convenienceMethods.getDate($scope.copy.Promised_date);
-        if ($scope.copy && $scope.copy.Completion_date) $scope.dates.completionDate = convenienceMethods.getDate($scope.copy.Completion_date);
+
+        if ($scope.copy && $scope.copy.Promised_date)
+            $scope.dates.promisedDate = convenienceMethods.getDate($scope.copy.Promised_date);
+        if ($scope.copy && $scope.copy.Completion_date)
+            $scope.dates.completionDate = convenienceMethods.getDate($scope.copy.Completion_date);
 
         $scope.closeOut = function () {
             $scope.dirty = true;
