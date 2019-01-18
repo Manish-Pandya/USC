@@ -92,8 +92,11 @@ class LabInspectionUpdatedMessage_Processor implements MessageTypeProcessor {
             $inspector_emails[] = $inspector->getUser()->getEmail();
         }
 
-        // Implode array to csv
-        return $this->prepareRecipientsArray( implode(',', $recipients), $inspector_emails );
+        // Implode arrays to csv
+        return $this->prepareRecipientsArray(
+            implode(',', $recipients),
+            implode(',', $inspector_emails)
+        );
     }
 
     private function computeEmailRecipients( $inspection, $context ){
