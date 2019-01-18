@@ -97,6 +97,8 @@ class LabInspectionUpdatedMessage_Processor implements MessageTypeProcessor {
     }
 
     private function computeEmailRecipients( $inspection, $context ){
+        $LOG = Logger::getLogger(__CLASS__);
+
         //   "the PI and any other individuals sent the original inspection report email"
         // Problem: RSMS postInspection allows the inspector to selectively send email to PI, Contacts, and arbitrary addresses
 
