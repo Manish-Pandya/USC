@@ -118,9 +118,14 @@ ul.banner-nav li a:hover {
     color: #aaa;
 }
 
-.report-detail .overdue-cap {
+.report-detail .pending-cap {
     background-color: #ffff00 !important;
     border-color: #ffff00 !important;
+}
+
+.report-detail .overdue-cap {
+    background-color: #ff9999 !important;
+    border-color: #ff9999 !important;
 }
 
 /* Report tables sizing */

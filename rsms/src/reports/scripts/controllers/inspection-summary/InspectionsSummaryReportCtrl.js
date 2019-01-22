@@ -53,6 +53,10 @@ angular.module('ng-Reports')
             return parseInt( item[field] ) > 0;
         };
 
+        $scope.hasPendingCaps = function hasPendingCaps( item ){
+            return parseInt( item.Pending_caps ) > 0;
+        }
+
         // Helper mappings for generating 'friendly' status texts
         var friendlyText = [];
         friendlyText[Constants.INSPECTION.STATUS.CLOSED_OUT] = "Closed Out";

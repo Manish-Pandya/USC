@@ -24,7 +24,8 @@
         <ul class="legend-box pull-right">
             <li><span class="keyword">* Compliance scores</span> can be used to assess overall safety and compliance progress and can be used as a performance improvement metric.
                 <span class="keyword">Scores</span> are intended to provide a general assessment of potential risk. However, an accident or incident may occur in any laboratory.</li>
-            <li><span class="keyword overdue-cap">Highlighted inspections</span> represent labs that are overdue to submit their corrective actions for inspection deficiencies.</li>
+            <li><span class="keyword overdue-cap">Highlighted inspections</span> indicate labs that are overdue to submit their corrective actions for inspection deficiencies.</li>
+            <li><span class="keyword pending-cap">Highlighted inspections</span> indicate labs that have corrective actions for inspection deficiencies that are pending and not yet completed.</li>
         </ul>
     </div>
 
@@ -64,7 +65,7 @@
                 <th class="no-print">Inspection Report</th>
             </tr>
             <tr ng-repeat="item in data.ReportItems | orderBy : config.orderByField : config.reverseSort"
-                ng-class="{'overdue-cap': item.Inspection_status == 'OVERDUE CAP', 'inspection-completed': item.Inspection_status == 'CLOSED OUT'}">
+                ng-class="{'overdue-cap': item.Inspection_status == 'OVERDUE CAP', 'pending-cap': hasPendingCaps(item), 'inspection-completed': item.Inspection_status == 'CLOSED OUT'}">
                 <td ng-if="config.list_department">{{item.Department_name}}</td>
                 <td>{{item.Principal_investigator_name}}</td>
                 <td>{{item.Started_date | dateToISO}}</td>
