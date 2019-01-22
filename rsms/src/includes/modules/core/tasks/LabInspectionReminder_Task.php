@@ -17,16 +17,16 @@ class LabInspectionReminder_Task implements ScheduledTask {
 
         // Enqueue Up-coming and Overdue reminders
         $msg = '';
-        $msg .= $this->queueMessages($reminders, CoreModule::$MTYPE_CAP_REMINDER_DUE);
-        $msg .= $this->queueMessages($overdue, CoreModule::$MTYPE_CAP_REMINDER_OVERDUE);
-        $msg .= $this->queueMessages($pending, CoreModule::$MTYPE_CAP_REMINDER_PENDING);
+        $msg .= $this->queueMessages($reminders, LabInspectionModule::$MTYPE_CAP_REMINDER_DUE);
+        $msg .= $this->queueMessages($overdue, LabInspectionModule::$MTYPE_CAP_REMINDER_OVERDUE);
+        $msg .= $this->queueMessages($pending, LabInspectionModule::$MTYPE_CAP_REMINDER_PENDING);
 
         return $msg;
     }
 
     private function queueMessages($contexts, $typeName){
         $enqueued = $this->messenger->enqueueMessages(
-            CoreModule::$NAME,
+            LabInspectionModule::$NAME,
             $typeName,
             $contexts
         );

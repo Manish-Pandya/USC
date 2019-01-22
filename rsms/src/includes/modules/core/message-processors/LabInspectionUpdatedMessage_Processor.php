@@ -136,9 +136,9 @@ class LabInspectionUpdatedMessage_Processor implements MessageTypeProcessor {
 
         $wc = '%"inspection_id":"' . $context->inspection_id . '"%';
         $mtypes = array(
-            CoreModule::$MTYPE_NO_DEFICIENCIES,
-            CoreModule::$MTYPE_DEFICIENCIES_FOUND,
-            CoreModule::$MTYPE_DEFICIENCIES_CORRECTED
+            LabInspectionModule::$MTYPE_NO_DEFICIENCIES,
+            LabInspectionModule::$MTYPE_DEFICIENCIES_FOUND,
+            LabInspectionModule::$MTYPE_DEFICIENCIES_CORRECTED
         );
 
         $sql = "SELECT
@@ -156,9 +156,9 @@ class LabInspectionUpdatedMessage_Processor implements MessageTypeProcessor {
 
         $stmt = DBConnection::prepareStatement($sql);
 
-        $stmt->bindValue(':m1', CoreModule::$MTYPE_NO_DEFICIENCIES, PDO::PARAM_STR);
-        $stmt->bindValue(':m2', CoreModule::$MTYPE_DEFICIENCIES_FOUND, PDO::PARAM_STR);
-        $stmt->bindValue(':m3', CoreModule::$MTYPE_DEFICIENCIES_CORRECTED, PDO::PARAM_STR);
+        $stmt->bindValue(':m1', LabInspectionModule::$MTYPE_NO_DEFICIENCIES, PDO::PARAM_STR);
+        $stmt->bindValue(':m2', LabInspectionModule::$MTYPE_DEFICIENCIES_FOUND, PDO::PARAM_STR);
+        $stmt->bindValue(':m3', LabInspectionModule::$MTYPE_DEFICIENCIES_CORRECTED, PDO::PARAM_STR);
 
         $stmt->bindValue(':wildcard', $wc, PDO::PARAM_STR);
 

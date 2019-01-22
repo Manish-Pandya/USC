@@ -4183,7 +4183,7 @@ class ActionManager {
 
             // Create a message to use to look up Template(s)
             $message = new Message();
-            $message->setModule( CoreModule::$NAME );
+            $message->setModule( LabInspectionModule::$NAME );
             $message->setMessage_type( $messageType );
 
             $messenger = new Messaging_ActionManager();
@@ -4623,7 +4623,7 @@ class ActionManager {
             // Enqueue this message to be sent
             $messenger = new Messaging_ActionManager();
             $messageType = InspectionEmailMessage_Processor::getMessageTypeName($context->getInspectionState());
-            $queued = $messenger->enqueueMessages( CoreModule::$NAME, $messageType, array($context) );
+            $queued = $messenger->enqueueMessages( LabInspectionModule::$NAME, $messageType, array($context) );
 
             if( count($queued) > 0 ){
                 // Successfully queued message

@@ -7,13 +7,13 @@ class InspectionEmailMessage_Processor implements MessageTypeProcessor {
     public static function getMessageTypeName( LabInspectionStateDto $inspectionState ){
         $messageType = null;
         if( $inspectionState->getTotals() == 0){
-            $messageType = CoreModule::$MTYPE_NO_DEFICIENCIES;
+            $messageType = LabInspectionModule::$MTYPE_NO_DEFICIENCIES;
         }
         else if( $inspectionState->getTotals() > $inspectionState->getCorrecteds()){
-            $messageType = CoreModule::$MTYPE_DEFICIENCIES_FOUND;
+            $messageType = LabInspectionModule::$MTYPE_DEFICIENCIES_FOUND;
         }
         else {
-            $messageType = CoreModule::$MTYPE_DEFICIENCIES_CORRECTED;
+            $messageType = LabInspectionModule::$MTYPE_DEFICIENCIES_CORRECTED;
         }
 
         return $messageType;

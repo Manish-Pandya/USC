@@ -1,6 +1,6 @@
 <?php
 
-class Core_Hooks {
+class LabInspection_Hooks {
 
     public static function after_inspection_report_message_queued($params){
         Scheduler::run( MessagingModule::$NAME );
@@ -40,7 +40,7 @@ class Core_Hooks {
                 $LOG->info("All corrective actions in $inspection have been Completed");
 
                 // Enqueue message
-                self::enqueueLabInspectionReminderMessage($inspection->getKey_id(), CoreModule::$MTYPE_CAP_SUBMITTED_ALL_COMPLETE);
+                self::enqueueLabInspectionReminderMessage($inspection->getKey_id(), LabInspectionModule::$MTYPE_CAP_SUBMITTED_ALL_COMPLETE);
             }
 
             if( in_array(CorrectiveAction::$STATUS_PENDING, $allCapStatuses) ){
@@ -48,7 +48,7 @@ class Core_Hooks {
                 $LOG->info("At least one corrective action in $inspection is Pending");
 
                 // Enqueue message
-                self::enqueueLabInspectionReminderMessage($inspection->getKey_id(), CoreModule::$MTYPE_CAP_SUBMITTED_PENDING);
+                self::enqueueLabInspectionReminderMessage($inspection->getKey_id(), LabInspectionModule::$MTYPE_CAP_SUBMITTED_PENDING);
             }
         }
     }
@@ -58,7 +58,7 @@ class Core_Hooks {
             $LOG->info("Inspection CAP was approved " . $inspection->getDate_closed());
 
             // Enqueue message
-            self::enqueueLabInspectionReminderMessage($inspection->getKey_id(), CoreModule::$MTYPE_CAP_APPROVED);
+            self::enqueueLabInspectionReminderMessage($inspection->getKey_id(), LabInspectionModule::$MTYPE_CAP_APPROVED);
         }
     }
 
@@ -83,7 +83,7 @@ class Core_Hooks {
     private static function enqueueLabInspectionReminderMessage( $inspection_id, $mtype ){
         $messenger = new Messaging_ActionManager();
         $messenger->enqueueMessages(
-            CoreModule::$NAME,
+            LabInspectionModule::$NAME,
             $mtype,
             array(
                 new LabInspectionReminderContext($inspection_id, date('Y-m-d'))
