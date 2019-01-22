@@ -7,6 +7,8 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
     require_once('../Application.php');
 }
 
+session_start();
+
 echo '<script type="text/javascript">
 var isProductionServer;';
 if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
@@ -16,7 +18,7 @@ if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
 </script>
 
 <?php 
-session_start();
+
 if(!isset($_SESSION["USER"])){ ?>
 <script>
 //make sure the user is signed in, if not redirect them to the login page, but save the location they attempted to reach so we can send them there after authentication
