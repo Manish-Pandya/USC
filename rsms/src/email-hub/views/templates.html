@@ -14,9 +14,10 @@
                 <th></th>
                 <th>Template Name</th>
                 <th>Message Type</th>
+                <th>Recipients</th>
                 <th>Module</th>
             </thead>
-            <tbody ng-repeat="template in Templates" ng-class="{closed: !template.EditCopy}">
+            <tbody ng-repeat="template in Templates" ng-class="{closed: !template.EditCopy}" ng-init="mtype = getTypeForTemplate(template)">
                 <tr ng-class="{blueBg: HighlightTemplate && template.Key_id == HighlightTemplate, inactive: !template.Is_active, greenBg: template.EditCopy}">
                     <td>
                         <a ng-if="!template.EditCopy" class="btn btn-primary left" ng-click="editTemplate(template)"><i class="icon-pencil"></i></a>
@@ -28,6 +29,7 @@
                     </td>
                     <td>{{template.Title}}</td>
                     <td>{{template.Message_type}}</td>
+                    <td>{{mtype.RecipientsDescription}}</td>
                     <td>{{template.Module}}</td>
                 </tr>
                 <tr ng-if="template.EditCopy">
@@ -66,7 +68,7 @@
                             </div>
                         </div>
 
-                        <div class="inner card span5 message-type-info" ng-init="mtype = getTypeForTemplate(template)">
+                        <div class="inner card span5 message-type-info">
 
                             <h4 class="desc">{{mtype.Module}}: <code style="font-size: inherit">{{mtype.TypeName}}</code></h4>
                             <div ng-bind="mtype.TypeDescription"></div>
@@ -110,6 +112,7 @@
                     <th rowspan="2"></th>
                     <th rowspan="2">Message Type</th>
                     <th rowspan="2">Description</th>
+                    <th rowspan="2">Recipients</th>
                     <th rowspan="2">Module</th>
                     <th colspan="2" style="text-align: center;">Templates</th>
                 </tr>
@@ -135,6 +138,7 @@
                     </td>
                     <td>{{mtype.TypeName}}</td>
                     <td>{{mtype.TypeDescription}}</td>
+                    <td>{{mtype.RecipientsDescription}}</td>
                     <td>{{mtype.Module}}</td>
                     <td>{{ countTemplatesOfType(mtype, true) }}</td>
                     <td>{{ countTemplatesOfType(mtype, false) }}</td>
