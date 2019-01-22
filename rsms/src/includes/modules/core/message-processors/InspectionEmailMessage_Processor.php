@@ -2,6 +2,8 @@
 
 class InspectionEmailMessage_Processor implements MessageTypeProcessor {
 
+    public function getRecipientsDescription(){ return "PI, Contact, Inspector(s)"; }
+
     public static function getMessageTypeName( LabInspectionStateDto $inspectionState ){
         $messageType = null;
         if( $inspectionState->getTotals() == 0){

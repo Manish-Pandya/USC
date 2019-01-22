@@ -8,6 +8,8 @@
  */
 class LabInspectionUpdatedMessage_Processor implements MessageTypeProcessor {
 
+    public function getRecipientsDescription(){ return "PI, Contact, Inspector(s)"; }
+
     public function process(Message $message, $macroResolverProvider){
         $LOG = Logger::getLogger(__CLASS__);
         $LOG->debug("Processing context for $message");

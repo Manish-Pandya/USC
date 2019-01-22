@@ -8,6 +8,8 @@
  */
 class LabInspectionReminder_Processor extends LabInspectionUpdatedMessage_Processor {
 
+    public function getRecipientsDescription(){ return "PI, Contact"; }
+
     /**
      * Override email inference to omit inspector emails
      */
