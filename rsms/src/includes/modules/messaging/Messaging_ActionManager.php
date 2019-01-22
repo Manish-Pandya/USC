@@ -73,7 +73,7 @@ class Messaging_ActionManager extends ActionManager {
             // TODO: Optionally allow for repeat emails (with repeat threshold)
 
             if( $matches != null && count($matches) > 0){
-                $LOG->debug("$description is already queued: " . $matches[0]);
+                $LOG->info("$description is already queued: " . $matches[0]);
                 continue;
             }
 
@@ -402,7 +402,8 @@ class Messaging_ActionManager extends ActionManager {
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
         if( $typeDto == null ){
-            $typeDto = $this->convertInputJson();
+            // We are expecting a MessageTypeDto; create an empty one as a model
+            $typeDto = $this->convertInputJson( new MessageTypeDto(null, null, null, null, null) );
         }
 
         if( !($typeDto instanceof MessageTypeDto) ){

@@ -4,7 +4,7 @@ class LabInspectionReminderContext implements MessageContext {
     public $inspection_id;
     public $reminder_date;
 
-    public function __construct($id, $reminder_date){
+    public function __construct($id = null, $reminder_date = null){
         $this->inspection_id = $id;
         $this->reminder_date = $reminder_date;
     }
@@ -16,7 +16,7 @@ class LabInspectionReminderContext implements MessageContext {
     public function setReminder_date($reminder_date){ $this->reminder_date = $reminder_date; }
 
     public function __toString(){
-        return "[" . get_class($this) . " inspection_id:$this->setInspection_id reminder_date:$this->reminder_date]";
+        return "[" . get_class($this) . " inspection_id:$this->inspection_id reminder_date:$this->reminder_date]";
     }
 }
 
