@@ -121,7 +121,7 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
         return $result;
     }
 
-    public function getDepartmentDetails($department_id = NULL){
+    public function getDepartmentDetails($department_id, $min_year){
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
         // Prepare predicates to constrain (optionally) Department
@@ -201,7 +201,7 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
 
         // Insert available inspection years to each dept
         foreach($result as $info){
-            $years = $this->getAvailableInspectionsForDepartment($info->getKey_id());
+            $years = $this->getAvailableInspectionsForDepartment($info->getKey_id(), $min_year);
             $info->setAvailableInspectionYears($years);
 
             $campuses = $this->getCampusesForDepartment($info->getKey_id());
@@ -260,18 +260,19 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
         return $result;
     }
 
-    public function getAvailableInspectionsForDepartment($department_id){
+    public function getAvailableInspectionsForDepartment($department_id, $min_year){
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
         $sql = "SELECT DISTINCT schedule_year AS year FROM inspection
             WHERE principal_investigator_id IN
                 ( SELECT principal_investigator_id FROM principal_investigator_department WHERE department_id = :department_id )
-            AND CAST(schedule_year AS UNSIGNED) > 2016
+            AND CAST(schedule_year AS UNSIGNED) >= :min_year
             ORDER BY schedule_year DESC";
 
         // Prepare statement
         $stmt = DBConnection::prepareStatement($sql);
         $stmt->bindValue(':department_id', $department_id, PDO::PARAM_INT);
+        $stmt->bindValue(':min_year', $min_year, PDO::PARAM_INT);
 
         // Execute the statement
         if( $LOG->isTraceEnabled() ){

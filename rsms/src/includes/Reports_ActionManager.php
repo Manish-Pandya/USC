@@ -42,7 +42,8 @@ class Reports_ActionManager extends ActionManager {
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
         $dao = new LabInspectionSummaryReportDAO();
-        $departments = $dao->getDepartmentDetails();
+        $min_year = $this->getMinimumReportYear();
+        $departments = $dao->getDepartmentDetails(null, $min_year);
 
         return $departments;
     }
@@ -65,10 +66,22 @@ class Reports_ActionManager extends ActionManager {
             return new ActionError("No department was provided or mapped to this user", 400);
         }
 
+        $min_year = $this->getMinimumReportYear();
+
         $dao = new LabInspectionSummaryReportDAO();
-        $departments = $dao->getDepartmentDetails($department_id);
+        $departments = $dao->getDepartmentDetails($department_id, $min_year);
 
         return $departments[0];
+    }
+
+    protected function getMinimumReportYear(){
+        // RSMS-837: Allow Admins to view back to 2017; otherwise 2018
+        if( in_array('Admin', $this->getCurrentRoles()) ){
+            return 2017;
+        }
+        else{
+            return 2018;
+        }
     }
 }
 ?>
