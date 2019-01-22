@@ -60,6 +60,16 @@ class Reports_ActionManager extends ActionManager {
             // Get department for current user
             $user = $this->getCurrentUser();
             $department_id = $user->getPrimary_department_id();
+
+            if( $department_id == NULL && $user->getPrincipalInvestigator() != null ){
+                try{
+                    // user is a PI and may not have a 'primary department' assigned
+                    $department_id = $user->getPrincipalInvestigator()->getDepartments()[0]->getKey_id();
+                }
+                catch( Exception $err ){
+                    return new ActionError("Unable to determine Department for this PI user", 400);
+                }
+            }
         }
 
         if( $department_id == NULL ){
