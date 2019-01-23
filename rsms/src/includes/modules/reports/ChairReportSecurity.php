@@ -1,8 +1,8 @@
 <?php
-class ReportsSecurity {
+class ChairReportSecurity {
 
     public static function userCanViewSummaryReport($year, $department_id){
-        return ReportsSecurity::userIsChairOfDepartment($department_id);
+        return ChairReportSecurity::userIsChairOfDepartment($department_id);
     }
 
     public static function userIsChairOfDepartment($department_id){

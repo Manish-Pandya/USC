@@ -38,9 +38,9 @@ class LabInspectionSecurity {
                 $inspection->getPrincipalInvestigator()->getDepartments()
             );
 
-            // Defer dept check to ReportsSecurity
+            // Defer dept check to ChairReportSecurity
             foreach($dept_ids as $dept){
-                if(ReportsSecurity::userIsChairOfDepartment($dept)){
+                if(ChairReportSecurity::userIsChairOfDepartment($dept)){
                     $LOG->debug("User is Department Chair over PI's department(s): Matched dept #$dept");
                     return true;
                 }
