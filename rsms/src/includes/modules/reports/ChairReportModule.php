@@ -25,7 +25,7 @@ class ChairReportModule implements RSMS_Module, MessageTypeProvider {
     }
 
     public function getActionManager(){
-        return new Reports_ActionManager();
+        return new ChairReport_ActionManager();
     }
 
     public function getActionConfig(){

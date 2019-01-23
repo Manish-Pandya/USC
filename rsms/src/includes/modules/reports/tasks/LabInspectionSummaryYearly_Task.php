@@ -12,7 +12,7 @@ class LabInspectionSummaryYearly_Task implements ScheduledTask {
     }
 
     public function run(){
-        $reportsManager = new Reports_ActionManager();
+        $reportsManager = new ChairReport_ActionManager();
 
         // Get current year
         $currentYear = $reportsManager->getCurrentYear();

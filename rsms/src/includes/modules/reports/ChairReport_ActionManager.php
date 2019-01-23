@@ -1,7 +1,7 @@
 
 <?php
 
-class Reports_ActionManager extends ActionManager {
+class ChairReport_ActionManager extends ActionManager {
 
     /**
      * "Laboratory Inspections Summary Report" endpoint with required constraints

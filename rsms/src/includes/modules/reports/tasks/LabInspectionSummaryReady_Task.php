@@ -39,7 +39,7 @@ class LabInspectionSummaryReady_Task implements ScheduledTask {
 
         $contexts = array();
 
-        $reportsManager = new Reports_ActionManager();
+        $reportsManager = new ChairReport_ActionManager();
 
         // Get current year
         $currentYear = $reportsManager->getCurrentYear();

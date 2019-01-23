@@ -53,7 +53,7 @@ class A_LabInspectionSummary_Processor implements MessageTypeProcessor {
         $LOG = Logger::getLogger(__CLASS__);
         $LOG->debug("Look up Department with ID $departmentId");
 
-        $reportManager = new Reports_ActionManager();
+        $reportManager = new ChairReport_ActionManager();
         $info = $reportManager->getDepartmentInfo($departmentId);
 
         if( $info == null ){
