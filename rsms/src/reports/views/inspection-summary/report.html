@@ -62,7 +62,8 @@
                 <th ng-click="reorder('Score');" class="sortable">
                     Compliance Score* <i class="icon-arrow"></i>
                 </th>
-                <th class="no-print">Inspection Report</th>
+                <th class="no-print">Inspection</th>
+                <th class="no-print">Report</th>
             </tr>
             <tr ng-repeat="item in data.ReportItems | orderBy : config.orderByField : config.reverseSort"
                 ng-class="{'inactive': item.Inspection_status == 'OVERDUE CAP', 'pending-cap': hasPendingCaps(item), 'inspection-completed': item.Inspection_status == 'CLOSED OUT'}">
@@ -74,13 +75,15 @@
                     <span ng-if="item.Items_inspected > 0">{{item.Score}}%</span>
                 </td>
                 <td class="hazard-icons no-print" style="text-align: right;">
-                        <span>{{parseInt(item.Chem_hazards_present)}}</span>
-                    <span ng-if="!showInspectionLink(item)">N/A</span>
                     <span ng-if="showInspectionLink(item)">
                         <span ng-if="hasHazard( item, 'Bio_hazards_present') && !item.Is_rad"><img ng-src="{{webRoot}}/img/biohazard-largeicon.png" /></span>
                         <span ng-if="hasHazard( item, 'Chem_hazards_present') && !item.Is_rad"><img ng-src="{{webRoot}}/img/chemical-blue-icon.png" /></span>
                         <span ng-if="hasHazard( item, 'Rad_hazards_present') && item.Is_rad"><img ng-src="{{webRoot}}/img/radiation-large-icon.png" /></span>
-
+                    </span>
+                </td>
+                <td>
+                    <span ng-if="!showInspectionLink(item)">N/A</span>
+                    <span ng-if="showInspectionLink(item)">
                         <a title="View Report" class="btn btn-info" style="font-style: italic;" ng-if="showInspectionLink(item)" target="_blank" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{item.Inspection_id}}">
                             <i class="icon-out"></i>
                         </a>
