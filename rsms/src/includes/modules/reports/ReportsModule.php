@@ -2,7 +2,7 @@
 
 class ReportsModule implements RSMS_Module, MessageTypeProvider {
 
-    public static $NAME = 'Reports';
+    public static $NAME = 'Chair Report';
 
     public function getModuleName(){
         return self::$NAME;
