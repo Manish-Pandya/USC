@@ -54,6 +54,7 @@ class Core_Hooks {
     }
 
     public static function after_cap_approved( &$inspection ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
         if( isset($inspection) && $inspection->getDate_closed() != null ){
             $LOG->info("Inspection CAP was approved " . $inspection->getDate_closed());
 
