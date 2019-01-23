@@ -28,13 +28,11 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider {
     }
 
     public function getActionManager(){
-        // TODO
-        return null;
+        return new LabInspection_ActionManager();
     }
 
     public function getActionConfig(){
-        // TODO
-        return array();
+        return LabInspection_ActionMappingFactory::readActionConfig();
     }
 
     public function getMessageTypes(){
