@@ -33,13 +33,13 @@ class LabInspectionSummaryYearly_Task implements ScheduledTask {
         // Prepare messages for delayed send
         $messenger = new Messaging_ActionManager();
         $enqueued = $messenger->enqueueMessages(
-            ReportsModule::$NAME,
-            ReportsModule::$MTYPE_INSPECTION_SUMMARY_YEARLY,
+            ChairReportModule::$NAME,
+            ChairReportModule::$MTYPE_INSPECTION_SUMMARY_YEARLY,
             $contexts,
             $sendOnDate
         );
 
-        return count($enqueued) . ' ' . ReportsModule::$MTYPE_INSPECTION_SUMMARY_YEARLY . " messages have been enqueued";
+        return count($enqueued) . ' ' . ChairReportModule::$MTYPE_INSPECTION_SUMMARY_YEARLY . " messages have been enqueued";
     }
 }
 

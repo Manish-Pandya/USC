@@ -1,6 +1,6 @@
 <?php
 
-class ReportsModule implements RSMS_Module, MessageTypeProvider {
+class ChairReportModule implements RSMS_Module, MessageTypeProvider {
 
     public static $NAME = 'Chair Report';
 
@@ -38,7 +38,7 @@ class ReportsModule implements RSMS_Module, MessageTypeProvider {
         return array(
             new MessageTypeDto(
                 self::$NAME,
-                ReportsModule::$MTYPE_INSPECTION_SUMMARY_READY,
+                ChairReportModule::$MTYPE_INSPECTION_SUMMARY_READY,
                 'Automatic email sent when ' . LabInspectionSummaryReady_Task::$COMPLETION_THRESHOLD . '% of the PIs in a department have been inspected.',
                 'LabInspectionSummaryReady_Processor',
                 array('DepartmentDetailDto', 'LabInspectionSummaryContext')
@@ -46,7 +46,7 @@ class ReportsModule implements RSMS_Module, MessageTypeProvider {
 
             new MessageTypeDto(
                 self::$NAME,
-                ReportsModule::$MTYPE_INSPECTION_SUMMARY_YEARLY,
+                ChairReportModule::$MTYPE_INSPECTION_SUMMARY_YEARLY,
                 'Automatic email sent on December 1st each year.',
                 'LabInspectionSummaryYearly_Processor',
                 array('DepartmentDetailDto', 'LabInspectionSummaryContext')

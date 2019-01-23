@@ -20,8 +20,8 @@ class LabInspectionSummaryReady_Task implements ScheduledTask {
         // Prepare messages
         $messenger = new Messaging_ActionManager();
         $enqueued = $messenger->enqueueMessages(
-            ReportsModule::$NAME,
-            ReportsModule::$MTYPE_INSPECTION_SUMMARY_READY,
+            ChairReportModule::$NAME,
+            ChairReportModule::$MTYPE_INSPECTION_SUMMARY_READY,
             $contexts
         );
 
