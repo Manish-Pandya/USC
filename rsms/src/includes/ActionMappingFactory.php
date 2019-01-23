@@ -143,8 +143,8 @@ class ActionMappingFactory {
                 "initiateInspection"=>new ActionMapping("initiateInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveInspectionRoomRelation"=>new ActionMapping("saveInspectionRoomRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveInspection"=>new ActionMapping("saveInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
-                "submitCAP"=>new SecuredActionMapping("submitCAP", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'CoreSecurity::userCanSaveInspection'),
-                "approveCAP"=>new SecuredActionMapping("approveCAP", $this::$ROLE_GROUPS["EHS"], 'CoreSecurity::userCanSaveInspection'),
+                "submitCAP"=>new SecuredActionMapping("submitCAP", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'LabInspectionSecurity::userCanSaveInspection'),
+                "approveCAP"=>new SecuredActionMapping("approveCAP", $this::$ROLE_GROUPS["EHS"], 'LabInspectionSecurity::userCanSaveInspection'),
 
                 "saveNoteForInspection"=>new ActionMapping("saveNoteForInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getSubHazards"=>new ActionMapping("getSubHazards", "", "", $this::$ROLE_GROUPS["EHS"]),
@@ -179,7 +179,7 @@ class ActionMappingFactory {
                 "resetChecklists" => new SecuredActionMapping(
                     "resetChecklists",
                     $this::$ROLE_GROUPS["EHS_AND_LAB"],
-                    'CoreSecurity::userCanViewInspection'),
+                    'LabInspectionSecurity::userCanViewInspection'),
 
                 "getDeficiencyById"=>new ActionMapping("getDeficiencyById", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveResponse"=>new ActionMapping("saveResponse", "", "", $this::$ROLE_GROUPS["EHS"]),
@@ -189,15 +189,15 @@ class ActionMappingFactory {
                 "removeDeficiencySelection"=>new ActionMapping("removeDeficiencySelection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "addCorrectedInInspection"=>new ActionMapping("addCorrectedInInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "removeCorrectedInInspection"=>new ActionMapping("removeCorrectedInInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
-                "saveCorrectiveAction"=>new SecuredActionMapping("saveCorrectiveAction", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'CoreSecurity::userCanSaveCorrectiveAction'),
-                "deleteCorrectiveActionFromDeficiency"=>new SecuredActionMapping("deleteCorrectiveActionFromDeficiency", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'CoreSecurity::userCanSaveCorrectiveAction'),
+                "saveCorrectiveAction"=>new SecuredActionMapping("saveCorrectiveAction", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'LabInspectionSecurity::userCanSaveCorrectiveAction'),
+                "deleteCorrectiveActionFromDeficiency"=>new SecuredActionMapping("deleteCorrectiveActionFromDeficiency", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'LabInspectionSecurity::userCanSaveCorrectiveAction'),
                 "saveObservationRelation"=>new ActionMapping("saveObservationRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveSupplementalObservation"=>new ActionMapping("saveSupplementalObservation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveSupplementalRecommendation"=>new ActionMapping("saveSupplementalRecommendation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveSupplementalDeficiency"=>new ActionMapping("saveSupplementalDeficiency", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getChecklistsForInspection"=>new ActionMapping("getChecklistsForInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
-                "getInspectionsByPIId" => new SecuredActionMapping("getInspectionsByPIId", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'CoreSecurity::userCanViewPI'),
+                "getInspectionsByPIId" => new SecuredActionMapping("getInspectionsByPIId", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'LabInspectionSecurity::userCanViewPI'),
                 "getArchivedInspectionsByPIId"=>new ActionMapping("getArchivedInspectionsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
                 "getDeficiencySelectionByInspectionIdAndDeficiencyId"=>new ActionMapping("getDeficiencySelectionByInspectionIdAndDeficiencyId", "", "", $this::$ROLE_GROUPS["EHS"]),
 
@@ -215,7 +215,7 @@ class ActionMappingFactory {
                 "getInspectionById" => new SecuredActionMapping(
                     "getInspectionById",
                     $this::$ROLE_GROUPS["EHS_AND_LAB"],
-                    'CoreSecurity::userCanViewInspection'),
+                    'LabInspectionSecurity::userCanViewInspection'),
 
                 "getResponseById"=>new ActionMapping("getResponseById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
@@ -239,7 +239,7 @@ class ActionMappingFactory {
 
 
                 //MY LABORATORY
-                "getMyLab"=>new SecuredActionMapping("getMyLab", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'CoreSecurity::userCanViewPI'),
+                "getMyLab"=>new SecuredActionMapping("getMyLab", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'LabInspectionSecurity::userCanViewPI'),
                 //ANNUAL VERIFICATION
                 "saveVerification"=>new ActionMapping("saveVerification", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "closeVerification"=>new ActionMapping("closeVerification", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
