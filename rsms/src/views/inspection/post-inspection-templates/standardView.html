@@ -89,14 +89,27 @@
         </div>
     </div>
 
-    <table ng-if="inspection.Cap_submitted_date || inspection.Date_closed" class="table table-bordered inspectionReportTable" style="width: 50%">
+    <style>
+        .inspectionReportTable .cap-status td {
+            font-size: 14pt;
+            border: 1px solid lightgrey;
+        }
+
+        .inspectionReportTable .cap-status td.action {
+            font-size: 14pt;
+            border: none;
+        }
+    </style>
+    <table ng-if="inspection.Cap_submitted_date || inspection.Date_closed" class="table inspectionReportTable" style="width: 50%">
         <tr class="cap-status" style="margin:30px 0;" ng-if="inspection.Cap_submitted_date">
             <td style="background: #c5d8f1;padding: 5px;">
                 <h3>Corrective Action Plan Submitted By:</h3>
             </td>
-            <td style="font-size: 14pt">{{inspection.Cap_submitter_name}}</td>
-            <td style="font-size: 14pt">
+            <td>{{inspection.Cap_submitter_name}}</td>
+            <td>
                 <span>{{inspection.Cap_submitted_date | dateToISO}}</span>
+            </td>
+            <td class="action">
                 <a class="btn btn-success btn-default-focus" ng-click="approveCAP(inspection)" ng-if="!handlingApproveCap && !inspection.Date_closed && inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'
                     && rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_INSPECTOR]])">
                     <span>Approve CAP</span>
@@ -112,8 +125,8 @@
             <td style="background: #c5d8f1;padding: 5px;">
                 <h3 >Corrective Action Plan Approved By:</h3>
             </td>
-            <td style="font-size: 14pt">{{inspection.Cap_approver_name}}</td>
-            <td style="font-size: 14pt">{{inspection.Date_closed | dateToISO}}</td>
+            <td>{{inspection.Cap_approver_name}}</td>
+            <td>{{inspection.Date_closed | dateToISO}}</td>
         </tr>
     </table>
 
