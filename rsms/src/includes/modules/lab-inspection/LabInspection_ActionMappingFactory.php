@@ -11,7 +11,6 @@ class LabInspection_ActionMappingFactory extends ActionMappingFactory {
 	public function getConfig() {
         return array(
             // Inspection, step 1 (PI / Room assessment)
-            "getAllRooms"=>new ActionMapping("getAllRooms", "", "", $this::$ROLE_GROUPS["EHS"]),
             "initiateInspection"=>new ActionMapping("initiateInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
             "saveInspectionRoomRelation"=>new ActionMapping("saveInspectionRoomRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
             "saveInspection"=>new ActionMapping("saveInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
