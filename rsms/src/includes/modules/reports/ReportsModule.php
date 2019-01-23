@@ -4,6 +4,9 @@ class ReportsModule implements RSMS_Module, MessageTypeProvider {
 
     public static $NAME = 'Chair Report';
 
+    public static $MTYPE_INSPECTION_SUMMARY_READY = 'LabInspectionSummaryReady';
+    public static $MTYPE_INSPECTION_SUMMARY_YEARLY = 'LabInspectionSummaryYearly';
+
     public function getModuleName(){
         return self::$NAME;
     }
@@ -35,7 +38,7 @@ class ReportsModule implements RSMS_Module, MessageTypeProvider {
         return array(
             new MessageTypeDto(
                 self::$NAME,
-                LabInspectionSummaryReady_Task::$MESSAGE_TYPE_NAME,
+                ReportsModule::$MTYPE_INSPECTION_SUMMARY_READY,
                 'Automatic email sent when ' . LabInspectionSummaryReady_Task::$COMPLETION_THRESHOLD . '% of the PIs in a department have been inspected.',
                 'LabInspectionSummaryReady_Processor',
                 array('DepartmentDetailDto', 'LabInspectionSummaryContext')
@@ -43,7 +46,7 @@ class ReportsModule implements RSMS_Module, MessageTypeProvider {
 
             new MessageTypeDto(
                 self::$NAME,
-                'LabInspectionSummaryYearly',
+                ReportsModule::$MTYPE_INSPECTION_SUMMARY_YEARLY,
                 'Automatic email sent on December 1st each year.',
                 'LabInspectionSummaryYearly_Processor',
                 array('DepartmentDetailDto', 'LabInspectionSummaryContext')

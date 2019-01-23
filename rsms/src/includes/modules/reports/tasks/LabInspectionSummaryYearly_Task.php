@@ -7,8 +7,6 @@
  */
 class LabInspectionSummaryYearly_Task implements ScheduledTask {
 
-    public static $MESSAGE_TYPE_NAME = 'LabInspectionSummaryYearly';
-
     public function getPriority(){
         return 0;
     }
@@ -36,12 +34,12 @@ class LabInspectionSummaryYearly_Task implements ScheduledTask {
         $messenger = new Messaging_ActionManager();
         $enqueued = $messenger->enqueueMessages(
             ReportsModule::$NAME,
-            self::$MESSAGE_TYPE_NAME,
+            ReportsModule::$MTYPE_INSPECTION_SUMMARY_YEARLY,
             $contexts,
             $sendOnDate
         );
 
-        return count($enqueued) . ' ' . self::$MESSAGE_TYPE_NAME . " messages have been enqueued";
+        return count($enqueued) . ' ' . ReportsModule::$MTYPE_INSPECTION_SUMMARY_YEARLY . " messages have been enqueued";
     }
 }
 

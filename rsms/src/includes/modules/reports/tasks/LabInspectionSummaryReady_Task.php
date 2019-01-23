@@ -7,8 +7,6 @@
  */
 class LabInspectionSummaryReady_Task implements ScheduledTask {
 
-    public static $MESSAGE_TYPE_NAME = 'LabInspectionSummaryReady';
-
     public static $COMPLETION_THRESHOLD = 80;
 
     public function getPriority(){
@@ -23,7 +21,7 @@ class LabInspectionSummaryReady_Task implements ScheduledTask {
         $messenger = new Messaging_ActionManager();
         $enqueued = $messenger->enqueueMessages(
             ReportsModule::$NAME,
-            self::$MESSAGE_TYPE_NAME,
+            ReportsModule::$MTYPE_INSPECTION_SUMMARY_READY,
             $contexts
         );
 
