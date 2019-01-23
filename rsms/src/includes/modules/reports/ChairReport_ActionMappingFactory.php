@@ -1,9 +1,9 @@
 <?php
 
-class Reports_ActionMappingFactory extends ActionMappingFactory {
+class ChairReport_ActionMappingFactory extends ActionMappingFactory {
 
 	public static function readActionConfig() {
-		$mappings = new Reports_ActionMappingFactory();
+		$mappings = new ChairReport_ActionMappingFactory();
 
 		return $mappings->getConfig();
     }

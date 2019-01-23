@@ -29,7 +29,7 @@ class ChairReportModule implements RSMS_Module, MessageTypeProvider {
     }
 
     public function getActionConfig(){
-        return Reports_ActionMappingFactory::readActionConfig();
+        return ChairReport_ActionMappingFactory::readActionConfig();
     }
 
     public function getMessageTypes(){
