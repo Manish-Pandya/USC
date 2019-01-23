@@ -55,7 +55,7 @@ class ChairReportModule implements RSMS_Module, MessageTypeProvider {
     }
 
     public function getMacroResolvers(){
-        return ReportsMessageMacros::getResolvers();
+        return ChairReportMessageMacros::getResolvers();
     }
 }
 ?>

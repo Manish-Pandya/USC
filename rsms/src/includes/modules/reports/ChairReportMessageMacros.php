@@ -1,6 +1,6 @@
 <?php
 
-class ReportsMessageMacros {
+class ChairReportMessageMacros {
 
     public static function getResolvers(){
         $resolvers = array();
