@@ -29,6 +29,7 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
         }
 
         // Prepare SQL
+        // TODO: Externalize 'Pending' constant
         $sql = "SELECT 
             insp.key_id AS inspection_id,
             insp.principal_investigator_id AS principal_investigator_id,
@@ -57,6 +58,22 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
             -- Inspection details
             (SELECT count(*) FROM response resp WHERE resp.inspection_id = insp.key_id) as items_inspected,
             (SELECT count(*) FROM response resp WHERE resp.inspection_id = insp.key_id AND resp.answer != 'no') as items_compliant,
+            (
+                SELECT
+                    sum(CASE cap.status WHEN 'Pending' THEN 1 ELSE 0 END)
+                FROM response response
+                LEFT OUTER JOIN deficiency_selection defsel ON defsel.response_id = response.key_id
+                LEFT OUTER JOIN supplemental_deficiency supdef ON supdef.response_id = response.key_id
+                JOIN corrective_action cap ON (
+                    cap.deficiency_selection_id IS NOT NULL AND cap.deficiency_selection_id = defsel.key_id
+                    OR
+                    cap.supplemental_deficiency_id IS NOT NULL AND cap.supplemental_deficiency_id = supdef.key_id
+                )
+
+                WHERE response.inspection_id = insp.key_id
+
+                GROUP BY response.inspection_id
+            ) AS pending_caps,
 
             (COALESCE(piuser.name, CONCAT_WS(', ', piuser.last_name, piuser.first_name))) AS principal_investigator_name,
             dept.key_id AS department_id,
@@ -121,7 +138,7 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
         return $result;
     }
 
-    public function getDepartmentDetails($department_id = NULL){
+    public function getDepartmentDetails($department_id, $min_year){
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
         // Prepare predicates to constrain (optionally) Department
@@ -201,7 +218,7 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
 
         // Insert available inspection years to each dept
         foreach($result as $info){
-            $years = $this->getAvailableInspectionsForDepartment($info->getKey_id());
+            $years = $this->getAvailableInspectionsForDepartment($info->getKey_id(), $min_year);
             $info->setAvailableInspectionYears($years);
 
             $campuses = $this->getCampusesForDepartment($info->getKey_id());
@@ -260,18 +277,19 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
         return $result;
     }
 
-    public function getAvailableInspectionsForDepartment($department_id){
+    public function getAvailableInspectionsForDepartment($department_id, $min_year){
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
         $sql = "SELECT DISTINCT schedule_year AS year FROM inspection
             WHERE principal_investigator_id IN
                 ( SELECT principal_investigator_id FROM principal_investigator_department WHERE department_id = :department_id )
-            AND CAST(schedule_year AS UNSIGNED) > 2016
+            AND CAST(schedule_year AS UNSIGNED) >= :min_year
             ORDER BY schedule_year DESC";
 
         // Prepare statement
         $stmt = DBConnection::prepareStatement($sql);
         $stmt->bindValue(':department_id', $department_id, PDO::PARAM_INT);
+        $stmt->bindValue(':min_year', $min_year, PDO::PARAM_INT);
 
         // Execute the statement
         if( $LOG->isTraceEnabled() ){

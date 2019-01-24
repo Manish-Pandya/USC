@@ -87,6 +87,8 @@ class CoreSecurity {
     }
 
     public static function userCanViewPI( $piId ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
         // TODO: Is user this PI, or a subordinate?
         if( !isset($_SESSION['USER']) ){
             // No user
@@ -119,15 +121,31 @@ class CoreSecurity {
         return CoreSecurity::userCanViewInspection( $inspection_id );
     }
 
-    public static function userCanSaveInspection(){
-        // Is request body an inspection which this user can save?
-        $inspectionToSave = JsonManager::decodeInputStream();
-        if( isset($inspectionToSave) ){
-            // Inspection exists; ensure they have access to it
-            return CoreSecurity::_userCanSaveInspectionById( $inspectionToSave->getKey_id() );
+    public static function userCanSaveInspection($id){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        if( !isset($id) ){
+            $LOG->debug("No ID parameter was provided; attempt to inspect request entity");
+
+            // Is request body an inspection which this user can save?
+            $inspectionToSave = JsonManager::decodeInputStream();
+            if( isset($inspectionToSave) ){
+                $id = $inspectionToSave->getKey_id();
+                $LOG->debug("Request entity provided; extracted inspection key_id: $id");
+            }
+            else{
+                $LOG->warn("No request entity was provided");
+            }
+        }
+
+        if( isset($id) ){
+            $LOG->debug("Checking Inspection key_id: $id");
+            $LOG->trace("Deferring security precondition to _userCanSaveInspectionById");
+            return CoreSecurity::_userCanSaveInspectionById( $id );
         }
 
         // Nothing to save...
+        $LOG->error("Unable to validate security precondition; no Inspection ID or Entity was provided");
         return false;
     }
 

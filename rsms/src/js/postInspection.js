@@ -420,10 +420,25 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
         inspectionDto.Cap_submitted_date = convenienceMethods.setMysqlTime(Date());
         inspectionDto.Cap_submitter_id = GLOBAL_SESSION_USER.Key_id;
 
-        var url = "../../ajaxaction.php?action=submitCAP";
+        var url = "../../ajaxaction.php?action=submitCAP&id=" + inspection.Key_id;
         var deferred = $q.defer();
 
-        convenienceMethods.saveDataAndDefer(url, inspectionDto).then(
+        convenienceMethods.saveDataAndDefer(url).then(
+          function (promise) {
+              deferred.resolve(promise);
+          },
+          function (promise) {
+              deferred.reject(promise);
+          }
+        );
+        return deferred.promise
+    }
+
+    factory.approveCAP = function (inspection) {
+        var url = "../../ajaxaction.php?action=approveCAP&id=" + inspection.Key_id;
+        var deferred = $q.defer();
+
+        convenienceMethods.saveDataAndDefer(url).then(
           function (promise) {
               deferred.resolve(promise);
           },
@@ -838,7 +853,7 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
 
 }
 
-inspectionReviewController = function ($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modal, roleBasedFactory) {
+inspectionReviewController = function ($scope, $location, convenienceMethods, postInspectionFactory, $rootScope, $modal, roleBasedFactory, $q) {
     $scope.getNumberOfRoomsForQuestionByChecklist = postInspectionFactory.getNumberOfRoomsForQuestionByChecklist;
     function init() {
         if ($location.search().inspection) {
@@ -1096,6 +1111,76 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         });
     }
 
+    $scope.getPendingCorrectiveActions = function getPendingCorrectiveActions( inspection ){
+        // Reduce the checklists to any Pending CorrectiveActions
+        return inspection.Checklists.reduce((acc, chk) => {
+            if( !acc ){
+                acc = [];
+            }
+            chk.Questions.forEach( q => {
+                if( q.Responses ){
+                    q.Responses.DeficiencySelections
+                        .concat(q.Responses.SupplementalDeficiencies)
+                        .forEach(ds => ds.CorrectiveActions
+                            .filter(ca => ca.Status == Constants.CORRECTIVE_ACTION.STATUS.PENDING)
+                            .forEach(ca => acc.push(ca)));
+                }
+            });
+
+            return acc;
+        }, []);
+    }
+
+    $scope.approveCAP = function( inspection ){
+        // Ask for confirmation if required
+        $scope._confirmApproveCAP( inspection )
+        .then(function () {
+            $scope.handlingApproveCap = true;
+            postInspectionFactory.approveCAP(inspection).then(function () {
+                //...
+                location.reload();
+            });
+        });
+    }
+
+    $scope._confirmApproveCAP = function (inspection) {
+        var deferred = $q.defer();
+        // Check if there are Pending actions
+        var pendingActions = $scope.getPendingCorrectiveActions(inspection);
+        var requireApproval = pendingActions.length;
+
+        if( requireApproval ){
+            console.debug("Inspection approval requires user confirmation");
+            postInspectionFactory.setModalData({
+                inspection: inspection,
+                pendingActions: pendingActions
+            });
+
+            var modalInstance = $modal.open({
+                templateUrl: 'post-inspection-templates/confirm-approve-pending-cap-modal.html',
+                controller: modalConfirmCtrl
+            });
+
+            modalInstance.result.then(
+                function (inspection) {
+                    console.log("User confirmed CAP approval");
+                    deferred.resolve();
+                },
+                function(err){
+                    console.log("User rejected CAP approval");
+                    deferred.reject();
+                }
+            );
+        }
+        else {
+            console.debug("No confirmation required for inspection approval");
+            // No approval required
+            deferred.resolve();
+        }
+
+        return deferred.promise;
+    }
+
     $scope.handleInspectionOpen = function (inspection, isReopen) {
         $scope.handlingInspectionOpen = true;
         var inspectionDto = {
@@ -1108,6 +1193,7 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
             Schedule_month: postInspectionFactory.inspection.Schedule_month,
             Schedule_year: postInspectionFactory.inspection.Schedule_year,
             Cap_submitted_date: isReopen ? null : postInspectionFactory.inspection.Cap_submitted_date,
+            Cap_submitter_id: postInspectionFactory.inspection.Cap_submitter_id,
             Cap_complete: isReopen ? null : postInspectionFactory.inspection.Cap_complete,
             Is_rad: postInspectionFactory.inspection.Is_rad,
             Class: "Inspection"
@@ -1184,7 +1270,8 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         switch( inspection.Status ){
             case Constants.INSPECTION.STATUS.CLOSED_OUT:
                 // No edits allowed after approval
-                ctrls = null;
+                ctrls.edit = isAdmin;
+                ctrls.delete = isAdmin;
                 break;
 
             case Constants.INSPECTION.STATUS.SUBMITTED_CAP:
@@ -1201,6 +1288,21 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         }
 
         return ctrls;
+    }
+}
+
+modalConfirmCtrl = function($scope, $modalInstance, postInspectionFactory){
+    var data = postInspectionFactory.getModalData();
+    $scope.inspection = data.inspection;
+    $scope.pendingActions = data.pendingActions;
+    $scope.pendingActionCount = data.pendingActions.length;
+
+    $scope.confirm = function(){
+        $modalInstance.close();
+    }
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss();
     }
 }
 
@@ -1241,8 +1343,11 @@ modalCtrl = function ($scope, $location, convenienceMethods, postInspectionFacto
                 Supplemental_deficiency_id: $scope.def.Class == "SupplementalDeficiency" ? $scope.def.Key_id : null,
             }
         }
-        if ($scope.copy && $scope.copy.Promised_date) $scope.dates.promisedDate = convenienceMethods.getDate($scope.copy.Promised_date);
-        if ($scope.copy && $scope.copy.Completion_date) $scope.dates.completionDate = convenienceMethods.getDate($scope.copy.Completion_date);
+
+        if ($scope.copy && $scope.copy.Promised_date)
+            $scope.dates.promisedDate = convenienceMethods.getDate($scope.copy.Promised_date);
+        if ($scope.copy && $scope.copy.Completion_date)
+            $scope.dates.completionDate = convenienceMethods.getDate($scope.copy.Completion_date);
 
         $scope.closeOut = function () {
             $scope.dirty = true;

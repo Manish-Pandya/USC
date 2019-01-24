@@ -14,7 +14,7 @@ class PrincipalInvestigatorDAO extends GenericDAO {
      */
     public function getPrimaryDepartment( $piId ){
         // Retrieve only the first element
-        return $this->getRelatedItemsById(
+        $depts = $this->getRelatedItemsById(
             $piId,
             DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP),
             null,
@@ -22,6 +22,12 @@ class PrincipalInvestigatorDAO extends GenericDAO {
             false,
             1
         );
+
+        if( count($depts) > 0 ){
+            return $depts[0];
+        }
+
+        return null;
     }
 }
 ?>

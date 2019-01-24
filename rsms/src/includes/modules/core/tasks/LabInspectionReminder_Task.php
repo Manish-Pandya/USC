@@ -13,11 +13,13 @@ class LabInspectionReminder_Task implements ScheduledTask {
 
         $reminders = $this->getReminderInspections();
         $overdue   = $this->getOverdueCapInspections();
+        $pending   = $this->getPendingCapInspections();
 
         // Enqueue Up-coming and Overdue reminders
         $msg = '';
         $msg .= $this->queueMessages($reminders, CoreModule::$MTYPE_CAP_REMINDER_DUE);
         $msg .= $this->queueMessages($overdue, CoreModule::$MTYPE_CAP_REMINDER_OVERDUE);
+        $msg .= $this->queueMessages($pending, CoreModule::$MTYPE_CAP_REMINDER_PENDING);
 
         return $msg;
     }
@@ -58,13 +60,44 @@ class LabInspectionReminder_Task implements ScheduledTask {
                 insp_status.inspection_id,
                 insp_status.inspection_status,
                 DATE(insp.notification_date) as notification_date,
-                DATE_ADD(DATE(insp.notification_date), INTERVAL 15 DAY) as reminder_date
+                CURDATE() as reminder_date
             FROM inspection_status insp_status
             JOIN inspection insp ON insp.key_id = insp_status.inspection_id
 
-            -- Constrain to overdue CAPs with a reminder date (two weeks + one day after notification) of today
-            WHERE insp_status.inspection_status = 'OVERDUE CAP'
-                AND CURDATE() = DATE_ADD(DATE(insp.notification_date), INTERVAL 15 DAY)";
+            WHERE insp.schedule_year = YEAR(CURDATE())
+                AND insp_status.inspection_status = 'OVERDUE CAP'
+                AND (
+                    -- Constrain to overdue CAPs with a reminder date (two weeks + one day after notification) of today
+                    CURDATE() = DATE_ADD(DATE(insp.notification_date), INTERVAL 15 DAY)
+                    OR
+                    -- OR every week following the initial two week period
+                    DATEDIFF(CURDATE(), DATE_ADD(DATE(insp.notification_date), INTERVAL 15 DAY)) % 7 = 0
+                )";
+
+        return $this->getContextObjects($sql);
+    }
+
+    private function getPendingCapInspections(){
+        $STATUS_PENDING = CorrectiveAction::$STATUS_PENDING;
+        $sql = "SELECT
+                inspection.key_id as inspection_id,
+                CURDATE() as reminder_date
+            FROM inspection inspection
+            JOIN response response ON response.inspection_id = inspection.key_id
+            LEFT OUTER JOIN deficiency_selection defsel ON defsel.response_id = response.key_id
+            LEFT OUTER JOIN supplemental_deficiency supdef ON supdef.response_id = response.key_id
+            JOIN corrective_action cap ON (
+                cap.deficiency_selection_id IS NOT NULL AND cap.deficiency_selection_id = defsel.key_id
+                OR
+                cap.supplemental_deficiency_id IS NOT NULL AND cap.supplemental_deficiency_id = supdef.key_id
+            )
+
+            WHERE inspection.schedule_year = YEAR(CURDATE())
+                AND cap.status = '$STATUS_PENDING'
+                AND CURDATE() > DATE(inspection.cap_submitted_date)
+                AND DATEDIFF(CURDATE(), DATE(inspection.cap_submitted_date)) % 14 = 0
+
+            GROUP BY inspection.key_id";
 
         return $this->getContextObjects($sql);
     }

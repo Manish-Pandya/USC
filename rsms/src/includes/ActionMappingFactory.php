@@ -144,6 +144,8 @@ class ActionMappingFactory {
                 "saveInspectionRoomRelation"=>new ActionMapping("saveInspectionRoomRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "saveInspection"=>new ActionMapping("saveInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "submitCAP"=>new SecuredActionMapping("submitCAP", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'CoreSecurity::userCanSaveInspection'),
+                "approveCAP"=>new SecuredActionMapping("approveCAP", $this::$ROLE_GROUPS["EHS"], 'CoreSecurity::userCanSaveInspection'),
+
                 "saveNoteForInspection"=>new ActionMapping("saveNoteForInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getSubHazards"=>new ActionMapping("getSubHazards", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getOpenInspectionsByPIId"=>new ActionMapping("getOpenInspectionsByPIId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),

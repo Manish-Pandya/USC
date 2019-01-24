@@ -16,6 +16,7 @@ class InspectionSummaryDto {
     private $inspection_status;
     private $items_inspected;
     private $items_compliant;
+    private $pending_caps;
     private $department_id;
     private $department_name;
 
@@ -78,6 +79,10 @@ class InspectionSummaryDto {
     public function getItems_compliant(){
         return $this->items_compliant;
     }
+
+    public function getPending_caps(){
+        return $this->pending_caps;
+    }
     
     public function getDepartment_id(){
         return $this->department_id;
@@ -133,6 +138,10 @@ class InspectionSummaryDto {
 
     public function setItems_compliant($val){
         $this->items_compliant = $val;
+    }
+
+    public function setPending_caps($val){
+        $this->pending_caps = $val;
     }
 
     public function setDepartment_id($val){

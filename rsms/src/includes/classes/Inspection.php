@@ -21,6 +21,7 @@ class Inspection extends GenericCrud {
         "notification_date"	=> "timestamp",
         "cap_submitted_date"	=> "timestamp",
         "cap_submitter_id"      => "integer",
+        "cap_approver_id"       => "integer",
         "schedule_month"	=> "text",
         "schedule_year"		=> "text",
         "note"			=> "text",
@@ -138,6 +139,9 @@ class Inspection extends GenericCrud {
      */
     private $cap_submitter_id;
     private $cap_submitter_name;
+
+    private $cap_approver_id;
+    private $cap_approver_name;
 
     private $rooms;
     private $roomIds;
@@ -384,6 +388,20 @@ class Inspection extends GenericCrud {
 		return $this->cap_submitter_name;
 	}
 
+	public function getCap_approver_id(){return $this->cap_approver_id;}
+	public function setCap_approver_id($cap_approver_id){$this->cap_approver_id = $cap_approver_id;}
+
+	public function getCap_approver_name(){
+        if($this->getCap_approver_id() != null && $this->cap_approver_name == null){
+            $thisDao = new GenericDAO(new User());
+            $user = $thisDao->getById($this->cap_approver_id);
+            if($user != null){
+                $this->cap_approver_name = $user->getName();
+            }
+        }
+		return $this->cap_approver_name;
+	}
+
     public function getRoomIds(){
         if($this->roomIds == null && $this->hasPrimaryKeyValue()){
             if( $this->rooms != null ){
@@ -402,6 +420,64 @@ class Inspection extends GenericCrud {
         }
 
         return $this->roomIds;
+    }
+
+    /**
+     * Retrieves the unique statuses of all associated CorrectiveActions
+     * contained within this Inspection's Responses
+     */
+    public function collectAllCorrectiveActionStatuses(){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        // Reduce to all CAPs
+        $LOG->debug("Reduce $this responses to their CAPs");
+        $allCaps = array_reduce(
+            $this->getResponses(),
+            function($caps, $response){
+                // Collect both DeficiencySelection and SupplementalDeficiencies
+                //   into single array
+                $defs = array();
+                if( $response->getDeficiencySelections() != null ){
+                    $defs = array_merge($defs, $response->getDeficiencySelections());
+                }
+
+                if( $response->getSupplementalDeficiencies() != null ){
+                    $defs = array_merge($defs, $response->getSupplementalDeficiencies());
+                }
+
+                // don't bother mapping if empty
+                if( count($defs) > 0){
+                    // Map each response to its deficiency CAPs
+                    foreach($defs as $def){
+                        $caps = array_merge($caps, $def->getCorrectiveActions());
+                    }
+                }
+
+                return $caps;
+            },
+            array()
+        );
+
+        // Further reduce to all Statuses
+        $LOG->debug("Reduce " . count($allCaps) . " CAPs to their unique statuses");
+        $allCapStatuses = array_reduce(
+            $allCaps,
+            function($statuses, $cap){
+                if( $statuses == null ){
+                    $statuses = array();
+                }
+
+                if(!in_array($cap->getStatus(), $statuses)){
+                    $statuses[] = $cap->getStatus();
+                }
+
+                return $statuses;
+            },
+            array()
+        );
+
+        $LOG->debug("$this contains CAP statuses: " . implode(', ', $allCapStatuses));
+        return $allCapStatuses;
     }
 }
 ?>
