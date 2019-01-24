@@ -994,7 +994,7 @@ class GenericDAO {
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id IN (10430, 10433))) AS `toxic_gas_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10434)) AS `corrosive_gas_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10435)) AS `flammable_gas_present`,
-                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id IN(10677,10679))) AS `hf_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id IN(10429,10949))) AS `hf_present`,
 
 
                 coalesce(year(`g`.`date_started`),`g`.`schedule_year`) AS `year`,`g`.`key_id`
