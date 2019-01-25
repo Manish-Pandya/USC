@@ -1985,6 +1985,69 @@ class ActionManager {
         }
     }
 
+    /**
+     * Retrieve basic details (Key_id, Name) of all Buildings
+     */
+    public function getAllBuildingNames(){
+        $dao = $this->getDao(new Building());
+
+        // get all buildings
+        $buildings = $dao->getAll();
+        $infos = array_map( function($building){
+            return new GenericDto( array(
+                'Key_id' => $building->getKey_id(),
+                'Name' => $building->getName(),
+                'Is_active' => $building->getIs_active()
+            ));
+        }, $buildings);
+
+        return $infos;
+    }
+
+    /**
+     * Retrieve basic details (Key_id, Name) of all Rooms in a given building
+     */
+    public function getAllBuildingRoomNames($buildingId){
+        $buildingId = $this->getValueFromRequest('buildingId', $buildingId);
+
+        // get building
+        $dao = $this->getDao(new Building());
+        $building = $dao->getById($buildingId);
+
+        // Get details for its rooms
+        $rooms = $building->getRooms();
+        $infos = array_map( function($room){
+            return new GenericDto( array(
+                'Key_id' => $room->getKey_id(),
+                'Name' => $room->getName(),
+                'Is_active' => $room->getIs_active()
+            ));
+        }, $rooms);
+
+        return $infos;
+    }
+
+    /**
+     * Retrieve basic details (Key_id, Name) of all Principal Investigators
+     */
+    public function getAllPINames(){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        $dao = $this->getDao(new PrincipalInvestigator());
+        $pis = $dao->getAllWith(DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
+
+        // Reduce the PIs to just IDs and Names
+        $infos = array_map( function($pi){
+            return new GenericDto( array(
+                'Key_id' => $pi->getKey_id(),
+                'Name' => $pi->getUser()->getName(),
+                'Is_active' => $pi->getIs_active()
+            ));
+        }, $pis);
+
+        return $infos;
+    }
+
     public function getAllPIs($rooms = null){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 

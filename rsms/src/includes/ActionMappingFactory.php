@@ -85,6 +85,10 @@ class ActionMappingFactory {
 
 
                 // PI Hub
+                "getAllBuildingNames"=>new ActionMapping("getAllBuildingNames", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "getAllBuildingRoomNames"=>new ActionMapping("getAllBuildingRoomNames", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "getAllPINames"=>new ActionMapping("getAllPINames", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+
                 "getAllPIs"=>new ActionMapping("getAllPIs", "", "", array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "Emergency Account")),
                 "getPisForUserHub"=>new ActionMapping("getPisForUserHub", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getRoomsByPIId"=>new ActionMapping("getRoomsByPIId", "", "", $this::$ROLE_GROUPS["ADMIN"]),
