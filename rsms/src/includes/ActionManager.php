@@ -2091,6 +2091,25 @@ class ActionManager {
         return $pis;
     }
 
+    public function getUsersForPIHub(){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        $users = $this->getAllUsers();
+        $u_maps = array();
+        $u_maps[] = new EntityMap("lazy","getInspector");
+        $u_maps[] = new EntityMap("lazy","getSupervisor");
+        $u_maps[] = new EntityMap("lazy","getPrincipalInvestigator");
+        $u_maps[] = new EntityMap("eager","getRoles");
+
+        $pi_maps = array();
+
+        foreach( $users as $user ){
+            $user->setEntityMaps($u_maps);
+        }
+
+        return $users;
+    }
+
     public function getUsersForUserHub(){
         $userDao = $this->getDao( new User() );
         $group = new WhereClauseGroup(
