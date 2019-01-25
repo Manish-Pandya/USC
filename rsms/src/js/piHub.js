@@ -436,37 +436,48 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
         }
 
         var createDefer = $q.defer();
+        $scope.createRoomStatus = "Creating room...";
         piHubFactory.createRoom(roomDto).then(
             function(room){
+                // Room has been created
                 room.IsDirty = false;
                 $scope.chosenBuilding.Rooms.push(room);
                 newRoom.IsDirty = false;
                 createDefer.resolve(room);
-                $scope.onSelectBuilding($scope.chosenBuilding);
-
-                for (var i = 0; i < $rootScope.buildings.length; i++) {
-                    if ($scope.chosenBuilding.Key_id == $rootScope.buildings[i].Key_id) {
-                        $rootScope.buildings[i].Rooms.push(room);
-                    }
-                }
-
+                $scope.createRoomStatus = "Room created";
+                $scope.newRoomName = room.Name;
                 return createDefer.promise;
             },
             function(){
                 newRoom.IsDirty = false;
+                $scope.createRoomStatus = undefined;
                 $scope.error="The room could not be created.  Please check your internet connection.";
                 createDefer.reject();
                 return createDefer.promise;
             }
-        ).then(
+        )
+        .then(
+            function(room){
+                // Re-select the building
+                return $scope.onSelectBuilding($scope.chosenBuilding)
+                .then( function(){
+                    $scope.createRoomStatus = "Assigning PI to new room...";
+                    return room;
+                });
+            }
+        )
+        .then(
             function(room){
                 console.log(room);
                 room.piHasRel = true;
 
                 //add room to pi
-                $scope.handleRoomChecked(room,$scope.chosenBuilding);
+                return $scope.handleRoomChecked(room,$scope.chosenBuilding);
             }
         )
+        .then( function (){
+            $scope.createRoomStatus = "Room assigned.";
+        });
     }
 
     function onSaveRoom(data, room){

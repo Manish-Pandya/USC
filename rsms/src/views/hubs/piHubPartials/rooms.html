@@ -92,10 +92,13 @@
                 <i class="icon-cancel-2 danger" style="margin-top: 6px; margin-left: -1px;" ng-if="newRoom.custom" ng-click="newRoom.custom = false"></i>
             </li>
             <li style="margin-top:4px" ng-if="error" class="red"><h3>{{error}}</h3></li>
-            <li ng-repeat="(key,floor) in chosenBuilding.roomsByFloor" style="margin-top:10px">
+            <li style="margin-top:4px" ng-if="loadingBuildingRooms">
+                <img ng-show="loadingBuildingRooms" class="smallLoading" ng-src="{{webRoot}}img/loading.gif" />
+            </li>
+            <li ng-repeat="(key,floor) in roomsByFloor" style="margin-top:10px">
                 <h3>Floor: {{key}}</h3>
                 <ul class="create-room">
-                    <li ng-repeat="room in floor | orderBy:'Name' | activeOnly">
+                    <li ng-repeat="room in floor | orderBy:'Name' | activeOnly" ng-class="{greenbg: room.Name == newRoomName}">
                         {{room.Name}}<span ng-if="room.Purpose">&nbsp;({{room.Purpose}})</span>
                     </li>
                 </ul>
