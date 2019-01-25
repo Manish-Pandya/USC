@@ -86,12 +86,15 @@ var piHub = angular.module('piHub', ['ui.bootstrap', 'convenienceMethodWithRoleB
     factory.getAllUsers = function () {
         var deferred = $q.defer();
         if (!factory.users) {
-            userHubFactory.getAllUsers().then(
-                function (promise) {
-                    factory.users = promise;
-                    deferred.resolve(promise);
+
+            var url = '../../ajaxaction.php?action=getUsersForPIHub&callback=JSON_CALLBACK';
+            convenienceMethods.getDataAsPromise( url )
+            .then(
+                function(resp){
+                    factory.users = resp.data;
+                    deferred.resolve(resp.data);
                 },
-                function (promise) {
+                function(err){
                     deferred.reject();
                 }
             );
@@ -526,9 +529,10 @@ piHubPersonnelController = function($scope, $rootScope, $location, convenienceMe
 
     init();
     function init(){
-        var url = '../../ajaxaction.php?action=getAllUsers&callback=JSON_CALLBACK';
-        convenienceMethods.getData( url, onGetUsers, onFailGetUsers );
-        $rootScope.userPromise = piHubFactory.getAllUsers();
+        $rootScope.userPromise = piHubFactory.getAllUsers()
+        .then(users => {
+            onGetUsers(users);
+        });
     }
 
     function onGetUsers(data){
