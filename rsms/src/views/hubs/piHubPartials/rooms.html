@@ -53,10 +53,11 @@
             </span>
          </div>
         </div>
-        {{chosenBuilding.roomsByFloor}}
+
        <h3 ng-show="chosenBuilding" style="font-size:19px; margin-bottom:15px; text-decoration:underline;">Rooms in {{chosenBuilding.Name}}:</h3>
-       <img ng-show="loadingBuildingRooms" class="smallLoading" ng-src="{{webRoot}}img/loading.gif" />
+
        <ul ng-show="!addRoom" style="margin-top:5px">
+            <img ng-show="loadingBuildingRooms" class="smallLoading" ng-src="{{webRoot}}img/loading.gif" />
             <li ng-repeat="(key,floor) in roomsByFloor" style="margin-top:10px">
                 <h3>Floor: {{key}}</h3>
                 <ul class="create-room">
@@ -108,6 +109,9 @@
 
     </div>
     <div class="modal-footer">
+        <span ng-if="createRoomStatus" class="pull-left greybg" style="padding:5px;">
+            {{createRoomStatus}}
+        </span>
         <a class="btn btn-large" ng-class="{'btn-info': !addRoom, 'btn-primary': addRoom}" ng-click="close()">Close</a>
     </div>
 </script>
