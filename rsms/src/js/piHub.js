@@ -107,6 +107,7 @@ var piHub = angular.module('piHub', ['ui.bootstrap', 'convenienceMethodWithRoleB
 });
 
 piHubMainController = function($scope, $rootScope, $location, convenienceMethods, $modal, piHubFactory, userHubFactory){
+    $rootScope.webRoot = GLOBAL_WEB_ROOT;
     $scope.doneLoading = false;
 
     $scope.setRoute = function(route){
@@ -138,10 +139,10 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
         console.log($location.search());
 
         //always get a list of all PIs so that a user can change the PI in scope
-        var url = '../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
+        var url = '../../ajaxaction.php?action=getAllPINames&callback=JSON_CALLBACK';
            convenienceMethods.getData( url, onGetAllPIs, onFailGetAllPIs );
 
-        var url = '../../ajaxaction.php?action=getAllBuildings&callback=JSON_CALLBACK';
+        var url = '../../ajaxaction.php?action=getAllBuildingNames&callback=JSON_CALLBACK';
         convenienceMethods.getData( url, onGetBuildings, onFailGetBuildings );
     }
 
@@ -329,8 +330,16 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
     }
 
     $scope.onSelectBuilding = function (item) {
+        $scope.roomsByFloor = {};
         $scope.chosenBuilding = angular.copy(item);
-        checkRooms($scope.chosenBuilding, $scope.PI);
+        $scope.loadingBuildingRooms = true;
+        var url = '../../ajaxaction.php?action=getAllBuildingRoomNames&buildingId=' + item.Key_id + '&callback=JSON_CALLBACK';
+        convenienceMethods.getDataAsPromise( url, onFailGetBuildings )
+        .then( resp => {
+            $scope.chosenBuilding.Rooms = resp.data;
+            checkRooms($scope.chosenBuilding, $scope.PI);
+            $scope.loadingBuildingRooms = false;
+        });
     }
 
     function checkRooms(building, pi) {
@@ -363,22 +372,21 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
         //room.piHasRel = !room.piHasRel;
 
         piHubFactory.addRoom(roomDto).then(
-            function(promise){
-                console.log(room);
-                room.Building = {};
-                room.Building.Name = building.Name;
-                //room.piHasRel = !room.piHasRel;
-                console.log(roomDto);
+            function(addedRoom){
+                // TODO: Reference the incoming data since our 'room' is limited
+                console.debug("Added Room:", addedRoom);
                 if(room.piHasRel){
-                    $scope.PI.Rooms.push(room);
+                    // Add the room
+                    $scope.PI.Rooms.push(addedRoom);
                 }else{
-
+                    // Remove the room
                     var idx = convenienceMethods.arrayContainsObject($scope.PI.Rooms, room, null, true);
                     console.log(idx);
                     console.log($scope.PI.Rooms[idx]);
                     $scope.PI.Rooms.splice(idx,1);
                 }
-                console.log($scope.PI);
+
+                console.debug($scope.PI);
 
                 room.IsDirty = false;
             },

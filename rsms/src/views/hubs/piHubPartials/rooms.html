@@ -49,12 +49,13 @@
 
             <span ng-if="!buildings">
                 <input class="span4" style="background:white;border-color:#999; width:350px;"  type="text"  placeholder="Getting Buildings..." disabled="disabled">
-                <img class="" style="height:23px; margin:-9px 0 0 -35px;" src="<?php echo WEB_ROOT?>img/loading.gif"/>
+                <img class="" style="height:23px; margin:-9px 0 0 -35px;" ng-src="{{webRoot}}img/loading.gif"/>
             </span>
          </div>
         </div>
         {{chosenBuilding.roomsByFloor}}
        <h3 ng-show="chosenBuilding" style="font-size:19px; margin-bottom:15px; text-decoration:underline;">Rooms in {{chosenBuilding.Name}}:</h3>
+       <img ng-show="loadingBuildingRooms" class="smallLoading" ng-src="{{webRoot}}img/loading.gif" />
        <ul ng-show="!addRoom" style="margin-top:5px">
             <li ng-repeat="(key,floor) in roomsByFloor" style="margin-top:10px">
                 <h3>Floor: {{key}}</h3>
@@ -62,7 +63,7 @@
                     <li ng-repeat="room in floor | orderBy:'Name' | activeOnly">
                         <label class="checkbox inline">
                             <input type="checkbox" ng-model="room.piHasRel" ng-change="handleRoomChecked(room,chosenBuilding)" />
-                            <span class="metro-checkbox">{{room.Name}}<span ng-if="room.Purpose">&nbsp;({{room.Purpose}})</span><img ng-show="room.IsDirty" class="smallLoading" src="/rsms/img/loading.gif" /></span>
+                            <span class="metro-checkbox">{{room.Name}}<span ng-if="room.Purpose">&nbsp;({{room.Purpose}})</span><img ng-show="room.IsDirty" class="smallLoading" ng-src="{{webRoot}}img/loading.gif" /></span>
                         </label>
                     </li>
                 </ul>

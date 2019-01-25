@@ -31,9 +31,9 @@ require_once '../top_view.php';
                <span ng-if="PIs && buildings" class="span12 nopad no-pad" style="margin-left:0">
                    <span class="span4 nopad no-pad" style="display:block; margin-left:0">
                        <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)">
-                           <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
-                           <ui-select-choices repeat="pi in PIs | propsFilter: {User.Name: $select.search}">
-                               <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                           <ui-select-match placeholder="Select or search for a PI">{{$select.selected.Name}}</ui-select-match>
+                           <ui-select-choices repeat="pi in PIs | propsFilter: {Name: $select.search}">
+                               <div ng-bind-html="pi.Name | highlight: $select.search"></div>
                            </ui-select-choices>
                        </ui-select>
                    </span>
