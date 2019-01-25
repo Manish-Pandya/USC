@@ -305,6 +305,11 @@ class JsonManager {
     }
 
 	public static function objectToBasicArray(&$object, &$entityMaps = NULL){
+		// Check for marker interface indicating that this object should be json_encode'd raw
+		if( $object instanceof IRawJsonable ){
+			return $object;
+		}
+
 		//Call Accessors
 		$objectVars = JsonManager::callObjectAccessors($object, $entityMaps);
 
