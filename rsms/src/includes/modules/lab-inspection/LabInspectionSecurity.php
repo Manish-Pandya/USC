@@ -68,6 +68,8 @@ class LabInspectionSecurity {
     }
 
     public static function userCanViewPI( $piId ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
         // TODO: Is user this PI, or a subordinate?
         if( !isset($_SESSION['USER']) ){
             // No user
