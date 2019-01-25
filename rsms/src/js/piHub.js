@@ -334,7 +334,8 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
         $scope.chosenBuilding = angular.copy(item);
         $scope.loadingBuildingRooms = true;
         var url = '../../ajaxaction.php?action=getAllBuildingRoomNames&buildingId=' + item.Key_id + '&callback=JSON_CALLBACK';
-        convenienceMethods.getDataAsPromise( url, onFailGetBuildings )
+
+        return convenienceMethods.getDataAsPromise( url, onFailGetBuildings )
         .then( resp => {
             $scope.chosenBuilding.Rooms = resp.data;
             checkRooms($scope.chosenBuilding, $scope.PI);
@@ -371,7 +372,7 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
 
         //room.piHasRel = !room.piHasRel;
 
-        piHubFactory.addRoom(roomDto).then(
+        return piHubFactory.addRoom(roomDto).then(
             function(addedRoom){
                 // TODO: Reference the incoming data since our 'room' is limited
                 console.debug("Added Room:", addedRoom);
