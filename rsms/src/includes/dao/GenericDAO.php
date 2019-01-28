@@ -931,9 +931,9 @@ class GenericDAO {
                 `d`.`key_id` AS `building_key_id`,
                 `e`.`name` AS `campus_name`,
                 `e`.`key_id` AS `campus_key_id`,
-                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 1)) AS `bio_hazards_present`,
-                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10009)) AS `chem_hazards_present`,
-                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10010)) AS `rad_hazards_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room pihr JOIN hazard hazard ON hazard.key_id = pihr.hazard_id where hazard.parent_hazard_id = 1)) AS `bio_hazards_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room pihr JOIN hazard hazard ON hazard.key_id = pihr.hazard_id where hazard.parent_hazard_id = 10009)) AS `chem_hazards_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room pihr JOIN hazard hazard ON hazard.key_id = pihr.hazard_id where hazard.parent_hazard_id = 10010)) AS `rad_hazards_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10016)) AS `lasers_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10015)) AS `xrays_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 2)) AS `recombinant_dna_present`,
@@ -947,7 +947,7 @@ class GenericDAO {
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id IN (10430, 10433))) AS `toxic_gas_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10434)) AS `corrosive_gas_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10435)) AS `flammable_gas_present`,
-                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id IN(10677,10679))) AS `hf_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id IN(10429,10949))) AS `hf_present`,
 
                 year(curdate()) AS `year`,
                 NULL AS `inspection_id` from (((((`principal_investigator` `a` join `erasmus_user` `b`) join `room` `c`) join `building` `d`) join `campus` `e`) join `principal_investigator_room` `f`)
@@ -977,9 +977,9 @@ class GenericDAO {
                 `d`.`name` AS `building_name`,
                 `d`.`key_id` AS `building_key_id`,
                 `e`.`name` AS `campus_name`,`e`.`key_id` AS `campus_key_id`,
-                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 1)) AS `bio_hazards_present`,
-                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10009)) AS `chem_hazards_present`,
-                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10010)) AS `rad_hazards_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room pihr JOIN hazard hazard ON hazard.key_id = pihr.hazard_id where hazard.parent_hazard_id = 1)) AS `bio_hazards_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room pihr JOIN hazard hazard ON hazard.key_id = pihr.hazard_id where hazard.parent_hazard_id = 10009)) AS `chem_hazards_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room pihr JOIN hazard hazard ON hazard.key_id = pihr.hazard_id where hazard.parent_hazard_id = 10010)) AS `rad_hazards_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10016)) AS `lasers_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10015)) AS `xrays_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 2)) AS `recombinant_dna_present`,
@@ -994,7 +994,7 @@ class GenericDAO {
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id IN (10430, 10433))) AS `toxic_gas_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10434)) AS `corrosive_gas_present`,
                 bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id = 10435)) AS `flammable_gas_present`,
-                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id IN(10677,10679))) AS `hf_present`,
+                bit_or(c.key_id IN (select room_id from principal_investigator_hazard_room where hazard_id IN(10429,10949))) AS `hf_present`,
 
 
                 coalesce(year(`g`.`date_started`),`g`.`schedule_year`) AS `year`,`g`.`key_id`
