@@ -22,8 +22,8 @@ require_once '../top_view.php';
         </div>
 
         <div class="well half" ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.DEPARTMENT_CHAIR] ])">
-            <h2><i style="margin-top: -5px;font-size: 22px;margin-right: 4px;" class="icon-clipboard-2"></i>Summary Reports
-            <a class="pull-right btn btn-info" href="../../reports"><i class="icon-out"></i>&nbsp;View your Department's Inspection Summary Reports</a></h2>
+            <h2><i style="margin-top: -5px;font-size: 22px;margin-right: 4px;" class="icon-clipboard-2"></i>Summary Reports</h2>
+            <a style="margin-top: 20px;" class="btn btn-info btn-large" href="../../reports"><i class="icon-out"></i>&nbsp;View your Department's Inspection Summary Reports</a>
         </div>
     </div>
 
