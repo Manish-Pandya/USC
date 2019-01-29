@@ -12,11 +12,15 @@ require_once '../top_view.php';
         </a>
     </h1>
     <div cg-busy="{promise:inspectionPromise,message:'Loading', backdrop:true,templateUrl:'../../rad/views/busy-templates/full-page-busy.html'}"></div>
-    <div class="alert alert-info my-lab-alert">
-        <h3>Your Annual Verification is due {{pi.Verifications[0].Due_date | dateToISO}}<a class="btn btn-large" style="margin: 0 10px;font-size: 18px;" href="../../verification/">View Verification</a></h3>
-    </div>
 
     <div style="float: left; width: 100%;">
+        <div class="well half">
+            <h2><i style="margin-top: -5px;font-size: 22px;margin-right: 4px;" class="icon-checkbox"></i>Annual Verification</h2>
+            <div class="alert alert-info my-lab-alert">
+                <h3>Your Annual Verification is due {{pi.Verifications[0].Due_date | dateToISO}}<a class="btn btn-large" style="margin: 0 10px;font-size: 18px;" href="../../verification/">View Verification</a></h3>
+            </div>
+        </div>
+
         <div class="well half" ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.DEPARTMENT_CHAIR] ])">
             <h2><i style="margin-top: -5px;font-size: 22px;margin-right: 4px;" class="icon-clipboard-2"></i>Summary Reports
             <a class="pull-right btn btn-info" href="../../reports"><i class="icon-out"></i>&nbsp;View your Department's Inspection Summary Reports</a></h2>
