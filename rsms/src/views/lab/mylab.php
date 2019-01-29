@@ -15,9 +15,14 @@ require_once '../top_view.php';
     <div class="alert alert-info my-lab-alert">
         <h3>Your Annual Verification is due {{pi.Verifications[0].Due_date | dateToISO}}<a class="btn btn-large" style="margin: 0 10px;font-size: 18px;" href="../../verification/">View Verification</a></h3>
     </div>
-    <div class="full">
-  
+
+    <div style="float: left; width: 100%;">
+        <div class="well half" ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.DEPARTMENT_CHAIR] ])">
+            <h2><i style="margin-top: -5px;font-size: 22px;margin-right: 4px;" class="icon-clipboard-2"></i>Summary Reports</h2>
+            <a class="btn btn-large blueBg" href="../../reports">View your Department's Inspection Summary Reports</a>
+        </div>
     </div>
+
     <div class="well half">
         <h2><i style="margin-top: -5px;font-size: 22px;margin-right: 4px;" class="icon-search-2"></i>Pending Reports</h2>
         <h3 style="margin-top:10px;" ng-show="!openInspections.length">No pending reports at this time.</h3>
