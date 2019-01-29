@@ -18,8 +18,8 @@ require_once '../top_view.php';
 
     <div style="float: left; width: 100%;">
         <div class="well half" ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.DEPARTMENT_CHAIR] ])">
-            <h2><i style="margin-top: -5px;font-size: 22px;margin-right: 4px;" class="icon-clipboard-2"></i>Summary Reports</h2>
-            <a class="btn btn-large blueBg" href="../../reports">View your Department's Inspection Summary Reports</a>
+            <h2><i style="margin-top: -5px;font-size: 22px;margin-right: 4px;" class="icon-clipboard-2"></i>Summary Reports
+            <a class="pull-right btn btn-info" href="../../reports"><i class="icon-out"></i>&nbsp;View your Department's Inspection Summary Reports</a></h2>
         </div>
     </div>
 
