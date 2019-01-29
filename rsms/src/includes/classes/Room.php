@@ -1,8 +1,5 @@
 <?php
 
-include_once 'GenericCrud.php';
-include_once 'Hazard.php';
-
 /**
  *
  *
