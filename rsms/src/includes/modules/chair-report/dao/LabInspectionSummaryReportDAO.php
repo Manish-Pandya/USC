@@ -29,6 +29,7 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
         }
 
         // Prepare SQL
+        // TODO: Externalize 'Pending' constant
         $sql = "SELECT 
             insp.key_id AS inspection_id,
             insp.principal_investigator_id AS principal_investigator_id,
@@ -57,6 +58,22 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
             -- Inspection details
             (SELECT count(*) FROM response resp WHERE resp.inspection_id = insp.key_id) as items_inspected,
             (SELECT count(*) FROM response resp WHERE resp.inspection_id = insp.key_id AND resp.answer != 'no') as items_compliant,
+            (
+                SELECT
+                    sum(CASE cap.status WHEN 'Pending' THEN 1 ELSE 0 END)
+                FROM response response
+                LEFT OUTER JOIN deficiency_selection defsel ON defsel.response_id = response.key_id
+                LEFT OUTER JOIN supplemental_deficiency supdef ON supdef.response_id = response.key_id
+                JOIN corrective_action cap ON (
+                    cap.deficiency_selection_id IS NOT NULL AND cap.deficiency_selection_id = defsel.key_id
+                    OR
+                    cap.supplemental_deficiency_id IS NOT NULL AND cap.supplemental_deficiency_id = supdef.key_id
+                )
+
+                WHERE response.inspection_id = insp.key_id
+
+                GROUP BY response.inspection_id
+            ) AS pending_caps,
 
             (COALESCE(piuser.name, CONCAT_WS(', ', piuser.last_name, piuser.first_name))) AS principal_investigator_name,
             dept.key_id AS department_id,

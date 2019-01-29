@@ -10,6 +10,14 @@ class EntityMap {
 	public static $TYPE_EAGER = 'eager';
 	public static $TYPE_LAZY = 'lazy';
 
+	public static function eager( $entityAccessor ){
+		return new EntityMap( self::$TYPE_EAGER, $entityAccessor );
+	}
+
+	public static function lazy( $entityAccessor ){
+		return new EntityMap( self::$TYPE_LAZY, $entityAccessor );
+	}
+
 	private $loadingType;
 	private $entityAccessor;	
 	

@@ -11,12 +11,13 @@
         <ul ng-if="room.HasHazards && room.deactivating">
             <li ng-repeat="pi in room.PrincipalInvestigators"><h3>{{PI.User.Name}} <a style="margin-left:5px" class="btn btn-warning left" href="../../hazard-inventory/#?pi={{PI.Key_id}}&{{room.roomUrlParam}}" target="_blank"><i class="icon-lab"></i>Show Hazards</a></h3></li>
         </ul>
-        <h3 ng-if="!room.deactivating">Remove room {{room.Name}} from {{PI.User.Name}}?</h3>
+
+        <h3 ng-if="!room.deactivating && !room.HasHazards">Remove room {{room.Name}} from {{PI.User.Name}}?</h3>
 
     </div>
     <div class="modal-footer">
         <i class="spinner icon-spinnery-dealie small" ng-show="saving"></i>
-        <a ng-if="!room.deactivating" class="btn btn-success left btn-large" ng-click="confirm()"><i class="icon-checkmark"></i>Confirm</a>
+        <a ng-if="!checkingPiHazardsInRoom && !room.deactivating && !room.HasHazards" class="btn btn-success left btn-large" ng-click="confirm()"><i class="icon-checkmark"></i>Confirm</a>
         <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
     </div>
 </div>

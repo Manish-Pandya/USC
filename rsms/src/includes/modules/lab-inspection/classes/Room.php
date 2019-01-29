@@ -350,10 +350,7 @@ class Room extends GenericCrud {
 			return $this->_hazardTypesComputed;
 		}
 
-        $LOG = Logger::getLogger(__CLASS__ );
-        //IDS of the direct children of the root hazard, except General Hazards, which are present in all rooms
-        //Per EHS request, added constants for Lasers (10016), Recombinant DNA (2), and X-Rays (10015), as displaying icons for these hazard types per room is useful
-        $branchIds = "1, 10009, 10010, 10016, 2, 10015, 10675, 10422, 10676, 10435";
+		$LOG = Logger::getLogger(__CLASS__ );
 
         // Get the db connection
         $db = DBConnection::get();
@@ -371,72 +368,21 @@ class Room extends GenericCrud {
 
         if($this->getPrincipalInvestigators() == null)return;
 
-        //get all the Relationships between this hazard and rooms that this PI has, so we can determine if this PI or ANY PI has the hazard in any of these rooms
-        $queryString = "SELECT DISTINCT parent_hazard_id
-                        FROM hazard a
-                        LEFT JOIN principal_investigator_hazard_room b
-                        ON a.key_id = b.hazard_id
-                        LEFT JOIN principal_investigator_room c
-                        ON b.principal_investigator_id = c.principal_investigator_id
-                        LEFT JOIN principal_investigator d
-                        ON b.principal_investigator_id = d.key_id
-                        WHERE a.is_active = true
-                        AND d.is_active = true
-                        AND (a.parent_hazard_id IN($branchIds)
-                        OR a.key_id IN($branchIds) )
-                        AND b.room_id = $this->key_id
-                        AND c.room_id = $this->key_id";
-        $stmt = DBConnection::prepareStatement($queryString);
-        $stmt->execute();
-
-
-
-        while($id = $stmt->fetchColumn()){
-			if($id == 1){
-                $this->bio_hazards_present = true;
-            }elseif($id == 10009){
-                $this->chem_hazards_present = true;
-            }elseif($id == 10010){
-                $this->rad_hazards_present = true;
-            }elseif($id == 10016){
-                $this->lasers_present = true;
-            }elseif($id == 10015){
-                $this->xrays_present = true;
-            }elseif($id == 2){
-                $this->recombinant_dna_present = true;
-                $this->bio_hazards_present = true;
-            }
-
-		}
-
-        $hazIds = "10430, 10433, 10434, 10435, 10677, 10679";
-        $queryString = "SELECT DISTINCT a.key_id
-                        FROM hazard a
-                        LEFT JOIN principal_investigator_hazard_room b
-                        ON a.key_id = b.hazard_id
-                        LEFT JOIN principal_investigator_room c
-                        ON b.principal_investigator_id = c.principal_investigator_id
-                        LEFT JOIN principal_investigator d
-                        ON b.principal_investigator_id = d.key_id
-                        WHERE a.is_active = true
-                        AND d.is_active = true
-                        AND a.key_id IN ($hazIds)
-                        AND b.room_id = $this->key_id
-                        AND c.room_id = $this->key_id";
-        $stmt = DBConnection::prepareStatement($queryString);
-        $stmt->execute();
-
-        while($id = $stmt->fetchColumn()){
-            if($id == 10430 || $id == 10433){
-                $this->toxic_gas_present = true;
-            }elseif($id == 10434){
-                $this->corrosive_gas_present = true;
-            }elseif($id == 10435){
-                $this->flammable_gas_present = true;
-            }elseif($id == 10677 || $id == 10679){
-                $this->hf_present = true;
-            }
-		}
+		$sql = "SELECT * FROM room_hazards WHERE room_id = :rid";
+		$stmt = DBConnection::prepareStatement($sql);
+		$stmt->bindValue(':rid', $this->key_id);
+		$stmt->execute();
+		$hazardCategories = $stmt->fetch(PDO::FETCH_ASSOC);
+        $this->bio_hazards_present = boolval( $hazardCategories['bio_hazards_present'] );
+        $this->chem_hazards_present = boolval( $hazardCategories['chem_hazards_present'] );
+        $this->rad_hazards_present = boolval( $hazardCategories['rad_hazards_present'] );
+        $this->lasers_present = boolval( $hazardCategories['lasers_present'] );
+        $this->xrays_present = boolval( $hazardCategories['xrays_present'] );
+        $this->recombinant_dna_present = boolval( $hazardCategories['recombinant_dna_present'] );
+        $this->flammable_gas_present = boolval( $hazardCategories['flammable_gas_present'] );
+	    $this->toxic_gas_present = boolval( $hazardCategories['toxic_gas_present'] );
+	    $this->corrosive_gas_present = boolval( $hazardCategories['corrosive_gas_present'] );
+        $this->hf_present = boolval( $hazardCategories['hf_present'] );
 
 		$this->_hazardTypesComputed = true;
 		return $this->_hazardTypesComputed;

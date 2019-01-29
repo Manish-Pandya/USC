@@ -2353,67 +2353,85 @@ class ActionManager {
     public function savePIRoomRelation($PIId = NULL,$roomId = NULL,$add= NULL){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         if($PIId == NULL && $roomId == NULL && $add == NULL){
+            // Attempt to decode input
             $decodedObject = $this->convertInputJson();
-        }else{
+
+            if( $decodedObject === NULL ){
+                return new ActionError('Error converting input stream to RelationshipDto');
+            }
+            else if( $decodedObject instanceof ActionError ){
+                return $decodedObject;
+            }
+
+            // Extract required details from decoded input
+            $PIId = $decodedObject->getMaster_id();
+            $roomId = $decodedObject->getRelation_id();
+            $add = $decodedObject->getAdd();
+        }
+        else{
             $decodedObject = new RelationshipDto();
             $decodedObject->setMaster_id($PIId);
             $decodedObject->setRelation_id($roomId);
             $decodedObject->setAdd($add);
         }
 
-        if( $decodedObject === NULL ){
-            return new ActionError('Error converting input stream to RelationshipDto');
-        }
-        else if( $decodedObject instanceof ActionError ){
-            return $decodedObject;
-        }
-        else{
+        if( $PIId !== NULL && $roomId !== NULL && $add !== null ){
+            $LOG->info( ($add ? 'Add' : 'Remove') . " PI #$PIId from Room #$roomId");
 
-            if($PIId == NULL && $roomId == NULL && $add == NULL){
-                $PIId = $decodedObject->getMaster_id();
-                $roomId = $decodedObject->getRelation_id();
-                $add = $decodedObject->getAdd();
+            // Get a DAO
+            $dao = $this->getDao(new PrincipalInvestigator());
+
+            // Look up the room
+            $room = $this->getRoomById($roomId);
+            if( !isset($room) ){
+                return new ActionError("No such room $roomId", 404);
             }
 
-            //$LOG->fatal('pi_id: ' . $PIId . "room_id: " . $roomId . "add: " . $add);
+            if( !$add ) {
+                $LOG->debug("Validating room unassignment");
 
-            if( $PIId !== NULL && $roomId !== NULL && $add !== null ){
+                // Remove this room assignment 
+                // First, verify that this PI has no hazards in this room
+                $hazardRoomRelations = $room->getHazard_room_relations();
+                $piHazards = array_filter($hazardRoomRelations, function($rel) use ($PIId){
+                    return $rel->getPrincipal_investigator_id() == $PIId;
+                });
 
-                // Get a DAO
-                $dao = $this->getDao(new PrincipalInvestigator());
-                // if add is true, add this room to this PI
-                if ($add){
-                    //$LOG->fatal('trying to add');
-                    $dao->addRelatedItems($roomId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
-                // if add is false, remove this room from this PI
-                } else {
-                    $dao->removeRelatedItems($roomId,$PIId,DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
-                    //set our hazard flags for the room.
+                if( isset($piHazards) && count($piHazards) > 0 ){
+                    // PI has hazards assigned to this room
+                    $LOG->error("Cannot remove Room assignment: PI #$PIId has Hazards assigned to room #$roomId");
+                    return new ActionError("PI $PIId has Hazards assigned to room $roomId", 400);
                 }
-                $room = $this->getRoomById($roomId);
-                $room->getHazardTypesArePresent();
-                if($room != $room = $this->saveRoom($room)){
-                    return new ActionError("Failed to update room");
+                else {
+                    $LOG->debug("PI $PIId Has no hazards assigned to room $roomId. Unassigning...");
+                    // PI has no hazards assigned to this room
+                    // Remove the assignment
+                    $dao->removeRelatedItems($roomId, $PIId,
+                        DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
                 }
-
-            } else {
-                //error
-                return new ActionError("Missing proper parameters (should be masterId int, relationId int, add boolean)");
+            }
+            else{
+                $LOG->debug("Assigning PI $PIId to room $roomId...");
+                // Add the room to this PI
+                $dao->addRelatedItems($roomId, $PIId,
+                    DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
             }
 
+            $entityMaps = array();
+            $entityMaps[] = EntityMap::eager("getPrincipalInvestigators");
+            $entityMaps[] = EntityMap::lazy("getHazards");
+            $entityMaps[] = EntityMap::lazy("getHazard_room_relations");
+            $entityMaps[] = EntityMap::eager("getHas_hazards");
+            $entityMaps[] = EntityMap::eager("getBuilding");
+            $entityMaps[] = EntityMap::lazy("getSolidsContainers");
+            $room->setEntityMaps($entityMaps);
+
+            return $room;
         }
-
-
-        $entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getPrincipalInvestigators");
-		$entityMaps[] = new EntityMap("lazy","getHazards");
-		$entityMaps[] = new EntityMap("lazy","getHazard_room_relations");
-		$entityMaps[] = new EntityMap("eager","getHas_hazards");
-		$entityMaps[] = new EntityMap("eager","getBuilding");
-		$entityMaps[] = new EntityMap("lazy","getSolidsContainers");
-		$room->setEntityMaps($entityMaps);
-
-        return $room;
+        else {
+            //error
+            return new ActionError("Missing proper parameters (should be masterId int, relationId int, add boolean)");
+        }
     }
 
     public function savePIContactRelation($PIId = NULL,$contactId = NULL,$add= NULL){
