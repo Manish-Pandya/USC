@@ -733,9 +733,12 @@ piHubPersonnelController = function($scope, $rootScope, $location, convenienceMe
 roomConfirmationController = function (PI, room, $scope, $rootScope, piHubFactory, $modalInstance, convenienceMethods, $q) {
     $scope.PI = PI;
     $scope.room = room;
+    $scope.checkingPiHazardsInRoom = true;
     $rootScope.loading = convenienceMethods.checkHazards(room, [PI]).then(function (r) {
-        room.HasHazards = r;
-        console.log(r, room)
+        // Convert r to boolean
+        room.HasHazards = (r && r == 'true');
+        $scope.checkingPiHazardsInRoom = false;
+        console.log(r, room);
     })
 
 

@@ -103,7 +103,7 @@ class Autoloader {
 				$LOG->trace( "Checking $directory for $class" );
 				$classfile = "$directory/$class.php";
 		
-				if( file_exists( $classfile ) ){
+				if( is_file( $classfile ) ){
 					$LOG->debug("Autoloading class file: $classfile");
 					
 					include_once( $classfile );

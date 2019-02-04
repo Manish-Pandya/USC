@@ -32,6 +32,7 @@ var Constants = /** @class */ (function () {
             ADMIN: "Admin",
             SAFETY_INSPECTOR: "Safety Inspector",
             RADIATION_INSPECTOR: "Radiation Inspector",
+            DEPARTMENT_CHAIR: "Department Chair",
             PRINCIPAL_INVESTIGATOR: "Principal Investigator",
             LAB_CONTACT: "Lab Contact",
             LAB_PERSONNEL: "Lab Personnel",

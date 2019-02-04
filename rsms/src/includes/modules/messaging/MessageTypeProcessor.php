@@ -17,5 +17,11 @@ interface MessageTypeProcessor {
      *   Array macromap
      */
     public function process(Message $message, $macroResolverProvider);
+
+    /**
+     * @returns a String which describes who receives a message
+     * which this Processor handles
+     */
+    public function getRecipientsDescription();
 }
 ?>

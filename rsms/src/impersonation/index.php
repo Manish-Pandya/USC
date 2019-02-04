@@ -69,7 +69,7 @@
 
     <script>
         window.defaultPage = "<?php echo LOGIN_PAGE;?>";
-        window.ImpersonationSessionActive = <?php echo $_SESSION['IMPERSONATOR'] != null ? 'true' : 'false';?>;
+        window.ImpersonationSessionActive = <?php echo isset($_SESSION['IMPERSONATOR']) ? 'true' : 'false';?>;
     </script>
     <style>
         .card {
