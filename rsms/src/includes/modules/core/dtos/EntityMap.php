@@ -25,7 +25,11 @@ class EntityMap {
 		$this->loadingType = $loadingType;
 		$this->entityAccessor = $entityAccessor;
 	
-	}	
+	}
+
+	public function __toString(){
+		return "$this->loadingType:$this->entityAccessor";
+	}
 
 	public function getLoadingType() {
 		return $this->loadingType;
