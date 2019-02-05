@@ -30,18 +30,12 @@ class JsonManager {
 	 */
 	public static function encode($value, $entityMaps = NULL){
 		// Time how long it takes to encode this
-		$start = microtime(true);
-		$jsonable = JsonManager::buildJsonableValue($value, $entityMaps);
-		$t = round(microtime(true) - $start, 4);
+		$recordMetric = Metrics::start(
+			"Encode " . (is_array($value) ? get_class($value[0]) . '[]' : get_class($value))
+		);
 
-		// Warn for long-running encodings
-		$l = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
-		if( $t > 10 ){
-			$l->warn("Building JSON-able value took $t seconds");
-		}
-		else {
-			$l->debug("Building JSON-able value took $t seconds");
-		}
+		$jsonable = JsonManager::buildJsonableValue($value, $entityMaps);
+		$recordMetric();
 
 		return json_encode($jsonable);
 	}
