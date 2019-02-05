@@ -140,12 +140,8 @@ class Checklist extends GenericCrud {
 
 		if(!empty($this->inspectionId)) {
 			$LOG->debug("Inspection Id " . $this->inspectionId . " found.");
-			// Define which subentities to load
+			// Override 'getResponses' to ensure we get them eagerly for these questions
 			$entityMaps = array();
-			$entityMaps[] = EntityMap::lazy("getChecklist");
-			$entityMaps[] = EntityMap::eager("getDeficiencies");
-			$entityMaps[] = EntityMap::eager("getRecommendations");
-			$entityMaps[] = EntityMap::eager("getObservations");
 			$entityMaps[] = EntityMap::eager("getResponses");
 
 			foreach ($questions as $question){
