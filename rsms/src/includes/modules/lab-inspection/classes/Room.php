@@ -113,12 +113,12 @@ class Room extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-		$entityMaps[] = new EntityMap("lazy","getHazards");
-		$entityMaps[] = new EntityMap("lazy","getHazard_room_relations");
-		$entityMaps[] = new EntityMap("lazy","getHas_hazards");
-		$entityMaps[] = new EntityMap("eager","getBuilding");
-		$entityMaps[] = new EntityMap("lazy","getSolidsContainers");
+		$entityMaps[] = EntityMap::lazy("getPrincipalInvestigators");
+		$entityMaps[] = EntityMap::lazy("getHazards");
+		$entityMaps[] = EntityMap::lazy("getHazard_room_relations");
+		$entityMaps[] = EntityMap::lazy("getHas_hazards");
+		$entityMaps[] = EntityMap::eager("getBuilding");
+		$entityMaps[] = EntityMap::lazy("getSolidsContainers");
 		return $entityMaps;
 	}
 

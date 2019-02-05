@@ -28,8 +28,8 @@ class PrincipalInvestigatorRoomRelation extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getRoom_id");
-		$entityMaps[] = new EntityMap("eager","getPrincipal_investigator_id");
+		$entityMaps[] = EntityMap::eager("getRoom_id");
+		$entityMaps[] = EntityMap::eager("getPrincipal_investigator_id");
 		return $entityMaps;
 	}
 

@@ -78,7 +78,7 @@
 
     public static function defaultEntityMaps(){
     	$entityMaps = array();
-        $entityMaps[] = new EntityMap("lazy", "getAuthorization");
+        $entityMaps[] = EntityMap::lazy("getAuthorization");
     	return $entityMaps;
     }
 

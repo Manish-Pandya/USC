@@ -84,9 +84,9 @@ class ParcelUse extends RadCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getParcel");
-        $entityMaps[] = new EntityMap("lazy", "getParcelAmountOnHand");
-        $entityMaps[] = new EntityMap("lazy", "getParcelRemainder");
+		$entityMaps[] = EntityMap::lazy("getParcel");
+        $entityMaps[] = EntityMap::lazy("getParcelAmountOnHand");
+        $entityMaps[] = EntityMap::lazy("getParcelRemainder");
 
 		return $entityMaps;
 	}

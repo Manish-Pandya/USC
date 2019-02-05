@@ -112,15 +112,15 @@ class CarboyUseCycle extends Container {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getCarboy");
-		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
-		$entityMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
-		$entityMaps[] = new EntityMap("eager", "getContents");
-		$entityMaps[] = new EntityMap("eager", "getCarboyNumber");
-		$entityMaps[] = new EntityMap("eager", "getCarboy_reading_amounts");
-		$entityMaps[] = new EntityMap("lazy", "getRoom");
-		$entityMaps[] = new EntityMap("lazy", "getPickup");
-		$entityMaps[] = new EntityMap("eager", "getPour_allowed_date");
+		$entityMaps[] = EntityMap::lazy("getCarboy");
+		$entityMaps[] = EntityMap::lazy("getPrincipal_investigator");
+		$entityMaps[] = EntityMap::lazy("getParcelUseAmounts");
+		$entityMaps[] = EntityMap::eager("getContents");
+		$entityMaps[] = EntityMap::eager("getCarboyNumber");
+		$entityMaps[] = EntityMap::eager("getCarboy_reading_amounts");
+		$entityMaps[] = EntityMap::lazy("getRoom");
+		$entityMaps[] = EntityMap::lazy("getPickup");
+		$entityMaps[] = EntityMap::eager("getPour_allowed_date");
 		return $entityMaps;
 	}
 

@@ -15,8 +15,8 @@ class PendingRoomChange extends PendingChange {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getParent_id");
-		$entityMaps[] = new EntityMap("lazy","getRoom");
+		$entityMaps[] = EntityMap::eager("getParent_id");
+		$entityMaps[] = EntityMap::lazy("getRoom");
 	
 		return $entityMaps;
 	}

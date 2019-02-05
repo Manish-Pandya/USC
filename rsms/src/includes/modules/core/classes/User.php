@@ -106,10 +106,10 @@ class User extends GenericCrud{
     public static function defaultEntityMaps(){
         // Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
-		$entityMaps[] = new EntityMap("lazy","getInspector");
-		$entityMaps[] = new EntityMap("lazy","getSupervisor");
-		$entityMaps[] = new EntityMap("eager","getRoles");
+		$entityMaps[] = EntityMap::lazy("getPrincipalInvestigator");
+		$entityMaps[] = EntityMap::lazy("getInspector");
+		$entityMaps[] = EntityMap::lazy("getSupervisor");
+		$entityMaps[] = EntityMap::eager("getRoles");
 		return $entityMaps;
 
 	}

@@ -44,7 +44,7 @@ class Campus extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getBuildings");
+		$entityMaps[] = EntityMap::lazy("getBuildings");
 		return $entityMaps;
 
 	}

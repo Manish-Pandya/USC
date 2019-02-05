@@ -53,7 +53,7 @@ class PurchaseOrder extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
+		$entityMaps[] = EntityMap::lazy("getPrincipal_investigator");
 		return $entityMaps;
 	}
 

@@ -80,10 +80,10 @@ class Checklist extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getHazard");
-		$entityMaps[] = new EntityMap("lazy","getRooms");
-		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
-		$entityMaps[] = new EntityMap("eager","getQuestions");
+		$entityMaps[] = EntityMap::lazy("getHazard");
+		$entityMaps[] = EntityMap::lazy("getRooms");
+		$entityMaps[] = EntityMap::lazy("getInspectionRooms");
+		$entityMaps[] = EntityMap::eager("getQuestions");
 		return $entityMaps;
 
 	}
@@ -142,11 +142,11 @@ class Checklist extends GenericCrud {
 			$LOG->debug("Inspection Id " . $this->inspectionId . " found.");
 			// Define which subentities to load
 			$entityMaps = array();
-			$entityMaps[] = new EntityMap("lazy","getChecklist");
-			$entityMaps[] = new EntityMap("eager","getDeficiencies");
-			$entityMaps[] = new EntityMap("eager","getRecommendations");
-			$entityMaps[] = new EntityMap("eager","getObservations");
-			$entityMaps[] = new EntityMap("eager","getResponses");
+			$entityMaps[] = EntityMap::lazy("getChecklist");
+			$entityMaps[] = EntityMap::eager("getDeficiencies");
+			$entityMaps[] = EntityMap::eager("getRecommendations");
+			$entityMaps[] = EntityMap::eager("getObservations");
+			$entityMaps[] = EntityMap::eager("getResponses");
 
 			foreach ($questions as $question){
 				$question->setInspectionId($this->inspectionId);

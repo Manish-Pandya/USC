@@ -152,15 +152,15 @@ class Inspection extends GenericCrud {
 
     public static function defaultEntityMaps(){
         $entityMaps = array();
-        $entityMaps[] = new EntityMap("eager","getInspectors");
-        $entityMaps[] = new EntityMap("eager","getLabPersonnel");
-        $entityMaps[] = new EntityMap("eager","getRooms");
-        $entityMaps[] = new EntityMap("eager","getResponses");
-        $entityMaps[] = new EntityMap("eager","getDeficiency_selections");
-        $entityMaps[] = new EntityMap("eager","getPrincipalInvestigator");
-        $entityMaps[] = new EntityMap("eager","getStatus");
-        $entityMaps[] = new EntityMap("lazy","getChecklists");
-        $entityMaps[] = new EntityMap("lazy","getInspection_wipe_tests");
+        $entityMaps[] = EntityMap::eager("getInspectors");
+        $entityMaps[] = EntityMap::eager("getLabPersonnel");
+        $entityMaps[] = EntityMap::eager("getRooms");
+        $entityMaps[] = EntityMap::eager("getResponses");
+        $entityMaps[] = EntityMap::eager("getDeficiency_selections");
+        $entityMaps[] = EntityMap::eager("getPrincipalInvestigator");
+        $entityMaps[] = EntityMap::eager("getStatus");
+        $entityMaps[] = EntityMap::lazy("getChecklists");
+        $entityMaps[] = EntityMap::lazy("getInspection_wipe_tests");
 
         return $entityMaps;
     }

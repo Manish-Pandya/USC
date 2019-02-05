@@ -34,7 +34,7 @@ class DrumWipe extends RadCrud
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getDrum_wipe_test");
+		$entityMaps[] = EntityMap::lazy("getDrum_wipe_test");
 		return $entityMaps;
 	}
 

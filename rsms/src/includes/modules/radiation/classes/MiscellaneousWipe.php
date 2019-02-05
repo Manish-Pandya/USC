@@ -34,8 +34,8 @@ class MiscellaneousWipe extends RadCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getMiscellaneous_wipe_test");
-		$entityMaps[] = new EntityMap("lazy","getRoom");
+		$entityMaps[] = EntityMap::lazy("getMiscellaneous_wipe_test");
+		$entityMaps[] = EntityMap::lazy("getRoom");
 		return $entityMaps;
 	}
 	

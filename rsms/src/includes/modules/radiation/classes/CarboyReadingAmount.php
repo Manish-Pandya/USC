@@ -68,8 +68,8 @@
 
     public static function defaultEntityMaps(){
     	$entityMaps = array();
-    	$entityMaps[] = new EntityMap("lazy", "getCarboy_use_cycle");
-    	$entityMaps[] = new EntityMap("lazy", "getIsotope");
+    	$entityMaps[] = EntityMap::lazy("getCarboy_use_cycle");
+    	$entityMaps[] = EntityMap::lazy("getIsotope");
     	return $entityMaps;
     }
 

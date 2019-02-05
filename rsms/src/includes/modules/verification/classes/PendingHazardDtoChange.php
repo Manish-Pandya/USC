@@ -24,9 +24,9 @@ class PendingHazardDtoChange extends PendingChange {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getParent_id");
-		$entityMaps[] = new EntityMap("lazy","getHazard");
-		$entityMaps[] = new EntityMap("lazy","getRoom");
+		$entityMaps[] = EntityMap::eager("getParent_id");
+		$entityMaps[] = EntityMap::lazy("getHazard");
+		$entityMaps[] = EntityMap::lazy("getRoom");
 
 		return $entityMaps;
 	}

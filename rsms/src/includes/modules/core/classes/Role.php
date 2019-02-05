@@ -7,7 +7,6 @@
  * @author Hoke Currie, GraySail LLC
  */
 class Role extends GenericCrud{
-	
 	// CRUD Meta-Data
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "role";

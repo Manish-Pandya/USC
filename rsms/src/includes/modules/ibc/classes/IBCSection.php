@@ -61,7 +61,7 @@ class IBCSection extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getIBCQuestions");
+		$entityMaps[] = EntityMap::lazy("getIBCQuestions");
 		return $entityMaps;
 	}
 

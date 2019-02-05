@@ -81,7 +81,7 @@ class Authorization extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getIsotope");
+		$entityMaps[] = EntityMap::lazy("getIsotope");
 		return $entityMaps;
 	}
 

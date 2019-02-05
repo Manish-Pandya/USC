@@ -44,7 +44,7 @@ class PIWipeTest extends RadCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getPIWipes");
+		$entityMaps[] = EntityMap::eager("getPIWipes");
 		return $entityMaps;
 	}
 

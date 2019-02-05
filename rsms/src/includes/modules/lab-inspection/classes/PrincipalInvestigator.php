@@ -222,28 +222,28 @@ class PrincipalInvestigator extends GenericCrud {
 
 	public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getLabPersonnel");
-		$entityMaps[] = new EntityMap("lazy","getRooms");
-		$entityMaps[] = new EntityMap("eager","getDepartments");
-		$entityMaps[] = new EntityMap("eager","getUser");
-		$entityMaps[] = new EntityMap("lazy","getInspections");
-		$entityMaps[] = new EntityMap("lazy", "getActiveParcels");
-		$entityMaps[] = new EntityMap("eager", "getCarboyUseCycles");
-		$entityMaps[] = new EntityMap("lazy", "getPurchaseOrders");
-		$entityMaps[] = new EntityMap("lazy", "getWasteBags");
-		$entityMaps[] = new EntityMap("lazy", "getOtherWasteContainers");
-        $entityMaps[] = new EntityMap("lazy", "getCurrentWasteBag");
-		$entityMaps[] = new EntityMap("lazy", "getPickups");
-		$entityMaps[] = new EntityMap("lazy", "getScintVialCollections");
-		$entityMaps[] = new EntityMap("lazy", "getCurrentScintVialCollections");
-		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
-		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
-		$entityMaps[] = new EntityMap("lazy","getCurrentVerifications");
-		$entityMaps[] = new EntityMap("lazy","getVerifications");
-		$entityMaps[] = new EntityMap("lazy","getPi_authorization");
-		$entityMaps[] = new EntityMap("lazy","getWipeTests");
-		$entityMaps[] = new EntityMap("lazy","getProtocols");
-		$entityMaps[] = new EntityMap("lazy","getGetOtherWasteTypes");
+		$entityMaps[] = EntityMap::eager("getLabPersonnel");
+		$entityMaps[] = EntityMap::lazy("getRooms");
+		$entityMaps[] = EntityMap::eager("getDepartments");
+		$entityMaps[] = EntityMap::eager("getUser");
+		$entityMaps[] = EntityMap::lazy("getInspections");
+		$entityMaps[] = EntityMap::lazy("getActiveParcels");
+		$entityMaps[] = EntityMap::eager("getCarboyUseCycles");
+		$entityMaps[] = EntityMap::lazy("getPurchaseOrders");
+		$entityMaps[] = EntityMap::lazy("getWasteBags");
+		$entityMaps[] = EntityMap::lazy("getOtherWasteContainers");
+        $entityMaps[] = EntityMap::lazy("getCurrentWasteBag");
+		$entityMaps[] = EntityMap::lazy("getPickups");
+		$entityMaps[] = EntityMap::lazy("getScintVialCollections");
+		$entityMaps[] = EntityMap::lazy("getCurrentScintVialCollections");
+		$entityMaps[] = EntityMap::lazy("getOpenInspections");
+		$entityMaps[] = EntityMap::lazy("getQuarterly_inventories");
+		$entityMaps[] = EntityMap::lazy("getCurrentVerifications");
+		$entityMaps[] = EntityMap::lazy("getVerifications");
+		$entityMaps[] = EntityMap::lazy("getPi_authorization");
+		$entityMaps[] = EntityMap::lazy("getWipeTests");
+		$entityMaps[] = EntityMap::lazy("getProtocols");
+		$entityMaps[] = EntityMap::lazy("getGetOtherWasteTypes");
 
 		return $entityMaps;
 	}

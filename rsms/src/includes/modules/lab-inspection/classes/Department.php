@@ -46,7 +46,7 @@ class Department extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+		$entityMaps[] = EntityMap::lazy("getPrincipalInvestigators");
 		return $entityMaps;
 	}
 	

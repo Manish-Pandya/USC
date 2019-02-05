@@ -15,8 +15,8 @@ class PendingUserChange extends PendingChange {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getParent_id");
-		$entityMaps[] = new EntityMap("lazy","getUser");
+		$entityMaps[] = EntityMap::eager("getParent_id");
+		$entityMaps[] = EntityMap::lazy("getUser");
 		
 		return $entityMaps;
 	}

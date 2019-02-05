@@ -34,10 +34,10 @@ class MiscellaneousWaste extends RadCrud {
 
 	public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getParcel_use_amounts");
-		$entityMaps[] = new EntityMap("lazy", "getPickup");
-		$entityMaps[] = new EntityMap("lazy", "getDrum");
-		$entityMaps[] = new EntityMap("eager", "getContents");
+		$entityMaps[] = EntityMap::lazy("getParcel_use_amounts");
+		$entityMaps[] = EntityMap::lazy("getPickup");
+		$entityMaps[] = EntityMap::lazy("getDrum");
+		$entityMaps[] = EntityMap::eager("getContents");
 
 		return $entityMaps;
 	}

@@ -96,9 +96,9 @@ class OtherWasteContainer extends Container {
 
 	public static function defaultEntityMaps() {
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getContainer");
-		$entityMaps[] = new EntityMap("lazy", "getPickup");
-		$entityMaps[] = new EntityMap("lazy", "getDrum");
+		$entityMaps[] = EntityMap::lazy("getContainer");
+		$entityMaps[] = EntityMap::lazy("getPickup");
+		$entityMaps[] = EntityMap::lazy("getDrum");
 
 		return $entityMaps;
 	}

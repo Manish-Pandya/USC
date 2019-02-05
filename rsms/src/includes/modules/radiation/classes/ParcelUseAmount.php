@@ -100,8 +100,8 @@
 
     public static function defaultEntityMaps(){
     	$entityMaps = array();
-    	$entityMaps[] = new EntityMap("lazy", "getCarboy");
-    	$entityMaps[] = new EntityMap("eager", "getWaste_type");
+    	$entityMaps[] = EntityMap::lazy("getCarboy");
+    	$entityMaps[] = EntityMap::eager("getWaste_type");
     	return $entityMaps;
     }
 

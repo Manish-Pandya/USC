@@ -88,10 +88,10 @@ class IBCProtocolRevision extends GenericCrud
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-        $entityMaps[] = new EntityMap("lazy","getPreliminaryReviewers");
-        $entityMaps[] = new EntityMap("lazy","getPrimaryReviewers");
-        $entityMaps[] = new EntityMap("lazy","getIBCPreliminaryComments");
-		$entityMaps[] = new EntityMap("lazy","getIBCResponses");
+        $entityMaps[] = EntityMap::lazy("getPreliminaryReviewers");
+        $entityMaps[] = EntityMap::lazy("getPrimaryReviewers");
+        $entityMaps[] = EntityMap::lazy("getIBCPreliminaryComments");
+		$entityMaps[] = EntityMap::lazy("getIBCResponses");
 		return $entityMaps;
 	}
 

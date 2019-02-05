@@ -88,14 +88,14 @@ class Response extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getQuestion");
-		$entityMaps[] = new EntityMap("lazy","getInspection");
-		$entityMaps[] = new EntityMap("eager","getDeficiencySelections");
-		$entityMaps[] = new EntityMap("eager","getRecommendations");
-		$entityMaps[] = new EntityMap("eager","getObservations");
-		$entityMaps[] = new EntityMap("eager","getSupplementalRecommendations");
-		$entityMaps[] = new EntityMap("eager","getSupplementalObservations");
-        $entityMaps[] = new EntityMap("eager","getSupplementalDeficiencies");
+		$entityMaps[] = EntityMap::lazy("getQuestion");
+		$entityMaps[] = EntityMap::lazy("getInspection");
+		$entityMaps[] = EntityMap::eager("getDeficiencySelections");
+		$entityMaps[] = EntityMap::eager("getRecommendations");
+		$entityMaps[] = EntityMap::eager("getObservations");
+		$entityMaps[] = EntityMap::eager("getSupplementalRecommendations");
+		$entityMaps[] = EntityMap::eager("getSupplementalObservations");
+        $entityMaps[] = EntityMap::eager("getSupplementalDeficiencies");
 
 		return $entityMaps;
 	}

@@ -43,7 +43,7 @@ class MiscellaneousWipeTest extends RadCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getMiscellaneous_wipes");
+		$entityMaps[] = EntityMap::eager("getMiscellaneous_wipes");
 		return $entityMaps;
 	}
 	

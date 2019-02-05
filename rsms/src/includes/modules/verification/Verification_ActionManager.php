@@ -87,18 +87,18 @@ class Verification_ActionManager extends HazardInventoryActionManager {
             $buildings = array();
 
             $roomMaps = array();
-            $roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-            $roomMaps[] = new EntityMap("lazy","getHazards");
-            $roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
-            $roomMaps[] = new EntityMap("lazy","getHas_hazards");
-            $roomMaps[] = new EntityMap("lazy","getBuilding");
-            $roomMaps[] = new EntityMap("lazy","getSolidsContainers");
+            $roomMaps[] = EntityMap::lazy("getPrincipalInvestigators");
+            $roomMaps[] = EntityMap::lazy("getHazards");
+            $roomMaps[] = EntityMap::lazy("getHazard_room_relations");
+            $roomMaps[] = EntityMap::lazy("getHas_hazards");
+            $roomMaps[] = EntityMap::lazy("getBuilding");
+            $roomMaps[] = EntityMap::lazy("getSolidsContainers");
 
             $buildingMaps = array();
-            $buildingMaps[] = new EntityMap("eager","getRooms");
-            $buildingMaps[] = new EntityMap("lazy","getCampus");
-            $buildingMaps[] = new EntityMap("lazy","getCampus_id");
-            $buildingMaps[] = new EntityMap("lazy","getPhysical_address");
+            $buildingMaps[] = EntityMap::eager("getRooms");
+            $buildingMaps[] = EntityMap::lazy("getCampus");
+            $buildingMaps[] = EntityMap::lazy("getCampus_id");
+            $buildingMaps[] = EntityMap::lazy("getPhysical_address");
 
             $rooms = $pi->getRooms();
             foreach($rooms as $room){
@@ -123,25 +123,25 @@ class Verification_ActionManager extends HazardInventoryActionManager {
             $pi->setBuildings($buildings);
 
     		$entityMaps = array();
-    		$entityMaps[] = new EntityMap("eager","getLabPersonnel");
-    		$entityMaps[] = new EntityMap("eager","getUser");
-    		$entityMaps[] = new EntityMap("eager","getCurrentVerifications");
-    		$entityMaps[] = new EntityMap("eager","getBuildings");
+    		$entityMaps[] = EntityMap::eager("getLabPersonnel");
+    		$entityMaps[] = EntityMap::eager("getUser");
+    		$entityMaps[] = EntityMap::eager("getCurrentVerifications");
+    		$entityMaps[] = EntityMap::eager("getBuildings");
 
-    		$entityMaps[] = new EntityMap("lazy","getDepartments");
-    		$entityMaps[] = new EntityMap("lazy","getInspections");
-    		$entityMaps[] = new EntityMap("lazy","getPi_authorization");
-    		$entityMaps[] = new EntityMap("lazy","getActiveParcels");
-    		$entityMaps[] = new EntityMap("lazy","getCarboyUseCycles");
-    		$entityMaps[] = new EntityMap("lazy","getPurchaseOrders");
-    		$entityMaps[] = new EntityMap("lazy","getSolidsContainers");
-    		$entityMaps[] = new EntityMap("lazy","getPickups");
-    		$entityMaps[] = new EntityMap("lazy","getScintVialCollections");
-    		$entityMaps[] = new EntityMap("lazy","getCurrentScintVialCollections");
-    		$entityMaps[] = new EntityMap("lazy","getOpenInspections");
-    		$entityMaps[] = new EntityMap("lazy","getQuarterly_inventories");
-    		$entityMaps[] = new EntityMap("lazy","getVerifications");
-    		$entityMaps[] = new EntityMap("lazy","getRooms");
+    		$entityMaps[] = EntityMap::lazy("getDepartments");
+    		$entityMaps[] = EntityMap::lazy("getInspections");
+    		$entityMaps[] = EntityMap::lazy("getPi_authorization");
+    		$entityMaps[] = EntityMap::lazy("getActiveParcels");
+    		$entityMaps[] = EntityMap::lazy("getCarboyUseCycles");
+    		$entityMaps[] = EntityMap::lazy("getPurchaseOrders");
+    		$entityMaps[] = EntityMap::lazy("getSolidsContainers");
+    		$entityMaps[] = EntityMap::lazy("getPickups");
+    		$entityMaps[] = EntityMap::lazy("getScintVialCollections");
+    		$entityMaps[] = EntityMap::lazy("getCurrentScintVialCollections");
+    		$entityMaps[] = EntityMap::lazy("getOpenInspections");
+    		$entityMaps[] = EntityMap::lazy("getQuarterly_inventories");
+    		$entityMaps[] = EntityMap::lazy("getVerifications");
+    		$entityMaps[] = EntityMap::lazy("getRooms");
 
 
     		$pi->setEntityMaps($entityMaps);

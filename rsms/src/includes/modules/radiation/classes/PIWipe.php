@@ -34,8 +34,8 @@ class PIWipe extends RadCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getPIWipeTest");
-		$entityMaps[] = new EntityMap("lazy","getRoom");
+		$entityMaps[] = EntityMap::lazy("getPIWipeTest");
+		$entityMaps[] = EntityMap::lazy("getRoom");
 		return $entityMaps;
 	}
 

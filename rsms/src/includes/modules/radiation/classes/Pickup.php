@@ -112,10 +112,10 @@ class Pickup extends RadCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager", "getCarboy_use_cycles");
-		$entityMaps[] = new EntityMap("eager", "getWaste_bags");
-		$entityMaps[] = new EntityMap("eager", "getScint_vial_collections");
-		$entityMaps[] = new EntityMap("lazy", "getPrincipalInvestigator");
+		$entityMaps[] = EntityMap::eager("getCarboy_use_cycles");
+		$entityMaps[] = EntityMap::eager("getWaste_bags");
+		$entityMaps[] = EntityMap::eager("getScint_vial_collections");
+		$entityMaps[] = EntityMap::lazy("getPrincipalInvestigator");
 		return $entityMaps;
 	}
 

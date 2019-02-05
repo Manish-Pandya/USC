@@ -31,9 +31,9 @@ class Hazard_room_relation extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getRoom_id");
-		$entityMaps[] = new EntityMap("eager","getHazard_id");
-		$entityMaps[] = new EntityMap("eager","getEquipment_serial_number");
+		$entityMaps[] = EntityMap::eager("getRoom_id");
+		$entityMaps[] = EntityMap::eager("getHazard_id");
+		$entityMaps[] = EntityMap::eager("getEquipment_serial_number");
 		return $entityMaps;
 	}
 

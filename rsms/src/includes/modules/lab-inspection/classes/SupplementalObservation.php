@@ -37,7 +37,7 @@ class SupplementalObservation extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getResponse");
+		$entityMaps[] = EntityMap::lazy("getResponse");
 		return $entityMaps;
 	}
 		

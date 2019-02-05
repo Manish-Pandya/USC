@@ -102,14 +102,14 @@ class Hazard extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getSubHazards");
-		$entityMaps[] = new EntityMap("eager","getActiveSubHazards");
-		$entityMaps[] = new EntityMap("lazy","getChecklist");
-		$entityMaps[] = new EntityMap("lazy","getRooms");
-		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
-		$entityMaps[] = new EntityMap("lazy","getHasChildren");
-		$entityMaps[] = new EntityMap("lazy","getParentIds");
-		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
+		$entityMaps[] = EntityMap::lazy("getSubHazards");
+		$entityMaps[] = EntityMap::eager("getActiveSubHazards");
+		$entityMaps[] = EntityMap::lazy("getChecklist");
+		$entityMaps[] = EntityMap::lazy("getRooms");
+		$entityMaps[] = EntityMap::lazy("getInspectionRooms");
+		$entityMaps[] = EntityMap::lazy("getHasChildren");
+		$entityMaps[] = EntityMap::lazy("getParentIds");
+		$entityMaps[] = EntityMap::lazy("getPrincipalInvestigators");
 		
 		return $entityMaps;
 	}

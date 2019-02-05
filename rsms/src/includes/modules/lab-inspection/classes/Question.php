@@ -104,11 +104,11 @@ class Question extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getChecklist");
-		$entityMaps[] = new EntityMap("eager","getDeficiencies");
-		$entityMaps[] = new EntityMap("eager","getRecommendations");
-		$entityMaps[] = new EntityMap("eager","getObservations");
-		$entityMaps[] = new EntityMap("lazy","getResponses");
+		$entityMaps[] = EntityMap::lazy("getChecklist");
+		$entityMaps[] = EntityMap::eager("getDeficiencies");
+		$entityMaps[] = EntityMap::eager("getRecommendations");
+		$entityMaps[] = EntityMap::eager("getObservations");
+		$entityMaps[] = EntityMap::lazy("getResponses");
 		return $entityMaps;
 	}
 

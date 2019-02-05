@@ -66,8 +66,8 @@ class CorrectiveAction extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getDeficiencySelection");
-        $entityMaps[] = new EntityMap("lazy","getSupplementalDeficiency");
+		$entityMaps[] = EntityMap::lazy("getDeficiencySelection");
+        $entityMaps[] = EntityMap::lazy("getSupplementalDeficiency");
 
 		return $entityMaps;
 	}

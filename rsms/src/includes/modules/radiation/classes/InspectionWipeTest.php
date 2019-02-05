@@ -40,7 +40,7 @@ class InspectionWipeTest extends RadCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getInspection");		
+		$entityMaps[] = EntityMap::lazy("getInspection");		
 		return $entityMaps;
 	}
 	

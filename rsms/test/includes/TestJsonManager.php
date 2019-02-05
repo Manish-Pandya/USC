@@ -122,18 +122,18 @@ class TestJsonManager extends UnitTestCase {
 
 	function test_mergeEntityMaps(){
 		$maps = array(
-			new EntityMap("eager","getField1"),
-			new EntityMap("eager","getField2")
+			EntityMap::eager("getField1"),
+			EntityMap::eager("getField2")
 		);
 		$over = array(
-			new EntityMap("lazy","getField2"),
-			new EntityMap("lazy","getField3")
+			EntityMap::lazy("getField2"),
+			EntityMap::lazy("getField3")
 		);
 
 		$expected = array(
-			new EntityMap("eager","getField1"),
-			new EntityMap("lazy","getField2"),
-			new EntityMap("lazy","getField3")
+			EntityMap::eager("getField1"),
+			EntityMap::lazy("getField2"),
+			EntityMap::lazy("getField3")
 		);
 
 		$this->assertEqual($expected, JsonManager::mergeEntityMaps($maps, $over));
@@ -169,9 +169,9 @@ class TestEntityMaps {
 
 	public function getEntityMaps(){
 		return array(
-			new EntityMap("eager","getField1"),
-			new EntityMap("eager","getField2"),
-			new EntityMap("lazy","getField3")
+			EntityMap::eager("getField1"),
+			EntityMap::eager("getField2"),
+			EntityMap::lazy("getField3")
 		);
 	}
 }

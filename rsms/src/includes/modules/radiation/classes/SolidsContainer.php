@@ -66,10 +66,10 @@ class SolidsContainer extends RadCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
-		$entityMaps[] = new EntityMap("lazy", "getRoom");
-		$entityMaps[] = new EntityMap("lazy", "getWasteBags");
-		$entityMaps[] = new EntityMap("eager", "getCurrentWasteBags");
+		$entityMaps[] = EntityMap::lazy("getPrincipal_investigator");
+		$entityMaps[] = EntityMap::lazy("getRoom");
+		$entityMaps[] = EntityMap::lazy("getWasteBags");
+		$entityMaps[] = EntityMap::eager("getCurrentWasteBags");
 		return $entityMaps;
 	}
 

@@ -51,7 +51,7 @@ class PendingChange extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getParent_id");
+		$entityMaps[] = EntityMap::eager("getParent_id");
 		return $entityMaps;
 	}
 	

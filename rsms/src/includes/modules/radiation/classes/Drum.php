@@ -146,8 +146,8 @@ class Drum extends RadCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getDisposalLots");
-        $entityMaps[] = new EntityMap("lazy","getWipe_test");
+		$entityMaps[] = EntityMap::lazy("getDisposalLots");
+        $entityMaps[] = EntityMap::lazy("getWipe_test");
 
 		return $entityMaps;
 	}

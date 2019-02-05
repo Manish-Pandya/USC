@@ -33,8 +33,8 @@ class ParcelWipe extends RadCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getParcel_wipe_test");
-		$entityMaps[] = new EntityMap("lazy","getRoom");
+		$entityMaps[] = EntityMap::lazy("getParcel_wipe_test");
+		$entityMaps[] = EntityMap::lazy("getRoom");
 		return $entityMaps;
 	}
 

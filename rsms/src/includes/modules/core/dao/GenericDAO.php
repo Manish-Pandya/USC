@@ -868,26 +868,26 @@ class GenericDAO {
         $inspectionSchedules = $dao->getNeededInspectionsByYear($year);
 
         $roomMaps = array();
-        $roomMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-        $roomMaps[] = new EntityMap("lazy","getHazards");
-        $roomMaps[] = new EntityMap("lazy","getHazard_room_relations");
-        $roomMaps[] = new EntityMap("lazy","getHas_hazards");
-        $roomMaps[] = new EntityMap("lazy","getBuilding");
-        $roomMaps[] = new EntityMap("lazy","getSolidsContainers");
-        $roomMaps[] = new EntityMap("lazy","getHazardTypesArePresent");
+        $roomMaps[] = EntityMap::lazy("getPrincipalInvestigators");
+        $roomMaps[] = EntityMap::lazy("getHazards");
+        $roomMaps[] = EntityMap::lazy("getHazard_room_relations");
+        $roomMaps[] = EntityMap::lazy("getHas_hazards");
+        $roomMaps[] = EntityMap::lazy("getBuilding");
+        $roomMaps[] = EntityMap::lazy("getSolidsContainers");
+        $roomMaps[] = EntityMap::lazy("getHazardTypesArePresent");
 
         foreach ($inspectionSchedules as &$is){
             if ($is->getInspection_id() !== null){
                 $inspection = $dao->getById($is->getInspection_id());
 
                 $entityMaps = array();
-                $entityMaps[] = new EntityMap("eager","getInspectors");
-                $entityMaps[] = new EntityMap("lazy","getRooms");
-                $entityMaps[] = new EntityMap("lazy","getResponses");
-                $entityMaps[] = new EntityMap("lazy","getDeficiency_selections");
-                $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
-                $entityMaps[] = new EntityMap("lazy","getChecklists");
-                $entityMaps[] = new EntityMap("eager","getStatus");
+                $entityMaps[] = EntityMap::eager("getInspectors");
+                $entityMaps[] = EntityMap::lazy("getRooms");
+                $entityMaps[] = EntityMap::lazy("getResponses");
+                $entityMaps[] = EntityMap::lazy("getDeficiency_selections");
+                $entityMaps[] = EntityMap::lazy("getPrincipalInvestigator");
+                $entityMaps[] = EntityMap::lazy("getChecklists");
+                $entityMaps[] = EntityMap::eager("getStatus");
 
                 $inspection->setEntityMaps($entityMaps);
 

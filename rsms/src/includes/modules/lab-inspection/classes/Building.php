@@ -58,10 +58,10 @@ class Building extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getRooms");
-		$entityMaps[] = new EntityMap("eager","getCampus");
-		$entityMaps[] = new EntityMap("eager","getCampus_id");
-		$entityMaps[] = new EntityMap("eager","getPhysical_address");
+		$entityMaps[] = EntityMap::lazy("getRooms");
+		$entityMaps[] = EntityMap::eager("getCampus");
+		$entityMaps[] = EntityMap::eager("getCampus_id");
+		$entityMaps[] = EntityMap::eager("getPhysical_address");
 		return $entityMaps;
 	}
 

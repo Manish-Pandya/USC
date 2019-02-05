@@ -78,10 +78,10 @@ class DeficiencySelection extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getRooms");
-		$entityMaps[] = new EntityMap("eager","getCorrectiveActions");
-		$entityMaps[] = new EntityMap("lazy","getResponse");
-		$entityMaps[] = new EntityMap("eager","getDeficiency");
+		$entityMaps[] = EntityMap::eager("getRooms");
+		$entityMaps[] = EntityMap::eager("getCorrectiveActions");
+		$entityMaps[] = EntityMap::lazy("getResponse");
+		$entityMaps[] = EntityMap::eager("getDeficiency");
 		return $entityMaps;
 
 	}

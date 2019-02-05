@@ -70,8 +70,8 @@ class Laser extends GenericCrud {
     public static function defaultEntityMaps(){
         // Define which subentities to load
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getRoom");
-        $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
+		$entityMaps[] = EntityMap::lazy("getRoom");
+        $entityMaps[] = EntityMap::lazy("getPrincipal_investigator");
 		return $entityMaps;
 
 	}

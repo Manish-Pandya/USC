@@ -62,10 +62,10 @@ class IBCProtocol extends GenericCrud {
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
-		$entityMaps[] = new EntityMap("lazy","getHazard");
-		$entityMaps[] = new EntityMap("lazy","getDepartment");
-        $entityMaps[] = new EntityMap("lazy","getRevisions");
+		$entityMaps[] = EntityMap::lazy("getPrincipalInvestigators");
+		$entityMaps[] = EntityMap::lazy("getHazard");
+		$entityMaps[] = EntityMap::lazy("getDepartment");
+        $entityMaps[] = EntityMap::lazy("getRevisions");
 		return $entityMaps;
 	}
 
