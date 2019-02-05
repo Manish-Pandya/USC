@@ -323,16 +323,14 @@ class JsonManager {
 	}
 
 	static function prepareEntityMaps(&$object, &$overrideEntityMaps){
+		$LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 		$objEntityMaps = null;
 
 		if( method_exists($object, 'getEntityMaps') ){
 			$objEntityMaps = $object->getEntityMaps();
-		}
-
-		if( isset($overrideEntityMaps) ){
-			// Override entity maps
-			$LOG->debug("Overriding registered entity maps");
-			EntityManager::with_entity_maps($classname, $overrideEntityMaps);
+			if( $LOG->isTraceEnabled()){
+				$LOG->trace("Loaded instance entity maps for object of type " . get_class($object) . ": " . implode(',', $objEntityMaps));
+			}
 		}
 
 		return EntityManager::merge_entity_maps($objEntityMaps, $overrideEntityMaps);
@@ -373,6 +371,7 @@ class JsonManager {
 
 		foreach ($accessors as $getter) {
 			//Call function to get value
+			$LOG->trace("  $classname::$getter()");
 			$value = $object->$getter();
 
 			//use function name to infer the associated key
