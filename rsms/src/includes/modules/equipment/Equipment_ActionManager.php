@@ -61,14 +61,11 @@ class Equipment_ActionManager extends ActionManager {
             //force reload of all inspections for relevant equipment by client
 			$is = $equipment->getEquipmentInspections();
 
-            $entityMaps = array();
-		    $entityMaps[] = EntityMap::eager("getRoom");
-            $entityMaps[] = EntityMap::eager("getPrincipal_investigator");
-            $entityMaps[] = EntityMap::eager("getPrincipalInvestigators");
-            foreach($is as $i){
-                //$i->setCertification_date("2017-10-01 15:32:56");
-                $i->setEntityMaps($entityMaps);
-            }
+            EntityManager::with_entity_maps('EquipmentInspection', array(
+		        EntityMap::eager("getRoom"),
+                EntityMap::eager("getPrincipal_investigator"),
+                EntityMap::eager("getPrincipalInvestigators")
+            ));
 
             return $is;
         }
@@ -77,14 +74,12 @@ class Equipment_ActionManager extends ActionManager {
     public function getAllBioSafetyCabinets(){
     	$bioSafetyCabinetDao = $this->getDao(new BioSafetyCabinet());
         $cabs = $bioSafetyCabinetDao->getAll();
-        foreach($cabs as $cab){
-            $entityMaps = array();
-		    $entityMaps[] = EntityMap::lazy("getRoom");
-            $entityMaps[] = EntityMap::lazy("getPrincipal_investigator");
-            $entityMaps[] = EntityMap::lazy("getPrincipalInvestigators");
-            $entityMaps[] = EntityMap::lazy("getEquipmentInspections");
-            $cab->setEntityMaps($entityMaps);
-        }
+        EntityManager::with_entity_maps('BioSafetyCabinet', array(
+            EntityMap::lazy("getRoom"),
+            EntityMap::lazy("getPrincipal_investigator"),
+            EntityMap::lazy("getPrincipalInvestigators"),
+            EntityMap::lazy("getEquipmentInspections")
+        ));
 
     	return $cabs;
     }
@@ -164,18 +159,17 @@ class Equipment_ActionManager extends ActionManager {
 
                 $cabinet->setEquipmentInspections(null);
             }
-            $entityMaps = array();
-            $entityMaps[] = EntityMap::eager("getEquipmentInspections");
-            $entityMaps[] = EntityMap::lazy("getFirstInspection");
-            $cabinet->setEntityMaps($entityMaps);
 
-            $entityMaps = array();
-            $entityMaps[] = EntityMap::eager("getRoom");
-            $entityMaps[] = EntityMap::lazy("getPrincipal_investigator");
-            $entityMaps[] = EntityMap::eager("getPrincipalInvestigators");
-            foreach($cabinet->getEquipmentInspections() as $i){
-                $i->setEntityMaps($entityMaps);
-            }
+            EntityManager::with_entity_maps('BioSafetyCabinet', array(
+                EntityMap::eager("getEquipmentInspections"),
+                EntityMap::lazy("getFirstInspection")
+            ));
+
+            EntityManager::with_entity_maps('EquipmentInspection', array(
+                EntityMap::eager("getRoom"),
+                EntityMap::lazy("getPrincipal_investigator"),
+                EntityMap::eager("getPrincipalInvestigators")
+            ));
 
             //manage PiHazardRoomRelationships for all PIs who could be associated, or could HAVE been associated with the cabinet
 
@@ -225,17 +219,14 @@ class Equipment_ActionManager extends ActionManager {
     public function getRoomsWithoutComposing(){
     	$rooms = $this->getAllRooms();
 
-    	$entityMaps = array();
-    	$entityMaps[] = EntityMap::lazy("getPrincipalInvestigators");
-    	$entityMaps[] = EntityMap::lazy("getHazards");
-    	$entityMaps[] = EntityMap::lazy("getHazard_room_relations");
-    	$entityMaps[] = EntityMap::lazy("getHas_hazards");
-    	$entityMaps[] = EntityMap::eager("getBuilding");
-    	$entityMaps[] = EntityMap::lazy("getSolidsContainers");
-
-    	foreach($rooms as $room){
-    		$room->setEntityMaps($entityMaps);
-    	}
+    	EntityManager::with_entity_maps('Room', array(
+    	    EntityMap::lazy("getPrincipalInvestigators"),
+    	    EntityMap::lazy("getHazards"),
+    	    EntityMap::lazy("getHazard_room_relations"),
+    	    EntityMap::lazy("getHas_hazards"),
+    	    EntityMap::eager("getBuilding"),
+            EntityMap::lazy("getSolidsContainers")
+        ));
 
     	return $rooms;
     }
@@ -354,34 +345,31 @@ class Equipment_ActionManager extends ActionManager {
         /* $whereClauseGroup = new WhereClauseGroup( array( new WhereClause("is_active","=","1"), new WhereClause("key_id","IN","(SELECT principal_investigator_id FROM principal_investigator_room)") ) );
         $pis = $dao->getAllWhere($whereClauseGroup, "OR");*/
 
-        $entityMaps = array();
-        $entityMaps[] = EntityMap::lazy("getLabPersonnel");
-        $entityMaps[] = EntityMap::lazy("getRooms");
-        $entityMaps[] = EntityMap::eager("getDepartments");
-        $entityMaps[] = EntityMap::eager("getUser");
-        $entityMaps[] = EntityMap::lazy("getInspections");
-        $entityMaps[] = EntityMap::lazy("getPi_authorization");
-        $entityMaps[] = EntityMap::lazy("getActiveParcels");
-        $entityMaps[] = EntityMap::lazy("getCarboyUseCycles");
-        $entityMaps[] = EntityMap::lazy("getPurchaseOrders");
-        $entityMaps[] = EntityMap::lazy("getSolidsContainers");
-        $entityMaps[] = EntityMap::lazy("getPickups");
-        $entityMaps[] = EntityMap::lazy("getScintVialCollections");
-        $entityMaps[] = EntityMap::lazy("getCurrentScintVialCollections");
-        $entityMaps[] = EntityMap::lazy("getOpenInspections");
-        $entityMaps[] = EntityMap::lazy("getQuarterly_inventories");
-        $entityMaps[] = EntityMap::lazy("getVerifications");
-        $entityMaps[] = EntityMap::lazy("getBuidling");
-        $entityMaps[] = EntityMap::lazy("getWipeTests");
-        $entityMaps[] = EntityMap::lazy("getCurrentPi_authorization");
-        $entityMaps[] = EntityMap::lazy("getCurrentVerifications");
-        $entityMaps[] = EntityMap::lazy("getCurrentIsotopeInventories");
-		$entityMaps[] = EntityMap::lazy("getWasteBags");
-		$entityMaps[] = EntityMap::lazy("getCurrentWasteBag");
-
-        foreach($pis as $pi){
-            $pi->setEntityMaps($entityMaps);
-        }
+        EntityManager::with_entity_maps('PrincipalInvestigator', array(
+            EntityMap::lazy("getLabPersonnel"),
+            EntityMap::lazy("getRooms"),
+            EntityMap::eager("getDepartments"),
+            EntityMap::eager("getUser"),
+            EntityMap::lazy("getInspections"),
+            EntityMap::lazy("getPi_authorization"),
+            EntityMap::lazy("getActiveParcels"),
+            EntityMap::lazy("getCarboyUseCycles"),
+            EntityMap::lazy("getPurchaseOrders"),
+            EntityMap::lazy("getSolidsContainers"),
+            EntityMap::lazy("getPickups"),
+            EntityMap::lazy("getScintVialCollections"),
+            EntityMap::lazy("getCurrentScintVialCollections"),
+            EntityMap::lazy("getOpenInspections"),
+            EntityMap::lazy("getQuarterly_inventories"),
+            EntityMap::lazy("getVerifications"),
+            EntityMap::lazy("getBuidling"),
+            EntityMap::lazy("getWipeTests"),
+            EntityMap::lazy("getCurrentPi_authorization"),
+            EntityMap::lazy("getCurrentVerifications"),
+            EntityMap::lazy("getCurrentIsotopeInventories"),
+		    EntityMap::lazy("getWasteBags"),
+            EntityMap::lazy("getCurrentWasteBag")
+        ));
 
         return $pis;
     }
@@ -391,23 +379,20 @@ class Equipment_ActionManager extends ActionManager {
 
         $rooms = $dao->getAll();
 
-        // initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
-        $roomMaps = array();
-	    $roomMaps[] = EntityMap::lazy("getPrincipalInvestigators");
-	    $roomMaps[] = EntityMap::lazy("getHazards");
-	    $roomMaps[] = EntityMap::eager("getBuilding");
-	    $roomMaps[] = EntityMap::lazy("getHazard_room_relations");
-	    $roomMaps[] = EntityMap::lazy("getHas_hazards");
-	    $roomMaps[] = EntityMap::lazy("getSolidsContainers");
-        $roomMaps[] = EntityMap::lazy("getHasMultiplePIs");
-        $roomMaps[] = EntityMap::lazy("getHazardTypesArePresent");
-        $roomMaps[] = EntityMap::lazy("getChem_hazards_present");
-        $roomMaps[] = EntityMap::lazy("getRad_hazards_present");
-        $roomMaps[] = EntityMap::lazy("getBio_hazards_present");
-
-        foreach($rooms as &$room){
-            $room->setEntityMaps($roomMaps);
-        }
+        // instructin rooms to lazy-load children
+        EntityManager::with_entity_maps('Room', array(
+	        EntityMap::lazy("getPrincipalInvestigators"),
+	        EntityMap::lazy("getHazards"),
+	        EntityMap::eager("getBuilding"),
+	        EntityMap::lazy("getHazard_room_relations"),
+	        EntityMap::lazy("getHas_hazards"),
+	        EntityMap::lazy("getSolidsContainers"),
+            EntityMap::lazy("getHasMultiplePIs"),
+            EntityMap::lazy("getHazardTypesArePresent"),
+            EntityMap::lazy("getChem_hazards_present"),
+            EntityMap::lazy("getRad_hazards_present"),
+            EntityMap::lazy("getBio_hazards_present")
+        ));
 
         return $rooms;
     }
