@@ -108,6 +108,9 @@ class Autoloader {
 					
 					include_once( $classfile );
 					$loaded = TRUE;
+
+					Autoloader::onLoadSuccess($directory, $class);
+
 					break;
 				}
 			}
@@ -117,6 +120,15 @@ class Autoloader {
 				$LOG->error("Unable to autoload class '$class' - no such file '$class.php' found.");
 			}
 		});
+	}
+
+	static function onLoadSuccess( &$directory, &$class ){
+		// If this path falls within a 'classes' or 'domain' folder, consider it an Entity type
+		if( stristr($directory, 'classes') || stristr($directory, 'domain') ){
+			// Register entity type
+			Logger::getLogger(__CLASS__)->debug("Loaded entity type $directory/$class");
+			EntityManager::register_entity_class($class);
+		}
 	}
 	
 }
