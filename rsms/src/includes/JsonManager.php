@@ -320,6 +320,22 @@ class JsonManager {
 		return $objectVars;
 	}
 
+	static function prepareEntityMaps(&$object, &$overrideEntityMaps){
+		$objEntityMaps = null;
+
+		if( method_exists($object, 'getEntityMaps') ){
+			$objEntityMaps = $object->getEntityMaps();
+		}
+
+		if( isset($overrideEntityMaps) ){
+			// Override entity maps
+			$LOG->debug("Overriding registered entity maps");
+			EntityManager::with_entity_maps($classname, $overrideEntityMaps);
+		}
+
+		return EntityManager::merge_entity_maps($objEntityMaps, $overrideEntityMaps);
+	}
+
 	/**
 	 * Returns an associative array containing the results of
 	 * calling all 'getter' functions on the given object.
@@ -328,101 +344,47 @@ class JsonManager {
 	 * @return Array
 	 */
 	public static function callObjectAccessors(&$object, &$overrideEntityMaps = NULL){
+		$LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+		$cached = SerialCache::getCachedEntity($object);
+		if( isset($cached) ){
+			$serlog = Logger::getLogger('SerialCache');
+			if( $serlog->isTraceEnabled()){
+				$serlog->trace("Return cached value for " . SerialCache::gen_entity_key($object));
+			}
+
+			return $cached;
+		}
+
 		$classname = get_class($object);
 
-		$functions = get_class_methods( $classname);
+		// Prepare instance- and request-specific entity maps, if any
+		$entityMaps = JsonManager::prepareEntityMaps($object, $overrideEntityMaps);
 
-		$LOG = Logger::getLogger(__CLASS__ . '.' . $classname);
+		// Get the list of accessor functions (filtered by entity maps)
+		$accessors = EntityManager::get_registered_accessors( $object, $entityMaps );
 
 		$LOG->trace("Calling accessors on $classname");
 
 		//Retain the object's type in the json
 		$objectVars = array('Class'=>$classname);
 
-		// Merge class entityMaps (if available) with overrides (if provided)
-		$entityMaps = $overrideEntityMaps;
-		if (method_exists($object,"getEntityMaps")) {
-			$entityMaps = JsonManager::mergeEntityMaps($object->getEntityMaps(), $overrideEntityMaps);
-		}
+		foreach ($accessors as $getter) {
+			//Call function to get value
+			$value = $object->$getter();
 
-		//get all functions named get*
-		foreach( $functions as $func ){
-
-			$skip = false;
-			//Make sure function starts with 'get' and not listed in JSON_IGNORE_FUNCTION_NAMES
-			//TODO: Add class-specific names to ignore?
-			if( strstr($func, 'get') && !in_array($func, JsonManager::$JSON_IGNORE_FUNCTION_NAMES) ){
-
-				if(!empty($entityMaps)) {
-					foreach($entityMaps as $em){
-						if($em->getEntityAccessor() == $func && $em->getLoadingType() == "lazy")	{
-							$skip = true;
-							break;
-						}
-					}
-				}
-
-				if(!$skip){
-					$LOG->trace("EAGER get $classname::$func()");
-					//Call function to get value
-					$value = $object->$func();
-					////$this->LOG->trace("#func() returns [$value]");
-				} else {
-					$LOG->trace(" LAZY get $classname::$func()");
-					//Call function to get value
-					$value = null;
-
-				}
-
-				//use function name to infer the associated key
-				$key = str_replace('get', '', $func);
-				if ($key == "Is_active") {
-                    $value = (boolean) $value;
-				}
-
-				//Associate key with value
-				$objectVars[$key] = $value;
-
+			//use function name to infer the associated key
+			$key = str_replace('get', '', $getter);
+			if ($key == "Is_active") {
+				$value = (boolean) $value;
 			}
+
+			//Associate key with value
+			$objectVars[$key] = $value;
 		}
 
+		SerialCache::cacheSerializedEntity($objectVars);
 		return $objectVars;
-	}
-
-	static function mergeEntityMaps($maps, &$overrides = null){
-		$LOG = Logger::getLogger(__CLASS__);
-
-		// Copy $maps to a new array, $merged
-		$merged = $maps;
-
-		if( $overrides != null ){
-			// Override or add mappings from $overrides
-			foreach($overrides as $over){
-				// is this key already in $merged?
-				$ref = null;
-				foreach($merged as $em){
-					if( $over->getEntityAccessor() == $em->getEntityAccessor() ){
-						$ref = $em;
-						break;
-					}
-				}
-
-				if($ref == null){
-					// Add
-					$merged[] = $over;
-				}
-				else{
-					// Update
-					$LOG->trace('Override mapping ' . $ref->getEntityAccessor() . ' ' . $ref->getLoadingType()  . ' => ' . $over->getLoadingType());
-					$ref->setLoadingType($over->getLoadingType());
-				}
-			}
-		}
-
-		if($LOG->isDebugEnabled()){
-			$LOG->debug($merged);
-		}
-		return $merged;
 	}
 
 	public static function extractEntityMapOverrides(&$dataSource){
