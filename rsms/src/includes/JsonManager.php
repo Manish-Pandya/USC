@@ -55,7 +55,6 @@ class JsonManager {
 
 		//Differentiate Objects and Arrays
 		if( is_object($value) ){
-			////$this->LOG->trace( 'Building a JsonableValue for simple ' . $input );
 			//Simply convert the object
 			$jsonable = JsonManager::objectToBasicArray($value, $entityMaps);
 		}
