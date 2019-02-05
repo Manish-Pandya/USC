@@ -29,10 +29,8 @@ class OtherWasteType extends RadCrud
 	);
 
 	public function __construct() {
-		$entityMaps = array();
-		$this->setEntityMaps($entityMaps);
-	}
 
+	}
 
 	// Access information
 

@@ -36,12 +36,15 @@ class DrumWipeTest extends RadCrud
 	);
 
 	public function __construct(){
-		// Define which subentities to load
+
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getDrum");
 		$entityMaps[] = new EntityMap("lazy","getDrum_wipes");
 
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 	}
 
 	//access information

@@ -76,22 +76,6 @@ class EntityManager {
                     $type->apply_entity_maps($defaultEntityMaps);
                 }
             }
-
-            // Infer the default EntityMap values definable by GenericCrud's EntityMaps
-            else if( $refclass->isSubclassOf('GenericCrud') ){
-                if( !isset($instance) ){
-                    $instance = new $classname;
-                }
-                else {
-                    $LOG->warn("Registering entity class with provided instance; this could introudce inconsistent accessor mappings!");
-                }
-
-                $defaultEntityMaps = $instance->getEntityMaps();
-                if( isset($defaultEntityMaps) ){
-                    $LOG->debug("Filtering natural entity accessors of $classname with implemented defaults");
-                    $type->apply_entity_maps($defaultEntityMaps);
-                }
-            }
         }
 
         return EntityManager::$_REGISTERED_TYPES[$classname];

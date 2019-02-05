@@ -148,7 +148,9 @@ class Inspection extends GenericCrud {
 
     public function __construct(){
 
-        // Define which subentities to load
+    }
+
+    public static function defaultEntityMaps(){
         $entityMaps = array();
         $entityMaps[] = new EntityMap("eager","getInspectors");
         $entityMaps[] = new EntityMap("eager","getLabPersonnel");
@@ -160,8 +162,7 @@ class Inspection extends GenericCrud {
         $entityMaps[] = new EntityMap("lazy","getChecklists");
         $entityMaps[] = new EntityMap("lazy","getInspection_wipe_tests");
 
-        $this->setEntityMaps($entityMaps);
-
+        return $entityMaps;
     }
 
     // Required for GenericCrud

@@ -101,13 +101,16 @@ class User extends GenericCrud{
 	// Constructor(s)
 	public function __construct(){
 
-		// Define which subentities to load
+		
+    }
+    public static function defaultEntityMaps(){
+        // Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
 		$entityMaps[] = new EntityMap("lazy","getInspector");
 		$entityMaps[] = new EntityMap("lazy","getSupervisor");
 		$entityMaps[] = new EntityMap("eager","getRoles");
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 
 	}
 

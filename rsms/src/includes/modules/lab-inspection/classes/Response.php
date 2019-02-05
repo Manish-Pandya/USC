@@ -84,7 +84,9 @@ class Response extends GenericCrud {
 
 	public function __construct(){
 
-		// Define which subentities to load
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getQuestion");
 		$entityMaps[] = new EntityMap("lazy","getInspection");
@@ -95,8 +97,7 @@ class Response extends GenericCrud {
 		$entityMaps[] = new EntityMap("eager","getSupplementalObservations");
         $entityMaps[] = new EntityMap("eager","getSupplementalDeficiencies");
 
-		$this->setEntityMaps($entityMaps);
-
+		return $entityMaps;
 	}
 
 	/** Reference to Question entity to which this Response applies */

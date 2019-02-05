@@ -10,18 +10,16 @@ class PendingRoomChange extends PendingChange {
 	private $room;
 		
 	public function __construct(){
-	
-		// Define which subentities to load
+
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
-		//$entityMaps[] = new EntityMap("lazy","getDeficiencySelection");
 		$entityMaps[] = new EntityMap("eager","getParent_id");
 		$entityMaps[] = new EntityMap("lazy","getRoom");
 	
-		$this->setEntityMaps($entityMaps);
-	
+		return $entityMaps;
 	}
-	
-	
 	
 	public function getRoom() {
 		if($this->room === NULL && $this->hasPrimaryKeyValue()) {

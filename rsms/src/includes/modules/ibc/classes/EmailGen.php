@@ -90,16 +90,19 @@ class EmailGen extends GenericCrud {
 	public function __construct(GenericCrud $dependency = null, $recipients = null) {
 		if ($dependency != null) $this->dependency = $dependency;
 
-		// Define which subentities to load
-		$entityMaps = array();
-		$entityMaps[] = new EntityMap("eager","getCorpus");
-		$this->setEntityMaps($entityMaps);
-
 		if ($recipients != null) {
 			$this->recipients = $recipients;
 		} else {
 			$this->buildRecipients();
 		}
+		
+    }
+
+    public static function defaultEntityMaps(){
+        // Define which subentities to load
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("eager","getCorpus");
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud //

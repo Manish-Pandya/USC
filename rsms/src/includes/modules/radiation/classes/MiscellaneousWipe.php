@@ -29,13 +29,14 @@ class MiscellaneousWipe extends RadCrud {
 	);
 	
 	public function __construct(){
-	
-		// Define which subentities to load
+
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getMiscellaneous_wipe_test");
 		$entityMaps[] = new EntityMap("lazy","getRoom");
-		$this->setEntityMaps($entityMaps);
-	
+		return $entityMaps;
 	}
 	
 	//access information

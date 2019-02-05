@@ -37,14 +37,17 @@ class ParcelWipeTest extends RadCrud {
 	);
 	
 	public function __construct(){
-		// Define which subentities to load
+
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getParcel");
 		$entityMaps[] = new EntityMap("eager","getParcel_wipes");
-		
-		$this->setEntityMaps($entityMaps);
+
+		return $entityMaps;
 	}
-	
+
 	//access information
 	// Required for GenericCrud
 	public function getTableName() {

@@ -55,15 +55,6 @@ class SolidsContainer extends RadCrud {
 	private $name;
 
 	public function __construct() {
-
-		// Define which subentities to load
-		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
-		$entityMaps[] = new EntityMap("lazy", "getRoom");
-		$entityMaps[] = new EntityMap("lazy", "getWasteBags");
-		$entityMaps[] = new EntityMap("eager", "getCurrentWasteBags");
-		$this->setEntityMaps($entityMaps);
-
         if($this->hasPrimaryKeyValue() && $this->getWasteBags() == null){
             $bag = new WasteBag();
             $bag->setContainer_id($this->key_id);
@@ -71,6 +62,15 @@ class SolidsContainer extends RadCrud {
             $bagDao = new GenericDao($bag);
             $bag = $bagDao->save($bag);
         }
+    }
+
+    public static function defaultEntityMaps(){
+		$entityMaps = array();
+		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
+		$entityMaps[] = new EntityMap("lazy", "getRoom");
+		$entityMaps[] = new EntityMap("lazy", "getWasteBags");
+		$entityMaps[] = new EntityMap("eager", "getCurrentWasteBags");
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud

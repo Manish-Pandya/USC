@@ -41,12 +41,13 @@ class Inspector extends GenericCrud {
 
 	public function __construct(){
 
-		// Define which subentities to load
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getInspections");
 		$entityMaps[] = new EntityMap("lazy","getUser");
-		$this->setEntityMaps($entityMaps);
-
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud

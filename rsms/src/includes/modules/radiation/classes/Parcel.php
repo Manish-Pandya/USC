@@ -121,7 +121,10 @@ class Parcel extends RadCrud {
 
 
 	public function __construct() {
-		// Define which subentities to load
+
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
 		$entityMaps[] = new EntityMap("lazy", "getPurchase_order");
@@ -129,7 +132,7 @@ class Parcel extends RadCrud {
 		$entityMaps[] = new EntityMap("lazy", "getParcelUses");
 		$entityMaps[] = new EntityMap("eager", "getRemainder");
 		$entityMaps[] = new EntityMap("lazy", "getWipe_test");
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud

@@ -108,7 +108,9 @@ class CarboyUseCycle extends Container {
 
 	public function __construct() {
 
-		// Define which subentities to load
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getCarboy");
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
@@ -119,8 +121,7 @@ class CarboyUseCycle extends Container {
 		$entityMaps[] = new EntityMap("lazy", "getRoom");
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
 		$entityMaps[] = new EntityMap("eager", "getPour_allowed_date");
-		$this->setEntityMaps($entityMaps);
-
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud

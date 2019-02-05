@@ -20,17 +20,17 @@ class PendingHazardDtoChange extends PendingChange {
 		$this->COLUMN_NAMES_AND_TYPES["room_id"] = "integer";
 		$this->COLUMN_NAMES_AND_TYPES["hazard_id"] = "integer";
         $this->COLUMN_NAMES_AND_TYPES["hazard_name"] = "text";
+    }
 
-		// Define which subentities to load
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
-		//$entityMaps[] = new EntityMap("lazy","getDeficiencySelection");
 		$entityMaps[] = new EntityMap("eager","getParent_id");
 		$entityMaps[] = new EntityMap("lazy","getHazard");
 		$entityMaps[] = new EntityMap("lazy","getRoom");
 
-		$this->setEntityMaps($entityMaps);
-
+		return $entityMaps;
 	}
+
 	public function getHazard() {
 		if($this->hazard === NULL && $this->hasPrimaryKeyValue()) {
 			$hazardDao = new GenericDAO(new hazard());

@@ -34,10 +34,13 @@ abstract class Equipment extends GenericCrud{
 	public function __construct(){
         //$this->conditionallyCreateInspectionForCurrentYear();
 
-		// Define which subentities to load
+		
+    }
+    public static function defaultEntityMaps(){
+        // Define which subentities to load
 		$entityMaps = array();
         $entityMaps[] = new EntityMap("eager","getEquipmentInspections");
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 
 	}
 

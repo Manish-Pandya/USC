@@ -218,6 +218,9 @@ class PrincipalInvestigator extends GenericCrud {
 
 	public function __construct(){
 
+	}
+
+	public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager","getLabPersonnel");
 		$entityMaps[] = new EntityMap("lazy","getRooms");
@@ -242,8 +245,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getProtocols");
 		$entityMaps[] = new EntityMap("lazy","getGetOtherWasteTypes");
 
-		$this->setEntityMaps($entityMaps);
-
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud

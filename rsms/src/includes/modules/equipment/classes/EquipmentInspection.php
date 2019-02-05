@@ -44,14 +44,17 @@ class EquipmentInspection extends GenericCrud{
         if ($frequency) $this->setFrequency($frequency);
         if ($equipmentId) $this->setEquipment_id($equipmentId);
 
-		// Define which subentities to load
+		
+    }
+    public static function defaultEntityMaps(){
+        // Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getRoom");
         $entityMaps[] = new EntityMap("lazy","getPrincipal_investigator");
         $entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
 
 
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 	}
 
     private $room_id;

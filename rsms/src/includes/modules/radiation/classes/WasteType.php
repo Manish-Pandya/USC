@@ -25,10 +25,8 @@ class WasteType extends GenericCrud {
 	);
 
 	public function __construct() {
-		$entityMaps = array();
-		$this->setEntityMaps($entityMaps);
-	}
 
+	}
 
 	// Access information
 

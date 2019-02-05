@@ -73,13 +73,16 @@ class DeficiencySelection extends GenericCrud {
 
 	public function __construct(){
 
-		// Define which subentities to load
+		
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager","getRooms");
 		$entityMaps[] = new EntityMap("eager","getCorrectiveActions");
 		$entityMaps[] = new EntityMap("lazy","getResponse");
 		$entityMaps[] = new EntityMap("eager","getDeficiency");
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 
 	}
 

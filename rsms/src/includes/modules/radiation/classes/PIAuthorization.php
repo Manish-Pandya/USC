@@ -106,13 +106,16 @@ class PIAuthorization extends RadCrud{
     private $conditions;
 
 	public function __construct(){
-		// Define which subentities to load
+
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager", "getRooms");
 		$entityMaps[] = new EntityMap("eager", "getAuthorizations");
 		$entityMaps[] = new EntityMap("eager", "getDepartments");
 		$entityMaps[] = new EntityMap("eager", "getAuthorizations");
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud

@@ -48,12 +48,14 @@ class BioSafetyProtocol extends GenericCrud {
 	
 	public function __construct(){
 
+	}
+	public static function defaultEntityMaps(){
 		// Define which subentities to load
-		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigator");
-		$entityMaps[] = new EntityMap("lazy","getHazard");
-		$entityMaps[] = new EntityMap("lazy","getDepartment");
-		$this->setEntityMaps($entityMaps);
+		return array(
+			EntityMap::lazy("getPrincipalInvestigator"),
+			EntityMap::lazy("getHazard"),
+			EntityMap::lazy("getDepartment")
+		);
 	}
 
 	// Required for GenericCrud

@@ -46,13 +46,13 @@ class PendingChange extends GenericCrud {
 	protected $phone_approved;
 	
 	public function __construct(){
-	
-		// Define which subentities to load
+
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
-		//$entityMaps[] = new EntityMap("lazy","getDeficiencySelection");
 		$entityMaps[] = new EntityMap("eager","getParent_id");
-		$this->setEntityMaps($entityMaps);
-	
+		return $entityMaps;
 	}
 	
 	// Required for GenericCrud

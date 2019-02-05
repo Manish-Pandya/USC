@@ -36,10 +36,14 @@ class EmailDependencyObj extends GenericCrud {
 	 */
 	public function __construct() {
 
-		// Define which subentities to load
+		
+    }
+
+    public static function defaultEntityMaps(){
+        // Define which subentities to load
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager","getDependency_entity_id");
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud //

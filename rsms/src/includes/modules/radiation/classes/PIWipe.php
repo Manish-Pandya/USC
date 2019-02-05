@@ -30,12 +30,13 @@ class PIWipe extends RadCrud {
 
 	public function __construct(){
 
-		// Define which subentities to load
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getPIWipeTest");
 		$entityMaps[] = new EntityMap("lazy","getRoom");
-		$this->setEntityMaps($entityMaps);
-
+		return $entityMaps;
 	}
 
 	//access information

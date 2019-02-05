@@ -108,14 +108,15 @@ class Pickup extends RadCrud {
 
 	public function __construct() {
 
-		// Define which subentities to load
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager", "getCarboy_use_cycles");
 		$entityMaps[] = new EntityMap("eager", "getWaste_bags");
 		$entityMaps[] = new EntityMap("eager", "getScint_vial_collections");
 		$entityMaps[] = new EntityMap("lazy", "getPrincipalInvestigator");
-		$this->setEntityMaps($entityMaps);
-
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud

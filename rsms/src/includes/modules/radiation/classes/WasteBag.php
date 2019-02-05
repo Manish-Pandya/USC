@@ -82,13 +82,17 @@ class WasteBag extends Container {
 	private $pickupLots;
 
 	public function __construct() {
+
+	}
+
+	public static function defaultEntityMaps() {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getContainer");
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
 		$entityMaps[] = new EntityMap("lazy", "getDrum");
 		$entityMaps[] = new EntityMap("lazy", "getParcelUseAmounts");
 
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 	}
 
 	// required for GenericCrud

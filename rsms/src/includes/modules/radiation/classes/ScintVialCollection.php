@@ -31,7 +31,10 @@ class ScintVialCollection extends Container{
 	);
 
 	public function __construct() {
-		$LOG = Logger::getLogger(__CLASS__);
+
+	}
+
+	public static function defaultEntityMaps() {
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getPrincipal_investigator");
 		$entityMaps[] = new EntityMap("lazy", "getParcel_use_amounts");
@@ -39,7 +42,7 @@ class ScintVialCollection extends Container{
 		$entityMaps[] = new EntityMap("lazy", "getDrum");
 		$entityMaps[] = new EntityMap("eager", "getContents");
 
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 	}
 
 

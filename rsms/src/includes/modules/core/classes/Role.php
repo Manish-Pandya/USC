@@ -48,11 +48,10 @@ class Role extends GenericCrud{
 	// Constructor(s)
 	public function __construct(){
 
-		// Define which subentities to load
-		$entityMaps = array();
-		$entityMaps[] = new EntityMap("lazy","getUsers");
-		$this->setEntityMaps($entityMaps);
-		
+	}
+
+	public static function defaultEntityMaps(){
+		return array( EntityMap::lazy("getUsers") );
 	}
 	
 	// Required for GenericCrud

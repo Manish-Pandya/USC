@@ -29,14 +29,17 @@ class MiscellaneousWaste extends RadCrud {
 	);
 
 	public function __construct() {
-		$LOG = Logger::getLogger(__CLASS__);
+
+	}
+
+	public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getParcel_use_amounts");
 		$entityMaps[] = new EntityMap("lazy", "getPickup");
 		$entityMaps[] = new EntityMap("lazy", "getDrum");
 		$entityMaps[] = new EntityMap("eager", "getContents");
 
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 	}
 
 	/** Relationships */

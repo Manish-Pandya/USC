@@ -31,12 +31,13 @@ class InspectionWipe extends RadCrud {
 	
 	public function __construct(){
 	
-		// Define which subentities to load
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getInspection_wipe_test");
 		$entityMaps[] = new EntityMap("lazy","getRoom");
-		$this->setEntityMaps($entityMaps);
-	
+		return $entityMaps;
 	}
 	
 	// Required for GenericCrud

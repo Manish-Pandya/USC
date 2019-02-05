@@ -24,12 +24,13 @@ class PrincipalInvestigatorRoomRelation extends GenericCrud {
 
 	public function __construct(){
 
-		// Define which subentities to load
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager","getRoom_id");
 		$entityMaps[] = new EntityMap("eager","getPrincipal_investigator_id");
-		$this->setEntityMaps($entityMaps);
-
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud

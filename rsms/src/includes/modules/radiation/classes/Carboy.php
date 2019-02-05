@@ -28,10 +28,12 @@ class Carboy extends RadCrud {
 
 	public function __construct() {
 
-		// Define which subentities to load
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getCarboy_use_cycles");
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 	}
 	
 	/** Relationships */

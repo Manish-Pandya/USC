@@ -42,9 +42,12 @@ class IBCResponse extends GenericCrud
 
 	public function __construct(){
 
-		// Define which subentities to load
+		
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud

@@ -26,13 +26,15 @@ class Hazard_room_relation extends GenericCrud {
 
 	public function __construct(){
 
-		// Define which subentities to load
+		
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("eager","getRoom_id");
 		$entityMaps[] = new EntityMap("eager","getHazard_id");
 		$entityMaps[] = new EntityMap("eager","getEquipment_serial_number");
-		$this->setEntityMaps($entityMaps);
-
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud

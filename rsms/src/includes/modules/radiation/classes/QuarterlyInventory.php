@@ -50,12 +50,14 @@
 
     public function __construct() {
 
-    	// Define which subentities to load
+    }
+
+    public static function defaultEntityMaps(){
     	$entityMaps = array();
     	$entityMaps[] = new EntityMap("eager", "getQuarterly_isotope_amounts");
     	$entityMaps[] = new EntityMap("eager", "getPi_quarterly_inventories");
 
-    	$this->setEntityMaps($entityMaps);
+    	return $entityMaps;
     }
 
     // Required for GenericCrud

@@ -98,7 +98,9 @@ class Hazard extends GenericCrud {
 
 	public function __construct(){
 
-		// Define which subentities to load
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getSubHazards");
 		$entityMaps[] = new EntityMap("eager","getActiveSubHazards");
@@ -109,8 +111,7 @@ class Hazard extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getParentIds");
 		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
 		
-		$this->setEntityMaps($entityMaps);
-
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud

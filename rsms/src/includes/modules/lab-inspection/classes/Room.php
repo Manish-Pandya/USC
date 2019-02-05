@@ -109,7 +109,9 @@ class Room extends GenericCrud {
 
 	public function __construct(){
 
-		// Define which subentities to load
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getPrincipalInvestigators");
 		$entityMaps[] = new EntityMap("lazy","getHazards");
@@ -117,8 +119,7 @@ class Room extends GenericCrud {
 		$entityMaps[] = new EntityMap("lazy","getHas_hazards");
 		$entityMaps[] = new EntityMap("eager","getBuilding");
 		$entityMaps[] = new EntityMap("lazy","getSolidsContainers");
-		$this->setEntityMaps($entityMaps);
-
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud

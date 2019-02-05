@@ -100,15 +100,16 @@ class Question extends GenericCrud {
 
 	public function __construct(){
 
-		// Define which subentities to load
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getChecklist");
 		$entityMaps[] = new EntityMap("eager","getDeficiencies");
 		$entityMaps[] = new EntityMap("eager","getRecommendations");
 		$entityMaps[] = new EntityMap("eager","getObservations");
 		$entityMaps[] = new EntityMap("lazy","getResponses");
-		$this->setEntityMaps($entityMaps);
-
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud

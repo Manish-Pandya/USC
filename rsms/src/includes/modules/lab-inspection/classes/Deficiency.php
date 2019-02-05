@@ -34,10 +34,13 @@ class Deficiency extends GenericCrud {
 
 	public function __construct(){
 
-		// Define which subentities to load
+		
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getQuestion");
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 
 	}
 

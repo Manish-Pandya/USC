@@ -75,13 +75,16 @@ class Checklist extends GenericCrud {
 
 	public function __construct(){
 
-		// Define which subentities to load
+		
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy","getHazard");
 		$entityMaps[] = new EntityMap("lazy","getRooms");
 		$entityMaps[] = new EntityMap("lazy","getInspectionRooms");
 		$entityMaps[] = new EntityMap("eager","getQuestions");
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 
 	}
 

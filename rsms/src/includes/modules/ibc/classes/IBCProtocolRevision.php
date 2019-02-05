@@ -83,16 +83,16 @@ class IBCProtocolRevision extends GenericCrud
     private $section;
 
     public function __construct(){
-		// Define which subentities to load
+		if($this->status == null)$this->status = self::$STATUSES["NOT_SUBMITTED"];
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
         $entityMaps[] = new EntityMap("lazy","getPreliminaryReviewers");
         $entityMaps[] = new EntityMap("lazy","getPrimaryReviewers");
         $entityMaps[] = new EntityMap("lazy","getIBCPreliminaryComments");
 		$entityMaps[] = new EntityMap("lazy","getIBCResponses");
-		//$entityMaps[] = new EntityMap("lazy","getProtocolFillOutUsers");
-		$this->setEntityMaps($entityMaps);
-
-		if($this->status == null)$this->status = self::$STATUSES["NOT_SUBMITTED"];
+		return $entityMaps;
 	}
 
     /** Relationships */

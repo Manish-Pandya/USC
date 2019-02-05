@@ -80,13 +80,15 @@ class ParcelUse extends RadCrud {
 
 	public function __construct() {
 
-		// Define which subentities to load
+    }
+
+    public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = new EntityMap("lazy", "getParcel");
         $entityMaps[] = new EntityMap("lazy", "getParcelAmountOnHand");
         $entityMaps[] = new EntityMap("lazy", "getParcelRemainder");
 
-		$this->setEntityMaps($entityMaps);
+		return $entityMaps;
 	}
 
 	// Required for GenericCrud
