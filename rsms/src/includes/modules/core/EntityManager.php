@@ -8,11 +8,21 @@ class RegisteredEntity {
     public $eagerAccessors;
     public function __construct($cls, $eagerAccessors){
         $this->entityClass = $cls;
-        $this->eagerAccessors = $eagerAccessors;
+        $this->setEagerAccessors($eagerAccessors);
     }
 
     public function apply_entity_maps( $mappings ){
-        $this->eagerAccessors = EntityManager::filter_merge_accessors($this->eagerAccessors, $mappings);
+        $this->setEagerAccessors( EntityManager::filter_merge_accessors($this->eagerAccessors, $mappings) );
+    }
+
+    function setEagerAccessors( $eagerAccessors ){
+        sort($eagerAccessors);
+        $LOG = Logger::getLogger('EntityManager.RegisteredEntity.' . $this->entityClass);
+        if( $LOG->isTraceEnabled() ){
+            $LOG->trace("$this->entityClass:\n  " . implode("\n  ", $eagerAccessors) );
+        }
+
+        $this->eagerAccessors = $eagerAccessors;
     }
 }
 
@@ -87,10 +97,13 @@ class EntityManager {
             return false;
         }
 
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
         // Get the registered type details (will register new if required)
         $type = EntityManager::register_entity_class($classname);
 
         // Apply new entity mappings
+        $LOG->debug("Filtering existing entity accessors of $classname with provided entityMaps");
         $type->apply_entity_maps($entityMaps);
         return $type;
     }
@@ -101,13 +114,16 @@ class EntityManager {
 		// Copy $maps to a new array, $merged
 		$merged = array();
 
+        $LOG->trace("Merging " . count($maps) . " sets of EntityMaps");
         foreach($maps as $overrides){
             if( !isset($overrides) ){
+                $LOG->trace("Ignore empty array");
                 // Skip nulls
                 continue;
             }
 
 			// Override or add mappings from $overrides
+            $LOG->trace("Merging " . count($overrides) . " EntityMap entries");
 			foreach($overrides as $over){
 				// is this key already in $merged?
 				$ref = null;
@@ -130,14 +146,12 @@ class EntityManager {
 			}
 		}
 
-		if($LOG->isTraceEnabled()){
-			$LOG->trace($merged);
-        }
-
 		return $merged;
     }
 
     public static function filter_merge_accessors(Array &$accessors, Array &$entityMaps){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
         // Init new array
         $newEagers = $accessors;
 
@@ -147,13 +161,14 @@ class EntityManager {
         $eagerAccessors = array();
 
         foreach($entityMaps as $em ){
+            $LOG->trace("filter/merge: $em");
             switch( $em->getLoadingType() ){
                 case EntityMap::$TYPE_LAZY:
                     $lazyAccessors[] = $em->getEntityAccessor();
                     break;
 
                 default:
-                    Logger::getLogger('EntityManager')->error("Unrecognized EntityMap loading type: " . $em->getLoadingType());
+                    $LOG->error("Unrecognized EntityMap loading type: " . $em->getLoadingType());
                 case EntityMap::$TYPE_EAGER:
                     $eagerAccessors[] = $em->getEntityAccessor();
                     break;
@@ -167,7 +182,28 @@ class EntityManager {
 
         // Union our still-existing eager accessors with the incoming Eager overrides
         if( count($eagerAccessors) > 0 ){
-            $newEagers = array_values($newEagers) + array_values($eagerAccessors);
+            $newEagers = array_unique( array_merge($newEagers, $eagerAccessors));
+        }
+
+        if( $LOG->isTraceEnabled() ){
+            // Compute differences
+            $added = array_diff( $newEagers, $accessors );
+            $removed = array_diff( $accessors, $newEagers );
+
+            if( count($added) > 0) {
+                $LOG->trace("Added eager accessors: \n  +" . implode("\n  +", $added));
+            }
+
+            if( count($removed) > 0){
+                $LOG->trace("Removed eager accessors: \n  -" . implode("\n  -", $removed));
+            }
+
+            if( (count($removed) + count($added)) == 0 ){
+                $LOG->warn("Filter/Merge Override resulted in no changes");
+            }
+
+            $stackex = new Exception();
+            $LOG->trace("Filter/Merge origin:\n    " . str_replace("\n", "\n    ", $stackex->getTraceAsString()));
         }
 
         return $newEagers;
