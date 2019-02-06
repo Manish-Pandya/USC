@@ -202,11 +202,12 @@ class IBC_ActionManager extends ActionManager {
 		}
 
 		$revision->setPreliminaryReviewers(null);
-		$revision->setPrimaryReviewers(null);
-		$entityMaps = array();
-        $entityMaps[] = EntityMap::eager("getPreliminaryReviewers");
-        $entityMaps[] = EntityMap::eager("getPrimaryReviewers");
-		$revision->setEntityMaps($entityMaps);
+        $revision->setPrimaryReviewers(null);
+
+        EntityManager::with_entity_maps('IBCProtocolRevision', array(
+            EntityMap::eager("getPreliminaryReviewers"),
+            EntityMap::eager("getPrimaryReviewers"),
+        ));
 
 		//TODO: use getIbcEmailByStatus to determine if an email, and if so, which, should be sent
 		//if($revision->getStatus() == IBCProtocolRevision::$STATUSES["SUBMITTED"]){
@@ -453,32 +454,29 @@ class IBC_ActionManager extends ActionManager {
         /* $whereClauseGroup = new WhereClauseGroup( array( new WhereClause("is_active","=","1"), new WhereClause("key_id","IN","(SELECT principal_investigator_id FROM principal_investigator_room)") ) );
         $pis = $dao->getAllWhere($whereClauseGroup, "OR");*/
 
-        $entityMaps = array();
-        $entityMaps[] = EntityMap::lazy("getLabPersonnel");
-        $entityMaps[] = EntityMap::lazy("getRooms");
-        $entityMaps[] = EntityMap::eager("getDepartments");
-        $entityMaps[] = EntityMap::lazy("getUser");
-        $entityMaps[] = EntityMap::lazy("getInspections");
-        $entityMaps[] = EntityMap::lazy("getPi_authorization");
-        $entityMaps[] = EntityMap::lazy("getActiveParcels");
-        $entityMaps[] = EntityMap::lazy("getCarboyUseCycles");
-        $entityMaps[] = EntityMap::lazy("getPurchaseOrders");
-        $entityMaps[] = EntityMap::lazy("getSolidsContainers");
-        $entityMaps[] = EntityMap::lazy("getPickups");
-        $entityMaps[] = EntityMap::lazy("getScintVialCollections");
-        $entityMaps[] = EntityMap::lazy("getCurrentScintVialCollections");
-        $entityMaps[] = EntityMap::lazy("getOpenInspections");
-        $entityMaps[] = EntityMap::lazy("getQuarterly_inventories");
-        $entityMaps[] = EntityMap::lazy("getVerifications");
-        $entityMaps[] = EntityMap::lazy("getBuidling");
-        $entityMaps[] = EntityMap::lazy("getWipeTests");
-        $entityMaps[] = EntityMap::lazy("getCurrentPi_authorization");
-        $entityMaps[] = EntityMap::lazy("getCurrentVerifications");
-        $entityMaps[] = EntityMap::lazy("getCurrentIsotopeInventories");
-
-        foreach($pis as $pi){
-            $pi->setEntityMaps($entityMaps);
-        }
+        EntityManager::with_entity_maps('PrincipalInvestigator', array(
+            EntityMap::lazy("getLabPersonnel"),
+            EntityMap::lazy("getRooms"),
+            EntityMap::eager("getDepartments"),
+            EntityMap::lazy("getUser"),
+            EntityMap::lazy("getInspections"),
+            EntityMap::lazy("getPi_authorization"),
+            EntityMap::lazy("getActiveParcels"),
+            EntityMap::lazy("getCarboyUseCycles"),
+            EntityMap::lazy("getPurchaseOrders"),
+            EntityMap::lazy("getSolidsContainers"),
+            EntityMap::lazy("getPickups"),
+            EntityMap::lazy("getScintVialCollections"),
+            EntityMap::lazy("getCurrentScintVialCollections"),
+            EntityMap::lazy("getOpenInspections"),
+            EntityMap::lazy("getQuarterly_inventories"),
+            EntityMap::lazy("getVerifications"),
+            EntityMap::lazy("getBuidling"),
+            EntityMap::lazy("getWipeTests"),
+            EntityMap::lazy("getCurrentPi_authorization"),
+            EntityMap::lazy("getCurrentVerifications"),
+            EntityMap::lazy("getCurrentIsotopeInventories")
+        ));
 
         return $pis;
     }
