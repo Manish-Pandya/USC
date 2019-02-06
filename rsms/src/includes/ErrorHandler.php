@@ -37,8 +37,12 @@ class ErrorHandler {
 		$message = "Exception ($severity) '" . get_class($exception) . "' occurred at " . $exception->getFile() . ":" . $exception->getLine() . ". Message: " . $exception->getMessage();
 		
 		$log = Logger::getLogger( basename($exception->getFile(), ".php") );
-		$loglevel = $severity == E_NOTICE ? 'warn' : 'error';
-		LogUtil::log_stack($log, $message, $loglevel);
+		if( $severity == E_NOTICE ){
+			$log->warn("$message:\n    " . str_replace("\n", "\n    ", $exception->getTraceAsString()));
+		}
+		else{
+			$log->error("$message:\n    " . str_replace("\n", "\n    ", $exception->getTraceAsString()));
+		}
 	}
 	
 	/**
