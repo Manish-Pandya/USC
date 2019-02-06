@@ -23,7 +23,7 @@ class Rad_ActionManager extends ActionManager {
             $dao = $this->getDao(new Inspection());
             $inspection =  $dao->getById($id);
 
-            EntityManager::with_entity_maps('Inspection', array(
+            EntityManager::with_entity_maps(Inspection::class, array(
                 EntityMap::lazy("getInspectors"),
                 EntityMap::eager("getRooms"),
                 EntityMap::lazy("getResponses"),
@@ -49,7 +49,7 @@ class Rad_ActionManager extends ActionManager {
 
         // initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
         // necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
-        EntityManager::with_entity_maps('Room', array(
+        EntityManager::with_entity_maps(Room::class, array(
 	        EntityMap::lazy("getPrincipalInvestigators"),
 	        EntityMap::lazy("getHazards"),
 	        EntityMap::lazy("getBuilding"),
@@ -125,7 +125,7 @@ class Rad_ActionManager extends ActionManager {
             $dao = $this->getDao(new Parcel());
             $parcel = $dao->getById($id);
 
-            EntityManager::with_entity_maps('Parcel', array(
+            EntityManager::with_entity_maps(Parcel::class, array(
                 EntityMap::lazy("getPrincipal_investigator"),
                 EntityMap::lazy("getPurchase_order"),
                 EntityMap::eager("getIsotope"),
@@ -134,12 +134,12 @@ class Rad_ActionManager extends ActionManager {
                 EntityMap::lazy("getWipe_test")
             ));
 
-            EntityManager::with_entity_maps('ParcelUse', array(
+            EntityManager::with_entity_maps(ParcelUse::class, array(
                 EntityMap::lazy("getParcel"),
                 EntityMap::eager("getParcelUseAmounts")
             ));
 
-            EntityManager::with_entity_maps('ParcelUseAmount', array(
+            EntityManager::with_entity_maps(ParcelUseAmount::class, array(
                 EntityMap::eager("getCarboy"),
                 EntityMap::eager("getWaste_type"),
                 EntityMap::eager("getContainer_name")
@@ -218,7 +218,7 @@ class Rad_ActionManager extends ActionManager {
             $dao = $this->getDao(new WasteBag());
             $bag = $dao->getById($id);
 
-            EntityManager::with_entity_maps('WasteBag', array(
+            EntityManager::with_entity_maps(WasteBag::class, array(
                 EntityMap::lazy("getContainer"),
                 EntityMap::lazy("getPickup"),
                 EntityMap::lazy("getDrum"),
@@ -337,7 +337,7 @@ class Rad_ActionManager extends ActionManager {
 
         $LOG->debug('Read ' . count($pis) . ' PIs from db');
 
-        EntityManager::with_entity_maps('PrincipalInvestigator', array(
+        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
 
             // PrincipalInvestigator //
             EntityMap::eager("getDepartments"),
@@ -388,7 +388,7 @@ class Rad_ActionManager extends ActionManager {
         $dao = $this->getDao(new User());
         $users = $dao->getAll();
 
-        EntityManager::with_entity_maps('User', array(
+        EntityManager::with_entity_maps(User::class, array(
             EntityMap::lazy("getPrincipalInvestigator"),
             EntityMap::lazy("getInspector"),
             EntityMap::lazy("getSupervisor"),

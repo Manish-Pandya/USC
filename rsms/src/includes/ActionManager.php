@@ -538,7 +538,7 @@ class ActionManager {
 
     public function getCurrentUser(){
         // when a user is logged in and in session, return the currently logged in user.
-        EntityManager::with_entity_maps('User', array(
+        EntityManager::with_entity_maps(User::class, array(
             EntityMap::eager("getPrincipalInvestigator"),
             EntityMap::eager("getInspector"),
             EntityMap::eager("getSupervisor"),
@@ -621,7 +621,7 @@ class ActionManager {
             $supervisor = $user->getSupervisor();
             if($supervisor != null){
 
-                EntityManager::with_entity_maps('PrincipalInvestigator', array(
+                EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
                     EntityMap::lazy("getLabPersonnel"),
                     EntityMap::lazy("getRooms"),
                     EntityMap::lazy("getDepartments"),
@@ -852,7 +852,7 @@ class ActionManager {
             }
 
             if($user->getKey_id()>0){
-                EntityManager::with_entity_maps('User', array(
+                EntityManager::with_entity_maps(User::class, array(
                     EntityMap::eager("getPrincipalInvestigator"),
                     EntityMap::eager("getInspector"),
                     EntityMap::lazy("getSupervisor"),
@@ -1166,7 +1166,7 @@ class ActionManager {
         $root = $dao->getById(10000);
 
         // Define which subentities to load
-        EntityManager::with_entity_maps('Hazard', array(
+        EntityManager::with_entity_maps(Hazard::class, array(
             EntityMap::lazy("getSubhazards"),
             EntityMap::eager("getActiveSubhazards"),
             EntityMap::eager("getHasChildren"),
@@ -1185,7 +1185,7 @@ class ActionManager {
         $dao = $this->getDao(new Hazard());
         $hazards = $dao->getAll();
 
-        EntityManager::with_entity_maps('Hazard', array(
+        EntityManager::with_entity_maps(Hazard::class, array(
             EntityMap::lazy("getSubHazards"),
             EntityMap::lazy("getActiveSubHazards"),
             EntityMap::lazy("getChecklist"),
@@ -1206,7 +1206,7 @@ class ActionManager {
         $hazards = array();
 
         // prepare a load map for the subHazards to load Subhazards lazy but Checklist eagerly.
-        EntityManager::with_entity_maps('Hazard', array(
+        EntityManager::with_entity_maps(Hazard::class, array(
             EntityMap::lazy("getSubHazards"),
             EntityMap::lazy("getActiveSubHazards"),
             EntityMap::eager("getChecklist"),
@@ -1217,7 +1217,7 @@ class ActionManager {
         ));
 
         // prepare a load map for Checklist to load all lazy.
-        EntityManager::with_entity_maps('Checklist', array(
+        EntityManager::with_entity_maps(Checklist::class, array(
             EntityMap::lazy("getHazard"),
             EntityMap::lazy("getQuestions")
         ));
@@ -1393,7 +1393,7 @@ class ActionManager {
 
             // loading checklist and getHasChildren are required in HazardHub,
             // where this method will primarily be used.
-            EntityManager::with_entity_maps('Hazard', array(
+            EntityManager::with_entity_maps(Hazard::class, array(
                 EntityMap::lazy("getSubHazards"),
                 EntityMap::lazy("getActiveSubHazards"),
                 EntityMap::eager("getChecklist"),
@@ -1407,7 +1407,7 @@ class ActionManager {
             $checklist = $savedHazard->getChecklist();
 
             if($checklist != NULL){
-                EntityManager::with_entity_maps('Checklist', array(
+                EntityManager::with_entity_maps(Checklist::class, array(
                     EntityMap::lazy("getHazard"),
                     EntityMap::lazy("getQuestions")
                 ));
@@ -1489,7 +1489,7 @@ class ActionManager {
             $room = $dao->save($decodedObject);
 
 
-            EntityManager::with_entity_maps('Room', array(
+            EntityManager::with_entity_maps(Room::class, array(
                 EntityMap::eager("getPrincipalInvestigators"),
                 EntityMap::lazy("getHazards"),
                 EntityMap::lazy("getHazard_room_relations"),
@@ -1870,7 +1870,7 @@ class ActionManager {
             $dao = $this->getDao(new PrincipalInvestigator());
             $pi = $dao->getById($id);
             if($getRooms != null && $getRooms == true){
-                EntityManager::with_entity_maps('PrincipalInvestigator', array(
+                EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
                     EntityMap::eager("getLabPersonnel"),
                     EntityMap::eager("getRooms"),
                     EntityMap::eager("getDepartments"),
@@ -1911,7 +1911,7 @@ class ActionManager {
 
             $buildings = array();
 
-            EntityManager::with_entity_maps('PrincipalInvestigator', array(
+            EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
                 EntityMap::lazy("getLabPersonnel"),
                 EntityMap::eager("getRooms"),
                 EntityMap::eager("getDepartments"),
@@ -1933,7 +1933,7 @@ class ActionManager {
                 EntityMap::lazy("getWipeTests")
             ));
 
-            EntityManager::with_entity_maps('Room', array(
+            EntityManager::with_entity_maps(Room::class, array(
                 EntityMap::lazy("getPrincipalInvestigators"),
                 EntityMap::lazy("getHazards"),
                 EntityMap::lazy("getHazard_room_relations"),
@@ -1942,7 +1942,7 @@ class ActionManager {
                 EntityMap::lazy("getSolidsContainers")
             ));
 
-            EntityManager::with_entity_maps('Building', array(
+            EntityManager::with_entity_maps(Building::class, array(
                 EntityMap::eager("getRooms"),
                 EntityMap::lazy("getCampus"),
                 EntityMap::lazy("getCampus_id"),
@@ -2051,7 +2051,7 @@ class ActionManager {
        /* $whereClauseGroup = new WhereClauseGroup( array( new WhereClause("is_active","=","1"), new WhereClause("key_id","IN","(SELECT principal_investigator_id FROM principal_investigator_room)") ) );
         $pis = $dao->getAllWhere($whereClauseGroup, "OR");*/
 
-        EntityManager::with_entity_maps('PrincipalInvestigator', array(
+        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
             EntityMap::eager("getLabPersonnel"),
             EntityMap::eager("getRooms"),
             EntityMap::eager("getDepartments"),
@@ -2080,7 +2080,7 @@ class ActionManager {
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $users = $this->getAllUsers();
-        EntityManager::with_entity_maps('User', array(
+        EntityManager::with_entity_maps(User::class, array(
             EntityMap::lazy("getInspector"),
             EntityMap::lazy("getSupervisor"),
             EntityMap::lazy("getPrincipalInvestigator"),
@@ -2100,14 +2100,14 @@ class ActionManager {
         //$users = $userDao->getAllWhere($group, "AND", "last_name");
         $users = $this->getAllUsers();
 
-        EntityManager::with_entity_maps('User', array(
+        EntityManager::with_entity_maps(User::class, array(
             EntityMap::eager("getInspector"),
             EntityMap::lazy("getSupervisor"),
             EntityMap::eager("getRoles"),
             EntityMap::eager("getPrincipalInvestigator")
         ));
 
-        EntityManager::with_entity_maps('PrincipalInvestigator', array(
+        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
             EntityMap::lazy("getLabPersonnel"),
             EntityMap::eager("getRooms"),
             EntityMap::eager("getDepartments"),
@@ -2150,7 +2150,7 @@ class ActionManager {
         $dao = $this->getDao(new PrincipalInvestigator());
         $pis = $dao->getAll();
 
-        EntityManager::with_entity_maps('PrincipalInvestigator', array(
+        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
             EntityMap::eager("getLabPersonnel"),
             EntityMap::eager("getRooms"),
             EntityMap::eager("getDepartments"),
@@ -2219,9 +2219,9 @@ class ActionManager {
         	$roomMaps[] = EntityMap::lazy("getSolidsContainers");
         }
 
-        EntityManager::with_entity_maps('Room', $roomMaps);
+        EntityManager::with_entity_maps(Room::class, $roomMaps);
 
-        EntityManager::with_entity_maps('PrincipalInvestigator', array(
+        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
             EntityMap::lazy("getLabPersonnel"),
             EntityMap::lazy("getRooms"),
             EntityMap::eager("getDepartments"),
@@ -2243,7 +2243,7 @@ class ActionManager {
             EntityMap::lazy("getWipeTests")
         ));
 
-        EntityManager::with_entity_maps('User', array(
+        EntityManager::with_entity_maps(User::class, array(
             EntityMap::lazy("getPrincipalInvestigator"),
             EntityMap::lazy("getInspector"),
             EntityMap::lazy("getSupervisor"),
@@ -2328,7 +2328,7 @@ class ActionManager {
 
         $pis = $decodedObject->getPrincipalInvestigators();
 
-        EntityManager::with_entity_maps('PrincipalInvestigator', array(
+        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
             EntityMap::lazy("getLabPersonnel"),
             EntityMap::lazy("getRooms"),
             EntityMap::lazy("getDepartments"),
@@ -2460,7 +2460,7 @@ class ActionManager {
                     DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
             }
 
-            EntityManager::with_entity_maps('Room', array(
+            EntityManager::with_entity_maps(Room::class, array(
                 EntityMap::eager("getPrincipalInvestigators"),
                 EntityMap::lazy("getHazards"),
                 EntityMap::lazy("getHazard_room_relations"),
@@ -2836,8 +2836,8 @@ class ActionManager {
             $roomMaps[] = EntityMap::lazy("getHas_hazards");
             $roomMaps[] = EntityMap::lazy("getBuilding");
 
-            EntityManager::with_entity_maps('Room', $roomMaps);
-            EntityManager::with_entity_maps('Building', array(EntityMap::eager("getRooms")));
+            EntityManager::with_entity_maps(Room::class, $roomMaps);
+            EntityManager::with_entity_maps(Building::class, array(EntityMap::eager("getRooms")));
         }
 
         return $buildings;
@@ -2870,7 +2870,7 @@ class ActionManager {
             $dao = $this->getDao(new Building());
             $building = $dao->getById($id);
 
-            EntityManager::with_entity_maps('Room', array(
+            EntityManager::with_entity_maps(Room::class, array(
                 EntityMap::lazy("getHazards"),
                 EntityMap::lazy("getHazard_room_relations"),
                 EntityMap::lazy("getHas_hazards"),
@@ -2992,7 +2992,7 @@ class ActionManager {
             return new ActionError("Missing proper parameters (should be inspectionId (nullable int), piId int, inspectorIds (one or more ints))");
         }
 
-        EntityManager::with_entity_maps('Inspection', array(
+        EntityManager::with_entity_maps(Inspection::class, array(
             EntityMap::eager("getInspectors"),
             EntityMap::eager("getRooms"),
             EntityMap::lazy("getResponses"),
@@ -3217,7 +3217,7 @@ class ActionManager {
             $verificationDao->save($verification);
         }
 
-        EntityManager::with_entity_maps('Inspection', array(
+        EntityManager::with_entity_maps(Inspection::class, array(
             EntityMap::eager("getInspectors"),
             EntityMap::eager("getRooms"),
             EntityMap::eager("getResponses"),
@@ -3337,7 +3337,7 @@ class ActionManager {
               $allHazards = $this->getAllHazardsAsTree();
             }
 
-            EntityManager::with_entity_maps('Hazard', array(
+            EntityManager::with_entity_maps(Hazard::class, array(
                 EntityMap::lazy("getSubHazards"),
                 EntityMap::eager("getActiveSubHazards"),
                 EntityMap::lazy("getChecklist"),
@@ -3511,7 +3511,7 @@ class ActionManager {
 
             // if subhazards is false, change all hazard subentities to lazy loading
             if ($subHazards == "false"){
-                EntityManager::with_entity_maps('Hazard', array(
+                EntityManager::with_entity_maps(Hazard::class, array(
                     EntityMap::lazy("getSubHazards"),
                     EntityMap::lazy("getActiveSubHazards"),
                     EntityMap::lazy("getChecklist"),
@@ -3564,7 +3564,7 @@ class ActionManager {
             }
 
             // if subhazards is false, change all hazard subentities to lazy loading
-            EntityManager::with_entity_maps('Hazard', array(
+            EntityManager::with_entity_maps(Hazard::class, array(
                 EntityMap::lazy("getSubHazards"),
                 EntityMap::lazy("getActiveSubHazards"),
                 EntityMap::lazy("getChecklist"),
@@ -3692,7 +3692,7 @@ class ActionManager {
             // Get the hazard
             $hazard = $decodedObject;
 
-            EntityManager::with_entity_maps('Hazard', array(
+            EntityManager::with_entity_maps(Hazard::class, array(
                 EntityMap::lazy("getSubHazards"),
                 EntityMap::eager("getActiveSubHazards"),
                 EntityMap::lazy("getChecklist"),
@@ -3866,7 +3866,7 @@ class ActionManager {
             // Get the hazard
             $hazard = $decodedObject;
 
-            EntityManager::with_entity_maps('Hazard', array(
+            EntityManager::with_entity_maps(Hazard::class, array(
                 EntityMap::lazy("getSubHazards"),
                 EntityMap::eager("getActiveSubHazards"),
                 EntityMap::lazy("getChecklist"),
@@ -3973,7 +3973,7 @@ class ActionManager {
             }
 
             $selection = $dao->getById($ds->getKey_id());
-            EntityManager::with_entity_maps('DeficiencySelection', array(
+            EntityManager::with_entity_maps(DeficiencySelection::class, array(
                 EntityMap::eager("getRooms"),
                 EntityMap::lazy("getCorrectiveActions"),
                 EntityMap::lazy("getResponse"),
@@ -4144,7 +4144,7 @@ class ActionManager {
 
             if (empty($inspection) ) {return new ActionError("No Response with id $id exists");}
 
-            EntityManager::with_entity_maps('Inspection', array(
+            EntityManager::with_entity_maps(Inspection::class, array(
                 EntityMap::eager("getInspectors"),
                 EntityMap::eager("getRooms"),
                 EntityMap::lazy("getResponses"),
@@ -4346,14 +4346,14 @@ class ActionManager {
                 }
             }
 
-            EntityManager::with_entity_maps('Checklist', array(
+            EntityManager::with_entity_maps(Checklist::class, array(
                 EntityMap::lazy("getHazard"),
                 EntityMap::lazy("getRooms"),
                 EntityMap::eager("getInspectionRooms"),
                 EntityMap::eager("getQuestions")
             ));
 
-            EntityManager::with_entity_maps('Inspection', array(
+            EntityManager::with_entity_maps(Inspection::class, array(
                 EntityMap::eager("getInspectors"),
                 EntityMap::eager("getRooms"),
                 EntityMap::lazy("getResponses"),
@@ -4777,7 +4777,7 @@ class ActionManager {
 
         $piDao = $this->getDao(new PrincipalInvestigator());
 
-        EntityManager::with_entity_maps('Inspection', array(
+        EntityManager::with_entity_maps(Inspection::class, array(
             EntityMap::eager("getInspectors"),
             EntityMap::lazy("getRooms"),
             EntityMap::lazy("getResponses"),
@@ -4787,7 +4787,7 @@ class ActionManager {
             EntityMap::eager("getStatus")
         ));
 
-        EntityManager::with_entity_maps('Room', array(
+        EntityManager::with_entity_maps(Room::class, array(
             EntityMap::lazy("getPrincipalInvestigators"),
             EntityMap::lazy("getHazards"),
             EntityMap::lazy("getHazard_room_relations"),
@@ -4841,7 +4841,7 @@ class ActionManager {
         $dao = new GenericDAO(new Inspection());
         $inspections = $dao->getInspectionsByYear($year);
 
-        EntityManager::with_entity_maps('Inspection', array(
+        EntityManager::with_entity_maps(Inspection::class, array(
             EntityMap::eager( "getInspectors" ),
             EntityMap::lazy( "getRooms" ),
             EntityMap::lazy( "getResponses" ),
@@ -4875,7 +4875,7 @@ class ActionManager {
                 }
         }
 
-        EntityManager::with_entity_maps('PrincipalInvestigator', array(
+        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
             EntityMap::lazy("getLabPersonnel"),
             EntityMap::lazy("getRooms"),
             EntityMap::eager("getDepartments"),
@@ -4997,7 +4997,7 @@ class ActionManager {
         if($id==null)return new ActionError('No request param "id" provided.');
         $principalInvestigator = $this->getPIById($id);
 
-        EntityManager::with_entity_maps('PrincipalInvestigator', array(
+        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
             EntityMap::lazy("getLabPersonnel"),
             EntityMap::lazy("getRooms"),
             EntityMap::lazy("getDepartments"),
@@ -5019,7 +5019,7 @@ class ActionManager {
             EntityMap::lazy("getWipeTests")
         ));
 
-        EntityManager::with_entity_maps('Inspection', array(
+        EntityManager::with_entity_maps(Inspection::class, array(
             EntityMap::eager("getInspectors"),
             EntityMap::lazy("getRooms"),
             EntityMap::lazy("getResponses"),
@@ -5075,7 +5075,7 @@ class ActionManager {
     	$dao = new GenericDAO(new Hazard());
     	$hazards = $dao->getLeafLevelHazards();
 
-    	EntityManager::with_entity_maps('Hazard', array(
+    	EntityManager::with_entity_maps(Hazard::class, array(
     	    EntityMap::lazy("getSubHazards"),
     	    EntityMap::lazy("getActiveSubHazards"),
     	    EntityMap::lazy("getChecklist"),
@@ -5228,7 +5228,7 @@ class ActionManager {
         $group =  new WhereClauseGroup(array(new WhereClause("hazard_id","=",$id)));
         $rels = $dao->getAllWhere($group);
 
-        EntityManager::with_entity_maps('PrincipalInvestigatorHazardRoomRelation', array(
+        EntityManager::with_entity_maps(PrincipalInvestigatorHazardRoomRelation::class, array(
 		    EntityMap::eager("getRoom_id"),
 		    EntityMap::eager("getPrincipal_investigator_id"),
             EntityMap::lazy("getHazard")

@@ -192,7 +192,7 @@ class HazardInventoryActionManager extends ActionManager {
 			$rooms = array($this->getRoomById($roomId));
 		}
 
-		EntityManager::with_entity_maps('Room', array(
+		EntityManager::with_entity_maps(Room::class, array(
 			EntityMap::lazy("getPrincipalInvestigators"),
 			EntityMap::lazy("getHazards"),
 			EntityMap::lazy("getHazard_room_relations"),
@@ -227,7 +227,7 @@ class HazardInventoryActionManager extends ActionManager {
         $LOG->fatal($roomIds);
 		$pis = $piDao->getPisByHazardAndRoomIDs($roomIds);
 
-        EntityManager::with_entity_maps('PrincipalInvestigator', array(
+        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
 			EntityMap::lazy("getLabPersonnel"),
 			EntityMap::lazy("getRooms"),
 			EntityMap::lazy("getDepartments"),
@@ -321,7 +321,7 @@ class HazardInventoryActionManager extends ActionManager {
         $stmt->execute();
         $piHazRooms = $stmt->fetchAll(PDO::FETCH_CLASS, "PrincipalInvestigatorHazardRoomRelation");
 
-		EntityManager::with_entity_maps('PrincipalInvestigatorHazardRoomRelation', array(
+		EntityManager::with_entity_maps(PrincipalInvestigatorHazardRoomRelation::class, array(
 			EntityMap::lazy("getHazard")
 		));
 
@@ -371,7 +371,7 @@ class HazardInventoryActionManager extends ActionManager {
             $cab->setEquipmentInspections(array($cab->grabMostRecentInspection()));
 		}
 
-		EntityManager::with_entity_maps('EquipmentInspection', array(
+		EntityManager::with_entity_maps(EquipmentInspection::class, array(
 			EntityMap::eager("getRoom"),
 			EntityMap::lazy("getPrincipal_investigator"),
 			EntityMap::eager("getPrincipalInvestigators")

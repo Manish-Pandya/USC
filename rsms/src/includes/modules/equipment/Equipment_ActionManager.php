@@ -61,7 +61,7 @@ class Equipment_ActionManager extends ActionManager {
             //force reload of all inspections for relevant equipment by client
 			$is = $equipment->getEquipmentInspections();
 
-            EntityManager::with_entity_maps('EquipmentInspection', array(
+            EntityManager::with_entity_maps(EquipmentInspection::class, array(
 		        EntityMap::eager("getRoom"),
                 EntityMap::eager("getPrincipal_investigator"),
                 EntityMap::eager("getPrincipalInvestigators")
@@ -74,7 +74,7 @@ class Equipment_ActionManager extends ActionManager {
     public function getAllBioSafetyCabinets(){
     	$bioSafetyCabinetDao = $this->getDao(new BioSafetyCabinet());
         $cabs = $bioSafetyCabinetDao->getAll();
-        EntityManager::with_entity_maps('BioSafetyCabinet', array(
+        EntityManager::with_entity_maps(BioSafetyCabinet::class, array(
             EntityMap::lazy("getRoom"),
             EntityMap::lazy("getPrincipal_investigator"),
             EntityMap::lazy("getPrincipalInvestigators"),
@@ -160,12 +160,12 @@ class Equipment_ActionManager extends ActionManager {
                 $cabinet->setEquipmentInspections(null);
             }
 
-            EntityManager::with_entity_maps('BioSafetyCabinet', array(
+            EntityManager::with_entity_maps(BioSafetyCabinet::class, array(
                 EntityMap::eager("getEquipmentInspections"),
                 EntityMap::lazy("getFirstInspection")
             ));
 
-            EntityManager::with_entity_maps('EquipmentInspection', array(
+            EntityManager::with_entity_maps(EquipmentInspection::class, array(
                 EntityMap::eager("getRoom"),
                 EntityMap::lazy("getPrincipal_investigator"),
                 EntityMap::eager("getPrincipalInvestigators")
@@ -219,7 +219,7 @@ class Equipment_ActionManager extends ActionManager {
     public function getRoomsWithoutComposing(){
     	$rooms = $this->getAllRooms();
 
-    	EntityManager::with_entity_maps('Room', array(
+    	EntityManager::with_entity_maps(Room::class, array(
     	    EntityMap::lazy("getPrincipalInvestigators"),
     	    EntityMap::lazy("getHazards"),
     	    EntityMap::lazy("getHazard_room_relations"),
@@ -345,7 +345,7 @@ class Equipment_ActionManager extends ActionManager {
         /* $whereClauseGroup = new WhereClauseGroup( array( new WhereClause("is_active","=","1"), new WhereClause("key_id","IN","(SELECT principal_investigator_id FROM principal_investigator_room)") ) );
         $pis = $dao->getAllWhere($whereClauseGroup, "OR");*/
 
-        EntityManager::with_entity_maps('PrincipalInvestigator', array(
+        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
             EntityMap::lazy("getLabPersonnel"),
             EntityMap::lazy("getRooms"),
             EntityMap::eager("getDepartments"),
@@ -380,7 +380,7 @@ class Equipment_ActionManager extends ActionManager {
         $rooms = $dao->getAll();
 
         // instructin rooms to lazy-load children
-        EntityManager::with_entity_maps('Room', array(
+        EntityManager::with_entity_maps(Room::class, array(
 	        EntityMap::lazy("getPrincipalInvestigators"),
 	        EntityMap::lazy("getHazards"),
 	        EntityMap::eager("getBuilding"),

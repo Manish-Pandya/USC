@@ -204,7 +204,7 @@ class IBC_ActionManager extends ActionManager {
 		$revision->setPreliminaryReviewers(null);
         $revision->setPrimaryReviewers(null);
 
-        EntityManager::with_entity_maps('IBCProtocolRevision', array(
+        EntityManager::with_entity_maps(IBCProtocolRevision::class, array(
             EntityMap::eager("getPreliminaryReviewers"),
             EntityMap::eager("getPrimaryReviewers"),
         ));
@@ -454,7 +454,7 @@ class IBC_ActionManager extends ActionManager {
         /* $whereClauseGroup = new WhereClauseGroup( array( new WhereClause("is_active","=","1"), new WhereClause("key_id","IN","(SELECT principal_investigator_id FROM principal_investigator_room)") ) );
         $pis = $dao->getAllWhere($whereClauseGroup, "OR");*/
 
-        EntityManager::with_entity_maps('PrincipalInvestigator', array(
+        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
             EntityMap::lazy("getLabPersonnel"),
             EntityMap::lazy("getRooms"),
             EntityMap::eager("getDepartments"),

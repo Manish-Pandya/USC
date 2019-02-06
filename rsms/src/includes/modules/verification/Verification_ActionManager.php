@@ -86,7 +86,7 @@ class Verification_ActionManager extends HazardInventoryActionManager {
 
             $buildings = array();
 
-            EntityManager::with_entity_maps('Room', array(
+            EntityManager::with_entity_maps(Room::class, array(
 				EntityMap::lazy("getPrincipalInvestigators"),
 				EntityMap::lazy("getHazards"),
 				EntityMap::lazy("getHazard_room_relations"),
@@ -95,7 +95,7 @@ class Verification_ActionManager extends HazardInventoryActionManager {
 				EntityMap::lazy("getSolidsContainers")
 			));
 
-            EntityManager::with_entity_maps('Building', array(
+            EntityManager::with_entity_maps(Building::class, array(
 				EntityMap::eager("getRooms"),
 				EntityMap::lazy("getCampus"),
 				EntityMap::lazy("getCampus_id"),
@@ -122,7 +122,7 @@ class Verification_ActionManager extends HazardInventoryActionManager {
 
             $pi->setBuildings($buildings);
 
-    		EntityManager::with_entity_maps('PrincipalInvestigator', array(
+    		EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
 				EntityMap::eager("getLabPersonnel"),
 				EntityMap::eager("getUser"),
 				EntityMap::eager("getCurrentVerifications"),
