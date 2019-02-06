@@ -2199,27 +2199,25 @@ class ActionManager {
 
         // initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
         // necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
-        $roomMaps = array();
+        EntityManager::with_entity_maps(Room::class, array(
+            EntityMap::lazy("getHazards"),
+            EntityMap::lazy("getBuilding"),
+            EntityMap::eager('getBuilding_id'),
+            EntityMap::lazy("getHazard_room_relations"),
+            EntityMap::lazy("getHas_hazards"),
+            EntityMap::lazy("getSolidsContainers")
+        ));
+
         if($allLazy == NULL){
-	        $roomMaps[] = EntityMap::eager("getPrincipalInvestigators");
-	        $roomMaps[] = EntityMap::lazy("getHazards");
-	        $roomMaps[] = EntityMap::lazy("getBuilding");
-	        $roomMaps[] = EntityMap::eager('getBuilding_id');
-	        $roomMaps[] = EntityMap::lazy("getHazard_room_relations");
-	        $roomMaps[] = EntityMap::lazy("getHas_hazards");
-	        $roomMaps[] = EntityMap::lazy("getSolidsContainers");
+            EntityManager::with_entity_maps(Room::class, array(
+                EntityMap::eager("getPrincipalInvestigators")
+            ));
 
         }else{
-        	$roomMaps[] = EntityMap::lazy("getPrincipalInvestigators");
-        	$roomMaps[] = EntityMap::lazy("getHazards");
-        	$roomMaps[] = EntityMap::lazy("getBuilding");
-        	$roomMaps[] = EntityMap::eager('getBuilding_id');
-        	$roomMaps[] = EntityMap::lazy("getHazard_room_relations");
-        	$roomMaps[] = EntityMap::lazy("getHas_hazards");
-        	$roomMaps[] = EntityMap::lazy("getSolidsContainers");
+            EntityManager::with_entity_maps(Room::class, array(
+                EntityMap::lazy("getPrincipalInvestigators")
+            ));
         }
-
-        EntityManager::with_entity_maps(Room::class, $roomMaps);
 
         EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
             EntityMap::lazy("getLabPersonnel"),
