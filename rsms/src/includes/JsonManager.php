@@ -55,7 +55,7 @@ class JsonManager {
 				// target object is already present in this path
 				// Omit it
 				$jsonable = null;
-				LogUtil::getLogger(__CLASS__, __FUNCTION__)->debug("Omit circular reference");
+				LogUtil::get_logger(__CLASS__, __FUNCTION__)->debug("Omit circular reference");
 			}
 		}
 		else if( is_array($value) ){
