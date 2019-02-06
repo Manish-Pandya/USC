@@ -141,8 +141,7 @@ class Rad_ActionManager extends ActionManager {
 
             EntityManager::with_entity_maps(ParcelUseAmount::class, array(
                 EntityMap::eager("getCarboy"),
-                EntityMap::eager("getWaste_type"),
-                EntityMap::eager("getContainer_name")
+                EntityMap::eager("getWaste_type")
             ));
 
             return $parcel;
@@ -360,14 +359,7 @@ class Rad_ActionManager extends ActionManager {
             EntityMap::lazy("getVerifications"),
             EntityMap::lazy("getQuarterly_inventories"),
             EntityMap::lazy("getOpenInspections"),
-            EntityMap::lazy("getCurrentVerifications"),
-            ////
-
-            // Sub-objects...
-            // Parcel //
-            EntityMap::eager("getPurchase_order"),
-            EntityMap::eager("getIsotope")
-            ////
+            EntityMap::lazy("getCurrentVerifications")
         ));
 
         $LOG->debug("Filter PIs with no user...");
@@ -424,7 +416,6 @@ class Rad_ActionManager extends ActionManager {
             EntityMap::eager("getActiveParcels"),
             EntityMap::eager("getCarboyUseCycles"),
             EntityMap::eager("getPurchaseOrders"),
-            EntityMap::eager("getSolidsContainers"),
             EntityMap::eager("getPickups"),
             EntityMap::eager("getScintVialCollections"),
             EntityMap::eager("getCurrentScintVialCollections"),
@@ -435,7 +426,7 @@ class Rad_ActionManager extends ActionManager {
             EntityMap::eager("getWipeTests"),
 		    EntityMap::eager("getWasteBags"),
             EntityMap::eager("getCurrentWasteBag"),
-            EntityMap::eager("getGetOtherWasteTypes"),
+            EntityMap::eager("getOtherWasteTypes"),
             EntityMap::eager("getOtherWasteContainers")
         ));
 
@@ -468,8 +459,7 @@ class Rad_ActionManager extends ActionManager {
 
         EntityManager::with_entity_maps(ParcelUseAmount::class, array(
             EntityMap::eager("getCarboy"),
-            EntityMap::eager("getWaste_type"),
-            EntityMap::eager("getContainer_name")
+            EntityMap::eager("getWaste_type")
         ));
 
         EntityManager::with_entity_maps(CarboyUseCycle::class, array(
