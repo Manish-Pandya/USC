@@ -17,9 +17,9 @@ return array(
 
 	//Other loggers
 	'loggers' => array(
-		'GenericDAO:Isotope' => configLogger('INFO'),
 		'ajaxaction' => configLogger('DEBUG'),
-		'action' => configLogger('DEBUG')
+		'action' => configLogger('DEBUG'),
+		'Metrics' => configLogger('INFO', array('metricsFileAppender')),
 	),
 
 	//Appenders
@@ -34,6 +34,20 @@ return array(
 			),
 			'params' => array(
 				'file' => constant('RSMS_LOGS') . '/erasmus.log',
+				'append' => true
+			)
+		),
+
+		'metricsFileAppender' => array(
+			'class' => 'LoggerAppenderRollingFile',
+			'layout' => array(
+				'class' => 'LoggerLayoutPattern',
+				'params' => array(
+					'conversionPattern' => '%date{Y-m-d H:i:s} %message%newline'
+				)
+			),
+			'params' => array(
+				'file' => constant('RSMS_LOGS') . '/metrics.log',
 				'append' => true
 			)
 		)
