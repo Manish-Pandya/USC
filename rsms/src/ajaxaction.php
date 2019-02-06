@@ -22,20 +22,18 @@ if( isset($_SESSION['IMPERSONATOR']) ){
     $username = $_SESSION['IMPERSONATOR']['USER']->getUsername() . " (as $username)";
 }
 
-if($rlog->isInfoEnabled()){
-    $params = "";
-    foreach( $dataSource as $key=>$value){
-        if( $key == 'action' || $key == 'callback')
-            continue;
+$params = "";
+foreach( $dataSource as $key=>$value){
+    if( $key == 'action' || $key == 'callback')
+        continue;
 
-        // Implode array if necessary
-        $pval = is_array($value) ? implode(", ", $value) : $value;
+    // Implode array if necessary
+    $pval = is_array($value) ? implode(", ", $value) : $value;
 
-        $params .= "[$key : $pval] ";
-    }
-
-    $rlog->info($username . ' >>>     ' . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . " $params");
+    $params .= "[$key : $pval] ";
 }
+
+$rlog->info($username . ' >>>     ' . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . " $params");
 
 // Create Dispatcher (based on $_SESSION)
 $sessionSource = $_SESSION;
