@@ -2613,7 +2613,6 @@ class Rad_ActionManager extends ActionManager {
         $inventory->setPi_quarterly_inventories($piInventories);
 
         EntityManager::with_entity_maps(QuarterlyInventory::class, array(
-            EntityMap::eager("getQuarterly_isotope_amounts"),
             EntityMap::eager("getPi_quarterly_inventories")
         ));
 

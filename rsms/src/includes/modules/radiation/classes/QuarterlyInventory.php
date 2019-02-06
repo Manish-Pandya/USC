@@ -54,7 +54,6 @@
 
     public static function defaultEntityMaps(){
     	$entityMaps = array();
-    	$entityMaps[] = EntityMap::eager("getQuarterly_isotope_amounts");
     	$entityMaps[] = EntityMap::eager("getPi_quarterly_inventories");
 
     	return $entityMaps;
