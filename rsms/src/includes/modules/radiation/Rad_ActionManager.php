@@ -344,6 +344,7 @@ class Rad_ActionManager extends ActionManager {
             EntityMap::eager("getActiveParcels"),
             EntityMap::eager("getPurchaseOrders"),
             EntityMap::eager("getPi_authorization"),
+            EntityMap::eager("getCurrentPi_authorization"),
             EntityMap::eager("getUser"),
 
             EntityMap::lazy("getLabPersonnel"),

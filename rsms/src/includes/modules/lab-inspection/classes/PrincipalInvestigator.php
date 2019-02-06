@@ -241,6 +241,7 @@ class PrincipalInvestigator extends GenericCrud {
 		$entityMaps[] = EntityMap::lazy("getCurrentVerifications");
 		$entityMaps[] = EntityMap::lazy("getVerifications");
 		$entityMaps[] = EntityMap::lazy("getPi_authorization");
+		$entityMaps[] = EntityMap::lazy("getCurrentPi_authorization");
 		$entityMaps[] = EntityMap::lazy("getWipeTests");
 		$entityMaps[] = EntityMap::lazy("getProtocols");
 		$entityMaps[] = EntityMap::lazy("getGetOtherWasteTypes");
