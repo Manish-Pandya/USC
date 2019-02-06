@@ -2,13 +2,11 @@
 
 class Metrics {
     private static $_METRICS = array();
-    public static function start($desc){
+    public static function start(string $desc){
         $start = microtime(true);
         self::$_METRICS[$desc] = $start;
 
-        return function() use ($desc){
-            Metrics::stop($desc);
-        };
+        return $desc;
     }
 
     public static function stop($desc){

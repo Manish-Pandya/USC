@@ -29,14 +29,7 @@ class JsonManager {
 	 * @return string
 	 */
 	public static function encode($value, $entityMaps = NULL){
-		// Time how long it takes to encode this
-		$recordMetric = Metrics::start(
-			"Encode " . (is_array($value) ? get_class($value[0]) . '[]' : get_class($value))
-		);
-
 		$jsonable = JsonManager::buildJsonableValue($value, $entityMaps);
-		$recordMetric();
-
 		return json_encode($jsonable);
 	}
 

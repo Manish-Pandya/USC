@@ -47,7 +47,9 @@ header('content-type: application/javascript');
 $actionDispatcher = new ActionDispatcher($dataSource, $sessionSource);
 
 // Attempt to dispatch to the requested action
+$dispatchId = Metrics::start("Dispatch action /$actionName $params");
 $actionResult = $actionDispatcher->dispatch($actionName);
+Metrics::stop($dispatchId);
 
 //TODO: option to encode JSON or not?
 
@@ -55,7 +57,10 @@ $actionResult = $actionDispatcher->dispatch($actionName);
 $entityMappingOverrides = JsonManager::extractEntityMapOverrides($dataSource);
 
 // JSON-Encode result
+// Time how long it takes to encode this
+$jsonifyId = Metrics::start("Encode response /$actionName $params");
 $json = JsonManager::encode($actionResult->actionFunctionResult, $entityMappingOverrides);
+Metrics::stop($jsonifyId);
 
 //if the user is not logged in or does not have permissions, the client will redirect to the login page.  prepare a message
 if($actionResult->statusCode == 401){
