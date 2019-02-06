@@ -137,7 +137,6 @@ class ActionMappingFactory {
 
                 "getInspector"=>new ActionMapping("getInspector", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getAllInspectors"=>new ActionMapping("getAllInspectors", "", "", $this::$ROLE_GROUPS["EHS"]),
-                "getAllPIs"=>new ActionMapping("getAllPIs", "", ""),
 
                 // Department Hub
                 "saveDepartment"=>new ActionMapping("saveDepartment", "", "", $this::$ROLE_GROUPS["ADMIN"]),
