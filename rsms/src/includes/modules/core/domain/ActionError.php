@@ -43,10 +43,7 @@ class ActionError {
 
 	private function logStack($msg){
 		$LOG = Logger::getLogger(__CLASS__);
-		if( $LOG->isTraceEnabled()){
-			$e = new \Exception;
-			$LOG->trace("$msg:\n    " . str_replace("\n", "\n    ", $e->getTraceAsString()));
-		}
+		LogUtil::log_stack($LOG, $msg, 'trace');
 	}
 }
 
