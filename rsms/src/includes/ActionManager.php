@@ -2875,7 +2875,7 @@ class ActionManager {
                 EntityMap::lazy("getBuilding")
             ));
 
-            return $rooms;
+            return $building->getRooms();
         }
         else{
             return new ActionError("No request parameter 'id' was provided");
