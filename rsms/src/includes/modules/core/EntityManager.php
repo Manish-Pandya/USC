@@ -22,6 +22,16 @@ class RegisteredEntity {
             $LOG->trace("$this->entityClass:\n  " . implode("\n  ", $eagerAccessors) );
         }
 
+        // Validate the supplied accessor name
+        foreach($eagerAccessors as $idx => $get){
+            if( !method_exists($this->entityClass, $get) ){
+                LogUtil::log_stack($LOG, "Method '$get' Is an invalid accessor for $this->entityClass and will be ignored");
+
+                // Omit invalid accessor
+                unset($eagerAccessors[$idx]);
+            }
+        }
+
         $this->eagerAccessors = $eagerAccessors;
     }
 }
