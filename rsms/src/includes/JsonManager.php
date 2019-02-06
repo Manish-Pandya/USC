@@ -42,8 +42,21 @@ class JsonManager {
 
 		//Differentiate Objects and Arrays
 		if( is_object($value) ){
-			//Simply convert the object
-			$jsonable = JsonManager::objectToBasicArray($value, $entityMaps);
+
+			try{
+				ObjectPathMapper::push($value);
+
+				//Simply convert the object
+				$jsonable = JsonManager::objectToBasicArray($value, $entityMaps);
+
+				ObjectPathMapper::pop($value);
+			}
+			catch( CircularReferenceException $e ){
+				// target object is already present in this path
+				// Omit it
+				$jsonable = null;
+				LogUtil::getLogger(__CLASS__, __FUNCTION__)->debug("Omit circular reference");
+			}
 		}
 		else if( is_array($value) ){
 			//Convert each element of the array
@@ -315,7 +328,7 @@ class JsonManager {
 
 		if( method_exists($object, 'getEntityMaps') ){
 			$objEntityMaps = $object->getEntityMaps();
-			if( $LOG->isTraceEnabled()){
+			if( $LOG->isTraceEnabled() && isset($objEntityMaps)){
 				$LOG->trace("Loaded instance entity maps for object of type " . get_class($object) . ": " . implode(',', $objEntityMaps));
 			}
 		}
@@ -391,6 +404,73 @@ class JsonManager {
 		}
 
 		return $entityMappingOverrides;
+	}
+}
+
+class CircularReferenceException extends Exception {
+	public function __construct($msg){
+		parent::__construct($msg);
+	}
+}
+
+class ObjectPathMapper {
+	static $_PATH = array();
+	static $_LOGGER_NAME = __CLASS__ . '.serializer.path';
+	static $_LOG;
+
+	private static function getLogger(){
+		if( !isset(self::$_LOG) ){
+			self::$_LOG = Logger::getLogger(self::$_LOGGER_NAME);
+		}
+
+		return self::$_LOG;
+	}
+
+	private static function hasGuid(&$object){
+
+	}
+
+	private static function describe( &$object){
+		if( method_exists($object, '__toString') ){
+			return $object->__toString();
+		}
+		else if (is_object($object) ){
+			return get_class($object);
+		}
+		else{
+			return gettype($object);
+		}
+	}
+
+	public static function push(&$object){
+		// Describe object
+		$key = self::describe($object);
+		$uuid = spl_object_id($object);
+
+		// Check for possible circular references
+		//   * If this already exists in the stack, then it's likely that there is a circle
+		if( array_key_exists($uuid, self::$_PATH)){
+			$msg = "Circular reference detected; key '$key' exists already in path: " . self::getFullPath();
+
+			// this object is already pathed.
+			// Break the cycle
+			self::getLogger()->error($msg);
+			throw new CircularReferenceException( $msg );
+		}
+
+		// push it onto the stack
+		self::$_PATH[$uuid] = $key;
+
+		// Log the full path
+		self::getLogger()->trace( self::getFullPath() );
+	}
+
+	public static function pop(){
+		array_pop(self::$_PATH);
+	}
+
+	public static function getFullPath(){
+		return implode('/', array_values(self::$_PATH));
 	}
 }
 ?>
