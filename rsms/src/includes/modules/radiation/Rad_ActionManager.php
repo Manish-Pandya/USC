@@ -21,18 +21,19 @@ class Rad_ActionManager extends ActionManager {
 
         if( $id !== NULL ){
             $dao = $this->getDao(new Inspection());
-            $entityMaps = array();
-            $entityMaps[] = EntityMap::lazy("getInspectors");
-            $entityMaps[] = EntityMap::eager("getRooms");
-            $entityMaps[] = EntityMap::lazy("getResponses");
-            $entityMaps[] = EntityMap::lazy("getDeficiency_selections");
-            $entityMaps[] = EntityMap::eager("getPrincipalInvestigator");
-            $entityMaps[] = EntityMap::eager("getStatus");
-            $entityMaps[] = EntityMap::lazy("getChecklists");
-            $entityMaps[] = EntityMap::eager("getInspection_wipe_tests");
-
             $inspection =  $dao->getById($id);
-            $inspection->setEntityMaps($entityMaps);
+
+            EntityManager::with_entity_maps('Inspection', array(
+                EntityMap::lazy("getInspectors"),
+                EntityMap::eager("getRooms"),
+                EntityMap::lazy("getResponses"),
+                EntityMap::lazy("getDeficiency_selections"),
+                EntityMap::eager("getPrincipalInvestigator"),
+                EntityMap::eager("getStatus"),
+                EntityMap::lazy("getChecklists"),
+                EntityMap::eager("getInspection_wipe_tests")
+            ));
+
             return $inspection;
         }
         else {
@@ -48,17 +49,14 @@ class Rad_ActionManager extends ActionManager {
 
         // initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
         // necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
-        $roomMaps = array();
-	    $roomMaps[] = EntityMap::lazy("getPrincipalInvestigators");
-	    $roomMaps[] = EntityMap::lazy("getHazards");
-	    $roomMaps[] = EntityMap::lazy("getBuilding");
-	    $roomMaps[] = EntityMap::lazy("getHazard_room_relations");
-	    $roomMaps[] = EntityMap::lazy("getHas_hazards");
-	    $roomMaps[] = EntityMap::lazy("getSolidsContainers");
-
-        foreach($rooms as $room){
-            $room->setEntityMaps($roomMaps);
-        }
+        EntityManager::with_entity_maps('Room', array(
+	        EntityMap::lazy("getPrincipalInvestigators"),
+	        EntityMap::lazy("getHazards"),
+	        EntityMap::lazy("getBuilding"),
+	        EntityMap::lazy("getHazard_room_relations"),
+	        EntityMap::lazy("getHas_hazards"),
+            EntityMap::lazy("getSolidsContainers")
+        ));
 
         return $rooms;
     }
@@ -127,33 +125,25 @@ class Rad_ActionManager extends ActionManager {
             $dao = $this->getDao(new Parcel());
             $parcel = $dao->getById($id);
 
-            $entityMaps = array();
-            $entityMaps[] = EntityMap::lazy("getPrincipal_investigator");
-            $entityMaps[] = EntityMap::lazy("getPurchase_order");
-            $entityMaps[] = EntityMap::eager("getIsotope");
-            $entityMaps[] = EntityMap::eager("getParcelUses");
-            $entityMaps[] = EntityMap::eager("getRemainder");
-            $entityMaps[] = EntityMap::lazy("getWipe_test");
+            EntityManager::with_entity_maps('Parcel', array(
+                EntityMap::lazy("getPrincipal_investigator"),
+                EntityMap::lazy("getPurchase_order"),
+                EntityMap::eager("getIsotope"),
+                EntityMap::eager("getParcelUses"),
+                EntityMap::eager("getRemainder"),
+                EntityMap::lazy("getWipe_test")
+            ));
 
-            $parcel->setEntityMaps($entityMaps);
+            EntityManager::with_entity_maps('ParcelUse', array(
+                EntityMap::lazy("getParcel"),
+                EntityMap::eager("getParcelUseAmounts")
+            ));
 
-            $useMaps = array();
-            $useMaps[] = EntityMap::lazy("getParcel");
-            $useMaps[] = EntityMap::eager("getParcelUseAmounts");
-
-            $amountMaps = array();
-            $amountMaps[] = EntityMap::eager("getCarboy");
-            $amountMaps[] = EntityMap::eager("getWaste_type");
-            $amountMaps[] = EntityMap::eager("getContainer_name");
-
-            foreach($parcel->getParcelUses() as $use){
-                $use->setEntityMaps($useMaps);
-
-                foreach($use->getParcelUseAmounts() as $amount){
-                    $amount->setEntityMaps($amountMaps);
-                }
-
-            }
+            EntityManager::with_entity_maps('ParcelUseAmount', array(
+                EntityMap::eager("getCarboy"),
+                EntityMap::eager("getWaste_type"),
+                EntityMap::eager("getContainer_name")
+            ));
 
             return $parcel;
 
@@ -228,13 +218,13 @@ class Rad_ActionManager extends ActionManager {
             $dao = $this->getDao(new WasteBag());
             $bag = $dao->getById($id);
 
-            $entityMaps = array();
-            $entityMaps[] = EntityMap::lazy("getContainer");
-            $entityMaps[] = EntityMap::lazy("getPickup");
-            $entityMaps[] = EntityMap::lazy("getDrum");
-            $entityMaps[] = EntityMap::eager("getParcelUseAmounts");
+            EntityManager::with_entity_maps('WasteBag', array(
+                EntityMap::lazy("getContainer"),
+                EntityMap::lazy("getPickup"),
+                EntityMap::lazy("getDrum"),
+                EntityMap::eager("getParcelUseAmounts")
+            ));
 
-            $bag->setEntityMaps($entityMaps);
             return $bag;
         }
         else {
@@ -347,36 +337,37 @@ class Rad_ActionManager extends ActionManager {
 
         $LOG->debug('Read ' . count($pis) . ' PIs from db');
 
-        $entityMaps = array();
+        EntityManager::with_entity_maps('PrincipalInvestigator', array(
 
-        // PrincipalInvestigator //
-        $entityMaps[] = EntityMap::eager("getDepartments");
-        $entityMaps[] = EntityMap::eager("getActiveParcels");
-        $entityMaps[] = EntityMap::eager("getPurchaseOrders");
-        $entityMaps[] = EntityMap::eager("getPi_authorization");
-        $entityMaps[] = EntityMap::eager("getUser");
+            // PrincipalInvestigator //
+            EntityMap::eager("getDepartments"),
+            EntityMap::eager("getActiveParcels"),
+            EntityMap::eager("getPurchaseOrders"),
+            EntityMap::eager("getPi_authorization"),
+            EntityMap::eager("getUser"),
 
-        $entityMaps[] = EntityMap::lazy("getLabPersonnel");
-        $entityMaps[] = EntityMap::lazy("getRooms");
-        $entityMaps[] = EntityMap::lazy("getInspections");
-        $entityMaps[] = EntityMap::lazy("getPrincipal_investigator_room_relations");
-        $entityMaps[] = EntityMap::lazy("getCarboyUseCycles");
-        $entityMaps[] = EntityMap::lazy("getSolidsContainers");
-        $entityMaps[] = EntityMap::lazy("getPickups");
-        $entityMaps[] = EntityMap::lazy("getScintVialCollections");
-        $entityMaps[] = EntityMap::lazy("getCurrentScintVialCollections");
-        $entityMaps[] = EntityMap::lazy("getInspection_notes");
-        $entityMaps[] = EntityMap::lazy("getVerifications");
-        $entityMaps[] = EntityMap::lazy("getQuarterly_inventories");
-        $entityMaps[] = EntityMap::lazy("getOpenInspections");
-        $entityMaps[] = EntityMap::lazy("getCurrentVerifications");
-        ////
+            EntityMap::lazy("getLabPersonnel"),
+            EntityMap::lazy("getRooms"),
+            EntityMap::lazy("getInspections"),
+            EntityMap::lazy("getPrincipal_investigator_room_relations"),
+            EntityMap::lazy("getCarboyUseCycles"),
+            EntityMap::lazy("getSolidsContainers"),
+            EntityMap::lazy("getPickups"),
+            EntityMap::lazy("getScintVialCollections"),
+            EntityMap::lazy("getCurrentScintVialCollections"),
+            EntityMap::lazy("getInspection_notes"),
+            EntityMap::lazy("getVerifications"),
+            EntityMap::lazy("getQuarterly_inventories"),
+            EntityMap::lazy("getOpenInspections"),
+            EntityMap::lazy("getCurrentVerifications"),
+            ////
 
-        // Sub-objects...
-        // Parcel //
-        $entityMaps[] = EntityMap::eager("getPurchase_order");
-        $entityMaps[] = EntityMap::eager("getIsotope");
-        ////
+            // Sub-objects...
+            // Parcel //
+            EntityMap::eager("getPurchase_order"),
+            EntityMap::eager("getIsotope")
+            ////
+        ));
 
         $LOG->debug("Filter PIs with no user...");
         foreach($pis as $key => $pi){
@@ -386,9 +377,6 @@ class Rad_ActionManager extends ActionManager {
                 unset($pis[$key]);
                 continue;
             }
-
-            // Set entitymaps for future RAD operations
-            $pi->setEntityMaps($entityMaps);
         }
 
         $LOG->debug("Returning " . count($pis) . " PIs");
@@ -399,16 +387,17 @@ class Rad_ActionManager extends ActionManager {
     public function getAllRadUsers(){
         $dao = $this->getDao(new User());
         $users = $dao->getAll();
-        $entityMaps = array();
 
-        $entityMaps[] = EntityMap::lazy("getPrincipalInvestigator");
-        $entityMaps[] = EntityMap::lazy("getInspector");
-        $entityMaps[] = EntityMap::lazy("getSupervisor");
-        $entityMaps[] = EntityMap::lazy("getRoles");
-        $entityMaps[] = EntityMap::lazy("getPrimary_department");
+        EntityManager::with_entity_maps('User', array(
+            EntityMap::lazy("getPrincipalInvestigator"),
+            EntityMap::lazy("getInspector"),
+            EntityMap::lazy("getSupervisor"),
+            EntityMap::lazy("getRoles"),
+            EntityMap::lazy("getPrimary_department")
+        ));
 
+        // Filter users without a last name...
         foreach($users as $key => $user){
-            $user->setEntityMaps($entityMaps);
             if($user->getLast_name() == null)unset($users[$key]);
         }
 
@@ -423,105 +412,84 @@ class Rad_ActionManager extends ActionManager {
 
         $dao = $this->getDao(new PrincipalInvestigator());
         $pi = $dao->getById($id);
-        $entityMaps = array();
-        $entityMaps[] = EntityMap::eager("getLabPersonnel");
-        if($rooms == null){
-            $entityMaps[] = EntityMap::lazy("getRooms");
-        }else{
-            $entityMaps[] = EntityMap::eager("getRooms");
+
+        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
+            EntityMap::lazy("getRooms"),
+            EntityMap::eager("getLabPersonnel"),
+            EntityMap::eager("getDepartments"),
+            EntityMap::eager("getUser"),
+            EntityMap::lazy("getInspections"),
+            EntityMap::eager("getPi_authorization"),
+            EntityMap::eager("getActiveParcels"),
+            EntityMap::eager("getCarboyUseCycles"),
+            EntityMap::eager("getPurchaseOrders"),
+            EntityMap::eager("getSolidsContainers"),
+            EntityMap::eager("getPickups"),
+            EntityMap::eager("getScintVialCollections"),
+            EntityMap::eager("getCurrentScintVialCollections"),
+            EntityMap::lazy("getOpenInspections"),
+            EntityMap::eager("getQuarterly_inventories"),
+            EntityMap::lazy("getCurrentVerifications"),
+            EntityMap::lazy("getVerifications"),
+            EntityMap::eager("getWipeTests"),
+		    EntityMap::eager("getWasteBags"),
+            EntityMap::eager("getCurrentWasteBag"),
+            EntityMap::eager("getGetOtherWasteTypes"),
+            EntityMap::eager("getOtherWasteContainers")
+        ));
+
+        if($rooms != null){
+            // Override to load getRooms if specified
+            EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
+                EntityMap::eager("getRooms")
+            ));
         }
 
-        $entityMaps[] = EntityMap::eager("getLabPersonnel");
-        $entityMaps[] = EntityMap::eager("getDepartments");
-        $entityMaps[] = EntityMap::eager("getUser");
-        $entityMaps[] = EntityMap::lazy("getInspections");
-        $entityMaps[] = EntityMap::eager("getPi_authorization");
-        $entityMaps[] = EntityMap::eager("getActiveParcels");
-        $entityMaps[] = EntityMap::eager("getCarboyUseCycles");
-        $entityMaps[] = EntityMap::eager("getPurchaseOrders");
-        $entityMaps[] = EntityMap::eager("getSolidsContainers");
-        $entityMaps[] = EntityMap::eager("getPickups");
-        $entityMaps[] = EntityMap::eager("getScintVialCollections");
-        $entityMaps[] = EntityMap::eager("getCurrentScintVialCollections");
-        $entityMaps[] = EntityMap::lazy("getOpenInspections");
-        $entityMaps[] = EntityMap::eager("getQuarterly_inventories");
-        $entityMaps[] = EntityMap::lazy("getCurrentVerifications");
-        $entityMaps[] = EntityMap::lazy("getVerifications");
-        $entityMaps[] = EntityMap::eager("getWipeTests");
-		$entityMaps[] = EntityMap::eager("getWasteBags");
-        $entityMaps[] = EntityMap::eager("getCurrentWasteBag");
-        $entityMaps[] = EntityMap::eager("getGetOtherWasteTypes");
-        $entityMaps[] = EntityMap::eager("getOtherWasteContainers");
+        EntityManager::with_entity_maps(PIAuthorization::class, array(
+            EntityMap::eager("getRooms"),
+            EntityMap::eager("getAuthorizations"),
+            EntityMap::lazy("getDepartments")
+        ));
 
-        $authMaps = array();
-        $authMaps[] = EntityMap::eager("getRooms");
-        $authMaps[] = EntityMap::eager("getAuthorizations");
-        $authMaps[] = EntityMap::lazy("getDepartments");
+        EntityManager::with_entity_maps(Parcel::class, array(
+            EntityMap::lazy("getPrincipal_investigator"),
+		    EntityMap::lazy("getPurchase_order"),
+		    EntityMap::lazy("getIsotope"),
+		    EntityMap::eager("getParcelUses"),
+		    EntityMap::eager("getRemainder"),
+            EntityMap::eager("getWipe_test")
+        ));
 
-        $parcelMaps = array();
-        $parcelMaps[] = EntityMap::lazy("getPrincipal_investigator");
-		$parcelMaps[] = EntityMap::lazy("getPurchase_order");
-		$parcelMaps[] = EntityMap::lazy("getIsotope");
-		$parcelMaps[] = EntityMap::eager("getParcelUses");
-		$parcelMaps[] = EntityMap::eager("getRemainder");
-		$parcelMaps[] = EntityMap::eager("getWipe_test");
+        EntityManager::with_entity_maps(ParcelUse::class, array(
+            EntityMap::lazy("getParcel"),
+            EntityMap::eager("getParcelUseAmounts")
+        ));
 
-        $useMaps = array();
-        $useMaps[] = EntityMap::lazy("getParcel");
-		$useMaps[] = EntityMap::eager("getParcelUseAmounts");
+        EntityManager::with_entity_maps(ParcelUseAmount::class, array(
+            EntityMap::eager("getCarboy"),
+            EntityMap::eager("getWaste_type"),
+            EntityMap::eager("getContainer_name")
+        ));
 
-        $amountMaps = array();
-    	$amountMaps[] = EntityMap::eager("getCarboy");
-    	$amountMaps[] = EntityMap::eager("getWaste_type");
-    	$amountMaps[] = EntityMap::eager("getContainer_name");
+        EntityManager::with_entity_maps(CarboyUseCycle::class, array(
+		    EntityMap::eager("getCarboy"),
+		    EntityMap::lazy("getPrincipal_investigator"),
+		    EntityMap::lazy("getParcelUseAmounts"),
+		    EntityMap::eager("getContents"),
+		    EntityMap::lazy("getCarboy_reading_amounts"),
+		    EntityMap::lazy("getRoom"),
+		    EntityMap::lazy("getPickup"),
+            EntityMap::lazy("getPour_allowed_date")
+        ));
 
-        $cycleMaps = array();
-		$cycleMaps[] = EntityMap::eager("getCarboy");
-		$cycleMaps[] = EntityMap::lazy("getPrincipal_investigator");
-		$cycleMaps[] = EntityMap::lazy("getParcelUseAmounts");
-		$cycleMaps[] = EntityMap::eager("getContents");
-		$cycleMaps[] = EntityMap::lazy("getCarboy_reading_amounts");
-		$cycleMaps[] = EntityMap::lazy("getRoom");
-		$cycleMaps[] = EntityMap::lazy("getPickup");
-		$cycleMaps[] = EntityMap::lazy("getPour_allowed_date");
+        EntityManager::with_entity_maps(WasteBag::class, array(
+            EntityMap::lazy("getContainer"),
+            EntityMap::lazy("getPickup"),
+            EntityMap::lazy("getDrum"),
+            EntityMap::eager("getParcelUseAmounts")
+        ));
 
-        if($pi->getPi_authorization() != NULL){
-        	$piAuths = $pi->getPi_authorization();
-            foreach($piAuths as $piAuth){
-                $piAuth->setEntityMaps($authMaps);
-            }
-        }
-
-        foreach($pi->getActiveParcels() as $parcel){
-            $parcel->setEntityMaps($parcelMaps);
-            foreach($parcel->getParcelUses() as $use){
-                $use->setEntityMaps($useMaps);
-                foreach($use->getParcelUseAmounts() as $amount){
-                    $amount->setEntityMaps($amountMaps);
-                }
-            }
-        }
-
-        foreach($pi->getCarboyUseCycles() as $cycle){
-            $cycle->setEntityMaps($cycleMaps);
-        }
-
-        if($pi->getCurrentWasteBag() != null){
-            $bagMaps = array();
-            $bagMaps[] = EntityMap::lazy("getContainer");
-            $bagMaps[] = EntityMap::lazy("getPickup");
-            $bagMaps[] = EntityMap::lazy("getDrum");
-            $bagMaps[] = EntityMap::eager("getParcelUseAmounts");
-            $bag = $pi->getCurrentWasteBag();
-            $bag->setEntityMaps($bagMaps);
-        }
-
-
-
-        $pi->setEntityMaps($entityMaps);
-        $LOG = Logger::getLogger(__CLASS__);
         return $pi;
-
     }
 
     public function getAllSVCollections(){
@@ -726,12 +694,6 @@ class Rad_ActionManager extends ActionManager {
         $LOG->info("Get all pickups" . ($piId ? " for PI $piId" : ''));
 
         $dao = $this->getDao(new Pickup());
-        $entityMaps = array();
-        $entityMaps[] = EntityMap::eager("getCarboy_use_cycles");
-        $entityMaps[] = EntityMap::eager("getWaste_bags");
-        $entityMaps[] = EntityMap::eager("getScint_vial_collections");
-        $entityMaps[] = EntityMap::lazy("getPrincipal_investigator");
-        $entityMaps[] = EntityMap::eager("getPiName");
 
         if( $piId ){
             // Get all, limited by PI
@@ -746,9 +708,13 @@ class Rad_ActionManager extends ActionManager {
             $pickups = $dao->getAll();
         }
 
-        foreach($pickups as $pickup){
-            $pickup->setEntityMaps($entityMaps);
-        }
+        EntityManager::with_entity_maps(Pickup::class, array(
+            EntityMap::eager("getCarboy_use_cycles"),
+            EntityMap::eager("getWaste_bags"),
+            EntityMap::eager("getScint_vial_collections"),
+            EntityMap::lazy("getPrincipal_investigator"),
+            EntityMap::eager("getPiName")
+        ));
 
         return $pickups;
     }
@@ -978,8 +944,9 @@ class Rad_ActionManager extends ActionManager {
             $this->checkCycleCarboy($carboy->getKey_id());
 
             // Override entitymaps to eagerly load use-cycle(s)
-            $entityMaps = array(new EntityMap(EntityMap::$TYPE_EAGER, "getCarboy_use_cycles"));
-            $carboy->setEntityMaps($entityMaps);
+            EntityManager::with_entity_maps(Carboy::class, array(
+                EntityMap::eager("getCarboy_use_cycles")
+            ));
 
             return $carboy;
         }
@@ -1009,16 +976,16 @@ class Rad_ActionManager extends ActionManager {
             $this->checkCycleCarboy($cycle->getCarboy_id());
             $cycle->setCarboy(null);
 
-            $entityMaps = array();
-            $entityMaps[] = EntityMap::lazy("getCarboy");
-            $entityMaps[] = EntityMap::lazy("getPrincipal_investigator");
-            $entityMaps[] = EntityMap::lazy("getParcelUseAmounts");
-            $entityMaps[] = EntityMap::eager("getContents");
-            $entityMaps[] = EntityMap::eager("getCarboy_reading_amounts");
-            $entityMaps[] = EntityMap::lazy("getRoom");
-            $entityMaps[] = EntityMap::lazy("getPickup");
-            $entityMaps[] = EntityMap::eager("getPour_allowed_date");
-            $cycle->setEntityMaps($entityMaps);
+            EntityManager::with_entity_maps(CarboyUseCycle::class, array(
+                EntityMap::lazy("getCarboy"),
+                EntityMap::lazy("getPrincipal_investigator"),
+                EntityMap::lazy("getParcelUseAmounts"),
+                EntityMap::eager("getContents"),
+                EntityMap::eager("getCarboy_reading_amounts"),
+                EntityMap::lazy("getRoom"),
+                EntityMap::lazy("getPickup"),
+                EntityMap::eager("getPour_allowed_date")
+            ));
 
             $LOG->debug("SAVE COMPLETE");
             return $cycle;
@@ -1247,14 +1214,15 @@ class Rad_ActionManager extends ActionManager {
         else {
             $dao = $this->getDao(new Parcel());
             $decodedObject = $dao->save($decodedObject);
-            $entityMaps = array();
-            $entityMaps[] = EntityMap::lazy("getPrincipal_investigator");
-            $entityMaps[] = EntityMap::lazy("getPurchase_order");
-            $entityMaps[] = EntityMap::lazy("getIsotope");
-            $entityMaps[] = EntityMap::lazy("getParcelUses");
-            $entityMaps[] = EntityMap::eager("getRemainder");
-            $entityMaps[] = EntityMap::eager("getWipe_test");
-            $decodedObject->setEntityMaps($entityMaps);
+            EntityManager::with_entity_maps(Parcel::class, array(
+                EntityMap::lazy("getPrincipal_investigator"),
+                EntityMap::lazy("getPurchase_order"),
+                EntityMap::lazy("getIsotope"),
+                EntityMap::lazy("getParcelUses"),
+                EntityMap::eager("getRemainder"),
+                EntityMap::eager("getWipe_test")
+            ));
+
             return $decodedObject;
         }
     }
@@ -1297,14 +1265,15 @@ class Rad_ActionManager extends ActionManager {
                 }
             }
 
-            $entityMaps = array();
-            $entityMaps[] = EntityMap::lazy("getPrincipal_investigator");
-            $entityMaps[] = EntityMap::lazy("getPurchase_order");
-            $entityMaps[] = EntityMap::lazy("getIsotope");
-            $entityMaps[] = EntityMap::lazy("getParcelUses");
-            $entityMaps[] = EntityMap::eager("getRemainder");
-            $entityMaps[] = EntityMap::eager("getWipe_test");
-            $decodedObject->setEntityMaps($entityMaps);
+            EntityManager::with_entity_maps(Parcel::class, array(
+                EntityMap::lazy("getPrincipal_investigator"),
+                EntityMap::lazy("getPurchase_order"),
+                EntityMap::lazy("getIsotope"),
+                EntityMap::lazy("getParcelUses"),
+                EntityMap::eager("getRemainder"),
+                EntityMap::eager("getWipe_test")
+            ));
+
             return $decodedObject;
         }
     }
@@ -1489,27 +1458,13 @@ class Rad_ActionManager extends ActionManager {
 
                         if(!empty($amount['Waste_bag_id'])){
                             $newAmount->setWaste_bag_id($amount['Waste_bag_id']);
-                            $entityMaps = array();
-                            $entityMaps[] = EntityMap::lazy("getWaste_type");
-                            $entityMaps[] = EntityMap::lazy("getContainer_name");
-                            $newAmount->setEntityMaps($entityMaps);
                         }
                         if(!empty($amount['Carboy_id'])){
                             $newAmount->setCarboy_id($amount['Carboy_id']);
-                            $entityMaps = array();
-                            $entityMaps[] = EntityMap::eager("getCarboy");
-                            $entityMaps[] = EntityMap::lazy("getWaste_type");
-                            $entityMaps[] = EntityMap::lazy("getContainer_name");
-                            $newAmount->setEntityMaps($entityMaps);
                         }
                         if(!empty($amount['Other_waste_container_id'])){
                             $newAmount->setOther_waste_container_id($amount['Other_waste_container_id']);
                             $newAmount->setOther_waste_type_id($amount['Other_waste_type_id']);
-                            $entityMaps = array();
-                            $entityMaps[] = EntityMap::eager("getWasteTypeName");
-                            $entityMaps[] = EntityMap::lazy("getWaste_type");
-                            $entityMaps[] = EntityMap::lazy("getContainer_name");
-                            $newAmount->setEntityMaps($entityMaps);
                         }
 
                         if(!empty($amount['Comments'])) {
@@ -1564,15 +1519,19 @@ class Rad_ActionManager extends ActionManager {
                 }
             }
 
-            $entityMaps = array();
-		    $entityMaps[] = EntityMap::eager("getParcel");
-		    $entityMaps[] = EntityMap::eager("getParcelUseAmounts");
-            $entityMaps[] = EntityMap::eager("getParcelAmountOnHand");
-            $entityMaps[] = EntityMap::eager("getParcelRemainder");
-            $entityMaps[] = EntityMap::eager("getDestinationParcel");
+            EntityManager::with_entity_maps(ParcelUseAmount::class, array(
+                EntityMap::eager("getCarboy"),
+                EntityMap::lazy("getWaste_type"),
+            ));
 
+            EntityManager::with_entity_maps(ParcelUse::class, array(
+		        EntityMap::eager("getParcel"),
+		        EntityMap::eager("getParcelUseAmounts"),
+                EntityMap::eager("getParcelAmountOnHand"),
+                EntityMap::eager("getParcelRemainder"),
+                EntityMap::eager("getDestinationParcel")
+            ));
 
-            $use->setEntityMaps($entityMaps);
             return $use;
         }
     }
@@ -1667,14 +1626,6 @@ class Rad_ActionManager extends ActionManager {
         // Handle partial Pickups - ensure no new pickup is required
         $this->handlePickup($pickup->getPrincipal_investigator_id());
 
-        // Override pickup entitymaps to eagerly retrieve containers
-        $pickup->setEntityMaps( array(
-            new EntityMap(EntityMap::$TYPE_EAGER, "getCarboy_use_cycles"),
-            new EntityMap(EntityMap::$TYPE_EAGER, "getWaste_bags"),
-            new EntityMap(EntityMap::$TYPE_EAGER, "getScint_vial_collections"),
-            new EntityMap(EntityMap::$TYPE_EAGER, "getPrincipalInvestigator"),
-        ));
-
         DBConnection::get()->commit();
         $LOG->debug("...Committed transaction");
 
@@ -1684,6 +1635,14 @@ class Rad_ActionManager extends ActionManager {
         if($LOG->isTraceEnabled()){
             $LOG->trace($savedDto);
         }
+
+        // Override pickup entitymaps to eagerly retrieve containers
+        EntityManager::with_entity_maps(Pickup::class, array(
+            EntityMap::eager("getCarboy_use_cycles"),
+            EntityMap::eager("getWaste_bags"),
+            EntityMap::eager("getScint_vial_collections"),
+            EntityMap::eager("getPrincipalInvestigator")
+        ));
 
         return $savedDto;
     }
@@ -2223,10 +2182,6 @@ class Rad_ActionManager extends ActionManager {
                 $wipeTestDao = $this->getDao ( $test );
                 $savedTest = $wipeTestDao->save($test);
 
-                $wipeMaps = array();
-                $wipeMaps[] = EntityMap::lazy("getDrum");
-                $wipeMaps[] = EntityMap::eager("getDrum_wipes");
-
                 foreach ( $wipes as $key=>$wipe ) {
                     $wipe = JsonManager::assembleObjectFromDecodedArray ( $wipe );
                     // there will be a collection of at least 3 DrumWipes. User intends only to save those with Curie_level provided
@@ -2234,15 +2189,20 @@ class Rad_ActionManager extends ActionManager {
                         $dao = $this->getDao ( new DrumWipe () );
                         $wipe->setDrum_wipe_test_id($savedTest->getKey_id());
                         $wipes[$key] = $dao->save ( $wipe );
-                        $wipes[$key]->setEntityMaps($wipeMaps);
                     }
                 }
             }
 
-            $entityMaps = array();
-            $entityMaps[] = EntityMap::lazy("getDrum");
-            $entityMaps[] = EntityMap::eager("getWipe_test");
-            $decodedObject->setEntityMaps($entityMaps);
+            EntityManager::with_entity_maps(DrumWipeTest::class, array(
+                EntityMap::lazy("getDrum"),
+                EntityMap::eager("getDrum_wipes")
+            ));
+
+            EntityManager::with_entity_maps(Drum::class, array(
+                EntityMap::lazy("getDrum"),
+                EntityMap::eager("getWipe_test")
+            ));
+
             return $decodedObject;
         }
     }
@@ -2262,16 +2222,18 @@ class Rad_ActionManager extends ActionManager {
             $decodedObject = $dao->save($decodedObject);
             $LOG->fatal($decodedObject);
             $cycle = $decodedObject->getCarboy_use_cycle();
-            $entityMaps = array();
-            $entityMaps[] = EntityMap::lazy("getCarboy");
-            $entityMaps[] = EntityMap::lazy("getPrincipal_investigator");
-            $entityMaps[] = EntityMap::lazy("getParcelUseAmounts");
-            $entityMaps[] = EntityMap::eager("getContents");
-            $entityMaps[] = EntityMap::eager("getCarboy_reading_amounts");
-            $entityMaps[] = EntityMap::lazy("getRoom");
-            $entityMaps[] = EntityMap::lazy("getPickup");
-            $entityMaps[] = EntityMap::eager("getPour_allowed_date");
-            $cycle->setEntityMaps($entityMaps);
+
+            EntityManager::with_entity_maps(CarboyReadingAmount::class, array(
+                EntityMap::lazy("getCarboy"),
+                EntityMap::lazy("getPrincipal_investigator"),
+                EntityMap::lazy("getParcelUseAmounts"),
+                EntityMap::eager("getContents"),
+                EntityMap::eager("getCarboy_reading_amounts"),
+                EntityMap::lazy("getRoom"),
+                EntityMap::lazy("getPickup"),
+                EntityMap::eager("getPour_allowed_date")
+            ));
+
             return $cycle;
         }
     }
@@ -2658,10 +2620,11 @@ class Rad_ActionManager extends ActionManager {
         $LOG->debug("Added " . count($piInventories) . " of " . count($pis) . " PI inventories");
 
         $inventory->setPi_quarterly_inventories($piInventories);
-        $entityMaps = array();
-    	$entityMaps[] = EntityMap::eager("getQuarterly_isotope_amounts");
-    	$entityMaps[] = EntityMap::eager("getPi_quarterly_inventories");
-        $inventory->setEntityMaps($entityMaps);
+
+        EntityManager::with_entity_maps(QuarterlyInventory::class, array(
+            EntityMap::eager("getQuarterly_isotope_amounts"),
+            EntityMap::eager("getPi_quarterly_inventories")
+        ));
 
         if( $LOG->isTraceEnabled()) {
             $LOG->trace($inventory);
@@ -2890,7 +2853,11 @@ class Rad_ActionManager extends ActionManager {
         $LOG->debug("PI $piId most recent inventory (of $qisize): $mostRecentIntentory");
 
         $pi_inventory = $this->getPiInventory($piId,$mostRecentIntentory->getQuarterly_inventory_id());
-        $this->eagerLoadInventoryAuthorization($pi_inventory);
+
+        EntityManager::with_entity_maps(PIQuarterlyInventory::class, array(
+            EntityMap::eager("getAuthorization")
+        ));
+
         return $pi_inventory;
     }
 
@@ -2919,13 +2886,11 @@ class Rad_ActionManager extends ActionManager {
         $whereClauseGroup = new WhereClauseGroup($clauses);
         $inventories=  $inventoriesDao->getAllWhere($whereClauseGroup);
 
-        $entityMaps = array();
-        $entityMaps[] = EntityMap::lazy("getQuarterly_isotope_amounts");
-        $entityMaps[] = EntityMap::eager("getQuarterly_inventory");
+        EntityManager::with_entity_maps(PIQuarterlyInventory::class, array(
+            EntityMap::lazy("getQuarterly_isotope_amounts"),
+            EntityMap::eager("getQuarterly_inventory")
+        ));
 
-        foreach($inventories as $inventory){
-            $inventory->setEntityMaps($entityMaps);
-        }
         $invcount = count($inventories);
         $LOG->debug("Inventories for PI #$piId: $invcount");
         return $inventories;
@@ -2938,8 +2903,9 @@ class Rad_ActionManager extends ActionManager {
         $inventoriesDao = $this->getDao(new PIQuarterlyInventory());
         $inv = $inventoriesDao->getById($piId);
 
-        // force the Authorizations to load...
-        $this->eagerLoadInventoryAuthorization($inv);
+        EntityManager::with_entity_maps(PIQuarterlyInventory::class, array(
+            EntityMap::eager("getAuthorization")
+        ));
 
         return $inv;
     }
@@ -3125,14 +3091,6 @@ class Rad_ActionManager extends ActionManager {
      *                            Utility Functions                              *
      *         Not exposed to frontend, just helpful for internal use.           *
     \*****************************************************************************/
-
-    function eagerLoadInventoryAuthorization($inventory){
-        foreach($inventory->getQuarterly_isotope_amounts() as $amt){
-            $entityMaps = array();
-            $entityMaps[] = EntityMap::eager("getAuthorization");
-            $amt->setEntityMaps($entityMaps);
-        }
-    }
 
     /**
      * Converts array of ParcelUseAmounts into associative array of [Type] => [Amount].
@@ -3345,13 +3303,14 @@ class Rad_ActionManager extends ActionManager {
             $LOG->fatal($amt);
             $amount = $amt;
         }
-        $entityMaps = array();
-		$entityMaps[] = EntityMap::eager("getParcel_use_amounts");
-		$entityMaps[] = EntityMap::lazy("getPickup");
-		$entityMaps[] = EntityMap::lazy("getDrum");
-		$entityMaps[] = EntityMap::eager("getContents");
 
-		$savedWaste->setEntityMaps($entityMaps);
+        EntityManager::with_entity_maps(MiscellaneousWaste::class, array(
+		    EntityMap::eager("getParcel_use_amounts"),
+		    EntityMap::lazy("getPickup"),
+		    EntityMap::lazy("getDrum"),
+            EntityMap::eager("getContents")
+        ));
+
         return $savedWaste;
     }
 
@@ -3371,15 +3330,10 @@ class Rad_ActionManager extends ActionManager {
             //$currentBag = new WasteBag();
             $piId = $bag->getPrincipal_investigator_id();
             $pi = $this->getPIById($piId);
-            $entityMaps = array();
-            $entityMaps[] = EntityMap::lazy("getContainer");
-            $entityMaps[] = EntityMap::lazy("getPickup");
-            $entityMaps[] = EntityMap::lazy("getDrum");
-            $entityMaps[] = EntityMap::eager("getParcelUseAmounts");
+
             if($pi->getCurrentWasteBag() != null){
                 $decodedObject->setWaste_bag_id($pi->getCurrentWasteBag()->getKey_id());
                 $bag = $pi->getCurrentWasteBag();
-                $bag->setEntityMaps($entityMaps);
                 array_push($pickupAndBag, $bag);
             }
             //pi doesn't have a wastebag not already selected for pickup, so make one
@@ -3387,13 +3341,19 @@ class Rad_ActionManager extends ActionManager {
                 $newBag = new WasteBag();
                 $newBag->setPrincipal_investigator_id($piId);
                 $newBag = $this->saveWasteBag($newBag);
-                $newBag->setEntityMaps($entityMaps);
 
                 $decodedObject->setWaste_bag_id($newBag->getKey_id());
                 array_push($pickupAndBag, $newBag);
             }
             $amountDao = new GenericDAO($decodedObject);
             $decodedObject = $amountDao->save();
+
+            EntityManager::with_entity_maps(WasteBag::class, array(
+                EntityMap::lazy("getContainer"),
+                EntityMap::lazy("getPickup"),
+                EntityMap::lazy("getDrum"),
+                EntityMap::eager("getParcelUseAmounts")
+            ));
 
             return $pickupAndBag;
         }
