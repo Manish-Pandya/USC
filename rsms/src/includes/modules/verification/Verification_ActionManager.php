@@ -86,19 +86,21 @@ class Verification_ActionManager extends HazardInventoryActionManager {
 
             $buildings = array();
 
-            $roomMaps = array();
-            $roomMaps[] = EntityMap::lazy("getPrincipalInvestigators");
-            $roomMaps[] = EntityMap::lazy("getHazards");
-            $roomMaps[] = EntityMap::lazy("getHazard_room_relations");
-            $roomMaps[] = EntityMap::lazy("getHas_hazards");
-            $roomMaps[] = EntityMap::lazy("getBuilding");
-            $roomMaps[] = EntityMap::lazy("getSolidsContainers");
+            EntityManager::with_entity_maps('Room', array(
+				EntityMap::lazy("getPrincipalInvestigators"),
+				EntityMap::lazy("getHazards"),
+				EntityMap::lazy("getHazard_room_relations"),
+				EntityMap::lazy("getHas_hazards"),
+				EntityMap::lazy("getBuilding"),
+				EntityMap::lazy("getSolidsContainers")
+			));
 
-            $buildingMaps = array();
-            $buildingMaps[] = EntityMap::eager("getRooms");
-            $buildingMaps[] = EntityMap::lazy("getCampus");
-            $buildingMaps[] = EntityMap::lazy("getCampus_id");
-            $buildingMaps[] = EntityMap::lazy("getPhysical_address");
+            EntityManager::with_entity_maps('Building', array(
+				EntityMap::eager("getRooms"),
+				EntityMap::lazy("getCampus"),
+				EntityMap::lazy("getCampus_id"),
+				EntityMap::lazy("getPhysical_address")
+			));
 
             $rooms = $pi->getRooms();
             foreach($rooms as $room){
@@ -111,40 +113,37 @@ class Verification_ActionManager extends HazardInventoryActionManager {
                 $rooms = array();
                 foreach($pi->getRooms() as $room){
                     if($room->getBuilding_id() == $building->getKey_id()){
-                        $room->setEntityMaps($roomMaps);
                         $rooms[] = $room;
                     }
                 }
 
-                $building->setEntityMaps($buildingMaps);
                 $building->setRooms($rooms);
             }
 
             $pi->setBuildings($buildings);
 
-    		$entityMaps = array();
-    		$entityMaps[] = EntityMap::eager("getLabPersonnel");
-    		$entityMaps[] = EntityMap::eager("getUser");
-    		$entityMaps[] = EntityMap::eager("getCurrentVerifications");
-    		$entityMaps[] = EntityMap::eager("getBuildings");
+    		EntityManager::with_entity_maps('PrincipalInvestigator', array(
+				EntityMap::eager("getLabPersonnel"),
+				EntityMap::eager("getUser"),
+				EntityMap::eager("getCurrentVerifications"),
+				EntityMap::eager("getBuildings"),
 
-    		$entityMaps[] = EntityMap::lazy("getDepartments");
-    		$entityMaps[] = EntityMap::lazy("getInspections");
-    		$entityMaps[] = EntityMap::lazy("getPi_authorization");
-    		$entityMaps[] = EntityMap::lazy("getActiveParcels");
-    		$entityMaps[] = EntityMap::lazy("getCarboyUseCycles");
-    		$entityMaps[] = EntityMap::lazy("getPurchaseOrders");
-    		$entityMaps[] = EntityMap::lazy("getSolidsContainers");
-    		$entityMaps[] = EntityMap::lazy("getPickups");
-    		$entityMaps[] = EntityMap::lazy("getScintVialCollections");
-    		$entityMaps[] = EntityMap::lazy("getCurrentScintVialCollections");
-    		$entityMaps[] = EntityMap::lazy("getOpenInspections");
-    		$entityMaps[] = EntityMap::lazy("getQuarterly_inventories");
-    		$entityMaps[] = EntityMap::lazy("getVerifications");
-    		$entityMaps[] = EntityMap::lazy("getRooms");
+				EntityMap::lazy("getDepartments"),
+				EntityMap::lazy("getInspections"),
+				EntityMap::lazy("getPi_authorization"),
+				EntityMap::lazy("getActiveParcels"),
+				EntityMap::lazy("getCarboyUseCycles"),
+				EntityMap::lazy("getPurchaseOrders"),
+				EntityMap::lazy("getSolidsContainers"),
+				EntityMap::lazy("getPickups"),
+				EntityMap::lazy("getScintVialCollections"),
+				EntityMap::lazy("getCurrentScintVialCollections"),
+				EntityMap::lazy("getOpenInspections"),
+				EntityMap::lazy("getQuarterly_inventories"),
+				EntityMap::lazy("getVerifications"),
+				EntityMap::lazy("getRooms")
+			));
 
-
-    		$pi->setEntityMaps($entityMaps);
     		return $pi;
     	}
     	else{
