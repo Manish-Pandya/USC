@@ -22,7 +22,17 @@ class FormattedMessage {
     public function getCc(){ return $this->cc; }
 
     public function __toString(){
-        return "FormattedMessage[$this->to | $this->cc | $this->from | $this->subject]";
+        $to = $this->to;
+        if( is_array($to) ){
+            $to = implode(',', $to);
+        }
+
+        $cc = $this->cc;
+        if( is_array($cc) ){
+            $cc = implode(',', $cc);
+        }
+
+        return "FormattedMessage[$to | $cc | $this->from | $this->subject]";
     }
 }
 
