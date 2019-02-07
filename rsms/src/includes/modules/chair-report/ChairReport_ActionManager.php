@@ -1,4 +1,3 @@
-
 <?php
 
 class ChairReport_ActionManager extends ActionManager {
