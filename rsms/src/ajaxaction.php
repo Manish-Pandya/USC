@@ -14,26 +14,10 @@
 require_once( dirname(__FILE__) . '/action_setup.php');
 session_start();
 
-$rlog = Logger::getLogger('request.ajax');
+RequestLog::init($actionName, $dataSource);
 $LOG = Logger::getLogger('ajaxaction.' . $actionName);
 
-$username = $_SESSION['USER'] ? $_SESSION['USER']->getUsername() : '';
-if( isset($_SESSION['IMPERSONATOR']) ){
-    $username = $_SESSION['IMPERSONATOR']['USER']->getUsername() . " (as $username)";
-}
-
-$params = "";
-foreach( $dataSource as $key=>$value){
-    if( $key == 'action' || $key == 'callback')
-        continue;
-
-    // Implode array if necessary
-    $pval = is_array($value) ? implode(", ", $value) : $value;
-
-    $params .= "[$key : $pval] ";
-}
-
-$rlog->info($username . ' >>>     ' . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . " $params");
+RequestLog::log_start();
 
 // Create Dispatcher (based on $_SESSION)
 $sessionSource = $_SESSION;
@@ -47,7 +31,7 @@ header('content-type: application/javascript');
 $actionDispatcher = new ActionDispatcher($dataSource, $sessionSource);
 
 // Attempt to dispatch to the requested action
-$dispatchId = Metrics::start("Dispatch action /$actionName $params");
+$dispatchId = Metrics::start("Dispatch action " . RequestLog::describe());
 $actionResult = $actionDispatcher->dispatch($actionName);
 Metrics::stop($dispatchId);
 
@@ -58,7 +42,7 @@ $entityMappingOverrides = JsonManager::extractEntityMapOverrides($dataSource);
 
 // JSON-Encode result
 // Time how long it takes to encode this
-$jsonifyId = Metrics::start("Encode response /$actionName $params");
+$jsonifyId = Metrics::start("Encode response " . RequestLog::describe());
 $json = JsonManager::encode($actionResult->actionFunctionResult, $entityMappingOverrides);
 Metrics::stop($jsonifyId);
 
@@ -82,9 +66,7 @@ if($actionResult->statusCode == 302){
 //http_response_code(404);
 
 // Output JSON (with possible callback)
-if($rlog->isInfoEnabled()){
-    $rlog->info($username . " <<< $actionResult->statusCode " . $_SERVER['REQUEST_METHOD'] . ' /' . $actionName . ' content-length:' . strlen($json));
-}
+RequestLog::log_stop( $actionResult, strlen($json));
 
 //If a callback function is requested
 if( array_key_exists('callback', $_GET) ){
