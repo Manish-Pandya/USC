@@ -1,6 +1,12 @@
 <?php
 class SerialCache {
     static $_SERIAL_CACHE = array();
+	static $_STATS = array(
+		'WRITES' => 0,
+		'HITS' => 0,
+		'MISSES' => 0,
+		'OVERWRITES' => 0,
+	);
 
     /**
      * Generates a simple cache key for the given data
@@ -26,20 +32,40 @@ class SerialCache {
 		if( isset($kid) ){
 			if( isset(self::$_SERIAL_CACHE[$kid]) ){
 				$LOG->warn("Overwriting cached $kid");
+				self::$_STATS['OVERWRITES']++;
 			}
 
 			$LOG->debug("Caching $kid");
 			self::$_SERIAL_CACHE[$kid] = $objectVars;
+			self::$_STATS['WRITES']++;
 		}
 	}
 
 	public static function getCachedEntity($obj){
 		$kid = self::gen_entity_key($obj);
 		if( isset($kid) && isset(self::$_SERIAL_CACHE[$kid]) ){
+			self::$_STATS['HITS']++;
 			return self::$_SERIAL_CACHE[$kid];
 		}
 
+		self::$_STATS['MISSES']++;
 		return null;
 	}
+
+	public static function stats(){
+		$LOG = Logger::getLogger(SerialCache::class . '.stats');
+		if( $LOG->isDebugEnabled() ){
+			$mapped = array_map( function($v, $k){
+				return "[$k: $v]";
+			}, self::$_STATS, array_keys(self::$_STATS));
+
+			$rlog = RequestLog::describe();
+			$LOG->debug( implode(' ',  $mapped) . "[Request : $rlog]");
+		}
+	}
 }
+
+register_shutdown_function(function(){
+	SerialCache::stats();
+});
 ?>
