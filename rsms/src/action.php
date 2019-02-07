@@ -53,18 +53,20 @@ else{
         $LOG->debug('Login successful');
         unset($_SESSION['error']);
 
-        $LOG->debug( 'Destination: ' . $_SESSION['DESTINATION'] );
-
         $_SESSION['DESTINATION'] = str_replace("rsms/", "", $_SESSION['DESTINATION']);
 		$_SESSION['DESTINATION'] = str_replace("//", "", $_SESSION['DESTINATION']);
 
         $host  = $_SERVER['HTTP_HOST'];
         $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+        $hloc = '';
         if(isset($_SESSION['REDIRECT'])){
-            header("location:" . $_SESSION['REDIRECT']);
+            $hloc = $_SESSION['REDIRECT'];
         }else{
-            header("location:"  . $uri  . '/' . $_SESSION['DESTINATION']);
+            $hloc = $uri  . '/' . $_SESSION['DESTINATION'];
         }
+
+        $LOG->debug( "Destination: $hloc" );
+        header("location:$hloc");
     }
     
 }
