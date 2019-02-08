@@ -517,37 +517,92 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
     $scope.saveRoom = function (room, originalRoom) {
         //unset global error, if it exists.
         $scope.error = null;
-        locationHubFactory['getRooms']().then(
-                function (stuff) {
-                    var collection = stuff;
-                    console.log(room, originalRoom);
-                    $rootScope.saving = $q.all([locationHubFactory.saveRoom(room)]).then(
-                        function (r) {
-                            var returned = r[0];
-                            if (room.Key_id) {
-                                //we are editing an old object
-                                var i = collection.length;
-                                while (i--) {
-                                    //var objectInCollection = collection[i];
-                                    if (collection[i].Key_id == returned.Key_id) {
-                                        collection[i] = returned;
-                                        break;
-                                    }
-                                }
-                                room.IsDirty = false;
-                            } else {
-                                //we are creating an new object
-                                collection.push(returned);
-                                $scope.rooms = collection;
-                            }
-                            room.edit = false;
-                    },
-                    function () {
-                        $scope.error = 'The' + obj.Class + ' could not be saved.  Please check your internet connection and try again.';
-                        obj.IsDirty = false;
-                    }
-                )
+
+        // Verify save if PI was removed
+        var verifyIfRequired = $q.defer();
+
+        // Find if PIs were removed
+        var removedPIs = [];
+        for(var i = 0; i < originalRoom.PrincipalInvestigators.length; i++){
+            var origPI = originalRoom.PrincipalInvestigators[i];
+
+            var found = false;
+            for(var j = 0; j < room.PrincipalInvestigators.length; j++){
+                var toSavePI = room.PrincipalInvestigators[j];
+
+                if( origPI.Key_id == toSavePI.Key_id ){
+                    found = true;
+                    break;
                 }
+            }
+
+            if( !found ){
+                removedPIs.push(origPI);
+            }
+        }
+
+        if( removedPIs.length ){
+            console.debug("PIs were removed from room: ", removedPIs);
+
+            var modalInstance = $modal.open({
+                templateUrl: 'roomConfirmationModal.html',
+                controller: roomConfirmationController,
+                resolve: {
+                    PI: function() {
+                        return removedPIs;
+                    },
+                    room: function () {
+                        room.deactivating = false;
+                        return room;
+                    }
+                }
+            });
+
+            // Instruct the modal to simply confirm, rather than persisting a change
+            modalInstance.simpleConfirm = true;
+            modalInstance.result.then(
+                () => verifyIfRequired.resolve(),
+                () => verifyIfRequired.reject()
+            );
+        }
+        else {
+            verifyIfRequired.resolve();
+        }
+
+        verifyIfRequired.promise.then(
+            () => locationHubFactory['getRooms']().then(
+                    function (stuff) {
+                        var collection = stuff;
+                        console.log(room, originalRoom);
+                        $rootScope.saving = $q.all([locationHubFactory.saveRoom(room)]).then(
+                            function (r) {
+                                var returned = r[0];
+                                if (room.Key_id) {
+                                    //we are editing an old object
+                                    var i = collection.length;
+                                    while (i--) {
+                                        //var objectInCollection = collection[i];
+                                        if (collection[i].Key_id == returned.Key_id) {
+                                            collection[i] = returned;
+                                            break;
+                                        }
+                                    }
+                                    room.IsDirty = false;
+                                } else {
+                                    //we are creating an new object
+                                    collection.push(returned);
+                                    $scope.rooms = collection;
+                                }
+                                room.edit = false;
+                        },
+                        function (err) {
+                            console.error(err);
+                            $scope.error = 'The' + room.Class + ' could not be saved.  Please check your internet connection and try again.';
+                            room.IsDirty = false;
+                        }
+                    )
+                    }
+            )
 
         );
 
@@ -871,15 +926,39 @@ modalCtrl = function($scope, $rootScope, locationHubFactory, $modalInstance, con
 
 }
 roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInstance, convenienceMethods, $q) {
-    $scope.PI = PI;
+    var checkPIs;
+    if( Array.isArray(PI) ){
+        $scope.PIs = PI;
+        checkPIs = PI;
+    }
+    else{
+        $scope.PI = PI;
+        checkPIs = [PI];
+    }
+
     $scope.room = room;
-    $rootScope.loadingHasHazards = $q.all([convenienceMethods.checkHazards(room, [PI])]).then(function (r) {
-        room.HasHazards = r[0];
-        console.log(r, room)
-    })
+    if( checkPIs.length ){
+        $scope.checkingPiHazardsInRoom = true;
+        $rootScope.loadingHasHazards = $q.all([convenienceMethods.checkHazards(room, checkPIs)]).then(function (r) {
+            $scope.checkingPiHazardsInRoom = false;
+            room.HasHazards = r[0] && r[0] == 'true';
+            console.log(r, room)
+        })
+    }
+    else{
+        // No one to check
+        $scope.checkingPiHazardsInRoom = false;
+        room.HasHazards = false;
+    }
 
 
     $scope.confirm = function () {
+        // Check if we're supposed to simply confirm...
+        if( $modalInstance.simpleConfirm ){
+            $modalInstance.close();
+            return;
+        }
+
         $scope.saving = true;
 
         $scope.error = false;

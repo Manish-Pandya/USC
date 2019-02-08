@@ -19,7 +19,8 @@ return array(
 	'loggers' => array(
 		'GenericDAO:Isotope' => configLogger('INFO'),
 		'ajaxaction' => configLogger('DEBUG'),
-		'action' => configLogger('DEBUG')
+		'action' => configLogger('DEBUG'),
+		'ActionManager._before_save_room_check_room_pis' => configLogger('DEBUG'),
 	),
 
 	//Appenders

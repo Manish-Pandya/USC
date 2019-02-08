@@ -1,10 +1,40 @@
 <div class="modal-header" style="padding:0;">
     <h2 ng-show="!addRoom" style="padding:5px;" class="redBg">Please Confirm</h2>
-    <div class="modal-body">
+    <div ng-if="!PI" class="modal-body">
         <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
-        <h3 class="red" ng-if="room.HasHazards && !room.deactivating">
-            {{PI.User.Name}} has hazards in {{room.Name}} <a class="btn btn-warning left" href="../../hazard-inventory/#?pi={{PI.Key_id}}&{{room.roomUrlParam}}" target="_blank"><i class="icon-lab"></i>Show Hazards</a>
-        </h3>
+        <span ng-if="checkingPiHazardsInRoom">
+            These changes may require confirmation:
+            <i class="spinner icon-spinnery-dealie small"></i>
+        </span>
+        <div ng-if="!checkingPiHazardsInRoom && room.HasHazards">
+            <h3>These changes cannot be saved:</h3>
+            <table class="table">
+                <tr ng-repeat="pi in PIs">
+                    <td><h3>{{pi.User.Name}} has hazards in {{room.Name}}</h3></td>
+                    <td>
+                        <a style="margin-left:5px" class="btn btn-warning left" href="../../hazard-inventory/#?pi={{pi.Key_id}}&{{room.roomUrlParam}}" target="_blank">
+                            <i class="icon-lab"></i>Show Hazards
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div ng-if="!checkingPiHazardsInRoom && PIs && !room.HasHazards">
+            <h3 >Remove room {{room.Name}} from the following Principal Investigator{{PIs.length == 1 ? '' : 's'}}?</h3>
+            <ul>
+                <li ng-repeat="pi in PIs"><h4>{{pi.User.Name}}</h4></li>
+            </ul>
+        </div>
+    </div>
+    <div ng-if="PI" class="modal-body">
+        <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
+        <div ng-if="room.HasHazards && !room.deactivating">
+            <h3 >
+                {{PI.User.Name}} has hazards in {{room.Name}}
+            </h3>
+            <a class="btn btn-warning left" style="margin-top:15px;" href="../../hazard-inventory/#?pi={{PI.Key_id}}&{{room.roomUrlParam}}" target="_blank"><i class="icon-lab"></i>Show Hazards</a>
+        </div>
         <h3 class="red" ng-if="room.HasHazards && room.deactivating">
             The PIs below have hazards in {{room.Name}}
         </h3>
@@ -16,7 +46,7 @@
 
     </div>
     <div class="modal-footer">
-        <i class="spinner icon-spinnery-dealie small" ng-show="saving"></i>
+        <i class="spinner icon-spinnery-dealie small" ng-show="checkingPiHazardsInRoom"></i>
         <a ng-if="!checkingPiHazardsInRoom && !room.deactivating && !room.HasHazards" class="btn btn-success left btn-large" ng-click="confirm()"><i class="icon-checkmark"></i>Confirm</a>
         <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel-2"></i>Cancel</a>
     </div>
