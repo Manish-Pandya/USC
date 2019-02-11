@@ -80,24 +80,19 @@ class GenericDAO {
 			return new ActionError("$this->modelClassName.getById: No ID provided", 404);
 		}
 
-		$this->LOG->debug("Looking up entity with keyid '$id'");
+		$this->LOG->debug("Looking up $this->modelClassName entity with keyid '$id'");
 
-		//Prepare to query the table by key_id
-		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' WHERE key_id = ?';
-		$this->LOG->debug("Executing: $sql");
-
-		$stmt = DBConnection::prepareStatement($sql);
-		$stmt->bindParam(1,$id,PDO::PARAM_INT);
-		$stmt->setFetchMode(PDO::FETCH_CLASS, $this->modelClassName);			// Query the db and return one of $this type of object
-		if ($stmt->execute()) {
-			$result = $stmt->fetch();
+		try{
+			$q = QueryUtil::selectFrom($this->modelObject)
+				->where('key_id', '=', $id, PDO::PARAM_INT);
+			$result = $q->getOne();
 
 			// $result being false indicates no rows returned.
 			if(!$result) {
 				// 'close' the statment
 				$stmt = null;
 
-				$this->LOG->warn("No Rows returned for fetch by ID $id ($sql)");
+				$this->LOG->warn("No Rows returned for fetch by ID $id");
 				//return;
 				return new ActionError('No rows returned');
 			}
@@ -106,16 +101,12 @@ class GenericDAO {
 				$cnt = is_array($result) ? count($result) : $result != null ? 1 : 0;
 				$this->LOG->trace("Result count: $cnt");
 			}
-		// ... otherwise, generate error message to be returned
-		} else {
-			$error = $stmt->errorInfo();
-			$result = new QueryError($error);
-			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
-		}
 
-		// 'close' the statment
-		$stmt = null;
-		return $result;
+			return $result;
+		}
+		catch(QueryException $er){
+			return new QueryError($er->getMessage());
+		}
 	}
 
 	/**
@@ -153,35 +144,26 @@ class GenericDAO {
 
 		$this->LOG->debug("Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
 
-		$className = get_class($this);
+		try{
+			$q = QueryUtil::selectFrom($this->modelObject);
 
-		//Prepare to query all from the table
-		$sql = 'SELECT * FROM ' . $this->modelObject->getTableName() . ' ' . ($activeOnly ? 'WHERE is_active = 1 ' : '') .
-	        ($sortColumn == NULL ? '' : " ORDER BY  CAST($sortColumn AS UNSIGNED), $sortColumn " . ($sortDescending ? 'DESC' : 'ASC'));
-		$stmt = DBConnection::prepareStatement($sql);
+			if( $sortColumn != NULL ){
+				$entity_table = $this->modelObject->getTableName();
+				$q->orderBy($entity_table, $sortColumn, ($sortDescending ? 'DESC' : 'ASC'));
+			}
 
-		$this->LOG->debug("Executing: $sql");
-		// Query the db and return an array of $this type of object
-		if ($stmt->execute() ) {
-			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
-			// ... otherwise, generate error message to be returned
-		} else {
-			$error = $stmt->errorInfo();
-			$result = new QueryError($error);
-			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
+			if( $activeOnly ){
+				$q->where('is_active', '=', '1');
+			}
+
+			$result = $q->getAll();
+
+			$this->LOG->trace("Result: " . count($result));
+			return $result;
 		}
-        /*
-        foreach($result as $r){
-            $this->LOG->fatal("hello");
-            $this->cacheIfNeeded($r);
-        }
-		*/
-
-		// 'close' the statment
-		$stmt = null;
-
-		$this->LOG->trace("Result: " . count($result));
-		return $result;
+		catch(QueryException $er){
+			return new QueryError($er->getMessage());
+		}
 	}
 
 	function getPage( $paging, $sortColumn = NULL, $sortDescending = FALSE, $activeOnly = FALSE ) {
