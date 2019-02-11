@@ -5,7 +5,7 @@
  *
  * @author Mitch Martin, GraySail LLC
  */
-class Inspection extends GenericCrud {
+class Inspection extends GenericCrud implements ISelectWithJoins {
 
     /** Name of the DB Table */
     protected static $TABLE_NAME = "inspection";
@@ -79,6 +79,19 @@ class Inspection extends GenericCrud {
             "foreignKeyName"	=>	"inspection_id"
     );
 
+	public static $SELECT_INSPECTION_STATUS_RELATIONSHIP = array(
+		"tableName" => 'inspection_status',
+		"keyName" 	=>  "key_id",
+		"className" => 'Inspection',
+		"foreignKeyName"	=>  "inspection_id",
+		"columns" => array(
+			'inspection_status' => 'text'
+        ),
+        "columnAliases" => array(
+            "inspection_status" => "status"
+        )
+	);
+
 
     /** Array of Inspector entities that took part in this Inspection */
     private $inspectors;
@@ -146,6 +159,8 @@ class Inspection extends GenericCrud {
     private $rooms;
     private $roomIds;
 
+    private $status;
+
     public function __construct(){
 
     }
@@ -173,6 +188,12 @@ class Inspection extends GenericCrud {
     public function getColumnData(){
         return self::$COLUMN_NAMES_AND_TYPES;
     }
+
+	public function selectJoinReleationships(){
+		return array(
+			DataRelationship::fromArray(self::$SELECT_INSPECTION_STATUS_RELATIONSHIP)
+		);
+	}
 
     public function getInspectors(){
         if($this->inspectors)return $this->inspectors;
@@ -292,6 +313,10 @@ class Inspection extends GenericCrud {
     }
 
     public function getStatus() {
+        if( $this->status != null ){
+            return $this->status;
+        }
+
         $LOG = Logger::getLogger(__CLASS__);
         //approved?
         // If there is a close date, it's closed.
@@ -300,27 +325,27 @@ class Inspection extends GenericCrud {
         $then = new DateTime("now - 30 days");
 
         if ($this->date_closed != null) {
-            return 'CLOSED OUT';
+            $this->status = 'CLOSED OUT';
         }elseif($this->cap_submitted_date){
-            return 'SUBMITTED CAP';
+            $this->status = 'SUBMITTED CAP';
         }elseif($this->notification_date){
             //do we even, like, need a plan?
             $ds = $this->getDeficiency_selections();
             if($this->key_id == 97)$LOG->fatal($ds);
             if(!isset($ds['deficiencySelections']) ||  empty($ds['deficiencySelections'])){
                 $this->hasDeficiencies = false;
-                return "CLOSED OUT";
+                $this->status = "CLOSED OUT";
             }
             //Is the Corrective Action Plan overdue?
             $notificationDate = new DateTime($this->getNotification_date());
 
             if($now->diff($notificationDate)->days > 14){
-                return "OVERDUE CAP";
+                $this->status = "OVERDUE CAP";
             }else{
-                return "INCOMPLETE CAP";
+                $this->status = "INCOMPLETE CAP";
             }
         }elseif($this->date_started){
-            return "INCOMPLETE INSPECTION";
+            $this->status = "INCOMPLETE INSPECTION";
         }elseif($this->schedule_month){
              // ... and it's not 30 days past the first day of the scheduled month
             if ($then < date_create($this->schedule_year . "-" . $this->schedule_month )  ) {
@@ -328,20 +353,23 @@ class Inspection extends GenericCrud {
 
                 //not fully schedule if not inspector(s) assigned
                 if($this->getInspectors() != NULL){
-                    return 'SCHEDULED';
+                    $this->status = 'SCHEDULED';
                 }else{
-                    return 'NOT ASSIGNED';
+                    $this->status = 'NOT ASSIGNED';
                 }
                 //Begin Inspection
             } else {
                 // If it is 30 days past due, it's overdue for inspection
-                return 'OVERDUE INSPECTION';
+                $this->status = 'OVERDUE INSPECTION';
                 //Begin Inspection
             }
         }else{
-            return "NOT SCHEDULED";
+            $this->status = "NOT SCHEDULED";
         }
+
+        return $this->status;
     }
+
     public function getCap_complete() {return $this->cap_complete;}
     public function setCap_complete($cap_complete) {$this->cap_complete = $cap_complete;}
     public function getCap_due_date() {
