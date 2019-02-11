@@ -414,65 +414,25 @@ class Room extends GenericCrud implements ISelectWithJoins {
 			return $this->_hazardTypesComputed;
 		}
 
-		$LOG = Logger::getLogger(__CLASS__ );
-
-        // Get the db connection
-        $db = DBConnection::get();
-
-        $this->bio_hazards_present = false;
-        $this->chem_hazards_present = false;
-        $this->rad_hazards_present = false;
-        $this->lasers_present = false;
-        $this->xrays_present = false;
-        $this->recombinant_dna_present = false;
-        $this->flammable_gas_present = false;
-	    $this->toxic_gas_present = false;
-	    $this->corrosive_gas_present = false;
-        $this->hf_present = false;
-
-        if($this->getPrincipalInvestigators() == null)return;
-
-		$sql = "SELECT * FROM room_hazards WHERE room_id = :rid";
-		$stmt = DBConnection::prepareStatement($sql);
-		$stmt->bindValue(':rid', $this->key_id);
-		$stmt->execute();
-		$hazardCategories = $stmt->fetch(PDO::FETCH_ASSOC);
-        $this->bio_hazards_present = boolval( $hazardCategories['bio_hazards_present'] );
-        $this->chem_hazards_present = boolval( $hazardCategories['chem_hazards_present'] );
-        $this->rad_hazards_present = boolval( $hazardCategories['rad_hazards_present'] );
-        $this->lasers_present = boolval( $hazardCategories['lasers_present'] );
-        $this->xrays_present = boolval( $hazardCategories['xrays_present'] );
-        $this->recombinant_dna_present = boolval( $hazardCategories['recombinant_dna_present'] );
-        $this->flammable_gas_present = boolval( $hazardCategories['flammable_gas_present'] );
-	    $this->toxic_gas_present = boolval( $hazardCategories['toxic_gas_present'] );
-	    $this->corrosive_gas_present = boolval( $hazardCategories['corrosive_gas_present'] );
-        $this->hf_present = boolval( $hazardCategories['hf_present'] );
+        $this->bio_hazards_present = boolval($this->bio_hazards_present);
+        $this->chem_hazards_present = boolval($this->chem_hazards_present);
+        $this->rad_hazards_present = boolval($this->rad_hazards_present);
+        $this->lasers_present = boolval($this->lasers_present);
+        $this->xrays_present = boolval($this->xrays_present);
+        $this->recombinant_dna_present = boolval($this->recombinant_dna_present);
+        $this->flammable_gas_present = boolval($this->flammable_gas_present);
+	    $this->toxic_gas_present = boolval($this->toxic_gas_present);
+	    $this->corrosive_gas_present = boolval($this->corrosive_gas_present);
+        $this->hf_present = boolval($this->hf_present);
+        $this->animal_facility = boolval($this->animal_facility);
 
 		$this->_hazardTypesComputed = true;
 		return $this->_hazardTypesComputed;
     }
 
     public function getAnimal_facility(){
-		if( !$this->hasPrimaryKeyValue() ){
-			// If we don't have a pkey, then we can't determine if we are a special lab.
-			return false;
-		}
-
-        $db = DBConnection::get();
-
-        $queryString = "select count(*)
-                        from room a
-                        where a.key_id in(select room_id from principal_investigator_room
-	                        where principal_investigator_id in (select principal_investigator_id from principal_investigator_department where department_id = 2)
-                        )
-                        AND a.key_id = $this->key_id";
-        $stmt = DBConnection::prepareStatement($queryString);
-        $stmt->execute();
-        $num_rows = $stmt->fetchAll();
-        //$l = Logger::getLogger(__FUNCTION__);
-        //$l->fatal($this->key_id);
-        //$l->fatal($num_rows);
-        return (bool) $this->animal_facility = $num_rows[0][0] > 0;
+		$this->getHazardTypesArePresent();
+		return $this->animal_facility;
     }
     public function setAnimal_facility($af){$this->animal_facility = $af;}
 
