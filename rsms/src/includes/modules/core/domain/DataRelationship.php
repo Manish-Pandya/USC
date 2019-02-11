@@ -12,7 +12,11 @@ class DataRelationship {
 	public $tableName;
 	public $keyName;
 	public $foreignKeyName;
-    public $orderColumn;
+	public $orderColumn;
+
+	public $sourceTableName;
+	public $columns;
+	public $columnAliases;
 
 	public function __construct(){
 	}
@@ -43,7 +47,12 @@ class DataRelationship {
 		$instance->keyName = $relationship["keyName"];
 		$instance->foreignKeyName = $relationship["foreignKeyName"];
         if(array_key_exists("orderColumn", $relationship)) 
-            $instance->orderColumn = $relationship["orderColumn"];
+			$instance->orderColumn = $relationship["orderColumn"];
+
+		$instance->sourceTableName = $relationship["sourceTableName"] ?? null;
+		$instance->columns = $relationship['columns'] ?? array();
+		$instance->columnAliases = $relationship['columnAliases'] ?? array();
+
 		return $instance;
 	}
 
