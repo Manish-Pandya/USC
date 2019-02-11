@@ -6,7 +6,7 @@
  *
  * @author Mitch Martin, GraySail LLC
  */
-class Room extends GenericCrud {
+class Room extends GenericCrud implements ISelectWithJoins {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "room";
@@ -58,6 +58,61 @@ class Room extends GenericCrud {
 			"tableName" =>  "solids_container",
 			"keyName" 	=>  "key_id",
 			"foreignKeyName"	=>  "room_id"
+	);
+
+	public static $SELECT_ROOM_HAZARDS_RELATIONSHIP = array(
+		"tableName" => 'room_hazards',
+		"keyName" 	=>  "key_id",
+		"className" => 'Room',
+		"foreignKeyName"	=>  "room_id",
+		"columns" => array(
+			'bio_hazards_present' => 'boolean',
+			'chem_hazards_present' => 'boolean',
+			'rad_hazards_present' => 'boolean',
+			'lasers_present' => 'boolean',
+			'xrays_present' => 'boolean',
+			'recombinant_dna_present' => 'boolean',
+			'toxic_gas_present' => 'boolean',
+			'corrosive_gas_present' => 'boolean',
+			'flammable_gas_present' => 'boolean',
+			'hf_present' => 'boolean',
+			'animal_facility' => 'boolean',
+		)
+	);
+
+	/**
+		... SELECT building.name as building_name
+		JOIN building building ON room.building_id = building.key_id
+	*/
+	public static $SELECT_BUILDING_RELATIONSHIP = array(
+		"className" => 'Building',
+		"keyName" 	=>  "building_id",
+		"tableName" => 'building',
+		"foreignKeyName"	=>  "key_id",
+		"columns" => array(
+			'name' => 'text'
+		),
+		"columnAliases" => array(
+			'name' => 'building_name'
+		)
+	);
+
+	/**
+		... SELECT campus.name as campus_name
+		JOIN campus campus ON building.campus_id = campus.key_id
+	 */
+	public static $SELECT_CAMPUS_RELATIONSHIP = array(
+		"className" => 'Campus',
+		"sourceTableName" => "building",
+		"keyName" 	=>  "campus_id",
+		"tableName" => 'campus',
+		"foreignKeyName"	=>  "key_id",
+		"columns" => array(
+			'name' => 'text'
+		),
+		"columnAliases" => array(
+			'name' => 'campus_name'
+		)
 	);
 
 	private $name;
@@ -129,6 +184,14 @@ class Room extends GenericCrud {
 
 	public function getColumnData(){
 		return self::$COLUMN_NAMES_AND_TYPES;
+	}
+
+	public function selectJoinReleationships(){
+		return array(
+			DataRelationship::fromArray(self::$SELECT_ROOM_HAZARDS_RELATIONSHIP),
+			DataRelationship::fromArray(self::$SELECT_BUILDING_RELATIONSHIP),
+			DataRelationship::fromArray(self::$SELECT_CAMPUS_RELATIONSHIP)
+		);
 	}
 
 	// Accessors / Mutators
