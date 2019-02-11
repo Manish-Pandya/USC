@@ -13,6 +13,8 @@ class JsonManager {
 
 	}
 
+	private static $_SERIAL_CACHE;
+
 	/** Names of functions JsonManager should ignore when converting to JSON */
 	public static $JSON_IGNORE_FUNCTION_NAMES = array(
 		'getTableName',
@@ -29,6 +31,10 @@ class JsonManager {
 	 * @return string
 	 */
 	public static function encode($value, $entityMaps = NULL){
+		if( !isset(self::$_SERIAL_CACHE) ){
+			self::$_SERIAL_CACHE = new AppCache('Serial');
+		}
+
 		$mid = Metrics::start('Build JSON-able Value');
 		$jsonable = JsonManager::buildJsonableValue($value, $entityMaps);
 		Metrics::stop($mid);
@@ -349,11 +355,11 @@ class JsonManager {
 	public static function callObjectAccessors(&$object, &$overrideEntityMaps = NULL){
 		$LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
-		$cached = SerialCache::getCachedEntity($object);
+		$cache_key = AppCache::gen_entity_key($object);
+		$cached = self::$_SERIAL_CACHE->getCachedEntity($cache_key);
 		if( isset($cached) ){
-			$serlog = Logger::getLogger('SerialCache');
-			if( $serlog->isTraceEnabled()){
-				$serlog->trace("Return cached value for " . SerialCache::gen_entity_key($object));
+			if( $LOG->isTraceEnabled()){
+				$LOG->trace("Return cached value for $cache_key");
 			}
 
 			return $cached;
@@ -389,7 +395,7 @@ class JsonManager {
 			$objectVars[$key] = $value;
 		}
 
-		SerialCache::cacheSerializedEntity($objectVars);
+		self::$_SERIAL_CACHE->cacheEntity($objectVars, $cache_key);
 		return $objectVars;
 	}
 

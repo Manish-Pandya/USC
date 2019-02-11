@@ -32,6 +32,8 @@ class GenericDAO {
 	/** Class name of the model object */
 	protected $modelClassName;
 
+	public static $_ENTITY_CACHE;
+
 	/**
 	 * Constructs a new Data Access Object for the type of the given object.
 	 * @param GenericCrud $model_object
@@ -44,6 +46,10 @@ class GenericDAO {
 		$this->modelObject = $new_model_object;
 		$this->modelClassName = get_class($new_model_object);
 		$this->logprefix = "[$this->modelClassName" . "DAO]";
+
+		if( !isset(self::$_ENTITY_CACHE) ){
+			self::$_ENTITY_CACHE = new AppCache('Entity');
+		}
 
 		$this->LOG = Logger::getLogger( __CLASS__ . "." . $this->modelClassName );
 	}
@@ -80,6 +86,13 @@ class GenericDAO {
 			return new ActionError("$this->modelClassName.getById: No ID provided", 404);
 		}
 
+		$cache_key = AppCache::key_class_id($this->modelClassName, $id);
+		$cached = self::$_ENTITY_CACHE->getCachedEntity($cache_key);
+		if( isset($cached) ){
+			$this->LOG->debug("Returning cached $this->modelClassName entity with keyid '$id'");
+			return $cached;
+		}
+
 		$this->LOG->debug("Looking up $this->modelClassName entity with keyid '$id'");
 
 		try{
@@ -102,6 +115,7 @@ class GenericDAO {
 				$this->LOG->trace("Result count: $cnt");
 			}
 
+			self::$_ENTITY_CACHE->cacheEntity($result, $cache_key);
 			return $result;
 		}
 		catch(QueryException $er){
