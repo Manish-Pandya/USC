@@ -29,8 +29,11 @@ class JsonManager {
 	 * @return string
 	 */
 	public static function encode($value, $entityMaps = NULL){
+		$mid = Metrics::start('Build JSON-able Value');
 		$jsonable = JsonManager::buildJsonableValue($value, $entityMaps);
-		return json_encode($jsonable);
+		Metrics::stop($mid);
+
+		return json_encode($jsonable, JSON_PRETTY_PRINT);
 	}
 
 	/**
@@ -371,8 +374,10 @@ class JsonManager {
 
 		foreach ($accessors as $getter) {
 			//Call function to get value
+			$mid = Metrics::start(ObjectPathMapper::describe($object) . "::$getter()");
 			$LOG->trace("  $classname::$getter()");
 			$value = $object->$getter();
+			Metrics::stop($mid);
 
 			//use function name to infer the associated key
 			$key = str_replace('get', '', $getter);
@@ -430,7 +435,7 @@ class ObjectPathMapper {
 
 	}
 
-	private static function describe( &$object){
+	public static function describe( &$object){
 		if( method_exists($object, '__toString') ){
 			return $object->__toString();
 		}
