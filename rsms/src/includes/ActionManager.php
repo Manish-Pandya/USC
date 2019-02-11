@@ -2233,6 +2233,8 @@ class ActionManager {
             EntityMap::lazy("getPickups"),
             EntityMap::lazy("getScintVialCollections"),
             EntityMap::lazy("getCurrentScintVialCollections"),
+            EntityMap::lazy("getCurrentIsotopeInventories"),
+            EntityMap::lazy("getOtherWasteTypes"),
             EntityMap::lazy("getOpenInspections"),
             EntityMap::lazy("getQuarterly_inventories"),
             EntityMap::lazy("getVerifications"),
