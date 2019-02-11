@@ -302,14 +302,14 @@ class Room extends GenericCrud implements ISelectWithJoins {
 		}
 		return $this->building;
 	}
+
 	public function setBuilding($building){
 		$this->building = $building;
 	}
 
     public function getBuilding_name(){
 		if($this->building_name == null && $this->getBuilding_id() != null) {
-			$buildingDAO = new GenericDAO(new Building());
-            $bldg = $buildingDAO->getById($this->building_id);
+			$bldg = $this->getBuilding();
 			$this->building_name = $bldg->getAlias() != null ? $bldg->getAlias() : $bldg->getName();
 		}
 		return $this->building_name;
@@ -317,8 +317,7 @@ class Room extends GenericCrud implements ISelectWithJoins {
 
     public function getCampus_Name(){
         if($this->campus_name == null && $this->getBuilding_id() != null) {
-			$buildingDAO = new GenericDAO(new Building());
-            $bldg = $buildingDAO->getById($this->building_id);
+			$bldg = $this->getBuilding();
             if($bldg->getCampus_id() != null){
                 $this->campus_name = $bldg->getCampus()->getName();
             }
