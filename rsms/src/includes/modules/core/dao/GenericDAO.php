@@ -238,40 +238,6 @@ class GenericDAO {
 		return new ResultPage($result, $total_results_count, $page, $recordsPerPage);
 	}
 
-    function cacheIfNeeded(GenericCrud $target){
-        return;
-        $db = DBConnection::get();
-
-        $id = $target->getKey_id();
-        $class = get_class($target);
-        $stmt = DBConnection::prepareStatement("SELECT * FROM dumb_cache WHERE parent_id = '$id' AND parent_class = '$class'");
-        // Query the db and return an array of $this type of object
-		if ($stmt->execute() ) {
-			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $this->modelClassName);
-			// ... otherwise, generate error message to be returned
-		} else {
-			$error = $stmt->errorInfo();
-			$result = new QueryError($error);
-			$this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
-		}
-        if(count($result) == 0 ){
-
-            $value = json_encode(JsonManager::encode($target));
-            $stmt = DBConnection::prepareStatement("INSERT INTO dumb_cache (parent_id, parent_class, cached_value) VALUES ('$id', '$class', '$value');" );
-            // Query the db and return an array of $this type of object
-            if ($stmt->execute() ) {
-                $this->LOG->fatal('success');
-
-                // ... otherwise, generate error message to be returned
-            } else {
-                $error = $stmt->errorInfo();
-                $result = new QueryError($error);
-                $this->LOG->fatal('Returning QueryError with message: ' . $result->getMessage());
-            }
-        }
-
-    }
-
 	/**
 	 * Retrieves all entities of this type, ordered by the given field
 	 *
@@ -437,10 +403,7 @@ class GenericDAO {
 			$result = new QueryError($error);
 			$this->LOG->error('Returning QueryError with message: ' . $result->getMessage());
 		}
-        foreach($result as $r){
-            $this->cacheIfNeeded($r);
-		}
-		
+
 		// 'close' the statment
 		$stmt = null;
 
