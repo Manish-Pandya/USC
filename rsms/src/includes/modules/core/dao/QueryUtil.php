@@ -148,6 +148,8 @@ class QueryUtil {
         $stmt = DBConnection::prepareStatement($sql);
         if( !empty($this->bindings) ){
             foreach($this->bindings as $param => $val){
+                // TODO: Infer type
+                $t = $val[1] ?? PDO::PARAM_STR;
                 $stmt->bindParam($param, $val[0], $val[1]);
             }
         }
