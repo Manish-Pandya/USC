@@ -4768,14 +4768,48 @@ class ActionManager {
         if ($year == null){
             $year = $this->getCurrentYear();
         }
-                // Call the database
-		$LOG->info('getting schedule for ' . $year);
-        $dao = $this->getDao(new Inspection());
+
+        // Call the database
+        $LOG->info('getting schedule for ' . $year);
+
+        // Get the needed inspections
+        $dao = new InspectionDAO();
         $inspectionSchedules = $dao->getNeededInspectionsByYear($year);
 
         $LOG->debug('Retrieved ' . count($inspectionSchedules) . " inspections for $year schedule");
 
-        $piDao = $this->getDao(new PrincipalInvestigator());
+        // Now fill in some extra DTO details (rooms)
+        $piDao = new PrincipalInvestigatorDAO();
+
+        foreach ($inspectionSchedules as &$is){
+            $LOG->trace("Processing $is...");
+            if ($is->getInspection_id() !== null){
+                // LOAD INSPECTION
+                $inspection = $dao->getById($is->getInspection_id());
+
+                // GET LIST OF INSPECTION'S ROOMS, AND FILTER THEM
+                //  SO THAT ONLY ROOMS OF THIS INSPECTION'S BUILDING
+                //  ARE PRESENT
+                $filteredRooms = array();
+                $rooms = $inspection->getRooms();
+                foreach( $rooms as $room ){
+                	if( $room->getBuilding_id() == $is->getBuilding_key_id() ){
+                		array_push($filteredRooms, $room);
+                    }
+                }
+                $is->setInspection_rooms($filteredRooms);
+            }
+
+            // Now get the PI's Rooms which are in the Inspection's Building
+            $rooms = $piDao->getRooms($is->getPi_key_id());
+            $pi_bldg_rooms = array();
+            foreach ($rooms as $room){
+                if ($room->getBuilding_id() == $is->getBuilding_key_id()){
+                    $pi_bldg_rooms[] = $room;
+                }
+            }
+            $is->setBuilding_rooms($pi_bldg_rooms);
+        }
 
         EntityManager::with_entity_maps(Inspection::class, array(
             EntityMap::eager("getInspectors"),
@@ -4797,32 +4831,6 @@ class ActionManager {
             EntityMap::lazy("getHazardTypesArePresent")
         ));
 
-        foreach ($inspectionSchedules as &$is){
-            $LOG->trace("Processing $is...");
-            if ($is->getInspection_id() !== null){
-                $inspection = $dao->getById($is->getInspection_id());
-
-                $filteredRooms = array();
-                $rooms = $inspection->getRooms();
-                foreach( $rooms as $room ){
-                	if( $room->getBuilding_id() == $is->getBuilding_key_id() ){
-                		array_push($filteredRooms, $room);
-                	}
-                }
-                $is->setInspection_rooms($filteredRooms);
-            }
-
-            $pi = $piDao->getById($is->getPi_key_id());
-            $rooms = $pi->getRooms();
-            $pi_bldg_rooms = array();
-            foreach ($rooms as $room){
-                if ($room->getBuilding_id() == $is->getBuilding_key_id()){
-                    $pi_bldg_rooms[] = $room;
-                }
-            }
-            $is->setBuilding_rooms($pi_bldg_rooms);
-        }
-
         $LOG->debug("Retrieved and populated $year inspection schedule");
         return $inspectionSchedules;
     }
@@ -4838,7 +4846,7 @@ class ActionManager {
             $year = $this->getCurrentYear();
         }
 
-        $dao = new GenericDAO(new Inspection());
+        $dao = new InspectionDAO();
         $inspections = $dao->getInspectionsByYear($year);
 
         EntityManager::with_entity_maps(Inspection::class, array(
