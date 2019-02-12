@@ -79,9 +79,9 @@ class QueryUtil {
         return $this;
     }
 
-    public function where( $name, $operator, $val = null, $valPdoType = null ){
+    public function where_raw($field, $operator, $val = null, $valPdoType = null ){
         // TODO: validate operator
-        $pred = "$this->entity_table.$name $operator";
+        $pred = "$field $operator";
 
         if( isset($val) ){
             $val_id = $this->bind_value($val, $valPdoType);
@@ -90,6 +90,11 @@ class QueryUtil {
 
         $this->predicates[] = $pred;
         return $this;
+    }
+
+    public function where( $name, $operator, $val = null, $valPdoType = null ){
+        $field = "$this->entity_table.$name";
+        return $this->where_raw($field, $operator, $val, $valPdoType);
     }
 
     public function orderBy($table, $column, $direction = "ASC"){
