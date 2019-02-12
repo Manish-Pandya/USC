@@ -29,5 +29,10 @@ class PrincipalInvestigatorDAO extends GenericDAO {
 
         return null;
     }
+
+    public function getRooms( $piId ){
+        return $this->getRelatedItemsById(
+            $piId, DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
+    }
 }
 ?>

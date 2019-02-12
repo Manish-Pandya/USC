@@ -286,8 +286,8 @@ class PrincipalInvestigator extends GenericCrud {
 
 	public function getRooms(){
 		if($this->rooms === NULL && $this->hasPrimaryKeyValue()) {
-			$thisDAO = new GenericDAO($this);
-			$this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
+			$thisDAO = new PrincipalInvestigatorDAO();
+			$this->rooms = $thisDAO->getRooms($this->getKey_id());
 		}
 		return $this->rooms;
 	}
