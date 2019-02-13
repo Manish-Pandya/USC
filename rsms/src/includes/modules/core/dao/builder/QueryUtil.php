@@ -1,6 +1,10 @@
 <?php
 
 class QueryUtil {
+
+    const JOIN = 'JOIN';
+    const JOIN_OUTER_LEFT = 'LEFT OUTER JOIN';
+
     public static function selectFrom( GenericCrud $modelObject, DataRelationship $relation = null){
         return new QueryUtil($modelObject, $relation);
     }
@@ -81,13 +85,16 @@ class QueryUtil {
             }
 
             foreach($joinRels as $joinRel){
-                $this->joinTo($joinRel);
+                // Init the join, using LEFT OUTER unless otherwise specified
+                $this->joinTo($joinRel, ($joinRel->joinType ?? self::JOIN_OUTER_LEFT));
             }
         }
     }
 
-    public function joinTo(DataRelationship $joinRel){
-        $this->joinRels[] = $joinRel;
+    public function joinTo(DataRelationship $joinRel, $joinType = self::JOIN){
+        $j = clone $joinRel;
+        $j->joinType = $joinType;
+        $this->joinRels[] = $j;
         return $this;
     }
 
@@ -127,7 +134,8 @@ class QueryUtil {
             $this->map_fields($join_table, array($joinRel->orderColumn => $joinRel->orderColumn));
         }
 
-        $this->joins[] = "JOIN $join_table $join_table ON $join_field = $src_field";
+        $join_type = $joinRel->joinType ?? self::JOIN;
+        $this->joins[] = "$join_type $join_table $join_table ON $join_field = $src_field";
 
         return $this;
     }

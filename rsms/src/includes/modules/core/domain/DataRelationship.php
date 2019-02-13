@@ -14,6 +14,8 @@ class DataRelationship {
 	public $foreignKeyName;
 	public $orderColumn;
 
+	public $joinType;
+
 	public $sourceTableName;
 	public $columns;
 	public $columnAliases;
