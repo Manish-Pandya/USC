@@ -528,26 +528,37 @@ class GenericDAO {
 		return $result;
 	}
 
+	protected function &_buildQueryFor_getRelatedItemsById($id, DataRelationship $relationship, $sortColumns = null, $activeOnly = false, $activeOnlyRelated = false, $limit=0){
+		$joinOnIdField = new Field($relationship->foreignKeyName, $relationship->tableName);
+		$q = QueryUtil::selectFrom($this->modelObject, $relationship)
+			->where($joinOnIdField, '=', $id, PDO::PARAM_INT);
+
+		if( $activeOnly ){
+			$q->where('is_active', '=', 1);
+		}
+
+		// TODO: Now that this Query uses Joins instead of a subquery, do we really need to respect 'activeOnlyRelated'?
+		/*if( $activeOnlyRelated){
+			Logger::getLogger(__CLASS__ . '.' . __FUNCTION__)->warn("Is $relationship->tableName.is_active a real column?");
+			//$q->where(Field::create('is_active', $relationship->tableName), '=', 1);
+		}*/
+
+		if( $sortColumns != null ){
+			foreach($sortColumns as $key=>$column){
+				$q->orderBy($relationship->tableName, $column);
+			}
+		}
+
+		if( $limit > 0 ){
+			$q->limit($limit);
+		}
+
+		return $q;
+	}
+
 	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumns = null, $activeOnly = false, $activeOnlyRelated = false, $limit=0){
 		try{
-			$joinOnIdField = new Field($relationship->foreignKeyName, $relationship->tableName);
-			$q = QueryUtil::selectFrom($this->modelObject, $relationship)
-				->where($joinOnIdField, '=', $id, PDO::PARAM_INT);
-
-			if( $activeOnly ){
-				$q->where('is_active', '=', 1);
-			}
-
-			if( $sortColumns != null ){
-				foreach($sortColumns as $key=>$column){
-					$q->orderBy($this->modelObject->getTableName(), $column);
-				}
-			}
-
-			if( $limit > 0 ){
-				$q->limit($limit);
-			}
-
+			$q = $this->_buildQueryFor_getRelatedItemsById($id, $relationship, $sortColumns, $activeOnly, $activeOnlyRelated, $limit);
 			$result = $q->getAll();
 
 			if( $this->LOG->isTraceEnabled() ){
