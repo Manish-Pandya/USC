@@ -7,10 +7,16 @@ class InspectionDAO extends GenericDAO {
     function getInspectionsByYear($year){
         //`inspection` where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)
 
-		//Prepare to query all from the table
+        //Prepare to query all from the table
 		try {
-			$q = QueryUtil::selectFrom(new Inspection())
-				->where_raw('coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`)', '=', $year, PDO::PARAM_STR);
+            $q = QueryUtil::selectFrom(new Inspection());
+
+            $yearFields = Coalesce::fields(
+                Field::create('date_started', 'inspection')->wrap('year'),
+                Field::create('schedule_year', 'inspection')
+            );
+
+            $q->where($yearFields, '=', $year, PDO::PARAM_STR);
 			$result = $q->getAll();
 			return $result;
 		}
