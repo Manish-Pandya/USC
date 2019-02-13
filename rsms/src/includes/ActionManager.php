@@ -4798,6 +4798,7 @@ class ActionManager {
                     }
                 }
                 $is->setInspection_rooms($filteredRooms);
+                $is->setInspections($inspection);
             }
 
             // Now get the PI's Rooms which are in the Inspection's Building

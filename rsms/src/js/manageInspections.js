@@ -200,9 +200,7 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
     factory.getInspectionScheduleDtos = function (year) {
         factory.year = year;
         //if we don't have the list of pis, get it from the server
-        return factory.getDtos(year)
-                .then(factory.getInspectionsByYear)
-                .then(factory.mapInspectionsToDtos)
+        return factory.getDtos(year);
     }
 
     factory.getDtos = function (year) {
@@ -217,36 +215,6 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
                 deferred.reject();
             }
         );
-        return deferred.promise;
-    }
-
-    factory.getInspectionsByYear = function () {
-        var deferred = $q.defer();
-        var url = '../../ajaxaction.php?action=getInspectionsByYear&year=' + factory.year.Name + '&callback=JSON_CALLBACK';
-        convenienceMethods.getDataAsDeferredPromise(url).then(
-            function (promise) {
-                factory.Inspections = promise;
-                deferred.resolve(promise);
-            },
-            function (promise) {
-                deferred.reject();
-            }
-        );
-        return deferred.promise;
-    }
-
-    factory.mapInspectionsToDtos = function () {
-        var deferred = $q.defer();
-
-        if (!factory.InspectionScheduleDtos || !factory.Inspections) {
-            return $q.reject("There was a problem loading the inspections");
-        }
-
-        factory.InspectionScheduleDtos.forEach(function (d) {
-            d.Inspections = _.find(factory.Inspections, function (i) { return i.Key_id == d.Inspection_id; });
-        })
-
-        deferred.resolve(factory.InspectionScheduleDtos);
         return deferred.promise;
     }
 
@@ -659,10 +627,6 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
         $scope.months = manageInspectionsFactory.getMonths();
 
     },
-
-    getInspectionsByYear = function () {
-
-    }
 
     var init = function () {
         $scope.loading = true;
