@@ -149,13 +149,13 @@ class QueryUtil {
 
     public function where( $nameOrField, $operator = null, $val = null, $valPdoType = null ){
         $field = $nameOrField;
-        if( !($field instanceof Field) ){
+        if( !($field instanceof IField) ){
             // TODO: infer table details
             // Find mapped columns which match the name?
             $field = new Field($nameOrField, $this->entity_table);
         }
 
-        $wherePart = "$field->table.$field->name";
+        $wherePart = $field->write();
         return $this->where_raw($wherePart, $operator, $val, $valPdoType);
     }
 
@@ -297,15 +297,70 @@ class QueryUtil {
     }
 }
 
-class Field {
+interface QueryPartWriter {
+    public function write();
+}
+
+interface IField extends QueryPartWriter {}
+
+class Coalesce implements IField {
+    public static function fields(Field...$fields){
+        return new Coalesce($fields);
+    }
+
+    private $fields = array();
+    private function __construct(Array $fields){
+        $this->fields = $fields;
+    }
+
+    public function write(){
+        $inner = implode(', ', array_map( function($f){ return $f->write(); }, $this->fields ));
+        return "COALESCE( $inner )";
+    }
+}
+
+class Field implements IField {
+    const VALID_WRAPPERS = array('YEAR');
+
+    public static function create($name, $table = null, $alias = null){
+        return new Field($name, $table, $alias);
+    }
+
     public $name;
     public $table;
     public $alias;
+
+    private $wrappers = array();
 
     public function __construct($name, $table = null, $alias = null){
         $this->name = $name;
         $this->table = $table;
         $this->alias = $alias ?? $name;
+    }
+
+    public function wrap($wrapper){
+        // Validate wrapper
+        $wrapper = strtoupper($wrapper);
+        if( in_array( $wrapper, Field::VALID_WRAPPERS )){
+            $this->wrappers[] = $wrapper;
+        }
+        else{
+            Logger::getLogger(__CLASS__)->error("Invalid field wrapper: '$wrapper'");
+        }
+
+        return $this;
+    }
+
+    public function write(){
+        $f = "$this->table.$this->name";
+
+        if( isset($this->wrappers) ){
+            foreach($this->wrappers as $wrapper){
+                $f = "$wrapper($f)";
+            }
+        }
+
+        return $f;
     }
 }
 ?>
