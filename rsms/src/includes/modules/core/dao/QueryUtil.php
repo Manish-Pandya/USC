@@ -3,12 +3,18 @@ class QueryException extends Exception{
     public function __construct($msg){ parent::__construct($msg); }
 }
 class QueryUtil {
-    public static function selectFrom( GenericCrud $modelObject ){
-        return new QueryUtil($modelObject);
+    public static function selectFrom( GenericCrud $modelObject, DataRelationship $relation = null){
+        return new QueryUtil($modelObject, $relation);
     }
+
+    protected $limit;
 
     protected $entity_class;
     protected $entity_table;
+
+    protected $rel_parent_table;
+    protected $rel_parent_class;
+
     protected $columns;
     protected $joins;
     protected $predicates;
@@ -20,9 +26,11 @@ class QueryUtil {
 
     private $valbinderId = 1;
 
-    public function __construct(GenericCrud $modelObject){
-        $this->entity_class = get_class($modelObject);
-        $this->entity_table = $modelObject->getTableName();
+    private $sql;
+
+    public function __construct(GenericCrud $modelObject, DataRelationship $relation = null){
+
+        // init query parts
         $this->columns = array();
         $this->joins = array();
         $this->joinRels = array();
@@ -31,8 +39,42 @@ class QueryUtil {
         $this->tableAliases = array();
         $this->fieldAliases = array();
 
+        // Set up entity details
+
+        if( !isset($relation) ){
+            $this->entity_class = get_class($modelObject);
+            $this->entity_table = $modelObject->getTableName();
+            $colData = $modelObject->getColumnData();
+        }
+        else {
+            // Redirect to get items related to the entity class
+            $this->rel_parent_table = $modelObject->getTableName();
+            $this->rel_parent_class = get_class($modelObject);
+            $this->withTableAlias($this->rel_parent_table, $this->rel_parent_table);
+
+            // REASSIGN modelObject to instance of relation class
+            $this->entity_class = $relation->className;
+            $modelObject = new $this->entity_class;
+
+            $this->entity_table = $modelObject->getTableName();
+            $colData = $modelObject->getColumnData();
+        }
+
         $this->withTableAlias($this->entity_table, $this->entity_table);
-        $this->map_fields($this->entity_table, $modelObject->getColumnData());
+        $this->map_fields($this->entity_table, $colData);
+
+        // Automatically apply declared Join(s)
+        if( isset($relation) ){
+            // Copy relation and override keys in order to form the join using legacy DataRelationship data...
+            $relatedRel = clone $relation;
+            $relatedRel->foreignKeyName = $relation->keyName;
+            $relatedRel->keyName = 'key_id';
+
+            // Validate join - prevent joining to entity table
+            if( $this->rel_parent_table != $this->entity_table ){
+                $this->joinTo($relatedRel);
+            }
+        }
 
         if( $modelObject instanceof ISelectWithJoins){
             $joinRels = $modelObject->selectJoinReleationships();
@@ -66,6 +108,15 @@ class QueryUtil {
         $join_key = $joinRel->keyName;
         $join_foreign = $joinRel->foreignKeyName;
 
+        $join_field = "$join_table.$join_foreign";
+        $src_field = "$src_table.$join_key";
+
+        // Validate join to prevent self-joining by key_id
+        if( $this->entity_table == $join_table && $join_field == $src_field){
+            Logger::getLogger(__CLASS__ . '.' . __FUNCTION__)->warn("Skip joining $src_table to $join_table on $join_field = $src_field");
+            return;
+        }
+
         $this->withTableAlias($join_table, $join_table);
 
         foreach($joinRel->columnAliases as $field=>$alias){
@@ -74,14 +125,18 @@ class QueryUtil {
 
         $this->map_fields($join_table, $joinRel->columns, $joinRel->columnAliases);
 
-        $this->joins[] = "JOIN $join_table $join_table ON $join_table.$join_foreign = $src_table.$join_key";
+        if( isset($joinRel->orderColumn) ){
+            $this->map_fields($join_table, array($joinRel->orderColumn => $joinRel->orderColumn));
+        }
+
+        $this->joins[] = "JOIN $join_table $join_table ON $join_field = $src_field";
 
         return $this;
     }
 
-    public function where_raw($field, $operator, $val = null, $valPdoType = null ){
+    public function where_raw($field, $operator = null, $val = null, $valPdoType = null ){
         // TODO: validate operator
-        $pred = "$field $operator";
+        $pred = implode(' ', array($field, $operator));
 
         if( isset($val) ){
             $val_id = $this->bind_value($val, $valPdoType);
@@ -92,17 +147,34 @@ class QueryUtil {
         return $this;
     }
 
-    public function where( $name, $operator, $val = null, $valPdoType = null ){
-        $field = "$this->entity_table.$name";
-        return $this->where_raw($field, $operator, $val, $valPdoType);
+    public function where( $nameOrField, $operator = null, $val = null, $valPdoType = null ){
+        $field = $nameOrField;
+        if( !($field instanceof Field) ){
+            // TODO: infer table details
+            // Find mapped columns which match the name?
+            $field = new Field($nameOrField, $this->entity_table);
+        }
+
+        $wherePart = "$field->table.$field->name";
+        return $this->where_raw($wherePart, $operator, $val, $valPdoType);
     }
 
     public function orderBy($table, $column, $direction = "ASC"){
         $alias = $this->tableAliases[$table] ?? $table;
         $this->orders[] = "CAST($alias.$column AS UNSIGNED), $alias.$column $direction";
+
+        return $this;
+    }
+
+    public function limit(int $limit){
+        $this->limit = $limit;
     }
 
     public function sql(){
+        if( isset($this->sql) ){
+            return $this->sql;
+        }
+
         $all_predicates = array();
 
         $entity_table = $this->entity_table;
@@ -137,10 +209,15 @@ class QueryUtil {
             $parts[] = $all_orders;
         }
 
+        if( isset($this->limit) ){
+            $parts[] = "LIMIT $this->limit";
+        }
+
         $sql = implode(' ', $parts);
         Logger::getLogger(__CLASS__)->debug($sql);
 
-		return $sql;
+        $this->sql = $sql;
+		return $this->sql;
     }
 
     public function &prepare(){
@@ -149,8 +226,18 @@ class QueryUtil {
         if( !empty($this->bindings) ){
             foreach($this->bindings as $param => $val){
                 // TODO: Infer type
-                $t = $val[1] ?? PDO::PARAM_STR;
-                $stmt->bindParam($param, $val[0], $val[1]);
+                $value = $val[0];
+                $t = $val[1];
+                if( !isset($t) ){
+                    if( is_numeric($value) ){
+                        $t = PDO::PARAM_INT;
+                    }
+                    else {
+                        $t = PDO::PARAM_STR;
+                    }
+                }
+                Logger::getLogger(__CLASS__ . '.' . __FUNCTION__)->debug("Binding $param='$value' as PDO type $t");
+                $stmt->bindValue($param, $value, $t);
             }
         }
 
@@ -197,7 +284,7 @@ class QueryUtil {
 
 		foreach( $cols as $field => $type){
             $field_alias = $this->fieldAliases["$alias.$field"] ?? $field;
-            $this->columns[] = "$alias.$field as $field_alias";
+            $this->columns[] = "$alias.$field as `$field_alias`";
         }
 
         return $this;
@@ -207,6 +294,18 @@ class QueryUtil {
         $val_id = ':val' . $this->valbinderId++;
         $this->bindings[$val_id] = array($value, $valPdoType);
         return $val_id;
+    }
+}
+
+class Field {
+    public $name;
+    public $table;
+    public $alias;
+
+    public function __construct($name, $table = null, $alias = null){
+        $this->name = $name;
+        $this->table = $table;
+        $this->alias = $alias ?? $name;
     }
 }
 ?>
