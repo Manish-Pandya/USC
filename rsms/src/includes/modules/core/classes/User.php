@@ -6,7 +6,7 @@
  *
  * @author Mitch Martin, GraySail LLC
  */
-class User extends GenericCrud{
+class User extends GenericCrud implements ISelectWithJoins {
 
 	// CRUD Meta-Data
 	/** Name of the DB Table */
@@ -55,6 +55,19 @@ class User extends GenericCrud{
 			"tableName"	=>	"inspector",
 			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"user_id"
+	);
+
+	public static $SELCT_INSPECTOR_ID_RELATIONSHIP = array(
+		"className" => "Inspector",
+		"tableName"	=> "inspector",
+		"keyName"	=> "key_id",
+		"foreignKeyName" => "user_id",
+		"columns" => array(
+			"key_id" => "integer"
+		),
+		"columnAliases" => array(
+			"key_id" => "inspector_id"
+		)
 	);
 
 	// Access information
@@ -123,6 +136,12 @@ class User extends GenericCrud{
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 
+	public function selectJoinReleationships(){
+		return array(
+			DataRelationship::fromArray(self::$SELCT_INSPECTOR_ID_RELATIONSHIP)
+		);
+	}
+
 	// Accessors / Mutators
 	public function getRoles(){
 		if($this->roles === NULL && $this->hasPrimaryKeyValue()) {
@@ -145,7 +164,7 @@ class User extends GenericCrud{
 
 
 	public function getInspector(){
-		if($this->inspector === NULL && $this->hasPrimaryKeyValue()) {
+		if($this->inspector === NULL && $this->hasPrimaryKeyValue() && $this->getInspector_id() != null) {
 			$thisDAO = new GenericDAO($this);
 			$inspectorArray = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$INSPECTOR_RELATIONSHIP));
 			if (isset($inspectorArray[0])) {$this->inspector = $inspectorArray[0];}
@@ -155,19 +174,19 @@ class User extends GenericCrud{
 	public function setInspector($inspector){ $this->inspector = $inspector; }
 
     public function getInspector_id(){
-        if($this->inspector_id == null && $this->getInspector() != null){
-            $this->inspector_id = $this->inspector->getKey_id();
-        }
-
         return $this->inspector_id;
     }
-    public function setInspector_id($id){$this->inspector_id = $id;}
+	public function setInspector_id($id){$this->inspector_id = $id;}
 
 	public function getSupervisor_id(){ return $this->supervisor_id; }
 	public function setSupervisor_id($id){ $this->supervisor_id = $id; }
 
+	public function hasSupervisor(){
+		return $this->supervisor != null || ($this->hasPrimaryKeyValue() && $this->supervisor_id > 0);
+	}
+
 	public function getSupervisor() {
-		if($this->supervisor === NULL && $this->hasPrimaryKeyValue() && $this->supervisor_id > 0) {
+		if($this->supervisor === NULL && $this->hasSupervisor()) {
 			$superDAO = new GenericDAO(new PrincipalInvestigator());
 			$this->supervisor = $superDAO->getById($this->supervisor_id);
 		}
@@ -205,12 +224,9 @@ class User extends GenericCrud{
 	public function setPosition($position){ $this->position = $position;}
 
 	public function getPrimary_department() {
-		if($this->getSupervisor_id() != NULL && $this->hasPrimaryKeyValue()) {
-            $super = $this->getSupervisor();
-            if($super != null){
-				$superDao = new PrincipalInvestigatorDAO();
-                $this->primary_department = $superDao->getPrimaryDepartment($this->getSupervisor_id());
-            }
+		if($this->hasSupervisor() && $this->primary_department == null) {
+			$superDao = new PrincipalInvestigatorDAO();
+			$this->primary_department = $superDao->getPrimaryDepartment($this->getSupervisor_id());
 		}
 		return $this->primary_department;
 	}
