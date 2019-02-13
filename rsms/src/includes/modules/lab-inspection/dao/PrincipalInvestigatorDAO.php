@@ -34,5 +34,25 @@ class PrincipalInvestigatorDAO extends GenericDAO {
         return $this->getRelatedItemsById(
             $piId, DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
     }
+
+    public function getRoomsInBuilding($piId, $buildingId){
+        try{
+
+            $q = $this->_buildQueryFor_getRelatedItemsById($piId, DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
+            $q->where(Field::create('building_id', 'room', '=', $buildingId, PDO::PARAM_INT));
+
+			$result = $q->getAll();
+
+			if( $this->LOG->isTraceEnabled() ){
+				$cnt = is_array($result) ? count($result) : $result != null ? 1 : 0;
+				$this->LOG->trace("Result count: $cnt");
+			}
+
+			return $result;
+		}
+		catch(QueryException $er){
+			return new QueryError($er->getMessage());
+		}
+    }
 }
 ?>

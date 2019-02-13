@@ -4801,13 +4801,7 @@ class ActionManager {
             }
 
             // Now get the PI's Rooms which are in the Inspection's Building
-            $rooms = $piDao->getRooms($is->getPi_key_id());
-            $pi_bldg_rooms = array();
-            foreach ($rooms as $room){
-                if ($room->getBuilding_id() == $is->getBuilding_key_id()){
-                    $pi_bldg_rooms[] = $room;
-                }
-            }
+            $pi_bldg_rooms = $piDao->getRoomsInBuilding($is->getPi_key_id(), $is->getBuilding_key_id());
             $is->setBuilding_rooms($pi_bldg_rooms);
         }
 
