@@ -527,99 +527,39 @@ class GenericDAO {
 		$this->LOG->debug("Retrieved " . count($result) . " results");
 		return $result;
 	}
-	/**
-	 * Retrieves a list of related items for the entity of this type with the given ID.
-	 *
-	 * @param unknown $id
-	 * @param DataRelationship $relationship
-	 * @param String $sortColumn
-	 * @param Boolean $activeOnly
-	 * @param Boolean $activeOnlyRelated
-	 * @return Array:
-	 */
+
 	public function getRelatedItemsById($id, DataRelationship $relationship, $sortColumns = null, $activeOnly = false, $activeOnlyRelated = false, $limit=0){
+		try{
+			$joinOnIdField = new Field($relationship->foreignKeyName, $relationship->tableName);
+			$q = QueryUtil::selectFrom($this->modelObject, $relationship)
+				->where($joinOnIdField, '=', $id, PDO::PARAM_INT);
 
-		if (empty($id)) { return array();}
+			if( $activeOnly ){
+				$q->where('is_active', '=', 1);
+			}
 
-		// get the relationship parameters needed to build the query
-		$className		= $relationship->getClassName();
-		$classInstance  = new $className();
-		$tableName		= $relationship->getTableName();
-		$keyName		= $relationship->getKeyName();
-		$foreignKeyName	= $relationship->getForeignKeyName();
-        if($relationship->orderColumn != null) {
-            $orderColumn = $relationship->orderColumn;
-            $class = $this->modelClassName;
-            $parentTable = $class::$TABLE_NAME;
-            $parentId = $this->modelObject->getKey_id();
-        }
-		$modelObject    = $this->modelObject;
-		//$this->LOG->error("$this->logprefix Retrieving related items for " . get_class($modelObject) . " entity with id=$id");
-
-		$whereTag = $activeOnly ? " WHERE is_active = 1 AND " : " WHERE ";
-		//$sql = "SELECT * FROM " . $modelObject->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
-		if(!isset($orderColumn)){
-            $sql = "SELECT * FROM " . $classInstance->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName WHERE $foreignKeyName = $id";
-            $sql .= $activeOnlyRelated ? " AND is_active = 1)" : ")";
-        }else{
-            $this->LOG->trace("getting ordered");
-            $this->LOG->trace($this->modelObject);
-            /*
-             * SELECT a.*, b.order_index as order_index
-            FROM rad_condition a
-            LEFT OUTER JOIN pi_authorization_rad_condition b
-            ON b.condition_id = a.key_id
-            LEFT OUTER JOIN pi_authorization c
-            ON c.key_id = b.pi_authorization_id
-            where c.key_id = 55;
-             */
-            $sql = "SELECT a.*, b.$orderColumn as $orderColumn
-                    FROM " . $classInstance->getTableName() . " a
-                    LEFT OUTER JOIN $tableName b
-                    ON a.key_id = b.$keyName
-                    LEFT OUTER JOIN $parentTable c
-                    ON c.key_id = b.$foreignKeyName
-                    WHERE c.key_id = $parentId";
-            /*
-            $sql = "SELECT a.*, b.$orderColumn as $orderColumn
-                    FROM a." . $classInstance->getTableName() . $whereTag . "key_id IN(SELECT $keyName FROM $tableName b WHERE $foreignKeyName = $id";
-        */
-        }
-
-		if ($sortColumns != null){
-			$sql .= " ORDER BY";
-			$max = count($sortColumns);
-			foreach($sortColumns as $key=>$column){
-				$sql .= " " . $column;
-				if($key != $max - 1){
-					$sql .= ",";
+			if( $sortColumns != null ){
+				foreach($sortColumns as $key=>$column){
+					$q->orderBy($this->modelObject->getTableName(), $column);
 				}
 			}
+
+			if( $limit > 0 ){
+				$q->limit($limit);
+			}
+
+			$result = $q->getAll();
+
+			if( $this->LOG->isTraceEnabled() ){
+				$cnt = is_array($result) ? count($result) : $result != null ? 1 : 0;
+				$this->LOG->trace("Result count: $cnt");
+			}
+
+			return $result;
 		}
-
-		if( $limit > 0 ){
-			$sql .= " LIMIT $limit";
+		catch(QueryException $er){
+			return new QueryError($er->getMessage());
 		}
-
-		$this->LOG->debug("Executing: $sql");
-		$stmt = DBConnection::prepareStatement($sql);
-
-		// Query the db and return an array of $this type of object
-		if ($stmt->execute() ) {
-			$result = $stmt->fetchAll(PDO::FETCH_CLASS, $className);
-			// ... otherwise, generate error message to be returned
-		} else {
-			$result = array();
-			$error = $stmt->errorInfo();
-			$resultError = new QueryError($error);
-			$this->LOG->error('Returning QueryError with message: ' . $resultError->getMessage());
-		}
-		
-		// 'close' the statment
-		$stmt = null;
-
-		$this->LOG->debug("Retrieved " . count($result) . " results");
-		return $result;
 	}
 
 	/**
