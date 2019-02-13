@@ -260,6 +260,8 @@ class QueryUtil {
 			$error = $stmt->errorInfo();
             $result = new QueryException($error[2]);
             $stmt = null;
+            Logger::getLogger(__CLASS__ . '.' . __FUNCTION__)->error($result->getMessage());
+
             throw $result;
         }
 

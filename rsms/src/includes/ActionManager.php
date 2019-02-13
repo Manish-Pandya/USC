@@ -4826,7 +4826,7 @@ class ActionManager {
             EntityMap::lazy("getHazardTypesArePresent")
         ));
 
-        $LOG->debug("Retrieved and populated $year inspection schedule");
+        $LOG->info("Retrieved and populated $year inspection schedule");
         return $inspectionSchedules;
     }
 
