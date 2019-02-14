@@ -39,7 +39,8 @@ class PrincipalInvestigatorDAO extends GenericDAO {
         try{
 
             $q = $this->_buildQueryFor_getRelatedItemsById($piId, DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
-            $q->where(Field::create('building_id', 'room', '=', $buildingId, PDO::PARAM_INT));
+            $q->where(Field::create('building_id', 'room'), '=', $buildingId, PDO::PARAM_INT);
+            $q->groupBy(Field::create('key_id', 'room'));
 
 			$result = $q->getAll();
 
