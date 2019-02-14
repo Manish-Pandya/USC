@@ -4869,6 +4869,9 @@ class ActionManager {
             EntityMap::lazy("getDeficiency_selections"),
             EntityMap::lazy("getPrincipalInvestigator"),
             EntityMap::lazy("getChecklists"),
+            EntityMap::lazy("getCap_submitter_name"),
+            EntityMap::lazy("getCap_approver_name"),
+            EntityMap::lazy("getLabPersonnel"),
             EntityMap::eager("getStatus")
         ));
 
@@ -4880,6 +4883,10 @@ class ActionManager {
             EntityMap::lazy("getBuilding"),
             EntityMap::lazy("getSolidsContainers"),
             EntityMap::lazy("getHazardTypesArePresent")
+        ));
+
+        EntityManager::with_entity_maps(User::class, array(
+            EntityMap::lazy("getPrimary_department")
         ));
 
         $LOG->info("Retrieved and populated $year inspection schedule");
