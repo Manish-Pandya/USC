@@ -4853,13 +4853,13 @@ class ActionManager {
                 		array_push($filteredRooms, $room);
                     }
                 }
-                $is->setInspection_rooms($filteredRooms);
+                $is->setInspection_rooms(array_map( array($this, '_roomToDto'), $filteredRooms));
                 $is->setInspections($inspection);
             }
 
             // Now get the PI's Rooms which are in the Inspection's Building
             $pi_bldg_rooms = $piDao->getRoomsInBuilding($is->getPi_key_id(), $is->getBuilding_key_id());
-            $is->setBuilding_rooms($pi_bldg_rooms);
+            $is->setBuilding_rooms( array_map( array($this, '_roomToDto'), $pi_bldg_rooms));
         }
 
         EntityManager::with_entity_maps(Inspection::class, array(
