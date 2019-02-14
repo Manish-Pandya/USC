@@ -49,7 +49,7 @@ class AppCache {
 				$this->_STATS['OVERWRITES']++;
 			}
 
-			$LOG->debug("($this->name cache) Caching $kid");
+			$LOG->trace("($this->name cache) Caching $kid");
 			$this->_CACHE[$kid] = $obj;
 			$this->_STATS['WRITES']++;
 		}
