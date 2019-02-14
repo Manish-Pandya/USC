@@ -4872,7 +4872,14 @@ class ActionManager {
             EntityMap::lazy("getCap_submitter_name"),
             EntityMap::lazy("getCap_approver_name"),
             EntityMap::lazy("getLabPersonnel"),
-            EntityMap::eager("getStatus")
+            EntityMap::eager("getStatus"),
+
+            EntityMap::lazy("getCap_approver_id"),
+            EntityMap::lazy("getCap_submitter_id"),
+            EntityMap::lazy("getCreated_user_id"),
+            EntityMap::lazy("getDate_created"),
+            EntityMap::lazy("getDate_last_modified"),
+            EntityMap::lazy("getHasDeficiencies")
         ));
 
         EntityManager::with_entity_maps(Room::class, array(
