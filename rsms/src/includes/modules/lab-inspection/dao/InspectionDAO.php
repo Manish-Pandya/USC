@@ -4,9 +4,13 @@ class InspectionDAO extends GenericDAO {
         parent::__construct(new Inspection());
     }
 
+    function getInspectionInspectors($inspectionId){
+        // Inspectors are a relatively small list; let's cache them aggressively
+        return $this->getRelatedItems($inspectionId, DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP));
+    }
+
     function getInpsectionRooms($inspectionId){
-        return $this->getRelatedItemsById(
-            $inspectionId, DataRelationship::fromArray(Inspection::$ROOMS_RELATIONSHIP));
+        return $this->getRelatedItems($inspectionId, DataRelationship::fromArray(Inspection::$ROOMS_RELATIONSHIP));
     }
 
     function getInspectionsByYear($year){
