@@ -626,7 +626,7 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
     getMonths = function () {
         $scope.months = manageInspectionsFactory.getMonths();
 
-    },
+    };
 
     var init = function () {
         $scope.loading = true;
@@ -634,7 +634,7 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
             .then(getYears)
             .then(getDtos)
             .then(getMonths)
-    }
+    };
 
     init();
 
