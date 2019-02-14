@@ -2022,13 +2022,7 @@ class ActionManager {
 
         // get all buildings
         $buildings = $dao->getAll();
-        $infos = array_map( function($building){
-            return new GenericDto( array(
-                'Key_id' => $building->getKey_id(),
-                'Name' => $building->getName(),
-                'Is_active' => $building->getIs_active()
-            ));
-        }, $buildings);
+        $infos = array_map( array($this, '_buildingToDto'), $buildings);
 
         return $infos;
     }
@@ -2045,13 +2039,7 @@ class ActionManager {
 
         // Get details for its rooms
         $rooms = $building->getRooms();
-        $infos = array_map( function($room){
-            return new GenericDto( array(
-                'Key_id' => $room->getKey_id(),
-                'Name' => $room->getName(),
-                'Is_active' => $room->getIs_active()
-            ));
-        }, $rooms);
+        $infos = array_map( array($this, '_roomToDto'), $rooms);
 
         return $infos;
     }
@@ -2066,13 +2054,7 @@ class ActionManager {
         $pis = $dao->getAllWith(DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
 
         // Reduce the PIs to just IDs and Names
-        $infos = array_map( function($pi){
-            return new GenericDto( array(
-                'Key_id' => $pi->getKey_id(),
-                'Name' => $pi->getUser()->getName(),
-                'Is_active' => $pi->getIs_active()
-            ));
-        }, $pis);
+        $infos = array_map( array($this, '_piToDto'), $pis);
 
         return $infos;
     }
@@ -5333,6 +5315,32 @@ class ActionManager {
         }
 
         return $relations;
+    }
+
+    protected function _buildingToDto($building){
+        return new GenericDto( array(
+            'Key_id' => $building->getKey_id(),
+            'Name' => $building->getName(),
+            'Is_active' => $building->getIs_active(),
+            'Campus_id' => $building->getCampus_id()
+        ));
+    }
+
+    protected function _roomToDto($room){
+        return new GenericDto( array(
+            'Key_id' => $room->getKey_id(),
+            'Name' => $room->getName(),
+            'Is_active' => $room->getIs_active(),
+            'Building_id' => $room->getBuilding_id()
+        ));
+    }
+
+    protected function _piToDto($pi){
+        return new GenericDto( array(
+            'Key_id' => $pi->getKey_id(),
+            'Name' => $pi->getUser()->getName(),
+            'Is_active' => $pi->getIs_active()
+        ));
     }
 }
 ?>
