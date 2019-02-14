@@ -61,7 +61,7 @@ class LabInspection_ActionMappingFactory extends ActionMappingFactory {
             "addCorrectedInInspection"=>new ActionMapping("addCorrectedInInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
             "removeCorrectedInInspection"=>new ActionMapping("removeCorrectedInInspection", "", "", $this::$ROLE_GROUPS["EHS"]),
             "saveCorrectiveAction"=>new SecuredActionMapping("saveCorrectiveAction", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'LabInspectionSecurity::userCanSaveCorrectiveAction'),
-            "deleteCorrectiveActionFromDeficiency"=>new SecuredActionMapping("deleteCorrectiveActionFromDeficiency", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'LabInspectionSecurity::userCanSaveCorrectiveAction'),
+            "deleteCorrectiveActionFromDeficiency"=>new SecuredActionMapping("deleteCorrectiveActionFromDeficiency", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'LabInspectionSecurity::userCanDeleteCorrectiveAction'),
             "saveObservationRelation"=>new ActionMapping("saveObservationRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
             "saveRecommendationRelation"=>new ActionMapping("saveRecommendationRelation", "", "", $this::$ROLE_GROUPS["EHS"]),
             "saveSupplementalObservation"=>new ActionMapping("saveSupplementalObservation", "", "", $this::$ROLE_GROUPS["EHS"]),

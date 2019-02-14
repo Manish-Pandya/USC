@@ -1433,6 +1433,32 @@ class ActionManager {
         return true;
     }
 
+    private function _before_save_room_check_room_pis(Room &$room, Array $oldPIs, Array $newPIs){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        $getIds = function($pi){
+            if(is_array($pi) )
+                return $pi['Key_id'];
+            return $pi->getKey_id();
+        };
+
+        $LOG->debug("Verifying room changes...");
+        $existingPiIds = array_map($getIds, $oldPIs);
+        $LOG->debug("Existing PIs: " . implode(', ', $existingPiIds));
+
+        $incomingPiIds = array_map($getIds, $newPIs);
+        $LOG->debug("Incoming PIs: " . implode(', ', $incomingPiIds));
+
+        $removingPiIds = array_diff($existingPiIds, $incomingPiIds);
+        if( !empty($removingPiIds) ){
+            $LOG->debug("Validate unassignment of PIs: " . implode(', ', $removingPiIds));
+            return $this->validateRoomUnassignments($room, $removingPiIds);
+        }
+
+        $LOG->debug("No PIs are being unassigned");
+        return true;
+    }
+
     public function saveRoom($room = null){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         if($room == null){
@@ -1464,6 +1490,17 @@ class ActionManager {
 
             if(is_array( $decodedObject->getPrincipalInvestigators() )){
                 $LOG->debug($decodedObject);
+
+                // First, validate any PI removals
+                $canSaveRoom = $this->_before_save_room_check_room_pis(
+                    $room,
+                    $room->getPrincipalInvestigators(),
+                    $decodedObject->getPrincipalInvestigators()
+                );
+
+                if( !$canSaveRoom ){
+                    return new ActionError("One or more PIs have Hazards assigned to room " . $room->getKey_id(), 200);
+                }
 
                 if( $room->getPrincipalInvestigators() != null ){
                     // Remove any existing
@@ -2393,6 +2430,50 @@ class ActionManager {
         }
     }
 
+    private function validateRoomUnassignments($room, Array $removePiIds = null){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+        $LOG->debug("Validating room unassignment: $room");
+
+        // Remove this room assignment
+        // First, check if this room has any hazards in it
+        $hazardRoomRelations = $room->getHazard_room_relations();
+
+        if( empty($hazardRoomRelations) ){
+            // No hazards in this room; nothing more to check
+            $LOG->debug("Room has no hazards");
+            return true;
+        }
+        else {
+            // This room has hazards assigned to it
+            $LOG->debug("Room has hazard assignments");
+
+            // Map relations to their PI IDs
+            $piAssignments = array_unique(
+                array_map(function($rel){
+                    return $rel->getPrincipal_investigator_id();
+                }, $hazardRoomRelations)
+            );
+
+            // Verify that the specified PIs have no hazards in this room
+            if( isset($removePiIds) && !empty($removePiIds) ) {
+                $LOG->debug("Checking hazard assignments for PIs: " . implode(', ', $removePiIds));
+
+                $piAssignments = array_filter($piAssignments, function($assignedPiId) use ($removePiIds){
+                    return in_array($assignedPiId, $removePiIds);
+                });
+
+                if( empty($piAssignments) ){
+                    // The specified PIs have no hazards assigned to this room
+                    $LOG->debug("PIs have no assignments in room: " . implode(', ', $removePiIds));
+                    return true;
+                }
+            }
+
+            $LOG->error("Cannot remove Room assignment: PIs (" . implode(', ', $piAssignments) . ") have Hazards assigned to $room");
+            return false;
+        }
+    }
+
     public function savePIRoomRelation($PIId = NULL,$roomId = NULL,$add= NULL){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         if($PIId == NULL && $roomId == NULL && $add == NULL){
@@ -2431,27 +2512,18 @@ class ActionManager {
             }
 
             if( !$add ) {
-                $LOG->debug("Validating room unassignment");
-
-                // Remove this room assignment 
-                // First, verify that this PI has no hazards in this room
-                $hazardRoomRelations = $room->getHazard_room_relations();
-                $piHazards = array_filter($hazardRoomRelations, function($rel) use ($PIId){
-                    return $rel->getPrincipal_investigator_id() == $PIId;
-                });
-
-                if( isset($piHazards) && count($piHazards) > 0 ){
-                    // PI has hazards assigned to this room
+                // First, validate the unassignment
+                if( !$this->validateRoomUnassignments($room, array($PIId)) ){
                     $LOG->error("Cannot remove Room assignment: PI #$PIId has Hazards assigned to room #$roomId");
-                    return new ActionError("PI $PIId has Hazards assigned to room $roomId", 400);
+                    return new ActionError("PI $PIId has Hazards assigned to room $roomId", 200);
                 }
-                else {
-                    $LOG->debug("PI $PIId Has no hazards assigned to room $roomId. Unassigning...");
-                    // PI has no hazards assigned to this room
-                    // Remove the assignment
-                    $dao->removeRelatedItems($roomId, $PIId,
-                        DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
-                }
+
+                // Remove this room assignment
+                $LOG->debug("PI $PIId Has no hazards assigned to room $roomId. Unassigning...");
+                // PI has no hazards assigned to this room
+                // Remove the assignment
+                $dao->removeRelatedItems($roomId, $PIId,
+                    DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
             }
             else{
                 $LOG->debug("Assigning PI $PIId to room $roomId...");
