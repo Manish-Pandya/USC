@@ -243,8 +243,8 @@ class Inspection extends GenericCrud implements ISelectWithJoins {
 
     public function getRooms(){
         if( $this->rooms == null ){
-            $thisDAO = new GenericDAO($this);
-            $this->rooms = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$ROOMS_RELATIONSHIP));
+            $thisDAO = new InspectionDAO();
+            $this->rooms = $thisDAO->getInpsectionRooms($this->getKey_id());
         }
 
         return $this->rooms;

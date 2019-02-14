@@ -4,6 +4,11 @@ class InspectionDAO extends GenericDAO {
         parent::__construct(new Inspection());
     }
 
+    function getInpsectionRooms($inspectionId){
+        return $this->getRelatedItemsById(
+            $inspectionId, DataRelationship::fromArray(Inspection::$ROOMS_RELATIONSHIP));
+    }
+
     function getInspectionsByYear($year){
         //`inspection` where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)
 
