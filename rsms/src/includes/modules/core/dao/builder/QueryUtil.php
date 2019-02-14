@@ -20,6 +20,7 @@ class QueryUtil {
     protected $columns;
     protected $joins;
     protected $predicates;
+    protected $groupBys;
     protected $orders;
 
     protected $tableAliases;
@@ -40,6 +41,7 @@ class QueryUtil {
         $this->orders = array();
         $this->tableAliases = array();
         $this->fieldAliases = array();
+        $this->groupBys = array();
 
         // Set up entity details
 
@@ -165,6 +167,10 @@ class QueryUtil {
         return $this->where_raw($wherePart, $operator, $val, $valPdoType);
     }
 
+    public function groupBy(Field $field){
+        $this->groupBys[] = $field->write();
+    }
+
     public function orderBy($table, $column, $direction = "ASC"){
         $alias = $this->tableAliases[$table] ?? $table;
         $this->orders[] = "CAST($alias.$column AS UNSIGNED), $alias.$column $direction";
@@ -207,6 +213,11 @@ class QueryUtil {
             // FIXME: GROUPING, OR
             $all_predicates = implode(' AND ', $this->predicates);
             $parts[] = " WHERE $all_predicates";
+        }
+
+        if( count($this->groupBys) > 0 ){
+            $all_groups = implode(', ', $this->groupBys);
+            $parts[] = "GROUP BY $all_groups";
         }
 
         if( count($this->orders) > 0 ){
