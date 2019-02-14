@@ -268,12 +268,9 @@ class QueryUtil {
 
         $stmt = $this->prepare();
         if( !$stmt->execute() ){
-			$error = $stmt->errorInfo();
-            $result = new QueryException($error[2]);
+            $er = $this->buildQueryException($stmt);
             $stmt = null;
-            Logger::getLogger(__CLASS__ . '.' . __FUNCTION__)->error($result->getMessage());
-
-            throw $result;
+            throw $er;
         }
 
         $result = $stmt->fetchAll(PDO::FETCH_CLASS, $fetchClass);
@@ -288,14 +285,21 @@ class QueryUtil {
 
         $stmt = $this->prepare();
         if( !$stmt->execute() ){
-			$error = $stmt->errorInfo();
-			$result = new QueryException($error[2]);
-            throw $result;
+            $er = $this->buildQueryException($stmt);
+            $stmt = null;
+            throw $er;
         }
 
         $result = $stmt->fetchObject($fetchClass);
         $stmt = null;
         return $result;
+    }
+
+    protected function buildQueryException(&$stmt){
+        $error = $stmt->errorInfo();
+        $ex = new QueryException($error[2]);
+        Logger::getLogger(__CLASS__ . '.' . __FUNCTION__)->error($ex->getMessage() . "\n" . $this->sql());
+        return $ex;
     }
 
     private function map_fields($table, $cols, $colAliases = array()){
