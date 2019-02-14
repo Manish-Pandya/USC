@@ -500,6 +500,29 @@ class GenericDAO {
 
 	}
 
+	/**
+	 * Retrieves related-items by first retrieveing related Keys,
+	 * then looking up each individually by key. While this is more
+	 * work for larger lists, it forces use of the entity cache
+	 * and prevents duplicate queries for items.
+	 *
+	 * Use the other getRelatedItem* methods to prevent this additional
+	 * step without caching
+	 */
+	public function getRelatedItems($id, DataRelationship $relationship){
+		$items = array();
+		$relationKeys = $this->getRelatedItemKeysById($id, $relationship);
+
+		if( !empty($relationKeys) ){
+			$relDao = new GenericDAO(new $relationship->className);
+			foreach($relationKeys as $id){
+				$items[] = $relDao->getById($id);
+			}
+		}
+
+		return $items;
+	}
+
 	public function getRelatedItemKeysById($id, DataRelationship $relationship){
 		if (empty($id)) { return array();}
 
