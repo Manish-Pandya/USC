@@ -150,5 +150,23 @@ class LabInspectionSecurity {
         // Nothing to save...
         return false;
     }
+
+    public static function userCanDeleteCorrectiveAction(){
+        // Is request body a DeficiencySelection which this user can save?
+        $deficiencySelection = JsonManager::decodeInputStream();
+        if( isset($deficiencySelection) ){
+            // Get the deficiency (either Selection or Supplemental)
+
+            // Map defeciency to response to get the Inspection ID
+            $inspection_id = $deficiencySelection->getResponse()->getInspection_id();
+
+            // ensure they have access to the inspection
+            return LabInspectionSecurity::_userCanSaveInspectionById($inspection_id);
+        }
+
+        // Nothing to delete...
+        return false;
+    }
+
 }
 ?>
