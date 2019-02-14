@@ -3231,11 +3231,13 @@ class ActionManager {
             $inspection->setInspectors(null);
         }
 
-        $LOG->debug("Save new Inspectors for $inspection");
-        foreach($decodedObject->getInspections()->getInspectors() as $inspector){
-            $LOG->debug("Link inspector: " . $inspector["Key_id"]);
-            //save inspector relationships
-            $inspectionDao->addRelatedItems($inspector["Key_id"],$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP ));
+        if( $decodedObject->getInspections()->getInspectors() != null ){
+            $LOG->debug("Save new Inspectors for $inspection");
+            foreach($decodedObject->getInspections()->getInspectors() as $inspector){
+                $LOG->debug("Link inspector: " . $inspector["Key_id"]);
+                //save inspector relationships
+                $inspectionDao->addRelatedItems($inspector["Key_id"],$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$INSPECTORS_RELATIONSHIP ));
+            }
         }
 
         //When an Inspection is scheduled, labs should complete a verification before the inspection takes place

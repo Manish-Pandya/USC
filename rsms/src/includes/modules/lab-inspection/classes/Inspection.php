@@ -196,9 +196,11 @@ class Inspection extends GenericCrud implements ISelectWithJoins {
 	}
 
     public function getInspectors(){
-        if($this->inspectors)return $this->inspectors;
-        $thisDAO = new GenericDAO($this);
-        $this->inspectors = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$INSPECTORS_RELATIONSHIP));
+        if( $this->inspectors == null && $this->hasPrimaryKeyValue() ){
+            $thisDAO = new GenericDAO($this);
+            $this->inspectors = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$INSPECTORS_RELATIONSHIP));
+        }
+
         return $this->inspectors;
     }
     public function setInspectors($inspectors){ $this->inspectors = $inspectors; }
