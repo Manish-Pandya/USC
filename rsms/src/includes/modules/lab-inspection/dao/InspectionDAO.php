@@ -1,7 +1,13 @@
 <?php
 class InspectionDAO extends GenericDAO {
+
+    private static $STATUS_CACHE;
+
     public function __construct(){
         parent::__construct(new Inspection());
+        if( !isset(self::$STATUS_CACHE)){
+            self::$STATUS_CACHE = new AppCache('Inspection Status');
+        }
     }
 
     function getInspectionInspectors($inspectionId){
@@ -14,17 +20,30 @@ class InspectionDAO extends GenericDAO {
     }
 
     function getInspectionStatus($inspectionId){
-        $stmt = DBConnection::prepareStatement("select inspection_status from inspection_status where inspection_id = :id");
-        $stmt->bindParam(':id', $inspectionId);
-        if( !$stmt->execute()){
-            $error = $stmt->errorInfo();
-            $stmt = null;
-            return new QueryError($error);
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+        $key = AppCache::key_class_id(Inspection::class, $inspectionId);
+
+        $cached = self::$STATUS_CACHE->getCachedEntity($key);
+        if( !$cached ){
+            $LOG->debug("Caching all inspection statuses");
+
+            $stmt = DBConnection::prepareStatement("select * from inspection_status");
+            $stmt->execute();
+            $statuses = $stmt->fetchAll(PDO::FETCH_CLASS, stdClass::class);
+
+            foreach($statuses as $status){
+                self::$STATUS_CACHE->cacheEntity(
+                    $status->inspection_status,
+                    AppCache::key_class_id(Inspection::class, $status->inspection_id)
+                );
+
+                if( $status->inspection_id == $inspectionId ){
+                    $cached = $status->inspection_status;
+                }
+            }
         }
 
-        $status = $stmt->fetchColumn(0);
-        $stmt = null;
-        return $status;
+        return $cached;
     }
 
     function getInspectionsByYear($year){
