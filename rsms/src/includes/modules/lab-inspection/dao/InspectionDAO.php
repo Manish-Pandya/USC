@@ -25,6 +25,7 @@ class InspectionDAO extends GenericDAO {
 
         $cached = self::$STATUS_CACHE->getCachedEntity($key);
         if( !$cached ){
+            $metrickey = Metrics::start('cache all inspection_status');
             $LOG->debug("Caching all inspection statuses");
 
             $stmt = DBConnection::prepareStatement("select * from inspection_status");
@@ -41,6 +42,8 @@ class InspectionDAO extends GenericDAO {
                     $cached = $status->inspection_status;
                 }
             }
+
+            Metrics::stop($metrickey);
         }
 
         return $cached;
