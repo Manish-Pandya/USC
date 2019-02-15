@@ -49,11 +49,7 @@ class DBConnection {
         $GLOBALS['db'] = new PDO(
             self::$DB_CN,
             self::$DB_UN,
-            self::$DB_PW,
-            array(
-                // Use Connection pooling
-                PDO::ATTR_PERSISTENT => true
-            )
+            self::$DB_PW
         );
 
         Logger::getLogger(__CLASS__)->debug("Connection opened.");
