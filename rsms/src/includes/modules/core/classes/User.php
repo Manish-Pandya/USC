@@ -145,7 +145,7 @@ class User extends GenericCrud {
 
 	private $_checkedForInspector = false;
 	public function getInspector(){
-		if($this->inspector === NULL && $this->hasPrimaryKeyValue() && !$this->$_checkedForInspector ) {
+		if($this->inspector === NULL && $this->hasPrimaryKeyValue() && !$this->_checkedForInspector ) {
 			// Prevent querying for multiple times if we don't have a linked Inspector
 			$this->_checkedForInspector = true;
 
