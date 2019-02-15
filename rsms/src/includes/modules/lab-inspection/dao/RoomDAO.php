@@ -15,9 +15,15 @@ class RoomDAO extends GenericDAO {
             return new QueryError($error);
         }
 
-        $hazards = $stmt->fetchObject(stdClass::class);
+        $hazards = $stmt->fetchObject(PresentHazardsDto::class);
         $stmt = null;
-        return $status;
+
+        if( $hazards ){
+            return $hazards;
+        }
+
+        // None returned; return empty mapping object
+        return new PresentHazardsDto();
     }
 
     public function getRoomHasHazards($roomId){

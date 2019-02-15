@@ -347,17 +347,17 @@ class Room extends GenericCrud {
 		$dao = new RoomDAO();
 		$hazardTypesPresent = $dao->getHazardTypesPresentInRoom($this->getKey_id());
 
-        $this->bio_hazards_present = boolval($hazardTypesPresent->bio_hazards_present);
-        $this->chem_hazards_present = boolval($hazardTypesPresent->chem_hazards_present);
-        $this->rad_hazards_present = boolval($hazardTypesPresent->rad_hazards_present);
-        $this->lasers_present = boolval($hazardTypesPresent->lasers_present);
-        $this->xrays_present = boolval($hazardTypesPresent->xrays_present);
-        $this->recombinant_dna_present = boolval($hazardTypesPresent->recombinant_dna_present);
-        $this->flammable_gas_present = boolval($hazardTypesPresent->flammable_gas_present);
-	    $this->toxic_gas_present = boolval($hazardTypesPresent->toxic_gas_present);
-	    $this->corrosive_gas_present = boolval($hazardTypesPresent->corrosive_gas_present);
-        $this->hf_present = boolval($hazardTypesPresent->hf_present);
-        $this->animal_facility = boolval($hazardTypesPresent->animal_facility);
+		$this->bio_hazards_present = boolval($hazardTypesPresent->bio_hazards_present);
+		$this->chem_hazards_present = boolval($hazardTypesPresent->chem_hazards_present);
+		$this->rad_hazards_present = boolval($hazardTypesPresent->rad_hazards_present);
+		$this->lasers_present = boolval($hazardTypesPresent->lasers_present);
+		$this->xrays_present = boolval($hazardTypesPresent->xrays_present);
+		$this->recombinant_dna_present = boolval($hazardTypesPresent->recombinant_dna_present);
+		$this->flammable_gas_present = boolval($hazardTypesPresent->flammable_gas_present);
+		$this->toxic_gas_present = boolval($hazardTypesPresent->toxic_gas_present);
+		$this->corrosive_gas_present = boolval($hazardTypesPresent->corrosive_gas_present);
+		$this->hf_present = boolval($hazardTypesPresent->hf_present);
+		$this->animal_facility = boolval($hazardTypesPresent->animal_facility);
 
 		$this->_hazardTypesComputed = true;
 		return $this->_hazardTypesComputed;
