@@ -13,6 +13,20 @@ class InspectionDAO extends GenericDAO {
         return $this->getRelatedItems($inspectionId, DataRelationship::fromArray(Inspection::$ROOMS_RELATIONSHIP));
     }
 
+    function getInspectionStatus($inspectionId){
+        $stmt = DBConnection::prepareStatement("select inspection_status from inspection_status where inspection_id = :id");
+        $stmt->bindParam(':id', $inspectionId);
+        if( !$stmt->execute()){
+            $error = $stmt->errorInfo();
+            $stmt = null;
+            return new QueryError($error);
+        }
+
+        $status = $stmt->fetchColumn(0);
+        $stmt = null;
+        return $status;
+    }
+
     function getInspectionsByYear($year){
         //`inspection` where (coalesce(year(`inspection`.`date_started`),`inspection`.`schedule_year`) = ?)
 

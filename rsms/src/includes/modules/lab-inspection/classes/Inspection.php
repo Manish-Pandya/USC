@@ -5,7 +5,7 @@
  *
  * @author Mitch Martin, GraySail LLC
  */
-class Inspection extends GenericCrud implements ISelectWithJoins {
+class Inspection extends GenericCrud {
 
     /** Name of the DB Table */
     protected static $TABLE_NAME = "inspection";
@@ -78,20 +78,6 @@ class Inspection extends GenericCrud implements ISelectWithJoins {
             "keyName"	=>	"personnel_id",
             "foreignKeyName"	=>	"inspection_id"
     );
-
-	public static $SELECT_INSPECTION_STATUS_RELATIONSHIP = array(
-		"tableName" => 'inspection_status',
-		"keyName" 	=>  "key_id",
-		"className" => 'Inspection',
-		"foreignKeyName"	=>  "inspection_id",
-		"columns" => array(
-			'inspection_status' => 'text'
-        ),
-        "columnAliases" => array(
-            "inspection_status" => "status"
-        )
-	);
-
 
     /** Array of Inspector entities that took part in this Inspection */
     private $inspectors;
@@ -188,12 +174,6 @@ class Inspection extends GenericCrud implements ISelectWithJoins {
     public function getColumnData(){
         return self::$COLUMN_NAMES_AND_TYPES;
     }
-
-	public function selectJoinReleationships(){
-		return array(
-			DataRelationship::fromArray(self::$SELECT_INSPECTION_STATUS_RELATIONSHIP)
-		);
-	}
 
     public function getInspectors(){
         if( $this->inspectors == null && $this->hasPrimaryKeyValue() ){
@@ -315,58 +295,9 @@ class Inspection extends GenericCrud implements ISelectWithJoins {
     }
 
     public function getStatus() {
-        if( $this->status != null ){
-            return $this->status;
-        }
-
-        $LOG = Logger::getLogger(__CLASS__);
-        //approved?
-        // If there is a close date, it's closed.
-         // Create some reference dates for status checking
-        $now = new DateTime("now");
-        $then = new DateTime("now - 30 days");
-
-        if ($this->date_closed != null) {
-            $this->status = 'CLOSED OUT';
-        }elseif($this->cap_submitted_date){
-            $this->status = 'SUBMITTED CAP';
-        }elseif($this->notification_date){
-            //do we even, like, need a plan?
-            $ds = $this->getDeficiency_selections();
-            if($this->key_id == 97)$LOG->fatal($ds);
-            if(!isset($ds['deficiencySelections']) ||  empty($ds['deficiencySelections'])){
-                $this->hasDeficiencies = false;
-                $this->status = "CLOSED OUT";
-            }
-            //Is the Corrective Action Plan overdue?
-            $notificationDate = new DateTime($this->getNotification_date());
-
-            if($now->diff($notificationDate)->days > 14){
-                $this->status = "OVERDUE CAP";
-            }else{
-                $this->status = "INCOMPLETE CAP";
-            }
-        }elseif($this->date_started){
-            $this->status = "INCOMPLETE INSPECTION";
-        }elseif($this->schedule_month){
-             // ... and it's not 30 days past the first day of the scheduled month
-            if ($then < date_create($this->schedule_year . "-" . $this->schedule_month )  ) {
-                // Then it's pending
-
-                //not fully schedule if not inspector(s) assigned
-                if($this->getInspectors() != NULL){
-                    $this->status = 'SCHEDULED';
-                }else{
-                    $this->status = 'NOT ASSIGNED';
-                }
-                //Begin Inspection
-            } else {
-                // If it is 30 days past due, it's overdue for inspection
-                $this->status = 'OVERDUE INSPECTION';
-                //Begin Inspection
-            }
-        }else{
-            $this->status = "NOT SCHEDULED";
+        if( $this->status == null ){
+            $dao = new InspectionDAO();
+            $this->status = $dao->getInspectionStatus($this->getKey_id());
         }
 
         return $this->status;
