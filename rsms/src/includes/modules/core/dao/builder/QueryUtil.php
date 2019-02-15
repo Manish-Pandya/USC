@@ -80,17 +80,6 @@ class QueryUtil {
             }
         }
 
-        if( $modelObject instanceof ISelectWithJoins){
-            $joinRels = $modelObject->selectJoinReleationships();
-            if( !is_array($joinRels) ){
-                $joinRels = array($joinRels);
-            }
-
-            foreach($joinRels as $joinRel){
-                // Init the join, using LEFT OUTER unless otherwise specified
-                $this->joinTo($joinRel, ($joinRel->joinType ?? self::JOIN_OUTER_LEFT));
-            }
-        }
     }
 
     public function joinTo(DataRelationship $joinRel, $joinType = self::JOIN){
