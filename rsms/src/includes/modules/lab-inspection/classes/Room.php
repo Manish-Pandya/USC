@@ -6,7 +6,7 @@
  *
  * @author Mitch Martin, GraySail LLC
  */
-class Room extends GenericCrud implements ISelectWithJoins {
+class Room extends GenericCrud {
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "room";
@@ -58,61 +58,6 @@ class Room extends GenericCrud implements ISelectWithJoins {
 			"tableName" =>  "solids_container",
 			"keyName" 	=>  "key_id",
 			"foreignKeyName"	=>  "room_id"
-	);
-
-	public static $SELECT_ROOM_HAZARDS_RELATIONSHIP = array(
-		"tableName" => 'room_hazards',
-		"keyName" 	=>  "key_id",
-		"className" => 'Room',
-		"foreignKeyName"	=>  "room_id",
-		"columns" => array(
-			'bio_hazards_present' => 'boolean',
-			'chem_hazards_present' => 'boolean',
-			'rad_hazards_present' => 'boolean',
-			'lasers_present' => 'boolean',
-			'xrays_present' => 'boolean',
-			'recombinant_dna_present' => 'boolean',
-			'toxic_gas_present' => 'boolean',
-			'corrosive_gas_present' => 'boolean',
-			'flammable_gas_present' => 'boolean',
-			'hf_present' => 'boolean',
-			'animal_facility' => 'boolean',
-		)
-	);
-
-	/**
-		... SELECT building.name as building_name
-		JOIN building building ON room.building_id = building.key_id
-	*/
-	public static $SELECT_BUILDING_RELATIONSHIP = array(
-		"className" => 'Building',
-		"keyName" 	=>  "building_id",
-		"tableName" => 'building',
-		"foreignKeyName"	=>  "key_id",
-		"columns" => array(
-			'name' => 'text'
-		),
-		"columnAliases" => array(
-			'name' => 'building_name'
-		)
-	);
-
-	/**
-		... SELECT campus.name as campus_name
-		JOIN campus campus ON building.campus_id = campus.key_id
-	 */
-	public static $SELECT_CAMPUS_RELATIONSHIP = array(
-		"className" => 'Campus',
-		"sourceTableName" => "building",
-		"keyName" 	=>  "campus_id",
-		"tableName" => 'campus',
-		"foreignKeyName"	=>  "key_id",
-		"columns" => array(
-			'name' => 'text'
-		),
-		"columnAliases" => array(
-			'name' => 'campus_name'
-		)
 	);
 
 	private $name;
@@ -184,14 +129,6 @@ class Room extends GenericCrud implements ISelectWithJoins {
 
 	public function getColumnData(){
 		return self::$COLUMN_NAMES_AND_TYPES;
-	}
-
-	public function selectJoinReleationships(){
-		return array(
-			DataRelationship::fromArray(self::$SELECT_ROOM_HAZARDS_RELATIONSHIP),
-			DataRelationship::fromArray(self::$SELECT_BUILDING_RELATIONSHIP),
-			DataRelationship::fromArray(self::$SELECT_CAMPUS_RELATIONSHIP)
-		);
 	}
 
 	// Accessors / Mutators
@@ -372,17 +309,11 @@ class Room extends GenericCrud implements ISelectWithJoins {
 	}
 
 	public function getHas_hazards(){
-		$LOG = Logger::getLogger(__CLASS__);
+		if( $this->has_hazards == null ){
+			$dao = new RoomDAO();
+			$this->has_hazards = $dao->getRoomHasHazards($this->getKey_id());
+		}
 
-		$this->has_hazards = false;
-		// Get the db connection
-		$db = DBConnection::get();
-
-		$queryString = "SELECT COUNT(*) FROM hazard_room WHERE room_id = " . $this->key_id;
-		$stmt = DBConnection::prepareStatement($queryString);
-		$stmt->execute();
-		$number_of_rows = $stmt->fetchColumn();
-		if($number_of_rows > 0) $this->has_hazards =  true;
 		return $this->has_hazards;
 	}
 
@@ -413,17 +344,20 @@ class Room extends GenericCrud implements ISelectWithJoins {
 			return $this->_hazardTypesComputed;
 		}
 
-        $this->bio_hazards_present = boolval($this->bio_hazards_present);
-        $this->chem_hazards_present = boolval($this->chem_hazards_present);
-        $this->rad_hazards_present = boolval($this->rad_hazards_present);
-        $this->lasers_present = boolval($this->lasers_present);
-        $this->xrays_present = boolval($this->xrays_present);
-        $this->recombinant_dna_present = boolval($this->recombinant_dna_present);
-        $this->flammable_gas_present = boolval($this->flammable_gas_present);
-	    $this->toxic_gas_present = boolval($this->toxic_gas_present);
-	    $this->corrosive_gas_present = boolval($this->corrosive_gas_present);
-        $this->hf_present = boolval($this->hf_present);
-        $this->animal_facility = boolval($this->animal_facility);
+		$dao = new RoomDAO();
+		$hazardTypesPresent = $dao->getHazardTypesPresentInRoom($this->getKey_id());
+
+        $this->bio_hazards_present = boolval($hazardTypesPresent->bio_hazards_present);
+        $this->chem_hazards_present = boolval($hazardTypesPresent->chem_hazards_present);
+        $this->rad_hazards_present = boolval($hazardTypesPresent->rad_hazards_present);
+        $this->lasers_present = boolval($hazardTypesPresent->lasers_present);
+        $this->xrays_present = boolval($hazardTypesPresent->xrays_present);
+        $this->recombinant_dna_present = boolval($hazardTypesPresent->recombinant_dna_present);
+        $this->flammable_gas_present = boolval($hazardTypesPresent->flammable_gas_present);
+	    $this->toxic_gas_present = boolval($hazardTypesPresent->toxic_gas_present);
+	    $this->corrosive_gas_present = boolval($hazardTypesPresent->corrosive_gas_present);
+        $this->hf_present = boolval($hazardTypesPresent->hf_present);
+        $this->animal_facility = boolval($hazardTypesPresent->animal_facility);
 
 		$this->_hazardTypesComputed = true;
 		return $this->_hazardTypesComputed;
