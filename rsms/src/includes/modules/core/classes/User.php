@@ -6,7 +6,7 @@
  *
  * @author Mitch Martin, GraySail LLC
  */
-class User extends GenericCrud implements ISelectWithJoins {
+class User extends GenericCrud {
 
 	// CRUD Meta-Data
 	/** Name of the DB Table */
@@ -55,19 +55,6 @@ class User extends GenericCrud implements ISelectWithJoins {
 			"tableName"	=>	"inspector",
 			"keyName"	=>	"key_id",
 			"foreignKeyName"	=>	"user_id"
-	);
-
-	public static $SELCT_INSPECTOR_ID_RELATIONSHIP = array(
-		"className" => "Inspector",
-		"tableName"	=> "inspector",
-		"keyName"	=> "key_id",
-		"foreignKeyName" => "user_id",
-		"columns" => array(
-			"key_id" => "integer"
-		),
-		"columnAliases" => array(
-			"key_id" => "inspector_id"
-		)
 	);
 
 	// Access information
@@ -136,12 +123,6 @@ class User extends GenericCrud implements ISelectWithJoins {
 		return self::$COLUMN_NAMES_AND_TYPES;
 	}
 
-	public function selectJoinReleationships(){
-		return array(
-			DataRelationship::fromArray(self::$SELCT_INSPECTOR_ID_RELATIONSHIP)
-		);
-	}
-
 	// Accessors / Mutators
 	public function getRoles(){
 		if($this->roles === NULL && $this->hasPrimaryKeyValue()) {
@@ -162,18 +143,28 @@ class User extends GenericCrud implements ISelectWithJoins {
 	}
 	public function setPrincipalInvestigator($principalInvestigator){ $this->principalInvestigator = $principalInvestigator; }
 
-
+	private $_checkedForInspector = false;
 	public function getInspector(){
-		if($this->inspector === NULL && $this->hasPrimaryKeyValue() && $this->getInspector_id() != null) {
+		if($this->inspector === NULL && $this->hasPrimaryKeyValue() && !$this->$_checkedForInspector ) {
+			// Prevent querying for multiple times if we don't have a linked Inspector
+			$this->_checkedForInspector = true;
+
 			$thisDAO = new GenericDAO($this);
 			$inspectorArray = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$INSPECTOR_RELATIONSHIP));
-			if (isset($inspectorArray[0])) {$this->inspector = $inspectorArray[0];}
+			if (isset($inspectorArray[0])) {
+				$this->inspector = $inspectorArray[0];
+			}
 		}
+
 		return $this->inspector;
 	}
 	public function setInspector($inspector){ $this->inspector = $inspector; }
 
     public function getInspector_id(){
+		if( $this->inspector_id == NULL && $this->getInspector() != null ){
+			$this->inspector_id = $this->getInspector()->getKey_id();
+		}
+
         return $this->inspector_id;
     }
 	public function setInspector_id($id){$this->inspector_id = $id;}
