@@ -283,8 +283,8 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
 
   factory.getBuildingsByPi = function(pi)
   {
-      pi.Buildings = [];
-      if(!pi.Rooms || !pi.Rooms.length)return;
+      pi.Buildings = pi.Buildings || [];
+      if(pi.Buildings.length || !pi.Rooms || !pi.Rooms.length)return;
       var i = pi.Rooms.length;
       var buildingIds = [];
 
