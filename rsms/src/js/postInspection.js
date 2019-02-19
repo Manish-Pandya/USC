@@ -699,11 +699,11 @@ inspectionDetailsController = function ($scope, $location, $anchorScroll, conven
 }
 
 inspectionConfirmationController = function ($scope, $location, $anchorScroll, convenienceMethods, postInspectionFactory, $rootScope, $q) {
+    // Retrieve Inspection
+    var inspectionWillLoad = $q.defer();
+
     if ($location.search().inspection) {
         var id = $location.search().inspection;
-
-        // Retrieve Inspection
-        var inspectionWillLoad = $q.defer();
 
         if (!postInspectionFactory.getInspection()) {
             // Load Inspection
@@ -731,7 +731,14 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
         // Get all data
         $scope.doneLoading = false;
         inspectionWillLoad.promise
+            // Confirm that Lab Contacts are correct before preparing email
             .then( function(){
+                return $scope.showEditPersonnelModal();
+            })
+
+            .then( function(){
+                $scope.loadingEmail = true;
+
                 // TODO: Move inspection stat collection server-side
                 var inspinfo = postInspectionFactory.getIsReadyToSubmit();
 
@@ -772,6 +779,7 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
             })
             .then(function(){
                 // Stop loading
+                $scope.loadingEmail = false;
                 $scope.doneLoading = true;
             });
     } else {

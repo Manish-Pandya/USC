@@ -2,6 +2,11 @@
   <img class="" src="../../img/loading.gif"/>
  Building List
 </div>
+<div ng-if="editingContacts || loadingEmail" style="font-size: 20px; font-style: italic;">
+    <i class="icon-spinnery-dealie spinner small pull-left" style="margin-right:10px;"></i>
+    <span ng-if="editingContacts">{{_editingContactsStatus}}</span>
+    <span ng-if="loadingEmail">Loading report Email...</span>
+</div>
 <div ng-if='inspection && inspectionEmailContext'>
  <h3 style="margin:20px 0 15px;">Please select personnel to receive the lab safety inspection report:</h3>
 
