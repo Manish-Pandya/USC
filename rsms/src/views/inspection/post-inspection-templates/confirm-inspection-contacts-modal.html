@@ -1,0 +1,14 @@
+﻿<div class="modal-header" style="padding:0;">
+    <h2 style="padding:5px" class="redBg">Inspection Lab Contact(s)</h2>
+</div>
+<div class="modal-body">
+    <h4>The following {{inspection.Is_rad ? 'radiation' : 'lab'}} safety contact(s) have been assigned to this inspection report:</h4>
+
+    <ul>
+        <li ng-repeat="contact in inspection.LabPersonnel" ng-class="{'inactive-contact': !contact.Is_active}">{{contact.Name}}</li>
+    </ul>
+</div>
+<div class="modal-footer">
+    <a class="btn btn-warning hazardBtn btn-large left" ng-click="closeModal()"><i class="icon-out"></i>Edit Contact(s)</a>
+    <a class="btn btn-large hazardBtn btn-success left" ng-click="cancel()"><i class="icon-checkmark"></i>Confirm</a>
+</div>
