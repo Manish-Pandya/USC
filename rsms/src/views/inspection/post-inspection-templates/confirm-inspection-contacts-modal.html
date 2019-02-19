@@ -1,14 +1,17 @@
 ﻿<div class="modal-header" style="padding:0;">
-    <h2 style="padding:5px" class="redBg">Inspection Lab Contact(s)</h2>
+    <h2 style="padding:5px" class="redBg">Inspection Lab Contact<span ng-if="inspection.LabPersonnel.length != 1">s</span></h2>
 </div>
 <div class="modal-body">
-    <h4>The following {{inspection.Is_rad ? 'radiation' : 'lab'}} safety contact(s) have been assigned to this inspection report:</h4>
+    <h4>The following {{inspection.Is_rad ? 'radiation' : 'lab'}} safety contact<span ng-if="inspection.LabPersonnel.length != 1">s</span> have been assigned to this inspection report:</h4>
 
     <ul style="margin-top: 10px; font-size: 14px;">
         <li ng-repeat="contact in inspection.LabPersonnel" ng-class="{'inactive-contact': !contact.Is_active}">{{contact.Name}}</li>
     </ul>
 </div>
 <div class="modal-footer">
-    <a class="btn btn-warning hazardBtn btn-large left" ng-click="closeModal()"><i class="icon-out"></i>Edit Contact(s)</a>
+    <a class="btn btn-warning hazardBtn btn-large left" ng-click="closeModal()"><i class="icon-out"></i>
+        <span ng-if="inspection.LabPersonnel.length == 1">Edit Contact</span>
+        <span ng-if="inspection.LabPersonnel.length != 1">Edit Contacts</span>
+    </a>
     <a class="btn btn-large hazardBtn btn-success left" ng-click="cancel()"><i class="icon-checkmark"></i>Confirm</a>
 </div>
