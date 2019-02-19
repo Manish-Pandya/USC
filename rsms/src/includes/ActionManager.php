@@ -756,6 +756,11 @@ class ActionManager {
                     $LOG->info("Adding Lab Personnel role to user " . $user->getKey_id());
                     updateRole($this, $_personnelRole->getKey_id(), $user->getKey_id(), true);
                 }
+
+                // Is this a newly-added Lab Contact?
+                if( $_isContact ){
+                    HooksManager::hook('after_save_lab_contact', $user);
+                }
             }
 
             //see if we need to save a PI or Inspector object

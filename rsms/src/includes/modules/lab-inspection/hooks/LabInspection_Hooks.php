@@ -63,6 +63,39 @@ class LabInspection_Hooks {
         }
     }
 
+    public static function after_save_lab_contact( &$user ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+        $LOG->debug("Checking $user to ensure they are assigned to their Supervisor's Open Inspections");
+
+        $supervisor = $user->getSupervisor();
+        if( !$supervisor ){
+            $LOG->error("User $user has no Supervisor!");
+            return;
+        }
+
+        // Check supervisor's open inspections
+        $inspections = $supervisor->getOpenInspections();
+        $inspectionDao = new GenericDAO(new Inspection());
+        foreach($inspections as $inspection){
+            $isContact = false;
+            foreach($inspection->getLabPersonnel() as $contact){
+                if( $contact->getKey_id() == $user->getKey_id() ){
+                    $isContact = true;
+                    break;
+                }
+            }
+
+            if( !$isContact ){
+                // User is not assigned to this inspection; assign them
+                $LOG->info("Assigning $user as Lab Contact to $inspection");
+                $inspectionDao->addRelatedItems(
+                    $user->getKey_id(),
+                    $inspection->getKey_id(),
+                    DataRelationship::fromArray(Inspection::$INSPECTION_LAB_PERSONNEL_RELATIONSHIP ));
+            }
+        }
+    }
+
     /**
      * RSMS-752: Trigger email when EHS approves a CAP
      */
