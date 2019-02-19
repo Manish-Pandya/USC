@@ -552,14 +552,82 @@ angular.module('postInspections', ['sticky', 'ui.bootstrap', 'convenienceMethodW
     return factory;
 });
 
-mainController = function ($scope, $location, postInspectionFactory, convenienceMethods, $rootScope, roleBasedFactory) {
+mainController = function ($scope, $location, postInspectionFactory, convenienceMethods, $rootScope, roleBasedFactory, $modal, $q) {
     $scope.route = $location.path();
     $scope.loc = $location.search();
+
     $scope.setRoute = function (route) {
         $location.path(route);
         $scope.route = route;
     }
+
     $rootScope.rbf = roleBasedFactory;
+
+    // Lab Contact Verification - pre-Finalization requirement
+    $scope.openUserHub = function openUserHub(){
+        return window.open(window.GLOBAL_WEB_ROOT + 'views/hubs/UserHub.php');
+    }
+
+    $scope.showEditPersonnelModal = function showEditPersonnelModal(){
+        var modalData = {
+            inspection: $scope.inspection
+        }
+
+        postInspectionFactory.setModalData(modalData);
+
+        // Do Lab Contacts require updating?
+        var modalInstance = $modal.open({
+            templateUrl: 'post-inspection-templates/confirm-inspection-contacts-modal.html',
+            controller: modalCtrl
+        });
+
+        $scope.contactsWillBeUpdated = $q.defer();
+
+        modalInstance.result.then(
+            function(){
+                // Yes, contacts should be updated
+
+                // Flag that we're editing contacts
+                $scope.editingContacts = true;
+                $scope._editingContactsStatus = 'Contacts are being edited in a new window';
+
+                var userhub = $scope.openUserHub();
+
+                userhub.onbeforeunload = function(){
+                    console.debug("User Hub window has closed");
+                    $scope._editingContactsStatus = 'Loading changes to Inspection Contacts';
+
+                    // Retrieve new Inspection contacts
+                    var onFailedLoad = function(){
+                        $scope._editingContactsStatus = "Failed to load Inspection updated. Reload the page and try again.";
+                        $scope.contactsWillBeUpdated.reject();
+                    };
+
+                    convenienceMethods.getDataAsPromise('../../ajaxaction.php?action=getInspectionById&id=' + $scope.inspection.Key_id + '&callback=JSON_CALLBACK', onFailedLoad)
+                        .then(function (promise) {
+                            var updatedInspection = promise.data;
+                            console.debug("Retrieved updated Inspection details:", updatedInspection);
+
+                            // Update contact details in our local inspection
+                            $scope.inspection.LabPersonnel = updatedInspection.LabPersonnel;
+                            console.debug("Updated lab personel in inspection: ", $scope.inspection);
+
+                            $scope._editingContactsStatus = 'Inspection Contact changes loaded';
+                            $scope.contactsWillBeUpdated.resolve();
+                        })
+                        .then(function() {
+                            $scope.editingContacts = false;
+                        });
+                };
+            },
+            function(){
+                // No, contacts are correct
+                $scope.contactsWillBeUpdated.resolve();
+            });
+
+            // Return deferred promise for chaining
+            return $scope.contactsWillBeUpdated.promise;
+    };
 }
 inspectionDetailsController = function ($scope, $location, $anchorScroll, convenienceMethods, postInspectionFactory, $rootScope) {
     function init() {
@@ -631,11 +699,11 @@ inspectionDetailsController = function ($scope, $location, $anchorScroll, conven
 }
 
 inspectionConfirmationController = function ($scope, $location, $anchorScroll, convenienceMethods, postInspectionFactory, $rootScope, $q) {
+    // Retrieve Inspection
+    var inspectionWillLoad = $q.defer();
+
     if ($location.search().inspection) {
         var id = $location.search().inspection;
-
-        // Retrieve Inspection
-        var inspectionWillLoad = $q.defer();
 
         if (!postInspectionFactory.getInspection()) {
             // Load Inspection
@@ -663,7 +731,14 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
         // Get all data
         $scope.doneLoading = false;
         inspectionWillLoad.promise
+            // Confirm that Lab Contacts are correct before preparing email
             .then( function(){
+                return $scope.showEditPersonnelModal();
+            })
+
+            .then( function(){
+                $scope.loadingEmail = true;
+
                 // TODO: Move inspection stat collection server-side
                 var inspinfo = postInspectionFactory.getIsReadyToSubmit();
 
@@ -704,6 +779,7 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
             })
             .then(function(){
                 // Stop loading
+                $scope.loadingEmail = false;
                 $scope.doneLoading = true;
             });
     } else {
@@ -936,6 +1012,10 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         }
         return false;
     }
+
+    $scope.userCanEditInspectionPersonnel = function userCanEditInspectionPersonnel(){
+        return $scope.userCanEditInspectionDate();
+    };
 
     $scope.userCanEditInspectionDate = function userCanEditInspectionDate(){
         //Does this user have the roles to edit the date?

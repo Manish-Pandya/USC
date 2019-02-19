@@ -144,6 +144,7 @@ class ActionDispatcher {
 
             //Dispatch as error
             // Override HTTP status code to not-authorized
+            $this->result->message = "User is not authorized for " . $actionMapping->actionFunctionName;
             $this->dispatchError($this->result, $actionMapping, 401);
 
             // Set value to error message

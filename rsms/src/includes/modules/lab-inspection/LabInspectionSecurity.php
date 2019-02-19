@@ -52,7 +52,8 @@ class LabInspectionSecurity {
         }
 
         // Is user the assigned PI?
-        if( $inspection->getPrincipalInvestigator()->getUser()->getKey_id() == $user->getKey_id()){
+        $inspectionPi = $inspection->getPrincipalInvestigator();
+        if( $inspectionPi->getUser()->getKey_id() == $user->getKey_id()){
             $LOG->debug("User is assigned PI");
             return true;
         }
@@ -61,6 +62,13 @@ class LabInspectionSecurity {
         $personnel_ids = array_map( function($u){ return $u->getKey_id(); }, $inspection->getLabPersonnel());
         if( in_array( $user->getKey_id(), $personnel_ids) ){
             $LOG->debug("User is assigned Personnel");
+            return true;
+        }
+
+        // Is user PI's Personnel?
+        $pi_personnel_ids = array_map( function($u){ return $u->getKey_id(); }, $inspectionPi->getLabPersonnel());
+        if( in_array( $user->getKey_id(), $pi_personnel_ids) ){
+            $LOG->debug("User is one of the Inspection's PI's Lab Personnel");
             return true;
         }
 

@@ -48,7 +48,7 @@ Metrics::stop($jsonifyId);
 
 //if the user is not logged in or does not have permissions, the client will redirect to the login page.  prepare a message
 if($actionResult->statusCode == 401){
-    $LOG->fatal('User is not authenticated');
+    $LOG->error($actionResult->message);
     $_SESSION['LOGGED_OUT'] = "You have been logged out of the system.  Please log in again to continue";
 }else{
     $_SESSION['LOGGED_OUT'] = NULL;
