@@ -70,9 +70,11 @@
                     <span ng-if="!inspection.LabPersonnel.length">
                         {{inspection.PrincipalInvestigator.User.Name}}
                     </span>
+                    <i class="icon-pencil primary" ng-if="userCanEditInspectionPersonnel()" ng-click="openUserHub()" style="margin:4px 0px 0 0"></i>
                 </p>
             </span>
         </div>
+
         <div class="row">
             <span class="span6">
                 <h3>Laboratory Room(s):</h3><p><span ng-repeat="room in inspection.Rooms">{{room.Name}}<span ng-show="!$last">, </span></span></p>

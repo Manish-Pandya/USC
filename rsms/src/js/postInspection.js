@@ -937,6 +937,14 @@ inspectionReviewController = function ($scope, $location, convenienceMethods, po
         return false;
     }
 
+    $scope.openUserHub = function openUserHub(){
+        window.open(window.GLOBAL_WEB_ROOT + 'views/hubs/UserHub.php');
+    }
+
+    $scope.userCanEditInspectionPersonnel = function userCanEditInspectionPersonnel(){
+        return $scope.userCanEditInspectionDate();
+    };
+
     $scope.userCanEditInspectionDate = function userCanEditInspectionDate(){
         //Does this user have the roles to edit the date?
         if( GLOBAL_SESSION_ROLES && GLOBAL_SESSION_ROLES.userRoles ){
