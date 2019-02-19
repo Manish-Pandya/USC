@@ -4,7 +4,7 @@
 <div class="modal-body">
     <h4>The following {{inspection.Is_rad ? 'radiation' : 'lab'}} safety contact(s) have been assigned to this inspection report:</h4>
 
-    <ul>
+    <ul style="margin-top: 10px; font-size: 14px;">
         <li ng-repeat="contact in inspection.LabPersonnel" ng-class="{'inactive-contact': !contact.Is_active}">{{contact.Name}}</li>
     </ul>
 </div>
