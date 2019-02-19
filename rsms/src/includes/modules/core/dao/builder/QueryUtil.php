@@ -158,6 +158,7 @@ class QueryUtil {
 
     public function groupBy(Field $field){
         $this->groupBys[] = $field->write();
+        return $this;
     }
 
     public function orderBy($table, $column, $direction = "ASC"){
