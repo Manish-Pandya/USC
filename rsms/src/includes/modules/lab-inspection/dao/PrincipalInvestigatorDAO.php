@@ -30,6 +30,31 @@ class PrincipalInvestigatorDAO extends GenericDAO {
         return null;
     }
 
+    private static $PI_BUILDING_ROOM_X_RELATION = array(
+        "className"	=>	"PrincipalInvestigatorRoomRelation",
+        "tableName"	=>	"principal_investigator_room",
+        "sourceTableName" => "room",
+        "keyName"	=>	"key_id",
+        "foreignKeyName" =>	"room_id"
+    );
+
+    public function getBuildings( $piId ){
+        try{
+            // Select all buildings from the PI's Room relations
+            $q = QueryUtil::selectFrom(new Building())
+                ->joinTo(DataRelationship::fromArray(Building::$ROOMS_RELATIONSHIP))
+                ->joinTo(DataRelationship::fromArray(self::$PI_BUILDING_ROOM_X_RELATION))
+                ->groupBy(Field::create('key_id', 'building'))
+                ->where(Field::create('principal_investigator_id', 'principal_investigator_room'), '=', $piId);
+
+            $piBuildings = $q->getAll();
+            return $piBuildings;
+        }
+        catch(QueryException $er){
+			return new QueryError($er->getMessage());
+        }
+    }
+
     public function getRooms( $piId ){
         return $this->getRelatedItemsById(
             $piId, DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));

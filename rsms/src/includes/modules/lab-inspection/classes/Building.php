@@ -27,7 +27,7 @@ class Building extends GenericCrud {
 		);
 
 	/** Relationships */
-	protected static $ROOMS_RELATIONSHIP = array(
+	public static $ROOMS_RELATIONSHIP = array(
 			"className"	=>	"Room",
 			"tableName"	=>	"room",
 			"keyName"	=>	"key_id",

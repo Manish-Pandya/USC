@@ -50,7 +50,7 @@ class User extends GenericCrud {
 			"foreignKeyName"	=>	"user_id"
 	);
 
-	protected static $INSPECTOR_RELATIONSHIP = array(
+	public static $INSPECTOR_RELATIONSHIP = array(
 			"className"	=>	"Inspector",
 			"tableName"	=>	"inspector",
 			"keyName"	=>	"key_id",
@@ -149,11 +149,8 @@ class User extends GenericCrud {
 			// Prevent querying for multiple times if we don't have a linked Inspector
 			$this->_checkedForInspector = true;
 
-			$thisDAO = new GenericDAO($this);
-			$inspectorArray = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$INSPECTOR_RELATIONSHIP));
-			if (isset($inspectorArray[0])) {
-				$this->inspector = $inspectorArray[0];
-			}
+			$thisDAO = new InspectorDAO();
+			$this->inspector = $thisDAO->getInspectorByUserId($this->getKey_id());
 		}
 
 		return $this->inspector;

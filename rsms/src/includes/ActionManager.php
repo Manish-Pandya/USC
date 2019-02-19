@@ -2117,43 +2117,96 @@ class ActionManager {
     }
 
     public function getUsersForUserHub(){
-        $userDao = $this->getDao( new User() );
-        $group = new WhereClauseGroup(
-            new WhereClause("last_name", "IS NOT", "")
-        );
-        //$users = $userDao->getAllWhere($group, "AND", "last_name");
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $users = $this->getAllUsers();
 
-        EntityManager::with_entity_maps(User::class, array(
-            EntityMap::eager("getInspector"),
-            EntityMap::lazy("getSupervisor"),
-            EntityMap::eager("getRoles"),
-            EntityMap::eager("getPrincipalInvestigator")
-        ));
+        // TODO: Convert to DTOs
+        /** We need:
+            User
+                Key_id
+                First_name
+                Last_name
+                Office PHone
+                Lab Phone
+                Email
+                Emergency Phone
+                Roles
+                Supervisor_id
 
-        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
-            EntityMap::lazy("getLabPersonnel"),
-            EntityMap::eager("getRooms"),
-            EntityMap::eager("getDepartments"),
-            EntityMap::lazy("getUser"),
-            EntityMap::lazy("getInspections"),
-            EntityMap::lazy("getPi_authorization"),
-            EntityMap::lazy("getActiveParcels"),
-            EntityMap::lazy("getCarboyUseCycles"),
-            EntityMap::lazy("getPurchaseOrders"),
-            EntityMap::lazy("getSolidsContainers"),
-            EntityMap::lazy("getPickups"),
-            EntityMap::lazy("getScintVialCollections"),
-            EntityMap::lazy("getCurrentScintVialCollections"),
-            EntityMap::lazy("getOpenInspections"),
-            EntityMap::lazy("getQuarterly_inventories"),
-            EntityMap::lazy("getVerifications"),
-            EntityMap::lazy("getBuidling"),
-            EntityMap::lazy("getCurrentVerifications"),
-            EntityMap::lazy("getWipeTests"),
-        ));
+                Principal Investigator
+                    Key_id
+                    Departments
+                    Buildings
 
-        return $users;
+                Investigator
+        */
+
+        // Get all inspectors to avoid querying for each user
+        $inspectorDao = new InspectorDAO();
+        $inspectorsByUserIds = array();
+        foreach( $inspectorDao->getAll() as $inspector) {
+            $inspectorsByUserIds[$inspector->getUser_id()] = $inspector;
+        }
+
+        $piDao = new PrincipalInvestigatorDAO();
+        $_mgr = $this;
+        /** Closure to convert a User to a GenericDto */
+        $fn_userToDto = function($u) use ($piDao, $_mgr, $inspectorsByUserIds){
+            // Roles to DTOs
+            $roleDtos = array_map(array($_mgr, '_roleToDto'), $u->getRoles());
+
+            // PI to DTO (or null)
+            $pi = $u->getPrincipalInvestigator();
+            $piDto = null;
+            if( isset($pi) ){
+                $piBuildings = $piDao->getBuildings($pi->getKey_id());
+                $buildingDtos = array_map(array($_mgr, '_buildingToDto'), $piBuildings);
+                $deptDtos = array_map(array($_mgr, '_departmentToDto'), $pi->getDepartments());
+
+                $piDto = new GenericDto(array(
+                    'Key_id' => $pi->getKey_id(),
+                    'Is_active' => $pi->getIs_active(),
+                    'Departments' => $deptDtos,
+                    'Buildings' => $buildingDtos
+                ));
+            }
+
+            // Inspector to DTO (or null)
+            $inspectorDto = null;
+            if( isset($inspectorsByUserIds[$u->getKey_id()]) ){
+                $inspector = $inspectorsByUserIds[$u->getKey_id()];
+                $inspectorDto = new GenericDto(array(
+                    'Key_id' => $inspector->getKey_id()
+                ));
+            }
+
+            $primaryDept = null;
+            if( $u->getPrimary_department() != null ){
+                $primaryDept = $_mgr->_departmentToDto($u->getPrimary_department());
+            }
+
+            // User to DTO, including only fields relevant to this endpoint
+            return new GenericDto(array(
+                'Key_id' => $u->getKey_id(),
+                'Is_active' => $u->getIs_active(),
+                'Name' => $u->getName(),
+                'First_name' => $u->getFirst_name(),
+                'Last_name' => $u->getLast_name(),
+                'Office_phone' => $u->getOffice_phone(),
+                'Emergency_phone' => $u->getEmergency_phone(),
+                'Lab_phone' => $u->getLab_phone(),
+                'Email' => $u->getEmail(),
+                'Position' => $u->getPosition(),
+                'Roles' => $roleDtos,
+                'Supervisor_id' => $u->getSupervisor_id(),
+                'Primary_department' => $primaryDept,
+                'PrincipalInvestigator' => $piDto,
+                'Inspector' => $inspectorDto,
+            ));
+        };
+
+        $dtos = array_map($fn_userToDto, $users);
+        return $dtos;
     }
 
     public function getOpenInspectionsByPIId( $id = null){
@@ -5361,6 +5414,19 @@ class ActionManager {
             'Key_id' => $pi->getKey_id(),
             'Name' => $pi->getUser()->getName(),
             'Is_active' => $pi->getIs_active()
+        ));
+    }
+
+    protected function _roleToDto($r){
+        return new GenericDto(array(
+            'Name' => $r->getName()
+        ));
+    }
+
+    protected function _departmentToDto($d){
+        return new GenericDto(array(
+            'Key_id' => $d->getKey_id(),
+            'Name' => $d->getName()
         ));
     }
 }
