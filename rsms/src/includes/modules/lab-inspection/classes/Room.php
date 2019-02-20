@@ -265,7 +265,14 @@ class Room extends GenericCrud {
 	public function getHazards(){
 		if($this->hazards == null) {
 			$thisDAO = new GenericDAO($this);
-			$this->hazards = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP), array("parent_hazard_id", "order_index"), NULL, TRUE, "parent_hazard_id");
+
+			// Define order-by fields to reference hazard table, since we want to order by the source table and NOT the table in the relationship...
+			$orderByFields = array(
+				Field::create("parent_hazard_id", 'hazard'),
+				Field::create("order_index", 'hazard'),
+			);
+
+			$this->hazards = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$HAZARDS_RELATIONSHIP), $orderByFields, NULL, TRUE, "parent_hazard_id");
 			$LOG = Logger::getLogger(__FUNCTION__);
 			//General Hazards are present in every room
 			//In addition to the Hazards this room is related to, we also get all hazards that are either the General Hazard or it's SubHazards

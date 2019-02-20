@@ -568,7 +568,13 @@ class GenericDAO {
 
 		if( $sortColumns != null ){
 			foreach($sortColumns as $key=>$column){
-				$q->orderBy($relationship->tableName, $column);
+				if( $column instanceof Field ){
+					$q->orderBy($column->table, $column->name);
+				}
+				else {
+					$q->orderBy($relationship->tableName, $column);
+				}
+
 			}
 		}
 
