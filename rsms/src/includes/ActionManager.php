@@ -2189,6 +2189,7 @@ class ActionManager {
             return new GenericDto(array(
                 'Key_id' => $u->getKey_id(),
                 'Is_active' => $u->getIs_active(),
+                'Username' => $u->getUsername(),
                 'Name' => $u->getName(),
                 'First_name' => $u->getFirst_name(),
                 'Last_name' => $u->getLast_name(),
