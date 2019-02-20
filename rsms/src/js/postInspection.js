@@ -565,7 +565,7 @@ mainController = function ($scope, $location, postInspectionFactory, convenience
 
     // Lab Contact Verification - pre-Finalization requirement
     $scope.openUserHub = function openUserHub(){
-        return window.open(window.GLOBAL_WEB_ROOT + 'views/hubs/UserHub.php');
+        return window.open(window.GLOBAL_WEB_ROOT + 'views/hubs/UserHub.php#/labPersonnel');
     }
 
     $scope.showEditPersonnelModal = function showEditPersonnelModal(){
