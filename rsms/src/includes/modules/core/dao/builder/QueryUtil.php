@@ -109,7 +109,7 @@ class QueryUtil {
 
         // Validate join to prevent self-joining by key_id
         if( $this->entity_table == $join_table && $join_field == $src_field){
-            Logger::getLogger(__CLASS__ . '.' . __FUNCTION__)->warn("Skip joining $src_table to $join_table on $join_field = $src_field");
+            Logger::getLogger(__CLASS__ . '.' . __FUNCTION__)->debug("Skip joining $src_table to $join_table on $join_field = $src_field");
             return;
         }
 
