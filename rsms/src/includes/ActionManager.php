@@ -5411,6 +5411,7 @@ class ActionManager {
 
     protected function _piToDto($pi){
         return new GenericDto( array(
+            'Class' => 'PrincipalInvestigator',
             'Key_id' => $pi->getKey_id(),
             'Name' => $pi->getUser()->getName(),
             'Is_active' => $pi->getIs_active()

@@ -17,88 +17,112 @@ angular.module('HazardInventory')
         var af = applicationControllerFactory;
         var getAllPIs = function () {
             return af
-                .getAllPIs()
+                .getAllPINames()
                 .then(function (pis) {
+                    console.debug("Fetched all PI Names", pis);
                     //we have to set this equal to the promise rather than the getter, because the getter will return a promise, and that breaks the typeahead because of a ui-bootstrap bug
-                    $scope.PIs = dataStoreManager.get("PrincipalInvestigator");
+                    $scope.PIs = pis;
+                    $scope.pis = pis;
                     return pis;
                 },
                     function () {
                         $scope.error = 'There was a problem getting the list of Principal Investigators.  Please check your internet connection.'
                     });
-        },
-            getHazards = function (id, roomIds) {
-                return af
-                    .getAllHazardDtos(id, roomIds)
-                    .then(
-                        function (hazards) {
-                            return hazards
-                        },
-                        function () {
-                            $scope.error = 'Couldn\'t get all hazards.'
-                        }
-                    ).then(
-                        function (hazards) {
-                            var hazard = dataStoreManager.getById('HazardDto', 10000);
-                            hazard.loadSubHazards();
-                            $scope.hazard = hazard;
-                            var hazards = dataStoreManager.get("HazardDto");
-                            hazards.forEach(function (h) {
-                                if (h.HasChildren) h.loadSubHazards();
-                            })
-                        },
-                        function () {
-                            $scope.error = 'Couldn\'t find the right hazards.'
-                        }
+        };
 
-                    ).then(
-                        af.getBuildings(id).then(function (rooms) {; $scope.PI.Rooms = rooms; })
-                    );
+        var getHazards = function (id, roomIds) {
+            return af
+                .getAllHazardDtos(id, roomIds)
+                .then(
+                    function (hazards) {
+                        return hazards
+                    },
+                    function () {
+                        $scope.error = 'Couldn\'t get all hazards.'
+                    }
+                ).then(
+                    function (hazards) {
+                        var hazard = dataStoreManager.getById('HazardDto', 10000);
+                        hazard.loadSubHazards();
+                        $scope.hazard = hazard;
+                        var hazards = dataStoreManager.get("HazardDto");
+                        hazards.forEach(function (h) {
+                            if (h.HasChildren) h.loadSubHazards();
+                        })
+                    },
+                    function () {
+                        $scope.error = 'Couldn\'t find the right hazards.'
+                    }
 
+                ).then(
+                    af.getBuildings(id).then(function (rooms) {; $scope.PI.Rooms = rooms; })
+                );
+        };
+
+        var loadSelectedPi = function(){
+            var deferred = $q.defer();
+
+            var search = $location.search();
+            var piId = undefined;
+            var roomIds = undefined;
+
+            if( search.pi ){
+                console.debug("param: pi=", search.pi);
+                piId = search.pi;
             }
 
-        $scope.piPromise =
-            getAllPIs()
-            .then(
-                function (pis) {
-                    $scope.pis = pis;
-                    console.log(window.location.hash);
-                    if ($location.search()) {
-                        if ($location.search().pi) {
-                            var pi = dataStoreManager.getById("PrincipalInvestigator", $location.search().pi);
-                            if (window.location.hash.indexOf("room") != -1) {
-                                console.log($location.search());
-                                $rootScope.selectedRoomIds = $location.search()["room[]"];
-                                var roomIds =[];
+            if( search['rooms[]'] ) {
+                var roomsParam = search["room[]"];
+                console.debug("param: room=", roomsParam);
+                $rootScope.selectedRoomIds = roomsParam;
 
-                                if(!Array.isArray($location.search()["room[]"])) {
-                                    roomIds =[$location.search()["room[]"]]
-                                } else {
-                                      roomIds = $location.search()["room[]"];
-                                }   
-                                $scope.onSelectPi(pi, roomIds);
-                            } else {
-                                $scope.onSelectPi(pi);
-                            }
-                        }
-                    }
-                }
-            );
+                // Init roomIds
+                roomIds = [].concat(roomsParam);
+            }
 
+            if( piId ){
+                console.debug("Fetch Principal Investigator with key_id=", search.pi);
+                // Load PI
+                $scope.piPromise = af.getPIDetails(search.pi)
+                    .then(function(pi){
+                        $scope.PI = pi;
+                        console.debug("Fetched PI: ", pi);
+                        // Load PI Hazards
+                        console.debug("Loading hazards");
+                        $scope.hazardPromise = getHazards(pi.Key_id, roomIds);
+                        return $scope.hazardPromise;
+                    })
+                    .then(function(){
+                        deferred.resolve();
+                    });
+            }
+
+            else{
+                console.debug("No PI selected");
+                deferred.resolve();
+            }
+
+            return deferred.promise;
+        };
 
         $scope.onSelectPi = function (pi, roomIds) {
-            pi.loadInspections();
-            $scope.PI = pi;
-            console.log("PI Selected: ",pi)
+            console.debug("PI Selected: ", pi);
+            console.debug("Rooms selected: ", roomIds);
+
             if (!roomIds) roomIds = false;
-            $scope.hazardPromise = getHazards(pi.Key_id, roomIds);
             $scope.selectPI = false;
             $location.search("pi", pi.Key_id);
             if (!roomIds && $location.search()["room[]"]) {
                 $location.search("room[]", false);
                 $rootScope.selectedRoomIds = null;
             }
+
+            loadSelectedPi();
         }
+
+        $scope.piPromise =
+            loadSelectedPi()
+            .then(getAllPIs);
 
         $scope.getShowRooms = function (hazard, room, building) {
             return hazard.InspectionRooms.some(function (r) { return r.ContainsHazard || r.OtherLab }) && hazard.InspectionRooms.some(function (r) { return !r.ContainsHazard && !r.OtherLab });

@@ -8,6 +8,22 @@ angular
         //give us access to this factory in all views.  Because that's cool.
         store.$q = $q;
 
+        ac.getAllPINames = function(){
+            var url = window.GLOBAL_WEB_ROOT + 'ajaxaction.php?action=getAllPINames&callback=JSON_CALLBACK';
+            return convenienceMethods.getDataAsDeferredPromise( url )
+                .then( function(dtos){
+                    return dtos;
+                });
+        };
+
+        ac.getPIDetails = function(piId){
+            var url = window.GLOBAL_WEB_ROOT + 'ajaxaction.php?action=getPIDetails&id=' + piId + '&callback=JSON_CALLBACK';
+            return convenienceMethods.getDataAsDeferredPromise( url )
+                .then( function(pi){
+                    return pi;
+                });
+        };
+
         ac.getAllPIs= function()
         {
             return this.getAllUsers()

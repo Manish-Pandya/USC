@@ -177,6 +177,7 @@ echo "</script>";
 
     <div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" class="container-fluid" style="margin-top:25px;">
 
+        <div cg-busy="{promise:piPromise,message:'Loading Principal Investigator Details',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:hazardPromise,message:'Loading Hazards',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:pisPromise,message:'Loading Principal Investigators',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:HazardDtoSaving,message:'Saving',backdrop:true,templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
@@ -212,12 +213,12 @@ echo "</script>";
        </span>
         <span ng-if="PIs">
             <ui-select ng-if="!PI || af.selectPI" ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="af.selectPI = false; onSelectPi(pi.selected)" class="span8" >
-                <ui-select-match placeholder="Select or search for a PI">{{$select.selected.User.Name}}</ui-select-match>
-                <ui-select-choices repeat="pi in PIs | orderBy:'User.Name' | propsFilter: {User.Name: $select.search}">
-                  <div ng-class="{'red':!pi.Is_active}" ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                <ui-select-match placeholder="Select or search for a PI">{{$select.selected.Name}}</ui-select-match>
+                <ui-select-choices repeat="pi in PIs | orderBy:'Name' | propsFilter: {Name: $select.search}">
+                  <div ng-class="{'red':!pi.Is_active}" ng-bind-html="pi.Name | highlight: $select.search"></div>
                 </ui-select-choices>
             </ui-select>
-            <h3 style="display:inline" ng-class="{'red':!PI.Is_active}" ng-if="PI && !af.selectPI">{{PI.User.Name}} {{!PI.Is_active ? "(Inactive PI)" : ""}}</h3>
+            <h3 style="display:inline" ng-class="{'red':!PI.Is_active}" ng-if="PI && !af.selectPI">{{PI.Name}} {{!PI.Is_active ? "(Inactive PI)" : ""}}</h3>
             <span ng-click="af.selectPI = !af.selectPI">
                 <i ng-if="PI && !af.selectPI" style="margin: -1px 2px;" class="icon-pencil primary"></i>
                 <i class="icon-cancel danger" ng-if="PI && af.selectPI"  style="margin: 6px 5px;"></i>
@@ -235,7 +236,7 @@ echo "</script>";
                                     Select a Principal Investigator.
                                 </p>
                                 <p ng-if="noRoomsAssigned" style="display: inline-block; margin-top:5px;">
-                                    <span once-text="PI.User.Name"></span> has no rooms <a class="btn btn-info" once-href="'<?php echo WEB_ROOT?>views/hubs/PIHub.php#/rooms?pi='+PI.Key_id'&inspection=true">Add Rooms</a>
+                                    <span once-text="PI.Name"></span> has no rooms <a class="btn btn-info" once-href="'<?php echo WEB_ROOT?>views/hubs/PIHub.php#/rooms?pi='+PI.Key_id'&inspection=true">Add Rooms</a>
                                 </p>
                             </span>
 

@@ -21,6 +21,7 @@ class HazardInventoryActionMappingFactory extends ActionMappingFactory {
         return array(
 
                 //HAZARD INVENTORY
+                "getPIDetails" => new SecuredActionMapping("getPIDetails", $this::$ROLE_GROUPS["EHS"]),
                 "getHazardRoomDtosByPIId" =>new ActionMapping("getHazardRoomDtosByPIId", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "savePIHazardRoomMappings"=>new ActionMapping("savePIHazardRoomMappings", "", "", $this::$ROLE_GROUPS["EHS"]),
         		"savePrincipalInvestigatorHazardRoomRelation"=>new ActionMapping("savePrincipalInvestigatorHazardRoomRelation", "", "", $this::$ROLE_GROUPS["EHS"]),

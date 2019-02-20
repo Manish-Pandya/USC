@@ -9,6 +9,46 @@
  */
 class HazardInventoryActionManager extends ActionManager {
 
+	public function getPIDetails($piId = null){
+		$piId = $this->getValueFromRequest('id', $piId);
+
+		$pi = $this->getPIById($piId);
+
+		EntityManager::with_entity_maps(Inspection::class, array(
+			EntityMap::lazy("getChecklists"),
+			EntityMap::lazy("getResponses"),
+			EntityMap::lazy("getDeficiency_selections"),
+			EntityMap::lazy("getPrincipalInvestigator"),
+			EntityMap::lazy("getCap_approver_name"),
+			EntityMap::lazy("getCap_submitter_name"),
+			EntityMap::lazy("getInspection_wipe_tests")
+		));
+
+		EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
+			EntityMap::lazy("getDepartments"),
+			EntityMap::eager("getUser"),
+			EntityMap::eager("getInspections"),
+			EntityMap::lazy("getLabPersonnel"),
+			EntityMap::lazy("getRooms"),
+			EntityMap::lazy("getPi_authorization"),
+			EntityMap::lazy("getActiveParcels"),
+			EntityMap::lazy("getCarboyUseCycles"),
+			EntityMap::lazy("getPurchaseOrders"),
+			EntityMap::lazy("getSolidsContainers"),
+			EntityMap::lazy("getPickups"),
+			EntityMap::lazy("getScintVialCollections"),
+			EntityMap::lazy("getCurrentScintVialCollections"),
+			EntityMap::lazy("getOpenInspections"),
+			EntityMap::lazy("getQuarterly_inventories"),
+			EntityMap::lazy("getVerifications"),
+			EntityMap::lazy("getBuidling"),
+			EntityMap::lazy("getCurrentVerifications"),
+			EntityMap::lazy("getWipeTests")
+		));
+
+		return $pi;
+	}
+
 	public function getHazardRoomDtosByPIId($piId = null, $roomIds = null) {
 
 		if($piId == NULL){
@@ -21,11 +61,49 @@ class HazardInventoryActionManager extends ActionManager {
 
 		if( $piId !== NULL ){
 			$dao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation());
-			if($roomIds == null){
-				return $dao->getHazardRoomDtosByPIId($piId);
-			}else{
-				return $dao->getHazardRoomDtosByPIId($piId, $roomIds);
-			}
+			$hazardDtos = $dao->getHazardRoomDtosByPIId($piId, $roomIds);
+
+			// Transform into DTOs
+			return array_map(function($hazard){
+				// Transform InspectionRooms into DTOS
+				$rooms = array_map(function($room){
+					return new GenericDto(array(
+						"Class" => get_class($room),
+						"Principal_investigator_id" => $room->getPrincipal_investigator_id(),
+						"Hazard_id" => $room->getHazard_id(),
+						"MasterHazardId" => $room->getMasterHazardId(),
+						"Room_name" => $room->getRoom_name(),
+						"Room_id" => $room->getRoom_id(),
+						"Building_id" => $room->getBuilding_id(),
+						"Building_name" => $room->getBuilding_name(),
+						"Principal_investigator_hazard_room_relation_id" => $room->getPrincipal_investigator_hazard_room_relation_id(),
+						"ContainsHazard" => $room->getContainsHazard(),
+						"Status" => $room->getStatus(),
+						"HasMultiplePis" => $room->getHasMultiplePis(),
+						"OtherLab" => $room->getOtherLab(),
+						"Stored" => $room->getStored(),
+					));
+				}, $hazard->getInspectionRooms());
+
+				return new GenericDto(array(
+					"Class" => get_class($hazard),
+					"InspectionRooms" => $rooms,
+					"Principal_investigator_id" => $hazard->getPrincipal_investigator_id(),
+					"Key_id" => $hazard->getKey_id(),
+					"Hazard_id" => $hazard->getHazard_id(),
+					"Hazard_name" => $hazard->getHazard_name(),
+					"Is_equipment" => $hazard->getIs_equipment(),
+					"IsPresent" => $hazard->getIsPresent(),
+					"Parent_hazard_id" => $hazard->getParent_hazard_id(),
+					"RoomIds" => $hazard->getRoomIds(),
+					"HasMultiplePis" => $hazard->getHasMultiplePis(),
+					"Stored_only" => $hazard->getStored_only(),
+					"HasChildren" => $hazard->getHasChildren(),
+					"Order_index" => $hazard->getOrder_index(),
+					"BelongsToOtherPI" => $hazard->getBelongsToOtherPI()
+				));
+			}, $hazardDtos);
+
 		}
 		else{
 			//error
