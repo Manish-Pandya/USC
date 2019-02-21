@@ -658,6 +658,7 @@ angular.module('00RsmsAngularOrmApp')
     $scope.af = af;
     $scope.carboysPromise = $rootScope.radModelsPromise
         .then(af.getAllCarboys)
+        .then(af.getAllRadPis)
         .then(getCarboysFromDatastore);
 
     $scope.deactivate = function (carboy) {

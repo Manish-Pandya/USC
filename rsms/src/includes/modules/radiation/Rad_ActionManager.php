@@ -3216,37 +3216,15 @@ class Rad_ActionManager extends ActionManager {
 
     public function getRadModels(){
     	$dto = new RadModelDto();
-    	//$dto->setUser($this->getAllRadUsers());
-    	//$dto->setAuthorization($this->getAllAuthorizations());
-    	//$dto->setPIAuthorization($this->getAllPIAuthorizations());
-    	//$dto->setCarboy($this->getAllCarboys());
-    	//$dto->setCarboyUseCycle($this->getAllCarboyUseCycles());
-        //$dto->setCarboyReadingAmount($this->getAllCarboyReadingAmounts());
-    	//$dto->setDrum($this->getAllDrums());
-    	//$dto->setDepartment($this->getAllDepartments());
-    	//$dto->setInspectionWipe($this->getAllInspectionWipes());
-    	//$dto->setInspectionWipeTest($this->getAllInspectionWipeTests());
-    	$dto->setIsotope($this->getAllIsotopes());
-    	//$dto->setParcelUseAmount($this->getAllParcelUseAmounts());
-    	//$dto->setParcelUse($this->getAllParcelUses());
-    	//$dto->setParcelWipe($this->getAllParcelWipes());
-    	//$dto->setParcelWipeTest($this->getAllParcelWipeTests());
-    	//$dto->setParcel($this->getAllParcels());
-    	//$dto->setPickup($this->getAllPickups());
-        $dto->setPurchaseOrder($this->getAllPurchaseOrders());
-    	//$dto->getQuarterlyIsotopeAmount($this->getAllQuarterlyInventories());
-    	//$dto->setQuarterlInventory($this->getMostRecentInventory());
-    	//$dto->setPIQuarterlyInventory($this->getAllPIQuarterlyInventories());
-    //	$dto->setScintVialCollection($this->getAllScintVialCollections());
-      //  $dto->setMiscellaneousWaste($this->getAllMiscellaneousWaste());
-    	//$dto->setWasteBag($this->getAllWasteBags());
-    	//$dto->setSolidsContainer($this->getAllSolidsContainers());
-    	$dto->setWasteType($this->getAllWasteTypes());
-    	$dto->setRoom($this->getAllRooms(true));
-    	$dto->setPrincipalInvestigator($this->getAllRadPis());
-        //$dto->setDrumWipe($this->getAllDrumWipes());
-       // $dto->setDrumWipeTest($this->getAllDrumWipeTests());
-        $dto->setOtherWasteType($this->getAllOtherWasteTypes());
+        $dto->setIsotope($this->getAllIsotopes());
+
+        // Only pull the PI names and keys; no need for everything yet
+        $dto->setPrincipalInvestigator( $this->getAllPINames() );
+
+        $roomDao = new RoomDAO();
+        $allRooms = $roomDao->getAll();
+        $dto->setRoom( DtoFactory::buildDtos($allRooms, 'DtoFactory::roomToDto') );
+
     	return $dto;
 
     }
