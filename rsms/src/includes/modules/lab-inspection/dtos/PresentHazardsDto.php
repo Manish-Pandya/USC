@@ -1,6 +1,6 @@
 <?php
 class PresentHazardsDto {
-
+    public $room_id;
     public $bio_hazards_present = false;
 	public $chem_hazards_present = false;
 	public $rad_hazards_present = false;

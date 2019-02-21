@@ -2270,7 +2270,7 @@ class ActionManager {
     public function getAllRooms($allLazy = NULL){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
-        $dao = $this->getDao(new Room());
+        $dao = new RoomDAO();
 
         $rooms = $dao->getAll("name");
         $allLazy = $this->getValueFromRequest('allLazy', $allLazy);
