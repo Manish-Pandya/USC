@@ -5,7 +5,8 @@
  * @author Perry Cate, GraySail LLC
  */
 
-class Isotope extends GenericCrud {
+class Isotope extends GenericCrud implements JsonSerializable {
+	use DtoGenerator;
 
 	/** Name of the DB Tabe */
 	protected static $TABLE_NAME = "isotope";

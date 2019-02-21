@@ -6,7 +6,8 @@
  *
  * @author Perry Cate, GraySail LLC
  */
-class WasteType extends GenericCrud {
+class WasteType extends GenericCrud implements JsonSerializable {
+	use DtoGenerator;
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "waste_type";

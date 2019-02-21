@@ -6,7 +6,7 @@
  *
  * @author Hoke Currie, GraySail LLC
  */
-class Role extends GenericCrud{
+class Role extends GenericCrud implements JsonSerializable {
 	// CRUD Meta-Data
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "role";
@@ -60,6 +60,13 @@ class Role extends GenericCrud{
 	
 	public function getColumnData(){
 		return self::$COLUMN_NAMES_AND_TYPES;
+	}
+
+	public function jsonSerialize(){
+		return array(
+			'Key_id' => $this->getKey_id(),
+			'Name' => $this->getName()
+		);
 	}
 	
 	// Accessors / Mutators

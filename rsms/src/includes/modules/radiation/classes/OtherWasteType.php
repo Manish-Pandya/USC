@@ -8,8 +8,8 @@
  * @version 1.0
  * @author Matt Breeden
  */
-class OtherWasteType extends RadCrud
-{
+class OtherWasteType extends RadCrud implements JsonSerializable {
+	use DtoGenerator;
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "other_waste_type";

@@ -6,7 +6,8 @@
  *
  * @author Mitch Martin, GraySail LLC
  */
-class User extends GenericCrud {
+class User extends GenericCrud implements JsonSerializable {
+	use DtoGenerator;
 
 	// CRUD Meta-Data
 	/** Name of the DB Table */

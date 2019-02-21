@@ -6,8 +6,10 @@
  * @version 1.0
  * @author Matt Breeden
  */
-class CurrentIsotopeInventoryDto
+class CurrentIsotopeInventoryDto implements JsonSerializable
 {
+	use DtoGenerator;
+
     private $principal_investigator_id;
     private $isotope_id;
     private $authorization_id;

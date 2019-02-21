@@ -5,7 +5,8 @@
  *
  * @author Mitch Martin, GraySail LLC
  */
-class Department extends GenericCrud {
+class Department extends GenericCrud implements JsonSerializable {
+	use DtoGenerator;
 	
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "department";

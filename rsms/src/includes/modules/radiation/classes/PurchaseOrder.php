@@ -6,7 +6,8 @@
  *
  * @author Perry Cate, GraySail LLC
  */
-class PurchaseOrder extends GenericCrud {
+class PurchaseOrder extends GenericCrud implements JsonSerializable {
+	use DtoGenerator;
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "purchase_order";

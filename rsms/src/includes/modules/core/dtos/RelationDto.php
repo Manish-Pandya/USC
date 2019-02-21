@@ -1,5 +1,7 @@
 <?php
-Class RelationDto{
+Class RelationDto implements JsonSerializable {
+	use DtoGenerator;
+
 	private $table;
 	private $parentId;
 	private $childId;
@@ -22,4 +24,5 @@ Class RelationDto{
 	
 	public function getTable(){return $this->table;}
 	public function setTable($table){$this->table = $table;}
+
 }
