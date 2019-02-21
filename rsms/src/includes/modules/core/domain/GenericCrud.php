@@ -166,6 +166,22 @@ abstract class GenericCrud {
 		}
 	}
 
+	public function _jsonSerializeCrudFields($fields = null){
+		return array_merge(
+			array(
+				'Class' => get_class($this),
+				'Key_id' => $this->getKey_id(),
+				'Date_created' => $this->getDate_created(),
+				'Date_last_modified' => $this->getDate_last_modified(),
+				'Is_active' => $this->getIs_active(),
+				'Last_modified_user_id' => $this->getLast_modified_user_id(),
+				'Created_user_id' => $this->getCreated_user_id(),
+			),
+
+			$fields
+		);
+	}
+
 	//TODO: Data-Access Operations
 
 }
