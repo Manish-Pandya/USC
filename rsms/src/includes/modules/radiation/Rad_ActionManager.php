@@ -2844,10 +2844,6 @@ class Rad_ActionManager extends ActionManager {
 
         $pi_inventory = $this->getPiInventory($piId,$mostRecentIntentory->getQuarterly_inventory_id());
 
-        EntityManager::with_entity_maps(PIQuarterlyInventory::class, array(
-            EntityMap::eager("getAuthorization")
-        ));
-
         return $pi_inventory;
     }
 
