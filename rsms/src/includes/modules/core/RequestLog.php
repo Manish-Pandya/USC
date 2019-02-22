@@ -17,7 +17,7 @@ class RequestLog {
 
         $requestMethod = $_SERVER['REQUEST_METHOD'];
 
-        $username = $_SESSION['USER'] ? $_SESSION['USER']->getUsername() : '';
+        $username = isset($_SESSION['USER']) ? $_SESSION['USER']->getUsername() : '';
         if( isset($_SESSION['IMPERSONATOR']) ){
             $username = $_SESSION['IMPERSONATOR']['USER']->getUsername() . " (as $username)";
         }
