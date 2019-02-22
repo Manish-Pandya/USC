@@ -6,7 +6,8 @@
  *
  * @author Matt Breeden, GraySail LLC
  */
-class BioSafetyProtocol extends GenericCrud {
+class BioSafetyProtocol extends GenericCrud implements JsonSerializable {
+	use DtoGenerator;
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "biosafety_protocol";
