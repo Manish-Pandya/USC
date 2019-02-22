@@ -340,37 +340,23 @@ class Equipment_ActionManager extends ActionManager {
 
         $dao = $this->getDao(new PrincipalInvestigator());
         $pis = $dao->getAll();
-        /** TODO: Instead of $dao->getAll, we gather PIs which are either active or have rooms associated with them. **/
-        /* $whereClauseGroup = new WhereClauseGroup( array( new WhereClause("is_active","=","1"), new WhereClause("key_id","IN","(SELECT principal_investigator_id FROM principal_investigator_room)") ) );
-        $pis = $dao->getAllWhere($whereClauseGroup, "OR");*/
 
-        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
-            EntityMap::lazy("getLabPersonnel"),
-            EntityMap::lazy("getRooms"),
-            EntityMap::eager("getDepartments"),
-            EntityMap::eager("getUser"),
-            EntityMap::lazy("getInspections"),
-            EntityMap::lazy("getPi_authorization"),
-            EntityMap::lazy("getActiveParcels"),
-            EntityMap::lazy("getCarboyUseCycles"),
-            EntityMap::lazy("getPurchaseOrders"),
-            EntityMap::lazy("getSolidsContainers"),
-            EntityMap::lazy("getPickups"),
-            EntityMap::lazy("getScintVialCollections"),
-            EntityMap::lazy("getCurrentScintVialCollections"),
-            EntityMap::lazy("getOpenInspections"),
-            EntityMap::lazy("getQuarterly_inventories"),
-            EntityMap::lazy("getVerifications"),
-            EntityMap::lazy("getBuidling"),
-            EntityMap::lazy("getWipeTests"),
-            EntityMap::lazy("getCurrentPi_authorization"),
-            EntityMap::lazy("getCurrentVerifications"),
-            EntityMap::lazy("getCurrentIsotopeInventories"),
-		    EntityMap::lazy("getWasteBags"),
-            EntityMap::lazy("getCurrentWasteBag")
-        ));
+        // Convert to DTOs
+        $dtos = array();
+        foreach($pis as $pi){
+            $piBuildings = $pi->getBuildings();
+            $deptDtos = DtoFactory::buildDtos($pi->getDepartments(), 'DtoFactory::departmentToDto');
 
-        return $pis;
+            $dto = DtoFactory::buildDto($pi, array(
+                'Departments' => $deptDtos,
+                'User' => $pi->getUser(),
+                'Name' => $pi->getName()
+            ));
+
+            $dtos[] = $dto;
+        }
+
+        return $dtos;
     }
 
     public function getAllEquipmentRooms(){
