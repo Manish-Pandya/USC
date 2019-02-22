@@ -538,16 +538,20 @@ class ActionManager {
 
     public function getCurrentUser(){
         // when a user is logged in and in session, return the currently logged in user.
-
-        $u = $_SESSION['USER'];
-        $dto = DtoFactory::buildDto( $u, array(
-            'Name' => $u->getName(),
-            'PrincipalInvestigator' => DtoFactory::piToDto($u->getPrincipalInvestigator()),
-            'Inspector' => DtoFactory::buildDto($u->getInspector()),
-            'Supervisor' => DtoFactory::piToDto($u->getSupervisor())
+        EntityManager::with_entity_maps(User::class, array(
+            EntityMap::eager("getPrincipalInvestigator"),
+            EntityMap::eager("getInspector"),
+            EntityMap::eager("getSupervisor"),
+            EntityMap::lazy("getRoles")
         ));
 
-        return $dto;
+        EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
+            EntityMap::lazy("getRooms"),
+            EntityMap::lazy("getLabPersonnel"),
+            EntityMap::lazy("getUser")
+        ));
+
+        return $_SESSION['USER'];
     }
 
     public function activate(){
