@@ -10,7 +10,8 @@
  */
 trait DtoGenerator {
     function jsonSerialize(){
-        $accessors = EntityManager::get_registered_accessors( get_class($this) );
+        $overrideMaps = ($this instanceof GenericCrud) ? $this->getEntityMaps() : null;
+        $accessors = EntityManager::get_registered_accessors( get_class($this), $overrideMaps );
 
         $methodsIterator = function() use ($accessors){
             yield 'Class' => get_class($this);

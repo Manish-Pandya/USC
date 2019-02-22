@@ -322,13 +322,14 @@ class JsonManager {
 		}
 
 		// Check if the object handles its own serialization
+		// compute the serialized value (this allows JsonManger to process the remaining tree)
 		if( $object instanceof JsonSerializable ){
-			// Return the serialized value (this allows JsonManger to process the remaining tree)
-			return $object->jsonSerialize();
+			$objectVars = $object->jsonSerialize();
 		}
-
-		//Call Accessors
-		$objectVars = JsonManager::callObjectAccessors($object, $entityMaps);
+		else {
+			//Call Accessors
+			$objectVars = JsonManager::callObjectAccessors($object, $entityMaps);
+		}
 
 		foreach( $objectVars as $key=>&$value ){
 			$value = JsonManager::buildJsonableValue($value, $entityMaps);
