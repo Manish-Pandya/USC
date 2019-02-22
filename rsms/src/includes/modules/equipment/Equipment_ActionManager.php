@@ -375,26 +375,17 @@ class Equipment_ActionManager extends ActionManager {
     }
 
     public function getAllEquipmentRooms(){
-        $dao = $this->getDao(new Room());
+        $roomDao = new RoomDAO();
+        $allRooms = $roomDao->getAll();
+        $dtos = array();
 
-        $rooms = $dao->getAll();
+        foreach($allRooms as $room ){
+            $dto = DtoFactory::roomToDto($room);
+            $dto->Building = DtoFactory::buildingToDto($room->getBuilding());
+            $dtos[] = $dto;
+        }
 
-        // instructin rooms to lazy-load children
-        EntityManager::with_entity_maps(Room::class, array(
-	        EntityMap::lazy("getPrincipalInvestigators"),
-	        EntityMap::lazy("getHazards"),
-	        EntityMap::eager("getBuilding"),
-	        EntityMap::lazy("getHazard_room_relations"),
-	        EntityMap::lazy("getHas_hazards"),
-	        EntityMap::lazy("getSolidsContainers"),
-            EntityMap::lazy("getHasMultiplePIs"),
-            EntityMap::lazy("getHazardTypesArePresent"),
-            EntityMap::lazy("getChem_hazards_present"),
-            EntityMap::lazy("getRad_hazards_present"),
-            EntityMap::lazy("getBio_hazards_present")
-        ));
-
-        return $rooms;
+        return $dtos;
     }
 
 	function uploadDocument(){
