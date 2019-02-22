@@ -2,7 +2,11 @@
 
 class DtoFactory {
 
-    public static function buildDto(GenericCrud &$object, Array $fields = array()){
+    public static function buildDto(GenericCrud $object = null, Array $fields = array()){
+        if( $object == null ){
+            return $object;
+        }
+
         $dto = new GenericDto($object->_jsonSerializeCrudFields($fields));
 
         return $dto;
@@ -18,18 +22,27 @@ class DtoFactory {
     //   serializability
 
     public static function roleToDto($r){
+        if( !isset($r) )
+            return $r;
+
         return DtoFactory::buildDto($r, array(
             'Name' => $r->getName()
         ));
     }
 
     public static function departmentToDto($d){
+        if( !isset($d) )
+            return $d;
+
         return DtoFactory::buildDto($d, array(
             'Name' => $d->getName())
         );
     }
 
     public static function buildingToDto($building){
+        if( !isset($building) )
+            return $building;
+
         return DtoFactory::buildDto($building, array(
             'Name' => $building->getName(),
             'Campus_id' => $building->getCampus_id()
@@ -37,6 +50,9 @@ class DtoFactory {
     }
 
     public static function roomToDto($room){
+        if( !isset($room) )
+            return $room;
+
         return DtoFactory::buildDto($room, array(
             'Name' => $room->getName(),
             'Building_id' => $room->getBuilding_id()
@@ -44,6 +60,9 @@ class DtoFactory {
     }
 
     public static function piToDto($pi){
+        if( !isset($pi) )
+            return $pi;
+
         return DtoFactory::buildDto($pi, array(
             'Name' => $pi->getName()
         ));
