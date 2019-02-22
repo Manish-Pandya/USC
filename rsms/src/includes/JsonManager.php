@@ -386,7 +386,7 @@ class JsonManager {
 
 		foreach ($accessors as $getter) {
 			//Call function to get value
-			$mid = Metrics::start(ObjectPathMapper::describe($object) . "::$getter()");
+			$mid = Metrics::start('Call ' . ObjectPathMapper::describe($object) . "::$getter()");
 			$LOG->trace("  $classname::$getter()");
 			$value = $object->$getter();
 			Metrics::stop($mid);

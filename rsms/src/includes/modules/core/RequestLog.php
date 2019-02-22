@@ -42,12 +42,14 @@ class RequestLog {
     }
 
     public static function log_start(){
+        Metrics::start(self::$desc);
         // Extra padding to cover the status code
         self::$logger->info(self::$username . " >>>     " . self::$desc);
     }
 
     public static function log_stop( &$actionResult, $contentSize ){
         self::$logger->info(self::$username . " <<< " . $actionResult->statusCode . ' ' . self::$desc . " content-length: $contentSize");
+        Metrics::stop(self::$desc);
     }
 }
 ?>
