@@ -17,6 +17,12 @@ class DtoFactory {
     //   It is more appropriate for each entity to define its own
     //   serializability
 
+    public static function roleToDto($r){
+        return DtoFactory::buildDto($r, array(
+            'Name' => $r->getName()
+        ));
+    }
+
     public static function departmentToDto($d){
         return DtoFactory::buildDto($d, array(
             'Name' => $d->getName())

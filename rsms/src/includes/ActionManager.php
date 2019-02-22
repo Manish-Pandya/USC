@@ -2153,19 +2153,17 @@ class ActionManager {
         /** Closure to convert a User to a GenericDto */
         $fn_userToDto = function($u) use ($piDao, $_mgr, $inspectorsByUserIds){
             // Roles to DTOs
-            $roleDtos = array_map(array($_mgr, '_roleToDto'), $u->getRoles());
+            $roleDtos = DtoFactory::buildDtos($u->getRoles(), 'DtoFactory::roleToDto');
 
             // PI to DTO (or null)
             $pi = $u->getPrincipalInvestigator();
             $piDto = null;
             if( isset($pi) ){
                 $piBuildings = $piDao->getBuildings($pi->getKey_id());
-                $buildingDtos = array_map(array($_mgr, '_buildingToDto'), $piBuildings);
-                $deptDtos = array_map(array($_mgr, '_departmentToDto'), $pi->getDepartments());
+                $buildingDtos = DtoFactory::buildDtos($piBuildings, 'DtoFactory::buildingToDto');
+                $deptDtos = DtoFactory::buildDtos($pi->getDepartments(), 'DtoFactory::departmentToDto');
 
-                $piDto = new GenericDto(array(
-                    'Key_id' => $pi->getKey_id(),
-                    'Is_active' => $pi->getIs_active(),
+                $piDto = DtoFactory::buildDto($pi, array(
                     'Departments' => $deptDtos,
                     'Buildings' => $buildingDtos
                 ));
@@ -2182,7 +2180,7 @@ class ActionManager {
 
             $primaryDept = null;
             if( $u->getPrimary_department() != null ){
-                $primaryDept = $_mgr->_departmentToDto($u->getPrimary_department());
+                $primaryDept = DtoFactory::departmentToDto($u->getPrimary_department());
             }
 
             // User to DTO, including only fields relevant to this endpoint
@@ -4912,13 +4910,13 @@ class ActionManager {
                 		array_push($filteredRooms, $room);
                     }
                 }
-                $is->setInspection_rooms(array_map( array($this, '_roomToDto'), $filteredRooms));
+                $is->setInspection_rooms( DtoFactory::buildDtos($filteredRooms, 'DtoFactory::roomToDto') );
                 $is->setInspections($inspection);
             }
 
             // Now get the PI's Rooms which are in the Inspection's Building
             $pi_bldg_rooms = $piDao->getRoomsInBuilding($is->getPi_key_id(), $is->getBuilding_key_id());
-            $is->setBuilding_rooms( array_map( array($this, '_roomToDto'), $pi_bldg_rooms));
+            $is->setBuilding_rooms( DtoFactory::buildDtos($pi_bldg_rooms, 'DtoFactory::roomToDto') );
         }
 
         EntityManager::with_entity_maps(Inspection::class, array(
@@ -5392,35 +5390,5 @@ class ActionManager {
         return $relations;
     }
 
-    protected function _buildingToDto($building){
-        return new GenericDto( array(
-            'Key_id' => $building->getKey_id(),
-            'Name' => $building->getName(),
-            'Is_active' => $building->getIs_active(),
-            'Campus_id' => $building->getCampus_id()
-        ));
-    }
-
-    protected function _roomToDto($room){
-        return new GenericDto( array(
-            'Key_id' => $room->getKey_id(),
-            'Name' => $room->getName(),
-            'Is_active' => $room->getIs_active(),
-            'Building_id' => $room->getBuilding_id()
-        ));
-    }
-
-    protected function _roleToDto($r){
-        return new GenericDto(array(
-            'Name' => $r->getName()
-        ));
-    }
-
-    protected function _departmentToDto($d){
-        return new GenericDto(array(
-            'Key_id' => $d->getKey_id(),
-            'Name' => $d->getName()
-        ));
-    }
 }
 ?>
