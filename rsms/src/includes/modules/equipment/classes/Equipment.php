@@ -152,7 +152,7 @@ abstract class Equipment extends GenericCrud{
                     $result = $query->fetchAll();
                 }
 
-                if(isset($result) && is_array($result) && get_class($result[0]) == "EquipmentInspection"){
+                if(isset($result) && is_array($result) && !empty($result) && get_class($result[0]) == "EquipmentInspection"){
                     $nextInspection = $result[0];
                     $l->debug($result);
                     $l->debug("here");
