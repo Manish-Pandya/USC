@@ -1,10 +1,18 @@
 <?php
 Class RelationDto implements JsonSerializable {
-	use DtoGenerator;
 
 	private $table;
 	private $parentId;
 	private $childId;
+
+	public function jsonSerialize(){
+		return array(
+			'Class' => RelationDto::class,
+			'Table' => $this->table,
+			'ParentId' => $this->parentId,
+			'ChildId' => $this->childId
+		);
+	}
 
 	public function getParentId(){
 		return $this->parentId;

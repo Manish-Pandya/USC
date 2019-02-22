@@ -6,7 +6,8 @@
  * @author David Hamiter
  */
 
-class EquipmentInspection extends GenericCrud{
+class EquipmentInspection extends GenericCrud implements JsonSerializable {
+	use DtoGenerator;
 
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "equipment_inspection";
