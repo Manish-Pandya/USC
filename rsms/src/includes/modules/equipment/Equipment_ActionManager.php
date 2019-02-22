@@ -62,7 +62,7 @@ class Equipment_ActionManager extends ActionManager {
 
             EntityManager::with_entity_maps(EquipmentInspection::class, array(
 		        EntityMap::eager("getRoom"),
-                EntityMap::eager("getPrincipal_investigator"),
+                EntityMap::eager("getPrincipal_investigator_id"),
                 EntityMap::eager("getPrincipalInvestigators")
             ));
 
