@@ -10,13 +10,7 @@ angular
 
         ac.getAllPIs= function()
         {
-            return this.getAllUsers()
-                .then(
-                    function(){
-                        return dataSwitchFactory.getAllObjects('PrincipalInvestigator');
-                    }
-                )
-
+            return dataSwitchFactory.getAllObjects('PrincipalInvestigator');
         }
 
         ac.getAllUsers = function()
