@@ -6,7 +6,8 @@
  * @author Matt Breeden, GraySail LLC
  */
 
-class Verification extends GenericCrud{
+class Verification extends GenericCrud implements JsonSerializable {
+	use DtoGenerator;
 	
 	/** Name of the DB Table */
 	protected static $TABLE_NAME = "verification";
