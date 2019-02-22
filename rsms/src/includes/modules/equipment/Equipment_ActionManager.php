@@ -335,28 +335,7 @@ class Equipment_ActionManager extends ActionManager {
 	}
 
     public function getAllEquipmentPis(){
-        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
-
-
-        $dao = $this->getDao(new PrincipalInvestigator());
-        $pis = $dao->getAll();
-
-        // Convert to DTOs
-        $dtos = array();
-        foreach($pis as $pi){
-            $piBuildings = $pi->getBuildings();
-            $deptDtos = DtoFactory::buildDtos($pi->getDepartments(), 'DtoFactory::departmentToDto');
-
-            $dto = DtoFactory::buildDto($pi, array(
-                'Departments' => $deptDtos,
-                'User' => $pi->getUser(),
-                'Name' => $pi->getName()
-            ));
-
-            $dtos[] = $dto;
-        }
-
-        return $dtos;
+        return $this->getAllPIDetails();
     }
 
     public function getAllEquipmentRooms(){

@@ -15,6 +15,9 @@ class Committees_ActionManager extends ActionManager {
      *                            Get Functions                                  *
     \*****************************************************************************/
 
+	public function getAllPIs($rooms = NULL){
+        return $this->getAllPIDetails();
+    }
 
 	public function getAllProtocols(){
 		$dao = $this->getDao(new BioSafetyProtocol());
