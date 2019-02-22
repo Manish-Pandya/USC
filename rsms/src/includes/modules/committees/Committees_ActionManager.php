@@ -1,4 +1,3 @@
-
 <?php
 /**
  * Contains action functions specific to the Committees module.
