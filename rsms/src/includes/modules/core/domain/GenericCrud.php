@@ -173,7 +173,7 @@ abstract class GenericCrud {
 				'Key_id' => $this->getKey_id(),
 				'Date_created' => $this->getDate_created(),
 				'Date_last_modified' => $this->getDate_last_modified(),
-				'Is_active' => $this->getIs_active(),
+				'Is_active' => (bool) $this->getIs_active(),
 				'Last_modified_user_id' => $this->getLast_modified_user_id(),
 				'Created_user_id' => $this->getCreated_user_id(),
 			),

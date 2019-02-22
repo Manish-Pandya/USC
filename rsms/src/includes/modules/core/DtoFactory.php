@@ -37,6 +37,12 @@ class DtoFactory {
         ));
     }
 
+    public static function piToDto($pi){
+        return DtoFactory::buildDto($pi, array(
+            'Name' => $pi->getName()
+        ));
+    }
+
 }
 
 ?>

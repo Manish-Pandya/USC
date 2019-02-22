@@ -2027,7 +2027,7 @@ class ActionManager {
 
         // get all buildings
         $buildings = $dao->getAll();
-        $infos = array_map( array($this, '_buildingToDto'), $buildings);
+        $infos = DtoFactory::buildDtos($buildings, 'DtoFactory::buildingToDto');
 
         return $infos;
     }
@@ -2044,7 +2044,7 @@ class ActionManager {
 
         // Get details for its rooms
         $rooms = $building->getRooms();
-        $infos = array_map( array($this, '_roomToDto'), $rooms);
+        $infos = DtoFactory::buildDtos($rooms, 'DtoFactory::roomToDto');
 
         return $infos;
     }
@@ -2059,7 +2059,7 @@ class ActionManager {
         $pis = $dao->getAllWith(DataRelationship::fromArray(PrincipalInvestigator::$ROOMS_RELATIONSHIP));
 
         // Reduce the PIs to just IDs and Names
-        $infos = array_map( array($this, '_piToDto'), $pis);
+        $infos = DtoFactory::buildDtos($pis, 'DtoFactory::piToDto');
 
         return $infos;
     }
@@ -5407,15 +5407,6 @@ class ActionManager {
             'Name' => $room->getName(),
             'Is_active' => $room->getIs_active(),
             'Building_id' => $room->getBuilding_id()
-        ));
-    }
-
-    protected function _piToDto($pi){
-        return new GenericDto( array(
-            'Class' => 'PrincipalInvestigator',
-            'Key_id' => $pi->getKey_id(),
-            'Name' => $pi->getUser()->getName(),
-            'Is_active' => $pi->getIs_active()
         ));
     }
 
