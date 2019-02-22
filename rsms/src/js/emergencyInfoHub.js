@@ -8,7 +8,7 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
     {
         //if we don't have a the list of pis, get it from the server
         //var deferred = $q.defer();
-        var url = '../../ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
+        var url = '../../ajaxaction.php?action=getAllPINames&callback=JSON_CALLBACK';
         return convenienceMethods.getDataAsDeferredPromise(url).then(
             function(promise){
               return promise;
@@ -21,7 +21,7 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
     factory.getAllBuildings = function()
     {
 
-        var url = '../../ajaxaction.php?action=getAllBuildings&skipRooms=true&callback=JSON_CALLBACK';
+        var url = '../../ajaxaction.php?action=getAllBuildingNames&callback=JSON_CALLBACK';
         return convenienceMethods.getDataAsDeferredPromise(url).then(
             function(promise){
               return promise;
@@ -114,7 +114,7 @@ var emergencyInfo = angular.module('emergencyInfo', ['ui.bootstrap','convenience
         if(building.Rooms){
           factory.onSelectPIOrBuilding(building);
         }else{
-          var url = '../../ajaxaction.php?action=getRoomsByBuildingId&id='+building.Key_id+'&callback=JSON_CALLBACK';
+          var url = '../../ajaxaction.php?action=getAllBuildingRoomNames&buildingId='+building.Key_id+'&callback=JSON_CALLBACK';
           convenienceMethods.getDataAsDeferredPromise(url).then(
               function(promise){
                 building.Rooms = promise;

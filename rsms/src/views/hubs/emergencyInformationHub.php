@@ -39,7 +39,7 @@ require_once '../top_view.php';
                     <span ng-if="searchType == 'location'">
                         <label>Building Name or Physical Address:</label>
                             <ui-select ng-if="buildings" ng-show="!PI || selectPI" style="width:350px !important;" ng-model="building.selected" theme="selectize" ng-disabled="disabled" on-select="eif.onSelectBuilding($item)">
-                                <ui-select-match placeholder="Select Buidling">{{$select.selected.Name}}</ui-select-match>
+                                <ui-select-match placeholder="Select Building">{{$select.selected.Name}}</ui-select-match>
                                 <ui-select-choices repeat="building in buildings | propsFilter: {Name: $select.search} | filter: {Is_active: true}">
                                   <div ng-bind-html="building.Name | highlight: $select.search"></div>
                                 </ui-select-choices>
@@ -65,9 +65,9 @@ require_once '../top_view.php';
                     <span ng-if="searchType == 'pi'">
                         <label>Principal Investigator:</label>
                         <ui-select ng-if="pis" style="width:350px;" ng-model="room.selected" theme="selectize" ng-disabled="disabled" on-select="eif.onSelectPI($item)">
-                            <ui-select-match placeholder="Select Principal Investigator">{{$select.selected.User.Name}}</ui-select-match>
-                            <ui-select-choices repeat="pi in pis | propsFilter: {User.Name: $select.search}">
-                              <div ng-bind-html="pi.User.Name | highlight: $select.search"></div>
+                            <ui-select-match placeholder="Select Principal Investigator">{{$select.selected.Name}}</ui-select-match>
+                            <ui-select-choices repeat="pi in pis | propsFilter: {Name: $select.search}">
+                              <div ng-bind-html="pi.Name | highlight: $select.search"></div>
                             </ui-select-choices>
                         </ui-select>
                         <input ng-if="!pis" style="width:280px" type="text" disabled="disabled" placeholder="Getting Principal Investigators...">
@@ -101,7 +101,7 @@ require_once '../top_view.php';
                         <th>Role</th>
                     </tr>
                     <tr ng-repeat="pi in pisByRoom">
-                        <td style="width:26%">{{pi.User.Name}}</td>
+                        <td style="width:26%">{{pi.Name}}</td>
                         <td style="width:17%"><span ng-if="pi.User.Emergency_phone">{{pi.User.Emergency_phone | tel}}</span><span ng-if="!pi.User.Emergency_phone">Unknown</span></td>
                         <td style="width:34%">
                             <ul style="list-style: none;">
