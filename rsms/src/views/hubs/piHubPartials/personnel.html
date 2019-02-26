@@ -42,7 +42,7 @@
     </tbody>
 </table>
 <hr>
-<h2 ng-if="PI" class="alert greenBg">Laboratory Member(s) <a class="btn left" ng-click="openAssignModal('Lab Member')"><i class="icon-plus-2"></i>Assign Lab Member</a><a class="btn left" ng-click="openModal(null, Constants.ROLE.NAME.LAB_PERSONNEL)"><i class="icon-plus-2"></i>Create Lab Member</a></h2>
+<h2 ng-if="PI" class="alert greenBg">Laboratory Member(s) <a class="btn left" ng-click="openAssignModal('Lab Personnel')"><i class="icon-plus-2"></i>Assign Lab Member</a><a class="btn left" ng-click="openModal(null, Constants.ROLE.NAME.LAB_PERSONNEL)"><i class="icon-plus-2"></i>Create Lab Member</a></h2>
 <h3 ng-if="!personnel.length" >{{PI.User.Name}} has no laboratory members.</h3>
 <table class="roomList personnelList table table-striped table-hover list" id="rooms" style="margin-top: 12px">
     <thead>
