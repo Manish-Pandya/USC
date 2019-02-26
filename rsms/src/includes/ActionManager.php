@@ -2131,19 +2131,7 @@ class ActionManager {
     }
 
     public function getUsersForPIHub(){
-        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
-
-        $users = $this->getAllUsers();
-        EntityManager::with_entity_maps(User::class, array(
-            EntityMap::lazy("getInspector"),
-            EntityMap::lazy("getSupervisor"),
-            EntityMap::lazy("getPrincipalInvestigator"),
-            EntityMap::eager("getRoles")
-        ));
-
-        $pi_maps = array();
-
-        return $users;
+        return $this->getUsersForUserHub();
     }
 
     public function getUsersForUserHub(){
@@ -2199,6 +2187,8 @@ class ActionManager {
                 ));
             }
 
+            $supervisorDto = DtoFactory::piToDto($u->getSupervisor());
+
             // Inspector to DTO (or null)
             $inspectorDto = null;
             if( isset($inspectorsByUserIds[$u->getKey_id()]) ){
@@ -2228,6 +2218,7 @@ class ActionManager {
                 'Position' => $u->getPosition(),
                 'Roles' => $roleDtos,
                 'Supervisor_id' => $u->getSupervisor_id(),
+                'Supervisor' => $supervisorDto,
                 'Primary_department' => $primaryDept,
                 'PrincipalInvestigator' => $piDto,
                 'Inspector' => $inspectorDto,
