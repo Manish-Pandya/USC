@@ -69,7 +69,7 @@ angular.module('modalPosition', [])
                 var rect = el.getBoundingClientRect();
                 return (
                     $(el).position().top >= 40 &&
-                    rect.bottom <= (body.outerHeight() + 83)  /*or $(window).height() */
+                    (rect.bottom <= (body.outerHeight() + 83)  || rect.bottom <= $(window).height() )
                 );
             }
 
