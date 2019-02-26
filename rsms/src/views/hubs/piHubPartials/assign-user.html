@@ -1,15 +1,16 @@
 <form name="form" ng-submit="saveUser()" class="form-horizontal form">
+
     <div class="modal-header" style="padding:0;" class="">
         <h2 style="padding:5px" class="redBg">Assign a {{modalData.type}} to {{modalData.User.Name}}</h2>
     </div>
-    <div class="modal-body" style="height:220px;">
+    <div class="modal-body">
         <h3 class="alert alert-danger" ng-if="modalError">{{modalError}}</h3>
         <div class="control-group">
             <label class="control-label" for="inputEmail">Select a {{modalData.type}}</label>
             <div class="controls" ng-if="!gettingUsers">
                 <ui-select ng-model="selected.user" theme="selectize" ng-disabled="disabled" style="width:300px; margin-left:10px" on-select="checkUserForSave($item)">
                     <ui-select-match placeholder="Select a {{modalData.type}}">{{$select.selected.Name}}</ui-select-match>
-                    <ui-select-choices repeat="user in users | isLabPersonnel | propsFilter: {Name: $select.search} | limitTo:20">
+                    <ui-select-choices repeat="user in labPersonnel | propsFilter: {Name: $select.search} | limitTo:20">
                         <div ng-bind-html="user.Name | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>

@@ -718,8 +718,10 @@ piHubPersonnelController = function($scope, $rootScope, $location, convenienceMe
               controller: assignUserCtrl,
               resolve: {
                 modalData: function () {
-                  $scope.PI.type = type;
-                  return $scope.PI;
+                  return {
+                      type: type,
+                      PI: $scope.PI
+                  };
                 }
               }
             });
@@ -966,21 +968,13 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
         }
 
       $scope.save = function (user, confirmed) {
-          if (!confirmed) {
-              $scope.selectedUser = user;
-          } else {
-              user = $scope.selectedUser;
-          }
-          if(!confirmed && !checkUserForSave(user)) return;
-          if(user.Supervisor_id){
-              if(!$scope.needsConfirmation){
-                  $scope.selectedUser = user;
-                  $scope.needsConfirmation = true;
-                  return;
-              }
+          if(!confirmed && !checkUserForSave(user)){
+              console.warn("Requested User edit requires confirmation");
+              return;
           }
 
-          user.Supervisor_id = modalData.Key_id
+          // Assign user
+          user.Supervisor_id = modalData.PI.Key_id
           user.Is_active = true;
 
           $rootScope.saving = userHubFactory.saveUser(user)
@@ -992,41 +986,53 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
             )
       }
 
-      function checkUserForSave(user) {
-          if (user.Is_active && !user.Supervisor) return true;
-          $scope.message = user.Name + " already exists as ";
-          if (!user.Is_active) {
-              $scope.message = $scope.message + "an innactive ";
-          }else{
-              $scope.message = $scope.message + "a ";  
-          }
+      $scope.onSelectUserId = function onSelectUserId(id){
+        console.debug("Selected user with ID ", id);
+      };
 
-          if (userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT)) {
-              $scope.message = $scope.message + "Lab Contact ";
-          }else{
-              $scope.message = $scope.message + "Lab Personnel ";
-          }
+    $scope.checkUserForSave = function checkUserForSave(user) {
+        console.debug("Selected user: ", user);
 
-          if (user.Supervisor) {
-              $scope.message = $scope.message + "for " + user.Supervisor.Name;
-          }
+        // Determine if confirmation is required
+        // Show a message if we're re-activating or re-assigning a user
+        $scope.needsConfirmation = !user.Is_active || user.Supervisor;
 
-          $scope.message = $scope.message + ".  Would you like to ";
+        if ( $scope.needsConfirmation ){
+            // Confirmation is required; build the confirmation message
+            $scope.message = user.Name + " already exists as ";
+            if (!user.Is_active) {
+                $scope.message = $scope.message + "an innactive ";
+            }else{
+                $scope.message = $scope.message + "a ";
+            }
 
-          if (!user.Is_active) {
-              $scope.message = $scope.message + "activate and ";
-          }
+            if (userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT)) {
+                $scope.message = $scope.message + "Lab Contact ";
+            }else{
+                $scope.message = $scope.message + "Lab Personnel ";
+            }
 
-          if (user.Supervisor) {
-              $scope.message = $scope.message + "re-";
-          }
+            if (user.Supervisor) {
+                $scope.message = $scope.message + "for " + user.Supervisor.Name;
+            }
 
-          $scope.message = $scope.message + "assign them to " + modalData.User.Name + "?" ;
+            $scope.message = $scope.message + ".  Would you like to ";
 
-          console.log(modalData, $scope.message);
+            if (!user.Is_active) {
+                $scope.message = $scope.message + "activate and ";
+            }
 
-          return false;
-      }
+            if (user.Supervisor) {
+                $scope.message = $scope.message + "re-";
+            }
+
+            $scope.message = $scope.message + "assign them to " + modalData.PI.User.Name + "?" ;
+
+            console.log(modalData.PI, $scope.message);
+        }
+
+        return !$scope.needsConfirmation;
+    }
 
 
       $scope.cancel = function(){
