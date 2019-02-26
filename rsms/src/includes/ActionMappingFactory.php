@@ -67,6 +67,7 @@ class ActionMappingFactory {
                 "getAllUsers"=>new ActionMapping("getAllUsers", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "getUserById"=>new ActionMapping("getUserById", "", ""),
                 "saveUser"=>new ActionMapping("saveUser", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "assignLabUserToPI"=>new SecuredActionMapping("assignLabUserToPI", $this::$ROLE_GROUPS["ADMIN"]),
                 "getAllRoles"=>new ActionMapping("getAllRoles", "", ""),
                 "saveUserRoleRelation"=>new ActionMapping("saveUserRoleRelation", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "saveUserRoleRelations"=>new ActionMapping("saveUserRoleRelations", "", "", $this::$ROLE_GROUPS["ADMIN"]),

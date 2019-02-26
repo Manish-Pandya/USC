@@ -973,11 +973,7 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
               return;
           }
 
-          // Assign user
-          user.Supervisor_id = modalData.PI.Key_id
-          user.Is_active = true;
-
-          $rootScope.saving = userHubFactory.saveUser(user)
+          $rootScope.saving = userHubFactory.assignLabUser(user.Key_id, modalData.PI.Key_id, $scope.modalData.type)
             .then(
               function(user){
                   user.new = true;
@@ -1026,7 +1022,35 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
                 $scope.message = $scope.message + "re-";
             }
 
-            $scope.message = $scope.message + "assign them to " + modalData.PI.User.Name + "?" ;
+            $scope.message = $scope.message + "assign them to " + modalData.PI.User.Name;
+
+            var roleChanges = [];
+
+            // Are role changes required?
+
+            // Always add PERSONNEL role
+            if( !userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_PERSONNEL) ){
+                roleChanges.push("add the '" + Constants.ROLE.NAME.LAB_PERSONNEL + "' role");
+            }
+
+            // If role is PERSONNEL, we may need to ADD 'Lab Personnel' and REMOVE 'Lab Contact'
+            if( $scope.modalData.type == Constants.ROLE.NAME.LAB_PERSONNEL && userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT)){
+                roleChanges.push("remove the '" + Constants.ROLE.NAME.LAB_CONTACT + "' role");
+            }
+            else if ($scope.modalData.type == Constants.ROLE.NAME.LAB_CONTACT && !userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT)){
+                roleChanges.push("add the '" + Constants.ROLE.NAME.LAB_CONTACT + "' role");
+            }
+
+            if( roleChanges.length > 0 ){
+                if( roleChanges.length == 1){
+                    $scope.message = $scope.message + ' and ' + roleChanges[0];
+                }
+                else {
+                    $scope.message = $scope.message + ', ' + roleChanges.join(' and ');
+                }
+            }
+
+            $scope.message = $scope.message + "?";
 
             console.log(modalData.PI, $scope.message);
         }

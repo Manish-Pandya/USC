@@ -676,9 +676,79 @@ class ActionManager {
         }
     }
 
-    public function saveUser(){
+    public function assignLabUserToPI($piid, $uid, $labContact = false){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
-        $decodedObject = $this->convertInputJson();
+
+        $piid = $this->getValueFromRequest('piid', $piid);
+        $uid = $this->getValueFromRequest('uid', $uid);
+        $labContact = $this->getValueFromRequest('labContact', $labContact);
+
+        // Prepare to add Lab Personnel role, and either add or remove lab contact role
+        $roleActions = array(
+            'Lab Personnel' => true,
+            'Lab Contact' => $labContact
+        );
+
+        if( !isset($piid) || !isset($uid) ){
+            return new ActionError("IDs are required", 400);
+        }
+
+        $userDao = new GenericDAO(new User());
+        $piDao = new PrincipalInvestigatorDAO();
+
+        $user = $userDao->getById($uid);
+        if( !isset($user) ){
+            return new ActionError("No such user", 404);
+        }
+
+        $pi = $piDao->getByid($piid);
+        if( !isset($pi) ){
+            return new ActionError("No such PI", 404);
+        }
+
+        // All required data is present; assign the user
+        if( !$user->getIs_active() ){
+            $LOG->info("Activating $user");
+            $user->setIs_active(true);
+        }
+
+        $LOG->info("Assigning $user to $pi");
+        $user->setSupervisor_id( $pi->getKey_id() );
+
+        // Add/remove role(s) to user
+        $roleDao = new RoleDAO();
+        foreach($roleActions as $requiredRoleName => $addRole){
+            if( $addRole == !CoreSecurity::userHasRoles($user, array($requiredRoleName)) ){
+                $LOG->debug("$user does not have role '$requiredRoleName'");
+                $requiredRole = $roleDao->getByName($requiredRoleName);
+
+                $rel = new RelationshipDto();
+                $rel->setMaster_id($user->getKey_id());
+                $rel->setRelation_id($requiredRole->getKey_id());
+                $rel->setAdd($addRole);
+
+                $LOG->info( ($addRole ? 'Add' : 'Remove') . " $requiredRole " . ($addRole ? 'to' : 'from') . "$user");
+                $this->saveUserRoleRelation($rel);
+            }
+        }
+
+        // Empty object role value to force re-query (which will include the newly-saved values)
+        $user->setRoles(null);
+
+        $LOG->debug("Saving $user");
+        $saved = $userDao->save($user);
+        return $saved;
+    }
+
+    public function saveUser( $user = null ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        if( !isset($user) ){
+            $decodedObject = $this->convertInputJson();
+        }
+        else{
+            $decodedObject = $user;
+        }
 
         if( $decodedObject === NULL ){
             return new ActionError('Error converting input stream to User');

@@ -297,6 +297,25 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
       }
   }
 
+  factory.assignLabUser = function assignLabUser (userId, piId, roleName){
+    var url = GLOBAL_WEB_ROOT + "ajaxaction.php?action=assignLabUserToPI";
+    url += '&piid=' + piId;
+    url += '&uid=' + userId;
+    url += '&labContact=' + (roleName == Constants.ROLE.NAME.LAB_CONTACT);
+
+    var deferred = $q.defer();
+      convenienceMethods.saveDataAndDefer(url, null)
+        .then(
+          function(promise){
+            deferred.resolve(promise);
+          },
+          function(promise){
+            deferred.reject();
+          }
+        );
+    return deferred.promise;
+  }
+
   factory.saveUser = function(userDto)
   {
     console.log(userDto);
