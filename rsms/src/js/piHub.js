@@ -937,12 +937,33 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
        }
   }
 
-  var assignUserCtrl = function($scope, $rootScope,modalData, $modalInstance, userHubFactory, piHubFactory){
+  var assignUserCtrl = function($scope, $rootScope,modalData, $modalInstance, userHubFactory, piHubFactory, $filter){
       $scope.modalData = modalData;
 
       $scope.gettingUsers = true;
+      $scope.selected = {
+          user: {}
+      };
+
       piHubFactory.getAllUsers()
-        .then(function(users){$scope.users = users;$scope.modalError="";$scope.gettingUsers = false},function(){$scope.modalError="There was an error getting the list of users.  Please check your internet connection and try again.";})
+        .then(
+            function(users){
+                // Filter users to lab personnel
+                console.debug("Filtering users...");
+                $scope.labPersonnel = $filter('isLabPersonnel')(users);
+                console.debug("Users filtered to LabPersonnel", $scope.labPersonnel);
+
+                $scope.modalError="";
+                $scope.gettingUsers = false;
+            },
+            function(){
+                $scope.modalError="There was an error getting the list of users.  Please check your internet connection and try again.";
+            }
+        );
+
+        $scope.asdf = function( $select ){
+            console.log($select);
+        }
 
       $scope.save = function (user, confirmed) {
           if (!confirmed) {
