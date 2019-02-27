@@ -995,62 +995,28 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
 
         if ( $scope.needsConfirmation ){
             // Confirmation is required; build the confirmation message
-            $scope.message = user.Name + " already exists as ";
-            if (!user.Is_active) {
-                $scope.message = $scope.message + "an innactive ";
-            }else{
-                $scope.message = $scope.message + "a ";
-            }
 
-            if (userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT)) {
-                $scope.message = $scope.message + "Lab Contact ";
-            }else{
-                $scope.message = $scope.message + "Lab Personnel ";
-            }
+            var currentRoleName = userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT)
+                ? Constants.ROLE.NAME.LAB_CONTACT
+                : Constants.ROLE.NAME.LAB_PERSONNEL;
 
-            if (user.Supervisor) {
-                $scope.message = $scope.message + "for " + user.Supervisor.Name;
-            }
+            var supervisor_stmt = user.Supervisor
+                ? "is currently assigned to " + user.Supervisor.Name
+                : "is an unassigned " + currentRoleName
 
-            $scope.message = $scope.message + ".  Would you like to ";
+            var inactive_stmt = user.Is_active ? undefined : "is inactive";
+            var question_stmt = "Assign to " + modalData.PI.User.Name + "?";
 
-            if (!user.Is_active) {
-                $scope.message = $scope.message + "activate and ";
-            }
+            // Construct message
+            var changes = [supervisor_stmt, inactive_stmt]
+                .filter(s => s)
+                .join(' and ') + '.';
 
-            if (user.Supervisor) {
-                $scope.message = $scope.message + "re-";
-            }
-
-            $scope.message = $scope.message + "assign them to " + modalData.PI.User.Name;
-
-            var roleChanges = [];
-
-            // Are role changes required?
-
-            // Always add PERSONNEL role
-            if( !userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_PERSONNEL) ){
-                roleChanges.push("add the '" + Constants.ROLE.NAME.LAB_PERSONNEL + "' role");
-            }
-
-            // If role is PERSONNEL, we may need to ADD 'Lab Personnel' and REMOVE 'Lab Contact'
-            if( $scope.modalData.type == Constants.ROLE.NAME.LAB_PERSONNEL && userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT)){
-                roleChanges.push("remove the '" + Constants.ROLE.NAME.LAB_CONTACT + "' role");
-            }
-            else if ($scope.modalData.type == Constants.ROLE.NAME.LAB_CONTACT && !userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT)){
-                roleChanges.push("add the '" + Constants.ROLE.NAME.LAB_CONTACT + "' role");
-            }
-
-            if( roleChanges.length > 0 ){
-                if( roleChanges.length == 1){
-                    $scope.message = $scope.message + ' and ' + roleChanges[0];
-                }
-                else {
-                    $scope.message = $scope.message + ', ' + roleChanges.join(' and ');
-                }
-            }
-
-            $scope.message = $scope.message + "?";
+            $scope.message = [
+                user.Name,
+                changes,
+                question_stmt
+            ].join(' ');
 
             console.log(modalData.PI, $scope.message);
         }
