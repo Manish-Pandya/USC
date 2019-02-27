@@ -2275,8 +2275,9 @@ class ActionManager {
 
             // User to DTO, including only fields relevant to this endpoint
             return new GenericDto(array(
+                'Class' => get_class($u),
                 'Key_id' => $u->getKey_id(),
-                'Is_active' => $u->getIs_active(),
+                'Is_active' => (bool) $u->getIs_active(),
                 'Username' => $u->getUsername(),
                 'Name' => $u->getName(),
                 'First_name' => $u->getFirst_name(),
