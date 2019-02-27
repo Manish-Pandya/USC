@@ -156,7 +156,7 @@
                         <div class="control-group" style="width:40%" ng-if="room.edit">
                             <div class="controls">
                                 <input ng-show="!pis" style="background:white;border-color:#999" type="text" placeholder="Getting PIs..." disabled="disabled">
-                                <i ng-show="!pis" class="icon-spinnery-dealie spinner small" style="margin-left: 177px;margin-top: -34px;position:absolute"></i>
+                                <i ng-show="!pis" class="icon-spinnery-dealie spinner small" style="margin-left: 177px;margin-top: -34px;"></i>
                                 <ui-select ng-show="pis" ng-model="pis.selected" theme="selectize" ng-disabled="disabled" on-select="handlePI($item)">
                                     <ui-select-match placeholder="Select A PI">{{$select.selected.User.Name}}</ui-select-match>
                                     <ui-select-choices repeat="pi in pis | propsFilter: {User.Name: $select.search}">
