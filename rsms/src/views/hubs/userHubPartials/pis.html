@@ -36,7 +36,8 @@
         </tr>
     </thead>
     <tbody>
-            <tr ng-repeat="pi in (filtered = (pis | isPI | filter:activeFilter(showInactive) | filter:searchText | filter:buildingFilter() | filter:departmentFilter() | orderBy:order:reverse ))">
+            <tr ng-repeat="pi in (filtered = (pis | isPI | filter:activeFilter(showInactive) | filter:searchText | filter:buildingFilter() | filter:departmentFilter() | orderBy:order:reverse ))"
+                ng-class="{inactive: !pi.Is_active}">
             <td style="width:8%;">
                 <button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" ng-hide="contact.edit" class="edit btn btn-primary" ng-click="openModal(pi,$index)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
                 <button ng-disabled="!rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(pi)" ng-if="pi.Is_active"><i class="icon-remove"></i></button>
