@@ -478,6 +478,9 @@ class GenericDAO {
 		if($success && $object->getKey_Id() > 0) {
 			$this->LOG->trace("Successfully updated or inserted entity with key_id=" . $object->getKey_Id());
 
+			// Evict this item from the cache
+			self::$_ENTITY_CACHE->evict($object);
+
 			// Re-load the whole record so that updated Date fields (and any field auto-set by DB) are updated
 			//$this->LOG->trace("$this->logprefix Reloading updated/inserted entity with key_id=" . $object->getKey_Id() );
 			$object = $this->getById( $object->getKey_Id() );

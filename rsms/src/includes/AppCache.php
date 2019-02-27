@@ -6,6 +6,7 @@ class AppCache {
 		'HITS' => 0,
 		'MISSES' => 0,
 		'OVERWRITES' => 0,
+		'EVICTIONS' => 0
 	);
 
 	private $name;
@@ -53,6 +54,23 @@ class AppCache {
 			$this->_CACHE[$kid] = $obj;
 			$this->_STATS['WRITES']++;
 		}
+	}
+
+	public function evict($objectOrKey){
+		$LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
+
+		// Get or generate key
+		$key = is_string($objectOrKey) ? $objectOrKey : AppCache::gen_entity_key($objectOrKey);
+
+		if( isset($this->CACHE[$key]) ){
+			$LOG->trace("($this->name cache) Evicting $key");
+			unset($this->CACHE[$key]);
+			$this->_STATS['EVICTIONS']++;
+			return true;
+		}
+
+		// nothing to evict
+		return false;
 	}
 
 	public function getCachedEntity($key){
