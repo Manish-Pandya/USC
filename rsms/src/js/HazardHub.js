@@ -281,7 +281,7 @@ hazardHub.controller('TreeController', function ($scope, $q, $modal, $rootScope,
             hazard.IsDirty = true;
 
             // server lazy loads subhazards, save any subhazards present to re-add manually.
-            var previousSubHazards = hazard.SubHazards;
+            var previousSubHazards = hazard.SubHazards || [];
 
             hazardHubFactory.saveHazard($scope.hazardCopy).then(
                 function(returnedHazard){
@@ -343,7 +343,7 @@ hazardHub.controller('TreeController', function ($scope, $q, $modal, $rootScope,
         hazard.IsDirty = true;
 
         // server lazy loads subhazards, save any subhazards present to re-add manually.
-        var previousSubHazards = hazard.SubHazards;
+        var previousSubHazards = hazard.SubHazards || [];
 
         hazardHubFactory.saveHazard($scope.hazardCopy).then(
             function(returnedHazard){
