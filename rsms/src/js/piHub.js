@@ -993,33 +993,31 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
         // Show a message if we're re-activating or re-assigning a user
         $scope.needsConfirmation = !user.Is_active || user.Supervisor;
 
-        if ( $scope.needsConfirmation ){
-            // Confirmation is required; build the confirmation message
+        // Confirmation may not be required, but build the confirmation message anyway
 
-            var currentRoleName = userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT)
-                ? Constants.ROLE.NAME.LAB_CONTACT
-                : Constants.ROLE.NAME.LAB_PERSONNEL;
+        var currentRoleName = userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT)
+            ? Constants.ROLE.NAME.LAB_CONTACT
+            : Constants.ROLE.NAME.LAB_PERSONNEL;
 
-            var supervisor_stmt = user.Supervisor
-                ? "is currently assigned to " + user.Supervisor.Name
-                : "is an unassigned " + currentRoleName
+        var supervisor_stmt = user.Supervisor
+            ? "is currently assigned to " + user.Supervisor.Name
+            : "is an unassigned " + currentRoleName
 
-            var inactive_stmt = user.Is_active ? undefined : "is inactive";
-            var question_stmt = "Assign to " + modalData.PI.User.Name + "?";
+        var inactive_stmt = user.Is_active ? undefined : "is inactive";
+        var question_stmt = "Assign to " + modalData.PI.User.Name + "?";
 
-            // Construct message
-            var changes = [supervisor_stmt, inactive_stmt]
-                .filter(s => s)
-                .join(' and ') + '.';
+        // Construct message
+        var changes = [supervisor_stmt, inactive_stmt]
+            .filter(s => s)
+            .join(' and ') + '.';
 
-            $scope.message = [
-                user.Name,
-                changes,
-                question_stmt
-            ].join(' ');
+        $scope.message = [
+            user.Name,
+            changes,
+            question_stmt
+        ].join(' ');
 
-            console.log(modalData.PI, $scope.message);
-        }
+        console.log(modalData.PI, $scope.message);
 
         return !$scope.needsConfirmation;
     }
