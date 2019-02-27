@@ -1,7 +1,7 @@
 <form name="form" ng-submit="saveUser()" class="form-horizontal form">
 
     <div class="modal-header" style="padding:0;" class="">
-        <h2 style="padding:5px" class="redBg">Assign a {{modalData.type}} to {{modalData.Name}}</h2>
+        <h2 style="padding:5px" class="redBg">Assign a {{modalData.type}} to {{modalData.PI.User.Name}}</h2>
     </div>
     <div class="modal-body">
         <h3 class="alert alert-danger" ng-if="modalError">{{modalError}}</h3>
