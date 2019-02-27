@@ -147,7 +147,7 @@
                     <option value="">Select Use</option>
                 </select>
                 <i class="icon-pencil primary" ng-if="room.edit && !roomCopy.custom" ng-click="roomCopy.custom = true"></i>
-                <i class="icon-cancel-2 danger" style="margin-top: 6px; margin-left: -1px;" ng-if="room.edit && roomCopy.custom" ng-click="roomCopy.custom = false"></i>
+                <i class="icon-cancel-2 danger" style="margin-top: 6px; margin-left: -1px;" ng-if="room.edit && roomCopy.custom" ng-click="roomCopy.custom = false; roomCopy.Purpose = null"></i>
                 <span ng-if="!room.edit">{{room.Purpose}}</span>
             </td>
             <td style="width:34%">
