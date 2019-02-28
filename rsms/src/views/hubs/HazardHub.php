@@ -33,7 +33,6 @@
         <div class="live" ng-hide="!SubHazards.length">
           <select ng-model="hazardFilterSetting.Is_active" style="margin:21px 19px 0;" ng-init="hazardFilterSetting.Is_active = 'active'">
             <option value="active">Active Hazards</option>
-            <option value="inactive">Inactive Hazards</option>
             <option value="both">Active & Inactive Hazards</option>
           </select>
           <ol id="hazardTree" style="padding-top:0">
