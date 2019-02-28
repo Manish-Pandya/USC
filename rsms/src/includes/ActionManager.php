@@ -763,7 +763,14 @@ class ActionManager {
             if($decodedObject->getKey_id() == NULL){
                 $decodedObject->setIs_active(true);
             }
+
             $user = $dao->save( $decodedObject );
+            if( $user instanceof ActionError ){
+                $LOG->error("Error saving user: $user");
+                return $user;
+            }
+
+            $LOG->info("Saved user details: $user");
 
             // Save Roles
             if($decodedObject->getRoles() != NULL){
@@ -779,12 +786,14 @@ class ActionManager {
                     }
                 };
 
-                function updateRole($actionman, $rid, $uid, $add){
-                    $rel = new RelationshipDto();
-                    $rel->setMaster_id($uid);
-                    $rel->setRelation_id($rid);
-                    $rel->setAdd($add);
-                    $actionman->saveUserRoleRelation($rel);
+                $userDao = new GenericDAO(new User());
+                function updateRole($dao, $rid, $uid, $add) {
+                    if( $add ){
+                        $dao->addRelatedItems($rid, $uid, DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
+                    }
+                    else{
+                        $dao->removeRelatedItems($rid, $uid, DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
+                    }
                 }
 
                 $newRoleIds = array_map( 'fn_getRoleId', $decodedObject->getRoles() );
@@ -800,14 +809,14 @@ class ActionManager {
                 if( !empty($rolesToUnlink) ){
                     foreach($rolesToUnlink as $r){
                         $LOG->debug("Unlink Role #$r from User #" . $user->getKey_id());
-                        updateRole($this, $r, $user->getKey_id(), false);
+                        updateRole($userDao, $r, $user->getKey_id(), false);
                     }
                 }
 
                 if( !empty($rolesToAdd) ){
                     foreach($rolesToAdd as $r){
                         $LOG->debug("Link Role #$r from User #" . $user->getKey_id());
-                        updateRole($this, $r, $user->getKey_id(), true);
+                        updateRole($userDao, $r, $user->getKey_id(), true);
                     }
                 }
 
@@ -831,7 +840,7 @@ class ActionManager {
                 if( $_isContact && !$_isPersonnel ){
                     $LOG->warn("User is assigned Lab Contact role but not Lab Peronnel role");
                     $LOG->info("Adding Lab Personnel role to user " . $user->getKey_id());
-                    updateRole($this, $_personnelRole->getKey_id(), $user->getKey_id(), true);
+                    updateRole($userDao, $_personnelRole->getKey_id(), $user->getKey_id(), true);
                 }
 
                 // Is this a newly-added Lab Contact?
@@ -867,15 +876,15 @@ class ActionManager {
                 }
 
                 // Look up the old PI (if any)
-                $pi_dao = new GenericDAO(new PrincipalInvestigator());
-                $old_pi = $pi_dao->getById( $pi->getKey_id() );
+                $pi_dao = new PrincipalInvestigatorDAO();
+                $old_pi = $pi_dao->getByUserId( $user->getKey_id() );
                 $LOG->debug("Old PI: $old_pi");
 
                 $pi->setUser_id($user->getKey_id());
                 $pi->setIs_active($user->getIs_active());
 
-                $LOG->debug("Save PI details");
                 $newPi = $this->savePI($pi);
+                $LOG->info("Saved PI details: $pi");
 
                 //set hazard relationships for any rooms the pi has
                 $LOG->debug("Process rooms");
@@ -887,7 +896,7 @@ class ActionManager {
                 }
 
                 // TODO: Only remove department if it isn't incoming
-                if( isset($old_pi) ){
+                if( isset($old_pi) && is_object($old_pi) ){
                     $LOG->debug("Removing old departments from PI #" . $old_pi->getKey_id());
                     // Remove all pre-existing departments
                     $old_depts = $old_pi->getDepartments();

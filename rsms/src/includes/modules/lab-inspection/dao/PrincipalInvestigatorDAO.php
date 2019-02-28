@@ -6,6 +6,13 @@ class PrincipalInvestigatorDAO extends GenericDAO {
         parent::__construct(new PrincipalInvestigator());
     }
 
+    public function getByUserId( $userId ){
+        $q = QueryUtil::selectFrom(new PrincipalInvestigator())
+            ->where(Field::create('user_id', 'principal_investigator'), '=', $userId);
+
+        return $q->getOne();
+    }
+
     /**
      * Retrieves the primary (first) deparmtment of the provided PI
      *
