@@ -2846,7 +2846,9 @@ class ActionManager {
                             }
 
                             $pi->setIs_active(true);
-                            if(!$this->savePI($pi))return new ActionError('The PI record was not saved');
+                            $LOG->info("Saving $pi");
+                            if(!$this->savePI($pi))
+                                return new ActionError('The PI record was not saved');
                         }
 
                         //add Inspector record if role is inspector
@@ -2859,15 +2861,20 @@ class ActionManager {
                                 $inspector = new Inspector();
                                 $inspector->setUser_id($userID);
                             }
-                            if(!$this->saveInspector($inspector))return new ActionError('The inspector record was not saved');
+
+                            $LOG->info("Saving $inspector");
+                            if(!$this->saveInspector($inspector))
+                                return new ActionError('The inspector record was not saved');
                         }
 
                         //All Lab Contacts are also Lab Personnel, so make sure Lab Contacts have that role as well
                         if($roleToAdd->getName() == 'Lab Contact'){
                             $addContact = true;
                             foreach($roles as $role){
-                                if($role->getName() == 'Lab Personnel') $addContact = false;
+                                if($role->getName() == 'Lab Personnel')
+                                    $addContact = false;
                             }
+
                             if($addContact == true){
                                 $allRoles = $this->getAllRoles();
                                 foreach($allRoles as $role){
@@ -2876,11 +2883,8 @@ class ActionManager {
                                         break;
                                     }
                                 }
-                                $personnelRelation = new RelationshipDto();
-                                $personnelRelation->setAdd(true);
-                                $personnelRelation->setMaster_id($userID);
-                                $personnelRelation->setRelation_id($roleId);
-                                //$LOG->fatal($personnelRelation);
+
+                                $LOG->info("Adding 'Lab Personnel' role to $userID");
                                 $dao->addRelatedItems($labPersonnelKeyid,$userID,DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
                             }
                         }
