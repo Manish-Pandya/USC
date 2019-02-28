@@ -5214,10 +5214,33 @@ class ActionManager {
     }
 
     public function getMyLab($id = null){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         if($id==null)$id = $this->getValueFromRequest('id', $id);
         if($id==null)return new ActionError('No request param "id" provided.');
         $principalInvestigator = $this->getPIById($id);
+
+        if( isset($principalInvestigator) ){
+            // Filter inspections by year based on current user role
+            $inspections = $principalInvestigator->getInspections();
+
+            $minYear = $this->sessionHasRoles(array("Admin"))
+                ? 2017
+                : 2018;
+
+            foreach($inspections as $key => $inspection){
+                if( $inspection->getIsArchived() ){
+                    $closedYear = date_create($inspection->getDate_closed())->format("Y");
+
+                    if( $closedYear < $minYear ){
+                        $LOG->debug("Omit $inspection (closed $closedYear) for MyLab");
+                        unset($inspections[$key]);
+                    }
+                }
+            }
+
+            $principalInvestigator->setInspections($inspections);
+        }
 
         EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
             EntityMap::lazy("getLabPersonnel"),
