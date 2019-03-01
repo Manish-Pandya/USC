@@ -111,6 +111,14 @@ class Room extends GenericCrud {
 
     }
 
+	public function __toString(){
+		return '[' .get_class($this)
+		. " key_id=" . $this->getKey_Id()
+		. ($this->is_active ? '' : ' is_active=false')
+		. " name='$this->name' purpose='$this->purpose'"
+		. "]";
+	}
+
     public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = EntityMap::lazy("getPrincipalInvestigators");
