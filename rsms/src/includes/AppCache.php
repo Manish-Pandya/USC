@@ -62,11 +62,14 @@ class AppCache {
 		// Get or generate key
 		$key = is_string($objectOrKey) ? $objectOrKey : AppCache::gen_entity_key($objectOrKey);
 
-		if( isset($this->CACHE[$key]) ){
+		if( isset($this->_CACHE[$key]) ){
 			$LOG->trace("($this->name cache) Evicting $key");
-			unset($this->CACHE[$key]);
+			unset($this->_CACHE[$key]);
 			$this->_STATS['EVICTIONS']++;
 			return true;
+		}
+		else{
+			$LOG->warn("($this->name cache) Nothing to evict for key: $key");
 		}
 
 		// nothing to evict
