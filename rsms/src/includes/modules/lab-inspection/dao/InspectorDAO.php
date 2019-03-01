@@ -14,6 +14,8 @@ class InspectorDAO extends GenericDAO {
     function getAll($sortColumn = NULL, $sortDescending = false, $activeOnly = false){
         $allInspectors = parent::getAll($sortColumn, $sortDescending, $activeOnly);
 
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+        $LOG->debug("Cache all Inspectors by User");
         foreach($allInspectors as $insp){
             $cache_key = AppCache::key_class_id(User::class, $insp->getUser_id());
             self::$_INSPECTOR_USER_CACHE->cacheEntity($insp, $cache_key);
@@ -47,5 +49,11 @@ class InspectorDAO extends GenericDAO {
         catch(QueryException $er){
 			return new QueryError($er->getMessage());
         }
+    }
+
+    function getInspectorByUserIdFromCache($userId){
+        $cache_key = AppCache::key_class_id(User::class, $userId);
+        $cached = self::$_INSPECTOR_USER_CACHE->getCachedEntity($cache_key);
+        return $cached;
     }
 }

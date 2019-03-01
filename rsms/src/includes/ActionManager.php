@@ -2208,6 +2208,63 @@ class ActionManager {
         return $dtos;
     }
 
+    protected function buildUserDTO( User $user ){
+        // Roles to DTOs
+        $roleDtos = DtoFactory::buildDtos($user->getRoles(), 'DtoFactory::roleToDto');
+
+        // PI to DTO (or null)
+        $pi = $user->getPrincipalInvestigator();
+        $piDto = null;
+        if( isset($pi) ){
+            $piDao = new PrincipalInvestigatorDAO();
+            $piBuildings = $piDao->getBuildings($pi->getKey_id());
+            $buildingDtos = DtoFactory::buildDtos($piBuildings, 'DtoFactory::buildingToDto');
+            $deptDtos = DtoFactory::buildDtos($pi->getDepartments(), 'DtoFactory::departmentToDto');
+
+            $piDto = DtoFactory::buildDto($pi, array(
+                'Departments' => $deptDtos,
+                'Buildings' => $buildingDtos
+            ));
+        }
+
+        $supervisorDto = DtoFactory::piToDto($user->getSupervisor());
+
+        // Inspector to DTO (or null)
+        $inspectorDao = new InspectorDAO();
+
+        // Pull Inspector from cache to avoid aggressive queries
+        // If the inspector/user cache is not populated, inspector will be omitted
+        $inspector = $inspectorDao->getInspectorByUserIdFromCache($user->getKey_id());
+        $inspectorDto = DtoFactory::buildDto($inspector);
+
+        $primaryDept = null;
+        if( $user->getPrimary_department() != null ){
+            $primaryDept = DtoFactory::departmentToDto($user->getPrimary_department());
+        }
+
+        // User to DTO, including only fields relevant to this endpoint
+        return new GenericDto(array(
+            'Class' => get_class($user),
+            'Key_id' => $user->getKey_id(),
+            'Is_active' => (bool) $user->getIs_active(),
+            'Username' => $user->getUsername(),
+            'Name' => $user->getName(),
+            'First_name' => $user->getFirst_name(),
+            'Last_name' => $user->getLast_name(),
+            'Office_phone' => $user->getOffice_phone(),
+            'Emergency_phone' => $user->getEmergency_phone(),
+            'Lab_phone' => $user->getLab_phone(),
+            'Email' => $user->getEmail(),
+            'Position' => $user->getPosition(),
+            'Roles' => $roleDtos,
+            'Supervisor_id' => $user->getSupervisor_id(),
+            'Supervisor' => $supervisorDto,
+            'Primary_department' => $primaryDept,
+            'PrincipalInvestigator' => $piDto,
+            'Inspector' => $inspectorDto,
+        ));
+    }
+
     public function getUsersForPIHub(){
         return $this->getUsersForUserHub();
     }
@@ -2237,71 +2294,15 @@ class ActionManager {
                 Investigator
         */
 
-        // Get all inspectors to avoid querying for each user
+        // Populate the Inspector/User cache to avoid querying for each user
+        //   Most users are not inspectors, so this will prevent many unproductive SELECTs
         $inspectorDao = new InspectorDAO();
-        $inspectorsByUserIds = array();
-        foreach( $inspectorDao->getAll() as $inspector) {
-            $inspectorsByUserIds[$inspector->getUser_id()] = $inspector;
-        }
+        $inspectorDao->getAll();
 
-        $piDao = new PrincipalInvestigatorDAO();
-        $_mgr = $this;
         /** Closure to convert a User to a GenericDto */
-        $fn_userToDto = function($u) use ($piDao, $_mgr, $inspectorsByUserIds){
-            // Roles to DTOs
-            $roleDtos = DtoFactory::buildDtos($u->getRoles(), 'DtoFactory::roleToDto');
-
-            // PI to DTO (or null)
-            $pi = $u->getPrincipalInvestigator();
-            $piDto = null;
-            if( isset($pi) ){
-                $piBuildings = $piDao->getBuildings($pi->getKey_id());
-                $buildingDtos = DtoFactory::buildDtos($piBuildings, 'DtoFactory::buildingToDto');
-                $deptDtos = DtoFactory::buildDtos($pi->getDepartments(), 'DtoFactory::departmentToDto');
-
-                $piDto = DtoFactory::buildDto($pi, array(
-                    'Departments' => $deptDtos,
-                    'Buildings' => $buildingDtos
-                ));
-            }
-
-            $supervisorDto = DtoFactory::piToDto($u->getSupervisor());
-
-            // Inspector to DTO (or null)
-            $inspectorDto = null;
-            if( isset($inspectorsByUserIds[$u->getKey_id()]) ){
-                $inspector = $inspectorsByUserIds[$u->getKey_id()];
-                $inspectorDto = new GenericDto(array(
-                    'Key_id' => $inspector->getKey_id()
-                ));
-            }
-
-            $primaryDept = null;
-            if( $u->getPrimary_department() != null ){
-                $primaryDept = DtoFactory::departmentToDto($u->getPrimary_department());
-            }
-
-            // User to DTO, including only fields relevant to this endpoint
-            return new GenericDto(array(
-                'Class' => get_class($u),
-                'Key_id' => $u->getKey_id(),
-                'Is_active' => (bool) $u->getIs_active(),
-                'Username' => $u->getUsername(),
-                'Name' => $u->getName(),
-                'First_name' => $u->getFirst_name(),
-                'Last_name' => $u->getLast_name(),
-                'Office_phone' => $u->getOffice_phone(),
-                'Emergency_phone' => $u->getEmergency_phone(),
-                'Lab_phone' => $u->getLab_phone(),
-                'Email' => $u->getEmail(),
-                'Position' => $u->getPosition(),
-                'Roles' => $roleDtos,
-                'Supervisor_id' => $u->getSupervisor_id(),
-                'Supervisor' => $supervisorDto,
-                'Primary_department' => $primaryDept,
-                'PrincipalInvestigator' => $piDto,
-                'Inspector' => $inspectorDto,
-            ));
+        $_mgr = $this;
+        $fn_userToDto = function($u) use ($_mgr){
+            return $_mgr->buildUserDTO($u);
         };
 
         $dtos = array_map($fn_userToDto, $users);
