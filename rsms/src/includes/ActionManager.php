@@ -2367,24 +2367,13 @@ class ActionManager {
         }
     }
 
-    public function getAllRooms($allLazy = NULL, $filterInactivePis = FALSE){
+    public function getAllRooms($allLazy = NULL){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $dao = new RoomDAO();
 
         $rooms = $dao->getAll("name");
         $allLazy = $this->getValueFromRequest('allLazy', $allLazy);
-
-        if( $filterInactivePis ){
-            foreach($rooms as $room){
-                // Filter inactive PIs
-                $pis = array_filter($room->getPrincipalInvestigators(), function($pi){
-                    return $pi->getIs_active();
-                });
-
-                $room->setPrincipalInvestigators($pis);
-            }
-        }
 
         // initialize an array of entityMap settings to assign to rooms, instructing them to lazy-load children
         // necessary because rooms by default eager-load buildings, and this would set up an infinite load loop between building->room->building->room...
