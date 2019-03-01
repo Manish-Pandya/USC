@@ -281,7 +281,7 @@ class ActionManager {
         $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
 
         // Make sure they're an Erasmus user by username lookup
-        $dao = $this->getDao(new User());
+        $dao = new UserDAO();
         $user = $dao->getUserByUsername($username);
 
         if ($user == null) {
@@ -1614,7 +1614,6 @@ class ActionManager {
 
             $LOG->info("Saving... $decodedObject");
             $room = $dao->save($decodedObject);
-
 
             EntityManager::with_entity_maps(Room::class, array(
                 EntityMap::eager("getPrincipalInvestigators"),
@@ -4819,20 +4818,39 @@ class ActionManager {
 
         $username = $this->getValueFromRequest('username', $username);
 
-        $ldap = new LDAP();
-        $user = new User();
+        if( ApplicationConfiguration::get('server.auth.providers.ldap', false) ){
+            // LDAP is enabled
+            $LOG->info("Lookup user '$username' via LDAP");
 
-        $fieldsToFind = array("cn","sn","givenName","mail");
-        if ($ldapData = $ldap->GetAttr($username, $fieldsToFind)){
-            $user->setFirst_name(ucfirst(strtolower($ldapData["givenName"])));
-            $user->setLast_name(ucfirst(strtolower($ldapData["sn"])));
-            $user->setEmail(strtolower($ldapData["mail"]));
-            $user->setUsername($ldapData["cn"]);
-        } else {
-            return false;
+            $ldap = new LDAP();
+
+            $fieldsToFind = array("cn","sn","givenName","mail");
+            if ($ldapData = $ldap->GetAttr($username, $fieldsToFind)){
+                $user = new User();
+                $user->setFirst_name(ucfirst(strtolower($ldapData["givenName"])));
+                $user->setLast_name(ucfirst(strtolower($ldapData["sn"])));
+                $user->setEmail(strtolower($ldapData["mail"]));
+                $user->setUsername($ldapData["cn"]);
+
+                return $user;
+            } else {
+                return false;
+            }
         }
+        else{
+            // LDAP is disabled; look up user just from our database
+            $LOG->info("Lookup user '$username' in local database");
+            $dao = new UserDAO();
+            $user = $dao->getUserByUsername($username);
 
-        return $user;
+            if( !$user ){
+                $LOG->info("No user '$username' found in local database");
+                $user = new User();
+                $user->setUsername($username);
+            }
+
+            return $user;
+        }
     }
 
     public function sendInspectionEmail(){
