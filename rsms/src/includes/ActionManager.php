@@ -149,13 +149,22 @@ class ActionManager {
         $ldap = new LDAP();
 
         // if successfully authenticates by LDAP:
-        if ($ldap->IsAuthenticated($username,$password)) {
-            return $this->handleUsernameAuthorization($username);
+        try{
+            if ($ldap->IsAuthenticated($username,$password)) {
+                return $this->handleUsernameAuthorization($username);
+            }
         }
-        else {
-            $LOG->info("LDAP AUTHENTICATION FAILED");
-            return false;
+        catch(Exception $e){
+            if( stristr($e->getMessage(), 'Invalid Credentials') ){
+                // Ignore this exception; it just indicates wrong password
+            }
+            else{
+                $LOG->error("Error authenticating user over LDAP: " . $e->getMessage());
+            }
         }
+
+        $LOG->info("LDAP AUTHENTICATION FAILED");
+        return false;
     }
 
     /**
