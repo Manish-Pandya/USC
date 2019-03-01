@@ -75,7 +75,7 @@ class InspectionWipe extends RadCrud {
 	public function setRoom_id($room_id) {$this->room_id = $room_id;}
 	
 	public function getRoom(){
-		$inspectionWipeTestDAO = new GenericDAO(new Room());
+		$inspectionWipeTestDAO = new RoomDAO();
 		$this->room = $inspectionWipeTestDAO->getById($this->room_id);
 		return $this->room;
 	}

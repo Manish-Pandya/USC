@@ -65,7 +65,7 @@ class PendingHazardDtoChange extends PendingChange {
 
     public function getRoom(){
         if($this->room == null && $this->room_id != null && $this->hasPrimaryKeyValue()){
-            $roomDao = new GenericDAO(new Room());
+            $roomDao = new RoomDAO();
             $this->room = $roomDao->getById($this->room_id);
         }
         return $this->room;

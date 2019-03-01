@@ -102,7 +102,7 @@ class SolidsContainer extends RadCrud {
 
 	public function getRoom() {
 		if($this->room === null && $this->hasPrimaryKeyValue()) {
-			$roomDao = new GenericDAO(new Room());
+			$roomDao = new RoomDAO();
 			$this->room = $roomDao->getById($this->getKey_id());
 		}
 		return $this->room;

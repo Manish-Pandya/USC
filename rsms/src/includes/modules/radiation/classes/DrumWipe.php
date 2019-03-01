@@ -63,7 +63,7 @@ class DrumWipe extends RadCrud
 	private $drum_wipe_test;
 
 	public function getRoom(){
-		$roomDAO = new GenericDAO(new Room());
+		$roomDAO = new RoomDAO();
 		$this->room = $roomDAO->getById($this->room_id);
 		return $this->room;
 	}

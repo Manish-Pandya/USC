@@ -1564,7 +1564,7 @@ class ActionManager {
             return $decodedObject;
         }
         else{
-            $dao = $this->getDao(new Room());
+            $dao = new RoomDAO();
 
             $room = null;
             if( $decodedObject->hasPrimaryKeyValue() ){
@@ -2474,10 +2474,10 @@ class ActionManager {
         $id = $this->getValueFromRequest('id', $id);
 
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
-        $LOG->trace('getting room');
+        $LOG->trace("getting room $id");
 
         if( $id !== NULL ){
-            $dao = $this->getDao(new Room());
+            $dao = new RoomDAO();
             return $dao->getById($id);
         }
         else{
@@ -2492,7 +2492,7 @@ class ActionManager {
         $LOG->trace('getting room');
 
         if( $id !== NULL ){
-            $dao = $this->getDao(new Room());
+            $dao = new RoomDAO();
             $room =  $dao->getById($id);
             return $room->getPrincipalInvestigators();
         }
@@ -3578,7 +3578,7 @@ class ActionManager {
             ));
 
             $rooms = array();
-            $roomDao = $this->getDao(new Room());
+            $roomDao = new RoomDAO();
 
             // Create an array of Room Objects
             foreach($roomIdsCsv as $roomId) {
@@ -3730,7 +3730,7 @@ class ActionManager {
 
         if( $roomId !== NULL ){
 
-            $dao = $this->getDao(new Room());
+            $dao = new RoomDAO();
 
             //get Room
             $room = $dao->getById($roomId);
@@ -4027,7 +4027,7 @@ class ActionManager {
 
         if( $roomId !== NULL && $hazardId !== NULL && $add !== null ){
             // Get this room
-            $dao = $this->getDao(new Room());
+            $dao = new RoomDAO();
             $room = $dao->getById($roomId);
             $hazDao = $this->getDao(new Hazard());
             $hazard = $hazDao->getById($hazardId);
@@ -5112,7 +5112,7 @@ class ActionManager {
         $previousRoomID = 0;
         foreach ($rooms as &$roomDTO){
             if ( $roomDTO->getRoom_id() !== NULL && $roomDTO->getPi_key_id() !== null && $previousRoomID !== $roomDTO->getRoom_id() ){
-                    $roomDao = $this->getDao(new Room());
+                    $roomDao = new RoomDAO();
                     $room = $roomDao->getById($roomDTO->getRoom_id());
                     $pis = $room->getPrincipalInvestigators();
 
@@ -5187,7 +5187,7 @@ class ActionManager {
 
     public function getLocationCSV(){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
-        $roomDao = $this->getDao(new Room());
+        $roomDao = new RoomDAO();
         $rooms = $roomDao->getAll(NULL,NULL,true);
 
         usort($rooms, function($a, $b)
@@ -5503,7 +5503,7 @@ class ActionManager {
             EntityMap::lazy("getHazard")
         ));
 
-        $rDao = new GenericDAO(new Room());
+        $rDao = new RoomDAO();
         /**
            * @var $relation PrincipalInvestigatorHazardRoomRelation
            */

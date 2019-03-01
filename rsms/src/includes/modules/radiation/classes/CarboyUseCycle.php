@@ -194,7 +194,7 @@ class CarboyUseCycle extends Container {
 
 	public function getRoom() {
 		if($this->room == null) {
-			$roomDAO = new GenericDAO(new Room());
+			$roomDAO = new RoomDAO();
 			$this->room = $roomDAO->getById($this->getRoom_id());
 		}
 		return $this->room;

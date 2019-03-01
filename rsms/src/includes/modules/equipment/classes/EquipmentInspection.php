@@ -104,7 +104,7 @@ class EquipmentInspection extends GenericCrud implements JsonSerializable {
 
     public function getRoom(){
 		if($this->room == null && $this->room_id != null) {
-			$roomDao = new GenericDAO(new Room());
+			$roomDao = new RoomDAO();
 			$this->room = $roomDao->getById($this->room_id);
 		}
 		return $this->room;

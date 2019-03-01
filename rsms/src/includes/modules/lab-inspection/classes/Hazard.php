@@ -134,7 +134,7 @@ class Hazard extends GenericCrud {
 		$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
 		$this->inspectionRooms = array();
-		$roomDao = new GenericDAO(new Room());
+		$roomDao = new RoomDAO();
 		//$LOG->debug($roomDao);
 
 		if( isset($inspectionRooms) ){

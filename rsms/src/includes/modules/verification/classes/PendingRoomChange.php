@@ -23,7 +23,7 @@ class PendingRoomChange extends PendingChange {
 	
 	public function getRoom() {
 		if($this->room === NULL && $this->hasPrimaryKeyValue()) {
-			$roomDao = new GenericDAO(new Room());
+			$roomDao = new RoomDAO();
 			$this->room = $roomDao->getById($this->parent_id);
 		}
 		return $this->room;
