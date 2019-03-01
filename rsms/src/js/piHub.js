@@ -963,23 +963,30 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
             }
         );
 
-        $scope.asdf = function( $select ){
-            console.log($select);
-        }
-
       $scope.save = function (user, confirmed) {
           if(!confirmed && !checkUserForSave(user)){
               console.warn("Requested User edit requires confirmation");
               return;
           }
 
+          console.debug("Assign lab user: ", user.Key_id, modalData.PI.Key_id, $scope.modalData.type);
           $rootScope.saving = userHubFactory.assignLabUser(user.Key_id, modalData.PI.Key_id, $scope.modalData.type)
             .then(
-              function(user){
-                  user.new = true;
+              function(savedUser){
+                  console.debug("Assigned user: ", savedUser);
+
+                  savedUser.new = true;
+
+                  // Update user in our cache
+                  angular.extend(user, savedUser);
+
                   $modalInstance.close(user);
+              },
+              function(err){
+                  console.error(err);
+                  $scope.modalError = "There was an error saving this user.";
               }
-            )
+            );
       }
 
       $scope.onSelectUserId = function onSelectUserId(id){

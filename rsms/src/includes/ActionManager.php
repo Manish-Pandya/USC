@@ -737,7 +737,8 @@ class ActionManager {
 
         $LOG->debug("Saving $user");
         $saved = $userDao->save($user);
-        return $saved;
+
+        return $this->buildUserDTO($saved);
     }
 
     public function saveUser( $user = null ){
