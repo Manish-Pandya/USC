@@ -133,7 +133,9 @@
             </td>
             <td style="width:34%">
                 <ul>
+                    <!-- Edit-mode-->
                     <li ng-if="room.edit">
+                        <!-- DROPDOWN -->
                         <div class="control-group" style="width:40%" ng-if="room.edit">
                             <div class="controls">
                                 <input ng-show="!pis" style="background:white;border-color:#999" type="text" placeholder="Getting PIs..." disabled="disabled">
@@ -145,29 +147,39 @@
                                     </ui-select-choices>
                                 </ui-select>
                             </div>
-                            <p ng-repeat="pi in roomCopy.PrincipalInvestigators" style="margin-bottom:0;margin-top:2px">
-                               {{pi.User.Name}}<i ng-click="handlePI(pi, $index)" style="margin: 5px;" class="icon-cancel-2 danger"></i>
-                            </p>
                         </div>
+                    </li>
+
+                    <li ng-if="room.edit" ng-repeat="pi in roomCopy.PrincipalInvestigators" class="piList" ng-class="{inactive: !pi.Is_active, unassigned: pi.User.Name == 'Unassigned'}">
+                        <!-- PI LISTINGS -->
+                        <p style="margin-bottom:0;margin-top:2px" ng-class="{inactive: !pi.Is_active}">
+                            {{pi.User.Name}}<span ng-if="!pi.Is_active">(Inactive)</span><i ng-click="handlePI(pi, $index)" style="margin: 5px;" class="icon-cancel-2 danger"></i>
+                        </p>
                         <ul>
                             <li ng-if="!pi.Departments || !pi.Departments.length" class="unassigned" style="color:#f00">Unassigned</li>
                             <li ng-repeat="department in pi.Departments" ng-class="{unassigned: department.Name == 'Unassigned'}"><span once-text="department.Name"></span></li>
                         </ul>
                     </li>
-                    <li ng-if="!room.edit" ng-repeat="pi in room.PrincipalInvestigators" class="piList" ng-class="{unassigned: pi.User.Name == 'Unassigned'}">
-                        <span><a once-href="'PIHub.php#/rooms?pi='+pi.Key_id" once-text="pi.User.Name"></a></span>
+
+                    <!-- Non-edit mode -->
+                    <li ng-if="!room.edit" ng-repeat="pi in room.PrincipalInvestigators" class="piList" ng-class="{inactive: !pi.Is_active, unassigned: pi.User.Name == 'Unassigned'}">
+                        <span><a once-href="'PIHub.php#/rooms?pi='+pi.Key_id">
+                            <span once-text="pi.User.Name"></span>
+                            <span ng-if="!pi.Is_active">(Inactive)</span>
+                        </a></span>
                         <ul>
                             <li ng-if="!pi.Departments || !pi.Departments.length" class="unassigned" style="color:#f00">Unassigned</li>
                             <li ng-repeat="department in pi.Departments" ng-class="{unassigned: department.Name == 'Unassigned'}"><span once-text="department.Name"></span></li>
                         </ul>
                     </li>
                 </ul>
-                <ul ng-if="!room.PrincipalInvestigators.length && !room.edit">
+                <ul ng-if="!(room.PrincipalInvestigators).length && !room.edit">
                     <li>
                         <span style="color:#f00;">Unassigned</span>
                         <ul>
                             <li><span style="color:#f00;">Unassigned</span></li>
                         </ul>
+                    </li>
                 </ul>
             </td>
             <td style="width:12%" once-text="room.Building.Campus.Name"></td>
