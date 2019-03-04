@@ -78,7 +78,7 @@ abstract class GenericCrud {
 	}
 
 	public function getIs_active(){
-		return $this->is_active;
+		return (bool) $this->is_active;
 	}
 
 	public function setIs_active($isActive){
