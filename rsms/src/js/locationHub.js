@@ -91,7 +91,6 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                 if( ( search.pi || search.department ) && item.PrincipalInvestigators){
                     if(!item.PrincipalInvestigators.length){
                         console.log('no pis in room '+item.Name);
-                        item.PrincipalInvestigators = [{Class:"PrincipalInvestigator",User:{Name: 'Unassigned', Class:"User"}, Departments:[{Name: 'Unassigned'}] }];
                     }
 
                     var j = item.PrincipalInvestigators.length
@@ -108,8 +107,9 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                         if(search.department){
                             deptMatch = false;
                             if(!pi.Departments || !pi.Departments.length){
-                                pi.Departments = [{Name: 'Unassigned'}];
-                            }else{
+
+                            }
+                            else{
                                 var k = pi.Departments.length;
                                 while(k--){
                                     if( pi.Departments && pi.Departments[k].Name && pi.Departments[k].Name.toLowerCase().indexOf(search.department.toLowerCase()) > -1 ) deptMatch = true;
