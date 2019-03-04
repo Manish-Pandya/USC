@@ -93,7 +93,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
                     onFail(returnedObj);
                 } else {
                     onSave(returnedObj, obj, extra1, extra2, extra3);
-                    methods.userLoggedOut(data);
+                    methods.userLoggedOut(returnedObj);
                 }
             })
             .error(function(data, status, headers, config, hazard){
