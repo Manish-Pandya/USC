@@ -597,10 +597,15 @@ piHubPersonnelController = function($scope, $rootScope, $location, convenienceMe
           }
         });
 
-        modalInstance.result.then(function (user) {
-           onRemoveUser(user);
+        modalInstance.result
+        .then(function (returnedUser) {
+            // Update cached user
+            return onUpdatedUser(user, returnedUser);
+        })
+        .then(function (returnedUser) {
+            // Remove user from Contact/Personnel list
+            onRemoveUser(user);
         });
-
     }
 
     $scope.confirmRemoveUser = function(user){
@@ -617,8 +622,14 @@ piHubPersonnelController = function($scope, $rootScope, $location, convenienceMe
           }
         });
 
-        modalInstance.result.then(function (user) {
-           onRemoveUser(user);
+        modalInstance.result
+        .then(function (returnedUser) {
+            // Update cached user
+            return onUpdatedUser(user, returnedUser);
+        })
+        .then(function (user) {
+            // Remove user from Contact/Personnel list
+            onRemoveUser(user);
         });
 
     }
@@ -630,6 +641,20 @@ piHubPersonnelController = function($scope, $rootScope, $location, convenienceMe
 
         convenienceMethods.updateObject( userCopy, user, onRemoveUser, onFailRemoveUser, '../../ajaxaction.php?action=saveUser' );
 
+    }
+
+    function onUpdatedUser(origUser, returnedUser){
+        return piHubFactory.getAllUsers()
+        .then(users => {
+            // Find existing user from cache
+            var u = users.filter(u => u.Key_id == returnedUser.Key_id)[0];
+
+            // Update cache and the incoming param
+            angular.extend(origUser, returnedUser);
+            angular.extend(u, origUser);
+
+            return u;
+        });
     }
 
     function onRemoveUser(user){
@@ -795,6 +820,7 @@ confirmationController = function(items, $scope, piHubFactory, $modalInstance, c
 
         //get rid of the user's PI relationship.
         $scope.userCopy.Supervisor_id = null;
+        $scope.userCopy.Supervisor = null;
 
         //save the user
         convenienceMethods.updateObject( $scope.userCopy, null, onConfirmRemoveUser, onFailRemoveUser, '../../ajaxaction.php?action=saveUser' );
