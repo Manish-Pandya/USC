@@ -151,7 +151,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
         if(this.rooms.length){
             deferred.resolve(this.rooms);
         }else{
-            var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getAllRooms&callback=JSON_CALLBACK';
+            var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getAllRoomDetails&callback=JSON_CALLBACK';
             convenienceMethods.getDataAsDeferredPromise(url).then(
                 function(promise){
                     deferred.resolve(promise);
