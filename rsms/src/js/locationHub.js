@@ -254,23 +254,29 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
         //lazy load
 
         //if we don't have a the list of pis, get it from the server
-        var deferred = $q.defer();
-        if(factory.pis){
-            deferred.resolve(factory.pis);
-        }else{
-            var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getAllPIDetails&callback=JSON_CALLBACK';
-                  convenienceMethods.getDataAsDeferredPromise(url).then(
-                  function(promise){
-                    deferred.resolve(promise);
-                    factory.pis = promise;
-                  },
-                  function(promise){
-                    deferred.reject();
-                  }
-            );
+        if( !factory.AllPisWillLoad ){
+            factory.AllPisWillLoad = $q.defer();
+
+            if(factory.pis){
+                factory.AllPisWillLoad.resolve(factory.pis);
+            }
+            else{
+                var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getAllPIDetails&callback=JSON_CALLBACK';
+                    convenienceMethods.getDataAsDeferredPromise(url).then(
+                    function(promise){
+                        factory.AllPisWillLoad.resolve(promise);
+                        factory.pis = promise;
+                    },
+                    function(promise){
+                        factory.AllPisWillLoad.reject();
+                    }
+                );
+            }
         }
-        return deferred.promise;
+
+        return factory.AllPisWillLoad.promise;
     }
+
 
     factory.saveRoom = function (roomDto) {
         console.log(roomDto);
