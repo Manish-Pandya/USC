@@ -648,6 +648,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
              $('body').css({"minHeight":0})
              $(elem[0]).addClass('scrollTable');
              $(elem[0]).find('tbody').css({"marginTop": $(elem[0]).find('thead').height()});
+
              var setWidths = function () {
                  console.log("fired width setter")
                  var firstRow;
@@ -658,9 +659,21 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
                      firstRow = elem.find('tbody').find('tr:first');
                  }
 
-                $(elem).find('thead').find("th").each(function(index) {
-                    $(this).width( firstRow.children("td").eq(index-1).width() );
+                 console.debug("First real row:", firstRow[0]);
+
+                 // For each row, assign widths to headers based on matching cols
+                var headerRows = $(elem).find('thead').find("tr");
+                console.debug("Header Rows: ", headerRows);
+
+                headerRows.each(function(ridx, row) {
+                    console.debug("Resizing row", row);
+                    $(row).find("th").each(function(index) {
+                        var col = firstRow.children("td").eq(index);
+                        console.debug(index, this, "=>", col[0], "Width: " + col.width());
+                        $(this).width( col.width() );
+                    });
                 });
+
                 $(elem[0]).find('> tbody').css({"marginTop": $(elem[0]).find('thead').height()});
 
              }
