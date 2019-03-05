@@ -258,7 +258,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
         if(factory.pis){
             deferred.resolve(factory.pis);
         }else{
-            var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getAllPIs&callback=JSON_CALLBACK';
+            var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getAllPIDetails&callback=JSON_CALLBACK';
                   convenienceMethods.getDataAsDeferredPromise(url).then(
                   function(promise){
                     deferred.resolve(promise);
