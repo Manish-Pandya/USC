@@ -2194,6 +2194,19 @@ class ActionManager {
         return $pis;
     }
 
+    protected function getPIDetails( PrincipalInvestigator $pi ){
+        $piBuildings = $pi->getBuildings();
+        $deptDtos = DtoFactory::buildDtos($pi->getDepartments(), 'DtoFactory::departmentToDto');
+
+        $dto = DtoFactory::buildDto($pi, array(
+            'Departments' => $deptDtos,
+            'User' => $pi->getUser(),
+            'Name' => $pi->getName()
+        ));
+
+        return $dto;
+    }
+
     public function getAllPIDetails(){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
@@ -2203,14 +2216,7 @@ class ActionManager {
         // Convert to DTOs
         $dtos = array();
         foreach($pis as $pi){
-            $piBuildings = $pi->getBuildings();
-            $deptDtos = DtoFactory::buildDtos($pi->getDepartments(), 'DtoFactory::departmentToDto');
-
-            $dto = DtoFactory::buildDto($pi, array(
-                'Departments' => $deptDtos,
-                'User' => $pi->getUser(),
-                'Name' => $pi->getName()
-            ));
+            $dto = $this->getPIDetails($pi);
 
             $dtos[] = $dto;
         }
@@ -2374,6 +2380,59 @@ class ActionManager {
             //error
             return new ActionError("No request parameter 'id' was provided");
         }
+    }
+
+    public function getAllRoomDetails(){
+
+        EntityManager::with_entity_maps(Room::class, array(
+            EntityMap::lazy("getHazards"),
+            EntityMap::lazy("getBuilding"),
+            EntityMap::eager('getBuilding_id'),
+            EntityMap::lazy("getHazard_room_relations"),
+            EntityMap::lazy("getHas_hazards"),
+            EntityMap::lazy("getSolidsContainers")
+        ));
+
+        // Retrieve all rooms, ordered by Name
+        $dao = new RoomDAO();
+        $rooms = $dao->getAll("name");
+
+        $roomDtos = array();
+        foreach($rooms as $room){
+            // Initialize present-hazard flags
+            $room->getHazardTypesArePresent();
+
+            $pis = $room->getPrincipalInvestigators();
+            $piDtos = array();
+            foreach($pis as $pi){
+                $dto = $this->getPIDetails($pi);
+                $piDtos[] = $dto;
+            }
+
+            $roomDto = DtoFactory::buildDto($room, array(
+                'Name' => $room->getName(),
+                'Building_id' => $room->getBuilding_id(),
+                'Building_name' => $room->getBuilding_name(),
+                'Purpose' => $room->getPurpose(),
+                'PrincipalInvestigators' => $piDtos,
+
+                'Bio_hazards_present' => $room->getBio_hazards_present(),
+                'Chem_hazards_present' => $room->getChem_hazards_present(),
+                'Rad_hazards_present' => $room->getRad_hazards_present(),
+                'Lasers_present' => $room->getLasers_present(),
+                'Xrays_present' => $room->getXrays_present(),
+                'Recombinant_dna_present' => $room->getRecombinant_dna_present(),
+                'Flammable_gas_present' => $room->getFlammable_gas_present(),
+                'Toxic_gas_present' => $room->getToxic_gas_present(),
+                'Corrosive_gas_present' => $room->getCorrosive_gas_present(),
+                'Hf_present' => $room->getHf_present(),
+                'Animal_facility' => $room->getAnimal_facility()
+            ));
+
+            $roomDtos[] = $roomDto;
+        }
+
+        return $roomDtos;
     }
 
     public function getAllRooms($allLazy = NULL){

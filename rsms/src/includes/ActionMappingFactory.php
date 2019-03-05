@@ -146,6 +146,7 @@ class ActionMappingFactory {
 
                 //
                 "getAllRooms"=>new ActionMapping("getAllRooms", "", "", $this::$ROLE_GROUPS["EHS"]),
+                "getAllRoomDetails"=>new SecuredActionMapping("getAllRoomDetails", $this::$ROLE_GROUPS["EHS"]),
 
                 // EMERGENCY INFO HUB
                 "getPIsByRoomId"=>new ActionMapping("getPIsByRoomId", "", ""),
