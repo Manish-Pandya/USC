@@ -45,45 +45,45 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
 
                 var item = items[i];
                 if (item.isNew) return true;
-                item.matched = true;
+                var item_matched = true;
 
                 if(search.building){
                     if( item.Building && item.Building.Name && item.Building.Name.toLowerCase().indexOf(search.building.toLowerCase() ) < 0 ){
-                        item.matched = false;
+                        item_matched = false;
                     }
 
-                    if(item.Class == "Building" && item.Name.toLowerCase().indexOf(search.building.toLowerCase()) < 0 )  item.matched = false;
+                    if(item.Class == "Building" && item.Name.toLowerCase().indexOf(search.building.toLowerCase()) < 0 )  item_matched = false;
 
                 }
 
                 if (search.hazards) {
                     console.log(item.Name + ' | ' + item[search.hazards] + ' | ' + search.hazards)
-                    if ( item.Class == "Room" && !item[search.hazards] || item[search.hazards] == false || item[search.hazards] == "0" ) item.matched = false;
+                    if ( item.Class == "Room" && !item[search.hazards] || item[search.hazards] == false || item[search.hazards] == "0" ) item_matched = false;
                 }
 
                 if(search.room){
-                    if( item.Class == 'Room' && item.Name && item.Name.toLowerCase().indexOf(search.room.toLowerCase()) < 0 )  item.matched = false;
+                    if( item.Class == 'Room' && item.Name && item.Name.toLowerCase().indexOf(search.room.toLowerCase()) < 0 )  item_matched = false;
                 }
 
                 if(search.purpose){
-                    if( item.Class == 'Room' && !item.Purpose || item.Purpose.toLowerCase().indexOf(search.purpose.toLowerCase()) < 0 )  item.matched = false;
+                    if( item.Class == 'Room' && !item.Purpose || item.Purpose.toLowerCase().indexOf(search.purpose.toLowerCase()) < 0 )  item_matched = false;
                 }
 
                 if (search.alias) {
-                    if (item.Class == 'Building' && !item.Alias || item.Alias.toLowerCase().indexOf(search.alias.toLowerCase()) < 0) item.matched = false;
+                    if (item.Class == 'Building' && !item.Alias || item.Alias.toLowerCase().indexOf(search.alias.toLowerCase()) < 0) item_matched = false;
                 }
 
                 if( search.campus ) {
                     if( item.Class != "Building" && (!item.Building || !item.Building.Campus) ){
-                        item.matched = false;
+                        item_matched = false;
                         console.log('set false because no building or campus')
                     }
                     if (item.Building && item.Building.Campus && item.Building.Campus.Name && item.Building.Campus.Name.toLowerCase().indexOf(search.campus.toLowerCase()) < 0) {
-                        item.matched = false;
+                        item_matched = false;
                         console.log('set false because of lack of match');
                     }
                     if(item.Class == "Building" && item.Campus && item.Campus.Name && item.Campus.Name.toLowerCase().indexOf( search.campus.toLowerCase() ) < 0 ){
-                        item.matched = false;
+                        item_matched = false;
                         console.log('set false because of lack of match');
                     }
                 }
@@ -94,13 +94,13 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                     }
 
                     var j = item.PrincipalInvestigators.length
-                    item.matched = false;
+                    item_matched = false;
                     var deptMatch = false;
                     while(j--){
 
                         var pi = item.PrincipalInvestigators[j];
                         if( search.pi && pi.User.Name && pi.User.Name.toLowerCase().indexOf(search.pi.toLowerCase()) > -1 ){
-                            item.matched = true;
+                            item_matched = true;
                             var piMatch = true;
                         }
 
@@ -115,13 +115,13 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                                     if( pi.Departments && pi.Departments[k].Name && pi.Departments[k].Name.toLowerCase().indexOf(search.department.toLowerCase()) > -1 ) deptMatch = true;
                                 }
                             }
-                            if( ( !search.pi && deptMatch ) || ( piMatch && deptMatch ) )item.matched = true;
+                            if( ( !search.pi && deptMatch ) || ( piMatch && deptMatch ) )item_matched = true;
                         }
                     }
 
                 }
 
-                if(item.matched == true)filtered.push(item);
+                if(item_matched == true)filtered.push(item);
 
             }
             filtered.reverse();
