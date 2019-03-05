@@ -2,6 +2,19 @@
 require_once '../top_view.php';
 ?>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/locationHub.js"></script>
+<style>
+    /* Location Hub - Rooms: Table column sizing */
+    th.lhcol_edit, td.lhcol_edit { width:6% !important; }
+    th.lhcol_building, td.lhcol_building { width:18% !important; }
+    th.lhcol_name, td.lhcol_name { width:10% !important; }
+    th.lhcol_hazards, td.lhcol_hazards { width:10% !important; }
+    th.lhcol_purpose, td.lhcol_purpose { width:10% !important; }
+
+    th.lhcol_pidept, td.lhcol_pidept { width:34% !important; }
+
+    th.lhcol_campus, td.lhcol_campus { width:12% !important; }
+</style>
+
 <span ng-app="locationHub" >
 <div class="navbar fixed">
     <ul class="nav pageMenu blueBg" style="min-height: 50px; color:white !important; padding: 4px 0 0 0; width:100%">

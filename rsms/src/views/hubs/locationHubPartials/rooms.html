@@ -32,39 +32,38 @@
             </th>
         </tr>
         <tr>
-            <th clas="temp">Edit</th>
-            <th>
-                Building<br>
-                <input class="span2" ng-model="search.building" placeholder="Filter by Building" />
+            <th class="lhcol_edit">Edit</th>
+            <th class="lhcol_building">Building</th>
+            <th class="lhcol_name">Room Number</th>
+            <th class="lhcol_hazards">Room Hazards</th>
+            <th class="lhcol_purpose">Room Use</th>
+            <th class="lhcol_pidept" colspan="2">
+                <span>Principal Investigator(s)</span>
+                <span style="margin-left: 25px;">Department(s)</span>
             </th>
+            <th class="lhcol_campus">Campus</th>
+        </tr>
+        <tr>
+            <th class="lhcol_edit"></th>
+            <th class="lhcol_building">
+                <input class="span2" ng-model="search.building" placeholder="Filter by Building" />
+            </th class="lhcol_name">
             <th>
-                Room Number
                 <input class="span2" ng-model="search.room" placeholder="Filter by Lab Room" />
             </th>
-            <th>
-                Room Hazards
+            <th class="lhcol_hazards">
                 <select ng-model="search.hazards" ng-options="v.value as v.label for v in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;">
                     <option value="">Select</option>
                 </select>
             </th>
-            <th>
-                Room Use
+            <th class="lhcol_purpose">
                 <input class="span2" ng-model="search.purpose" placeholder="Filter by Lab Use" />
             </th>
-            <th style="width:12.6%">
-                <label style="margin-bottom: -21px;width: 45%;display: inline-block; font-weight:bold;font-size: .9vw;">
-                    Principal Investigator
-                    <input class="span2" ng-model="search.pi" placeholder="Filter by PI" />
-                </label>
-                <ul>
-                    <li>
-                        <label style="margin-bottom: -21px;width: 45%;display: inline-block; font-weight:bold;font-size: .9vw;">Department(s)</label><br>
-                        <input class="span2" ng-model="search.department" placeholder="Filter by Department" />
-                    </li>
-                </ul>
+            <th class="lhcol_pidept" colspan="2">
+                <input class="span2" ng-model="search.pi" placeholder="Filter by PI" />
+                <input class="span2" ng-model="search.department" placeholder="Filter by Department" style="margin-left: 25px;" />
             </th>
-            <th>
-                Campus
+            <th class="lhcol_campus">
                 <input class="span2" ng-model="search.campus" placeholder="Filter by Campus" />
             </th>
         </tr>
@@ -72,7 +71,7 @@
 
     <tbody>
         <tr ng-repeat="room in (filtered = (rooms | orderBy:['isNew', 'Building_name', convenienceMethods.sortAlphaNum('Name')] | genericFilter:search)) | paginationFilter:paginationObj.start:100" ng-class="{'inactive': !room.Is_active, 'new': room.isNew, 'edit':room.edit}">
-            <td style="width:6%;">
+            <td class="lhcol_edit">
                 <button ng-disabled="editingRoom || !rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" ng-if="!room.edit" class="edit btn btn btn-primary" ng-click="editRoom(room)" alt="Edit" title="Edit"><i class="icon-pencil"></i></button>
                 <button ng-disabled="editingRoom || !rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-danger btn DeactivateeRow" ng-click="confirmDeactivate(room)" ng-if="room.Is_active && !room.edit" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
                 <button ng-disabled="editingRoom || !rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-success btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="!room.Is_active && !room.edit"><i class="icon-checkmark"></i></button>
@@ -82,7 +81,7 @@
                 <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="room.IsDirty"></i>
             </td>
 
-            <td style="width:20%">
+            <td class="lhcol_building">
                 <span ng-if="!room.edit">{{lhf.getBuildingByRoom(room).Name}}</span>
                 <div class="control-group" ng-if="room.edit">
                     <div class="controls">
@@ -95,12 +94,12 @@
                 </div>
             </td>
 
-            <td style="width:8%;">
+            <td class="lhcol_name">
                 <input ng-model="roomCopy.Name" placeholder="Name" ng-if="room.edit" style="max-width:115px" />
                 <span ng-if="!room.edit">{{room.Name}}</span>
             </td>
 
-            <td style="width:9%" class="hazard-icons">
+            <td class="lhcol_hazards hazard-icons">
                 <span ng-if="room.Bio_hazards_present"><img src="../../img/biohazard-largeicon.png" /></span>
                 <span ng-if="room.Chem_hazards_present"><img src="../../img/chemical-blue-icon.png" /></span>
                 <span ng-if="room.Rad_hazards_present"><img src="../../img/radiation-large-icon.png" /></span>
@@ -117,7 +116,7 @@
                 
             </td>
 
-            <td style="width:10%;">
+            <td class="lhcol_purpose">
                 <span ng-init="roomCopy.custom = getIsCustom(room.Purpose)" ng-if="room.edit"></span>
                 <input ng-model="roomCopy.Purpose" 
                        placeholder="Use" style="max-width:130px" 
@@ -131,11 +130,11 @@
                 <i class="icon-cancel-2 danger" style="margin-top: 6px; margin-left: -1px;" ng-if="room.edit && roomCopy.custom" ng-click="roomCopy.custom = false; roomCopy.Purpose = null"></i>
                 <span ng-if="!room.edit">{{room.Purpose}}</span>
             </td>
-            <td style="width:34%">
+
+            <!-- v new pi / dept v-->
+            <td class="lhcol_pidept" colspan="2">
                 <ul>
-                    <!-- Edit-mode-->
                     <li ng-if="room.edit">
-                        <!-- DROPDOWN -->
                         <div class="control-group" style="width:40%" ng-if="room.edit">
                             <div class="controls">
                                 <input ng-show="!pis" style="background:white;border-color:#999" type="text" placeholder="Getting PIs..." disabled="disabled">
@@ -150,39 +149,33 @@
                         </div>
                     </li>
 
-                    <li ng-if="room.edit" ng-repeat="pi in roomCopy.PrincipalInvestigators" class="piList" ng-class="{inactive: !pi.Is_active}">
-                        <!-- PI LISTINGS -->
-                        <p style="margin-bottom:0;margin-top:2px" ng-class="{inactive: !pi.Is_active}">
-                            {{pi.Name}}<span ng-if="!pi.Is_active">(Inactive)</span><i ng-click="handlePI(pi, $index)" style="margin: 5px;" class="icon-cancel-2 danger"></i>
-                        </p>
-                        <ul>
-                            <li ng-repeat="department in pi.Departments"><span once-text="department.Name"></span></li>
-                            <li ng-if="!pi.Departments.length"><span style="color:#f00;">Unassigned</span></li>
-                        </ul>
-                    </li>
+                    <li ng-if="!(room.edit ? roomCopy : room).PrincipalInvestigators.length"><span style="color:#f00;">Unassigned</span></li>
 
-                    <!-- Non-edit mode -->
-                    <li ng-if="!room.edit" ng-repeat="pi in room.PrincipalInvestigators" class="piList" ng-class="{inactive: !pi.Is_active}">
-                        <span><a once-href="'PIHub.php#/rooms?pi='+pi.Key_id">
-                            <span once-text="pi.Name"></span>
-                            <span ng-if="!pi.Is_active">(Inactive)</span>
-                        </a></span>
+                    <li ng-repeat="pi in (room.edit ? roomCopy : room).PrincipalInvestigators" class="piList" ng-class="{inactive: !pi.Is_active}">
+
+                        <p ng-if="room.edit" style="margin-bottom:0;margin-top:2px" ng-class="{inactive: !pi.Is_active}">
+                            {{pi.User.Name}} <span ng-if="!pi.Is_active">(Inactive)</span>
+                            <i ng-click="handlePI(pi, $index)" style="margin: 5px;" class="icon-cancel-2 danger"></i>
+                        </p>
+
+                        <span ng-if="!room.edit">
+                            <a once-href="'PIHub.php#/rooms?pi='+pi.Key_id">
+                                <span once-text="pi.Name"></span> <span ng-if="!pi.Is_active">(Inactive)</span>
+                            </a>
+                        </span>
+
                         <ul>
-                            <li ng-repeat="department in pi.Departments"><span once-text="department.Name"></span></li>
+                            <li ng-repeat="department in pi.Departments" class="piList">
+                                <span once-text="department.Name"></span>
+                            </li>
                             <li ng-if="!pi.Departments.length"><span style="color:#f00;">Unassigned</span></li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul ng-if="!(room.PrincipalInvestigators).length && !room.edit">
-                    <li>
-                        <span style="color:#f00;">Unassigned</span>
-                        <ul>
-                            <li><span style="color:#f00;">Unassigned</span></li>
                         </ul>
                     </li>
                 </ul>
             </td>
-            <td style="width:12%" once-text="room.Building.Campus.Name"></td>
+            <!-- ^ new pi / dept ^-->
+
+            <td class="lhcol_campus" once-text="room.Building.Campus.Name"></td>
         </tr>
     </tbody>
 </table>
