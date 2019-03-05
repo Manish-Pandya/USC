@@ -615,11 +615,15 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
     }
 
     $scope.handlePI = function (pi, idx) {
+        // Handle PI selection
         if (idx == undefined) {
             $scope.roomCopy.PrincipalInvestigators.push(pi);
         } else {
             $scope.roomCopy.PrincipalInvestigators.splice(idx, 1);
         }
+
+        // Clear selection from dropdown
+        $scope.pis.selected = null;
     }
 
     $scope.removeRoom = function (room, pi) {
