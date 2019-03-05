@@ -157,6 +157,7 @@
                         </p>
                         <ul>
                             <li ng-repeat="department in pi.Departments"><span once-text="department.Name"></span></li>
+                            <li ng-if="!pi.Departments.length"><span style="color:#f00;">Unassigned</span></li>
                         </ul>
                     </li>
 
@@ -168,6 +169,7 @@
                         </a></span>
                         <ul>
                             <li ng-repeat="department in pi.Departments"><span once-text="department.Name"></span></li>
+                            <li ng-if="!pi.Departments.length"><span style="color:#f00;">Unassigned</span></li>
                         </ul>
                     </li>
                 </ul>
