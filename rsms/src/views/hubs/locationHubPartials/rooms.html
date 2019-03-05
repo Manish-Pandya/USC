@@ -141,9 +141,9 @@
                                 <input ng-show="!pis" style="background:white;border-color:#999" type="text" placeholder="Getting PIs..." disabled="disabled">
                                 <i ng-show="!pis" class="icon-spinnery-dealie spinner small" style="margin-left: 177px;margin-top: -34px;"></i>
                                 <ui-select ng-show="pis" ng-model="pis.selected" theme="selectize" ng-disabled="disabled" on-select="handlePI($item)">
-                                    <ui-select-match placeholder="Select A PI">{{$select.selected.User.Name}}</ui-select-match>
-                                    <ui-select-choices repeat="pi in pis | propsFilter: {User.Name: $select.search}">
-                                        <div once-text="pi.User.Name"></div>
+                                    <ui-select-match placeholder="Select A PI">{{$select.selected.Name}}</ui-select-match>
+                                    <ui-select-choices repeat="pi in pis | propsFilter: {Name: $select.search}">
+                                        <div once-text="pi.Name"></div>
                                     </ui-select-choices>
                                 </ui-select>
                             </div>
@@ -153,7 +153,7 @@
                     <li ng-if="room.edit" ng-repeat="pi in roomCopy.PrincipalInvestigators" class="piList" ng-class="{inactive: !pi.Is_active}">
                         <!-- PI LISTINGS -->
                         <p style="margin-bottom:0;margin-top:2px" ng-class="{inactive: !pi.Is_active}">
-                            {{pi.User.Name}}<span ng-if="!pi.Is_active">(Inactive)</span><i ng-click="handlePI(pi, $index)" style="margin: 5px;" class="icon-cancel-2 danger"></i>
+                            {{pi.Name}}<span ng-if="!pi.Is_active">(Inactive)</span><i ng-click="handlePI(pi, $index)" style="margin: 5px;" class="icon-cancel-2 danger"></i>
                         </p>
                         <ul>
                             <li ng-repeat="department in pi.Departments"><span once-text="department.Name"></span></li>
@@ -163,7 +163,7 @@
                     <!-- Non-edit mode -->
                     <li ng-if="!room.edit" ng-repeat="pi in room.PrincipalInvestigators" class="piList" ng-class="{inactive: !pi.Is_active}">
                         <span><a once-href="'PIHub.php#/rooms?pi='+pi.Key_id">
-                            <span once-text="pi.User.Name"></span>
+                            <span once-text="pi.Name"></span>
                             <span ng-if="!pi.Is_active">(Inactive)</span>
                         </a></span>
                         <ul>
