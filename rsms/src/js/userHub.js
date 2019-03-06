@@ -961,12 +961,6 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
 }
 modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods, $q, $location){
 
-    if($location.$$host.indexOf('graysail')<0){
-      $scope.isProductionServer = true;
-    }else{
-      $scope.isProductionServer = false;
-    }
-
     $scope.modalError="";
     //make a copy without reference to the modalData so we can manipulate our object without applying changes until we save
     $scope.modalData = angular.copy( userHubFactory.getModalData() );

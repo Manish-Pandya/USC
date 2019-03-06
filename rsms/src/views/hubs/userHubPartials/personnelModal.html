@@ -9,35 +9,35 @@
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Username</label>
                 <div class="controls">
-                    <div class="input-append" ng-if="isProductionServer && !modalData.Username">
+                    <div class="input-append" ng-if="!modalData.Username">
                         <input type="text" id="inputEmail" ng-model="modalData.userNameForQuery" placeholder="Username"><a class="add-on greenBg" ng-click="getAuthUser(modalData)"><i class="icon-search"></i></a>
                         <img ng-show="lookingForUser" class="smallLoading" src="../../img/loading.gif" />
                     </div>
-                    <input type="text" ng-if="!isProductionServer || modalData.Username" id="inputEmail" disabled="disabled" ng-model="modalData.Username" placeholder="Username" required>
+                    <input type="text" ng-if="modalData.Username" id="inputEmail" disabled="disabled" ng-model="modalData.Username" placeholder="Username" required>
                 </div>
             </div>
 
             <div class="control-group">
                 <label class="control-label" for="inputEmail">First Name</label>
                 <div class="controls">
-                    <input type="text" id="inputEmail" ng-model="modalData.First_name" ng-if="isProductionServer && !modalData.Username" disabled="disabled" placeholder="First Name" required>
-                    <input type="text" id="inputEmail" ng-model="modalData.First_name" ng-if="!isProductionServer || modalData.Username" placeholder="First Name" required>
+                    <input type="text" id="inputEmail" ng-model="modalData.First_name" ng-if="!modalData.Username" disabled="disabled" placeholder="First Name" required>
+                    <input type="text" id="inputEmail" ng-model="modalData.First_name" ng-if="modalData.Username" placeholder="First Name" required>
                 </div>
             </div>
 
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Last Name</label>
                 <div class="controls">
-                    <input type="text" id="inputEmail" ng-model="modalData.Last_name" ng-if="isProductionServer && !modalData.Username" disabled="disabled" placeholder="Last Name" required>
-                    <input type="text" id="inputEmail" ng-model="modalData.Last_name" ng-if="!isProductionServer || modalData.Username" placeholder="Last Name" required>
+                    <input type="text" id="inputEmail" ng-model="modalData.Last_name" ng-if="!modalData.Username" disabled="disabled" placeholder="Last Name" required>
+                    <input type="text" id="inputEmail" ng-model="modalData.Last_name" ng-if="modalData.Username" placeholder="Last Name" required>
                 </div>
             </div>
 
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Email</label>
                 <div class="controls">
-                    <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="isProductionServer && !modalData.Username" disabled="disabled" placeholder="Email" required ng-pattern="emailPattern">
-                    <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="!isProductionServer || modalData.Username" placeholder="Email" required ng-pattern="emailPattern">
+                    <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="!modalData.Username" disabled="disabled" placeholder="Email" required ng-pattern="emailPattern">
+                    <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="modalData.Username" placeholder="Email" required ng-pattern="emailPattern">
                     <span class="help-block" ng-show="form.email.$error.pattern">{{emailErrorMsg}}</span>
                 </div>
             </div>
@@ -45,24 +45,24 @@
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Office Phone</label>
                 <div class="controls">
-                    <input type="text" name="officePhone" id="inputEmail" ng-model="modalData.Office_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-bind="modalData.Office_phone|tel">
-                    <input type="text" name="officePhone" id="inputEmail" ng-model="modalData.Office_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username" ng-bind="modalData.Office_phone|tel">
+                    <input type="text" name="officePhone" id="inputEmail" ng-model="modalData.Office_phone" ui-mask="(999) 999-9999" ng-if="!modalData.Username" disabled="disabled" ng-bind="modalData.Office_phone|tel">
+                    <input type="text" name="officePhone" id="inputEmail" ng-model="modalData.Office_phone" ui-mask="(999) 999-9999" ng-if="modalData.Username" ng-bind="modalData.Office_phone|tel">
                 </div>
             </div>
 
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Emergency Phone</label>
                 <div class="controls">
-                    <input type="text" name="emergencyPhone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="isProductionServer && !modalData.Username" disabled="disabled" ng-bind="modalData.Emergency_phone|tel">
-                    <input type="text" name="emergencyPhone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="!isProductionServer || modalData.Username" ng-bind="modalData.Emergency_phone|tel">
+                    <input type="text" name="emergencyPhone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="!modalData.Username" disabled="disabled" ng-bind="modalData.Emergency_phone|tel">
+                    <input type="text" name="emergencyPhone" id="inputEmail" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="modalData.Username" ng-bind="modalData.Emergency_phone|tel">
                 </div>
             </div>
 
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Position</label>
                 <div class="controls">
-                    <input type="text" id="inputEmail" ng-model="modalData.Position" placeholder="Position" ng-if="isProductionServer && !modalData.Username" disabled="disabled">
-                    <input type="text" id="inputEmail" ng-model="modalData.Position" placeholder="Position" ng-if="!isProductionServer || modalData.Username">
+                    <input type="text" id="inputEmail" ng-model="modalData.Position" placeholder="Position" ng-if="!modalData.Username" disabled="disabled">
+                    <input type="text" id="inputEmail" ng-model="modalData.Position" placeholder="Position" ng-if="modalData.Username">
                 </div>
             </div>
 
