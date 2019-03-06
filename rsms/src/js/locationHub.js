@@ -106,6 +106,11 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                     }
                 }
 
+                // Filter Unassigned rooms
+                if( !search.unassignedPis && (!item.PrincipalInvestigators || item.PrincipalInvestigators.length == 0) ){
+                    item_matched = false;
+                }
+
                 if( item.PrincipalInvestigators && item.PrincipalInvestigators.length > 0 ){
 
                     if( search.pi || search.department ){
@@ -466,7 +471,8 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
 
     // Default search parameters
     $scope.search = {
-        activePis: true
+        activePis: true,
+        unassignedPis: true
     };
 
     $scope.editRoom = function (room) {

@@ -59,14 +59,18 @@
                 <input class="span2" ng-model="search.purpose" placeholder="Filter by Lab Use" />
             </th>
             <th class="lhcol_pidept" >
-                <div style="width: 43%">
+                <div class="pi_filters">
                     <span>
-                        <label style="display: inline !important;">Active PIs</label>
-                        <input ng-model="search.activePis" style="width: inherit !important" type="checkbox"/>
+                        <label>Active PIs</label>
+                        <input ng-model="search.activePis" type="checkbox"/>
                     </span>
-                    <span class="pull-right">
-                        <label style="display: inline !important;">Inactive PIs</label>
-                        <input ng-model="search.inactivePis" style="width: inherit !important" type="checkbox"/>
+                    <span>
+                        <label>Inactive PIs</label>
+                        <input ng-model="search.inactivePis" type="checkbox"/>
+                    </span>
+                    <span>
+                        <label>Unassigned</label>
+                        <input ng-model="search.unassignedPis" type="checkbox"/>
                     </span>
                 </div>
                 <input class="span2" ng-model="search.pi" placeholder="Filter by PI" />

@@ -13,6 +13,10 @@ require_once '../top_view.php';
 
     .locationTable tr .lhcol_campus { width:12%; }
 
+    .lhcol_pidept .pi_filters span label { display: inline; }
+    .lhcol_pidept .pi_filters span input { width: inherit !important; }
+    .lhcol_pidept .pi_filters span { margin-right: 10%; }
+
     .locationTable {
         max-width: 100%;
         overflow-x: scroll;
