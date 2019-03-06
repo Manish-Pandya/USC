@@ -60,6 +60,16 @@
                 <input class="span2" ng-model="search.purpose" placeholder="Filter by Lab Use" />
             </th>
             <th class="lhcol_pidept" >
+                <div style="width: 43%">
+                    <span>
+                        <label style="display: inline !important;">Active PIs</label>
+                        <input ng-model="search.activePis" style="width: inherit !important" type="checkbox"/>
+                    </span>
+                    <span class="pull-right">
+                        <label style="display: inline !important;">Inactive PIs</label>
+                        <input ng-model="search.inactivePis" style="width: inherit !important" type="checkbox"/>
+                    </span>
+                </div>
                 <input class="span2" ng-model="search.pi" placeholder="Filter by PI" />
                 <input class="span2" ng-model="search.department" placeholder="Filter by Department" style="margin-left: 25px;" />
             </th>
@@ -149,9 +159,7 @@
                         </div>
                     </li>
 
-                    <li ng-if="!(room.edit ? roomCopy : room).PrincipalInvestigators.length"><span style="color:#f00;">Unassigned</span></li>
-
-                    <li ng-repeat="pi in (room.edit ? roomCopy : room).PrincipalInvestigators" class="piList" ng-class="{inactive: !pi.Is_active}">
+                    <li ng-repeat="pi in ( filteredPis = (room.edit ? roomCopy : room).PrincipalInvestigators | piActiveFilter:search)" class="piList" ng-class="{inactive: !pi.Is_active}">
 
                         <p ng-if="room.edit" style="margin-bottom:0;margin-top:2px" ng-class="{inactive: !pi.Is_active}">
                             {{pi.User.Name}} <span ng-if="!pi.Is_active">(Inactive)</span>
@@ -171,6 +179,8 @@
                             <li ng-if="!pi.Departments.length"><span style="color:#f00;">Unassigned</span></li>
                         </ul>
                     </li>
+
+                    <li ng-if="!filteredPis.length"><span style="color:#f00;">Unassigned</span></li>
                 </ul>
             </td>
             <!-- ^ new pi / dept ^-->
