@@ -1042,7 +1042,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     $scope.saveUser = function(){
         $scope.modalData.IsDirty = true;
 
-        if($scope.isPIRequired($scope.modalData) && !$scope.modalData.Supervisor){
+        if($scope.isPIRequired($scope.modalData) && !$scope.modalData.Supervisor_id){
             $scope.modalError = 'A Lab Contact must be assigned to a Principal Investigator.';
             $scope.modalData.IsDirty = false;
             return;
