@@ -4,15 +4,60 @@ require_once '../top_view.php';
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/locationHub.js"></script>
 <style>
     /* Location Hub - Rooms: Table column sizing */
-    th.lhcol_edit, td.lhcol_edit { width:6% !important; }
-    th.lhcol_building, td.lhcol_building { width:18% !important; }
-    th.lhcol_name, td.lhcol_name { width:10% !important; }
-    th.lhcol_hazards, td.lhcol_hazards { width:10% !important; }
-    th.lhcol_purpose, td.lhcol_purpose { width:10% !important; }
+    .locationTable tr .lhcol_edit { width:6%; }
+    .locationTable tr .lhcol_building { width:18%; }
+    .locationTable tr .lhcol_name { width:10%; }
+    .locationTable tr .lhcol_hazards { width:10%; }
+    .locationTable tr .lhcol_purpose { width:10%; }
+    .locationTable tr .lhcol_pidept { width:34%; }
 
-    th.lhcol_pidept, td.lhcol_pidept { width:34% !important; }
+    .locationTable tr .lhcol_campus { width:12%; }
 
-    th.lhcol_campus, td.lhcol_campus { width:12% !important; }
+    .locationTable {
+        max-width: 100%;
+        overflow-x: scroll;
+    }
+
+    .locationTable th h1 {
+        display: inline-block;
+    }
+
+    .locationTable tr {
+        max-width: 100%;
+        border: none;
+    }
+
+    .locationTable tr th {
+        font-size: .9vw;
+    }
+
+    .locationTable tr td {
+        /*width: 1%;*/
+        transition: all .3s;
+        font-size: 16px;
+    }
+
+    .locationTable tr td ul {
+        list-style: none;
+    }
+
+    .locationTable tr td li i:not(.icon-arrow-down) {
+        /*width: auto;*/
+        margin: 1px 0 10px 0px;
+        cursor: pointer;
+    }
+
+    .locationTable tr td li i.icon-minus {
+        color: #bd362f;
+    }
+
+    .locationTable tr td li.add-role {
+        color: #5bb75b;
+    }
+
+    .locationTable tr td:last-child {
+        /*width: 4%;*/
+    }
 </style>
 
 <span ng-app="locationHub" >
