@@ -8,7 +8,7 @@
 <table class="userList table table-striped table-hover piTable table-bordered locationTable" scroll-table watch="filtered.length" ng-if="rooms && !loading && !modal" style="margin-top: 140px;">
     <thead>
         <tr class="blueBg">
-            <th colspan="8" class="blueBg">
+            <th colspan="7" class="blueBg">
                 <h1 class="blueBg">Laboratory Locations</h1>
                 <div class="btn-group" style="margin:-22px 0 0 30px">
                     <a ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn-large btn" ng-click="editRoom()" style="padding:10px; margin-left:5px;"><i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>Add Lab Room</a>
@@ -37,7 +37,7 @@
             <th class="lhcol_name">Room Number</th>
             <th class="lhcol_hazards">Room Hazards</th>
             <th class="lhcol_purpose">Room Use</th>
-            <th class="lhcol_pidept" colspan="2">
+            <th class="lhcol_pidept">
                 <span>Principal Investigator(s)</span>
                 <span style="margin-left: 25px;">Department(s)</span>
             </th>
@@ -59,7 +59,7 @@
             <th class="lhcol_purpose">
                 <input class="span2" ng-model="search.purpose" placeholder="Filter by Lab Use" />
             </th>
-            <th class="lhcol_pidept" colspan="2">
+            <th class="lhcol_pidept" >
                 <input class="span2" ng-model="search.pi" placeholder="Filter by PI" />
                 <input class="span2" ng-model="search.department" placeholder="Filter by Department" style="margin-left: 25px;" />
             </th>
@@ -132,7 +132,7 @@
             </td>
 
             <!-- v new pi / dept v-->
-            <td class="lhcol_pidept" colspan="2">
+            <td class="lhcol_pidept">
                 <ul>
                     <li ng-if="room.edit">
                         <div class="control-group" style="width:40%" ng-if="room.edit">

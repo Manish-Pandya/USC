@@ -667,10 +667,36 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
 
                 headerRows.each(function(ridx, row) {
                     console.debug("Resizing row", row);
-                    $(row).find("th").each(function(index) {
-                        var col = firstRow.children("td").eq(index);
-                        console.debug(index, this, "=>", col[0], "Width: " + col.width());
-                        $(this).width( col.width() );
+
+                    var idxModifier = 0;
+                    $(row).find("th").each(function(index, head) {
+                        // Check for colspan
+                        var colspan = parseInt($(head).attr("colspan")) || 1;
+
+                        // get 'colspan' number of columns, starting at index+idxModifier (to account for prior colspans)
+                        var start = index + idxModifier;
+                        var end = start + (colspan);
+
+                        var cols = firstRow.children("td").slice(start, end);
+
+                        console.debug(cols);
+
+                        // Calculate total width of spanned columns
+                        var totalWidth = cols
+                            .map( (i, c) => $(c).width() )
+                            .get()
+                            .reduce( (acc, cur) => acc + cur, 0);
+
+                        // Adjust idxModifier for further iterations
+                        // We only want this adjusted for colspans greater than 1, so we reduce this -1
+                        idxModifier += colspan - 1;
+
+                        console.debug(index + " (" + start + ':' + end + ")",
+                            this, "=>", cols,
+                            "Width: " + totalWidth
+                        );
+
+                        $(this).width( totalWidth );
                     });
                 });
 
