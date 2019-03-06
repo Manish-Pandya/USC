@@ -27,7 +27,25 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
             }
         );
 })
-.filter('genericFilter', function () {
+.filter('piActiveFilter', function(){
+    return function(pis, search){
+        if ( !search || !pis ){
+            return pis;
+        }
+
+        var matched = [];
+
+        pis.forEach( pi => {
+            // Match the PI if its active status matches either filter
+            if( (search.activePis && pi.Is_active == search.activePis) || (search.inactivePis && !pi.Is_active == search.inactivePis) ){
+                matched.push(pi);
+            }
+        });
+
+        return matched;
+    };
+})
+.filter('genericFilter', function ( $filter ) {
     return function (items,search) {
         if (search) {
             var i = 0;
@@ -88,37 +106,44 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                     }
                 }
 
-                if( ( search.pi || search.department ) && item.PrincipalInvestigators){
-                    if(!item.PrincipalInvestigators.length){
-                        console.log('no pis in room '+item.Name);
-                    }
+                if( item.PrincipalInvestigators && item.PrincipalInvestigators.length > 0 ){
 
-                    var j = item.PrincipalInvestigators.length
-                    item_matched = false;
-                    var deptMatch = false;
-                    while(j--){
-
-                        var pi = item.PrincipalInvestigators[j];
-                        if( search.pi && pi.User.Name && pi.User.Name.toLowerCase().indexOf(search.pi.toLowerCase()) > -1 ){
-                            item_matched = true;
-                            var piMatch = true;
+                    if( search.pi || search.department ){
+                        if(!item.PrincipalInvestigators.length){
+                            console.log('no pis in room '+item.Name);
                         }
 
-                        if(search.department){
-                            deptMatch = false;
-                            if(!pi.Departments || !pi.Departments.length){
+                        var j = item.PrincipalInvestigators.length
+                        item_matched = false;
+                        var deptMatch = false;
+                        while(j--){
 
+                            var pi = item.PrincipalInvestigators[j];
+                            if( search.pi && pi.User.Name && pi.User.Name.toLowerCase().indexOf(search.pi.toLowerCase()) > -1 ){
+                                item_matched = true;
+                                var piMatch = true;
                             }
-                            else{
-                                var k = pi.Departments.length;
-                                while(k--){
-                                    if( pi.Departments && pi.Departments[k].Name && pi.Departments[k].Name.toLowerCase().indexOf(search.department.toLowerCase()) > -1 ) deptMatch = true;
+
+                            if(search.department){
+                                deptMatch = false;
+                                if(!pi.Departments || !pi.Departments.length){
+
                                 }
+                                else{
+                                    var k = pi.Departments.length;
+                                    while(k--){
+                                        if( pi.Departments && pi.Departments[k].Name && pi.Departments[k].Name.toLowerCase().indexOf(search.department.toLowerCase()) > -1 ) deptMatch = true;
+                                    }
+                                }
+                                if( ( !search.pi && deptMatch ) || ( piMatch && deptMatch ) )item_matched = true;
                             }
-                            if( ( !search.pi && deptMatch ) || ( piMatch && deptMatch ) )item_matched = true;
                         }
                     }
 
+                    // Filter by PI Activity status if this room has any PI assignments
+                    // Note that this will not apply to unassigned rooms
+                    var filteredPis = $filter('piActiveFilter')(item.PrincipalInvestigators, search);
+                    item_matched = item_matched && filteredPis && filteredPis.length > 0;
                 }
 
                 if(item_matched == true)filtered.push(item);
@@ -438,6 +463,12 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
     $rootScope.rbf = roleBasedFactory;
     $scope.constants = Constants;
     $scope.convenienceMethods = convenienceMethods;
+
+    // Default search parameters
+    $scope.search = {
+        activePis: true
+    };
+
     $scope.editRoom = function (room) {
 
         if (!room) {
