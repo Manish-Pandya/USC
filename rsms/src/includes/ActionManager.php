@@ -2364,10 +2364,11 @@ class ActionManager {
 
         // Filter nameless users
         $namedUsers = array_filter($users, function($u){
-            if($u->getUsername() != null){
+            if($u->getUsername() == null){
                 Logger::getLogger(__CLASS__ . '.' . __FUNCTION__)->warn("User has no name: $u");
                 return false;
             }
+
             return true;
         });
 
