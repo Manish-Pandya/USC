@@ -26,8 +26,10 @@
                         <button class="btn btn-mini" ng-click="paginationObj.start = paginationObj.start + 100" ng-disabled="filtered.length - paginationObj.start < 100">>></button>
                         <button class="btn btn-mini" ng-click="paginationObj.start = roundDown(filtered.length, paginationObj.range)" ng-disabled="filtered.length - paginationObj.start < 100">Last</button>
                     </p>
-                    <span class="bold underline">{{filtered.length}}</span>
-                    Laboratory Locations
+                    <span>
+                        <span class="bold underline">{{(filtered | filter:{Is_active: true}).length}}</span>
+                        Active Laboratory Locations
+                    </span>
                 </div>
             </th>
         </tr>
