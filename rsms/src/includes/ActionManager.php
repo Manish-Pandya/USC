@@ -685,6 +685,53 @@ class ActionManager {
         }
     }
 
+    public function unassignLabUser($uid, $inactive = FALSE){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        $uid = $this->getValueFromRequest('uid', $uid);
+        $inactive = $this->getValueFromRequest('inactive', $inactive);
+        if( !isset($uid) ){
+            return new ActionError("ID is required", 400);
+        }
+
+        $userDao = new GenericDAO(new User());
+        $user = $userDao->getById($uid);
+        if( !isset($user) ){
+            return new ActionError("No such user", 404);
+        }
+
+        if( $inactive == TRUE ){
+            $LOG->info("Inactivating $user");
+            $user->setIs_active(false);
+        }
+
+        // Unlink user from supervisor
+        $pi = $user->getSupervisor();
+        if( isset($pi) ){
+            $LOG->info("Unassigning $user from $pi");
+            $user->setSupervisor(null);
+            $user->setSupervisor_id( null );
+        }
+
+        // If they are a Lab Contact, revoke that role
+        if( CoreSecurity::userHasRoles($user, array('Lab Contact')) ){
+            $LOG->debug("$user is Lab Contact");
+            $roleDao = new RoleDAO();
+            $contactRole = $roleDao->getByName('Lab Contact');
+
+            $rel = new RelationshipDto();
+            $rel->setMaster_id($user->getKey_id());
+            $rel->setRelation_id($contactRole->getKey_id());
+            $rel->setAdd(false);
+
+            $LOG->info("Remove Lab Contact role from $user");
+            $this->saveUserRoleRelation($rel);
+        }
+
+        $saved = $userDao->save($user);
+        return $this->buildUserDTO($saved);
+    }
+
     public function assignLabUserToPI($piid, $uid, $labContact = false){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 

@@ -316,6 +316,25 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     return deferred.promise;
   }
 
+  factory.unassignLabUser = function unassignLabUser (userId, inactive){
+    var url = GLOBAL_WEB_ROOT + "ajaxaction.php?action=unassignLabUser&uid=" + userId;
+    if( inactive ){
+      url += '&inactive=true'
+    }
+
+    var deferred = $q.defer();
+    convenienceMethods.saveDataAndDefer(url, null)
+      .then(
+        function(promise){
+          deferred.resolve(promise);
+        },
+        function(promise){
+          deferred.reject();
+        }
+      );
+    return deferred.promise;
+  }
+
   factory.saveUser = function(userDto)
   {
     console.log(userDto);
