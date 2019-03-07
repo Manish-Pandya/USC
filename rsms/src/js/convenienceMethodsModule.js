@@ -659,6 +659,11 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
                      firstRow = elem.find('tbody').find('tr:first');
                  }
 
+                 if( !firstRow.length ){
+                    console.debug("No rows to check size");
+                    return;
+                 }
+
                  console.debug("First real row:", firstRow[0]);
 
                  // For each row, assign widths to headers based on matching cols
