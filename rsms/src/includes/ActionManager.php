@@ -2362,7 +2362,13 @@ class ActionManager {
             return $_mgr->buildUserDTO($u);
         };
 
-        $dtos = array_map($fn_userToDto, $users);
+        // Filter nameless users
+        $namedUsers = array_filter($users, function($u){
+            Logger::getLogger(__CLASS__ . '.' . __FUNCTION__)->warn("User has no name: $u");
+            return $u->getUsername() != null;
+        });
+
+        $dtos = array_map($fn_userToDto, $namedUsers);
         return $dtos;
     }
 
