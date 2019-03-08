@@ -56,11 +56,8 @@ session_start();
         Key_id: '<?php echo $_SESSION['USER']->getKey_id(); ?>'
     }
     var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
-    var isProductionServer;
 <?php
-if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
-  echo 'isProductionServer = true;';
-}
+
 }
 ?>
 </script>

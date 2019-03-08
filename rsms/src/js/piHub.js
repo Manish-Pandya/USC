@@ -804,7 +804,7 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, piHubFactor
 
 }
 
-confirmationController = function(items, $scope, piHubFactory, $modalInstance, convenienceMethods){
+confirmationController = function(items, $scope, piHubFactory, userHubFactory, $modalInstance, convenienceMethods){
     $scope.userCopy = piHubFactory.getUser();
     var functionType = items;
     if(functionType.toLowerCase() == 'inactivate'){
@@ -816,14 +816,17 @@ confirmationController = function(items, $scope, piHubFactory, $modalInstance, c
     $scope.confirm = function(){
         $scope.userCopy.IsDirty = true;
         //are we deactivating this user?  Set the user's Is_active property to false, if so.
-        if(functionType.toLowerCase() == 'remove')$scope.userCopy.Is_active = false;
+        var inactive = functionType.toLowerCase() == 'remove';
+
+        if( inactive ) $scope.userCopy.Is_active = false;
 
         //get rid of the user's PI relationship.
         $scope.userCopy.Supervisor_id = null;
         $scope.userCopy.Supervisor = null;
 
-        //save the user
-        convenienceMethods.updateObject( $scope.userCopy, null, onConfirmRemoveUser, onFailRemoveUser, '../../ajaxaction.php?action=saveUser' );
+        // unassign the user
+        userHubFactory.unassignLabUser( $scope.userCopy.Key_id, inactive )
+            .then( onConfirmRemoveUser, onFailRemoveUser );
     }
 
     //save call succeeded.  go back to the normal view

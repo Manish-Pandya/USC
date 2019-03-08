@@ -9,7 +9,7 @@
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Building</label>
                 <div class="controls">
-                    <input style="" class="span4" placeholder="Select A Building" typeahead-on-select='onSelectBuilding($item)' type="text" ng-model="modalData.Building" typeahead="building as building.Name for building in buildings | filter:$viewValue" ng-init="" ng-if="!isProductionServer || userCopy.Username">
+                    <input style="" class="span4" placeholder="Select A Building" typeahead-on-select='onSelectBuilding($item)' type="text" ng-model="modalData.Building" typeahead="building as building.Name for building in buildings | filter:$viewValue" ng-init="" ng-if="userCopy.Username">
                 </div>
             </div>
 

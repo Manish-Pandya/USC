@@ -7,13 +7,8 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
     require_once('../Application.php');
 }
 
-echo '<script type="text/javascript">
-var isProductionServer;';
-if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
-  echo 'isProductionServer = true;';
-}
+
 ?>
-</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>

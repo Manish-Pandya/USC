@@ -228,7 +228,7 @@ var labContactController = function(userHubFactory, $scope, $modal, $routeParams
     $scope.piId = $location.search().piId;
   }
 
-  if($location.$$host.indexOf('graysail')<0)$scope.isProductionServer = true;
+
 
 
   //create a modal instance for editing a user or creating a new one.
@@ -324,7 +324,6 @@ var labContactController = function(userHubFactory, $scope, $modal, $routeParams
 
 //controller for modal instance for lab contacts
 var labContactModalInstanceController = function ($scope, $modalInstance, items, $rootScope,convenienceMethods, $location, $window, userHubFactory) {
-  if($location.$$host.indexOf('graysail')<0)$scope.isProductionServer = true;
 
   $scope.failFindUser = false;
   //console.log(items);
@@ -648,7 +647,6 @@ var personnelController = function($scope, $modal, $routeParams, $browser,  $roo
 
 //controller for modal instance for lab contacts
 var personnelModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window) {
-  if($location.$$host.indexOf('graysail')<0)$scope.isProductionServer = true;
 
   $scope.failFindUser = false;
 
@@ -976,7 +974,6 @@ var piController = function($scope, $modal, $routeParams, $browser,  $rootElemen
 //controller for modal instance for lab contacts
 var piModalInstanceController = function ($scope, $modalInstance, items, convenienceMethods, $location, $window) {
   console.log(items);
-  if($location.$$host.indexOf('graysail')<0)$scope.isProductionServer = true;
 
   $scope.failFindUser = false;
   //console.log(items[0]);

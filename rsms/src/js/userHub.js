@@ -316,6 +316,25 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     return deferred.promise;
   }
 
+  factory.unassignLabUser = function unassignLabUser (userId, inactive){
+    var url = GLOBAL_WEB_ROOT + "ajaxaction.php?action=unassignLabUser&uid=" + userId;
+    if( inactive ){
+      url += '&inactive=true'
+    }
+
+    var deferred = $q.defer();
+    convenienceMethods.saveDataAndDefer(url, null)
+      .then(
+        function(promise){
+          deferred.resolve(promise);
+        },
+        function(promise){
+          deferred.reject();
+        }
+      );
+    return deferred.promise;
+  }
+
   factory.saveUser = function(userDto)
   {
     console.log(userDto);
@@ -961,12 +980,6 @@ var uncatController = function($scope, $modal, $rootScope, userHubFactory, conve
 }
 modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods, $q, $location){
 
-    if($location.$$host.indexOf('graysail')<0){
-      $scope.isProductionServer = true;
-    }else{
-      $scope.isProductionServer = false;
-    }
-
     $scope.modalError="";
     //make a copy without reference to the modalData so we can manipulate our object without applying changes until we save
     $scope.modalData = angular.copy( userHubFactory.getModalData() );
@@ -1048,7 +1061,7 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
     $scope.saveUser = function(){
         $scope.modalData.IsDirty = true;
 
-        if($scope.isPIRequired($scope.modalData) && !$scope.modalData.Supervisor){
+        if($scope.isPIRequired($scope.modalData) && !$scope.modalData.Supervisor_id){
             $scope.modalError = 'A Lab Contact must be assigned to a Principal Investigator.';
             $scope.modalData.IsDirty = false;
             return;

@@ -8,13 +8,6 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
 }
 session_start();
 
-echo '<script type="text/javascript">
-var isProductionServer;';
-if($_SERVER['HTTP_HOST'] != 'erasmus.graysail.com'){
-  echo 'isProductionServer = true;';
-}
-echo "</script>";
-
 ?>
 <?php if(!isset($_SESSION["USER"])){ ?>
 <script>
