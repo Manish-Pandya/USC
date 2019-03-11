@@ -913,10 +913,10 @@ class ActionManager {
             }
 
             //see if we need to save a PI or Inspector object
+            $savePI = false;
+            $saveInspector = false;
             if($decodedObject->getRoles() != NULL){
                 $LOG->debug("Check roles for special-cases");
-                $savePI = false;
-                $saveInspector = false;
                 foreach($decodedObject->getRoles() as $role){
                     $role = $this->getRoleById($role['Key_id']);
                     if($role->getName() == "Principal Investigator")$savePI 	   = true;
