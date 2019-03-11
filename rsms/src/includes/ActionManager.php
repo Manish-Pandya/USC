@@ -856,6 +856,9 @@ class ActionManager {
                 $newRoleIds = array_map( 'fn_getRoleId', $decodedObject->getRoles() );
                 $oldRoleIds = array_map( 'fn_getRoleId', $user->getRoles());
 
+                $LOG->trace("New Role IDs: " . implode(', ', $newRoleIds));
+                $LOG->trace("Old Role IDs: " . implode(', ', $oldRoleIds));
+
                 /** Roles present in old entity which should be removed */
                 $rolesToUnlink = array_diff($oldRoleIds, $newRoleIds);
 
@@ -899,6 +902,9 @@ class ActionManager {
                     $LOG->info("Adding Lab Personnel role to user " . $user->getKey_id());
                     updateRole($userDao, $_personnelRole->getKey_id(), $user->getKey_id(), true);
                 }
+
+                // Clear roles to force object update...
+                $user->setRoles(null);
 
                 // Is this a newly-added Lab Contact?
                 if( $_isContact ){
@@ -1006,7 +1012,7 @@ class ActionManager {
                     EntityMap::eager("getRoles")
                 ));
 
-                return $user;
+                return $dao->getById($user->getKey_id());
             }
         }
         return new ActionError('Could not save');
