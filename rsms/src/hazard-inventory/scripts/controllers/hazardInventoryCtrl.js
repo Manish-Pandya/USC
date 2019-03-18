@@ -71,7 +71,7 @@ angular.module('HazardInventory')
                 piId = search.pi;
             }
 
-            if( search['rooms[]'] ) {
+            if( search['room[]'] ) {
                 var roomsParam = search["room[]"];
                 console.debug("param: room=", roomsParam);
                 $rootScope.selectedRoomIds = roomsParam;
