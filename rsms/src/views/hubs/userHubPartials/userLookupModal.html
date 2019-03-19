@@ -1,0 +1,68 @@
+<div class="modal-header" style="padding:0;">
+    <h2 class="greenBg" style="padding: 10px">
+        Find a User
+        <a class="btn btn-danger left pull-right" ng-click="close()"><i class="icon-cancel-2"></i></a>
+    </h2>
+</div>
+<div id="user-lookup" style="padding: 15px">
+    <div id="user-select">
+        <form class="form">
+            <div class="control-group">
+                <div class="controls">
+                    <span ng-if="!users">
+                        <input class="span4" style="background:white;border-color:#999"  type="text"  placeholder="Loading Users..." disabled="disabled">
+                        <i class="icon-spinnery-dealie spinner small asbolute" style="margin-top:-5px;"></i>
+                    </span>
+                    <span ng-if="users" class="nopad no-pad" style="margin-left:0">
+                        <span class="span4 nopad no-pad" style="display:block; margin-left:0">
+                            <ui-select ng-model="selection.user" theme="selectize" ng-disabled="disabled">
+                                <ui-select-match placeholder="Select or search for a User">{{$select.selected.Name}}</ui-select-match>
+                                <ui-select-choices repeat="user in users | propsFilter: {Name: $select.search} | limitTo:20">
+                                    <div ng-bind-html="(user.Name || user.Username) | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="user-info" ng-if="selection.user">
+        <dl>
+            <dt>Name</dt>
+            <dd>{{selection.user.Name}}</dd>
+
+            <dt>Email</dt>
+            <dd>{{selection.user.Email}}</dd>
+
+            <dt>Username</dt>
+            <dd>{{selection.user.Username}}</dd>
+
+            <dt ng-if="selection.user.Lab_phone">Lab Phone</dt>
+            <dd ng-if="selection.user.Lab_phone">{{selection.user.Lab_phone}}</dd>
+
+            <dt ng-if="selection.user.Office_phone">Office Phone</dt>
+            <dd ng-if="selection.user.Office_phone">{{selection.user.Office_phone}}</dd>
+
+            <dt ng-if="selection.user.Emergency_phone">Emergency Phone</dt>
+            <dd ng-if="selection.user.Emergency_phone">{{selection.user.Emergency_phone}}</dd>
+        </dl>
+        <dl>
+            <dt>Status</dt>
+            <dd>
+                <span class="badge" ng-class="{'badge-important': !selection.user.Is_active, 'badge-success': selection.user.Is_active}">
+                    {{selection.user.Is_active ? 'Active' : 'Inactive'}}
+                </span>
+            </dd>
+
+            <dt>Roles</dt>
+            <dd><span class="badge badge-info" ng-repeat="r in selection.user.Roles">{{r.Name}}</span></dd>
+
+            <dt>Appears In:</dt>
+            <dd>
+                <a class="badge badge-inverse" ng-repeat="view in views = getUserHubTableNames(selection.user)" ng-click="setRoute(view.route)">{{view.name}}</a>
+                <span ng-if="!views.length" class="badge badge-important">This user does not appear in any User Hub view</span>
+            </dd>
+        </dl>
+    </div>
+</div>
