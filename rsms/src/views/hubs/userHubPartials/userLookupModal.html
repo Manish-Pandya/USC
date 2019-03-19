@@ -40,13 +40,13 @@
             <dd ng-if="selection.user.Position">{{selection.user.Position}}</dd>
 
             <dt ng-if="selection.user.Lab_phone">Lab Phone</dt>
-            <dd ng-if="selection.user.Lab_phone">{{selection.user.Lab_phone}}</dd>
+            <dd ng-if="selection.user.Lab_phone">{{selection.user.Lab_phone | tel}}</dd>
 
             <dt ng-if="selection.user.Office_phone">Office Phone</dt>
-            <dd ng-if="selection.user.Office_phone">{{selection.user.Office_phone}}</dd>
+            <dd ng-if="selection.user.Office_phone">{{selection.user.Office_phone | tel}}</dd>
 
             <dt ng-if="selection.user.Emergency_phone">Emergency Phone</dt>
-            <dd ng-if="selection.user.Emergency_phone">{{selection.user.Emergency_phone}}</dd>
+            <dd ng-if="selection.user.Emergency_phone">{{selection.user.Emergency_phone | tel}}</dd>
         </dl>
         <dl>
             <dt>Status</dt>
