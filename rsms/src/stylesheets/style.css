@@ -795,6 +795,35 @@ tr.notedit, tr.notedit td {
 .modal-body table tr th{
     font-size:1.5em;
 }
+
+#user-lookup #user-info dl {
+  float: left;
+  width: 100%;
+  padding: 0;
+  border: 1px solid gray;
+}
+
+#user-lookup #user-info dt {
+  clear: left;
+  float: left;
+  width: 30%;
+  margin: 0;
+  padding: 5px;
+  font-weight: bold;
+}
+
+#user-lookup #user-info dd {
+  float: left;
+  width: 60%;
+  margin: 0;
+  padding: 5px;
+  font-size: 12pt;
+}
+
+#user-lookup #user-info .badge {
+  margin: 3px;
+}
+
 /*******************************************************
 * HAZARD HUB STYLES
 *******************************************************/

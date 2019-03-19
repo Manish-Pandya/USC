@@ -17,18 +17,20 @@ require_once '../top_view.php';
 
 <span ng-app="userList"  ng-controller="MainUserListController" style="clear:both; display: block; margin-top:120px">
     <form class="form-horizontal fixed" style="margin: -42px 0 0;background: rgb(221, 221, 221);z-index: 1047;">
-      <div class="control-group">
+      <div class="control-group" style="display:inline-block;">
          <label class="control-label" for="route" style="font-weight:bold; text-align: left; width:auto;">Select User Type:</label>
          <div class="controls" style="margin-left:128px;">
             <select ng-model="selectedRoute" ng-change="setRoute()" id="route">
-              <option value="/pis">Principal Investigators</option>
-              <option value="/contacts">Laboratory Contacts</option>
-              <option value="/labPersonnel">Laboratory Personnel</option>
-              <option value="/EHSPersonnel">EHS Personnel</option>
-              <option value="/uncategorized">Uncategorized Users</option>
+              <option ng-repeat="view in userHubViews" ng-value="view.route" ng-selected="selectedRoute == view.route">{{view.name}}</option>
            </select>
          </div>
       </div>
+      <div class="control-group" style="display:inline-block;">
+        <a class="btn btn-info left" ng-click="openUserLookupModal()">
+          <i class="icon-magnifying-glass"></i>
+        </a>
+      </div>
+
     </form>
 
     <div class="loading" ng-if="!neededUsers" style="z-index:1070; position:absolute">

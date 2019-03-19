@@ -725,6 +725,12 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
     }
   }
 
+  $scope.openUserLookupModal = function(){
+    $modal.open({
+      templateUrl: 'userHubPartials/userLookupModal.html',
+      controller: userLookupModalCtrl
+    });
+  };
 
 }
 
@@ -1357,4 +1363,33 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
         $modalInstance.close(dataToReturn);
     }
 
+}
+
+userLookupModalCtrl = function($rootScope, $scope, userHubFactory, $modalInstance, $filter){
+  $scope.selection = {
+    user: null
+  };
+
+  userHubFactory.getAllUsers()
+  .then(
+    function(users){
+      $scope.users = users;
+    }
+  );
+
+  $scope.getUserHubTableNames = function(user){
+
+    var views = [];
+    $rootScope.userHubViews.forEach( view => {
+      if( $filter(view.filter)([user]).length ){
+        views.push(view);
+      }
+    });
+
+    return views;
+  }
+
+  $scope.close = function(){
+    $modalInstance.close();
+  }
 }
