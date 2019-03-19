@@ -36,6 +36,9 @@
             <dt>Email</dt>
             <dd>{{selection.user.Email}}</dd>
 
+            <dt ng-if="selection.user.Position">Position</dt>
+            <dd ng-if="selection.user.Position">{{selection.user.Position}}</dd>
+
             <dt ng-if="selection.user.Lab_phone">Lab Phone</dt>
             <dd ng-if="selection.user.Lab_phone">{{selection.user.Lab_phone}}</dd>
 
