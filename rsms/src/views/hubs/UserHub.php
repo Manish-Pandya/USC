@@ -25,9 +25,9 @@ require_once '../top_view.php';
            </select>
          </div>
       </div>
-      <div class="control-group" style="display:inline-block;">
+      <div class="control-group pull-right" style="display:inline-block;">
         <a class="btn btn-info left" ng-click="openUserLookupModal()">
-          <i class="icon-magnifying-glass"></i>
+          Find a User<i class="icon-magnifying-glass"></i>
         </a>
       </div>
 
