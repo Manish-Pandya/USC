@@ -227,18 +227,22 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         deferred.resolve(factory.users);
         return deferred.promise;
       }
-
-      var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getUsersForUserHub&callback=JSON_CALLBACK';
+      else if( !factory.usersWillLoad ){
+        var url = GLOBAL_WEB_ROOT+'ajaxaction.php?action=getUsersForUserHub&callback=JSON_CALLBACK';
         convenienceMethods.getDataAsDeferredPromise(url).then(
-        function(users){
-          factory.users = users;
-          deferred.resolve(users);
-        },
-        function(promise){
-          deferred.reject();
-        }
-      );
-      return deferred.promise;
+          function(users){
+            factory.users = users;
+            deferred.resolve(users);
+          },
+          function(promise){
+            deferred.reject();
+          }
+        );
+
+        factory.usersWillLoad = deferred.promise;
+      }
+
+      return factory.usersWillLoad;
   }
 
   factory.hasRole = function(user, role)
