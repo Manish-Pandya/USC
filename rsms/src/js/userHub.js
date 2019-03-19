@@ -623,16 +623,48 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
 
 });
 
-var MainUserListController = function(userHubFactory, $scope, $rootScope, $location, convenienceMethods, $route) {
+var MainUserListController = function(userHubFactory, $scope, $rootScope, $location, convenienceMethods, $route, $modal) {
     $rootScope.uhf=userHubFactory;
     $rootScope.order = 'Last_name';
+
+    $rootScope.userHubViews = [
+      {
+        name: 'Principal Investigator',
+        filter: 'isPI',
+        route: '/pis'
+      },
+      {
+        name: 'Laboratory Contacts',
+        filter: 'isLabContact',
+        route: '/contacts'
+      },
+      {
+        name: 'Laboratory Personnel',
+        filter: 'isLabPersonnel',
+        route: '/labPersonnel'
+      },
+      {
+        name: 'EHS Personnel',
+        filter: 'isEHSPersonnel',
+        route: '/EHSPersonnel'
+      },
+      {
+        name: 'Uncategorized Users',
+        filter: 'isUncat',
+        route: '/uncategorized'
+      },
+    ];
 
     //----------------------------------------------------------------------
     //
     // ROUTING
     //
     //----------------------------------------------------------------------
-    $scope.setRoute = function(){
+    $rootScope.setRoute = function( route ){
+      if( route ){
+        $scope.selectedRoute = route;
+      }
+
       $location.path($scope.selectedRoute);
     }
 
