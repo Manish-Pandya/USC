@@ -432,28 +432,17 @@ class GenericDAO {
 		}
 		//else use $object as-is!
 
+		// Update created/last-modified audit fields
+		$this->updateAuditFields($object);
+
 		// Get DB Connection
 		$db = DBConnection::get();
-
-		// update the modify timetamp
-		$object->setDate_last_modified(date("Y-m-d H:i:s"));
-
-		// Add the creation timestamp
-		if ($object->getDate_created() == null) {
-			$object->setDate_created(date("Y-m-d H:i:s"));
-		}
-
-		//set created user and last modified user ids if we can and need to
-		if(isset($_SESSION["USER"]) && $_SESSION["USER"]->getKey_id() != null){
-			$object->setLast_modified_user_id($_SESSION["USER"]->getKey_id());
-			if($object->getCreated_user_id() == null)
-				$object->setCreated_user_id($_SESSION["USER"]->getKey_id());
-		}
 
 		// Check to see if this item has a key_id
 		//  If it does, we assume it's an existing record and issue an UPDATE
 		if ($object->getKey_id() != null) {
 			$this->LOG->debug("Entity exists; UPDATE");
+
 			$stmt = $this->createUpdateStatement($db,$object);
 			$stmt = $this->bindColumns($stmt,$object);
 			$success = $stmt->execute();
@@ -501,6 +490,52 @@ class GenericDAO {
 		// return the updated object
 		return $object;
 
+	}
+
+	private function updateAuditFields( GenericCrud &$object ){
+		$this->LOG->debug("Update audit fields of: $object");
+
+		$now = date("Y-m-d H:i:s");
+
+		$curUserId = null;
+		if(isset($_SESSION["USER"]) && $_SESSION["USER"]->getKey_id() != null){
+			$curUserId = $_SESSION["USER"]->getKey_id();
+		}
+
+		if( $object->hasPrimaryKeyValue() ){
+			$this->LOG->trace("Look up existing value for audit fields");
+
+			// Look up existing entity
+			$auditInfo = $this->getAuditFields( $object->getKey_id() );
+
+			// Ensure that our value-to-be-saved has the same *Created audit fields
+			$object->setDate_created( $auditInfo->date_created );
+			$object->setCreated_user_id( $auditInfo->created_user_id );
+		}
+		else {
+			$this->LOG->trace("Initialize created audit fields");
+
+			// This is a new entity; initialize *Created audit fields
+			$object->setDate_created( $now );
+			$object->setCreated_user_id( $curUserId );
+		}
+
+		// Update last-modified audit fields
+		$this->LOG->trace("Update modified audit fields");
+		$object->setDate_last_modified($now);
+		$object->setLast_modified_user_id($curUserId);
+
+		return $object;
+	}
+
+	public function getAuditFields( $id ){
+		$table = $this->modelObject->getTableName();
+		$sql = "SELECT date_created, date_last_modified, last_modified_user_id, created_user_id FROM $table o WHERE o.key_id = ?";
+		$stmt = DBConnection::prepareStatement($sql);
+		$stmt->bindValue(1, $id);
+		$stmt->execute();
+
+		return $stmt->fetchObject();
 	}
 
 	/**
