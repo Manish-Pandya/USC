@@ -1,6 +1,6 @@
 <?php
 
-class EquipmentModule implements RSMS_Module {
+class EquipmentModule implements RSMS_Module, MyLabWidgetProvider {
     public function getModuleName(){
         return 'Equipment';
     }
@@ -24,6 +24,19 @@ class EquipmentModule implements RSMS_Module {
 
     public function getActionConfig(){
         return Equipment_ActionMappingFactory::readActionConfig();
+    }
+
+    public function getMyLabWidgets( User $user ){
+        $widgets = array();
+
+        $equipmentWidget = new MyLabWidgetDto();
+        $equipmentWidget->title = "Equipment";
+        $equipmentWidget->icon = "icon-cog-2";
+        $equipmentWidget->template = null;
+        $equipmentWidget->data = null;
+        $widgets[] = $equipmentWidget;
+
+        return $widgets;
     }
 }
 ?>
