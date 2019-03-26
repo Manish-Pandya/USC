@@ -1,0 +1,24 @@
+<div class="fake-table striped bordered">
+    <div class="table-row">
+        <div>Name</div>
+        <div>{{data.Name}}</div>
+    </div>
+    <div class="table-row">
+        <div>Position</div>
+        <div>{{data.Position}}</div>
+    </div>
+    <div class="table-row" ng-if="data.Lab_phone != undefined">
+        <div>Lab Phone</div>
+        <div>{{data.Lab_phone | tel}}</div>
+    </div>
+    <div class="table-row" ng-if="data.Office_phone != undefined">
+        <div>Office Phone</div>
+        <div>{{data.Office_phone | tel}}</div>
+    </div>
+    <div class="table-row" ng-if="data.Emergency_phone != undefined">
+        <div>Emergency Phone</div>
+        <div>{{data.Emergency_phone | tel}}</div>
+    </div>
+</div>
+
+<a class="btn btn-inverse">Edit Profile</a>

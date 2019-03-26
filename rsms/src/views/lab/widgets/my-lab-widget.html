@@ -1,0 +1,6 @@
+<h2 class="widget-header {{group}}">
+    <i ng-if="headerIcon" style="margin-top: -5px;font-size: 22px;margin-right: 4px;" class="{{headerIcon}}"></i>
+    <img ng-if="headerImage" ng-src="{{'../../img/' + headerImage}}" width="25px" style="margin-right:5px;" />
+    {{headerText}}
+</h2>
+<ng-include src="contentTemplate" class="content"></span>
