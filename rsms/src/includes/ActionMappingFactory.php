@@ -168,6 +168,8 @@ class ActionMappingFactory {
 
                 //MY LABORATORY
                 "getMyLab"=>new SecuredActionMapping("getMyLab", $this::$ROLE_GROUPS["EHS_AND_LAB"], 'LabInspectionSecurity::userCanViewPI'),
+                "getMyLabWidgets" => new SecuredActionMapping("getMyLabWidgets", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
+
                 //ANNUAL VERIFICATION
                 "saveVerification"=>new ActionMapping("saveVerification", "", "", $this::$ROLE_GROUPS["EHS"]),
                 "closeVerification"=>new ActionMapping("closeVerification", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),

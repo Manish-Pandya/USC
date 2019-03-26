@@ -5436,6 +5436,18 @@ class ActionManager {
         return $principalInvestigator;
     }
 
+    public function getMyLabWidgets(){
+        $widgets = array();
+        $user = $this->getCurrentUser();
+        foreach( ModuleManager::getAllModules() as $module ){
+            if( $module instanceof MyLabWidgetProvider ){
+                $widgets = array_merge( $widgets, $module->getMyLabWidgets( $user ));
+            }
+        }
+
+        return $widgets;
+    }
+
     //generate a random float
     public function random_float ($min,$max) {
         return ($min+lcg_value()*(abs($max-$min)));
