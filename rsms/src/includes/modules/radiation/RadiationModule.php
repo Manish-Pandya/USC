@@ -34,18 +34,21 @@ class RadiationModule implements RSMS_Module, MyLabWidgetProvider {
 
         // Get relevant PI for lab
         $principalInvestigator = $manager->getPIByUserId( $user->getKey_id() );
-        $auth = $principalInvestigator->getCurrentPi_authorization();
 
-        if( !empty($auth) ){
-            $radWidget = new MyLabWidgetDto();
-            $radWidget->title = "Radioactive Materials";
-            $radWidget->image = "radiation-large-icon.png";
-            $radWidget->template = "radiation-lab";
-            $radWidget->data = new GenericDto(array(
-                "id" => $principalInvestigator->getKey_id()
-            ));
+        if( isset($principalInvestigator) ){
+            $auth = $principalInvestigator->getCurrentPi_authorization();
 
-            $widgets[] = $radWidget;
+            if( !empty($auth) ){
+                $radWidget = new MyLabWidgetDto();
+                $radWidget->title = "Radioactive Materials";
+                $radWidget->image = "radiation-large-icon.png";
+                $radWidget->template = "radiation-lab";
+                $radWidget->data = new GenericDto(array(
+                    "id" => $principalInvestigator->getKey_id()
+                ));
+
+                $widgets[] = $radWidget;
+            }
         }
 
         return $widgets;

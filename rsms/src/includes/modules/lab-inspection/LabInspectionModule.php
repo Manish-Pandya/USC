@@ -140,76 +140,78 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
         $userInfoWidget->data = new GenericDto($userData);
         $widgets[] = $userInfoWidget;
 
-        $piInfoWidget = new MyLabWidgetDto();
-        $piInfoWidget->title = "Principal Investigator Details";
-        $piInfoWidget->icon = "icon-user-3";
-        $piInfoWidget->group = $_WIDGET_GROUP_PROFILE;
-        $piInfoWidget->template = 'pi-profile';
-        $piInfoWidget->data = $manager->buildUserDTO($user)->PrincipalInvestigator;
+        if( isset( $principalInvestigator ) ){
+            $piInfoWidget = new MyLabWidgetDto();
+            $piInfoWidget->title = "Principal Investigator Details";
+            $piInfoWidget->icon = "icon-user-3";
+            $piInfoWidget->group = $_WIDGET_GROUP_PROFILE;
+            $piInfoWidget->template = 'pi-profile';
+            $piInfoWidget->data = $manager->buildUserDTO($user)->PrincipalInvestigator;
 
-        if( !CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
-            // If user is not a PI, omit Lab Location data
-            $piInfoWidget->data->Buildings = null;
-            $piInfoWidget->data->Rooms = null;
-        }
+            if( !CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
+                // If user is not a PI, omit Lab Location data
+                $piInfoWidget->data->Buildings = null;
+                $piInfoWidget->data->Rooms = null;
+            }
 
-        $widgets[] = $piInfoWidget;
+            $widgets[] = $piInfoWidget;
 
-        // Collect inspections
-        $open_inspections = array();
-        $archived_inspections = array();
+            // Collect inspections
+            $open_inspections = array();
+            $archived_inspections = array();
 
-        if( isset($principalInvestigator) ){
-            // Filter inspections by year based on current user role
-            $inspections = $principalInvestigator->getInspections();
+            if( isset($principalInvestigator) ){
+                // Filter inspections by year based on current user role
+                $inspections = $principalInvestigator->getInspections();
 
-            $minYear = CoreSecurity::userHasRoles($user, array("Admin"))
-                ? 2017
-                : 2018;
+                $minYear = CoreSecurity::userHasRoles($user, array("Admin"))
+                    ? 2017
+                    : 2018;
 
-            foreach($inspections as $key => $inspection){
-                if( $inspection->getIsArchived() ){
-                    $closedYear = date_create($inspection->getDate_closed())->format("Y");
+                foreach($inspections as $key => $inspection){
+                    if( $inspection->getIsArchived() ){
+                        $closedYear = date_create($inspection->getDate_closed())->format("Y");
 
-                    if( $closedYear < $minYear ){
-                        $LOG->debug("Omit $inspection (closed $closedYear) for MyLab");
-                        unset($inspections[$key]);
+                        if( $closedYear < $minYear ){
+                            $LOG->debug("Omit $inspection (closed $closedYear) for MyLab");
+                            unset($inspections[$key]);
+                        }
+                    }
+                }
+
+                $principalInvestigator->setInspections($inspections);
+
+                // Collect Open vs Archived
+                foreach( $inspections as $i ){
+                    if( $i->getIsArchived() ){
+                        $archived_inspections[] = $i;
+                    }
+                    else{
+                        $open_inspections[] = $i;
                     }
                 }
             }
 
-            $principalInvestigator->setInspections($inspections);
+            // Group by 'Lab Inspections'
+            // TODO: Combine into a single Lab Inspections widget
+            // Pending Inspection Reports
+            $pendingWidget = new MyLabWidgetDto();
+            $pendingWidget->group = $_WIDGET_GROUP_INSPECTIONS;
+            $pendingWidget->title = "Pending Reports";
+            $pendingWidget->icon = "icon-search-2";
+            $pendingWidget->template = "inspection-table";
+            $pendingWidget->data = $open_inspections;
+            $widgets[] = $pendingWidget;
 
-            // Collect Open vs Archived
-            foreach( $inspections as $i ){
-                if( $i->getIsArchived() ){
-                    $archived_inspections[] = $i;
-                }
-                else{
-                    $open_inspections[] = $i;
-                }
-            }
+            // Archived Inspection Reports
+            $archivedWidget = new MyLabWidgetDto();
+            $archivedWidget->group = $_WIDGET_GROUP_INSPECTIONS;
+            $archivedWidget->title = "Archived Reports";
+            $archivedWidget->icon = "icon-search-2";
+            $archivedWidget->template = "inspection-table";
+            $archivedWidget->data = $archived_inspections;
+            $widgets[] = $archivedWidget;
         }
-
-        // Group by 'Lab Inspections'
-        // TODO: Combine into a single Lab Inspections widget
-        // Pending Inspection Reports
-        $pendingWidget = new MyLabWidgetDto();
-        $pendingWidget->group = $_WIDGET_GROUP_INSPECTIONS;
-        $pendingWidget->title = "Pending Reports";
-        $pendingWidget->icon = "icon-search-2";
-        $pendingWidget->template = "inspection-table";
-        $pendingWidget->data = $open_inspections;
-        $widgets[] = $pendingWidget;
-
-        // Archived Inspection Reports
-        $archivedWidget = new MyLabWidgetDto();
-        $archivedWidget->group = $_WIDGET_GROUP_INSPECTIONS;
-        $archivedWidget->title = "Archived Reports";
-        $archivedWidget->icon = "icon-search-2";
-        $archivedWidget->template = "inspection-table";
-        $archivedWidget->data = $archived_inspections;
-        $widgets[] = $archivedWidget;
 
         return $widgets;
     }
