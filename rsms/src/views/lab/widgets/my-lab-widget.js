@@ -17,7 +17,10 @@ angular.module('myLab')
             element.addClass("widget").addClass("well");
         },
         controller: function ($scope){
-            $scope.contentTemplate = './widgets/' + $scope.contentTemplateName + '.html';
+            if( $scope.contentTemplateName ){
+                $scope.contentTemplate = './widgets/' + $scope.contentTemplateName + '.html';
+            }
+
             console.log('content-template:', $scope.contentTemplate);
         }
     };
