@@ -1,6 +1,6 @@
 <?php
 
-class LabInspectionModule implements RSMS_Module, MessageTypeProvider {
+class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidgetProvider {
     public static $NAME = 'Lab Inspection';
 
     public static $MTYPE_CAP_REMINDER_DUE = 'LabInspectionReminderCAPDue';
@@ -91,6 +91,127 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider {
 
     public function getMacroResolvers(){
         return LabInspectionMessageMacros::getResolvers();
+    }
+
+    public function getMyLabWidgets( User $user ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        $widgets = array();
+        $_WIDGET_GROUP_PROFILE = "000_my-profile";
+        $_WIDGET_GROUP_INSPECTIONS = "001_lab-inspections";
+
+        $manager = $this->getActionManager();
+
+        // Get relevant PI for lab
+        $principalInvestigator = $manager->getPIByUserId( $user->getKey_id() );
+
+        // Collect User Info
+        // Notes:
+        //   Phone number inclusion varies by Role:
+        //     PI user – Office Phone and Emergency Phone.
+        //     Lab Contact – Lab Phone and Emergency Phone.
+        //     Lab Personnel – Lab Phone only
+        $userData = array(
+            'First_name' => $user->getFirst_name(),
+            'Last_name' => $user->getLast_name(),
+            'Name' => $user->getName(),
+            'Position' => $user->getPosition()
+        );
+
+        if( CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
+            $userData['Office_phone'] = $user->getOffice_phone();
+            $userData['Emergency_phone'] = $user->getEmergency_phone();
+        }
+        else{
+            if( CoreSecurity::userHasRoles($user, array('Lab Personnel')) ){
+                $userData['Lab_phone'] = $user->getLab_phone();
+            }
+
+            if( CoreSecurity::userHasRoles($user, array('Lab Contact')) ){
+                $userData['Emergency_phone'] = $user->getEmergency_phone();
+            }
+        }
+
+        $userInfoWidget = new MyLabWidgetDto();
+        $userInfoWidget->title = "My Profile";
+        $userInfoWidget->icon = "icon-user";
+        $userInfoWidget->group = $_WIDGET_GROUP_PROFILE;
+        $userInfoWidget->template = 'my-profile';
+        $userInfoWidget->data = new GenericDto($userData);
+        $widgets[] = $userInfoWidget;
+
+        $piInfoWidget = new MyLabWidgetDto();
+        $piInfoWidget->title = "Principal Investigator Details";
+        $piInfoWidget->icon = "icon-user-3";
+        $piInfoWidget->group = $_WIDGET_GROUP_PROFILE;
+        $piInfoWidget->template = 'pi-profile';
+        $piInfoWidget->data = $manager->buildUserDTO($user)->PrincipalInvestigator;
+
+        if( !CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
+            // If user is not a PI, omit Lab Location data
+            $piInfoWidget->data->Buildings = null;
+            $piInfoWidget->data->Rooms = null;
+        }
+
+        $widgets[] = $piInfoWidget;
+
+        // Collect inspections
+        $open_inspections = array();
+        $archived_inspections = array();
+
+        if( isset($principalInvestigator) ){
+            // Filter inspections by year based on current user role
+            $inspections = $principalInvestigator->getInspections();
+
+            $minYear = CoreSecurity::userHasRoles($user, array("Admin"))
+                ? 2017
+                : 2018;
+
+            foreach($inspections as $key => $inspection){
+                if( $inspection->getIsArchived() ){
+                    $closedYear = date_create($inspection->getDate_closed())->format("Y");
+
+                    if( $closedYear < $minYear ){
+                        $LOG->debug("Omit $inspection (closed $closedYear) for MyLab");
+                        unset($inspections[$key]);
+                    }
+                }
+            }
+
+            $principalInvestigator->setInspections($inspections);
+
+            // Collect Open vs Archived
+            foreach( $inspections as $i ){
+                if( $i->getIsArchived() ){
+                    $archived_inspections[] = $i;
+                }
+                else{
+                    $open_inspections[] = $i;
+                }
+            }
+        }
+
+        // Group by 'Lab Inspections'
+        // TODO: Combine into a single Lab Inspections widget
+        // Pending Inspection Reports
+        $pendingWidget = new MyLabWidgetDto();
+        $pendingWidget->group = $_WIDGET_GROUP_INSPECTIONS;
+        $pendingWidget->title = "Pending Reports";
+        $pendingWidget->icon = "icon-search-2";
+        $pendingWidget->template = "inspection-table";
+        $pendingWidget->data = $open_inspections;
+        $widgets[] = $pendingWidget;
+
+        // Archived Inspection Reports
+        $archivedWidget = new MyLabWidgetDto();
+        $archivedWidget->group = $_WIDGET_GROUP_INSPECTIONS;
+        $archivedWidget->title = "Archived Reports";
+        $archivedWidget->icon = "icon-search-2";
+        $archivedWidget->template = "inspection-table";
+        $archivedWidget->data = $archived_inspections;
+        $widgets[] = $archivedWidget;
+
+        return $widgets;
     }
 }
 ?>

@@ -2271,7 +2271,7 @@ class ActionManager {
         return $dtos;
     }
 
-    protected function buildUserDTO( User $user ){
+    public function buildUserDTO( User $user ){
         // Roles to DTOs
         $roleDtos = DtoFactory::buildDtos($user->getRoles(), 'DtoFactory::roleToDto');
 
@@ -2283,10 +2283,13 @@ class ActionManager {
             $piBuildings = $piDao->getBuildings($pi->getKey_id());
             $buildingDtos = DtoFactory::buildDtos($piBuildings, 'DtoFactory::buildingToDto');
             $deptDtos = DtoFactory::buildDtos($pi->getDepartments(), 'DtoFactory::departmentToDto');
+            $roomDtos = DtoFactory::buildDtos($pi->getRooms(), 'DtoFactory::roomToDto');
 
             $piDto = DtoFactory::buildDto($pi, array(
+                'Name' => $pi->getName(),
                 'Departments' => $deptDtos,
-                'Buildings' => $buildingDtos
+                'Buildings' => $buildingDtos,
+                'Rooms' => $roomDtos
             ));
         }
 
