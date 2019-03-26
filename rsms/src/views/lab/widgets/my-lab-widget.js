@@ -17,6 +17,8 @@ angular.module('myLab')
             element.addClass("widget").addClass("well");
         },
         controller: function ($scope){
+            $scope.GLOBAL_WEB_ROOT = window.GLOBAL_WEB_ROOT;
+
             if( $scope.contentTemplateName ){
                 $scope.contentTemplate = './widgets/' + $scope.contentTemplateName + '.html';
             }
