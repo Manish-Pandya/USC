@@ -67,6 +67,10 @@ require_once '../../RequireUserLoggedIn.php';
         width: 49%;
     }
 
+    .widget.full {
+        width: 100%;
+    }
+
     .widget .widget-header {
         padding-bottom: 20px;
     }
@@ -78,6 +82,25 @@ require_once '../../RequireUserLoggedIn.php';
     [class^="icon-"] {
         vertical-align: initial;
     }
+
+    /* widget-specific styles */
+    .widget .toolbar-container {
+        position: relative;
+        height: 70px;
+    }
+
+    .saving .toolbar-container {
+        display:none;
+    }
+
+    .widget .toolbar-container .toolbar {
+        text-align: right;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: 0;
+    }
+
 </style>
 
 <div ng-app="myLab" ng-controller="myLabController">
@@ -91,12 +114,23 @@ require_once '../../RequireUserLoggedIn.php';
         </ul>
     </div>
 
-    <div class="widget-group well full" ng-repeat="(group, widgets) in MyLabWidgets | groupBy: 'Group'">
+    <div class="alert alert-info my-lab-alert">
+        <ul ng-repeat="widget in MyLabWidgets">
+            <li ng-repeat="alert in widget.Alerts">
+                <a ng-href="#{{widget.Group}}">{{alert}}</a>
+            </li>
+        </ul>
+    </div>
+
+    <div id="{{group}}" class="widget-group well full" ng-repeat="(group, widgets) in MyLabWidgets | groupBy: 'Group'">
         <h3 ng-show="false" ng-if="group && group != 'null'">{{group}}</h3>
         <div class="widgets-container full">
             <my-lab-widget ng-repeat="widget in widgets"
+                api="widget_functions"
                 content-template-name="{{widget.Template}}"
                 data="widget.Data"
+                alerts="widget.Alerts"
+                full-width="widget.FullWidth"
                 group-name="{{widget.Group}}"
                 header-text="{{widget.Title}}"
                 header-icon="{{widget.Icon}}"

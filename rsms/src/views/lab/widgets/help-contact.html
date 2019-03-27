@@ -1,0 +1,17 @@
+<h4>If any of the above information cannot be updated, contact your administrator:</h4>
+<div class="fake-table well">
+    <div class="table-header">
+        <h3></h3>
+        <h3>Email</h3>
+        <h3>Lab</h3>
+        <h3>Office</h3>
+        <h3>Emergency</h3>
+    </div>
+    <div class="table-row">
+        <div>{{data.Name}}</div>
+        <div><a ng-href="mailto:{{data.Email}}">{{data.Email}}</a></div>
+        <div ng-if="data.Lab_phone">{{data.Lab_phone | tel}}</div>
+        <div ng-if="data.Office_phone">{{data.Office_phone | tel}}</div>
+        <div ng-if="data.Emergency_phone">{{data.Emergency_phone | tel}}</div>
+    </div>
+</div>

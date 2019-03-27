@@ -8,6 +8,8 @@ class MyLabWidgetDto {
     public $image;
     public $template;
     public $data;
+    public $fullWidth;
+    public $alerts;
 
     public function getGroup(){ return $this->group; }
     public function getTitle(){ return $this->title; }
@@ -15,6 +17,8 @@ class MyLabWidgetDto {
     public function getImage(){ return $this->image; }
     public function getTemplate(){ return $this->template; }
     public function getData(){ return $this->data; }
+    public function getFullWidth(){ return $this->fullWidth; }
+    public function getAlerts(){ return $this->alerts; }
 }
 
 

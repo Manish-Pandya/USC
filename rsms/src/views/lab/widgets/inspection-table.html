@@ -4,14 +4,16 @@
     <div class="table-header">
         <h3>Inspection Date</h3>
         <h3>Inspector(s)</h3>
+        <h3>Status</h3>
         <h3>Report</h3>
     </div>
 
-    <div class="table-row" ng-repeat="inspection in data">
+    <div class="table-row" ng-class="{inactive:inspection.IsArchived}" ng-repeat="inspection in data">
         <div>{{inspection.Date_started | dateToISO}}</div>
         <div>
             <span ng-repeat="inspector in inspection.Inspectors">{{inspector.Name}}<span ng-if="!$last">, </span></span>
         </div>
+        <div>{{inspection.Status}}</div>
         <div>
             <a class="btn btn-info left" href="../inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i class="icon-clipboard-2"></i>Inspection Report</a>
         </div>

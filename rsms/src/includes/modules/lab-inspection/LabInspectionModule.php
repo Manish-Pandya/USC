@@ -138,6 +138,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
         $userInfoWidget->group = $_WIDGET_GROUP_PROFILE;
         $userInfoWidget->template = 'my-profile';
         $userInfoWidget->data = new GenericDto($userData);
+
         $widgets[] = $userInfoWidget;
 
         if( isset( $principalInvestigator ) ){
@@ -192,26 +193,35 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
                 }
             }
 
-            // Group by 'Lab Inspections'
-            // TODO: Combine into a single Lab Inspections widget
-            // Pending Inspection Reports
-            $pendingWidget = new MyLabWidgetDto();
-            $pendingWidget->group = $_WIDGET_GROUP_INSPECTIONS;
-            $pendingWidget->title = "Pending Reports";
-            $pendingWidget->icon = "icon-search-2";
-            $pendingWidget->template = "inspection-table";
-            $pendingWidget->data = $open_inspections;
-            $widgets[] = $pendingWidget;
-
-            // Archived Inspection Reports
-            $archivedWidget = new MyLabWidgetDto();
-            $archivedWidget->group = $_WIDGET_GROUP_INSPECTIONS;
-            $archivedWidget->title = "Archived Reports";
-            $archivedWidget->icon = "icon-search-2";
-            $archivedWidget->template = "inspection-table";
-            $archivedWidget->data = $archived_inspections;
-            $widgets[] = $archivedWidget;
+            $inspectionsWidget = new MyLabWidgetDto();
+            $inspectionsWidget->group = $_WIDGET_GROUP_INSPECTIONS;
+            $inspectionsWidget->title = "Inspection Reports";
+            $inspectionsWidget->icon = "icon-search-2";
+            $inspectionsWidget->template = "inspection-table";
+            $inspectionsWidget->fullWidth = 1;
+            $inspectionsWidget->data = $inspections;
+            $widgets[] = $inspectionsWidget;
         }
+
+        // Help
+        $helpContact = $manager->getUserByUsername(ApplicationConfiguration::get('server.web.HELP_CONTACT_USERNAME'));
+
+        if( isset($helpContact) ){
+            $helpWidget = new MyLabWidgetDto();
+            $helpWidget->group = $_WIDGET_GROUP_PROFILE;
+            $helpWidget->title = "Help";
+            $helpWidget->icon = "icon-help";
+            $helpWidget->template = "help-contact";
+            $helpWidget->data = new GenericDto(array(
+                'Name' => $helpContact->getName(),
+                'Email' => $helpContact->getEmail(),
+                'Office_phone' => $user->getOffice_phone(),
+                'Emergency_phone' => $user->getEmergency_phone(),
+                'Lab_phone' => $user->getLab_phone()
+            ));
+            $widgets[] = $helpWidget;
+        }
+
 
         return $widgets;
     }

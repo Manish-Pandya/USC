@@ -1,24 +1,62 @@
-<div class="fake-table striped bordered">
-    <div class="table-row">
-        <div>Name</div>
-        <div>{{data.Name}}</div>
+<form>
+    <div class="fake-table striped bordered">
+        <div class="table-row">
+            <div>First Name</div>
+            <div>{{data.First_name}}</div>
+            <div ng-if="editData">
+                <input required ng-model="editData.First_name">
+            </div>
+        </div>
+        <div class="table-row">
+            <div>Last Name</div>
+            <div>{{data.Last_name}}</div>
+            <div ng-if="editData">
+                <input required ng-model="editData.Last_name">
+            </div>
+        </div>
+        <div class="table-row">
+            <div>Position</div>
+            <div>{{data.Position}}</div>
+            <div ng-if="editData">
+                <select required ng-model="editData.Position" ng-options="position as position for position in api.getProfilePositionOptions()">
+                    <option value="" style="display:none">--Select a Position--</option>
+                </select>
+            </div>
+        </div>
+        <div class="table-row" ng-if="data.Lab_phone != undefined">
+            <div>Lab Phone</div>
+            <div>{{data.Lab_phone | tel}}</div>
+            <div ng-if="editData">
+                <input required ng-model="editData.Lab_phone">
+            </div>
+        </div>
+        <div class="table-row" ng-if="data.Office_phone != undefined">
+            <div>Office Phone</div>
+            <div>{{data.Office_phone | tel}}</div>
+            <div ng-if="editData">
+                <input required ng-model="editData.Office_phone">
+            </div>
+        </div>
+        <div class="table-row" ng-if="data.Emergency_phone != undefined">
+            <div>Emergency Phone</div>
+            <div>{{data.Emergency_phone | tel}}</div>
+            <div ng-if="editData">
+                <input required ng-model="editData.Emergency_phone">
+            </div>
+        </div>
     </div>
-    <div class="table-row">
-        <div>Position</div>
-        <div>{{data.Position}}</div>
-    </div>
-    <div class="table-row" ng-if="data.Lab_phone != undefined">
-        <div>Lab Phone</div>
-        <div>{{data.Lab_phone | tel}}</div>
-    </div>
-    <div class="table-row" ng-if="data.Office_phone != undefined">
-        <div>Office Phone</div>
-        <div>{{data.Office_phone | tel}}</div>
-    </div>
-    <div class="table-row" ng-if="data.Emergency_phone != undefined">
-        <div>Emergency Phone</div>
-        <div>{{data.Emergency_phone | tel}}</div>
+</form>
+
+<div class="toolbar-container">
+    <div class="toolbar pull-right">
+        <a ng-if="!editData" ng-click="prepareEdit(data)" class="btn btn-inverse">
+            <i class="icon-pencil"></i>
+        </a>
+        <a ng-if="editData" ng-click="cancelEdit()" class="btn btn-danger">
+            <i class="icon-cancel"></i>
+        </a>
+        <a ng-if="editData" ng-click="save(editData, api.saveUserProfile)" class="btn btn-success">
+            <i class="icon-checkmark"></i>
+        </a>
     </div>
 </div>
-
-<a class="btn btn-inverse">Edit Profile</a>

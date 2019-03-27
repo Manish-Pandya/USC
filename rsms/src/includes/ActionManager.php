@@ -624,6 +624,17 @@ class ActionManager {
         }
     }
 
+    public function getUserByUsername( $username ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        if( $username !== NULL ){
+            $dao = new UserDAO();
+            return $dao->getUserByUsername($username);
+        }
+
+        return null;
+    }
+
     public function getSupervisorByUserId( $id = NULL ){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 

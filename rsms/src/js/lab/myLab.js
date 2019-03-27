@@ -69,8 +69,31 @@ function myLabController($scope, $rootScope, convenienceMethods, myLabFactory, r
           function(MyLabWidgets){
               $scope.MyLabWidgets = MyLabWidgets;
           }
-      )
-    }
+      );
+    };
+
+    $scope.widget_functions = {
+      getProfilePositionOptions: function(){
+        if( GLOBAL_SESSION_ROLES.userRoles.indexOf('Principal Investigator') > -1){
+          return Constants.PI_POSITION;
+        }
+        else if( GLOBAL_SESSION_ROLES.userRoles.indexOf('Lab Personnel') > -1){
+          return Constants.POSITION;
+        }
+      },
+
+      saveUserProfile: function(profile){
+        var profileWillSave = $q.defer();
+
+        console.log("TODO: Save changes to user profile:", profile);
+
+        setTimeout(function() {
+          profileWillSave.resolve(profile);
+        }, 5000);
+
+        return profileWillSave.promise;
+      }
+    };
 
     //init call
     $scope.inspectionPromise = getWidgets();
