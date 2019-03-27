@@ -84,6 +84,11 @@ require_once '../../RequireUserLoggedIn.php';
     }
 
     /* widget-specific styles */
+    .widget input,
+    .widget select {
+        width: 100%;
+    }
+
     .widget .toolbar-container {
         position: relative;
         height: 70px;
@@ -114,7 +119,7 @@ require_once '../../RequireUserLoggedIn.php';
         </ul>
     </div>
 
-    <div class="alert alert-info my-lab-alert">
+    <div ng-if="AllAlerts.length" class="alert alert-info my-lab-alert">
         <ul ng-repeat="widget in MyLabWidgets">
             <li ng-repeat="alert in widget.Alerts">
                 <a ng-href="#{{widget.Group}}">{{alert}}</a>

@@ -15,6 +15,9 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
     public static $MTYPE_CAP_SUBMITTED_ALL_COMPLETE = 'LabInspectionAllCompletedCAPSubmitted';
     public static $MTYPE_CAP_SUBMITTED_PENDING = 'LabInspectionPendingCAPSubmitted';
 
+    public static $MYLAB_GROUP_PROFILE = "000_my-profile";
+    public static $MYLAB_GROUP_INSPECTIONS = '001_lab-inspections';
+
     public function getModuleName(){
         return self::$NAME;
     }
@@ -97,47 +100,18 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $widgets = array();
-        $_WIDGET_GROUP_PROFILE = "000_my-profile";
-        $_WIDGET_GROUP_INSPECTIONS = "001_lab-inspections";
 
         $manager = $this->getActionManager();
 
         // Get relevant PI for lab
         $principalInvestigator = $manager->getPIByUserId( $user->getKey_id() );
 
-        // Collect User Info
-        // Notes:
-        //   Phone number inclusion varies by Role:
-        //     PI user – Office Phone and Emergency Phone.
-        //     Lab Contact – Lab Phone and Emergency Phone.
-        //     Lab Personnel – Lab Phone only
-        $userData = array(
-            'First_name' => $user->getFirst_name(),
-            'Last_name' => $user->getLast_name(),
-            'Name' => $user->getName(),
-            'Position' => $user->getPosition()
-        );
-
-        if( CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
-            $userData['Office_phone'] = $user->getOffice_phone();
-            $userData['Emergency_phone'] = $user->getEmergency_phone();
-        }
-        else{
-            if( CoreSecurity::userHasRoles($user, array('Lab Personnel')) ){
-                $userData['Lab_phone'] = $user->getLab_phone();
-            }
-
-            if( CoreSecurity::userHasRoles($user, array('Lab Contact')) ){
-                $userData['Emergency_phone'] = $user->getEmergency_phone();
-            }
-        }
-
         $userInfoWidget = new MyLabWidgetDto();
         $userInfoWidget->title = "My Profile";
         $userInfoWidget->icon = "icon-user";
-        $userInfoWidget->group = $_WIDGET_GROUP_PROFILE;
+        $userInfoWidget->group = self::$MYLAB_GROUP_PROFILE;
         $userInfoWidget->template = 'my-profile';
-        $userInfoWidget->data = new GenericDto($userData);
+        $userInfoWidget->data = $manager->getMyProfile( $user->getKey_id() );
 
         $widgets[] = $userInfoWidget;
 
@@ -145,7 +119,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             $piInfoWidget = new MyLabWidgetDto();
             $piInfoWidget->title = "Principal Investigator Details";
             $piInfoWidget->icon = "icon-user-3";
-            $piInfoWidget->group = $_WIDGET_GROUP_PROFILE;
+            $piInfoWidget->group = self::$MYLAB_GROUP_PROFILE;
             $piInfoWidget->template = 'pi-profile';
             $piInfoWidget->data = $manager->buildUserDTO($user)->PrincipalInvestigator;
 
@@ -194,7 +168,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             }
 
             $inspectionsWidget = new MyLabWidgetDto();
-            $inspectionsWidget->group = $_WIDGET_GROUP_INSPECTIONS;
+            $inspectionsWidget->group = self::$MYLAB_GROUP_INSPECTIONS;
             $inspectionsWidget->title = "Inspection Reports";
             $inspectionsWidget->icon = "icon-search-2";
             $inspectionsWidget->template = "inspection-table";
@@ -208,7 +182,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
 
         if( isset($helpContact) ){
             $helpWidget = new MyLabWidgetDto();
-            $helpWidget->group = $_WIDGET_GROUP_PROFILE;
+            $helpWidget->group = self::$MYLAB_GROUP_PROFILE;
             $helpWidget->title = "Help";
             $helpWidget->icon = "icon-help";
             $helpWidget->template = "help-contact";

@@ -5452,7 +5452,13 @@ class ActionManager {
 
     public function getMyLabWidgets(){
         $widgets = array();
-        $user = $this->getCurrentUser();
+
+        // Get session-cached user details
+        $sess_user = $this->getCurrentUser();
+
+        // Get persisted user details via session user ID
+        $user = $this->getUserById($sess_user->getKey_id());
+
         foreach( ModuleManager::getAllModules() as $module ){
             if( $module instanceof MyLabWidgetProvider ){
                 $widgets = array_merge( $widgets, $module->getMyLabWidgets( $user ));
@@ -5460,6 +5466,105 @@ class ActionManager {
         }
 
         return $widgets;
+    }
+
+    public function getMyProfile( $userId = null ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $userId = $this->getValueFromRequest('userId', $userId);
+        if( !isset($userId) ){
+            $LOG->debug("User retrieving own profile");
+            $userId = $this->getCurrentUser()->getKey_id();
+        }
+
+        $user = $this->getUserById($userId);
+        if( !isset($user) ){
+            return new ActionError("No such user", 404);
+        }
+
+        // Collect User Info
+        // Notes:
+        //   Phone number inclusion varies by Role:
+        //     PI user – Office Phone and Emergency Phone.
+        //     Lab Contact – Lab Phone and Emergency Phone.
+        //     Lab Personnel – Lab Phone only
+        $userData = array(
+            'First_name' => $user->getFirst_name(),
+            'Last_name' => $user->getLast_name(),
+            'Name' => $user->getName(),
+            'Position' => $user->getPosition()
+        );
+
+        if( CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
+            $userData['Office_phone'] = $user->getOffice_phone();
+            $userData['Emergency_phone'] = $user->getEmergency_phone();
+        }
+        else{
+            if( CoreSecurity::userHasRoles($user, array('Lab Personnel')) ){
+                $userData['Lab_phone'] = $user->getLab_phone();
+            }
+
+            if( CoreSecurity::userHasRoles($user, array('Lab Contact')) ){
+                $userData['Emergency_phone'] = $user->getEmergency_phone();
+            }
+        }
+
+        return new GenericDto($userData);
+    }
+
+    public function saveMyProfile( $userId = NULL, $profile = NULL ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        if( !isset($profile) ){
+            $LOG->debug("Read profile data from input");
+            $profile = $this->readRawInputJson();
+        }
+
+        $userId = $this->getValueFromRequest('userId', $userId);
+        if( !isset($userId) ){
+            $LOG->debug("User editing own profile");
+            $userId = $this->getCurrentUser()->getKey_id();
+        }
+
+        $user = $this->getUserById($userId);
+        if( !isset($user) ){
+            return new ActionError("No such user", 404);
+        }
+
+        $LOG->info("Checking profile changes for $user");
+        $LOG->debug($profile);
+
+        $fields = array(
+            'First_name', 'Last_name', 'Position',
+            'Office_phone', 'Emergency_phone', 'Lab_phone'
+        );
+
+        $updated = false;
+        foreach( $fields as $field ){
+            // TODO: Should we allow nulls? By using isset, we prevent the ability to empty a value
+            if( isset($profile[$field]) ){
+                $setter = "set$field";
+                $getter = "get$field";
+                $prev = $user->$getter();
+
+                if( $prev != $profile[$field] ){
+                    $LOG->debug("Updating user $field");
+                    $user->$setter($profile[$field]);
+                    $updated = true;
+                }
+            }
+        }
+
+        if( $updated ){
+            $LOG->info("Saving changes made to $user profile...");
+            $userDao = new UserDAO();
+            $userDao->save($user);
+        }
+        else{
+            $LOG->info("No changes made to $user profile");
+        }
+
+        return $this->getMyProfile( $user->getKey_id() );
     }
 
     //generate a random float

@@ -56,6 +56,22 @@ var myLab = angular.module('myLab', [
           return deferred.promise
         };
 
+        factory.saveMyProfile = function( profile ){
+          var deferred = $q.defer();
+
+          var url = "../../ajaxaction.php?&action=saveMyProfile";
+          convenienceMethods.saveDataAndDefer(url, profile).then(
+            function(saved){
+              deferred.resolve(saved);
+            },
+            function(error){
+              deferred.reject(error);
+            }
+          );
+
+          return deferred.promise;
+        };
+
         return factory;
 });
 
@@ -68,6 +84,16 @@ function myLabController($scope, $rootScope, convenienceMethods, myLabFactory, r
       .then(
           function(MyLabWidgets){
               $scope.MyLabWidgets = MyLabWidgets;
+              if( $scope.MyLabWidgets ){
+                $scope.AllAlerts = [];
+                $scope.MyLabWidgets.forEach(w => {
+                  if( w.Alerts && w.Alerts.length ){
+                    $w.Alerts.forEach(alert => {
+                      $scope.AllAlerts.push({ group: w.Group, message: alert});
+                    });
+                  }
+                });
+              }
           }
       );
     };
@@ -87,9 +113,15 @@ function myLabController($scope, $rootScope, convenienceMethods, myLabFactory, r
 
         console.log("TODO: Save changes to user profile:", profile);
 
-        setTimeout(function() {
-          profileWillSave.resolve(profile);
-        }, 5000);
+        mlf.saveMyProfile(profile)
+          .then(
+            saved => {
+              profileWillSave.resolve(saved);
+            },
+            error => {
+              console.error(error);
+              profileWillSave.reject(error);
+            });
 
         return profileWillSave.promise;
       }

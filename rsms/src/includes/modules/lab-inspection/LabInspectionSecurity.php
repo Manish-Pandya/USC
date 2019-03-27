@@ -176,5 +176,28 @@ class LabInspectionSecurity {
         return false;
     }
 
+    public static function userCanEditProfile( $userId ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $user = $_SESSION['USER'];
+
+        if( CoreSecurity::userHasAnyRole($user, array('Admin'))){
+            // User is Admin
+            $LOG->debug("User is administrator");
+            return true;
+        }
+
+        if( !isset($userId) ){
+            $LOG->debug("User is editing their own profile");
+            return true;
+        }
+
+        if( $user->getKey_id() == $userId ){
+            $LOG->debug("User is the profile being edited");
+            return true;
+        }
+
+        return false;
+    }
 }
 ?>

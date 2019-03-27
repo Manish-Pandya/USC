@@ -45,9 +45,12 @@ angular.module('myLab')
             $scope.save = function(data, api_fn){
                 $scope.saving = true;
                 api_fn(data).then(
-                    data => {
+                    saved => {
                         // Save completed successfully
                         $scope.saving = false;
+
+                        // Completely reset our data?
+                        $scope.data = saved;
 
                         // Clear out the edit form
                         $scope.cancelEdit();
