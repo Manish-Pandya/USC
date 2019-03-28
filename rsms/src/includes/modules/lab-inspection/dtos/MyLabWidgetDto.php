@@ -9,7 +9,9 @@ class MyLabWidgetDto {
     public $template;
     public $data;
     public $fullWidth;
+
     public $alerts;
+    public $actionWidgets;
 
     public function getGroup(){ return $this->group; }
     public function getTitle(){ return $this->title; }
@@ -19,6 +21,7 @@ class MyLabWidgetDto {
     public function getData(){ return $this->data; }
     public function getFullWidth(){ return $this->fullWidth; }
     public function getAlerts(){ return $this->alerts; }
+    public function getActionWidgets(){ return $this->actionWidgets; }
 }
 
 

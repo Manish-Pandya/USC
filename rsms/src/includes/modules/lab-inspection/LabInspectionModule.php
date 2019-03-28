@@ -105,13 +105,23 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
 
         // Get relevant PI for lab
         $principalInvestigator = $manager->getPIByUserId( $user->getKey_id() );
+        $profileData = $manager->getMyProfile( $user->getKey_id() );
 
         $userInfoWidget = new MyLabWidgetDto();
         $userInfoWidget->title = "My Profile";
         $userInfoWidget->icon = "icon-user";
         $userInfoWidget->group = self::$MYLAB_GROUP_PROFILE;
         $userInfoWidget->template = 'my-profile';
-        $userInfoWidget->data = $manager->getMyProfile( $user->getKey_id() );
+        $userInfoWidget->data = $profileData;
+
+        if( !isset($profileData->Position) ){
+            $profilePositionWidget = new MyLabWidgetDto();
+            $profilePositionWidget->title = "My Profile - Position";
+            $profilePositionWidget->icon = "icon-user";
+            $profilePositionWidget->template = 'my-profile-position';
+
+            $userInfoWidget->actionWidgets = array( $profilePositionWidget );
+        }
 
         $widgets[] = $userInfoWidget;
 

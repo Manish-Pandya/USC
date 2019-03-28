@@ -132,6 +132,7 @@ require_once '../../RequireUserLoggedIn.php';
         <div class="widgets-container full">
             <my-lab-widget ng-repeat="widget in widgets"
                 api="widget_functions"
+                widget="widget"
                 content-template-name="{{widget.Template}}"
                 data="widget.Data"
                 alerts="widget.Alerts"

@@ -1,0 +1,16 @@
+<h2 class="redBg">Action Required</h2>
+<div style="padding:20px">
+    <my-lab-widget
+        api="widget_functions"
+        widget="widget"
+        content-template-name="{{widget.Template}}"
+        data="widget.Data"
+        alerts="widget.Alerts"
+        full-width="true"
+        group-name="{{widget.Group}}"
+        header-text="{{widget.Title}}"
+        header-icon="{{widget.Icon}}"
+        header-image="{{widget.Image}}"
+        after-save="closeModal(widget.Data)">
+    </my-lab-widget>
+</div>

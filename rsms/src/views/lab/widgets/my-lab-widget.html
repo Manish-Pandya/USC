@@ -6,6 +6,10 @@
 </h2>
 <ng-include ng-if="contentTemplate" src="contentTemplate" class="content" ng-class="{saving: saving}"></ng-include>
 <span ng-if="saving">
-        <h1 style="z-index:30000; text-align:center; color:black;"><i style="color:black;" class="spinner icon-spinnery-dealie large"></i>{{$message}}</h1>
+    <h1 style="z-index:30000; text-align:center; color:black;">
+        <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
+        {{$message}}
+    </h1>
 </span>
+<div ng-if="error" class="error message red">{{error}}</div>
 <span ng-if="!contentTemplate">No data to display at this time.</span>

@@ -1,5 +1,5 @@
 angular.module('myLab')
-    .directive("myLabWidget", function () {
+    .directive("myLabWidget", function (widgetModalActionFactory, widgetFunctionsFactory) {
     return {
         restrict: 'E',
         scope: {
@@ -8,10 +8,12 @@ angular.module('myLab')
             headerImage: "@",
             groupName: "@",
             contentTemplateName: "@",
+            widget: '=',
             fullWidth: "=",
             alerts: "=",
             data: "=",
-            api: "="
+            api: "=",
+            afterSave: "&"
         },
         replace: false,
         transclude: true,
@@ -24,7 +26,7 @@ angular.module('myLab')
                 element.addClass("full");
             }
         },
-        controller: function ($scope){
+        controller: function ($scope, widgetModalActionFactory, widgetFunctionsFactory){
             $scope.GLOBAL_WEB_ROOT = window.GLOBAL_WEB_ROOT;
             $scope.Constants = Constants;
 
@@ -33,6 +35,15 @@ angular.module('myLab')
             }
 
             console.log('content-template:', $scope.contentTemplate);
+
+            if( $scope.widget.ActionWidgets ){
+                console.log($scope.widget.ActionWidgets );
+                for( var i = 0; i < $scope.widget.ActionWidgets.length; i++){
+                    var actionWidget = $scope.widget.ActionWidgets[i];
+                    actionWidget.Data = $scope.data;
+                    widgetModalActionFactory.addAction(this, actionWidget);
+                }
+            }
 
             $scope.prepareEdit = function(data){
                 $scope.editData = angular.copy(data);
@@ -44,7 +55,7 @@ angular.module('myLab')
 
             $scope.save = function(data, api_fn){
                 $scope.saving = true;
-                api_fn(data).then(
+                var promise = api_fn(data).then(
                     saved => {
                         // Save completed successfully
                         $scope.saving = false;
@@ -54,13 +65,22 @@ angular.module('myLab')
 
                         // Clear out the edit form
                         $scope.cancelEdit();
+                        return $scope.data;
                     },
                     err  => {
                         // Error in saving; keep the edit form open
-                        // TODO: DISPLAY ERROR MESSAGE
                         $scope.saving = false;
+
+                        // TODO: DISPLAY ERROR MESSAGE
+                        $scope.error = "Something went wrong.";
                     }
                 );
+
+                if( $scope.afterSave ){
+                    promise.then( $scope.afterSave );
+                }
+
+                return promise;
             }
         }
     };

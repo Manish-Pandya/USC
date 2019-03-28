@@ -27,6 +27,45 @@ var myLab = angular.module('myLab', [
         return matches;
   };
 })
+.controller('ActionWidgetModalCtrl', function($scope, $modalInstance, widget, widget_functions){
+
+  $scope.widget = widget;
+  $scope.widget_functions = widget_functions;
+
+  $scope.closeModal = function(data){
+    $modalInstance.close(data);
+  }
+
+})
+.factory('widgetModalActionFactory', function($q, $modal, widgetFunctionsFactory){
+
+  var factory = {};
+  factory.actionChain = null;
+
+  factory.addAction = function(parentWidget, actionWidget){
+    if( !factory.actionChain ){
+      var deferred = $q.defer();
+      deferred.resolve();
+      factory.actionChain = deferred.promise;
+    }
+
+    return factory.actionChain.then(function(){
+      var instance = $modal.open({
+        templateUrl: "widgets/action-widget-modal.html",
+        controller: 'ActionWidgetModalCtrl',
+        resolve: {
+          widget_functions: function() { return widgetFunctionsFactory; },
+          widget: function () { return actionWidget; }
+        }
+      });
+
+      return instance.result;
+    });
+
+  };
+
+  return factory;
+})
 .factory('myLabFactory', function(convenienceMethods,$q,$rootScope){
 
         var factory = {};
@@ -73,9 +112,53 @@ var myLab = angular.module('myLab', [
         };
 
         return factory;
+})
+.factory('widgetFunctionsFactory', function($q, myLabFactory){
+  var widget_functions = {
+    getProfilePositionRequiredRole: function(){
+      if( GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR) > -1){
+        return Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR;
+      }
+      else if( GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.LAB_PERSONNEL) > -1){
+        return Constants.ROLE.NAME.LAB_PERSONNEL;
+      }
+    },
+
+    getProfilePositionOptions: function(){
+      switch( widget_functions.getProfilePositionRequiredRole() ){
+        case Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR:
+          return Constants.PI_POSITION;
+
+        case Constants.ROLE.NAME.LAB_PERSONNEL:
+          return Constants.POSITION;
+
+        default: return [];
+      }
+    },
+
+    saveUserProfile: function(profile){
+      var profileWillSave = $q.defer();
+
+      console.log("TODO: Save changes to user profile:", profile);
+
+      myLabFactory.saveMyProfile(profile)
+        .then(
+          saved => {
+            profileWillSave.resolve(saved);
+          },
+          error => {
+            console.error(error);
+            profileWillSave.reject(error);
+          });
+
+      return profileWillSave.promise;
+    }
+  };
+
+  return widget_functions;
 });
 
-function myLabController($scope, $rootScope, convenienceMethods, myLabFactory, roleBasedFactory, $q) {
+function myLabController($scope, $rootScope, convenienceMethods, myLabFactory, widgetFunctionsFactory) {
     var mlf = myLabFactory
     $scope.mlf = mlf;
 
@@ -98,34 +181,7 @@ function myLabController($scope, $rootScope, convenienceMethods, myLabFactory, r
       );
     };
 
-    $scope.widget_functions = {
-      getProfilePositionOptions: function(){
-        if( GLOBAL_SESSION_ROLES.userRoles.indexOf('Principal Investigator') > -1){
-          return Constants.PI_POSITION;
-        }
-        else if( GLOBAL_SESSION_ROLES.userRoles.indexOf('Lab Personnel') > -1){
-          return Constants.POSITION;
-        }
-      },
-
-      saveUserProfile: function(profile){
-        var profileWillSave = $q.defer();
-
-        console.log("TODO: Save changes to user profile:", profile);
-
-        mlf.saveMyProfile(profile)
-          .then(
-            saved => {
-              profileWillSave.resolve(saved);
-            },
-            error => {
-              console.error(error);
-              profileWillSave.reject(error);
-            });
-
-        return profileWillSave.promise;
-      }
-    };
+    $scope.widget_functions = widgetFunctionsFactory;
 
     //init call
     $scope.inspectionPromise = getWidgets();
