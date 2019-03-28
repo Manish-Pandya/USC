@@ -2282,26 +2282,29 @@ class ActionManager {
         return $dtos;
     }
 
+    public function buildPIDTO( PrincipalInvestigator $pi ){
+        $piDao = new PrincipalInvestigatorDAO();
+        $piBuildings = $piDao->getBuildings($pi->getKey_id());
+        $buildingDtos = DtoFactory::buildDtos($piBuildings, 'DtoFactory::buildingToDto');
+        $deptDtos = DtoFactory::buildDtos($pi->getDepartments(), 'DtoFactory::departmentToDto');
+        $roomDtos = DtoFactory::buildDtos($pi->getRooms(), 'DtoFactory::roomToDto');
+
+        return DtoFactory::buildDto($pi, array(
+            'Name' => $pi->getName(),
+            'Departments' => $deptDtos,
+            'Buildings' => $buildingDtos,
+            'Rooms' => $roomDtos
+        ));
+    }
+
     public function buildUserDTO( User $user ){
         // Roles to DTOs
         $roleDtos = DtoFactory::buildDtos($user->getRoles(), 'DtoFactory::roleToDto');
 
         // PI to DTO (or null)
         $pi = $user->getPrincipalInvestigator();
-        $piDto = null;
         if( isset($pi) ){
-            $piDao = new PrincipalInvestigatorDAO();
-            $piBuildings = $piDao->getBuildings($pi->getKey_id());
-            $buildingDtos = DtoFactory::buildDtos($piBuildings, 'DtoFactory::buildingToDto');
-            $deptDtos = DtoFactory::buildDtos($pi->getDepartments(), 'DtoFactory::departmentToDto');
-            $roomDtos = DtoFactory::buildDtos($pi->getRooms(), 'DtoFactory::roomToDto');
-
-            $piDto = DtoFactory::buildDto($pi, array(
-                'Name' => $pi->getName(),
-                'Departments' => $deptDtos,
-                'Buildings' => $buildingDtos,
-                'Rooms' => $roomDtos
-            ));
+            $piDto = $this->buildPIDTO($pi);
         }
 
         $supervisorDto = DtoFactory::piToDto($user->getSupervisor());
@@ -3066,6 +3069,15 @@ class ActionManager {
         $userDao = $this->getDao(new User());
         $user = $userDao->getById($id);
         return $user->getPrincipalInvestigator();
+    }
+
+    public function getPrincipalInvestigatorOrSupervisorForUser( User $user ){
+        if( $user->getSupervisor_id() != null ){
+            return $user->getSupervisor();
+        }
+        else {
+            return $user->getPrincipalInvestigator();
+        }
     }
 
     //Get a room dto duple

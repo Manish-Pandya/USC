@@ -104,7 +104,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
         $manager = $this->getActionManager();
 
         // Get relevant PI for lab
-        $principalInvestigator = $manager->getPIByUserId( $user->getKey_id() );
+        $principalInvestigator = $manager->getPrincipalInvestigatorOrSupervisorForUser( $user );
         $profileData = $manager->getMyProfile( $user->getKey_id() );
 
         $userInfoWidget = new MyLabWidgetDto();
@@ -131,7 +131,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             $piInfoWidget->icon = "icon-user-3";
             $piInfoWidget->group = self::$MYLAB_GROUP_PROFILE;
             $piInfoWidget->template = 'pi-profile';
-            $piInfoWidget->data = $manager->buildUserDTO($user)->PrincipalInvestigator;
+            $piInfoWidget->data = $manager->buildPIDTO($principalInvestigator);
 
             if( !CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
                 // If user is not a PI, omit Lab Location data
