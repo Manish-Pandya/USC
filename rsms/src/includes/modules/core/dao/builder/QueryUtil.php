@@ -136,8 +136,23 @@ class QueryUtil {
         $pred = implode(' ', array($field, $operator));
 
         if( isset($val) ){
-            $val_id = $this->bind_value($val, $valPdoType);
-            $pred .= " $val_id";
+            if( $operator == 'IN' && is_array($val) ){
+                // Bind an array of values
+                $bound_valIds = array();
+                foreach($val as $v){
+                    $val_id = $this->bind_value($v, $valPdoType);
+                    $bound_valIds[] = $val_id;
+                }
+
+                $pred .= '(' . implode(', ', $bound_valIds) . ')';
+
+            }
+            else {
+                // Bind a single value
+                $val_id = $this->bind_value($val, $valPdoType);
+                $pred .= " $val_id";
+            }
+
         }
 
         $this->predicates[] = $pred;
