@@ -1,0 +1,29 @@
+<h3 style="margin-top:10px;" ng-show="!data.length">No reports at this time.</h3>
+<div class="fake-table bordered striped" ng-show="data.length">
+    
+    <div class="table-header">
+        <h3>Location</h3>
+        <h3>Type</h3>
+        <h3>Manufacturer</h3>
+        <h3>Model</h3>
+        <h3>Serial #</h3>
+        <h3>Certification Status</h3>
+    </div>
+
+    <div class="table-row" ng-repeat="equipment in data">
+        <div>
+            <span ng-repeat="insp in inspections = (equipment.EquipmentInspections | orderBy:'Due_date':true | limitTo:1)">
+                {{insp.Room.Building.Alias || insp.Room.Building.Name}} {{insp.Room.Name}}
+            </span>
+        </div>
+        <div>{{equipment.Type}}</div>
+        <div>{{equipment.Make}}</div>
+        <div>{{equipment.Model}}</div>
+        <div>{{equipment.Serial_number}}</div>
+        <div>
+            <span ng-repeat="inspection in inspections">
+                {{inspection.Status}}
+            </span>
+        </div>
+    </div>
+</div>

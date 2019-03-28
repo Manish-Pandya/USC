@@ -373,7 +373,40 @@ class Equipment_ActionManager extends ActionManager {
         catch( IOException $e ){
 			return new ActionError($e->getMessage(), $e->getCode());
         }
-	}
+    }
+
+    public function getEquipmentForPI( PrincipalInvestigator $pi ){
+        // 'Equipment' records are technically based around Inspections of equipment.
+        //  The Inspections describe WHERE equipment is stored and WHO is responsible for it,
+        //    whereas the related Equipment record describes WHAT the equipment is
+
+        // 1. Get Rooms for this PI
+        $rooms = $pi->getRooms();
+        $room_ids = array_map(function($r){ return $r->getKey_id();}, $rooms);
+
+        // 2. Get BioSafetyCabinets for these Rooms
+        // TODO: Also select from other types of equipment
+        $piCabs = QueryUtil::selectFrom(new BioSafetyCabinet())
+            ->joinTo( DataRelationship::fromArray(array(
+                "className"	=>	"EquipmentInspection",
+                "tableName"	=>	"equipment_inspection",
+                "keyName"	=>	"key_id",
+                "foreignKeyName" =>	"equipment_id")))
+            ->where(Field::create('equipment_class', 'equipment_inspection'), '=', BioSafetyCabinet::class)
+            ->where(Field::create('room_id', 'equipment_inspection'), 'IN', $room_ids)
+            ->groupBy(Field::create('equipment_id', 'equipment_inspection'))
+            ->getAll();
+
+        EntityManager::with_entity_maps(EquipmentInspection::class, array(
+            EntityMap::eager("getRoom")
+        ));
+
+        EntityManager::with_entity_maps(Room::class, array(
+            EntityMap::eager("getBuilding")
+        ));
+
+        return $piCabs;
+    }
 }
 
 ?>

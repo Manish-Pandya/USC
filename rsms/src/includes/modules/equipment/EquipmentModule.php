@@ -29,12 +29,20 @@ class EquipmentModule implements RSMS_Module, MyLabWidgetProvider {
     public function getMyLabWidgets( User $user ){
         $widgets = array();
 
-        $equipmentWidget = new MyLabWidgetDto();
-        $equipmentWidget->title = "Equipment";
-        $equipmentWidget->icon = "icon-cog-2";
-        $equipmentWidget->template = null;
-        $equipmentWidget->data = null;
-        $widgets[] = $equipmentWidget;
+        $manager = $this->getActionManager();
+        $principalInvestigator = $manager->getPrincipalInvestigatorOrSupervisorForUser( $user );
+
+        if( isset($principalInvestigator) ){
+            $equipment = $manager->getEquipmentForPI( $principalInvestigator );
+
+            $equipmentWidget = new MyLabWidgetDto();
+            $equipmentWidget->title = "Equipment";
+            $equipmentWidget->icon = "icon-cog-2";
+            $equipmentWidget->template = "equipment-table";
+            $equipmentWidget->fullWidth = 1;
+            $equipmentWidget->data = $equipment;
+            $widgets[] = $equipmentWidget;
+        }
 
         return $widgets;
     }
