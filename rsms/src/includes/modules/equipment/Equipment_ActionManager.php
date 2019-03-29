@@ -375,7 +375,7 @@ class Equipment_ActionManager extends ActionManager {
         }
     }
 
-    public function getEquipmentForPI( PrincipalInvestigator $pi ){
+    public function getEquipmentForPI( PrincipalInvestigator $pi, string $equipmentClassName ){
         // 'Equipment' records are technically based around Inspections of equipment.
         //  The Inspections describe WHERE equipment is stored and WHO is responsible for it,
         //    whereas the related Equipment record describes WHAT the equipment is
@@ -384,15 +384,14 @@ class Equipment_ActionManager extends ActionManager {
         $rooms = $pi->getRooms();
         $room_ids = array_map(function($r){ return $r->getKey_id();}, $rooms);
 
-        // 2. Get BioSafetyCabinets for these Rooms
-        // TODO: Also select from other types of equipment
-        $piCabs = QueryUtil::selectFrom(new BioSafetyCabinet())
+        // 2. Get Specified type of equipment for these Rooms
+        $piCabs = QueryUtil::selectFrom(new $equipmentClassName)
             ->joinTo( DataRelationship::fromArray(array(
                 "className"	=>	"EquipmentInspection",
                 "tableName"	=>	"equipment_inspection",
                 "keyName"	=>	"key_id",
                 "foreignKeyName" =>	"equipment_id")))
-            ->where(Field::create('equipment_class', 'equipment_inspection'), '=', BioSafetyCabinet::class)
+            ->where(Field::create('equipment_class', 'equipment_inspection'), '=', $equipmentClassName)
             ->where(Field::create('room_id', 'equipment_inspection'), 'IN', $room_ids)
             ->groupBy(Field::create('equipment_id', 'equipment_inspection'))
             ->getAll();
