@@ -156,9 +156,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             $widgets[] = $piInfoWidget;
 
             // Collect inspections
-            $open_inspections = array();
-            $archived_inspections = array();
-
+            $inspections = array();
             if( isset($principalInvestigator) ){
                 // Filter inspections by year based on current user role
                 $inspections = $principalInvestigator->getInspections();
@@ -176,19 +174,13 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
                             unset($inspections[$key]);
                         }
                     }
+                    else {
+                        $LOG->debug("Omit $inspection (still open) for MyLab");
+                        unset($inspections[$key]);
+                    }
                 }
 
                 $principalInvestigator->setInspections($inspections);
-
-                // Collect Open vs Archived
-                foreach( $inspections as $i ){
-                    if( $i->getIsArchived() ){
-                        $archived_inspections[] = $i;
-                    }
-                    else{
-                        $open_inspections[] = $i;
-                    }
-                }
             }
 
             $inspectionsWidget = new MyLabWidgetDto();
