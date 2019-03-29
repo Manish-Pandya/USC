@@ -5508,16 +5508,16 @@ class ActionManager {
         );
 
         if( CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
-            $userData['Office_phone'] = $user->getOffice_phone();
-            $userData['Emergency_phone'] = $user->getEmergency_phone();
+            $userData['Office_phone'] = $user->getOffice_phone() ?? '';
+            $userData['Emergency_phone'] = $user->getEmergency_phone() ?? '';
         }
         else{
             if( CoreSecurity::userHasRoles($user, array('Lab Personnel')) ){
-                $userData['Lab_phone'] = $user->getLab_phone();
+                $userData['Lab_phone'] = $user->getLab_phone() ?? '';
             }
 
             if( CoreSecurity::userHasRoles($user, array('Lab Contact')) ){
-                $userData['Emergency_phone'] = $user->getEmergency_phone();
+                $userData['Emergency_phone'] = $user->getEmergency_phone() ?? '';
             }
         }
 
