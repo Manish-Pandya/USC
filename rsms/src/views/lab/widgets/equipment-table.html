@@ -1,4 +1,4 @@
-<h3 style="margin-top:10px;" ng-show="!data.length">No reports at this time.</h3>
+<h3 style="margin-top:10px;" ng-show="!data.length">No equipment to display at this time.</h3>
 <div class="fake-table bordered striped" ng-show="data.length">
     
     <div class="table-header">
@@ -12,7 +12,7 @@
 
     <div class="table-row" ng-repeat="equipment in data">
         <div>
-            <span ng-repeat="insp in inspections = (equipment.EquipmentInspections | orderBy:'Due_date':true | limitTo:1)">
+            <span ng-repeat="insp in inspections = (equipment.EquipmentInspections | recentEquipmentInspections | orderBy:'Due_date':true | limitTo:1)">
                 {{insp.Room.Building.Alias || insp.Room.Building.Name}} {{insp.Room.Name}}
             </span>
         </div>
@@ -22,7 +22,17 @@
         <div>{{equipment.Serial_number}}</div>
         <div>
             <span ng-repeat="inspection in inspections">
-                {{inspection.Status}}
+                <!-- Copied from equipment module cabinet-table... -->
+                <span ng-class="{'red': inspection.Status == Constants.EQUIPMENT.STATUS.FAIL || inspection.Status == Constants.EQUIPMENT.STATUS.OVERDUE || inspection.Is_uncertified,
+                        'yellow': inspection.Status == Constants.EQUIPMENT.STATUS.PENDING || inspection.Status == Constants.EQUIPMENT.STATUS.NEW,
+                        'green': inspection.Status == Constants.EQUIPMENT.STATUS.PASS }">
+                    <span class="bold" ng-if="inspection.Is_uncertified && inspection.Status != Constants.EQUIPMENT.STATUS.FAIL">FAILED ON: {{inspection.Due_date | dateToISO}}</span>
+                    <span class="bold" ng-if="!inspection.Is_uncertified && inspection.Status == Constants.EQUIPMENT.STATUS.FAIL">FAIL</span>
+                    <span class="bold" ng-if="inspection.Status == Constants.EQUIPMENT.STATUS.OVERDUE">OVERDUE: {{inspection.Due_date | dateToISO}}</span>
+                    <span class="bold" ng-if="inspection.Status == Constants.EQUIPMENT.STATUS.PENDING">DUE: {{inspection.Due_date | dateToISO}}</span>
+                    <span class="bold" ng-if="inspection.Status == Constants.EQUIPMENT.STATUS.NEW">NO CERTIFICATION RECORD</span>
+                    <span class="bold green" ng-if="inspection.Status == Constants.EQUIPMENT.STATUS.PASS">PASS</span>
+                </span>
             </span>
         </div>
     </div>

@@ -27,6 +27,22 @@ var myLab = angular.module('myLab', [
         return matches;
   };
 })
+.filter('recentEquipmentInspections', function(){
+  var current_year = new Date().getFullYear();
+
+  return function(equipmentInspections){
+    if(!equipmentInspections) return;
+    return equipmentInspections.filter(function(i){
+      // Include inspections which are either:
+      //  1. Uncertified and not yet failed or failed this year
+      var cond_one = (i.Is_uncertified || !i.Certification_date) && (!i.Fail_date || i.Fail_date.indexOf(current_year) > -1);
+      //  2. Certified or Due this year
+      var cond_two = (i.Certification_date && i.Certification_date.indexOf(current_year) > -1) || (i.Due_date && i.Due_date.indexOf(current_year) > -1);
+
+      return cond_one || cond_two;
+    });
+  }
+})
 .controller('ActionWidgetModalCtrl', function($scope, $modalInstance, widget, widget_functions){
 
   $scope.widget = widget;
