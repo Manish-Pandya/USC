@@ -131,12 +131,26 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             $piInfoWidget->icon = "icon-user-3";
             $piInfoWidget->group = self::$MYLAB_GROUP_PROFILE;
             $piInfoWidget->template = 'pi-profile';
-            $piInfoWidget->data = $manager->buildPIDTO($principalInvestigator);
+            $piInfoWidget->data = new GenericDto(array(
+                'pi' => $manager->buildPIDTO($principalInvestigator)
+            ));
 
             if( !CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
                 // If user is not a PI, omit Lab Location data
-                $piInfoWidget->data->Buildings = null;
-                $piInfoWidget->data->Rooms = null;
+                $piInfoWidget->data->pi->Buildings = null;
+                $piInfoWidget->data->pi->Rooms = null;
+            }
+            else {
+                // Display Help block for PI users
+                $helpContact = $manager->getUserByUsername(ApplicationConfiguration::get('server.web.HELP_CONTACT_USERNAME'));
+
+                if( isset($helpContact) ){
+                    $piInfoWidget->data->help = new GenericDto(array(
+                        'Name' => $helpContact->getName(),
+                        'Email' => $helpContact->getEmail(),
+                        'Office_phone' => $helpContact->getOffice_phone()
+                    ));
+                }
             }
 
             $widgets[] = $piInfoWidget;
@@ -186,24 +200,6 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             $inspectionsWidget->data = $inspections;
             $widgets[] = $inspectionsWidget;
         }
-
-        // Help
-        $helpContact = $manager->getUserByUsername(ApplicationConfiguration::get('server.web.HELP_CONTACT_USERNAME'));
-
-        if( isset($helpContact) ){
-            $helpWidget = new MyLabWidgetDto();
-            $helpWidget->group = self::$MYLAB_GROUP_PROFILE;
-            $helpWidget->title = "Help";
-            $helpWidget->icon = "icon-help";
-            $helpWidget->template = "help-contact";
-            $helpWidget->data = new GenericDto(array(
-                'Name' => $helpContact->getName(),
-                'Email' => $helpContact->getEmail(),
-                'Office_phone' => $helpContact->getOffice_phone()
-            ));
-            $widgets[] = $helpWidget;
-        }
-
 
         return $widgets;
     }
