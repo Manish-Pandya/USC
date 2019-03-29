@@ -1,4 +1,4 @@
-<form>
+<form class="content-container">
     <h4 style="margin-bottom: 20px;">
         <span ng-if="Constants.ROLE.NAME.LAB_PERSONNEL == api.getProfilePositionRequiredRole()">Please select one of the following that best describes your position in the laboratory.</span>
         <span ng-if="Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR == api.getProfilePositionRequiredRole()">Please select the title that best describes your position.</span>
@@ -8,11 +8,12 @@
         <option value="" style="display:none">--Select a Position--</option>
     </select>
 
-    <div class="toolbar-container">
-        <div class="toolbar pull-right">
-            <a ng-click="save(data, api.saveUserProfile)" class="btn btn-success">
-                <i class="icon-checkmark"></i>
-            </a>
-        </div>
-    </div>
 </form>
+
+<div class="toolbar-container">
+    <div class="toolbar pull-right">
+        <a ng-click="save(data, api.saveUserProfile)" class="btn btn-success">
+            <i class="icon-checkmark"></i>
+        </a>
+    </div>
+</div>

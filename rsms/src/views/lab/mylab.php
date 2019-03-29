@@ -65,6 +65,7 @@ require_once '../../RequireUserLoggedIn.php';
 
     .widget {
         width: 49%;
+        position: relative;
     }
 
     .widget.full {
@@ -73,10 +74,6 @@ require_once '../../RequireUserLoggedIn.php';
 
     .widget .widget-header {
         padding-bottom: 20px;
-    }
-
-    .widget .content {
-
     }
 
     [class^="icon-"] {
@@ -89,9 +86,18 @@ require_once '../../RequireUserLoggedIn.php';
         width: 100%;
     }
 
+    .widget .content-container {
+        /* Leave room for toolbar */
+        margin-bottom: 70px;
+    }
+
     .widget .toolbar-container {
-        position: relative;
-        height: 70px;
+        position: absolute;
+        bottom: 10;
+        right: 10;
+        width: 95%;
+        min-height: 70px;
+
     }
 
     .saving .toolbar-container {

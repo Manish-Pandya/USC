@@ -4,7 +4,7 @@
     {{headerText}}
     <span ng-if="alerts.length" class="pull-right badge badge-warning">{{alerts.length}}</span>
 </h2>
-<ng-include ng-if="contentTemplate" src="contentTemplate" class="content" ng-class="{saving: saving}"></ng-include>
+<ng-include ng-if="contentTemplate" src="contentTemplate" ng-class="{saving: saving}"></ng-include>
 <span ng-if="saving">
     <h1 style="z-index:30000; text-align:center; color:black;">
         <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
