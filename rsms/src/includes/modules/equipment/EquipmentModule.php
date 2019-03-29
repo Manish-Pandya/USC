@@ -35,14 +35,17 @@ class EquipmentModule implements RSMS_Module, MyLabWidgetProvider {
         if( isset($principalInvestigator) ){
             $biocabs = $manager->getEquipmentForPI( $principalInvestigator, BioSafetyCabinet::class );
 
-            $equipmentWidget = new MyLabWidgetDto();
-            $equipmentWidget->group = "equipment";
-            $equipmentWidget->title = "Biological Safety Cabinets";
-            $equipmentWidget->icon = "icon-cog-2";
-            $equipmentWidget->template = "equipment-table";
-            $equipmentWidget->fullWidth = 1;
-            $equipmentWidget->data = $biocabs;
-            $widgets[] = $equipmentWidget;
+            // Don't add widget if there are no equipment
+            if( !empty($biocabs) ){
+                $equipmentWidget = new MyLabWidgetDto();
+                $equipmentWidget->group = "equipment";
+                $equipmentWidget->title = "Biological Safety Cabinets";
+                $equipmentWidget->icon = "icon-cog-2";
+                $equipmentWidget->template = "equipment-table";
+                $equipmentWidget->fullWidth = 1;
+                $equipmentWidget->data = $biocabs;
+                $widgets[] = $equipmentWidget;
+            }
         }
 
         return $widgets;
