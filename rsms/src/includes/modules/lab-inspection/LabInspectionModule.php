@@ -165,8 +165,15 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
                     ? 2017
                     : 2018;
 
+                $show_statuses = array(
+                    "CLOSED OUT",
+                    "INCOMPLETE CAP",
+                    "OVERDUE CAP",
+                    "SUBMITTED CAP"
+                );
+
                 foreach($inspections as $key => $inspection){
-                    if( $inspection->getIsArchived() ){
+                    if( in_array($inspection->getStatus(), $show_statuses) ){
                         $closedYear = date_create($inspection->getDate_closed())->format("Y");
 
                         if( $closedYear < $minYear ){
