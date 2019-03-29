@@ -199,9 +199,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             $helpWidget->data = new GenericDto(array(
                 'Name' => $helpContact->getName(),
                 'Email' => $helpContact->getEmail(),
-                'Office_phone' => $user->getOffice_phone(),
-                'Emergency_phone' => $user->getEmergency_phone(),
-                'Lab_phone' => $user->getLab_phone()
+                'Office_phone' => $helpContact->getOffice_phone()
             ));
             $widgets[] = $helpWidget;
         }
