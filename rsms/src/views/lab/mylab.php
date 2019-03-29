@@ -112,6 +112,11 @@ require_once '../../RequireUserLoggedIn.php';
         left: 0;
     }
 
+    /* Modal style */
+    .widget-modal {
+        width: 40%;
+    }
+
 </style>
 
 <div ng-app="myLab" ng-controller="myLabController">

@@ -69,6 +69,7 @@ var myLab = angular.module('myLab', [
       var instance = $modal.open({
         templateUrl: "widgets/action-widget-modal.html",
         controller: 'ActionWidgetModalCtrl',
+        windowClass: 'widget-modal',
         resolve: {
           widget_functions: function() { return widgetFunctionsFactory; },
           widget: function () { return actionWidget; }
