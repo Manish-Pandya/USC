@@ -32,6 +32,7 @@ var Constants = /** @class */ (function () {
         "Assistant Professor",
         "Associate Professor",
         "Professor",
+        "Distinguished Professor",
         "SmartState Endowed Chair"
     ];
 
