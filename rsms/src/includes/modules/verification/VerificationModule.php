@@ -44,7 +44,7 @@ class VerificationModule implements RSMS_Module, MyLabWidgetProvider {
             $verificationWidget = new MyLabWidgetDto();
             $verificationWidget->title = "Annual Verification";
             $verificationWidget->icon = "icon-checkbox";
-            $verificationWidget->template = "verification";
+            //$verificationWidget->template = "verification";
             $verificationWidget->data = $verifications[0] ?? null;
 
             $widgets[] = $verificationWidget;
