@@ -147,6 +147,9 @@ class Inspection extends GenericCrud {
 
     private $status;
 
+    /** Transient property detailing if this can be edited after it has been archived */
+    private $can_edit_after_archive;
+
     public function __construct(){
 
     }
@@ -440,6 +443,14 @@ class Inspection extends GenericCrud {
 
         $LOG->debug("$this contains CAP statuses: " . implode(', ', $allCapStatuses));
         return $allCapStatuses;
+    }
+
+    public function getIsEditableAfterArchive() {
+        if( !isset( $this->can_edit_after_archive) ){
+            $this->can_edit_after_archive = LabInspectionSecurity::userCanSaveInspectionById( $this->getKey_id() );
+        }
+
+        return $this->can_edit_after_archive;
     }
 }
 ?>

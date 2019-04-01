@@ -110,7 +110,7 @@ class LabInspectionSecurity {
         return false;
     }
 
-    private static function _userCanSaveInspectionById($inspection_id){
+    public static function userCanSaveInspectionById($inspection_id){
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
         $user = $_SESSION['USER'];
 
@@ -199,8 +199,8 @@ class LabInspectionSecurity {
 
         if( isset($id) ){
             $LOG->debug("Checking Inspection key_id: $id");
-            $LOG->trace("Deferring security precondition to _userCanSaveInspectionById");
-            return LabInspectionSecurity::_userCanSaveInspectionById( $id );
+            $LOG->trace("Deferring security precondition to userCanSaveInspectionById");
+            return LabInspectionSecurity::userCanSaveInspectionById( $id );
         }
 
         // Nothing to save...
@@ -222,7 +222,7 @@ class LabInspectionSecurity {
             $inspection_id = $def->getResponse()->getInspection_id();
 
             // ensure they have access to the inspection
-            return LabInspectionSecurity::_userCanSaveInspectionById($inspection_id);
+            return LabInspectionSecurity::userCanSaveInspectionById($inspection_id);
         }
 
         // Nothing to save...
@@ -239,7 +239,7 @@ class LabInspectionSecurity {
             $inspection_id = $deficiencySelection->getResponse()->getInspection_id();
 
             // ensure they have access to the inspection
-            return LabInspectionSecurity::_userCanSaveInspectionById($inspection_id);
+            return LabInspectionSecurity::userCanSaveInspectionById($inspection_id);
         }
 
         // Nothing to delete...
