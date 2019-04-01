@@ -169,5 +169,29 @@ class InspectionDAO extends GenericDAO {
 		$stmt = null;
 
 		return $result;
-	}
+    }
+
+    // Get all inspections for a PI with a minimum scheduled-year value
+    public function getPiInspectionsSince( $piId, $minYear ){
+        try {
+            $q = QueryUtil::selectFrom(new Inspection());
+
+            $yearFields = Coalesce::fields(
+                Field::create('date_started', 'inspection')->wrap('year'),
+                Field::create('schedule_year', 'inspection')
+            );
+
+            $q->where($yearFields, '>=', $minYear, PDO::PARAM_INT)
+              ->where(Field::create('principal_investigator_id', 'inspection'), '=', $piId)
+              ->orderBy('inspection', 'schedule_year', "DESC")
+              ->orderBy('inspection', 'schedule_month', "DESC")
+              ->orderBy('inspection', 'date_started', "DESC");
+
+			$result = $q->getAll();
+			return $result;
+		}
+		catch(QueryException $er){
+			return new QueryError($er->getMessage());
+		}
+    }
 }
