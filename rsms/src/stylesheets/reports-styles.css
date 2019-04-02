@@ -64,7 +64,7 @@ ul.banner-nav li a:hover {
 
 .report-detail ul.report-info {
     list-style: none;
-    font-size: 25px;
+    font-size: 30px;
 }
 
 .report-detail .title {
@@ -83,6 +83,10 @@ ul.banner-nav li a:hover {
     color: #49afcd !important;
 }
 
+.report-detail .nav-pills {
+    font-size: 18px;
+}
+
 .report-detail .nav-pills > li.label {
     margin-top: 2px;
     margin-bottom: 2px;
@@ -94,8 +98,25 @@ ul.banner-nav li a:hover {
     padding-bottom: 8px;
 }
 
-.report-detail .title-box {
-    width: 70%;
+.title-card {
+    display: flex;
+    justify-content: space-between;
+}
+
+.title-card > * {
+    flex-grow: 1;
+}
+
+.title-card > .big {
+    /* Grow 3 times larger than other elements */
+    flex-grow: 3;
+}
+
+.title-card .title-box {
+    /* Layout children */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
 }
 
 .report-detail .legend-box {
