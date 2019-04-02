@@ -123,12 +123,12 @@ class LabInspectionSecurity {
             // get the inspection
             $inspection = LabInspectionSecurity::_get_inspection( $inspection_id );
 
-            if( $inspection->getIsArchived() ){
+            if( !$inspection->getIsArchived() ){
                 // Verify that the both:
                 //   this inspection is for the year prior
                 //   current year's inspection has NOT yet been started
 
-                // ==> A User May edit an archived Inspection until it is two years old OR another Inspection in Started in the following year (or later)
+                // ==> A User May edit a non-archived Inspection until it is two years old OR another Inspection in Started in the following year (or later)
 
                 $currentYear = date("Y");
                 $lastYear = $currentYear - 1;
@@ -172,8 +172,8 @@ class LabInspectionSecurity {
             }
             else{
                 // Inspection is still open
-                $LOG->debug("$inspection is still open");
-                return true;
+                $LOG->debug("$inspection is archived; deny user edits");
+                return false;
             }
         }
 
