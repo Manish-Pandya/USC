@@ -81,7 +81,7 @@
         <div cg-busy="{promise:loading, message:'Loading...', templateUrl:'../busy-templates/full-page-busy.html'}"></div>
 
         <!-- NAVIGATION -->
-        <div class="no-print blueBg">
+        <div class="banner no-print blueBg">
             <h1>
                 <i class="title-icon icon-clipboard-2" style="margin: 5px 0 0 5px;"></i>
                 Reports

@@ -5212,7 +5212,7 @@ class ActionManager {
             EntityMap::lazy("getCreated_user_id"),
             EntityMap::lazy("getDate_created"),
             EntityMap::lazy("getDate_last_modified"),
-            EntityMap::lazy("getHasDeficiencies")
+            EntityMap::eager("getHasDeficiencies")
         ));
 
         EntityManager::with_entity_maps(Room::class, array(
