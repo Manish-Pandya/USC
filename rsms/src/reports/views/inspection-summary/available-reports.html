@@ -40,6 +40,8 @@
                         </ul>
                     </td>
                 </tr>
+            </tbody>
+            <tbody ng-if="(Departments | filter:{ Specialty_lab: 1 }).length">
                 <tr>
                     <th class="blueBg" colspan="4">
                         <span class="card-header padding blueBg">Specialty Labs</span>
@@ -51,7 +53,7 @@
                     <th></th>
                     <th>Inspection Summaries</th>
                 </tr>
-                <tr ng-repeat="dept in Departments | filter:{ Specialty_lab: 1 } | orderBy:'Name' track by dept.Key_id">
+                <tr ng-repeat="dept in specialtyLabs = (Departments | filter:{ Specialty_lab: 1 }) | orderBy:'Name' track by dept.Key_id">
                     <td style="text-align: right">{{dept.Name}}</td>
                     <td>
                         <ul class="info-list" ng-if="dept.Campuses">
