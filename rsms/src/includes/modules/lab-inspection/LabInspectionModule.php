@@ -182,9 +182,16 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
                 foreach($inspections as $key => $inspection){
                     if( in_array($inspection->getStatus(), $show_statuses) ){
                         $closedYear = date_create($inspection->getDate_closed())->format("Y");
+                        $startedYear = date_create($inspection->getDate_started())->format("Y");
 
                         if( $closedYear < $minYear ){
+                            // Closed prior to minYear
                             $LOG->debug("Omit $inspection (closed $closedYear) for MyLab");
+                            unset($inspections[$key]);
+                        }
+                        else if( $startedYear < $minYear ){
+                            // Started prior to minYear
+                            $LOG->debug("Omit $inspection (started $startedYear) for MyLab");
                             unset($inspections[$key]);
                         }
                     }
