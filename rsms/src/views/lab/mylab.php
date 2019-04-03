@@ -64,8 +64,9 @@ require_once '../../RequireUserLoggedIn.php';
     }
 
     .widget {
-        width: 49%;
         position: relative;
+        flex-grow: 1;
+        margin: 10px;
     }
 
     .widget.full {
