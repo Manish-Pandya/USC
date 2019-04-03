@@ -119,6 +119,20 @@ require_once '../../RequireUserLoggedIn.php';
         left: 0;
     }
 
+    .widget .link-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .link-container.vertical {
+        flex-direction: column;
+    }
+
+    .link-container > * {
+        min-width: 40px;
+        margin: 5px;
+    }
+
     /* Modal style */
     .widget-modal {
         width: 40%;
