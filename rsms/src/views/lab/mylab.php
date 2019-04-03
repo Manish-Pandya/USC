@@ -74,10 +74,16 @@ require_once '../../RequireUserLoggedIn.php';
 
     .widget .widget-header {
         padding-bottom: 20px;
+        position: relative;
     }
 
     [class^="icon-"] {
         vertical-align: initial;
+    }
+
+    .widget .widget-header > .badge {
+        position: absolute;
+        margin-left: 10px;
     }
 
     /* widget-specific styles */
