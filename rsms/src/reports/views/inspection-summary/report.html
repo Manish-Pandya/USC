@@ -3,7 +3,7 @@
     <div class="card full title-card">
         <div class="title-box">
             <h1 style="margin: 10px 0 0px 15px">
-                <span ng-if="selection.year">{{selection.year}} </span> Laboratory Safety Inspection Summary Report
+                <span ng-if="selection.year">{{selection.year}} </span> Department Laboratory Inspection Reports
             </h1>
 
             <div ng-if="!data.Department" style="text-align: center; margin: 10px;">
@@ -57,12 +57,12 @@
                     Inspection Date <i class="icon-arrow"></i>
                 </th>
                 <th ng-click="reorder('Inspection_status');" class="sortable">
-                    Lab Inspection Status <i class="icon-arrow"></i>
+                    Status <i class="icon-arrow"></i>
                 </th>
                 <th ng-click="reorder('Score');" class="sortable">
                     Compliance Score* <i class="icon-arrow"></i>
                 </th>
-                <th class="no-print">Inspection</th>
+                <th class="no-print">Type</th>
                 <th class="no-print">Report</th>
             </tr>
             <tr ng-repeat="item in data.ReportItems | orderBy : config.orderByField : config.reverseSort"

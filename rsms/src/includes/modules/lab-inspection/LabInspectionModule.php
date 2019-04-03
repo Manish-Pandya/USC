@@ -206,7 +206,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
 
             $inspectionsWidget = new MyLabWidgetDto();
             $inspectionsWidget->group = self::$MYLAB_GROUP_INSPECTIONS;
-            $inspectionsWidget->title = "Inspection Reports";
+            $inspectionsWidget->title = "Lab Inspection Reports";
             $inspectionsWidget->icon = "icon-search-2";
             $inspectionsWidget->template = "inspection-table";
             $inspectionsWidget->fullWidth = 1;
