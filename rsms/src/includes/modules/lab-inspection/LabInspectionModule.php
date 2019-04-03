@@ -165,11 +165,18 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
                     ? 2017
                     : 2018;
 
+                /* Statuses to display in My Lab */
                 $show_statuses = array(
                     "CLOSED OUT",
                     "INCOMPLETE CAP",
                     "OVERDUE CAP",
                     "SUBMITTED CAP"
+                );
+
+                /** Statuses to Notify in mylab */
+                $notify_statuses = array(
+                    "INCOMPLETE CAP",
+                    "OVERDUE CAP"
                 );
 
                 foreach($inspections as $key => $inspection){
@@ -197,6 +204,14 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             $inspectionsWidget->template = "inspection-table";
             $inspectionsWidget->fullWidth = 1;
             $inspectionsWidget->data = $inspections;
+
+            $inspectionsWidget->alerts = array();
+            foreach( $inspectionsWidget->data as $inspection ){
+                if( in_array($inspection->getStatus(), $notify_statuses) ){
+                    $inspectionsWidget->alerts[] = $inspection->getKey_id();
+                }
+            }
+
             $widgets[] = $inspectionsWidget;
         }
 
