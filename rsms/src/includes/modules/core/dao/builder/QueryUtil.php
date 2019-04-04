@@ -5,6 +5,28 @@ class QueryUtil {
     const JOIN = 'JOIN';
     const JOIN_OUTER_LEFT = 'LEFT OUTER JOIN';
 
+    public static function select( $column_names, $table, $fetch_class = null){
+        // Convert to array to allow passing a single column name
+        if(!is_array($column_names)){
+            $column_names = array($column_names);
+        }
+
+        // map names to themselves; column mappings assume associative array, but dosn't really kare about the vals.
+        $_cols = array();
+        foreach($column_names as $name){
+            $_cols[$name] = $name;
+        }
+
+        $model = DataRelationship::fromArray(array(
+            'className' => $fetch_class,
+            'tableName' => $table,
+            'keyName' => null,
+            'foreignKeyName' => null,
+            'columns' => $_cols
+        ));
+        return new QueryUtil( $model, null );
+    }
+
     public static function selectFrom( GenericCrud $modelObject, DataRelationship $relation = null){
         return new QueryUtil($modelObject, $relation);
     }
@@ -31,9 +53,7 @@ class QueryUtil {
 
     private $sql;
 
-    public function __construct(GenericCrud $modelObject, DataRelationship $relation = null){
-
-        // init query parts
+    private function __init(){
         $this->columns = array();
         $this->joins = array();
         $this->joinRels = array();
@@ -42,9 +62,35 @@ class QueryUtil {
         $this->tableAliases = array();
         $this->fieldAliases = array();
         $this->groupBys = array();
+    }
+
+    public function __construct( $model, DataRelationship $relation = null){
+
+        // init query parts
+        $this->__init();
 
         // Set up entity details
+        if( $model instanceof GenericCrud ){
+            $this->__constructFromGenericCrud($model, $relation);
+        }
+        else if( $model instanceof DataRelationship ){
+            $this->__constructFromRelation($model);
+        }
+        else{
+            throw new Exception("Invalid query model type: " . get_class($model));
+        }
+    }
 
+    private function __constructFromRelation(DataRelationship $model){
+        $this->entity_class = $model->getClassName();
+        $this->entity_table = $model->getTableName();
+        $colData = $model->columns;
+
+        $this->withTableAlias($this->entity_table, $this->entity_table);
+        $this->map_fields($this->entity_table, $colData);
+    }
+
+    private function __constructFromGenericCrud(GenericCrud $modelObject, DataRelationship $relation = null){
         if( !isset($relation) ){
             $this->entity_class = get_class($modelObject);
             $this->entity_table = $modelObject->getTableName();
@@ -312,7 +358,12 @@ class QueryUtil {
 
 		foreach( $cols as $field => $type){
             $field_alias = $this->fieldAliases["$alias.$field"] ?? $field;
-            $this->columns[] = "$alias.$field as `$field_alias`";
+            if( $field == '*' ){
+                $this->columns[] = "$alias.*";
+            }
+            else{
+                $this->columns[] = "$alias.$field as `$field_alias`";
+            }
         }
 
         return $this;
