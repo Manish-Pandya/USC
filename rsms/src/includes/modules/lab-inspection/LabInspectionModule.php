@@ -206,7 +206,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
                 $dao = new InspectionDAO();
                 foreach($inspections as $inspection){
                     $inspectionDtos[] = new GenericDto(array(
-                        'key_id' => $inspection->getKey_id(),
+                        'Key_id' => $inspection->getKey_id(),
                         'Status' => $inspection->getStatus(),
                         'Date_started' => $inspection->getDate_started(),
                         'HazardInfo' => $dao->getInspectionHazardInfo($inspection->getKey_id()),
