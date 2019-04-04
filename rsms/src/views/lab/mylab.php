@@ -133,6 +133,10 @@ require_once '../../RequireUserLoggedIn.php';
         margin: 5px;
     }
 
+    .hazard-icons img, .hazard-icons i {
+        width:25px;
+    }
+
     /* Modal style */
     .widget-modal {
         width: 40%;

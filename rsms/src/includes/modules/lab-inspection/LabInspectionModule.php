@@ -157,6 +157,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
 
             // Collect inspections
             $inspections = array();
+            $inspectionDtos = array();
             if( isset($principalInvestigator) ){
                 // Filter inspections by year based on current user role
                 $inspections = $principalInvestigator->getInspections();
@@ -201,7 +202,17 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
                     }
                 }
 
-                $principalInvestigator->setInspections($inspections);
+                // Look up hazard info for displayable inspections
+                $dao = new InspectionDAO();
+                foreach($inspections as $inspection){
+                    $inspectionDtos[] = new GenericDto(array(
+                        'key_id' => $inspection->getKey_id(),
+                        'Status' => $inspection->getStatus(),
+                        'Date_started' => $inspection->getDate_started(),
+                        'HazardInfo' => $dao->getInspectionHazardInfo($inspection->getKey_id()),
+                        'Inspectors' => array_map( function($i){ return $i->getName(); }, $inspection->getInspectors())
+                    ));
+                }
             }
 
             $inspectionsWidget = new MyLabWidgetDto();
@@ -210,11 +221,11 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             $inspectionsWidget->icon = "icon-search-2";
             $inspectionsWidget->template = "inspection-table";
             $inspectionsWidget->fullWidth = 1;
-            $inspectionsWidget->data = $inspections;
+            $inspectionsWidget->data = $inspectionDtos;
 
             $inspectionsWidget->alerts = array();
             foreach( $inspectionsWidget->data as $inspection ){
-                if( in_array($inspection->getStatus(), $notify_statuses) ){
+                if( in_array($inspection->Status, $notify_statuses) ){
                     $inspectionsWidget->alerts[] = $inspection->getKey_id();
                 }
             }

@@ -156,8 +156,6 @@ var myLab = angular.module('myLab', [
     saveUserProfile: function(profile){
       var profileWillSave = $q.defer();
 
-      console.log("TODO: Save changes to user profile:", profile);
-
       myLabFactory.saveMyProfile(profile)
         .then(
           saved => {
@@ -169,6 +167,10 @@ var myLab = angular.module('myLab', [
           });
 
       return profileWillSave.promise;
+    },
+
+    inspectionHasHazard: function(inspection, field){
+      return inspection.HazardInfo[field] > 0;
     }
   };
 
