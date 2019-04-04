@@ -126,7 +126,7 @@ class Inspection extends GenericCrud {
     /** is this a radiation inspection **/
     private  $is_rad;
 
-    private $hasDeficiencies = true;
+    private $hasDeficiencies;
 
     /**decorator to translate schedule month property into month name so that it doesn't have to be done repeatedly on client**/
     private $text_schedule_month;
@@ -268,28 +268,30 @@ class Inspection extends GenericCrud {
     public function setCap_submitted_date($cap_submitted_date){$this->cap_submitted_date = $cap_submitted_date;}
 
     public function getDeficiency_selections(){
-        $deficiencySelections = array();
-        $correctedSelections = array();
-        $roomsShownSelections = array();
-        $responses = $this->getResponses();
-        foreach ($responses as $response){
-            $selections = $response->getDeficiencySelections();
-            //$selections = array_merge($selections, $response->getSupplementalDeficiencies());
-            foreach($selections as $selection){
-                $id = $selection->getDeficiency_id();
-                $deficiencySelections[] = $id;
-                if($selection->getCorrected_in_inspection() == true){
-                    $correctedSelections[] = $id;
-                }
-                if($selection->getShow_rooms() == true){
-                    $roomsShownSelections[] = $id;
+        if( !isset($this->deficiency_selections) ){
+            $deficiencySelections = array();
+            $correctedSelections = array();
+            $roomsShownSelections = array();
+            $responses = $this->getResponses();
+            foreach ($responses as $response){
+                $selections = $response->getDeficiencySelections();
+                //$selections = array_merge($selections, $response->getSupplementalDeficiencies());
+                foreach($selections as $selection){
+                    $id = $selection->getDeficiency_id();
+                    $deficiencySelections[] = $id;
+                    if($selection->getCorrected_in_inspection() == true){
+                        $correctedSelections[] = $id;
+                    }
+                    if($selection->getShow_rooms() == true){
+                        $roomsShownSelections[] = $id;
+                    }
                 }
             }
+            $this->deficiency_selections = array();
+            $this->deficiency_selections['deficiencySelections'] = $deficiencySelections;
+            $this->deficiency_selections['correctedSelections'] = $correctedSelections;
+            $this->deficiency_selections['roomsShownSelections'] = $roomsShownSelections;
         }
-        $this->deficiency_selections = array();
-        $this->deficiency_selections['deficiencySelections'] = $deficiencySelections;
-        $this->deficiency_selections['correctedSelections'] = $correctedSelections;
-        $this->deficiency_selections['roomsShownSelections'] = $roomsShownSelections;
 
         return $this->deficiency_selections;
     }
@@ -334,7 +336,18 @@ class Inspection extends GenericCrud {
         $this->isArchived = $archived;
     }
 
-    public function getHasDeficiencies(){return $this->hasDeficiencies;}
+    public function getHasDeficiencies(){
+        if( !isset($this->hasDeficiencies) ){
+            //  For this, we just need to know if there exists any deficiency selection
+            //    which was NOT corrected during inspeciton
+
+            $dao = new InspectionDAO();
+            $id = $this->getKey_id();
+            $this->hasDeficiencies = $dao->getInspectionHasDeficiencySelections( $id );
+        }
+
+        return $this->hasDeficiencies;
+    }
 
 	public function getCap_submitter_id(){return $this->cap_submitter_id;}
 	public function setCap_submitter_id($cap_submitter_id){$this->cap_submitter_id = $cap_submitter_id;}

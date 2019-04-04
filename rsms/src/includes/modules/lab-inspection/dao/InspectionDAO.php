@@ -169,5 +169,29 @@ class InspectionDAO extends GenericDAO {
 		$stmt = null;
 
 		return $result;
-	}
+    }
+
+    function getInspectionHasDeficiencySelections( $inspectionId ) {
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        // If there are deficiencies, but they were all corrected at inspection-time,
+        //   then we treat this as having no deficiencies...
+        // Therefore, find the number of deficiencies for this inspection which were not corrected in-inspection
+
+        $sql = "SELECT
+          count(*) > 0 as has_deficiencies
+        FROM response r
+        JOIN deficiency_selection ds ON ds.response_id = r.key_id
+        WHERE r.inspection_id = :inspectionId
+          AND ds.corrected_in_inspection = false";
+
+        $stmt = DBConnection::prepareStatement($sql);
+        $stmt->bindValue(':inspectionId', $inspectionId, PDO::PARAM_INT);
+
+        // Query the db and return an array of $this type of object
+        $stmt->execute();
+        $hasDeficiencies = $stmt->fetch(PDO::FETCH_COLUMN);
+
+        return (bool) $hasDeficiencies;
+    }
 }
