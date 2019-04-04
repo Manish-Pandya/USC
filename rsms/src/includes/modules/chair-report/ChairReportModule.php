@@ -66,7 +66,7 @@ class ChairReportModule implements RSMS_Module, MessageTypeProvider, MyLabWidget
             $summaryReportsWidget = new MyLabWidgetDto();
             $summaryReportsWidget->group = LabInspectionModule::$MYLAB_GROUP_INSPECTIONS;
             $summaryReportsWidget->title = "Chair Reports";
-            $summaryReportsWidget->subtitle = "Departemnt Lab Inspection Reports";
+            $summaryReportsWidget->subtitle = "Department Lab Inspection Reports";
             $summaryReportsWidget->icon = "icon-clipboard-2";
             $summaryReportsWidget->template = "summary-reports";
             $summaryReportsWidget->data = $this->getActionManager()->getAllAvailableDepartments();
