@@ -4,6 +4,7 @@ angular.module('myLab')
         restrict: 'E',
         scope: {
             headerText: "@",
+            subheaderText: "@",
             headerIcon: "@",
             headerImage: "@",
             groupName: "@",

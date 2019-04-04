@@ -78,6 +78,13 @@ require_once '../../RequireUserLoggedIn.php';
         position: relative;
     }
 
+    .widget .widget-header .subheader {
+        padding-left: 26px;
+        padding-top: 5px;
+        font-size: 20px;
+        font-style: italic;
+    }
+
     [class^="icon-"] {
         vertical-align: initial;
     }
@@ -175,6 +182,7 @@ require_once '../../RequireUserLoggedIn.php';
                 full-width="widget.FullWidth"
                 group-name="{{widget.Group}}"
                 header-text="{{widget.Title}}"
+                subheader-text="{{widget.Subtitle}}"
                 header-icon="{{widget.Icon}}"
                 header-image="{{widget.Image}}">
             </my-lab-widget>

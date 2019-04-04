@@ -4,6 +4,7 @@ class MyLabWidgetDto {
 
     public $group = "999_ungrouped";
     public $title;
+    public $subtitle;
     public $icon;
     public $image;
     public $template;
@@ -15,6 +16,7 @@ class MyLabWidgetDto {
 
     public function getGroup(){ return $this->group; }
     public function getTitle(){ return $this->title; }
+    public function getSubtitle(){ return $this->subtitle; }
     public function getIcon(){ return $this->icon; }
     public function getImage(){ return $this->image; }
     public function getTemplate(){ return $this->template; }

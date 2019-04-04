@@ -1,9 +1,12 @@
-<h2 class="widget-header {{group}}">
-    <i ng-if="headerIcon" style="margin-top: -5px;font-size: 22px;margin-right: 4px;" class="{{headerIcon}}"></i>
-    <img ng-if="headerImage" ng-src="{{'../../img/' + headerImage}}" width="25px" style="margin-right:5px;" />
-    {{headerText}}
-    <span ng-if="alerts.length" class="pull-right badge badge-warning">{{alerts.length}}</span>
-</h2>
+<div class="widget-header {{group}}">
+    <h2>
+        <i ng-if="headerIcon" style="margin-top: -5px;font-size: 22px;margin-right: 4px;" class="{{headerIcon}}"></i>
+        <img ng-if="headerImage" ng-src="{{'../../img/' + headerImage}}" width="25px" style="margin-right:5px;" />
+        {{headerText}}
+        <span ng-if="alerts.length" class="pull-right badge badge-warning">{{alerts.length}}</span>
+    </h2>
+    <div ng-if="subheaderText" class="subheader">{{subheaderText}}</div>
+</div>
 <ng-include ng-if="contentTemplate" src="contentTemplate" ng-class="{saving: saving}"></ng-include>
 <span ng-if="saving">
     <h1 style="z-index:30000; text-align:center; color:black;">
