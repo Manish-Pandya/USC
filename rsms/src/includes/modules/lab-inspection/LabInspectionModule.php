@@ -226,7 +226,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             $inspectionsWidget->alerts = array();
             foreach( $inspectionsWidget->data as $inspection ){
                 if( in_array($inspection->Status, $notify_statuses) ){
-                    $inspectionsWidget->alerts[] = $inspection->getKey_id();
+                    $inspectionsWidget->alerts[] = $inspection->Key_id;
                 }
             }
 
