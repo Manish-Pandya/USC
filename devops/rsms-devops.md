@@ -88,6 +88,45 @@ RSMS `Scheduler` module manages tasks which should be run regularly. Because the
 0 1 * * * php /var/rsms/scripts/run_scheduler.php >/dev/null 2>&1
 ```
 
+## Backup Restoration
+
+The `restore.sh` script can be used to unpack a backup archive and restore it on the local instance.
+
+```
+#
+# The '-c' flag indicates that the configuration file should be excluded from the restoration,
+#   allowing for easier restorations of a backup from another server (such as restoring a Prod backup on the Test server)
+# ./restore.sh -h will list available options
+#
+$ ./restore.sh -c /var/rsms/prod-backup/backup/rsms_backup_20190405_000001.tar.gz
+
+Exclude configuration from backup
+Staging restoration in /tmp/rsmsbackup_restore_20190405_104916
+
+Restore backup '/var/rsms/prod-backup/backup/rsms_backup_20190405_000001.tar.gz'
+Backup is extracted and staged for restoration on this server. This will perform the following DESTRUCTIVE tasks:
+
+  Overwrite RSMS application document root: /var/www/html/rsms
+  Retain existing configuration file:       /var/www/html/rsms/config/rsms-config.php
+  Overwrite RSMS database:                  usc_ehs_rsms
+
+Are you sure you want to continue? y
+Restoring application backup...
+Restoring docroot...
+Restoring database 'usc_ehs_rsms'...
+Restoration of backup /var/rsms/prod-backup/backup/rsms_backup_20190405_000001.tar.gz complete
+```
+
+### Automated Restoration
+
+The Test server is configured to restore a Prod backup onto the Test server monthly
+
+Crontab:
+```
+# Pass the latest Prod backup to the restore script, excluding config and pre-accepting confirmation, email results
+0 1 1 * * /var/rsms/scripts/restore.sh -cY -e 'mmartin@graysail.com,MROBBINS@mailbox.sc.edu,JLOCKE@mailbox.sc.edu' $(find /var/rsms/prod-backup/backup/ -printf '%p\n' | sort -r | head -n 1)
+```
+
 ## SMTP Configuration
 USC SMTP relay server is `smtp.sc.edu`. Postfix must be configured by updating the `relayhost` property in `/etc/postfix/main.cf` to `[smtp.sc.edu]`
 
