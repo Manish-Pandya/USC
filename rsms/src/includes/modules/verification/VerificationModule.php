@@ -1,6 +1,6 @@
 <?php
 
-class VerificationModule implements RSMS_Module, MyLabWidgetProvider {
+class VerificationModule implements RSMS_Module {
     public function getModuleName(){
         return 'Verification';
     }
@@ -28,29 +28,6 @@ class VerificationModule implements RSMS_Module, MyLabWidgetProvider {
             Verification_ActionMappingFactory::readActionConfig(),
             HazardInventoryActionMappingFactory::readActionConfig()
         );
-    }
-
-    public function getMyLabWidgets( User $user ){
-        $widgets = array();
-
-        // Only display verification widget to PIs
-        if( CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
-            $manager = $this->getActionManager();
-
-            // Get relevant PI for lab
-            $principalInvestigator = $manager->getPIByUserId( $user->getKey_id() );
-            $verifications = $principalInvestigator->getVerifications();
-
-            $verificationWidget = new MyLabWidgetDto();
-            $verificationWidget->title = "Annual Verification";
-            $verificationWidget->icon = "icon-checkbox";
-            //$verificationWidget->template = "verification";
-            $verificationWidget->data = $verifications[0] ?? null;
-
-            $widgets[] = $verificationWidget;
-        }
-
-        return $widgets;
     }
 }
 ?>
