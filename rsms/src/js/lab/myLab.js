@@ -4,7 +4,8 @@ var myLab = angular.module('myLab', [
   'convenienceMethodWithRoleBasedModule',
   'once',
   'cgBusy',
-  'angular.filter'])
+  'angular.filter',
+  'text-mask'])
 .filter('openInspections', function () {
   return function (inspections) {
         if(!inspections)return;
