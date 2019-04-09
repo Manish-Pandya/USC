@@ -46,15 +46,25 @@ angular.module('myLab')
                 }
             }
 
+            /** Phone-number masking configuration */
+            $scope.phoneMaskConfig = widgetFunctionsFactory.getPhoneMaskConfig();
+
             $scope.prepareEdit = function(data){
                 $scope.editData = angular.copy(data);
             }
 
             $scope.cancelEdit = function(){
                 $scope.editData = undefined;
+                $scope.validation = undefined;
             }
 
-            $scope.save = function(data, api_fn){
+            $scope.save = function(data, api_fn, validator_fn){
+                $scope.validation = validator_fn(data);
+                if( !$scope.validation.valid ){
+                    // There are validation errors
+                    return;
+                }
+
                 $scope.saving = true;
                 var promise = api_fn(data).then(
                     saved => {

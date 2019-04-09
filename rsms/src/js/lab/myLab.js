@@ -133,6 +133,15 @@ var myLab = angular.module('myLab', [
 })
 .factory('widgetFunctionsFactory', function($q, myLabFactory){
   var widget_functions = {
+    getPhoneMaskConfig: function(){
+      return {
+        mask: ['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/],
+        keepCharPositions: true,
+        guide: true,
+        showMask: false
+      };
+    },
+
     getProfilePositionRequiredRole: function(){
       if( GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR) > -1){
         return Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR;
@@ -152,6 +161,29 @@ var myLab = angular.module('myLab', [
 
         default: return [];
       }
+    },
+
+    validateUserProfile: function(profile){
+      var validation = {
+        valid: true,
+        errorFields: {}
+      };
+
+      // Validate the phone numbers
+      var phones = ['Office_phone', 'Lab_phone', 'Emergency_phone'];
+      for( var i = 0; i < phones.length; i++){
+        // Skip numbers which aren't provided
+        if( profile[phones[i]] !== undefined ){
+          var digits = profile[phones[i]].trim().replace(/[^0-9.]/g, '');
+          if( digits.length < 10 ){
+            // loose validation; invalid only if they're too short
+            validation.valid = false;
+            validation.errorFields[phones[i]] = true;
+          }
+        }
+      }
+
+      return validation;
     },
 
     saveUserProfile: function(profile){

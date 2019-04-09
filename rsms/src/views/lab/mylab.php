@@ -100,6 +100,10 @@ require_once '../../RequireUserLoggedIn.php';
         width: 100%;
     }
 
+    .widget input.phone-input {
+        padding: 5px;
+    }
+
     .widget .content-container {
         /* Leave room for toolbar */
         margin-bottom: 70px;
