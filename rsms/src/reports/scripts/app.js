@@ -66,20 +66,32 @@ angular
 
         // TODO: Other reports?
     })
-    .controller('AppCtrl', function ($rootScope, $q, convenienceMethods, $state) {
+    .controller('AppCtrl', function ($rootScope, $q, reportsActionFunctionsFactory, $state) {
         console.debug("ng-Reports running");
         $rootScope.webRoot = GLOBAL_WEB_ROOT;
+
+        $rootScope.deptsWillLoad = reportsActionFunctionsFactory.getAllAvailableDepartments()
+            .then( depts => {
+                $rootScope.AvailableDepartments = depts;
+                return $rootScope.AvailableDepartments;
+            });
 
         $rootScope.getNavLinks = function(){
             var links = [
                 {
                     text: 'Lab Inspection Summary',
                     expression: 'isr.available()',
-                    name: 'isr.available'
+                    name: 'isr.available',
+                    minDepts: 2
                 }
             ];
 
-            return links.filter( link => link.name != $state.current.name);
+            return $rootScope.deptsWillLoad
+                .then( depts => {
+                    return links
+                        .filter( link => link.name != $state.current.name)
+                        .filter( link => link.minDepts < depts.length);
+                });
         }
 
         $rootScope.$on('$stateChangeSuccess',
@@ -92,7 +104,9 @@ angular
                 }
 
                 // Build nav links
-                $rootScope.moduleNavLinks = $rootScope.getNavLinks();
+                $rootScope.getNavLinks().then(links => {
+                    $rootScope.moduleNavLinks = links;
+                });
             }
         );
     });
