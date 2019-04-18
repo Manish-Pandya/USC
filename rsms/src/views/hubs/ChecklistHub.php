@@ -6,7 +6,7 @@ require_once '../top_view.php';
         <li class="">
             <img src="../../img/checklist-icon.png" class="pull-left" style="height:50px" />
             <h2  style="padding: 11px 0 5px 85px;">Checklist Hub
-        <a style="float:right;margin: 6px 35px 0 9px;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
+        <a style="float:right;margin: 6px 35px 0 9px;" href="<? echo WEB_ROOT;?>"><i class="icon-home" style="font-size:40px;"></i></a>
         <a href="HazardHub.php" style="float:right; font-size:20px;"><i class="icon-arrow-left-2" style="font-size: 20px; margin: 7px 12px 0 0;"></i>Hazard Hub</a>
       </h2>
         </li>

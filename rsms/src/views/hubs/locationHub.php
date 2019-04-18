@@ -70,7 +70,7 @@ require_once '../top_view.php';
         <li class="span3" style="margin-left:0">
             <img src="<?php echo WEB_ROOT?>img/building-hub-large-icon.png" class="pull-left" style="height:50px" />
                 <h2 style="padding: 11px 0 5px 15px;">Location Hub
-                <a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
+                <a style="float:right;margin: 11px 28px 0 0;" href="<? echo WEB_ROOT;?>"><i class="icon-home" style="font-size:40px;"></i></a>
             </h2>
         </li>
         <div style="clear:both; height:0; font-size:0; ">&nbsp;</div>
