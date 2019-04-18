@@ -9,7 +9,7 @@ require_once '../top_view.php';
             <h2 style="padding: 11px 0 5px 0; font-weight:bold; text-align:center">
                 <img src="../../img/hazard-icon.png"  style="height:50px" />
                 Laboratory Hazards & Equipment Inventory
-                <a style="float:right;margin: 11px 28px 0 0;" href="<? echo WEB_ROOT;?>"><i class="icon-home" style="font-size:40px;"></i></a>
+                <a style="float:right;margin: 11px 28px 0 0;" href="<?php echo WEB_ROOT;?>"><i class="icon-home" style="font-size:40px;"></i></a>
             </h2>
         </li>
     </ul>
