@@ -173,7 +173,8 @@ var myLab = angular.module('myLab', [
       var phones = ['Office_phone', 'Lab_phone', 'Emergency_phone'];
       for( var i = 0; i < phones.length; i++){
         // Skip numbers which aren't provided
-        if( profile[phones[i]] !== undefined ){
+        // Skip empty numbers, as users are allowed to empty them
+        if( profile[phones[i]] !== undefined && profile[phones[i]] != '' ){
           var digits = profile[phones[i]].trim().replace(/[^0-9.]/g, '');
           if( digits.length < 10 ){
             // loose validation; invalid only if they're too short
