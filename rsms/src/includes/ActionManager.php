@@ -2303,6 +2303,7 @@ class ActionManager {
 
         // PI to DTO (or null)
         $pi = $user->getPrincipalInvestigator();
+        $piDto = null;
         if( isset($pi) ){
             $piDto = $this->buildPIDTO($pi);
         }
