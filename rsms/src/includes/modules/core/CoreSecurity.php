@@ -1,6 +1,10 @@
 <?php
 class CoreSecurity {
 
+    public static function userIsAdmin( User &$user ){
+        return CoreSecurity::userHasRoles($user, array('Admin'));
+    }
+
     public static function userHasAnyRole(User &$user, Array $roleNames){
         return CoreSecurity::userHasRoles($user, $roleNames, false);
     }
