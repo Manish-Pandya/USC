@@ -194,4 +194,21 @@ class InspectionDAO extends GenericDAO {
 
         return (bool) $hasDeficiencies;
     }
+
+    public function getInspectionHazardInfo( $ids ){
+        $getOne = !is_array($ids);
+        if( $getOne == true ){
+            $ids = array($ids);
+        }
+
+        $query = QueryUtil::select( '*', 'inspection_hazards', InspectionHazardInfoDto::class)
+            ->where( Field::create('inspection_id', 'inspection_hazards'), 'IN', $ids );
+
+        if( $getOne ){
+            return $query->getOne();
+        }
+        else{
+            return $query->getAll();
+        }
+    }
 }

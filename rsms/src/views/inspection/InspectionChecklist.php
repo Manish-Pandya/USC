@@ -13,7 +13,7 @@ require_once '../top_view.php';
             <a class="pull-left navicon" ng-click="showMenu = !showMenu"><i ng-class="{'icon-list':!showMenu,'icon-cancel-2': showMenu}"></i></a>
             <img src="../../img/checklist-icon.png" class="pull-left" style="height:50px" />
             <h2  style="padding: 11px 0 5px 85px;">Inspection Checklist  <span style="margin-left:10px;" ng-if="inspection">({{inspection.PrincipalInvestigator.User.Name}})</span>
-                <a style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>
+                <a style="float:right;margin: 11px 28px 0 0;" href="<?php echo WEB_ROOT;?>"><i class="icon-home" style="font-size:40px;"></i></a>
                 <a style="float:right; margin:7px 10px 0 0;" class="btn" href="../../hazard-inventory/#?pi={{inspection.PrincipalInvestigator.Key_id}}">Hazard Inventory</a>
             </h2>
         </li>

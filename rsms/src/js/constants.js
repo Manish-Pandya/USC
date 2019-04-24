@@ -27,6 +27,15 @@ var Constants = /** @class */ (function () {
         "Intern",
         "Other"
     ];
+
+    Constants.PI_POSITION = [
+        "Assistant Professor",
+        "Associate Professor",
+        "Professor",
+        "Distinguished Professor",
+        "SmartState Endowed Chair"
+    ];
+
     Constants.ROLE = {
         NAME: {
             ADMIN: "Admin",

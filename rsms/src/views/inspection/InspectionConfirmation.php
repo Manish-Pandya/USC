@@ -11,7 +11,7 @@ require_once '../top_view.php';
         <li class="">
             <img src="../../img/checklist-icon.png" class="pull-left" style="height:50px" />
             <h2  style="padding: 11px 0 5px 85px;">Finalize Inspection
-                <a ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.SAFETY_INSPECTOR],  R[Constants.ROLE.NAME.RADIATION_INSPECTOR],  R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN] ])" style="float:right;margin: 11px 28px 0 0;" href="../RSMSCenter.php"><i class="icon-home" style="font-size:40px;"></i></a>        <a ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR],  R[Constants.ROLE.NAME.LAB_CONTACT]])" style="float:right;margin: 11px 28px 0 0;" href="../lab/myLab.php"><i class="icon-home" style="font-size:40px;"></i></a>
+                <a style="float:right;margin: 11px 28px 0 0;" href="<?php echo WEB_ROOT; ?>"><i class="icon-home" style="font-size:40px;"></i></a>
             </h2>
         </li>
     </ul>

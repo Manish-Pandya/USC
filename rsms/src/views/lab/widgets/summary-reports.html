@@ -1,0 +1,23 @@
+<h3 style="margin-top:10px;" ng-show="!data.length">No reports at this time.</h3>
+<div class="fake-table bordered striped" ng-show="data.length">
+    <div class="table-header">
+        <h3>Department</h3>
+        <h3>Campuses</h3>
+        <h3>Reports</h3>
+    </div>
+
+    <div class="table-row" ng-repeat="department in data | orderBy:'Name' track by (dept.Key_id + '_' + dept.Chair_id)">
+        <div style="width: 25%">{{department.Name}}</div>
+        <div style="width: 25%">
+            <div ng-if="department.Campuses" class="vertical link-container">
+                <span ng-repeat="campus in department.Campuses | orderBy:'Name'">{{campus.Name}}</span>
+            </div>
+        </div>
+        <div style="width: 50%">
+            <div class="link-container">
+                <a ng-repeat="year in department.AvailableInspectionYears" ng-href="{{GLOBAL_WEB_ROOT}}/reports/#/inspection-summary/reports/{{department.Key_id}}/{{year}}"
+                    class="btn btn-info">{{year}}</a>
+            </div>
+        </div>
+    </div>
+</div>

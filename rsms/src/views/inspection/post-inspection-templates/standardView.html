@@ -105,12 +105,14 @@
             border: none;
         }
     </style>
-    <table ng-if="inspection.Cap_submitted_date || inspection.Date_closed" class="table inspectionReportTable" style="width: 50%">
+    <table ng-if="inspection.Cap_submitted_date || inspection.Date_closed" class="table inspectionReportTable" style="max-width: 50%"
+        ng-init="show_user_col = (inspection.Cap_submitter_name != null || inspection.Cap_approver_name != null)">
         <tr class="cap-status" style="margin:30px 0;" ng-if="inspection.Cap_submitted_date">
-            <td style="background: #c5d8f1;padding: 5px;">
-                <h3>Corrective Action Plan Submitted By:</h3>
+            <td style="width:400px; background: #c5d8f1;padding: 5px;">
+                <h3 ng-if="show_user_col">Corrective Action Plan Submitted By:</h3>
+                <h3 ng-if="!show_user_col">Corrective Action Plan Submitted:</h3>
             </td>
-            <td>{{inspection.Cap_submitter_name}}</td>
+            <td ng-if="show_user_col">{{inspection.Cap_submitter_name}}</td>
             <td>
                 <span>{{inspection.Cap_submitted_date | dateToISO}}</span>
             </td>
@@ -127,10 +129,11 @@
         </tr>
 
         <tr class="cap-status" style="margin:30px 0;" ng-if="inspection.Date_closed">
-            <td style="background: #c5d8f1;padding: 5px;">
-                <h3 >Corrective Action Plan Approved By:</h3>
+            <td style="width:400px; background: #c5d8f1;padding: 5px;">
+                <h3 ng-if="show_user_col">Corrective Action Plan Approved By:</h3>
+                <h3 ng-if="!show_user_col">Corrective Action Plan Approved:</h3>
             </td>
-            <td>{{inspection.Cap_approver_name}}</td>
+            <td ng-if="show_user_col">{{inspection.Cap_approver_name}}</td>
             <td>{{inspection.Date_closed | dateToISO}}</td>
         </tr>
     </table>

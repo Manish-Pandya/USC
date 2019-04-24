@@ -393,7 +393,13 @@ class JsonManager {
 			Metrics::stop($mid);
 
 			//use function name to infer the associated key
-			$key = str_replace('get', '', $getter);
+			//  Replace only the first instance of 'get' in the getter function name
+			//    This prevents inadvertent removals of 'get' should the string appear
+			//    such as "getWidgets"
+			//  We can safely assume 'get' appears here, as we have already checked this
+			$pos = strpos($getter, 'get');
+			$key = substr_replace($getter, '', $pos, 3);
+
 			if ($key == "Is_active") {
 				$value = (boolean) $value;
 			}

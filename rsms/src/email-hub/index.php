@@ -85,7 +85,7 @@
             <h1>
                 <i class="title-icon icon-email" style="margin: 5px 0 0 5px;"></i>
                 Email Hub
-                <a style="float:right;margin: 15px 30px 0 0; color:white" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/admin">
+                <a style="float:right;margin: 15px 30px 0 0; color:white" href="<?php echo WEB_ROOT?>">
                     <i class="icon-home" style="font-size:40px;"></i>
                 </a>
             </h1>

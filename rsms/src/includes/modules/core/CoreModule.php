@@ -1,6 +1,6 @@
 <?php
 
-class CoreModule implements RSMS_Module {
+class CoreModule implements RSMS_Module, MyLabWidgetProvider {
     public static $NAME = 'Core';
 
     public function getModuleName(){
@@ -21,6 +21,21 @@ class CoreModule implements RSMS_Module {
 
     public function getActionConfig(){
         return ActionMappingFactory::readActionConfig();
+    }
+
+    public function getMyLabWidgets( User $user ){
+        $widgets = array();
+
+        if( CoreSecurity::userHasRoles($user, array('Admin')) ){
+            $adminWidget = new MyLabWidgetDto();
+            $adminWidget->title = "RSMS Administration";
+            $adminWidget->icon = "icon-home";
+            $adminWidget->template = "admin";
+
+            $widgets[] = $adminWidget;
+        }
+
+        return $widgets;
     }
 }
 ?>

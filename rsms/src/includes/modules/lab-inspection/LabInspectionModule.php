@@ -1,6 +1,6 @@
 <?php
 
-class LabInspectionModule implements RSMS_Module, MessageTypeProvider {
+class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidgetProvider {
     public static $NAME = 'Lab Inspection';
 
     public static $MTYPE_CAP_REMINDER_DUE = 'LabInspectionReminderCAPDue';
@@ -14,6 +14,9 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider {
 
     public static $MTYPE_CAP_SUBMITTED_ALL_COMPLETE = 'LabInspectionAllCompletedCAPSubmitted';
     public static $MTYPE_CAP_SUBMITTED_PENDING = 'LabInspectionPendingCAPSubmitted';
+
+    public static $MYLAB_GROUP_PROFILE = "000_my-profile";
+    public static $MYLAB_GROUP_INSPECTIONS = '001_lab-inspections';
 
     public function getModuleName(){
         return self::$NAME;
@@ -91,6 +94,146 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider {
 
     public function getMacroResolvers(){
         return LabInspectionMessageMacros::getResolvers();
+    }
+
+    public function getMyLabWidgets( User $user ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        $widgets = array();
+
+        $manager = $this->getActionManager();
+
+        // Get relevant PI for lab
+        $principalInvestigator = $manager->getPrincipalInvestigatorOrSupervisorForUser( $user );
+        $profileData = $manager->getMyProfile( $user->getKey_id() );
+
+        $userInfoWidget = new MyLabWidgetDto();
+        $userInfoWidget->title = "My Profile";
+        $userInfoWidget->icon = "icon-user";
+        $userInfoWidget->group = self::$MYLAB_GROUP_PROFILE;
+        $userInfoWidget->template = 'my-profile';
+        $userInfoWidget->data = $profileData;
+
+        if( !isset($profileData->Position) ){
+            $profilePositionWidget = new MyLabWidgetDto();
+            $profilePositionWidget->title = "My Profile - Position";
+            $profilePositionWidget->icon = "icon-user";
+            $profilePositionWidget->template = 'my-profile-position';
+
+            $userInfoWidget->actionWidgets = array( $profilePositionWidget );
+        }
+
+        $widgets[] = $userInfoWidget;
+
+        if( isset( $principalInvestigator ) ){
+            $piInfoWidget = new MyLabWidgetDto();
+            $piInfoWidget->title = "Principal Investigator Details";
+            $piInfoWidget->icon = "icon-user-3";
+            $piInfoWidget->group = self::$MYLAB_GROUP_PROFILE;
+            $piInfoWidget->template = 'pi-profile';
+            $piInfoWidget->data = new GenericDto(array(
+                'pi' => $manager->buildPIDTO($principalInvestigator)
+            ));
+
+            if( !CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
+                // If user is not a PI, omit Lab Location data
+                $piInfoWidget->data->pi->Buildings = null;
+                $piInfoWidget->data->pi->Rooms = null;
+            }
+            else {
+                // Display Help block for PI users
+                $helpContact = $manager->getUserByUsername(ApplicationConfiguration::get('server.web.HELP_CONTACT_USERNAME'));
+
+                if( isset($helpContact) ){
+                    $piInfoWidget->data->help = new GenericDto(array(
+                        'Name' => $helpContact->getName(),
+                        'Email' => $helpContact->getEmail(),
+                        'Office_phone' => $helpContact->getOffice_phone()
+                    ));
+                }
+            }
+
+            $widgets[] = $piInfoWidget;
+
+            // Collect inspections
+            $inspections = array();
+            $inspectionDtos = array();
+            if( isset($principalInvestigator) ){
+                // Filter inspections by year based on current user role
+                $inspections = $principalInvestigator->getInspections();
+
+                $minYear = CoreSecurity::userHasRoles($user, array("Admin"))
+                    ? 2017
+                    : 2018;
+
+                /* Statuses to display in My Lab */
+                $show_statuses = array(
+                    "CLOSED OUT",
+                    "INCOMPLETE CAP",
+                    "OVERDUE CAP",
+                    "SUBMITTED CAP"
+                );
+
+                /** Statuses to Notify in mylab */
+                $notify_statuses = array(
+                    "INCOMPLETE CAP",
+                    "OVERDUE CAP"
+                );
+
+                foreach($inspections as $key => $inspection){
+                    if( in_array($inspection->getStatus(), $show_statuses) ){
+                        $closedYear = date_create($inspection->getDate_closed())->format("Y");
+                        $startedYear = date_create($inspection->getDate_started())->format("Y");
+
+                        if( $closedYear < $minYear ){
+                            // Closed prior to minYear
+                            $LOG->debug("Omit $inspection (closed $closedYear) for MyLab");
+                            unset($inspections[$key]);
+                        }
+                        else if( $startedYear < $minYear ){
+                            // Started prior to minYear
+                            $LOG->debug("Omit $inspection (started $startedYear) for MyLab");
+                            unset($inspections[$key]);
+                        }
+                    }
+                    else {
+                        $LOG->debug("Omit $inspection (still open) for MyLab");
+                        unset($inspections[$key]);
+                    }
+                }
+
+                // Look up hazard info for displayable inspections
+                $dao = new InspectionDAO();
+                foreach($inspections as $inspection){
+                    $inspectionDtos[] = new GenericDto(array(
+                        'Key_id' => $inspection->getKey_id(),
+                        'Status' => $inspection->getStatus(),
+                        'Date_started' => $inspection->getDate_started(),
+                        'HazardInfo' => $dao->getInspectionHazardInfo($inspection->getKey_id()),
+                        'Inspectors' => array_map( function($i){ return $i->getName(); }, $inspection->getInspectors())
+                    ));
+                }
+            }
+
+            $inspectionsWidget = new MyLabWidgetDto();
+            $inspectionsWidget->group = self::$MYLAB_GROUP_INSPECTIONS;
+            $inspectionsWidget->title = "Lab Inspection Reports";
+            $inspectionsWidget->icon = "icon-search-2";
+            $inspectionsWidget->template = "inspection-table";
+            $inspectionsWidget->fullWidth = 1;
+            $inspectionsWidget->data = $inspectionDtos;
+
+            $inspectionsWidget->alerts = array();
+            foreach( $inspectionsWidget->data as $inspection ){
+                if( in_array($inspection->Status, $notify_statuses) ){
+                    $inspectionsWidget->alerts[] = $inspection->Key_id;
+                }
+            }
+
+            $widgets[] = $inspectionsWidget;
+        }
+
+        return $widgets;
     }
 }
 ?>

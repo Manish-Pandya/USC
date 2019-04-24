@@ -1,0 +1,61 @@
+<form class="content-container">
+    <div class="fake-table striped bordered">
+        <div class="table-row">
+            <div>First Name</div>
+            <div>{{data.First_name}}</div>
+            <div ng-if="editData"></div>
+        </div>
+        <div class="table-row">
+            <div>Last Name</div>
+            <div>{{data.Last_name}}</div>
+            <div ng-if="editData"></div>
+        </div>
+        <div class="table-row">
+            <div>Position</div>
+            <div>{{data.Position}}</div>
+            <div ng-if="editData">
+                <select id="position" required ng-model="editData.Position" ng-options="position as position for position in api.getProfilePositionOptions()">
+                    <option value="" style="display:none">--Select a Position--</option>
+                </select>
+            </div>
+        </div>
+        <div class="table-row" ng-if="data.Lab_phone != undefined" ng-class="{inactive: validation.errorFields.Lab_phone}">
+            <div>Lab Phone</div>
+            <div>{{data.Lab_phone | tel}}</div>
+            <div ng-if="editData">
+                <input id="phone-lab" min="10" class="phone-input" ng-model="editData.Lab_phone" text-mask="phoneMaskConfig">
+            </div>
+        </div>
+        <div class="table-row" ng-if="data.Office_phone != undefined" ng-class="{inactive: validation.errorFields.Office_phone}">
+            <div>Office Phone</div>
+            <div>{{data.Office_phone | tel}}</div>
+            <div ng-if="editData">
+                <input id="phone-office" min="10" class="phone-input" ng-model="editData.Office_phone" text-mask="phoneMaskConfig">
+            </div>
+        </div>
+        <div class="table-row" ng-if="data.Emergency_phone != undefined" ng-class="{inactive: validation.errorFields.Emergency_phone}">
+            <div>Emergency Phone</div>
+            <div>{{data.Emergency_phone | tel}}</div>
+            <div ng-if="editData">
+                <input id="phone-emergency" min="10" class="phone-input" ng-model="editData.Emergency_phone" text-mask="phoneMaskConfig">
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="toolbar-container">
+    <div ng-if="validation && !validation.valid" class="error red">
+        {{validation.error}}
+    </div>
+    <div class="toolbar pull-right">
+        <a ng-if="!editData" ng-click="prepareEdit(data)" class="btn btn-primary">
+            <i class="icon-pencil"></i> Edit
+        </a>
+        <a ng-if="editData" ng-click="cancelEdit()" class="btn btn-danger">
+            <i class="icon-cancel"></i> Cancel
+        </a>
+        <a ng-if="editData" ng-click="save(editData, api.saveUserProfile, api.validateUserProfile)" class="btn btn-success">
+            <i class="icon-checkmark"></i> Save
+        </a>
+    </div>
+</div>

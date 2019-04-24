@@ -1,6 +1,6 @@
 <?php
 
-class EquipmentModule implements RSMS_Module {
+class EquipmentModule implements RSMS_Module, MyLabWidgetProvider {
     public function getModuleName(){
         return 'Equipment';
     }
@@ -24,6 +24,31 @@ class EquipmentModule implements RSMS_Module {
 
     public function getActionConfig(){
         return Equipment_ActionMappingFactory::readActionConfig();
+    }
+
+    public function getMyLabWidgets( User $user ){
+        $widgets = array();
+
+        $manager = $this->getActionManager();
+        $principalInvestigator = $manager->getPrincipalInvestigatorOrSupervisorForUser( $user );
+
+        if( isset($principalInvestigator) ){
+            $biocabs = $manager->getEquipmentForPI( $principalInvestigator, BioSafetyCabinet::class );
+
+            // Don't add widget if there are no equipment
+            if( !empty($biocabs) ){
+                $equipmentWidget = new MyLabWidgetDto();
+                $equipmentWidget->group = "equipment";
+                $equipmentWidget->title = "Biological Safety Cabinets";
+                $equipmentWidget->icon = "icon-cog-2";
+                $equipmentWidget->template = "equipment-table";
+                $equipmentWidget->fullWidth = 1;
+                $equipmentWidget->data = $biocabs;
+                $widgets[] = $equipmentWidget;
+            }
+        }
+
+        return $widgets;
     }
 }
 ?>

@@ -23,7 +23,7 @@ abstract class Equipment extends GenericCrud{
 
 
     /** Relationships */
-	protected static $INSPECTIONS_RELATIONSHIP = array(
+	public static $INSPECTIONS_RELATIONSHIP = array(
 		"className"	=>	"Inspection",
 		"tableName"	=>	"inspection",
 		"keyName"	=>	"key_id",

@@ -112,6 +112,7 @@ session_start();
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular-busy.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/scrolltable.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/phone-format.js"></script>
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular1TextMask.min.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/angular.filter.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/moment.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/datetimepicker.js"></script>
