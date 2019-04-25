@@ -76,9 +76,15 @@
                 </td>
                 <td class="hazard-icons no-print" style="text-align: right;">
                     <span ng-if="showInspectionLink(item)">
-                        <span ng-if="hasHazard( item, 'Bio_hazards_present') && !item.Is_rad"><img ng-src="{{webRoot}}/img/biohazard-largeicon.png" /></span>
-                        <span ng-if="hasHazard( item, 'Chem_hazards_present') && !item.Is_rad"><img ng-src="{{webRoot}}/img/chemical-blue-icon.png" /></span>
-                        <span ng-if="hasHazard( item, 'Rad_hazards_present') && item.Is_rad"><img ng-src="{{webRoot}}/img/radiation-large-icon.png" /></span>
+                        <span ng-if="hasHazard( item, 'Bio_hazards_present')" ng-class="{'grayed-out': item.Is_rad}">
+                            <img ng-src="{{webRoot}}/img/biohazard-largeicon.png" />
+                        </span>
+                        <span ng-if="hasHazard( item, 'Chem_hazards_present')" ng-class="{'grayed-out': item.Is_rad}">
+                            <img ng-src="{{webRoot}}/img/chemical-blue-icon.png" />
+                        </span>
+                        <span ng-if="hasHazard( item, 'Rad_hazards_present')" ng-class="{'grayed-out': !item.Is_rad}">
+                            <img ng-src="{{webRoot}}/img/radiation-large-icon.png" />
+                        </span>
                     </span>
                 </td>
                 <td>
