@@ -1221,6 +1221,10 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
             }else{
               $scope.modalData=returnedUser;
               $scope.modalData.Roles = user.Roles;
+              if(user.Supervisor){
+                $scope.modalData.Supervisor_id = user.Supervisor_id;
+                $scope.modalData.Supervisor = user.Supervisor;
+              }
               if(user.PrincipalInvestigator)$scope.modalData.PrincipalInvestigator = user.PrincipalInvestigator;
               if(user.Inspector)$scope.modalData.Inspector = user.Inspector;
             }

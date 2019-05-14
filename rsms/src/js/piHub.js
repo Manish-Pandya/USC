@@ -673,7 +673,14 @@ piHubPersonnelController = function($scope, $rootScope, $location, convenienceMe
 
     $scope.openModal = function(user, role){
         if(!user){
-          var user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
+          var user = {
+              Is_active:true,
+              Roles:[],
+              Class:'User',
+              Is_new:true,
+              Supervisor: $scope.PI,
+              Supervisor_id: $scope.PI.Key_id
+            };
           $rootScope.userPromise = getUsers()
           .then(getRoles)
           .then(fireModal);
