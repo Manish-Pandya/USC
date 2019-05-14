@@ -725,7 +725,7 @@ piHubPersonnelController = function($scope, $rootScope, $location, convenienceMe
               if(user.Key_id){
                 angular.extend(user, returnedUser)
               }else{
-                pi.LabPersonnel.push(returnedUser);
+                $scope.PI.LabPersonnel.push(returnedUser);
               }
             });
         }
