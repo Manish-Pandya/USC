@@ -943,6 +943,10 @@ class ActionManager {
                 if($decodedObject->getPrincipalInvestigator() != null){
                     $LOG->debug("Retrieve PI details from incoming data");
                     $pi = $decodedObject->getPrincipalInvestigator();
+                    // FIXME: Assemble array into PI; JsonManager decoding may not have gone deep enough
+                    if( is_array($pi) ){
+                        $pi = JsonManager::assembleObjectFromDecodedArray($pi, new PrincipalInvestigator());
+                    }
                 }else{
                     $LOG->debug("Create new PI entity");
                     $pi = new PrincipalInvestigator();
@@ -1021,6 +1025,10 @@ class ActionManager {
                     EntityMap::eager("getInspector"),
                     EntityMap::lazy("getSupervisor"),
                     EntityMap::eager("getRoles")
+                ));
+
+                EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
+                    EntityMap::lazy("getUser")
                 ));
 
                 return $dao->getById($user->getKey_id());
