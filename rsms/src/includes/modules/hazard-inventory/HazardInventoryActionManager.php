@@ -299,10 +299,9 @@ class HazardInventoryActionManager extends ActionManager {
 		if($roomIds == NULL && $hazardId == NULL){
 			return new ActionError("roomId and hazardId params both required");
 		}
-        $LOG->fatal("asdfasdfasdfasdfasdfasdf");
 
 		$piDao = $this->getDao(new PrincipalInvestigator());
-        $LOG->fatal($roomIds);
+        $LOG->debug($roomIds);
 		$pis = $piDao->getPisByHazardAndRoomIDs($roomIds);
 
         EntityManager::with_entity_maps(PrincipalInvestigator::class, array(
