@@ -91,6 +91,9 @@ var piHub = angular.module('piHub', ['ui.bootstrap', 'convenienceMethodWithRoleB
             convenienceMethods.getDataAsPromise( url )
             .then(
                 function(resp){
+                    // Overwrite userHubFactory users
+                    // As our dependencies may read from there rather than here...
+                    userHubFactory.users = resp.data;
                     factory.users = resp.data;
                     deferred.resolve(resp.data);
                 },
