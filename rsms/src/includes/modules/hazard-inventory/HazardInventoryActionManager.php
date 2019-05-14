@@ -425,7 +425,7 @@ class HazardInventoryActionManager extends ActionManager {
         return false;
     }
 
-    public function getCabinetsByPi(){
+    public function getCabinetsByPi( $id = null ){
         $LOG = Logger::getLogger(__CLASS__);
 		$id = $this->getValueFromRequest("id", $id);
         if($id == null)return new ActionError("No Id provided");

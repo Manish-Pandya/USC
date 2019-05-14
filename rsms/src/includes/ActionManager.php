@@ -1840,7 +1840,7 @@ class ActionManager {
                 return new ActionError("Couldn't find DeficiencySelection for that Inspection and Deficiency");
             }
 
-            $LOG->debug("Prepare to add Corrected flag to DeficiencySelection: $ds->getKey_id()");
+            $LOG->debug("Prepare to add Corrected flag to DeficiencySelection: " . $ds->getKey_id());
 
             $dao = $this->getDao($ds);
             $ds->setCorrected_in_inspection(true);
