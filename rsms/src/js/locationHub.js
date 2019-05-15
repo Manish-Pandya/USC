@@ -62,93 +62,95 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                 //we filter for every set search filter, looping through the collection only once
 
                 var item = items[i];
-                if (item.isNew) return true;
                 var item_matched = true;
 
-                if(search.building){
-                    if( item.Building && item.Building.Name && item.Building.Name.toLowerCase().indexOf(search.building.toLowerCase() ) < 0 ){
-                        item_matched = false;
-                    }
-
-                    if(item.Class == "Building" && item.Name.toLowerCase().indexOf(search.building.toLowerCase()) < 0 )  item_matched = false;
-
-                }
-
-                if (search.hazards) {
-                    console.log(item.Name + ' | ' + item[search.hazards] + ' | ' + search.hazards)
-                    if ( item.Class == "Room" && !item[search.hazards] || item[search.hazards] == false || item[search.hazards] == "0" ) item_matched = false;
-                }
-
-                if(search.room){
-                    if( item.Class == 'Room' && item.Name && item.Name.toLowerCase().indexOf(search.room.toLowerCase()) < 0 )  item_matched = false;
-                }
-
-                if(search.purpose){
-                    if( item.Class == 'Room' && !item.Purpose || item.Purpose.toLowerCase().indexOf(search.purpose.toLowerCase()) < 0 )  item_matched = false;
-                }
-
-                if (search.alias) {
-                    if (item.Class == 'Building' && !item.Alias || item.Alias.toLowerCase().indexOf(search.alias.toLowerCase()) < 0) item_matched = false;
-                }
-
-                if( search.campus ) {
-                    if( item.Class != "Building" && (!item.Building || !item.Building.Campus) ){
-                        item_matched = false;
-                        console.log('set false because no building or campus')
-                    }
-                    if (item.Building && item.Building.Campus && item.Building.Campus.Name && item.Building.Campus.Name.toLowerCase().indexOf(search.campus.toLowerCase()) < 0) {
-                        item_matched = false;
-                        console.log('set false because of lack of match');
-                    }
-                    if(item.Class == "Building" && item.Campus && item.Campus.Name && item.Campus.Name.toLowerCase().indexOf( search.campus.toLowerCase() ) < 0 ){
-                        item_matched = false;
-                        console.log('set false because of lack of match');
-                    }
-                }
-
-                // Filter Unassigned rooms
-                if( !search.unassignedPis && (!item.PrincipalInvestigators || item.PrincipalInvestigators.length == 0) ){
-                    item_matched = false;
-                }
-
-                if( item.PrincipalInvestigators && item.PrincipalInvestigators.length > 0 ){
-
-                    if( search.pi || search.department ){
-                        if(!item.PrincipalInvestigators.length){
-                            console.log('no pis in room '+item.Name);
+                // Only apply filters if the item isn't new
+                if( !item.isNew ){
+                    if(search.building){
+                        if( item.Building && item.Building.Name && item.Building.Name.toLowerCase().indexOf(search.building.toLowerCase() ) < 0 ){
+                            item_matched = false;
                         }
 
-                        var j = item.PrincipalInvestigators.length
-                        item_matched = false;
-                        var deptMatch = false;
-                        while(j--){
+                        if(item.Class == "Building" && item.Name.toLowerCase().indexOf(search.building.toLowerCase()) < 0 )  item_matched = false;
 
-                            var pi = item.PrincipalInvestigators[j];
-                            if( search.pi && pi.User.Name && pi.User.Name.toLowerCase().indexOf(search.pi.toLowerCase()) > -1 ){
-                                item_matched = true;
-                                var piMatch = true;
+                    }
+
+                    if (search.hazards) {
+                        console.log(item.Name + ' | ' + item[search.hazards] + ' | ' + search.hazards)
+                        if ( item.Class == "Room" && !item[search.hazards] || item[search.hazards] == false || item[search.hazards] == "0" ) item_matched = false;
+                    }
+
+                    if(search.room){
+                        if( item.Class == 'Room' && item.Name && item.Name.toLowerCase().indexOf(search.room.toLowerCase()) < 0 )  item_matched = false;
+                    }
+
+                    if(search.purpose){
+                        if( item.Class == 'Room' && !item.Purpose || item.Purpose.toLowerCase().indexOf(search.purpose.toLowerCase()) < 0 )  item_matched = false;
+                    }
+
+                    if (search.alias) {
+                        if (item.Class == 'Building' && !item.Alias || item.Alias.toLowerCase().indexOf(search.alias.toLowerCase()) < 0) item_matched = false;
+                    }
+
+                    if( search.campus ) {
+                        if( item.Class != "Building" && (!item.Building || !item.Building.Campus) ){
+                            item_matched = false;
+                            console.log('set false because no building or campus')
+                        }
+                        if (item.Building && item.Building.Campus && item.Building.Campus.Name && item.Building.Campus.Name.toLowerCase().indexOf(search.campus.toLowerCase()) < 0) {
+                            item_matched = false;
+                            console.log('set false because of lack of match');
+                        }
+                        if(item.Class == "Building" && item.Campus && item.Campus.Name && item.Campus.Name.toLowerCase().indexOf( search.campus.toLowerCase() ) < 0 ){
+                            item_matched = false;
+                            console.log('set false because of lack of match');
+                        }
+                    }
+
+                    // Filter Unassigned rooms
+                    if( !search.unassignedPis && (!item.PrincipalInvestigators || item.PrincipalInvestigators.length == 0) ){
+                        item_matched = false;
+                    }
+
+                    if( item.PrincipalInvestigators && item.PrincipalInvestigators.length > 0 ){
+
+                        if( search.pi || search.department ){
+                            if(!item.PrincipalInvestigators.length){
+                                console.log('no pis in room '+item.Name);
                             }
 
-                            if(search.department){
-                                deptMatch = false;
-                                if(!pi.Departments || !pi.Departments.length){
+                            var j = item.PrincipalInvestigators.length
+                            item_matched = false;
+                            var deptMatch = false;
+                            while(j--){
 
+                                var pi = item.PrincipalInvestigators[j];
+                                if( search.pi && pi.User.Name && pi.User.Name.toLowerCase().indexOf(search.pi.toLowerCase()) > -1 ){
+                                    item_matched = true;
+                                    var piMatch = true;
                                 }
-                                else{
-                                    var k = pi.Departments.length;
-                                    while(k--){
-                                        if( pi.Departments && pi.Departments[k].Name && pi.Departments[k].Name.toLowerCase().indexOf(search.department.toLowerCase()) > -1 ) deptMatch = true;
+
+                                if(search.department){
+                                    deptMatch = false;
+                                    if(!pi.Departments || !pi.Departments.length){
+
                                     }
+                                    else{
+                                        var k = pi.Departments.length;
+                                        while(k--){
+                                            if( pi.Departments && pi.Departments[k].Name && pi.Departments[k].Name.toLowerCase().indexOf(search.department.toLowerCase()) > -1 ) deptMatch = true;
+                                        }
+                                    }
+                                    if( ( !search.pi && deptMatch ) || ( piMatch && deptMatch ) )item_matched = true;
                                 }
-                                if( ( !search.pi && deptMatch ) || ( piMatch && deptMatch ) )item_matched = true;
                             }
                         }
-                    }
 
-                    // Filter by PI Activity status if this room has any PI assignments
-                    // Note that this will not apply to unassigned rooms
-                    var filteredPis = $filter('piActiveFilter')(item.PrincipalInvestigators, search);
-                    item_matched = item_matched && filteredPis && filteredPis.length > 0;
+                        // Filter by PI Activity status if this room has any PI assignments
+                        // Note that this will not apply to unassigned rooms
+                        var filteredPis = $filter('piActiveFilter')(item.PrincipalInvestigators, search);
+                        item_matched = item_matched && filteredPis && filteredPis.length > 0;
+                    }
                 }
 
                 if(item_matched == true)filtered.push(item);
