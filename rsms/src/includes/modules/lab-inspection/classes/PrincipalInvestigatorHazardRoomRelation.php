@@ -39,6 +39,15 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 
     }
 
+	public function __toString(){
+		return '[' .get_class($this) . " key_id=" . $this->getKey_Id() . ($this->is_active ? '' : ' is_active=false')
+			. " pi='$this->principal_investigator_id'"
+			. " room='$this->room_id'"
+			. " hazard='$this->hazard_id'"
+			. " status='$this->status'"
+			. "]";
+	}
+
     public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = EntityMap::eager("getRoom_id");
