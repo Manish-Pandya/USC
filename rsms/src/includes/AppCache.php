@@ -6,7 +6,8 @@ class AppCache {
 		'HITS' => 0,
 		'MISSES' => 0,
 		'OVERWRITES' => 0,
-		'EVICTIONS' => 0
+		'EVICTIONS' => 0,
+		'FLUSHES' => 0,
 	);
 
 	private $name;
@@ -36,6 +37,11 @@ class AppCache {
 		register_shutdown_function(function() use ($instance){
 			$instance->stats();
 		});
+	}
+
+	public function flush(){
+		$this->_CACHE = array();
+		$this->_STATS['FLUSHES']++;
 	}
 
 	public function cacheEntity(&$obj, $key = null){
