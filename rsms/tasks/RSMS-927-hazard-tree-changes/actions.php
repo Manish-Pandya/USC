@@ -102,6 +102,7 @@ $KNOWN_ACTIONS = array(
     new MoveAction( 10678, "Simple Asphyxiant" ),
     new DeleteAction( 10867, "JL Request Delete", "Tetraflouromethane" ),
     new DeleteAction( 10982, "JL Request Delete", "Nitrous oxide" ),
+    new InactivateAction( 10422, "Delete requested, but linked Checklist prevents deletion - High-hazard chemicals"),
     new MoveAction( 10675, "Compressed Gasses" , 10289),
     new MoveAction( 10676, "Chemical and Physical Hazards" , 10009),
     new AddAction( 10676, "Fire Hazard" ),
