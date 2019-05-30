@@ -4643,118 +4643,116 @@ class ActionManager {
 
         $id = $this->getValueFromRequest('id', $id);
         $report = $this->getValueFromRequest('report', $report);
-        if( $id !== NULL ){
-            $dao = $this->getDao(new Inspection());
 
-            //get inspection
-            $inspection = $dao->getById($id);
+        if( $id === NULL ){
+            //error
+            return new ActionError("No request parameter 'id' was provided", 400);
+        }
 
-            if( !isset($inspection) || ($inspection instanceof ActionError) ){
-                return new ActionError("No such Inspection $id", 404);
+        $dao = $this->getDao(new Inspection());
+
+        //get inspection
+        $inspection = $dao->getById($id);
+
+        if( !isset($inspection) || ($inspection instanceof ActionError) ){
+            return new ActionError("No such Inspection $id", 404);
+        }
+
+        // check if this is an inspection we're just starting
+        if( $inspection->getDate_started() == NULL ) {
+            $inspection->setDate_started(date("Y-m-d H:i:s"));
+            $dao->save($inspection);
+        }
+
+        // Remove previous checklists (if any) and recalculate the required checklist.
+        $oldChecklists = $inspection->getChecklists();
+        if (!empty($oldChecklists) && $report == null) {
+            // remove the old checklists
+            foreach ($oldChecklists as $oldChecklist) {
+                $dao->removeRelatedItems($oldChecklist->getKey_id(),
+                                            $inspection->getKey_id(),
+                                            DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
             }
-
-            // check if this is an inspection we're just starting
-            if( $inspection->getDate_started() == NULL ) {
-                $inspection->setDate_started(date("Y-m-d H:i:s"));
-                $dao->save($inspection);
-            }
-
-            // Remove previous checklists (if any) and recalculate the required checklist.
-            $oldChecklists = $inspection->getChecklists();
-            if (!empty($oldChecklists) && $report == null) {
-                // remove the old checklists
-                foreach ($oldChecklists as $oldChecklist) {
-                    $dao->removeRelatedItems($oldChecklist->getKey_id(),
-                    						 $inspection->getKey_id(),
-                    						 DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
-                }
-            }
+        }
 
 
-            // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
+        // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
+        if($report == null){
+            $LOG->debug('should be getting new list of checklists');
+            $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
+        }
+        //if we are loading a report instead of a list of checklists for an inspection, we don't update the list of checklists
+        else{
+            $LOG->debug('should be retrieving old checklists');
+            $checklists = $oldChecklists;
+        }
+
+        $hazardIds = array();
+        // add the checklists to this inspection
+        foreach ($checklists as $checklist){
             if($report == null){
-                $LOG->debug('should be getting new list of checklists');
-                $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
-            }
-            //if we are loading a report instead of a list of checklists for an inspection, we don't update the list of checklists
-            else{
-                $LOG->debug('should be retrieving old checklists');
-                $checklists = $oldChecklists;
-            }
-
-            $hazardIds = array();
-            // add the checklists to this inspection
-            foreach ($checklists as $checklist){
-                if($report == null){
-                    $dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
-                    $checklist->setInspectionId($inspection->getKey_id());
-                    $checklist->setRooms($inspection->getRooms());
-                    //filter the rooms, but only for hazards that aren't in the General branch, which should always have all the rooms for an inspection
-                    //9999 is the key_id for General Hazard
-                    if($checklist->getMaster_id() != 9999){
-                        $checklist->filterRooms($inspection->getPrincipal_investigator_id());
-                    }
+                $dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+                $checklist->setInspectionId($inspection->getKey_id());
+                $checklist->setRooms($inspection->getRooms());
+                //filter the rooms, but only for hazards that aren't in the General branch, which should always have all the rooms for an inspection
+                //9999 is the key_id for General Hazard
+                if($checklist->getMaster_id() != 9999){
+                    $checklist->filterRooms($inspection->getPrincipal_investigator_id());
                 }
-
-                $hazardIds[] = $checklist->getHazard_id();
-
             }
 
-			//recurse down hazard tree.  look in checklists array for each hazard.  if checklist is found, push it into ordered array.
-            $orderedChecklists = array();
-            $orderedChecklists = $this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $this->getHazardById(10000));
-            $inspection->setChecklists( $orderedChecklists );
+            $hazardIds[] = $checklist->getHazard_id();
 
-            //make sure we get the right rooms for our branch level checklists
-            //ids of the branch level hazards, excluding general, which is always in every room
-            $realBranchIds = array(1,10009,10010);
-            $neededRoomIds = array();
-            $neededRooms   = array();
-            foreach($orderedChecklists as $list){
+        }
 
-                if(in_array($list->getHazard_id(), $realBranchIds)){
-                    //if(!in_array(,$neededRoomIds))
-                    //evaluate what rooms we need.  any room a checklist for a child of this one has should be pushed
-                    $childLists =  $this->getChildLists($list, $orderedChecklists);
-                    foreach($childLists as $childList){
-                        $childInspectionRooms = $childList->getInspectionRooms();
-                        if( !empty($childInspectionRooms) ){
-                            foreach($childList->getInspectionRooms() as $room){
-                                if(!in_array($room->getKey_id(), $neededRoomIds)){
-                                    array_push($neededRoomIds, $room->getKey_id());
-                                    array_push($neededRooms, $room);
-                                }
+        //recurse down hazard tree.  look in checklists array for each hazard.  if checklist is found, push it into ordered array.
+        $orderedChecklists = array();
+        $orderedChecklists = $this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $this->getHazardById(10000));
+        $inspection->setChecklists( $orderedChecklists );
+
+        //make sure we get the right rooms for our branch level checklists
+        //ids of the branch level hazards, excluding general, which is always in every room
+        $realBranchIds = array(1,10009,10010);
+        $neededRoomIds = array();
+        $neededRooms   = array();
+        foreach($orderedChecklists as $list){
+
+            if(in_array($list->getHazard_id(), $realBranchIds)){
+                //if(!in_array(,$neededRoomIds))
+                //evaluate what rooms we need.  any room a checklist for a child of this one has should be pushed
+                $childLists =  $this->getChildLists($list, $orderedChecklists);
+                foreach($childLists as $childList){
+                    $childInspectionRooms = $childList->getInspectionRooms();
+                    if( !empty($childInspectionRooms) ){
+                        foreach($childList->getInspectionRooms() as $room){
+                            if(!in_array($room->getKey_id(), $neededRoomIds)){
+                                array_push($neededRoomIds, $room->getKey_id());
+                                array_push($neededRooms, $room);
                             }
                         }
                     }
-                    $list->setInspectionRooms($neededRooms);
                 }
+                $list->setInspectionRooms($neededRooms);
             }
-
-            EntityManager::with_entity_maps(Checklist::class, array(
-                EntityMap::lazy("getHazard"),
-                EntityMap::lazy("getRooms"),
-                EntityMap::eager("getInspectionRooms"),
-                EntityMap::eager("getQuestions")
-            ));
-
-            EntityManager::with_entity_maps(Inspection::class, array(
-                EntityMap::eager("getInspectors"),
-                EntityMap::eager("getRooms"),
-                EntityMap::lazy("getResponses"),
-                EntityMap::eager("getPrincipalInvestigator"),
-                EntityMap::eager("getChecklists"),
-                EntityMap::eager("getInspection_wipe_tests")
-            ));
-
-            return $inspection;
-        }
-        else{
-            //error
-            return new ActionError("No request parameter 'id' was provided");
         }
 
+        EntityManager::with_entity_maps(Checklist::class, array(
+            EntityMap::lazy("getHazard"),
+            EntityMap::lazy("getRooms"),
+            EntityMap::eager("getInspectionRooms"),
+            EntityMap::eager("getQuestions")
+        ));
 
+        EntityManager::with_entity_maps(Inspection::class, array(
+            EntityMap::eager("getInspectors"),
+            EntityMap::eager("getRooms"),
+            EntityMap::lazy("getResponses"),
+            EntityMap::eager("getPrincipalInvestigator"),
+            EntityMap::eager("getChecklists"),
+            EntityMap::eager("getInspection_wipe_tests")
+        ));
+
+        return $inspection;
     }
 
     private function getChildLists(Checklist $list, array $orderedChecklists){
