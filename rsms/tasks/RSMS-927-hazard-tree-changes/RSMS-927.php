@@ -4,6 +4,9 @@
     // Set up RSMS application
     require_once '/var/www/html/rsms/Application.php';
 
+    // Reconfigure logger
+    Logger::configure( './task-log4php-config.php' );
+
     // Include task scripts
     require_once 'actions.php';
     require_once 'domain/HazardChangeManager.php';
@@ -19,16 +22,22 @@
     $LOG->info("***START TRANSACTION***");
     DBConnection::get()->beginTransaction();
 
-    $manager = new HazardChangeManager();
-    $success = $manager->process_actions($KNOWN_ACTIONS);
+    try{
+        $manager = new HazardChangeManager();
+        $success = $manager->process_actions($KNOWN_ACTIONS);
 
-    if( $success = true ){
-        DBConnection::get()->commit();
-        $LOG->info("***COMMIT TRANSACTION***");
+        if( $success = true ){
+            DBConnection::get()->commit();
+            $LOG->info("***COMMIT TRANSACTION***");
+        }
+        else {
+            DBConnection::get()->rollback();
+            $LOG->warn("***ROLLBACK TRANSACTION DUE TO TASK FAILURES***");
+        }
     }
-    else {
+    catch(Exception $e){
         DBConnection::get()->rollback();
-        $LOG->info("***ROLLBACK TRANSACTION***");
+        $LOG->warn("***ROLLBACK TRANSACTION DUE TO ERROR***");
     }
 
 ?>
