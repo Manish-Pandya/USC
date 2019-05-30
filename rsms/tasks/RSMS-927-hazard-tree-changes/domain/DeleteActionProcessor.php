@@ -1,6 +1,13 @@
 <?php
 
 class DeleteActionProcessor extends A_ActionProcessor {
+    const STAT_HAZARD = 'Deleted Hazards';
+    const STAT_HR     = 'Deleted Hazard/Room Relations';
+    const STAT_PIHR   = 'Deleted PI/Hazard/Room Relations';
+
+    const SQL_DELETE_HAZARD = "DELETE FROM hazard WHERE key_id = :hazard_id;";
+    const SQL_DELETE_PIHR   = "DELETE FROM principal_investigator_hazard_room WHERE hazard_id = :hazard_id;";
+    const SQL_DELETE_HR     = "DELETE FROM hazard_room WHERE hazard_id = :hazard_id;";
 
     function validate( Action &$action ): ActionProcessorResult {
         // Get the hazard to delete, by both ID AND NAME
@@ -55,37 +62,48 @@ class DeleteActionProcessor extends A_ActionProcessor {
 
         // Get the hazard
         $hazard = $this->_get_hazard($action);
+        $hazard_id = $hazard->getKey_id();
         $statements = array();
 
-        if( !empty($hazard->getRooms()) ){
-            // Delete Room assignments
-            $statements[] = "DELETE FROM hazard_room WHERE hazard_id = :hazard_id;";
-        }
+        try {
+            if( !empty($hazard->getRooms()) ){
+                // Delete Room assignments
+                $deleted_hr_count = $this->execute_sql( self::SQL_DELETE_HR, $hazard_id );
+                $this->stat( self::STAT_HR, $deleted_hr_count);
+            }
 
-        $assignments = $this->_get_pi_hazard_room_assignments( $action );
-        if( !empty($assignments) ){
-            // Delete PI/Hazard/Room assignments
-            $statements[] = "DELETE FROM principal_investigator_hazard_room WHERE hazard_id = :hazard_id;";
-        }
+            $assignments = $this->_get_pi_hazard_room_assignments( $action );
+            if( !empty($assignments) ){
+                // Delete PI/Hazard/Room assignments
+                $deleted_pihr_count = $this->execute_sql( self::SQL_DELETE_PIHR, $hazard_id );
+                $this->stat( self::STAT_PIHR, $deleted_pihr_count);
+            }
 
-        // Delete Hazard
-        $statements[] = "DELETE FROM hazard WHERE key_id = :hazard_id;";
+            // Delete Hazard
+            $deleted_hazard_count = $this->execute_sql(self::SQL_DELETE_HAZARD, $hazard_id);
+            $this->stat( self::STAT_HAZARD, $deleted_hazard_count);
 
-        $sql = implode("\n\t", $statements);
-        $LOG->debug("Executing SQL for $action:\n\t$sql");
-
-        $stmt = DBConnection::prepareStatement($sql);
-        $stmt->bindValue('hazard_id', $hazard->getKey_id());
-
-        if( $stmt->execute() ){
-            // Success
             return new ActionProcessorResult(true, "Deleted $hazard and room relations");
         }
+        catch( Exception $e ){
+            return new ActionProcessorResult(false, "Failed to delete $hazard: " . $e->getMessage());
+        }
+    }
+
+    private function execute_sql( $sql, &$hazard_id ){
+        $LOG = LogUtil::get_logger(TASK_NUM, __CLASS__, __FUNCTION__);
+        $LOG->trace("\t$sql");
+
+        $stmt = DBConnection::prepareStatement($sql);
+        $stmt->bindValue('hazard_id', $hazard_id);
+
+        if( $stmt->execute() ){
+            return $stmt->rowCount();
+        }
         else {
-            // Error
 			$error = $stmt->errorInfo();
 			$resultError = new QueryError($error);
-            return new ActionProcessorResult(false, "Failed to delete $hazard: " . $resultError->getMessage());
+            throw new Exception("Could not execute \"$sql\" on hazard_id:$hazard_id: " . $resultError->getMessage());
         }
     }
 

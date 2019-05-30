@@ -2,6 +2,8 @@
 
 class AddActionProcessor extends A_ActionProcessor {
 
+    const STAT_ADD_HAZARD = 'Added Hazards';
+
     public function validate( Action &$action ): ActionProcessorResult {
         // Validate that parent hazard exists
         $parent = $this->_get_add_action_parent_hazard($action);
@@ -52,6 +54,8 @@ class AddActionProcessor extends A_ActionProcessor {
 
         // Save the new hazard
         $savedHazard = $this->appActionManager->saveHazard( $newHazard );
+        $this->stat(self::STAT_ADD_HAZARD, 1);
+
         return new ActionProcessorResult(true, "$savedHazard");
     }
 

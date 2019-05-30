@@ -42,9 +42,15 @@ class HazardChangeManager {
         }
 
         $LOG->info("Action-Processing completed. "
-            . count($this->resolved_actions) . " were resolved "
-            . count($this->unresolved_actions) . " left unresolved "
+            . count($this->resolved_actions) . " were resolved | "
+            . count($this->unresolved_actions) . " left unresolved | "
             . count($this->failed_actions) . " failed to resolve");
+
+        $LOG->info("+--- Action Stats ----");
+        foreach($this->processors as $proc){
+            $LOG->info( '| ' . get_class($proc) . ': ' .  $proc->get_stats() );
+        }
+        $LOG->info("+---------------------");
 
         if( !empty( $this->unresolved_actions )){
             $LOG->warn( count($this->unresolved_actions) . " Actions were unable to be resolved after $attempt attempts:");
@@ -70,8 +76,10 @@ class HazardChangeManager {
             $LOG->info("All actions have been successfully performed");
             return true;
         }
-
-        return false;
+        else {
+            $LOG->warn("Not all actions could be successfully performed. Review the log for additional information.");
+            return false;
+        }
     }
 
     private function _process(){

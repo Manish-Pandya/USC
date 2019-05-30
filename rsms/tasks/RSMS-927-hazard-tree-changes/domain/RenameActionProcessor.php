@@ -1,6 +1,7 @@
 <?php
 
 class RenameActionProcessor extends A_ActionProcessor {
+    const STAT_RENAME = "Renamed Hazards";
 
     function validate( Action &$action ): ActionProcessorResult {
         // Get the hazard to rename
@@ -26,6 +27,8 @@ class RenameActionProcessor extends A_ActionProcessor {
 
         // Save the hazard
         $savedHazard = $this->appActionManager->saveHazard( $hazard );
+        $this->stat( self::STAT_RENAME, 1 );
+
         return new ActionProcessorResult(true, "Renamed Hazard: $savedHazard: '$old_name' => '" . $savedHazard->getName() . "'");
     }
 

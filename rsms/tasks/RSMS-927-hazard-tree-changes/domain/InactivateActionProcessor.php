@@ -1,5 +1,6 @@
 <?php
 class InactivateActionProcessor extends A_ActionProcessor {
+    const STAT_INACTIVATED = 'Inactivated Hazards';
 
     private function _get_hazard( InactivateAction &$action ){
         $hazard = QueryUtil::selectFrom($this->meta->hazard)
@@ -32,8 +33,11 @@ class InactivateActionProcessor extends A_ActionProcessor {
         $hazard->setIs_active( false );
 
         // TODO: Also Inactivate all ancestors
+        // Note that ActionManager does not recursively inactivate hazards, so we shouldn't here.
 
         $savedHazard = $this->appActionManager->saveHazard( $hazard );
+        $this->stat( self::STAT_INACTIVATED, 1);
+
         return new ActionProcessorResult(true, "$savedHazard");
     }
 

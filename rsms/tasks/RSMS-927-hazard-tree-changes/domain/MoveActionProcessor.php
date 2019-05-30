@@ -1,6 +1,8 @@
 <?php
 
 class MoveActionProcessor extends A_ActionProcessor {
+    const STAT_MOVED = 'Moved Hazards';
+    const STAT_HAZARD_ASSIGNMENTS = 'Added Assignments';
 
     public function __construct( ActionManager &$actionManager, &$meta ){
         parent::__construct( $actionManager, $meta );
@@ -45,6 +47,7 @@ class MoveActionProcessor extends A_ActionProcessor {
 
         // Save
         $savedHazard = $this->appActionManager->saveHazard( $hazard );
+        $this->stat( self::STAT_MOVED, 1);
 
         $savedHazard->setParentIds(array());
         $new_tree = $savedHazard->getParentIds();
@@ -57,6 +60,7 @@ class MoveActionProcessor extends A_ActionProcessor {
 
         // Add assignments to new parent(s)
         $total_added = $this->addAssignments( $savedHazard );
+        $this->stat( self::STAT_HAZARD_ASSIGNMENTS, $total_added );
 
         return new ActionProcessorResult(true, "Moved Hazard $savedHazard to $target | Added $total_added PI/Hazard/Room assignments | $diff" );
     }
