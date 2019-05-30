@@ -38,7 +38,7 @@ class HazardChangeManager {
             $attempt++;
         }
 
-        $LOG->info("Action-Processing completed. "
+        $LOG->info("Action-Processing completed after $attempt attempt(s). "
             . count($this->resolved_actions) . " were resolved | "
             . count($this->unresolved_actions) . " left unresolved | "
             . count($this->failed_actions) . " failed to resolve");
