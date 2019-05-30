@@ -1,11 +1,8 @@
 <?php
-    const TASK_NUM = "RSMS-927";
+    const TASK_NUM = "TASKS.RSMS-927";
 
     // Set up RSMS application
     require_once '/var/www/html/rsms/Application.php';
-
-    // Reconfigure logger
-    Logger::configure( './task-log4php-config.php' );
 
     // Include task scripts
     require_once 'actions.php';
