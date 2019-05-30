@@ -105,6 +105,8 @@ $KNOWN_ACTIONS = array(
     new RenameAction( 10422, "High Hazard liquids and solids"),
     new MoveAction( 10675, "Compressed Gasses" , 10289),
     new DeleteAction( 10676, "JL Request Delete", "High-hazard liquids and solids"),
+    new MoveAction( 11094, "Hazardous consumer products", 10422),
+    new MoveAction( 11161, "Other Environmental Toxin", 10422),
     new AddAction( 10422, "Fire Hazard" ),
     new AddAction( 10422, "Self-heating" , "Fire Hazard"),
     new AddAction( 10422, "Health Hazard" ),
