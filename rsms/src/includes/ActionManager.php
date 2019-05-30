@@ -4664,9 +4664,18 @@ class ActionManager {
             $dao->save($inspection);
         }
 
+        // Force 'report' mode if requested OR if inspection is archived
+        //   * Archived reports should never be modified!
+        $REPORT_MODE = $report ?? $inspection->getIsArchived();
+
+        // Log a warning if someone attempted to view an archived inspection in non-report mode
+        if( $report == null && $REPORT_MODE){
+            $LOG->warn("Requested non-report mode for Archived inspection $inspection");
+        }
+
         // Remove previous checklists (if any) and recalculate the required checklist.
         $oldChecklists = $inspection->getChecklists();
-        if (!empty($oldChecklists) && $report == null) {
+        if (!empty($oldChecklists) && !$REPORT_MODE) {
             // remove the old checklists
             foreach ($oldChecklists as $oldChecklist) {
                 $dao->removeRelatedItems($oldChecklist->getKey_id(),
@@ -4677,7 +4686,7 @@ class ActionManager {
 
 
         // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
-        if($report == null){
+        if(!$REPORT_MODE){
             $LOG->debug('should be getting new list of checklists');
             $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
         }
@@ -4690,7 +4699,7 @@ class ActionManager {
         $hazardIds = array();
         // add the checklists to this inspection
         foreach ($checklists as $checklist){
-            if($report == null){
+            if(!$REPORT_MODE){
                 $dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
                 $checklist->setInspectionId($inspection->getKey_id());
                 $checklist->setRooms($inspection->getRooms());
