@@ -1,7 +1,5 @@
 <?php
 
-const TASK_NUM = "RSMS-927";
-
 class HazardChangeManager {
     private $meta;
 
@@ -21,8 +19,7 @@ class HazardChangeManager {
             MOVE => new MoveActionProcessor( $this->appActionManager, $this->meta ),
             INACTIVATE => new InactivateActionProcessor( $this->appActionManager, $this->meta ),
             DELETE => new DeleteActionProcessor( $this->appActionManager, $this->meta ),
-            RENAME => new RenameActionProcessor( $this->appActionManager, $this->meta ),
-            NOTE => null,
+            RENAME => new RenameActionProcessor( $this->appActionManager, $this->meta )
         );
     }
 

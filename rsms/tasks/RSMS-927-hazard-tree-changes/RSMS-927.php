@@ -1,4 +1,6 @@
 <?php
+    const TASK_NUM = "RSMS-927";
+
     // Set up RSMS application
     require_once '/var/www/html/rsms/Application.php';
 
@@ -12,7 +14,7 @@
     require_once 'domain/DeleteActionProcessor.php';
     require_once 'domain/RenameActionProcessor.php';
 
-    $LOG = LogUtil::get_logger(__FILE__);
+    $LOG = LogUtil::get_logger(TASK_NUM, __FILE__);
 
     $LOG->info("***START TRANSACTION***");
     DBConnection::get()->beginTransaction();
