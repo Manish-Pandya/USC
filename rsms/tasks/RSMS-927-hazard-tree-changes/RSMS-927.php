@@ -23,7 +23,7 @@
         $manager = new HazardChangeManager();
         $success = $manager->process_actions($KNOWN_ACTIONS);
 
-        if( $success = true ){
+        if( $success == true ){
             DBConnection::get()->commit();
             $LOG->info("***COMMIT TRANSACTION***");
         }
