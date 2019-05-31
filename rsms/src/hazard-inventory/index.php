@@ -317,7 +317,7 @@ session_start();
                              </li>
                         </ul>
                         <ul>
-                            <li ng-class="{'yellowed': child.Stored_only || child.storedOnly}" ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent || child.BelongsToOtherPI || child.Stored_only" ng-init="child.loadActiveSubHazards()" id="id-{{child.Hazard_id}}" class="hazardLi"><span data-ng-include="'views/sub-hazard.html'"></span></li>
+                            <li ng-class="{'yellowed': child.Stored_only || child.storedOnly}" ng-repeat="child in child.ActiveSubHazards | orderBy: 'Order_index'" ng-if="child.IsPresent || child.BelongsToOtherPI || child.Stored_only" ng-init="child.loadActiveSubHazards()" id="id-{{child.Hazard_id}}" class="hazardLi"><span data-ng-include="'views/sub-hazard.html'"></span></li>
                         </ul>
                     </li>
                 </ul>
