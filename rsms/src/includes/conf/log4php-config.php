@@ -20,6 +20,8 @@ return array(
 		'ajaxaction' => configLogger('DEBUG'),
 		'action' => configLogger('DEBUG'),
 		'Metrics' => configLogger('INFO', array('metricsFileAppender')),
+
+		'ActionManager' => configLogger("TRACE")
 	),
 
 	//Appenders

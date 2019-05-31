@@ -1567,6 +1567,11 @@ button.checklistNav{
 .checkbox.inline .metro-checkbox{
   margin-right: 0px !important;
 }
+
+.checkbox.inline span.metro-checkbox.standardRecOrObs{
+  display: inline-block;
+}
+
 /*rotate hide/reveal text for sidenav on checklist*/
 /* line 458, ../sass/style.scss */
 /* line 1050, ../sass/style.scss */

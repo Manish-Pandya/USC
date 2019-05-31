@@ -1284,6 +1284,14 @@ class ActionManager {
             return $decodedObject;
         }
         else{
+
+            // Verify that the related Inspection isn't archived
+            $inspection = $decodedObject->getResponse()->getInspection();
+            if( $inspection->getIsArchived() ){
+                // Forbid modifications to this inspection
+                return new ActionError("Cannot save recommendation for an Archived inspection", 403);
+            }
+
             $dao = $this->getDao(new SupplementalRecommendation());
             $dao->save($decodedObject);
             return $decodedObject;
@@ -4670,36 +4678,34 @@ class ActionManager {
 
         // Log a warning if someone attempted to view an archived inspection in non-report mode
         if( $report == null && $REPORT_MODE){
-            $LOG->warn("Requested non-report mode for Archived inspection $inspection");
+            $LOG->warn("Requested non-report mode for Archived inspection $inspection. Report-mode will be forced.");
         }
 
         // Remove previous checklists (if any) and recalculate the required checklist.
         $oldChecklists = $inspection->getChecklists();
-        if (!empty($oldChecklists) && !$REPORT_MODE) {
-            // remove the old checklists
-            foreach ($oldChecklists as $oldChecklist) {
-                $dao->removeRelatedItems($oldChecklist->getKey_id(),
-                                            $inspection->getKey_id(),
-                                            DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
-            }
-        }
-
 
         // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
         if(!$REPORT_MODE){
-            $LOG->debug('should be getting new list of checklists');
-            $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
-        }
-        //if we are loading a report instead of a list of checklists for an inspection, we don't update the list of checklists
-        else{
-            $LOG->debug('should be retrieving old checklists');
-            $checklists = $oldChecklists;
-        }
+            $LOG->info("Recalculating list of Checklists for $inspection");
 
-        $hazardIds = array();
-        // add the checklists to this inspection
-        foreach ($checklists as $checklist){
-            if(!$REPORT_MODE){
+            if (!empty($oldChecklists)) {
+                $LOG->debug("Removing all old Checklists from $inspection");
+                // remove the old checklists
+                foreach ($oldChecklists as $oldChecklist) {
+                    $dao->removeRelatedItems($oldChecklist->getKey_id(),
+                                                $inspection->getKey_id(),
+                                                DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+                }
+            }
+
+            $LOG->debug("Generating new list of Checklists for $inspection");
+            $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
+
+            // add the checklists to this inspection
+            $LOG->debug("Assigning new Checklists to $inspection");
+            foreach ($checklists as $checklist){
+                $LOG->trace("Add $checklist to $inspection");
+
                 $dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
                 $checklist->setInspectionId($inspection->getKey_id());
                 $checklist->setRooms($inspection->getRooms());
@@ -4709,10 +4715,19 @@ class ActionManager {
                     $checklist->filterRooms($inspection->getPrincipal_investigator_id());
                 }
             }
-
-            $hazardIds[] = $checklist->getHazard_id();
-
         }
+        //if we are loading a report instead of a list of checklists for an inspection, we don't update the list of checklists
+        else {
+            $checklists = $oldChecklists;
+        }
+
+        // Build array of Hazard IDs for each checklist
+        $hazardIds = array_map(
+            function($checklist){
+                return $checklist->getHazard_id();
+            },
+            $checklists
+        );
 
         //recurse down hazard tree.  look in checklists array for each hazard.  if checklist is found, push it into ordered array.
         $orderedChecklists = array();
