@@ -241,6 +241,8 @@ $KNOWN_ACTIONS = array(
     new DeleteAction( 10448, "JL Request Delete", "High Voltage" ),
     new MoveAction( 10563, "High Hazard Equipment and Processes" , 10423),
     new MoveAction( 11054, "High Hazard Equipment and Processes" , 10423),
+
+    new ReorderAction( 10000, 'Reorder all leaf nodes')
 );
 
 ?>
