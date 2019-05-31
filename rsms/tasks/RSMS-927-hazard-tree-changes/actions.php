@@ -7,6 +7,8 @@ const DELETE = 'DELETE';
 const RENAME = 'RENAME';
 const NOTE = 'NOTE';
 
+const REORDER = 'REORDER';
+
 class Action {
     public $type;
     public $hazard_id;
@@ -20,6 +22,10 @@ class Action {
 
     public function __toString(){
         return "$this->type #$this->hazard_id : $this->desc";
+    }
+
+    public function isPostAction(){
+        return false;
     }
 }
 
@@ -80,6 +86,16 @@ class DeleteAction extends Action {
     public function __toString(){
         return "Delete hazard #$this->hazard_id ($this->hazard_name)"
             . ($this->desc == null ? '' : " - $this->desc");
+    }
+}
+
+class ReorderAction extends Action {
+    public function __construct($hazard_id, $desc = ''){
+        parent::__construct($hazard_id, REORDER, $desc);
+    }
+
+    public function isPostAction(){
+        return true;
     }
 }
 //////////////////

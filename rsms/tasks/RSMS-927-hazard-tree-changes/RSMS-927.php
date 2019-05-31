@@ -13,6 +13,7 @@
     require_once 'domain/InactivateActionProcessor.php';
     require_once 'domain/DeleteActionProcessor.php';
     require_once 'domain/RenameActionProcessor.php';
+    require_once 'domain/ReorderActionProcessor.php';
 
     $LOG = LogUtil::get_logger(TASK_NUM, __FILE__);
 

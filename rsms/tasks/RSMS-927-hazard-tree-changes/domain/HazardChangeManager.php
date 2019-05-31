@@ -19,27 +19,42 @@ class HazardChangeManager {
             MOVE => new MoveActionProcessor( $this->appActionManager, $this->meta ),
             INACTIVATE => new InactivateActionProcessor( $this->appActionManager, $this->meta ),
             DELETE => new DeleteActionProcessor( $this->appActionManager, $this->meta ),
-            RENAME => new RenameActionProcessor( $this->appActionManager, $this->meta )
+            RENAME => new RenameActionProcessor( $this->appActionManager, $this->meta ),
+
+            REORDER => new ReorderActionProcessor( $this->appActionManager, $this->meta)
         );
     }
 
     public function process_actions( Array $actions ) {
         $LOG = LogUtil::get_logger(TASK_NUM, __CLASS__, __FUNCTION__);
 
-        $this->unresolved_actions = $actions;
+        // Extract post-actions to deal with later
+        $pre_actions  = array_filter( $actions, function($a){ return !$a->isPostAction(); } );
+        $post_actions = array_filter( $actions, function($a){ return $a->isPostAction(); } );
+
+        $completed_pre_actions = false;
+        $completed_post_actions = false;
+
+        // Set up result arrays
         $this->omitted_actions = array();
         $this->repeatable_unresolved_actions = array();
         $this->resolved_actions = array();
         $this->failed_actions = array();
 
-        $attempt = 1;
-        while( !empty($this->unresolved_actions) && $attempt < 5 ){
-            $LOG->info("Pass #$attempt through hazard-change actions. Unresolved Actions: " . count($this->unresolved_actions));
-            $this->_process();
-            $attempt++;
+        // Process pre-actions, allowing 5 attempts
+        $LOG->info("Processing actions");
+        $completed_pre_actions = $this->_process( $pre_actions, 5 );
+        
+        // Are all pre-actions done?
+        if( $completed_pre_actions->success ){
+            // Process Post actions
+            $LOG->info("Processing post-actions");
+            $completed_post_actions = $this->_process( $post_actions );
         }
 
-        $LOG->info("Action-Processing completed after $attempt attempt(s). "
+        $completed_all_actions = $completed_pre_actions->success && $completed_post_actions->success;
+
+        $LOG->info("Action-Processing completed. "
             . count($this->resolved_actions) . " were resolved | "
             . count($this->omitted_actions) . " were omitted | "
             . count($this->unresolved_actions) . " left unresolved | "
@@ -59,7 +74,7 @@ class HazardChangeManager {
         }
 
         if( !empty( $this->unresolved_actions )){
-            $LOG->warn( count($this->unresolved_actions) . " Actions were unable to be resolved after $attempt attempts:");
+            $LOG->warn( count($this->unresolved_actions) . " Actions were unable to be resolved after $completed_pre_actions->attempts attempts:");
             foreach($this->unresolved_actions as $a){
                 $reason = '';
                 if( isset($this->repeatable_unresolved_actions["$a"]) ){
@@ -77,7 +92,7 @@ class HazardChangeManager {
             }
         }
 
-        if( empty($this->failed_actions) && empty($this->unresolved_actions) ){
+        if( $completed_all_actions ){
             // All actions completed successfully!
             $LOG->info("All actions have been successfully performed");
             return true;
@@ -88,7 +103,25 @@ class HazardChangeManager {
         }
     }
 
-    private function _process(){
+    private function _process( &$actions, $max_attempts = 1 ){
+        $LOG = LogUtil::get_logger(TASK_NUM, __CLASS__, __FUNCTION__);
+        $this->unresolved_actions = $actions;
+
+        $attempt = 1;
+        while( !empty($this->unresolved_actions) && $attempt <= $max_attempts ){
+            $LOG->info("Pass #$attempt through hazard-change actions. Unresolved Actions: " . count($this->unresolved_actions));
+            $this->_process_unresolved_actions();
+            $attempt++;
+        }
+
+        $result = new stdClass();
+        $result->success = empty($this->failed_actions) && empty($this->unresolved_actions);
+        $result->attempts = $attempt;
+
+        return $result;
+    }
+
+    private function _process_unresolved_actions(){
         $LOG = LogUtil::get_logger(TASK_NUM, __CLASS__, __FUNCTION__);
 
         foreach($this->unresolved_actions as $idx => $action){
@@ -157,6 +190,9 @@ class HazardChangeManager {
             }
             catch (Exception $e){
                 $LOG->warn("Action Verification failed: {" . $e->getMessage() . "}");
+                $action_result->success = false;
+                $action_result->message = $e->getMessage();
+                $status = ' FAILURE';
             }
 
             $LOG->info("[$status] [$action] {$action_result->message}");
