@@ -4,11 +4,13 @@ class ActionProcessorResult {
     public $success;
     public $message;
     public $repeatable;
+    public $redundant;
 
-    public function __construct($success, $message = null, $repeatable = false){
+    public function __construct($success, $message = null, $repeatable = false, $redundant = false){
         $this->success = $success;
         $this->message = $message;
         $this->repeatable = $repeatable;
+        $this->redundant = $redundant;
     }
 }
 

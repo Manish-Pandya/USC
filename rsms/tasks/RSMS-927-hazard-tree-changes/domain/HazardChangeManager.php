@@ -27,6 +27,7 @@ class HazardChangeManager {
         $LOG = LogUtil::get_logger(TASK_NUM, __CLASS__, __FUNCTION__);
 
         $this->unresolved_actions = $actions;
+        $this->omitted_actions = array();
         $this->repeatable_unresolved_actions = array();
         $this->resolved_actions = array();
         $this->failed_actions = array();
@@ -40,6 +41,7 @@ class HazardChangeManager {
 
         $LOG->info("Action-Processing completed after $attempt attempt(s). "
             . count($this->resolved_actions) . " were resolved | "
+            . count($this->omitted_actions) . " were omitted | "
             . count($this->unresolved_actions) . " left unresolved | "
             . count($this->failed_actions) . " failed to resolve");
 
@@ -48,6 +50,13 @@ class HazardChangeManager {
             $LOG->info( '| ' . get_class($proc) . ': ' .  $proc->get_stats() );
         }
         $LOG->info("+---------------------");
+
+        if( !empty( $this->omitted_actions )){
+            $LOG->info( count($this->omitted_actions) . " Actions were not necessary to complete, and therefore omitted:");
+            foreach($this->omitted_actions as $omitted_action => $message){
+                $LOG->info("        [$omitted_action]: $message");
+            }
+        }
 
         if( !empty( $this->unresolved_actions )){
             $LOG->warn( count($this->unresolved_actions) . " Actions were unable to be resolved after $attempt attempts:");
@@ -88,24 +97,46 @@ class HazardChangeManager {
             $result = $this->do_action($action);
 
             if( $result->success == false ){
-                if( $result->repeatable == true ){
+                if( $result->redundant == true ){
+                    // Action is redundant, and is not necessary
+                    $this->omit_action($idx, $action, $result->message);
+                }
+                else if( $result->repeatable == true ){
                     $LOG->debug("Retain action for re-attempt: $action");
-                    $this->repeatable_unresolved_actions["$action"] = $result->message;
+                    $this->repeat_action($idx, $action, $result->message);
                 }
                 else {
                     // Action should not be attempted again, as it is impossible to resolve with additional Actions
-                    unset( $this->unresolved_actions[$idx] );
-
-                    // Use string version of action as key to reason it failed
-                    $this->failed_actions["$action"] = $result->message;
+                    $this->fail_action($idx, $action, $result->message);
                 }
             }
             else {
                 // Success!
-                unset( $this->unresolved_actions[$idx] );
-                $this->resolved_actions[] = $action;
+                $this->resolve_action($idx, $action);
             }
         }
+    }
+
+    private function resolve_action( &$idx, &$action ){
+        unset( $this->unresolved_actions[$idx] );
+        $this->resolved_actions[] = $action;
+    }
+
+    private function omit_action( &$idx, &$action, $message = '' ){
+        unset( $this->unresolved_actions[$idx] );
+        $this->omitted_actions["$action"] = $message;
+    }
+
+    private function repeat_action( &$idx, &$action, &$message ){
+        // To not remove from unresolved_actions
+        $this->repeatable_unresolved_actions["$action"] = $result->message;
+    }
+
+    private function fail_action( &$idx, &$action, &$reason ){
+        unset( $this->unresolved_actions[$idx] );
+
+        // Use string version of action as key to reason it failed
+        $this->failed_actions["$action"] = $reason;
     }
 
     public function do_action( Action &$action ){
@@ -133,7 +164,15 @@ class HazardChangeManager {
         }
         else {
             // Invalid action - skip
-            $LOG->warn("[ INVALID] [$action] {$validation_result->message}");
+
+            if( $validation_result->redundant == true ){
+                // This should be omitted
+                $LOG->info("[  OMIT  ] [$action] {$validation_result->message}");
+            }
+            else{
+                $LOG->warn("[ INVALID] [$action] {$validation_result->message}");
+            }
+
             return $validation_result;
         }
     }

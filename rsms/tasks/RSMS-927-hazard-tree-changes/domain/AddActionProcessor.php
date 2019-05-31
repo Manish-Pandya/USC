@@ -27,7 +27,7 @@ class AddActionProcessor extends A_ActionProcessor {
 
         if( $existing_added ){
             // Hazard has already been added
-            return new ActionProcessorResult(false, "Item to add has already been added: $existing_added", false);
+            return new ActionProcessorResult(false, "Item to add has already been added: $existing_added", false, true);
         }
 
         // Action is valid and can be performed

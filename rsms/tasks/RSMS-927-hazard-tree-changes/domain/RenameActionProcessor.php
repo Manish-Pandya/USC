@@ -12,7 +12,7 @@ class RenameActionProcessor extends A_ActionProcessor {
         }
 
         if( $hazard->getName() == $action->desc ){
-            return new ActionProcessorResult(false, "Hazard with ID #$action->hazard_id already has target name '" . $hazard->getName() . "'", false);
+            return new ActionProcessorResult(false, "Hazard with ID #$action->hazard_id already has target name '" . $hazard->getName() . "'", false, true);
         }
 
         return new ActionProcessorResult(true);

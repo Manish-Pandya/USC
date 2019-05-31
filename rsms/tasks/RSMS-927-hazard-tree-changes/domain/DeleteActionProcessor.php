@@ -18,6 +18,7 @@ class DeleteActionProcessor extends A_ActionProcessor {
             // Check if hazard exists with ID
             $hazard_by_id = $this->_get_hazard_by_id($action);
             $msg = null;
+            $not_needed = false;
             if( $hazard ){
                 // Hazard does exist, but the expected name is different.
                 $msg = "Hazard with ID #$action->hazard_id does not have expected name. [Expected='$action->hazard_name' | Actual='" . $hazard->getName() . "'";
@@ -25,9 +26,10 @@ class DeleteActionProcessor extends A_ActionProcessor {
             else {
                 // Hazard does not exist
                 $msg = "Hazard with ID #$action->hazard_id and name '$action->hazard_name' does not exist";
+                $not_needed = true;
             }
 
-            return new ActionProcessorResult(false, $msg, false);
+            return new ActionProcessorResult(false, $msg, false, $not_needed);
         }
 
         // Ensure hazard has no children

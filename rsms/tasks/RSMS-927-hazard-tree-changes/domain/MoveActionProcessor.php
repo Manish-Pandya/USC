@@ -27,7 +27,7 @@ class MoveActionProcessor extends A_ActionProcessor {
 
         // Validate that item has not yet been moved
         if( $hazard->getParent_hazard_id() == $target->getKey_id() ){
-            return new ActionProcessorResult(false, "Hazard $hazard is already child of target $target", false);
+            return new ActionProcessorResult(false, "Hazard $hazard is already child of target $target", false, true);
         }
 
         // OK to move

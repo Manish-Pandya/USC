@@ -19,7 +19,7 @@ class InactivateActionProcessor extends A_ActionProcessor {
         }
 
         if( !$hazard->getIs_active() ){
-            return new ActionProcessorResult(false, "Hazard $hazard is already inactive", false);
+            return new ActionProcessorResult(false, "Hazard $hazard is already inactive", false, true);
         }
 
         return new ActionProcessorResult(true);
