@@ -131,6 +131,12 @@ $KNOWN_ACTIONS = array(
     new DeleteAction( 10849, "JL Request Delete", "Sodium azide" ),
     new MoveAction( 10452, "Health Hazard" ),
     new RenameAction( 10452, "Acute toxicity (fatal)" ),
+
+    new DeleteAction( 11051, "JL Request Delete - 20190531", "elemental mercury"),
+    new DeleteAction( 11052, "JL Request Delete - 20190531", "inorganic mercury"),
+    new DeleteAction( 11053, "JL Request Delete - 20190531", "organic mercury"),
+    new DeleteAction( 11047, "JL Request Delete", "Mercury"),
+
     new DeleteAction( 10451, "JL Request Delete", "Other Health Hazards" ),
     new DeleteAction( 10975, "JL Request Delete", "Aniline" ),
     new DeleteAction( 11068, "JL Request Delete", "Aluminum Chloride" ),
@@ -215,6 +221,7 @@ $KNOWN_ACTIONS = array(
     new DeleteAction( 11066, "JL Request Delete", "Welding to close glass ampules" ),
     new MoveAction( 11104, "Equipment generating hazardous chemicals" ),
     new MoveAction( 11106, "Equipment with mechanical hazards" ),
+    new MoveAction( 11108, "Equipment generating hazardous chemicals"),
     new DeleteAction( 10448, "JL Request Delete", "High Voltage" ),
     new MoveAction( 10563, "High Hazard Equipment and Processes" , 10423),
     new MoveAction( 11054, "High Hazard Equipment and Processes" , 10423),
