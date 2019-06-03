@@ -191,7 +191,7 @@ if [ ! -z "$EMAIL_TO" ]; then
 
     echo "<h4>Do not reply to this email. Instead, notify your systems administrator of any issues.</h4>" >> _mail.txt
 
-    sendmail -f $SENDER $EMAIL_TO < _mail.txt
+    /usr/sbin/sendmail -f $SENDER $EMAIL_TO < _mail.txt
 fi
 
 # TODO: cleanup?
