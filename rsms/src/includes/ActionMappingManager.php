@@ -34,7 +34,23 @@ class ActionMappingManager  {
             $LOG->warn("$matchedActions modules define mapping for action '$actionName'");
             $LOG->debug("Attempt to find valid mapping from matches...");
 
-            // FIXME: sort Modules to identify the correct mapping
+            // Sort Modules to identify the correct mapping
+            //   Just sort by name, but always put the CoreModule last
+            usort( $actions, function($a, $b) {
+                $a_mod = $a['module'];
+                $b_mod = $b['module'];
+
+                if( $a_mod == CoreModule::class ){
+                    return 1;
+                }
+
+                if( $b_mod == CoreModule::class ){
+                    return -1;
+                }
+
+                return strcmp( $a_mod, $b_mod);
+            });
+
             // This seems to stem from intersecting actions and mappings across multiple modules.
             // This will attempt to find the first match with an existing function, but is no guarantee to find the 'right' one
             // Really, we should only have ONE mapping
