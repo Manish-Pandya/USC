@@ -162,7 +162,7 @@ class HazardChangeManager {
 
     private function repeat_action( &$idx, &$action, &$message ){
         // To not remove from unresolved_actions
-        $this->repeatable_unresolved_actions["$action"] = $result->message;
+        $this->repeatable_unresolved_actions["$action"] = $message;
     }
 
     private function fail_action( &$idx, &$action, &$reason ){
