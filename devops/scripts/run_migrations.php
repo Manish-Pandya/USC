@@ -27,7 +27,7 @@
             $output = null;
             $exitcode = null;
             echo ("Executing $scriptpath...\n");
-            echo exec("mysql $db < $scriptpath", $output, $exitcode) . "\n";
+            echo exec("mysql --defaults-file=$EXTRAS_FILE $db < $scriptpath", $output, $exitcode) . "\n";
             echo ("Completed $scriptpath: exit code '$exitcode'\n");
 
             return $exitcode == 0;
