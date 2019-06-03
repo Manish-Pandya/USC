@@ -755,9 +755,6 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
                 var templateLoaded = function(data){
                     console.debug(data);
 
-                    // Strip HTML
-                    data.Email.Body = new DOMParser().parseFromString(data.Email.Body, 'text/html').body.textContent || "";
-
                     $scope.inspectionEmailContext = data;
 
                     console.debug("Loaded inspection report email template:", $scope.inspectionEmailContext);
