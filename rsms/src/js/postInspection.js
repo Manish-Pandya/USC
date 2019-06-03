@@ -699,6 +699,16 @@ inspectionDetailsController = function ($scope, $location, $anchorScroll, conven
 }
 
 inspectionConfirmationController = function ($scope, $location, $anchorScroll, convenienceMethods, postInspectionFactory, $rootScope, $q) {
+    $scope.confirmEmailTinymceOptions = {
+        branding: false,
+        plugins: ['link lists', 'autoresize', 'contextmenu'],
+        contextmenu_never_use_native: true,
+        toolbar: 'bold | italic | underline | link | lists | bullist | numlist',
+        menubar: false,
+        elementpath: false,
+        content_style: "p,ul li, ol li {font-size:14px}"
+    };
+
     // Retrieve Inspection
     var inspectionWillLoad = $q.defer();
 
