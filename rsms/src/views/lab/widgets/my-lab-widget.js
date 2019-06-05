@@ -11,6 +11,7 @@ angular.module('myLab')
             contentTemplateName: "@",
             widget: '=',
             fullWidth: "=",
+            stretchContent: "=",
             alerts: "=",
             data: "=",
             api: "=",
@@ -25,6 +26,10 @@ angular.module('myLab')
 
             if( scope.fullWidth ){
                 element.addClass("full");
+            }
+
+            if( scope.stretchContent ){
+                element.addClass("stretch-content");
             }
         },
         controller: function ($scope, widgetModalActionFactory, widgetFunctionsFactory){

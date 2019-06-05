@@ -1,0 +1,25 @@
+<div class="content-container">
+    <div class="tight-list" ng-repeat="(building_id, rooms) in data.Rooms | groupBy: 'Building_id'">
+        <h3 ng-repeat="b in (data.Buildings | filter : {'Key_id': building_id})">{{b.Name}}</h3>
+        <ul>
+            <li ng-repeat="room in rooms | orderBy: Name">{{room.Name}}</li>
+        </ul>
+    </div>
+    <!--
+    <div class="fake-table striped bordered" ng-repeat="(building_id, rooms) in data.Rooms | groupBy: 'Building_id'">
+        <div class="table-header">
+            <h3 ng-repeat="b in (data.Buildings | filter : {'Key_id': building_id})">{{b.Name}}</h3>
+        </div>
+        <div class="table-row" ng-repeat="room in rooms | orderBy: Name">
+            <div style="text-align: right">{{room.Name}}</div>
+        </div>
+    </div>
+    -->
+</div>
+
+<div ng-if="data.help" class="toolbar-container">
+    <div class="toolbar">
+        <h5><i class="icon-help" style="margin:10px;"></i>If any of your profile information cannot be updated, contact your administrator:</h4>
+        <span><b>{{data.help.Name}}</b> | <a ng-href="mailto:{{data.help.Email}}">{{data.help.Email}}</a> | {{data.help.Office_phone | tel}}</span>
+    </div>
+</div>

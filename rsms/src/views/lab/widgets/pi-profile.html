@@ -28,6 +28,17 @@
             </div>
         </div>
     </div>
+
+    <div class="table-row" ng-if="data.pi.LabPersonnel.length">
+        <div>Lab Personnel</div>
+        <div>
+            <div class="fake-table striped bordered">
+                <div class="table-row" ng-repeat="personnel in data.pi.LabPersonnel | orderBy: 'Last_name'">
+                    <div>{{personnel.Name}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div ng-if="data.help" class="toolbar-container">

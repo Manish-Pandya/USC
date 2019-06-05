@@ -63,11 +63,27 @@ class DtoFactory {
         if( !isset($pi) )
             return $pi;
 
-        return DtoFactory::buildDto($pi, array(
-            'Name' => $pi->getName()
-        ));
+        $data = array();
+        $u = self::userToDto($pi->getUser());
+        if( isset($u) ){
+            $data['Name'] = $u->Name;
+            $data['First_name'] = $u->First_name;
+            $data['Last_name'] = $u->Last_name;
+        }
+
+        return DtoFactory::buildDto($pi, $data);
     }
 
+    public static function userToDto($u){
+        if( !isset($u) )
+            return $u;
+
+        return DtoFactory::buildDto($u, array(
+            'Name' => $u->getName(),
+            'First_name' => $u->getFirst_name(),
+            'Last_name' => $u->getLast_name()
+        ));
+    }
 }
 
 ?>

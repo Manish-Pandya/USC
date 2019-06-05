@@ -2303,11 +2303,15 @@ class ActionManager {
         $deptDtos = DtoFactory::buildDtos($pi->getDepartments(), 'DtoFactory::departmentToDto');
         $roomDtos = DtoFactory::buildDtos($pi->getRooms(), 'DtoFactory::roomToDto');
 
+        // TODO: Query for personnel who are inactive
+        $personnelDtos = DtoFactory::buildDtos($pi->getLabPersonnel(), 'DtoFactory::userToDto');
+
         return DtoFactory::buildDto($pi, array(
             'Name' => $pi->getName(),
             'Departments' => $deptDtos,
             'Buildings' => $buildingDtos,
-            'Rooms' => $roomDtos
+            'Rooms' => $roomDtos,
+            'LabPersonnel' => $personnelDtos
         ));
     }
 

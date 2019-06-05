@@ -57,9 +57,14 @@ my-lab-widget {
 
 .widget {
     position: relative;
-    flex-grow: 1;
-    flex-basis: 0;
     margin: 10px;
+    align-self:flex-start;
+    width: 48%;
+}
+
+/* Change color of widget border on-hover */
+.widget.well:hover {
+    border-color: rgb(185, 185, 185);
 }
 
 .widget.full {
@@ -67,9 +72,44 @@ my-lab-widget {
     flex-basis: auto;
 }
 
+.widget.stretch-content {
+    align-self: auto;
+}
+
 .widget .widget-header {
     padding-bottom: 20px;
     position: relative;
+    border-bottom: double lightgray;
+}
+
+.widget .widget-header:hover {
+    color: #777;
+    cursor: pointer;
+}
+
+.widget .widget-header h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.widget .widget-header .actions {
+    display: flex;
+}
+
+.widget .widget-header .widget-title {
+    flex-grow: 2;
+    padding-left: 10px;
+}
+
+.widget .widget-header i {
+    /*margin-top: -5px;*/
+    font-size: 22px;
+    margin-right: 4px;
+}
+
+.widget .widget-header h2 {
+    font-weight: bold;
 }
 
 .widget .widget-header .subheader {
@@ -96,6 +136,12 @@ my-lab-widget {
 
 .widget input.phone-input {
     padding: 5px;
+}
+
+.widget .collapsed .content-container,
+.widget .collapsed .toolbar-container {
+    display: none;
+    overflow: hidden;
 }
 
 .widget .content-container {
@@ -140,6 +186,25 @@ my-lab-widget {
 
 .hazard-icons img, .hazard-icons i {
     width:25px;
+}
+
+.tight-list {
+    border: 3px solid rgb(205, 205, 205);
+    padding: 9px;
+    margin: 10px;
+}
+
+.tight-list ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+}
+
+.tight-list ul li {
+    font-size: 16px;
+    padding: 2px;
+    flex: 1 0 30%;
+    max-width: 30%;
 }
 
 /* Modal style */

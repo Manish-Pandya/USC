@@ -18,6 +18,8 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
     public static $MYLAB_GROUP_PROFILE = "000_my-profile";
     public static $MYLAB_GROUP_INSPECTIONS = '001_lab-inspections';
 
+    private $manager;
+
     public function getModuleName(){
         return self::$NAME;
     }
@@ -31,7 +33,11 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
     }
 
     public function getActionManager(){
-        return new LabInspection_ActionManager();
+        if( !isset($this->manager) ){
+            $this->manager = new LabInspection_ActionManager();
+        }
+
+        return $this->manager;
     }
 
     public function getActionConfig(){
@@ -107,6 +113,22 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
         $principalInvestigator = $manager->getPrincipalInvestigatorOrSupervisorForUser( $user );
         $profileData = $manager->getMyProfile( $user->getKey_id() );
 
+        // Add profile widget
+        $widgets[] = $this->buildUserInfoWidget( $profileData, $principalInvestigator );
+
+        // Ad PI-related widgets, if we have PI data
+        if( isset( $principalInvestigator ) ){
+            foreach( $this->buildPIWidgets( $user, $principalInvestigator) as $w ){
+                $widgets[] = $w;
+            }
+        }
+
+        return $widgets;
+    }
+
+    private function buildUserInfoWidget( &$profileData, &$principalInvestigator ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
         $userInfoWidget = new MyLabWidgetDto();
         $userInfoWidget->title = "My Profile";
         $userInfoWidget->icon = "icon-user";
@@ -123,118 +145,178 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             $userInfoWidget->actionWidgets = array( $profilePositionWidget );
         }
 
-        $widgets[] = $userInfoWidget;
+        return $userInfoWidget;
+    }
 
-        if( isset( $principalInvestigator ) ){
-            $piInfoWidget = new MyLabWidgetDto();
-            $piInfoWidget->title = "Principal Investigator Details";
-            $piInfoWidget->icon = "icon-user-3";
-            $piInfoWidget->group = self::$MYLAB_GROUP_PROFILE;
-            $piInfoWidget->template = 'pi-profile';
-            $piInfoWidget->data = new GenericDto(array(
-                'pi' => $manager->buildPIDTO($principalInvestigator)
-            ));
+    private function buildPIWidgets( &$user, &$principalInvestigator ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
-            if( !CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
-                // If user is not a PI, omit Lab Location data
-                $piInfoWidget->data->pi->Buildings = null;
-                $piInfoWidget->data->pi->Rooms = null;
+        $pi_widgets = array();
+
+        // Compile all PI details into a single DTO
+        // We'll pass this to individual widget-builders so we don't need to query again
+        $piDto = $this->manager->buildPIDTO($principalInvestigator);
+
+        $piInfoWidget = $this->buildPIWidgets_info( $user, $principalInvestigator, $piDto );
+        $pi_widgets[] = $piInfoWidget;
+
+        if( CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
+            $piPersonnelWidget = $this->buildPIWidgets_personnel( $user, $principalInvestigator, $piDto);
+            $pi_widgets[] = $piPersonnelWidget;
+
+            $piLocationWidget = $this->buildPIWidgets_locations( $user, $principalInvestigator, $piDto );
+            $pi_widgets[] = $piLocationWidget;
+
+            // Display Help block for PI users
+            $helpContact = $this->manager->getUserByUsername(ApplicationConfiguration::get('server.web.HELP_CONTACT_USERNAME'));
+            if( isset($helpContact) ){
+                $helpContactDto = new GenericDto(array(
+                    'Name' => $helpContact->getName(),
+                    'Email' => $helpContact->getEmail(),
+                    'Office_phone' => $helpContact->getOffice_phone()
+                ));
+
+                $piInfoWidget->data->help = $helpContactDto;
+                $piLocationWidget->data->help = $helpContactDto;
+                $piPersonnelWidget->data->help = $helpContactDto;
             }
-            else {
-                // Display Help block for PI users
-                $helpContact = $manager->getUserByUsername(ApplicationConfiguration::get('server.web.HELP_CONTACT_USERNAME'));
 
-                if( isset($helpContact) ){
-                    $piInfoWidget->data->help = new GenericDto(array(
-                        'Name' => $helpContact->getName(),
-                        'Email' => $helpContact->getEmail(),
-                        'Office_phone' => $helpContact->getOffice_phone()
-                    ));
-                }
-            }
+        }
 
-            $widgets[] = $piInfoWidget;
+        $pi_widgets[] = $this->buildPIWidgets_inspections( $user, $principalInvestigator );
 
-            // Collect inspections
-            $inspections = array();
-            $inspectionDtos = array();
-            if( isset($principalInvestigator) ){
-                // Filter inspections by year based on current user role
-                $inspections = $principalInvestigator->getInspections();
+        return $pi_widgets;
+    }
 
-                $minYear = CoreSecurity::userHasRoles($user, array("Admin"))
-                    ? 2017
-                    : 2018;
+    private function buildPIWidgets_info(User &$user, PrincipalInvestigator &$principalInvestigator, $piDto) : MyLabWidgetDto {
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
-                /* Statuses to display in My Lab */
-                $show_statuses = array(
-                    "CLOSED OUT",
-                    "INCOMPLETE CAP",
-                    "OVERDUE CAP",
-                    "SUBMITTED CAP"
-                );
+        // remove pi data we don't need here
+        $data = clone $piDto;
+        $data->Buildings = null;
+        $data->Rooms = null;
+        $data->LabPersonnel = null;
 
-                /** Statuses to Notify in mylab */
-                $notify_statuses = array(
-                    "INCOMPLETE CAP",
-                    "OVERDUE CAP"
-                );
+        $piInfoWidget = new MyLabWidgetDto();
+        $piInfoWidget->title = "Principal Investigator Details";
+        $piInfoWidget->icon = "icon-user-3";
+        $piInfoWidget->group = self::$MYLAB_GROUP_PROFILE;
+        $piInfoWidget->template = 'pi-profile';
+        $piInfoWidget->data = new GenericDto(array(
+            'pi' => $data
+        ));
 
-                foreach($inspections as $key => $inspection){
-                    if( in_array($inspection->getStatus(), $show_statuses) ){
-                        $closedYear = date_create($inspection->getDate_closed())->format("Y");
-                        $startedYear = date_create($inspection->getDate_started())->format("Y");
+        return $piInfoWidget;
+    }
 
-                        if( $closedYear < $minYear ){
-                            // Closed prior to minYear
-                            $LOG->debug("Omit $inspection (closed $closedYear) for MyLab");
-                            unset($inspections[$key]);
-                        }
-                        else if( $startedYear < $minYear ){
-                            // Started prior to minYear
-                            $LOG->debug("Omit $inspection (started $startedYear) for MyLab");
-                            unset($inspections[$key]);
-                        }
+    private function buildPIWidgets_locations(User &$user, PrincipalInvestigator &$principalInvestigator, $piDto ) : MyLabWidgetDto {
+        $piLocationWidget = new MyLabWidgetDto();
+        $piLocationWidget->title = "Lab Locations";
+        $piLocationWidget->icon = "icon-location";
+        $piLocationWidget->group = self::$MYLAB_GROUP_PROFILE;
+        $piLocationWidget->template = 'pi-locations';
+        $piLocationWidget->data = new GenericDto(array(
+            'Buildings' => $piDto->Buildings,
+            'Rooms' => $piDto->Rooms
+        ));
+
+        return $piLocationWidget;
+    }
+
+    private function buildPIWidgets_inspections(User &$user, PrincipalInvestigator &$principalInvestigator ) : MyLabWidgetDto {
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        // Collect inspections
+        $inspections = array();
+        $inspectionDtos = array();
+        if( isset($principalInvestigator) ){
+            // Filter inspections by year based on current user role
+            $inspections = $principalInvestigator->getInspections();
+
+            $minYear = CoreSecurity::userHasRoles($user, array("Admin"))
+                ? 2017
+                : 2018;
+
+            /* Statuses to display in My Lab */
+            $show_statuses = array(
+                "CLOSED OUT",
+                "INCOMPLETE CAP",
+                "OVERDUE CAP",
+                "SUBMITTED CAP"
+            );
+
+            /** Statuses to Notify in mylab */
+            $notify_statuses = array(
+                "INCOMPLETE CAP",
+                "OVERDUE CAP"
+            );
+
+            foreach($inspections as $key => $inspection){
+                if( in_array($inspection->getStatus(), $show_statuses) ){
+                    $closedYear = date_create($inspection->getDate_closed())->format("Y");
+                    $startedYear = date_create($inspection->getDate_started())->format("Y");
+
+                    if( $closedYear < $minYear ){
+                        // Closed prior to minYear
+                        $LOG->debug("Omit $inspection (closed $closedYear) for MyLab");
+                        unset($inspections[$key]);
                     }
-                    else {
-                        $LOG->debug("Omit $inspection (still open) for MyLab");
+                    else if( $startedYear < $minYear ){
+                        // Started prior to minYear
+                        $LOG->debug("Omit $inspection (started $startedYear) for MyLab");
                         unset($inspections[$key]);
                     }
                 }
-
-                // Look up hazard info for displayable inspections
-                $dao = new InspectionDAO();
-                foreach($inspections as $inspection){
-                    $inspectionDtos[] = new GenericDto(array(
-                        'Key_id' => $inspection->getKey_id(),
-                        'Status' => $inspection->getStatus(),
-                        'Date_started' => $inspection->getDate_started(),
-                        'Is_rad' => $inspection->getIs_rad(),
-                        'HazardInfo' => $dao->getInspectionHazardInfo($inspection->getKey_id()),
-                        'Inspectors' => array_map( function($i){ return $i->getName(); }, $inspection->getInspectors())
-                    ));
+                else {
+                    $LOG->debug("Omit $inspection (still open) for MyLab");
+                    unset($inspections[$key]);
                 }
             }
 
-            $inspectionsWidget = new MyLabWidgetDto();
-            $inspectionsWidget->group = self::$MYLAB_GROUP_INSPECTIONS;
-            $inspectionsWidget->title = "Lab Inspection Reports";
-            $inspectionsWidget->icon = "icon-search-2";
-            $inspectionsWidget->template = "inspection-table";
-            $inspectionsWidget->fullWidth = 1;
-            $inspectionsWidget->data = $inspectionDtos;
-
-            $inspectionsWidget->alerts = array();
-            foreach( $inspectionsWidget->data as $inspection ){
-                if( in_array($inspection->Status, $notify_statuses) ){
-                    $inspectionsWidget->alerts[] = $inspection->Key_id;
-                }
+            // Look up hazard info for displayable inspections
+            $dao = new InspectionDAO();
+            foreach($inspections as $inspection){
+                $inspectionDtos[] = new GenericDto(array(
+                    'Key_id' => $inspection->getKey_id(),
+                    'Status' => $inspection->getStatus(),
+                    'Date_started' => $inspection->getDate_started(),
+                    'Is_rad' => $inspection->getIs_rad(),
+                    'HazardInfo' => $dao->getInspectionHazardInfo($inspection->getKey_id()),
+                    'Inspectors' => array_map( function($i){ return $i->getName(); }, $inspection->getInspectors())
+                ));
             }
-
-            $widgets[] = $inspectionsWidget;
         }
 
-        return $widgets;
+        $inspectionsWidget = new MyLabWidgetDto();
+        $inspectionsWidget->group = self::$MYLAB_GROUP_INSPECTIONS;
+        $inspectionsWidget->title = "Lab Inspection Reports";
+        $inspectionsWidget->icon = "icon-search-2";
+        $inspectionsWidget->template = "inspection-table";
+        $inspectionsWidget->fullWidth = 1;
+        $inspectionsWidget->data = $inspectionDtos;
+
+        $inspectionsWidget->alerts = array();
+        foreach( $inspectionsWidget->data as $inspection ){
+            if( in_array($inspection->Status, $notify_statuses) ){
+                $inspectionsWidget->alerts[] = $inspection->Key_id;
+            }
+        }
+
+        return $inspectionsWidget;
+    }
+
+    private function buildPIWidgets_personnel( User &$user, PrincipalInvestigator &$principalInvestigator, $piDto) : MyLabWidgetDto {
+        $personnelWidget = new MyLabWidgetDto();
+        $personnelWidget->group = self::$MYLAB_GROUP_PROFILE;
+        $personnelWidget->title = "Lab Personnel";
+        $personnelWidget->icon = "icon-users";
+        $personnelWidget->template = "pi-personnel";
+        $personnelWidget->data = 
+        $piInfoWidget->data = new GenericDto(array(
+            'LabPersonnel' => $piDto->LabPersonnel
+        ));
+
+        return $personnelWidget;
     }
 }
 ?>

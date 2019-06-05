@@ -1,0 +1,14 @@
+<div class="content-container">
+    <div class="fake-table striped bordered content-container">
+        <div class="table-row" ng-repeat="personnel in data.LabPersonnel | orderBy: 'Last_name'">
+            <div>{{personnel.Name}}</div>
+        </div>
+    </div>
+</div>
+
+<div ng-if="data.help" class="toolbar-container">
+    <div class="toolbar">
+        <h5><i class="icon-help" style="margin:10px;"></i>If any of your profile information cannot be updated, contact your administrator:</h4>
+        <span><b>{{data.help.Name}}</b> | <a ng-href="mailto:{{data.help.Email}}">{{data.help.Email}}</a> | {{data.help.Office_phone | tel}}</span>
+    </div>
+</div>

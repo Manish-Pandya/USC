@@ -1,0 +1,7 @@
+<h3 style="margin-top:10px;" ng-show="!data.length">No equipment to display at this time.</h3>
+<div class="fake-table bordered striped" ng-show="data.length">
+
+    <div class="table-row" ng-repeat="personnel in data">
+        <div>{{personnel.Name}}</div>
+    </div>
+</div>
