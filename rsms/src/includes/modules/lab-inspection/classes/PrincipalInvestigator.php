@@ -300,7 +300,7 @@ class PrincipalInvestigator extends GenericCrud {
 			$this->labPersonnel = $thisDAO->getRelatedItemsById(
 				$this->getKey_id(),
 				DataRelationship::fromArray(self::$LABPERSONNEL_RELATIONSHIP),
-				null, false, true);
+				null, true, true);
 		}
 		return $this->labPersonnel;
 	}
