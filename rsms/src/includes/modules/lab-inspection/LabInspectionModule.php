@@ -311,8 +311,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
         $personnelWidget->title = "Lab Personnel";
         $personnelWidget->icon = "icon-users";
         $personnelWidget->template = "pi-personnel";
-        $personnelWidget->data = 
-        $piInfoWidget->data = new GenericDto(array(
+        $personnelWidget->data = new GenericDto(array(
             'LabPersonnel' => $piDto->LabPersonnel
         ));
 
