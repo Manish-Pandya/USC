@@ -27,6 +27,21 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
             }
         );
 })
+.filter('roomUnassignedFilter', function(){
+    return function(room){
+        if( !room ){
+            return true;
+        }
+
+        // 'Unassigned' here means:
+        //   1. Assigned to Zero PIs
+        //   2. Assigned to Only Inactive PIs
+        let empty = (!room.PrincipalInvestigators || room.PrincipalInvestigators.length == 0);
+        let onlyInactive = room.PrincipalInvestigators.filter( pi => !pi.Is_active ).length == room.PrincipalInvestigators.length;
+
+        return empty || onlyInactive;
+    }
+})
 .filter('piActiveFilter', function(){
     return function(pis, search){
         if ( !search || !pis ){
@@ -107,10 +122,15 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                         }
                     }
 
-                    // Filter Unassigned rooms
-                    if( !search.unassignedPis && (!item.PrincipalInvestigators || item.PrincipalInvestigators.length == 0) ){
+                    // Is room Unassigned?
+                    let unassigned = $filter('roomUnassignedFilter')(item);
+
+                    if( !search.unassignedPis && unassigned ){
+                        // Exclude Unassigned Rooms
+                        console.debug("Room " + item.Name + " is Unassigned");
                         item_matched = false;
                     }
+                    // else Include Unassigned Rooms
 
                     if( item.PrincipalInvestigators && item.PrincipalInvestigators.length > 0 ){
 
