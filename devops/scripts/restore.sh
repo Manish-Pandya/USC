@@ -135,6 +135,7 @@ fi
 echo "Restoring application backup..."
 
 # Stage the docroot restoration
+# TODO: CHOWN/CHMOD to ensure www-deploy is group and group has rw
 mkdir docroot
 tar -xf $DOCROOT_BACKUP -C ./docroot
 cd ./docroot
