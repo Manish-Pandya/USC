@@ -81,7 +81,8 @@ class DtoFactory {
         return DtoFactory::buildDto($u, array(
             'Name' => $u->getName(),
             'First_name' => $u->getFirst_name(),
-            'Last_name' => $u->getLast_name()
+            'Last_name' => $u->getLast_name(),
+            'Is_active' => $u->getIs_active()
         ));
     }
 }
