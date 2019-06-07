@@ -4713,6 +4713,11 @@ class ActionManager {
 			//recurse down hazard tree.  look in checklists array for each hazard.  if checklist is found, push it into ordered array.
             $orderedChecklists = array();
             $orderedChecklists = $this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $this->getHazardById(10000));
+
+            if( !empty($checklists) ){
+                $LOG->warn("Not all Checklists were matched:\n\t" . implode("\n\t", $checklists));
+            }
+
             $inspection->setChecklists( $orderedChecklists );
 
             //make sure we get the right rooms for our branch level checklists
