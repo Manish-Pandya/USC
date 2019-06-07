@@ -50,12 +50,14 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
 
         var matched = [];
 
-        pis.forEach( pi => {
-            // Match the PI if its active status matches either filter
-            if( (search.activePis && pi.Is_active == search.activePis) || (search.inactivePis && !pi.Is_active == search.inactivePis) ){
-                matched.push(pi);
-            }
-        });
+        if( search.activePis || search.inactivePis ){
+            pis.forEach( pi => {
+                // Match the PI if its active status matches either filter
+                if( (search.activePis && pi.Is_active == search.activePis) || (search.inactivePis && !pi.Is_active == search.inactivePis) ){
+                    matched.push(pi);
+                }
+            });
+        }
 
         return matched;
     };
