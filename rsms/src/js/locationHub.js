@@ -122,15 +122,45 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                         }
                     }
 
-                    // Is room Unassigned?
-                    let unassigned = $filter('roomUnassignedFilter')(item);
+                    // Filter based on mix of PI assignment and Is_active status
+                    //   (arbitrary block intentional)
+                    {
+                        let assignedToActive = false;
+                        let assignedToInactive = false;
+                        item.PrincipalInvestigators.forEach( pi => {
+                            if ( pi.Is_active ){
+                                assignedToActive = true;
+                            }
+                            else {
+                                assignedToInactive = true;
+                            }
+                        });
 
-                    if( !search.unassignedPis && unassigned ){
-                        // Exclude Unassigned Rooms
-                        console.debug("Room " + item.Name + " is Unassigned");
-                        item_matched = false;
+                        let unassigned = !assignedToActive && !assignedToInactive;
+
+                        if( !search.activePis && assignedToActive ){
+                            // Exclude rooms assigned to Active PIs
+                            item_matched = false;
+                            console.debug("Exclude room assigned to Active PIs", item);
+                        }
+
+                        else if( !search.unassignedPis && unassigned ){
+                            // Exclude Unassigned rooms (assigned to no one OR only to Inactive)
+                            item_matched = false;
+                            console.debug("Exclude Unassigned room", item);
+                        }
+
+                        // Note that search.unassignedPis takes precedence over search.inactivePis
+                        //   due to an overlap in conditions
+                        // Therefore, they are mutually-exclusive for purposes of filtering Rooms.
+                        // While search.unassignedPis is active, search.inactivePis may only be used
+                        //   for display purposes (to show/hide Inactive PI names)
+                        else if( !search.inactivePis && assignedToInactive && !search.unassignedPis ){
+                            // Exclude rooms assigned to Inactive PIs
+                            item_matched = false;
+                            console.debug("Exclude room assigned to Inactive PIs", item);
+                        }
                     }
-                    // else Include Unassigned Rooms
 
                     if( item.PrincipalInvestigators && item.PrincipalInvestigators.length > 0 ){
 
@@ -165,11 +195,6 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                                 }
                             }
                         }
-
-                        // Filter by PI Activity status if this room has any PI assignments
-                        // Note that this will not apply to unassigned rooms
-                        var filteredPis = $filter('piActiveFilter')(item.PrincipalInvestigators, search);
-                        item_matched = item_matched && filteredPis && filteredPis.length > 0;
                     }
                 }
 
