@@ -61,6 +61,25 @@ ul.banner-nav li span {
     text-decoration: underline;
 }
 
+.card .expander {
+    padding: 10px 15px 5px 15px; cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: #662D91;
+    color: white;
+}
+
+.card .expander .title {
+    flex-grow: 2;
+}
+
+.card .expander i {
+    font-size: inherit;
+    margin-right: 30px;
+}
+
 /* Templates table */
 .templates.table tbody:nth-child(even) {
     background: #ECF0F1;
@@ -75,6 +94,11 @@ ul.banner-nav li span {
 /* Reset the tr striping so we can stripe using tbody */
 .templates.table tbody tr:nth-child(even){
     background:initial;
+}
+
+.subtitle {
+    font-style: italic;
+    margin-top: 5px;
 }
 
 .inner.card {

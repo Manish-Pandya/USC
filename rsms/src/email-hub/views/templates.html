@@ -2,22 +2,22 @@
 <div cg-busy="{promise:saving, message:'Saving...', backdrop:true, templateUrl:'../busy-templates/full-page-busy.html'}"></div>
 <div class="email-hub">
 
-    <div class="card full" ng-init="showTemplatesTable = true">
-        <h1 style="margin: 10px 15px 5px 15px; cursor: pointer;" ng-click="showTemplatesTable = !showTemplatesTable">
-            <i style="vertical-align: middle; font-size: inherit; margin-right:20px;" ng-class="{'icon-arrow-7':!showTemplatesTable, 'icon-arrow-8': showTemplatesTable}"></i>
-            <span>Message Templates</span>
-            <span class="pull-right" ng-if="Templates">({{Templates.length}})</span>
+
+    <div class="card full" ng-repeat="(module, moduleTemplates) in Templates | groupBy:'Module'" ng-init="showTemplatesTable = true">
+        <h1 class="expander" ng-click="showTemplatesTable = !showTemplatesTable">
+            <i ng-class="{'icon-arrow-7':!showTemplatesTable, 'icon-arrow-8': showTemplatesTable}"></i>
+            <span class="title">{{module || 'Message'}} Templates</span>
+            <span ng-if="moduleTemplates">({{moduleTemplates.length}})</span>
         </h1>
 
-        <table ng-if="Templates && showTemplatesTable" class="table table-bordered templates">
+        <table ng-if="moduleTemplates && showTemplatesTable" class="table table-bordered templates">
             <thead>
-                <th></th>
-                <th>Template Name</th>
-                <th>Message Type</th>
-                <th>Recipients</th>
-                <th>Module</th>
+                <th style="width: 6%"></th>
+                <th style="width: 25%">Subject</th>
+                <th style="width: 25%">Description</th>
+                <th style="width: 15%">Recipients</th>
             </thead>
-            <tbody ng-repeat="template in Templates" ng-class="{closed: !template.EditCopy}" ng-init="mtype = getTypeForTemplate(template)">
+            <tbody ng-repeat="template in moduleTemplates" ng-class="{closed: !template.EditCopy}" ng-init="mtype = getTypeForTemplate(template)">
                 <tr ng-class="{blueBg: HighlightTemplate && template.Key_id == HighlightTemplate, inactive: !template.Is_active, greenBg: template.EditCopy}">
                     <td>
                         <a ng-if="!template.EditCopy" class="btn btn-primary left" ng-click="editTemplate(template)"><i class="icon-pencil"></i></a>
@@ -27,10 +27,12 @@
                             <i ng-class="{'icon-remove': template.Is_active, 'icon-checkmark': !template.Is_active}"></i>
                         </a>
                     </td>
-                    <td>{{template.Title}}</td>
-                    <td>{{template.Message_type}}</td>
+                    <td>
+                        <h4>{{template.Subject}}</h4>
+                        <h5 class="subtitle">{{template.Title || template.Message_type}}</h5>
+                    </td>
+                    <td>{{mtype.TypeDescription}}</td>
                     <td>{{mtype.RecipientsDescription}}</td>
-                    <td>{{template.Module}}</td>
                 </tr>
                 <tr ng-if="template.EditCopy">
                     <td colspan="5">
@@ -97,53 +99,6 @@
                 </tr>
             </tbody>
         </table>
-    </div>
 
-    <div class="card full" ng-init="showTypesTable = true">
-        <h1 style="margin: 10px 15px 5px 15px; cursor: pointer;" ng-click="showTypesTable = !showTypesTable">
-            <i style="vertical-align: middle; font-size: inherit; margin-right:20px;" ng-class="{'icon-arrow-7':!showTypesTable, 'icon-arrow-8': showTypesTable}"></i>
-            <span>Message Types</span>
-            <span class="pull-right" ng-if="MessageTypes">({{MessageTypes.length}})</span>
-        </h1>
-
-        <table ng-if="MessageTypes && showTypesTable" class="table table-bordered table-hover table-striped">
-            <thead>
-                <tr>
-                    <th rowspan="2"></th>
-                    <th rowspan="2">Message Type</th>
-                    <th rowspan="2">Description</th>
-                    <th rowspan="2">Recipients</th>
-                    <th rowspan="2">Module</th>
-                    <th colspan="2" style="text-align: center;">Templates</th>
-                </tr>
-                <tr>
-                    <th style="text-align: center;">Active</th>
-                    <th style="text-align: center;">Inactive</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr ng-repeat="mtype in MessageTypes" ng-click="mtype.EditCopy = !mtype.EditCopy">
-                    <td>
-                        <a ng-if="mtype.numActiveTemplates > 0" class="btn left btn-warning" style="margin-right:10px" ng-click="createNewTemplate(mtype)"
-                            popover="Each Active template for a given Message Type will generate its own email."
-                            popover-title="There is already at least one template for this Message Type.">
-                            <i class="icon-add"></i>
-                            Add Template
-                        </a>
-                        <a ng-if="mtype.numActiveTemplates == 0" class="btn left btn-success" style="margin-right:10px" ng-click="createNewTemplate(mtype)">
-                            <i class="icon-plus-2"></i>
-                            New Template
-                        </a>
-                    </td>
-                    <td>{{mtype.TypeName}}</td>
-                    <td>{{mtype.TypeDescription}}</td>
-                    <td>{{mtype.RecipientsDescription}}</td>
-                    <td>{{mtype.Module}}</td>
-                    <td>{{ countTemplatesOfType(mtype, true) }}</td>
-                    <td>{{ countTemplatesOfType(mtype, false) }}</td>
-                </tr>
-            </tbody>
-        </table>
     </div>
 </div>
