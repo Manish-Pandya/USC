@@ -196,27 +196,6 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
         return $pi_widgets;
     }
 
-    private function buildPIWidgets_info(User &$user, PrincipalInvestigator &$principalInvestigator, $piDto) : MyLabWidgetDto {
-        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
-
-        // remove pi data we don't need here
-        $data = clone $piDto;
-        $data->Buildings = null;
-        $data->Rooms = null;
-        $data->LabPersonnel = null;
-
-        $piInfoWidget = new MyLabWidgetDto();
-        $piInfoWidget->title = "Principal Investigator Details";
-        $piInfoWidget->icon = "icon-user-3";
-        $piInfoWidget->group = self::$MYLAB_GROUP_PROFILE;
-        $piInfoWidget->template = 'pi-profile';
-        $piInfoWidget->data = new GenericDto(array(
-            'pi' => $data
-        ));
-
-        return $piInfoWidget;
-    }
-
     private function buildPIWidgets_locations(User &$user, PrincipalInvestigator &$principalInvestigator, $piDto ) : MyLabWidgetDto {
         $piLocationWidget = new MyLabWidgetDto();
         $piLocationWidget->title = "Lab Locations";
