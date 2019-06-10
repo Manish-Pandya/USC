@@ -128,6 +128,32 @@ class ActionManager {
         return $roles;
     }
 
+    public function getDepartmentForUser( User &$user ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $department = null;
+        $department_id = $user->getPrimary_department_id();
+
+        if( $department_id == NULL ){
+
+            $pi = $this->getPrincipalInvestigatorOrSupervisorForUser( $user );
+
+            try{
+                // user is a PI and may not have a 'primary department' assigned
+                $department = $pi->getDepartments()[0];
+            }
+            catch( Exception $err ){
+                $LOG->error("Unable to determine Department for this PI user");
+            }
+        }
+        else {
+            $dao = new GenericDAO(new Department());
+            $department = $dao->getById($department_id);
+        }
+
+        return $department;
+    }
+
     /**
      * Authenticate via LDAP
      */
