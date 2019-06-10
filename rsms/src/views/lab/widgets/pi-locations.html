@@ -9,7 +9,7 @@
         </h3>
 
         <div class="fake-table striped bordered">
-            <div ng-if="!_hide" ng-repeat="room in rooms | orderBy: Name" class="table-row">
+            <div ng-if="!_hide" ng-repeat="room in rooms | orderBy: 'Name'" class="table-row">
                 <div style="padding-left: 25px;">{{room.Name}}</div>
             </div>
         </div>
