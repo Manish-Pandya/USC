@@ -1,7 +1,12 @@
 <div class="content-container">
     <div class="fake-table striped bordered content-container">
+        <div class="table-header">
+            <h3>Name</h3>
+            <h3>Position</h3>
+        </div>
         <div class="table-row" ng-repeat="personnel in data.LabPersonnel | orderBy: 'Last_name'">
             <div>{{personnel.Name}}</div>
+            <div>{{personnel.Position}}</div>
         </div>
     </div>
 </div>

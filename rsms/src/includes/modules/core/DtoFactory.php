@@ -82,6 +82,7 @@ class DtoFactory {
             'Name' => $u->getName(),
             'First_name' => $u->getFirst_name(),
             'Last_name' => $u->getLast_name(),
+            'Position' => $u->getPosition(),
             'Is_active' => $u->getIs_active()
         ));
     }
