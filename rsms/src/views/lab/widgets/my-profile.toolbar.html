@@ -1,0 +1,11 @@
+<div class="toolbar">
+    <a ng-if="!editData" ng-click="prepareEdit(data)" class="btn btn-primary">
+        <i class="icon-pencil"></i> Edit
+    </a>
+    <a ng-if="editData" ng-click="cancelEdit()" class="btn btn-danger">
+        <i class="icon-cancel"></i> Cancel
+    </a>
+    <a ng-if="editData" ng-click="save(editData, api.saveUserProfile, api.validateUserProfile)" class="btn btn-success">
+        <i class="icon-checkmark"></i> Save
+    </a>
+</div>

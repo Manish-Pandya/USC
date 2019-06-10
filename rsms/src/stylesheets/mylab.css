@@ -95,6 +95,11 @@ my-lab-widget {
 
 .widget .widget-header .actions {
     display: flex;
+    align-items: center;
+}
+
+.widget .widget-header .actions .toolbar {
+    padding: 0 20px;
 }
 
 .widget .widget-header .widget-title {
@@ -144,30 +149,13 @@ my-lab-widget {
     overflow: hidden;
 }
 
-.widget .content-container {
-    /* Leave room for toolbar */
-    margin-bottom: 70px;
-}
-
 .widget .toolbar-container {
-    position: absolute;
-    bottom: 10;
-    right: 10;
-    width: 95%;
-    min-height: 70px;
-
+    text-align: right;
+    margin-top: 10px;
 }
 
 .saving .toolbar-container {
     display:none;
-}
-
-.widget .toolbar-container .toolbar {
-    text-align: right;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    left: 0;
 }
 
 .widget .link-container {

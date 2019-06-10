@@ -5,6 +5,7 @@
             <img ng-if="headerImage" ng-src="{{'../../img/' + headerImage}}" width="25px" style="margin-right:5px;" />
             <span class="widget-title">{{headerText}}</span>
             <span class="actions">
+                <ng-include ng-if="toolbarTemplate" src="toolbarTemplate" ng-click="$event.stopPropagation();"></ng-include>
                 <span ng-if="alerts.length" class="badge badge-warning">{{alerts.length}}</span>
                 <i ng-class="{'icon-arrow-down': !collapsed, 'icon-arrow-right': collapsed}"></i>
             </span>

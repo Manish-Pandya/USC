@@ -142,6 +142,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
         $userInfoWidget->group = self::$MYLAB_GROUP_PROFILE;
         $userInfoWidget->template = 'my-profile';
         $userInfoWidget->fullWidth = 1;
+        $userInfoWidget->toolbar = 1;
         $userInfoWidget->data = $profileData;
 
         if( !CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
