@@ -188,6 +188,18 @@ my-lab-widget {
     width:25px;
 }
 
+.collapsible-table-header {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.collapsible-table-header:hover {
+    cursor: pointer;
+    color: #777;
+}
+
 .tight-list {
     border: 3px solid rgb(205, 205, 205);
     padding: 9px;
