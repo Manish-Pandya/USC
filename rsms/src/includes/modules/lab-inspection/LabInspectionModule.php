@@ -111,14 +111,21 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
 
         // Get relevant PI for lab
         $principalInvestigator = $manager->getPrincipalInvestigatorOrSupervisorForUser( $user );
-        $profileData = $manager->getMyProfile( $user->getKey_id() );
+
+        $piDto = null;
+        if( isset($principalInvestigator) ){
+            // Compile all PI details into a single DTO
+            // We'll pass this to individual widget-builders so we don't need to query again
+            $piDto = $manager->buildPIDTO($principalInvestigator);
+        }
 
         // Add profile widget
-        $widgets[] = $this->buildUserInfoWidget( $profileData, $principalInvestigator );
+        $profileData = $manager->getMyProfile( $user->getKey_id() );
+        $widgets[] = $this->buildProfileWidget( $user, $profileData, $piDto);
 
         // Ad PI-related widgets, if we have PI data
         if( isset( $principalInvestigator ) ){
-            foreach( $this->buildPIWidgets( $user, $principalInvestigator) as $w ){
+            foreach( $this->buildPIWidgets( $user, $principalInvestigator, $piDto) as $w ){
                 $widgets[] = $w;
             }
         }
@@ -126,7 +133,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
         return $widgets;
     }
 
-    private function buildUserInfoWidget( &$profileData, &$principalInvestigator ){
+    private function buildProfileWidget( &$user, &$profileData, &$piDto ){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $userInfoWidget = new MyLabWidgetDto();
@@ -134,9 +141,16 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
         $userInfoWidget->icon = "icon-user";
         $userInfoWidget->group = self::$MYLAB_GROUP_PROFILE;
         $userInfoWidget->template = 'my-profile';
+        $userInfoWidget->fullWidth = 1;
         $userInfoWidget->data = $profileData;
 
+        if( !CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
+            // Show additional PI info for non-PI users
+            $userInfoWidget->data->PI = $piDto;
+        }
+
         if( !isset($profileData->Position) ){
+            // User needs to fill out their Position
             $profilePositionWidget = new MyLabWidgetDto();
             $profilePositionWidget->title = "My Profile - Position";
             $profilePositionWidget->icon = "icon-user";
@@ -148,17 +162,10 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
         return $userInfoWidget;
     }
 
-    private function buildPIWidgets( &$user, &$principalInvestigator ){
+    private function buildPIWidgets( &$user, &$principalInvestigator, &$piDto ){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         $pi_widgets = array();
-
-        // Compile all PI details into a single DTO
-        // We'll pass this to individual widget-builders so we don't need to query again
-        $piDto = $this->manager->buildPIDTO($principalInvestigator);
-
-        $piInfoWidget = $this->buildPIWidgets_info( $user, $principalInvestigator, $piDto );
-        $pi_widgets[] = $piInfoWidget;
 
         if( CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
             $piPersonnelWidget = $this->buildPIWidgets_personnel( $user, $principalInvestigator, $piDto);
@@ -176,13 +183,14 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
                     'Office_phone' => $helpContact->getOffice_phone()
                 ));
 
-                $piInfoWidget->data->help = $helpContactDto;
+                $piLocationWidget->data->help = $helpContactDto;
                 $piLocationWidget->data->help = $helpContactDto;
                 $piPersonnelWidget->data->help = $helpContactDto;
             }
 
         }
 
+        // List Inspections to all lab users & PI
         $pi_widgets[] = $this->buildPIWidgets_inspections( $user, $principalInvestigator );
 
         return $pi_widgets;

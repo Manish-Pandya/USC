@@ -14,6 +14,21 @@
                 </select>
             </div>
         </div>
+        <div class="table-row" ng-if="data.PI">
+            <div>Principal Investigator Name</div>
+            <div>{{data.PI.Name}}</div>
+            <div ng-if="editData"></div>
+        </div>
+        <div class="table-row" ng-if="data.PI">
+            <div>Principal Investigator Position</div>
+            <div>{{data.PI.Position}}</div>
+            <div ng-if="editData"></div>
+        </div>
+        <div class="table-row">
+            <div>Department</div>
+            <div>{{data.Department}}</div>
+            <div ng-if="editData"></div>
+        </div>
         <div class="table-row" ng-if="data.Lab_phone != undefined" ng-class="{inactive: validation.errorFields.Lab_phone}">
             <div>Lab Phone</div>
             <div>{{data.Lab_phone | tel}}</div>

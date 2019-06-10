@@ -2332,6 +2332,7 @@ class ActionManager {
 
         return DtoFactory::buildDto($pi, array(
             'Name' => $pi->getName(),
+            'Position' => $pi->getUser()->getPosition(),
             'Departments' => $deptDtos,
             'Buildings' => $buildingDtos,
             'Rooms' => $roomDtos,
@@ -5537,6 +5538,8 @@ class ActionManager {
             return new ActionError("No such user", 404);
         }
 
+        $department = $this->getDepartmentForUser( $user );
+
         // Collect User Info
         // Notes:
         //   Phone number inclusion varies by Role:
@@ -5547,7 +5550,8 @@ class ActionManager {
             'First_name' => $user->getFirst_name(),
             'Last_name' => $user->getLast_name(),
             'Name' => $user->getName(),
-            'Position' => $user->getPosition()
+            'Position' => $user->getPosition(),
+            'Department' => $department->getName() ?? null
         );
 
         if( CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
@@ -5555,6 +5559,14 @@ class ActionManager {
             $userData['Emergency_phone'] = $user->getEmergency_phone() ?? '';
         }
         else{
+
+            // Add PI details
+            $pi = $this->getPrincipalInvestigatorOrSupervisorForUser( $user );
+            $userData['PI'] = array(
+                'Name' => $pi->getUser()->getName(),
+                'Position' => $pi->getUser()->getPosition()
+            );
+
             if( CoreSecurity::userHasRoles($user, array('Lab Personnel')) ){
                 $userData['Lab_phone'] = $user->getLab_phone() ?? '';
             }
