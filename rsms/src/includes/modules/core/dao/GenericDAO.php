@@ -196,10 +196,15 @@ class GenericDAO {
 	/**
 	 * Helper function which executes a query limited to a specific page
 	 */
-	function queryPage( $paging, $sql, $fetch_fn ){
+	function queryPage( $paging, $sql, $fetch_fn, $bind_fn = null ){
 		if( $paging != null ){
 			// First, count the records
 			$count_stmt = DBConnection::prepareStatement($sql);
+
+			if( isset($bind_fn) ){
+				call_user_func($bind_fn, $count_stmt);
+			}
+
 			$count_stmt->execute();
 			$total_results_count = $count_stmt->rowCount();
 
@@ -215,6 +220,10 @@ class GenericDAO {
 		}
 
 		$stmt = DBConnection::prepareStatement($sql);
+
+		if( isset($bind_fn) ){
+			call_user_func($bind_fn, $stmt);
+		}
 
 		$this->LOG->debug("Executing: $sql");
 		if ($stmt->execute() ) {

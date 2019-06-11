@@ -498,11 +498,21 @@ class Messaging_ActionManager extends ActionManager {
         return $template;
     }
 
-    public function getEmails( $page, $size ){
+    public function getEmails( $page, $size, $module = null, $template = null, $search = null ){
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
         $pageNum = $this->getValueFromRequest('page', $page);
         $pageSize = $this->getValueFromRequest('size', $size);
+
+        // Filters
+        $module = $this->getValueFromRequest('module', $module);
+        $template = $this->getValueFromRequest('template', $template);
+        $search = $this->getValueFromRequest('search', $search);
+
+        // Trim filter values
+        if( $module ) $module = trim($module);
+        if( $template ) $template = trim($template);
+        if( $search ) $search = trim($search);
 
         $paging = array(
             'page' => $pageNum,
@@ -510,7 +520,7 @@ class Messaging_ActionManager extends ActionManager {
         );
 
         $emailDao = new QueuedEmailDAO();
-        $resultPage = $emailDao->getQueue($paging, null, false, false);
+        $resultPage = $emailDao->getQueue($paging, null, false, false, $module, $template, $search);
 
         return $resultPage;
     }
