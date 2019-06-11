@@ -2,22 +2,22 @@
 <div cg-busy="{promise:saving, message:'Saving...', backdrop:true, templateUrl:'../busy-templates/full-page-busy.html'}"></div>
 <div class="email-hub">
 
-
-    <div class="card full" ng-repeat="(module, moduleTemplates) in Templates | groupBy:'Module'" ng-init="showTemplatesTable = true">
+    <div class="card full" ng-repeat="module in Modules" ng-init="showTemplatesTable = true">
         <h1 class="expander" ng-click="showTemplatesTable = !showTemplatesTable">
             <i ng-class="{'icon-arrow-7':!showTemplatesTable, 'icon-arrow-8': showTemplatesTable}"></i>
-            <span class="title">{{module || 'Message'}} Templates</span>
-            <span ng-if="moduleTemplates">({{moduleTemplates.length}})</span>
+            <span class="title">{{module.Name || 'Message'}} Templates</span>
+            <span>({{module.TotalTypes}})</span>
         </h1>
 
-        <table ng-if="moduleTemplates && showTemplatesTable" class="table table-bordered templates">
+        <table ng-if="showTemplatesTable" class="table table-bordered templates">
             <thead>
                 <th style="width: 6%"></th>
                 <th style="width: 25%">Subject</th>
                 <th style="width: 25%">Description</th>
                 <th style="width: 15%">Recipients</th>
             </thead>
-            <tbody ng-repeat="template in moduleTemplates" ng-class="{closed: !template.EditCopy}" ng-init="mtype = getTypeForTemplate(template)">
+
+            <tbody ng-repeat="template in moduleTemplates = (Templates | filter:{'Module': module.Name})" ng-class="{closed: !template.EditCopy}" ng-init="mtype = getTypeForTemplate(template)">
                 <tr ng-class="{blueBg: HighlightTemplate && template.Key_id == HighlightTemplate, inactive: !template.Is_active, greenBg: template.EditCopy}">
                     <td>
                         <a ng-if="!template.EditCopy" class="btn btn-primary left" ng-click="editTemplate(template)"><i class="icon-pencil"></i></a>
@@ -98,7 +98,18 @@
                     </td>
                 </tr>
             </tbody>
+            <tbody ng-repeat="mtype in moduleUntemplatedTypes = (MessageTypes | untemplatedTypes: module.Name : Templates)">
+                <tr>
+                    <td>
+                        <a class="btn left btn-success" style="margin-right:10px" ng-click="createNewTemplate(mtype)">
+                            <i class="icon-plus-2"></i>
+                        </a>
+                    </td>
+                    <td>{{mtype.TypeName}}</td>
+                    <td>{{mtype.TypeDescription}}</td>
+                    <td>{{mtype.RecipientsDescription}}</td>
+                </tr>
+            </tbody>
         </table>
-
     </div>
 </div>
