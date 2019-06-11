@@ -131,3 +131,22 @@ ul.banner-nav li span {
 .email-content {
     word-break: break-word;
 }
+
+.filters {
+    margin: 5px;
+    display: flex;
+    justify-content: space-evenly
+}
+
+.filters > * {
+    flex-grow: 1;
+    padding: 0 5px;
+    margin: 0 5px;
+}
+
+.filters > button {
+    flex-grow: 0;
+    align-self: flex-start;
+    padding: 0px 15px;
+    margin: 0 5px;
+}
