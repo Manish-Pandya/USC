@@ -30,7 +30,10 @@
             page="Pager.currentPage"
             items-per-page="Pager.numPerPage"
             on-select-page="loadPage(page)"
-            total-items="QueuedEmailsPage.TotalCount">
+            total-items="QueuedEmailsPage.TotalCount"
+            boundary-links="true"
+            max-size="10"
+            rotate="false">
         </pagination>
 
         <table ng-if="QueuedEmailsPage" class="table table-bordered templates">
