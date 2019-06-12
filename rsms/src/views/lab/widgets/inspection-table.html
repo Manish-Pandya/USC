@@ -1,33 +1,35 @@
-<h3 style="margin-top:10px;" ng-show="!data.length">No reports at this time.</h3>
-<div class="fake-table bordered striped" ng-show="data.length">
-    
-    <div class="table-header">
-        <h3>Inspection Date</h3>
-        <h3>Inspector(s)</h3>
-        <h3>Status</h3>
-        <h3>Type</h3>
-        <h3>Report</h3>
-    </div>
+<div class="content-container">
+    <h3 style="margin-top:10px;" ng-show="!data.length">No reports at this time.</h3>
+    <div class="fake-table bordered striped" ng-show="data.length">
+        
+        <div class="table-header">
+            <h3>Inspection Date</h3>
+            <h3>Inspector(s)</h3>
+            <h3>Status</h3>
+            <h3>Type</h3>
+            <h3>Report</h3>
+        </div>
 
-    <div class="table-row" ng-repeat="inspection in data | orderBy: 'Date_started':true" ng-class="{inactive: inspection.Status == Constants.INSPECTION.STATUS.INCOMPLETE_CAP || inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_CAP }">
-        <div>{{inspection.Date_started | dateToISO}}</div>
-        <div>
-            <span ng-repeat="inspector in inspection.Inspectors">{{inspector}}<span ng-if="!$last">, </span></span>
-        </div>
-        <div>{{inspection.Status}}</div>
-        <div class="hazard-icons">
-            <span ng-if="api.inspectionHasHazard( inspection, 'bio_hazards_present')" ng-class="{'grayed-out': inspection.Is_rad}">
-                <img ng-src="{{GLOBAL_WEB_ROOT}}/img/biohazard-largeicon.png" />
-            </span>
-            <span ng-if="api.inspectionHasHazard( inspection, 'chem_hazards_present')" ng-class="{'grayed-out': inspection.Is_rad}">
-                <img ng-src="{{GLOBAL_WEB_ROOT}}/img/chemical-blue-icon.png" />
-            </span>
-            <span ng-if="api.inspectionHasHazard( inspection, 'rad_hazards_present')" ng-class="{'grayed-out': !inspection.Is_rad}">
-                <img ng-src="{{GLOBAL_WEB_ROOT}}/img/radiation-large-icon.png" />
-            </span>
-        </div>
-        <div>
-            <a class="btn btn-info left" href="{{GLOBAL_WEB_ROOT}}views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i class="icon-clipboard-2"></i>Inspection Report</a>
+        <div class="table-row" ng-repeat="inspection in data | orderBy: 'Date_started':true" ng-class="{inactive: inspection.Status == Constants.INSPECTION.STATUS.INCOMPLETE_CAP || inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_CAP }">
+            <div>{{inspection.Date_started | dateToISO}}</div>
+            <div>
+                <span ng-repeat="inspector in inspection.Inspectors">{{inspector}}<span ng-if="!$last">, </span></span>
+            </div>
+            <div>{{inspection.Status}}</div>
+            <div class="hazard-icons">
+                <span ng-if="api.inspectionHasHazard( inspection, 'bio_hazards_present')" ng-class="{'grayed-out': inspection.Is_rad}">
+                    <img ng-src="{{GLOBAL_WEB_ROOT}}/img/biohazard-largeicon.png" />
+                </span>
+                <span ng-if="api.inspectionHasHazard( inspection, 'chem_hazards_present')" ng-class="{'grayed-out': inspection.Is_rad}">
+                    <img ng-src="{{GLOBAL_WEB_ROOT}}/img/chemical-blue-icon.png" />
+                </span>
+                <span ng-if="api.inspectionHasHazard( inspection, 'rad_hazards_present')" ng-class="{'grayed-out': !inspection.Is_rad}">
+                    <img ng-src="{{GLOBAL_WEB_ROOT}}/img/radiation-large-icon.png" />
+                </span>
+            </div>
+            <div>
+                <a class="btn btn-info left" href="{{GLOBAL_WEB_ROOT}}views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i class="icon-clipboard-2"></i>Inspection Report</a>
+            </div>
         </div>
     </div>
 </div>

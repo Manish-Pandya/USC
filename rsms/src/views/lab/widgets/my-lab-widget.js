@@ -9,8 +9,10 @@ angular.module('myLab')
             headerImage: "@",
             groupName: "@",
             contentTemplateName: "@",
+            toolbar: '=',
             widget: '=',
             fullWidth: "=",
+            stretchContent: "=",
             alerts: "=",
             data: "=",
             api: "=",
@@ -26,6 +28,10 @@ angular.module('myLab')
             if( scope.fullWidth ){
                 element.addClass("full");
             }
+
+            if( scope.stretchContent ){
+                element.addClass("stretch-content");
+            }
         },
         controller: function ($scope, widgetModalActionFactory, widgetFunctionsFactory){
             $scope.GLOBAL_WEB_ROOT = window.GLOBAL_WEB_ROOT;
@@ -33,6 +39,10 @@ angular.module('myLab')
 
             if( $scope.contentTemplateName ){
                 $scope.contentTemplate = './widgets/' + $scope.contentTemplateName + '.html';
+
+                if( $scope.widget.Toolbar ){
+                    $scope.toolbarTemplate = './widgets/' + $scope.contentTemplateName + '.toolbar.html';
+                }
             }
 
             console.log('content-template:', $scope.contentTemplate);

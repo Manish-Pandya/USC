@@ -1,13 +1,8 @@
 <form class="content-container">
     <div class="fake-table striped bordered">
         <div class="table-row">
-            <div>First Name</div>
-            <div>{{data.First_name}}</div>
-            <div ng-if="editData"></div>
-        </div>
-        <div class="table-row">
-            <div>Last Name</div>
-            <div>{{data.Last_name}}</div>
+            <div>Name</div>
+            <div>{{data.First_name}} {{data.Last_name}}</div>
             <div ng-if="editData"></div>
         </div>
         <div class="table-row">
@@ -18,6 +13,21 @@
                     <option value="" style="display:none">--Select a Position--</option>
                 </select>
             </div>
+        </div>
+        <div class="table-row" ng-if="data.PI">
+            <div>Principal Investigator Name</div>
+            <div>{{data.PI.Name}}</div>
+            <div ng-if="editData"></div>
+        </div>
+        <div class="table-row" ng-if="data.PI">
+            <div>Principal Investigator Position</div>
+            <div>{{data.PI.Position}}</div>
+            <div ng-if="editData"></div>
+        </div>
+        <div class="table-row">
+            <div>Department</div>
+            <div>{{data.Department}}</div>
+            <div ng-if="editData"></div>
         </div>
         <div class="table-row" ng-if="data.Lab_phone != undefined" ng-class="{inactive: validation.errorFields.Lab_phone}">
             <div>Lab Phone</div>
@@ -43,19 +53,8 @@
     </div>
 </form>
 
-<div class="toolbar-container">
-    <div ng-if="validation && !validation.valid" class="error red">
+<div ng-if="validation" class="toolbar-container">
+    <div ng-if="!validation.valid" class="error red">
         {{validation.error}}
-    </div>
-    <div class="toolbar pull-right">
-        <a ng-if="!editData" ng-click="prepareEdit(data)" class="btn btn-primary">
-            <i class="icon-pencil"></i> Edit
-        </a>
-        <a ng-if="editData" ng-click="cancelEdit()" class="btn btn-danger">
-            <i class="icon-cancel"></i> Cancel
-        </a>
-        <a ng-if="editData" ng-click="save(editData, api.saveUserProfile, api.validateUserProfile)" class="btn btn-success">
-            <i class="icon-checkmark"></i> Save
-        </a>
     </div>
 </div>
