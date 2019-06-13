@@ -303,7 +303,7 @@ class Room extends GenericCrud {
 	public function getPrincipalInvestigators(){
 		if($this->principalInvestigators == null && !is_array($this->principalInvestigators)) {
 			$thisDAO = new GenericDAO($this);
-			$this->principalInvestigators = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PIS_RELATIONSHIP), NULL, NULL, TRUE);
+			$this->principalInvestigators = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PIS_RELATIONSHIP), NULL, TRUE, TRUE);
 		}
 		return $this->principalInvestigators;
 	}
