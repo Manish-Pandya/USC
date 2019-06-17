@@ -10,6 +10,13 @@
 
     $LINE = "\n";
 
+    $whitelisting = false;
+    $runScriptNames = null;
+    if( $argc > 1 ){
+        $runScriptNames = array_slice($argv, 1);
+        $whitelisting = !empty($runScriptNames);
+    }
+
     class Migration {
         public $version;
         public $script;
@@ -121,6 +128,19 @@
 
     echo( count($scripts) . " found:$LINE");
 
+    // Use $runScriptNames as a whitelist for existing Scripts
+    if( !empty($runScriptNames) ){
+        $pre_count = count($scripts);
+        echo("Filter scripts using parameter whitelist...$LINE");
+        $scripts = array_filter($scripts, function($s) use ($runScriptNames){
+            return in_array($s, $runScriptNames);
+        });
+
+        $post_count = count($scripts);
+
+        echo("Retained $post_count/$pre_count scripts$LINE");
+    }
+
     // Step 3: Determine which scripts have been run
     echo("Filter executed scripts...$LINE");
     $migration_script_names = array_map( function($m){ return $m->script; }, $migrations);
@@ -130,7 +150,7 @@
         }
     );
 
-    echo($LINE . count($scripts_to_execute) . " migrations need executing:$LINE");
+    echo($LINE . count($scripts_to_execute) . ($whitelisting ? ' whitelisted' : '') . " migrations need executing:$LINE");
     echo( "  " . implode("$LINE  ", $scripts_to_execute) . $LINE);
 
     // Validate migration script Version/ID values
