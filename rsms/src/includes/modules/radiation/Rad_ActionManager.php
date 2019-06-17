@@ -3218,6 +3218,11 @@ class Rad_ActionManager extends ActionManager {
     	$dto = new RadModelDto();
         $dto->setIsotope($this->getAllIsotopes());
 
+        $dto->setIsotope($this->getAllIsotopes());
+        $dto->setPurchaseOrder($this->getAllPurchaseOrders());
+        $dto->setWasteType($this->getAllWasteTypes());
+        $dto->setOtherWasteType($this->getAllOtherWasteTypes());
+
         // Only pull the PI names and keys; no need for everything yet
 
         // Get all PIs with rooms
