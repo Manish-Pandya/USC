@@ -1,4 +1,4 @@
-﻿<fieldset ng-disabled="inspection.isArchived">
+﻿<fieldset ng-disabled="inspection.IsArchived">
     <span ng-if="deficiency.Class != 'SupplementalDeficiency'">
         <label class="checkbox inline">
             <input type="checkbox" ng-model="deficiency.selected" ng-change="cf.saveDeficiencySelection( deficiency, question, checklist )" ng-checked="cf.evaluateDeficiency( deficiency, question )" />

@@ -563,6 +563,11 @@ mainController = function ($scope, $location, postInspectionFactory, convenience
 
     $rootScope.rbf = roleBasedFactory;
 
+    $scope.allowReturnToInspection = function allowReturnToInspection( inspection ){
+        // Disallow returning-to-inspection for closed-out inspections
+        return inspection.Status != Constants.INSPECTION.STATUS.CLOSED_OUT;
+    }
+
     // Lab Contact Verification - pre-Finalization requirement
     $scope.openUserHub = function openUserHub(){
         return window.open(window.GLOBAL_WEB_ROOT + 'views/hubs/UserHub.php#/labPersonnel');
