@@ -37,12 +37,19 @@ angular.module('myLab')
             $scope.GLOBAL_WEB_ROOT = window.GLOBAL_WEB_ROOT;
             $scope.Constants = Constants;
 
+            $scope.contentLoaded = function contentLoaded(){
+                $scope.loaded = true;
+            }
+
             if( $scope.contentTemplateName ){
                 $scope.contentTemplate = './widgets/' + $scope.contentTemplateName + '.html';
 
                 if( $scope.widget.Toolbar ){
                     $scope.toolbarTemplate = './widgets/' + $scope.contentTemplateName + '.toolbar.html';
                 }
+            }
+            else {
+                $scope.contentLoaded();
             }
 
             console.log('content-template:', $scope.contentTemplate);

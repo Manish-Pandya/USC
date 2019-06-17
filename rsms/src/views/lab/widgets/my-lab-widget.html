@@ -12,7 +12,7 @@
         </h2>
         <div ng-if="subheaderText" class="subheader">{{subheaderText}}</div>
     </div>
-    <ng-include ng-if="contentTemplate" src="contentTemplate" ng-class="{saving: saving, collapsed: collapsed}"></ng-include>
+    <ng-include ng-if="contentTemplate" ng-show="loaded" onload="contentLoaded()" src="contentTemplate" ng-class="{saving: saving, collapsed: collapsed}"></ng-include>
     <span ng-if="saving">
         <h1 style="z-index:30000; text-align:center; color:black;">
             <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
@@ -20,5 +20,9 @@
         </h1>
     </span>
     <div ng-if="error" class="error message red">{{error}}</div>
-    <span ng-if="!contentTemplate">No data to display at this time.</span>
+
+    <span ng-if="loaded && !contentTemplate">No data to display at this time.</span>
+    <h1 ng-if="!loaded" style="text-align:center; padding-top:20px;">
+        <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
+    </h1>
 </div>
