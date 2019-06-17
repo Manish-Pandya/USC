@@ -3234,6 +3234,7 @@ class Rad_ActionManager extends ActionManager {
         }
 
         $dto->setPrincipalInvestigatorNames( $infos );
+        $dto->setPrincipalInvestigator($this->getAllRadPIs());
 
         $roomDao = new RoomDAO();
         $allRooms = $roomDao->getAll();

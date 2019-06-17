@@ -2992,6 +2992,7 @@ angular
 
                             // Cache PI Names
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.PrincipalInvestigatorNames));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.PrincipalInvestigator));
 
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.DrumWipe));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.DrumWipeTest));
