@@ -2929,7 +2929,7 @@ angular
                 copy = Object.assign({}, copy);
                 copy.Rooms = rooms.filter(r => r.isAuthorized);
                 copy.Departments = pi.Departments.filter(r => r.isAuthorized);               
-                copy.Users = users.filter(r => r.isAuthorized);               
+                copy.Users = (users || []).filter(r => r.isAuthorized);
                 console.log(copy.Termination_date);
                 af.clearError();
                 return this.save(copy)
