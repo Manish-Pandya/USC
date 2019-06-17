@@ -2929,7 +2929,7 @@ angular
                 copy = Object.assign({}, copy);
                 copy.Rooms = rooms.filter(r => r.isAuthorized);
                 copy.Departments = pi.Departments.filter(r => r.isAuthorized);               
-                copy.Users = users.filter(r => r.isAuthorized);               
+                copy.Users = (users || []).filter(r => r.isAuthorized);
                 console.log(copy.Termination_date);
                 af.clearError();
                 return this.save(copy)
@@ -2990,8 +2990,9 @@ angular
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.OtherWasteContainer));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Room ));
 
-                            // Recursively instantiate PIs
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.PrincipalInvestigator, 'PrincipalInvestigator', true));
+                            // Cache PI Names
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.PrincipalInvestigatorNames));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.PrincipalInvestigator));
 
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.DrumWipe));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.DrumWipeTest));

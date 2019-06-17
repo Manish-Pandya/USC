@@ -309,11 +309,23 @@ dataStoreManager.pushIntoCollection = function(object){
         var ID_prop = "Key_id";
     }
 
-    if(dataStoreManager.getById(object.Class, object[ID_prop]))return;
+    // Ignore incoming value if we already have a value with key
+    if(dataStoreManager.getById(object.Class, object[ID_prop])){
+        console.warn(object.Class + ':' + object[ID_prop] + ' Already exists in datastore. It WILL NOT BE OVERWRITTEN',
+            "\n\tExisting: ", dataStoreManager.getById(object.Class, object[ID_prop]),
+            "\n\tIGNORING", object);
+        return;
+    }
 
-    if(!dataStore[object.Class])dataStoreManager.store([object]);
+    // Init the collection if required
+    else if(!dataStore[object.Class]){
+        console.debug("Initializing " + object.Class + " datastore with initial object value of [" + object.Class + ':' + object[ID_prop] + ']', object);
+        dataStoreManager.store([object]);
+    }
 
-    if(!dataStoreManager.getById(object.Class, object[ID_prop])){
+    // Push incoming value into the relevant collection
+    else if(!dataStoreManager.getById(object.Class, object[ID_prop])){
+        console.debug("Pushing " + object.Class + ':' + object[ID_prop] + " into existing datastore collection: ", object);
         dataStore[object.Class].push(object);
         if(!dataStore[object.Class+'Map'])dataStore[object.Class+'Map'] = [];
         dataStore[object.Class+'Map'][object.Key_id] = dataStore[object.Class].length-1;
