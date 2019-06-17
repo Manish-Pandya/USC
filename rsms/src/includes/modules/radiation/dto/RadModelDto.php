@@ -23,6 +23,7 @@ class RadModelDto {
     private $pickup;
     private $pIQuarterlyInventory;
     private $principalInvestigator;
+    private $principalInvestigatorNames;
     private $purchaseOrder;
     private $quarterlInventory;
     private $quarterlyIsotopeAmount;
@@ -218,6 +219,14 @@ class RadModelDto {
 
     public function setPrincipalInvestigator($principalInvestigator){
     	$this->principalInvestigator = $principalInvestigator;
+    }
+
+    public function getPrincipalInvestigatorNames(){
+        return $this->principalInvestigatorNames;
+    }
+
+    public function setPrincipalInvestigatorNames($val){
+        $this->principalInvestigatorNames = $val;
     }
 
     public function getPurchaseOrder(){

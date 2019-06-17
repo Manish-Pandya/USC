@@ -2990,8 +2990,8 @@ angular
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.OtherWasteContainer));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Room ));
 
-                            // Recursively instantiate PIs
-                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.PrincipalInvestigator, 'PrincipalInvestigator', true));
+                            // Cache PI Names
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.PrincipalInvestigatorNames));
 
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.DrumWipe));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.DrumWipeTest));
