@@ -10,6 +10,12 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
 session_start();
 
 ?>
+<script type="text/javascript">
+    <?php
+    $enableZap = ApplicationConfiguration::get("module.Radiation.zap.enabled", false) ? 'true' : 'false';
+    echo "var enableZapTool = $enableZap;";
+    ?>
+</script>
 
 <?php 
 

@@ -2712,25 +2712,34 @@ angular.module('00RsmsAngularOrmApp')
             af.saveParcel(copy, parcel, $scope.modalData.PI)
                 .then($scope.close);
         };
-        $scope.saveTransferOut = function (parcel, copy, use) {
+        $scope.saveTransferOut = function (parcel, copy, use, convertUse) {
             $scope.modalData.tooMuch = false;
-            if (copy.Quantity > parcel.Remainder) {
+            if( convertUse ){
+                // Validate conversion of Use; do not compare to quantity
+                console.debug("Converting use to Transfer:", convertUse);
+            }
+            else if (copy.Quantity > parcel.Remainder) {
                 $scope.modalData.tooMuch = "You can't transfer that much.";
                 return;
             }
             parcel.loadUses().then(function () {
-                var amt = new ParcelUseAmount();
-                amt.Parcel_use_id = copy.Key_id || null;
-                if (copy.ParcelUseAmounts && copy.ParcelUseAmounts.length) {
-                    amt.Key_id = copy.ParcelUseAmounts[0].Key_id || null;
-                    amt.Comments = copy.ParcelUseAmounts[0].Comments;
+                // View will always provide at least one ParcelUseAmount
+
+                // Ensure all Amounts are Transfers and apply Comments
+                if(copy.ParcelUseAmounts && copy.ParcelUseAmounts.length ){
+                    copy.ParcelUseAmounts.forEach(amt => {
+                        amt.Class = amt.Class || "ParcelUseAmount";
+                        amt.Parcel_use_id = copy.Key_id || null;
+
+                        amt.Curie_level = amt.Curie_level || copy.Quantity;
+                        amt.Waste_type_id = Constants.WASTE_TYPE.TRANSFER;
+                        amt.Comments = copy.ParcelUseAmounts[0].Comments;
+                    });
                 }
-                amt.Class = "ParcelUseAmount";
-                amt.Curie_level = copy.Quantity;
-                amt.Waste_type_id = Constants.WASTE_TYPE.TRANSFER;
-                copy.ParcelUseAmounts = [amt];
+
                 copy.Date_transferred = convenienceMethods.setMysqlTime(copy.view_Date_transferred);
-                console.log(copy);
+
+                console.debug("Saving Transfer-Out", copy);
                 //if it walks like a duck
                 if (!use.Key_id)
                     use = false;
@@ -2738,6 +2747,20 @@ angular.module('00RsmsAngularOrmApp')
                     .then($scope.close);
             });
         };
+
+        $scope.selectParcelForTransfer = function (parcel, use){
+            if( use ){
+                // We are converting an actual use
+                $scope.modalData.selectedParcelUse = dataStoreManager.getById('ParcelUse', use.Key_id);
+                $scope.modalData.ParcelUseCopy = dataStoreManager.createCopy( $scope.modalData.selectedParcelUse );
+                console.debug("Select ParcelUse to transform to a Transfer:", $scope.modalData.selectedParcelUse);
+            }
+
+            $scope.modalData.forceSelectParcel = false;
+            $scope.modalData.ParcelUseCopy.Parcel_id = parcel.Key_id;
+            $scope.modalData.selectedParcel = dataStoreManager.getById('Parcel', $scope.modalData.ParcelUseCopy.Parcel_id);
+        };
+
         $scope.selectReceivingPi = function (pi) {
             $scope.loading = pi.loadPIAuthorizations().then(function () {
                 console.log(pi);

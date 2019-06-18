@@ -26,7 +26,7 @@
                 <li><a class="inventories" ng-class="{'active': state.current.name == 'radmin.other-waste'}" ui-sref="radmin.other-waste"><i class="icon-beaker-alt"></i>Other Waste</a></li>
                 <li><a class="auth-report" ng-class="{'active': state.current.name == 'radmin.isotope-report'}" ui-sref="radmin.isotope-report"><i class="icon-copy"></i>Total Inventories</a></li>
                 <li><a class="auth-report" ng-class="{'active': state.current.name == 'radmin.conditions'}" ui-sref="radmin.conditions"><i class="icon-paragraph-left"></i>Conditions</a></li>
-                <li><a ng-class="{'active': state.current.name == 'radmin.zap'}" ui-sref="radmin.zap"><i class="icon-lightning"></i>Zap Test Data</a></li>
+                <li ng-if="enableZapTool"><a ng-class="{'active': state.current.name == 'radmin.zap'}" ui-sref="radmin.zap"><i class="icon-lightning"></i>Zap Test Data</a></li>
             </ul>
             <!--
             <ul class="sideNav" ng-if="pi && $state.current.url.indexOf('pi-detail')>-1">
