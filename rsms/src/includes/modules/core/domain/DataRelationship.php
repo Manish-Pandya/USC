@@ -39,6 +39,10 @@ class DataRelationship {
 		$instance->tableName = $tableName;
 		$instance->keyName = $keyName;
 		$instance->foreignKeyName = $foreignKeyName;
+
+		$instance->sourceTableName = null;
+		$instance->columns = array();
+		$instance->columnAliases = array();
 		return $instance;
 	}
 
