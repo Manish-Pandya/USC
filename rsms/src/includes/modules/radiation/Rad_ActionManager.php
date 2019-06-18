@@ -3219,7 +3219,16 @@ class Rad_ActionManager extends ActionManager {
         $dto->setIsotope($this->getAllIsotopes());
 
         // Only pull the PI names and keys; no need for everything yet
-        $dto->setPrincipalInvestigator( $this->getAllPINames() );
+
+        // Get all PIs with rooms
+        $infos = $this->getAllPINames();
+
+        // (RSMS-957) Forcibly rename the class name to work around frontend behavior...
+        foreach ($infos as $pi) {
+            $pi->Class = 'PrincipalInvestigatorNameDto';
+        }
+
+        $dto->setPrincipalInvestigatorNames( $infos );
 
         $roomDao = new RoomDAO();
         $allRooms = $roomDao->getAll();
