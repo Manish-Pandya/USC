@@ -17,27 +17,37 @@ class RadSecurity {
             return true;
         }
 
-        // Get the PI being requested
-        $dao = new PrincipalInvestigatorDAO();
-        $pi = $dao->getById($id);
+        // User is a Rad User
+        if( CoreSecurity::userHasAnyRole($user, array('Radiation User'))){
+            // Get the PI being requested
+            $dao = new PrincipalInvestigatorDAO();
+            $pi = $dao->getById($id);
 
-        if( isset($pi) ){
-
-            if($user->getKey_id() == $pi->getUser()->getKey_id()){
-                // User is the PI
-                $LOG->debug("User is PI #$id");
-                return true;
-            }
-
-            // TODO: Check pi's authorization user list?
-
-            // Is user one of the PI's lab personnel?
-            foreach( $pi->getLabPersonnel() as $personnel ){
-                if( $personnel->getKey_id() == $user->getKey_id() ){
-                    $LOG->debug("User is a Lab Personnel of PI #$id");
+            if( isset($pi) ){
+                if($user->getKey_id() == $pi->getUser()->getKey_id()){
+                    // User is the PI
+                    $LOG->debug("User is PI #$id");
                     return true;
                 }
+
+                // Check pi's authorization user list
+                $piauthDao = new PIAuthorizationDAO();
+                $authorizedUsers = $piauthDao->getAllAuthorizedUsersForPi( $pi->getKey_id() );
+                foreach ( $authorizedUsers as $u ) {
+                    if( $u->getKey_id() == $user->getKey_id() ){
+                        $LOG->debug("User is authorized to view Rad Lab for PI #$id");
+                        return true;
+                    }
+                }
+
+                $LOG->warn("User is not authorized to view Rad Lab for PI #$id");
             }
+            else {
+                $LOG->warn("Requested PI #$id does not exist");
+            }
+        }
+        else {
+            $LOG->warn("User is not a Radiation User");
         }
 
         return false;
