@@ -1,16 +1,18 @@
+CREATE OR REPLACE VIEW `rad_pi_authorization_status_subq` AS
+SELECT
+    principal_investigator_id,
+    MAX(termination_date) AS termination_date,
+    MAX(approval_date) AS approval_date
+FROM pi_authorization
+GROUP BY principal_investigator_id;
+
 -- Create new view to list the status of each PI's CURRENT authorization
 CREATE OR REPLACE VIEW `rad_current_pi_authorization_status` AS
 SELECT
     pi_auth.key_id as pi_authorization_id,
     auth_status.*
 FROM
-    ( SELECT
-            principal_investigator_id,
-            MAX(termination_date) AS termination_date,
-            MAX(approval_date) AS approval_date
-        FROM pi_authorization
-        GROUP BY principal_investigator_id
-    ) AS auth_status
+    rad_pi_authorization_status_subq auth_status
 INNER JOIN pi_authorization pi_auth
     ON pi_auth.principal_investigator_id = auth_status.principal_investigator_id
     AND pi_auth.approval_date = auth_status.approval_date;
