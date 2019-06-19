@@ -79,6 +79,12 @@
     margin-left: 11px;
 }
 
+/* Display sidenav link images in grayscale to remain consistent */
+.dashboard .sideNav a img {
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
+}
+
 .dashboard .well,
 .inspection-well.well {
     background: rgba(255, 255, 255, .7);
