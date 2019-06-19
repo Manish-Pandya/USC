@@ -1,4 +1,19 @@
-<a ng-if="data" href="../../rad/#/my-lab{{data.id}}" class="btn btn-info">My Rad Lab</a>
-<div ng-if="!data" class="alert alert-info my-lab-alert">
-    <h3>You are not currently authorized to use radioactive materials.</h3>
+<div class="content-container">
+    <div ng-if="!data.AuthorizedPIs || !data.AuthorizedPIs.length" class="alert alert-info my-lab-alert">
+        <h3>You are not currently authorized to access any Radiation Labs</h3>
+    </div>
+
+    <div ng-if="data.AuthorizedPIs" ng-show="data.AuthorizedPIs.length" class="fake-table bordered striped">
+        <div class="table-header">
+            <h3>Authorized Labs</h3>
+            <h3></h3>
+        </div>
+
+        <div class="table-row" ng-repeat="pi in data.AuthorizedPIs">
+            <div>{{pi.Name}}</div>
+            <div>
+                <a href="../../rad/#/my-lab{{pi.Key_id}}" class="btn btn-info">Rad Lab</a>
+            </div>
+        </div>
+    </div>
 </div>

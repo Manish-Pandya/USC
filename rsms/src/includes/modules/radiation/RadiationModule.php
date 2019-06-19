@@ -29,26 +29,47 @@ class RadiationModule implements RSMS_Module, MyLabWidgetProvider {
     public function getMyLabWidgets( User $user ){
         $widgets = array();
 
-        // Only display verification widget to labs with Rad authorizations
-        $manager = $this->getActionManager();
+        // Show this widget for users that have the Radiation User role
+        if( CoreSecurity::userHasAnyRole($user, array('Radiation User')) ){
 
-        // Get relevant PI for lab
-        $principalInvestigator = $manager->getPIByUserId( $user->getKey_id() );
+            $radWidget = new MyLabWidgetDto();
+            $radWidget->title = "Radioactive Materials";
+            $radWidget->image = "radiation-large-icon.png";
+            $radWidget->template = "radiation-lab";
 
-        if( isset($principalInvestigator) ){
-            $auth = $principalInvestigator->getCurrentPi_authorization();
+            // Get all PIs which have Active Authorizations which list this user
+            $dao = new PIAuthorizationDAO();
+            $userAuthorizations = $dao->getUserAuthorizations( $user->getKey_id() );
 
-            if( !empty($auth) ){
-                $radWidget = new MyLabWidgetDto();
-                $radWidget->title = "Radioactive Materials";
-                $radWidget->image = "radiation-large-icon.png";
-                $radWidget->template = "radiation-lab";
+            if( isset($userAuthorizations) && !empty($userAuthorizations) ){
+
+                // Prepare Data for each Lab this user has auth's for
+                //    Note that there may be multiple authorizations listed for a single PI;
+                //    we only need one reference to each Lab they have access to
+                $pi_ids = array_unique(
+                    array_map(
+                        function($a){
+                            // Map authorizatino to PI ID
+                            return $a->getPrincipal_investigator_id();
+                        },
+                        $userAuthorizations
+                    )
+                );
+
+                $piDao = new PrincipalInvestigatorDAO();
+                $pis = array();
+                foreach($pi_ids as $id){
+                    $pi = $piDao->getById($id);
+                    $pis[] = DtoFactory::piToDto($pi);
+                }
+
+                // Pass the PI details as widget data
                 $radWidget->data = new GenericDto(array(
-                    "id" => $principalInvestigator->getKey_id()
+                    "AuthorizedPIs" => $pis
                 ));
-
-                $widgets[] = $radWidget;
             }
+
+            $widgets[] = $radWidget;
         }
 
         return $widgets;
