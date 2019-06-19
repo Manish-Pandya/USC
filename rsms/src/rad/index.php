@@ -251,7 +251,7 @@ if(!isset($_SESSION["USER"])){ ?>
                 <li><a ui-sref="lab-wipes({ pi: navPi})">Wipe Tests</a></li>
                 <li><a ui-sref="pi-auths({ pi: navPi})">Authorizations</a></li>
                 <li>|</li>
-                <li><a ui-sref="pi-rad-management({ pi: navPi })">My Lab</a></li>
+                <li><a ui-sref="pi-rad-management({ pi: navPi })">Rad Lab</a></li>
                 <li ng-if="isAdminUser()"><a ui-sref="radmin()">Radiation Admin</a></li>
             </ul>
         </div>
