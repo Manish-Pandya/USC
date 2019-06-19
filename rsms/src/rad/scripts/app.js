@@ -222,6 +222,7 @@ angular
   })
   .controller('NavCtrl', function ($rootScope, actionFunctionsFactory, $state, roleBasedFactory) {
       $rootScope.constants = Constants;
+      $rootScope.GLOBAL_WEB_ROOT = GLOBAL_WEB_ROOT;
 
       // Features
       $rootScope.enableZapTool = window.enableZapTool;
@@ -258,6 +259,9 @@ angular
             }
         });
 
+    $rootScope.setPIDetails = function (pi) {
+      $rootScope.pi_name = pi.Name;
+    }
       //global authorization getter function used by multiple controllers
     $rootScope.getHighestAuth = function (pi) {
         console.log(pi);
@@ -275,10 +279,6 @@ angular
         $rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN],
         $rootScope.R[Constants.ROLE.NAME.ADMIN]]
       );
-    }
-
-    $rootScope.rsmsCenter = function(){
-      window.location.href = GLOBAL_WEB_ROOT + 'views/RSMSCenter.php';
     }
   })
   .controller('RadHomePageRoutingCtrl', function($rootScope, $state, $location, roleBasedFactory){

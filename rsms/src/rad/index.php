@@ -238,7 +238,10 @@ if(!isset($_SESSION["USER"])){ ?>
             <div cg-busy="{promise:saving,message:'Saving...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
         <!-- NAVIGATION -->
         <div class="banner {{bannerClass | splitAtPeriod}} radiation no-print" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
-            <h1>{{viewLabel}} <a ng-if="isAdminUser()" style="float:right;margin: 11px 128px 0 0; color:black" ng-click="rsmsCenter()"><i class="icon-home" style="font-size:40px;"></i></a></h1>
+            <h1>{{viewLabel}}
+                <span ng-if="showPiNav && pi_name"> - {{pi_name}}</span>
+                <a style="float:right;margin: 11px 128px 0 0; color:black" ng-href="{{GLOBAL_WEB_ROOT}}"><i class="icon-home" style="font-size:40px;"></i></a>
+            </h1>
             <ul class="piNav" ng-if="showPiNav">
                 <li><a ui-sref="pi-orders({ pi: navPi })">Orders</a></li>
                 <li><a ui-sref="use-log({ pi: navPi})">Use Logs</a></li>

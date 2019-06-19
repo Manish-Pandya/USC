@@ -14,6 +14,7 @@ angular.module('00RsmsAngularOrmApp')
         .then(function (pi) {
             console.log(pi);
             $scope.pi = pi;
+            $rootScope.setPIDetails(pi);
         }, function () { })
         .then(function(){
             $scope.piAuth = radUtilitiesFactory.getPIAuthorization($scope.pi);
@@ -44,6 +45,7 @@ angular.module('00RsmsAngularOrmApp')
         return actionFunctionsFactory.getRadPIById($stateParams.pi)
             .then(function (pi) {
             $rootScope.pi = pi;
+            $rootScope.setPIDetails(pi);
             return pi;
         }, function () {
         })
@@ -79,6 +81,7 @@ angular.module('00RsmsAngularOrmApp')
         .then(function (pi) {
         console.log(pi);
         $scope.pi = pi;
+        $rootScope.setPIDetails(pi);
     }, function () { });
 });
 'use strict';
@@ -100,6 +103,7 @@ angular.module('00RsmsAngularOrmApp')
         .then(function (pi) {
         console.log(pi);
         $scope.pi = pi;
+        $rootScope.setPIDetails(pi);
     }, function () { })
     .then(function(){
         $scope.piAuthorization = radUtilitiesFactory.getPIAuthorization($scope.pi);
@@ -263,6 +267,7 @@ angular.module('00RsmsAngularOrmApp')
         return af.getRadPIById($stateParams.pi)
             .then(function () {
             $rootScope.pi = dataStoreManager.getById('PrincipalInvestigator', $stateParams.pi);
+            $rootScope.setPIDetails($rootScope.pi);
             var i = $rootScope.pi.ActiveParcels.length;
             while (i--) {
                 var parcel = dataStoreManager.getById("Parcel", $rootScope.pi.ActiveParcels.Key_id);
@@ -719,8 +724,14 @@ angular.module('00RsmsAngularOrmApp')
 });
 
 angular.module('00RsmsAngularOrmApp')
-    .controller('PickupCtrl', function ($scope, actionFunctionsFactory, $stateParams, radUtilitiesFactory, $q, convenienceMethods) {
+    .controller('PickupCtrl', function ($rootScope, $scope, actionFunctionsFactory, $stateParams, radUtilitiesFactory, $q, convenienceMethods) {
         var af = actionFunctionsFactory;
+
+        af.getRadPIById($stateParams.pi)
+        .then(function () {
+            $scope.pi = dataStoreManager.getById('PrincipalInvestigator', $stateParams.pi);
+            $rootScope.setPIDetails($scope.pi);
+        });
 
         var loadPickups = function(){
             return af.getPickupsForPI($stateParams.pi)
@@ -837,6 +848,7 @@ angular.module('00RsmsAngularOrmApp')
         return af.getRadPIById(id)
             .then(function (pi) {
             $scope.pi = pi;
+            $rootScope.setPIDetails(pi);
         }, function () { });
     };
     $rootScope.piPromise = getPI($stateParams.pi);
@@ -949,6 +961,7 @@ angular.module('00RsmsAngularOrmApp')
         return af.getRadPIById($stateParams.pi)
             .then(function (pi) {
             $scope.pi = pi;
+            $rootScope.setPIDetails(pi);
             return pi;
         }, function () { });
     };
@@ -1005,6 +1018,7 @@ angular.module('00RsmsAngularOrmApp')
         .then(
             function (pi) {
                 $scope.pi = pi;
+                $rootScope.setPIDetails(pi);
             },
             function () { }
         )
@@ -1178,6 +1192,7 @@ angular.module('00RsmsAngularOrmApp')
     $rootScope.piPromise = $scope.parcelPromise = af.getRadPIById($stateParams.pi)
         .then(function (pi) {
         $scope.pi = dataStoreManager.getById("PrincipalInvestigator", $stateParams.pi);
+        $rootScope.setPIDetails(pi);
         console.log(dataStore);
     }, function () { });
 

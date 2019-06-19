@@ -221,24 +221,26 @@ angular
                     },
                     {
                         Name:'pi-rad-management',
-                        Label: 'My Radiation Laboratory',
-                        NoHead: true
+                        Label: 'Radiation Laboratory',
+                        //NoHead: true
+                        Dashboard: true,
+                        showPiNav: true
                     },
                     {
                         Name:'solids',
-                        Label: 'My Radiation Laboratory',
+                        Label: 'Radiation Laboratory',
                         Dashboard: true,
                         showPiNav: true
                     },
                     {
                         Name:'pi-orders',
-                        Label: 'My Radiation Laboratory',
+                        Label: 'Radiation Laboratory',
                         Dashboard: true,
                         showPiNav: true
                     },
                     {
                         Name:'lab-wipes',
-                        Label: 'My Radiation Laboratory -- Wipe Tests',
+                        Label: 'Radiation Laboratory',
                         Dashboard: true,
                         showPiNav: true
                     },
@@ -295,7 +297,8 @@ angular
                     {
                         Name: 'pi-auths',
                         Label: 'Authorizations',
-                        Dashboard: true
+                        Dashboard: true,
+                        showPiNav: true
                     },
                     {
                         Name:'radmin.isotopes',
