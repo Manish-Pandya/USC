@@ -346,15 +346,16 @@ class GenericDAO {
 
 		$i = 1;
 		foreach($whereClauses as $clause){
-			if($clause->getVal() != NULL && strtolower($clause->getVal()) != "null") {
-                if( !is_array( $clause->getVal() ) ){
-				    $stmt->bindValue( $i, $clause->getVal() );
-				    $i++;
-                }else{
+			if($clause->getVal() != NULL) {
+				if( is_array($clause->getVal()) ){
                     foreach($clause->getVal() as $val){
                         $stmt->bindValue( $i, $val );
                         $i++;
                     }
+				}
+                else if( strtolower($clause->getVal()) != "null" ){
+				    $stmt->bindValue( $i, $clause->getVal() );
+				    $i++;
                 }
 			}
 		}
