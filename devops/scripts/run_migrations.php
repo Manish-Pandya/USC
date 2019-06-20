@@ -98,7 +98,7 @@
     if( !$stmt->execute() ){
         echo ("Unable to query migration table$LINE");
         echo (var_dump($stmt->errorInfo()));
-        die;
+        exit("Failed to read from migration table");
     }
 
     $migrations = $stmt->fetchAll(PDO::FETCH_CLASS, Migration::class);
@@ -123,7 +123,7 @@
 
     if( empty($scripts) ){
         echo("No migration scripts to run in $cwd $LINE");
-        die;
+        exit(0);
     }
 
     echo( count($scripts) . " found:$LINE");
@@ -169,12 +169,12 @@
         echo($LINE . "ERROR: " . count($invalid_script_names) . " unexecuted scripts have conflicting version/id values$LINE");
         echo( "  " . implode("$LINE  ", $invalid_script_names) . $LINE);
         echo($LINE . "ERROR: Cannot perform migrartion operations until script version/ids are made unique$LINE");
-        die;
+        exit("Inavlid migration script numbers");
     }
 
     if( empty($scripts_to_execute) ){
         // Nothing left to do
-        die;
+        exit(0);
     }
 
     // Step 4: Execute the scripts and update migration table
@@ -260,7 +260,7 @@ Processing unexecute migrations. Options are:
             // Run the script
             if( !run_script($migration->script) ){
                 echo( "Error executing migration file: $migration->script $LINE");
-                die;
+                exit("Error executing migration file: $migration->script");
             }
         }
 
