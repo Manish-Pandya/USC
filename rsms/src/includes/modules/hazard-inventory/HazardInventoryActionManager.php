@@ -430,14 +430,24 @@ class HazardInventoryActionManager extends ActionManager {
         if($id == null)return new ActionError("No Id provided");
         $db = DBConnection::get();
 
-		$queryString = "SELECT biosafety_cabinet.* from biosafety_cabinet biosafety_cabinet
-                        left join  equipment_inspection equipment_inspection
-                        on biosafety_cabinet.key_id = equipment_inspection.equipment_id
+        $queryString = "SELECT
+                            biosafety_cabinet.*
+
+                        -- Get cabinets
+                        FROM biosafety_cabinet biosafety_cabinet
+
+                        -- Join to each cabinet's Latest Inspections
+                        left join  latest_equipment_inspection latest_insp
+                            on biosafety_cabinet.key_id = latest_insp.equipment_id
+
+                        -- Join to inspected PI
                         left join principal_investigator_equipment_inspection pi_equip_insp
-                        on pi_equip_insp.inspection_id = equipment_inspection.key_id
-                        where equipment_inspection.equipment_class = 'BioSafetyCabinet'
-                        AND pi_equip_insp.principal_investigator_id = ?
-                        AND biosafety_cabinet.Is_active = 1
+                            on pi_equip_insp.inspection_id = latest_insp.key_id
+
+                        where latest_insp.equipment_class = 'BioSafetyCabinet'
+                            AND pi_equip_insp.principal_investigator_id = ?
+                            AND biosafety_cabinet.Is_active = 1
+
                         GROUP BY biosafety_cabinet.key_id";
         $stmt = DBConnection::prepareStatement($queryString);
         $stmt->bindValue(1, $id);
