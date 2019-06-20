@@ -55,7 +55,7 @@
             <div class="control-group">
                 <label class="control-label bold">Select Building</label>
                 <div class="controls">
-                    <select ng-options="b as b.Name for b in modalData.Buildings | orderBy:'Name'" ng-model="modalData.building">
+                    <select ng-options="b as b.Name for b in modalData.Buildings | orderBy:'Name'" ng-model="modalData.building" ng-change="getRoomsInBuilding(modalData.building)">
                         <option value="">--Select Building--</option>
                     </select>
                 </div>

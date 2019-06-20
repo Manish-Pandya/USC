@@ -3258,6 +3258,10 @@ class Rad_ActionManager extends ActionManager {
         $dto->setPrincipalInvestigatorNames( $infos );
         $dto->setPrincipalInvestigator($this->getAllRadPIs());
 
+        $buildingDao = new GenericDAO(new Building());
+        $allBuildings = $buildingDao->getAll();
+        $dto->setBuilding( DtoFactory::buildDtos($allBuildings, 'DtoFactory::buildingToDto') );
+
         $roomDao = new RoomDAO();
         $allRooms = $roomDao->getAll();
         $dto->setRoom( DtoFactory::buildDtos($allRooms, 'DtoFactory::roomToDto') );

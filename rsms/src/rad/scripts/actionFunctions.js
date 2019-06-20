@@ -2996,6 +2996,7 @@ angular
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.SolidsContainer));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.OtherWasteContainer));
                             store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Room ));
+                            store.store(modelInflatorFactory.instateAllObjectsFromJson( dto.Building ));
 
                             // Cache PI Names
                             store.store(modelInflatorFactory.instateAllObjectsFromJson(dto.PrincipalInvestigatorNames));

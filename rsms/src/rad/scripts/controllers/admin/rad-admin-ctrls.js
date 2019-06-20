@@ -2177,6 +2177,13 @@ angular.module('00RsmsAngularOrmApp')
                 $scope.modalData.building = $scope.modalData.building ? $scope.modalData.building : {};
             });
         };
+        $scope.getRoomsInBuilding = function(building){
+            if( !building.Rooms ){
+                $rootScope.loading = af.getAllRooms().then(function(rooms){
+                    building.Rooms = rooms.filter(r => r.Building_id == building.Key_id);
+                });
+            }
+        };
         $scope.getUsers = function () {
             $rootScope.loading = af.getAllUsers(true).then(function (b) {
                 $scope.modalData.addUser = true;
