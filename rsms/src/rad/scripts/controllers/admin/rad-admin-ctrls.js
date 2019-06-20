@@ -2046,6 +2046,12 @@ angular.module('00RsmsAngularOrmApp')
         for (var n = 0; n < copy.Authorizations; n++) {
             copy.Authorizations[n].Is_active = true;
         }
+
+        // Flag all Users, Rooms, and Departments as 'authorized' to get around UI/Controller flow bug
+        copy.Users.forEach(u => u.isAuthorized = true);
+        copy.Rooms.forEach(r => r.isAuthorized = true);
+        copy.Departments.forEach(d => d.isAuthorized = true);
+
         af.savePIAuthorization(copy, piAuth, $scope.pi, piAuth.Rooms || [], piAuth.Users || []);
     };
     $scope.removeOtherWasteType = function (type, pi) {
@@ -2308,6 +2314,11 @@ angular.module('00RsmsAngularOrmApp')
                 for (var n = 0; n < copy.Authorizations; n++) {
                     copy.Authorizations[n].Is_active = false;
                 }
+
+                // Flag all Users, Rooms, and Departments as 'authorized' to get around UI/Controller flow bug
+                copy.Users.forEach(u => u.isAuthorized = true);
+                copy.Rooms.forEach(r => r.isAuthorized = true);
+                copy.Departments.forEach(d => d.isAuthorized = true);
             }
             console.log(copy); //return;
             af.savePIAuthorization(copy, auth, pi, rooms, users)
