@@ -4394,7 +4394,11 @@ class ActionManager {
                 return true;
             }
 
+            // Retrieve a fresh copy of the modified object
+            //  by first Evicting the cached entry
+            GenericDAO::$_ENTITY_CACHE->evict($ds);
             $selection = $dao->getById($ds->getKey_id());
+
             EntityManager::with_entity_maps(DeficiencySelection::class, array(
                 EntityMap::eager("getRooms"),
                 EntityMap::lazy("getCorrectiveActions"),
