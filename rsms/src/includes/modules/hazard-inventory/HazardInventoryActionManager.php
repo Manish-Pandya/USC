@@ -67,6 +67,7 @@ class HazardInventoryActionManager extends ActionManager {
 			return array_map(function($hazard){
 				// Transform InspectionRooms into DTOS
 				$rooms = array_map(function($room){
+					$mult = $room->getHasMultiplePis();
 					return new GenericDto(array(
 						"Class" => get_class($room),
 						"Principal_investigator_id" => $room->getPrincipal_investigator_id(),
@@ -79,7 +80,8 @@ class HazardInventoryActionManager extends ActionManager {
 						"Principal_investigator_hazard_room_relation_id" => $room->getPrincipal_investigator_hazard_room_relation_id(),
 						"ContainsHazard" => $room->getContainsHazard(),
 						"Status" => $room->getStatus(),
-						"HasMultiplePis" => $room->getHasMultiplePis(),
+						"HasMultiplePis" => $mult,
+						"HasMultiplePIs" => $mult,
 						"OtherLab" => $room->getOtherLab(),
 						"Stored" => $room->getStored(),
 					));
