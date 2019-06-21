@@ -1363,7 +1363,7 @@ img.smallLoading {
   border: 1px solid #ddd;
   position: absolute;
   background: white;
-  z-index: 1000000000;
+  z-index: 500;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 /* line 925, ../sass/style.scss */
