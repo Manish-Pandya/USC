@@ -9,8 +9,10 @@ EXCLUDE_CONFIG=''
 DB_NAME="usc_ehs_rsms"
 PRE_CONFIRM=false
 EMAIL_TO="mmartin@graysail.com"
+DB_ONLY=0
+PROTECTED_TABLES=()
 
-while getopts "hcYd:a:e:" opt; do
+while getopts "hcYd:Dp:a:e:" opt; do
     case $opt in
         h )
             echo "Usage:"
@@ -19,8 +21,10 @@ while getopts "hcYd:a:e:" opt; do
             echo ""
             echo "    -h                      Display this help message."
             echo "    -c                      Exclude the RSMS configuration file from the restoration."
+            echo "    -D                      Restore the Database only; the docroot remains untouched."
             echo "    -Y                      Confirm restoration; do not prompt."
             echo "    -d [database_name]      Specify the database name to restore onto (default '$DB_NAME')."
+            echo "    -p [table]              Specify one table name to protect (by backing up and reimporting). Multiple tables are supporrted by specifying -p multiple times"
             echo "    -a [context name]       Specify the webapp context name to resore onto (default '$DEPLOY_CONTEXT'"
             echo "    -e [email address(es)]  Specify one or more email addresses to notify upon completion"
             exit 0
@@ -36,6 +40,12 @@ while getopts "hcYd:a:e:" opt; do
         c )
             echo "Exclude configuration from backup"
             EXCLUDE_CONFIG="--exclude /$APP_CONFIG_FILE"
+            ;;
+        D )
+            DB_ONLY=1
+            ;;
+        p )
+            PROTECTED_TABLES+=("$OPTARG")
             ;;
         e )
             EMAIL_TO="$OPTARG"
@@ -108,13 +118,24 @@ echo ''
 echo "Restore backup '$BACKUP_TARGZ'"
 echo "Backup is extracted and staged for restoration on this server. This will perform the following DESTRUCTIVE tasks:"
 echo ''
-echo "  Overwrite RSMS application document root: $DOCROOT/$DEPLOY_CONTEXT"
+if [ $DB_ONLY -eq 1 ]; then
+    echo "  Retain RSMS application document root:    $DOCROOT/$DEPLOY_CONTEXT"
+else
+    echo "  Overwrite RSMS application document root: $DOCROOT/$DEPLOY_CONTEXT"
+fi
+
 if [ -z "$EXCLUDE_CONFIG" ]; then
-  echo "  OVERWRITE configuration file:             $DOCROOT/$DEPLOY_CONTEXT/$APP_CONFIG_FILE"
+  echo "  Overwrite configuration file:             $DOCROOT/$DEPLOY_CONTEXT/$APP_CONFIG_FILE"
 else
   echo "  Retain existing configuration file:       $DOCROOT/$DEPLOY_CONTEXT/$APP_CONFIG_FILE"
 fi
 echo "  Overwrite RSMS database:                  $DB_NAME"
+
+if [ ${#PROTECTED_TABLES[@]} -gt 0 ]; then
+    for val in "${PROTECTED_TABLES[@]}"; do
+        echo "                                              * Retain $val"
+    done
+fi
 echo ''
 
 if [ $PRE_CONFIRM == false ]
@@ -131,21 +152,40 @@ else
 fi
 #####################################
 
+# Backup protected tables
+
+if [ ${#PROTECTED_TABLES[@]} -gt 0 ]; then
+    BACKUP_PROTECTED_TABLES="./protected-tables.sql.gz"
+    echo "Backup protected tables: ${PROTECTED_TABLES[@]}..."
+    mysqldump --defaults-extra-file=/var/rsms/conf/.rsms.erasmus.my.cnf $DB_NAME --single-transaction --quick --lock-tables=false ${PROTECTED_TABLES[@]} | gzip > $BACKUP_PROTECTED_TABLES
+else
+    BACKUP_PROTECTED_TABLES=''
+fi
+
 # Restore the docroot
 echo "Restoring application backup..."
 
 # Stage the docroot restoration
-# TODO: CHOWN/CHMOD to ensure www-deploy is group and group has rw
-mkdir docroot
-tar -xf $DOCROOT_BACKUP -C ./docroot
-cd ./docroot
-echo "Restoring docroot..."
-rsync -av --delete $EXCLUDE_CONFIG ./rsms/ $DOCROOT/$DEPLOY_CONTEXT > docroot_restore.log
-cd ..
+if [ $DB_ONLY -eq 0 ]; then
+    # TODO: CHOWN/CHMOD to ensure www-deploy is group and group has rw
+    mkdir docroot
+    tar -xf $DOCROOT_BACKUP -C ./docroot
+    cd ./docroot
+    echo "Restoring docroot..."
+    rsync -av --delete $EXCLUDE_CONFIG ./rsms/ $DOCROOT/$DEPLOY_CONTEXT > docroot_restore.log
+    cd ..
+else
+    echo "Skip docroot Restoration (-D flag)"
+fi
 
 # Restore the db schema
 echo "Restoring database '$DB_NAME'..."
 zcat $DB_BACKUP | mysql --defaults-extra-file=/var/rsms/conf/.rsms.erasmus.my.cnf $DB_NAME
+
+if [ ! -z "$BACKUP_PROTECTED_TABLES" ]; then
+    echo 'Restore protected tables...'
+    zcat $BACKUP_PROTECTED_TABLES | mysql --defaults-extra-file=/var/rsms/conf/.rsms.erasmus.my.cnf $DB_NAME
+fi
 
 # Output a file into the docroot to specify that a restoration has taken place
 echo "$BACKUP_TARGZ restored on $TIMESTAMP" > $DOCROOT/$DEPLOY_CONTEXT/backup_restored
@@ -162,7 +202,7 @@ if [ ! -z "$EMAIL_TO" ]; then
 
     # Headers
     echo "Subject: Refresh of $HOSTNAME - $COMPLETED_TIMESTAMP" > _mail.txt
-    echo "From: Test RSMS <$SENDER>" >> _mail.txt
+    echo "From: $HOSTNAME RSMS <$SENDER>" >> _mail.txt
     echo "To: $EMAIL_TO" >> _mail.txt
     echo "Content-Type: text/html" >> _mail.txt
     echo "MIME-Version: 1.0" >> _mail.txt
@@ -180,7 +220,14 @@ if [ ! -z "$EMAIL_TO" ]; then
     echo "<dt>Application</dt> <dd>$HOSTNAME/$DEPLOY_CONTEXT</dd>" >> _mail.txt
     echo "<dt>Completed timestamp</dt> <dd>$COMPLETED_TIMESTAMP</dd>" >> _mail.txt
     echo "" >> _mail.txt
-    echo "<dt>Application document root</dt> <dd>$DOCROOT/$DEPLOY_CONTEXT</dd>" >> _mail.txt
+    echo "<dt>Application document root</dt>" >> _mail.txt
+
+    if [ $DB_ONLY -eq 1 ]; then
+        echo "<dd>Retained</dd>" >> _mail.txt
+    else
+        echo "<dd>$DOCROOT/$DEPLOY_CONTEXT</dd>" >> _mail.txt
+    fi
+
     if [ -z "$EXCLUDE_CONFIG" ]; then
         echo "<dt>Overwrote configuration file</dt>" >> _mail.txt
     else
@@ -188,6 +235,12 @@ if [ ! -z "$EMAIL_TO" ]; then
     fi
     echo "<dd>$DOCROOT/$DEPLOY_CONTEXT/$APP_CONFIG_FILE</dd>" >> _mail.txt
     echo "<dt>Overwrote RSMS database</dt> <dd>$DB_NAME</dd>" >> _mail.txt
+    if [ ${#PROTECTED_TABLES[@]} -gt 0 ]; then
+        echo "<dt>Protected Tables</dt>" >> _mail.txt
+        for val in "${PROTECTED_TABLES[@]}"; do
+            echo "<dd>$val<dd>" >> _mail.txt
+        done
+    fi
     echo "</dl>" >> _mail.txt
 
     echo "<h4>Do not reply to this email. Instead, notify your systems administrator of any issues.</h4>" >> _mail.txt
