@@ -8,7 +8,7 @@ APP_CONFIG_FILE='config/rsms-config.php'
 EXCLUDE_CONFIG=''
 DB_NAME="usc_ehs_rsms"
 PRE_CONFIRM=false
-EMAIL_TO="mmartin@graysail.com"
+EMAIL_TO="martina3@mailbox.sc.edu"
 DB_ONLY=0
 PROTECTED_TABLES=()
 
