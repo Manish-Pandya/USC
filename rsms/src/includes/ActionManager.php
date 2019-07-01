@@ -1700,7 +1700,7 @@ class ActionManager {
                 // First, validate any PI removals
                 $canSaveRoom = $this->_before_save_room_check_room_pis(
                     $room,
-                    $room->getPrincipalInvestigators(),
+                    $room->getPrincipalInvestigators() ?? [],
                     $decodedObject->getPrincipalInvestigators()
                 );
 
