@@ -91,6 +91,21 @@
 
     // Run / Check DB migrations
 
+    // Step 0: Ensure migrations table exists
+    echo("Verifying migration table... ");
+    $VERIFY_OR_CREATE_MIGRATION_TABLE = "CREATE TABLE IF NOT EXISTS `devops_migration` (
+        `version` varchar(12) NOT NULL,
+        `script` varchar(128) NOT NULL,
+        `date` timestamp DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`version`)
+    );";
+    $stmt = DBConnection::prepareStatement($VERIFY_OR_CREATE_MIGRATION_TABLE);
+    if( !$stmt->execute() ){
+        echo ("Unable to verify or create migration table$LINE");
+        echo (var_dump($stmt->errorInfo()));
+        exit("Unable to verify or create migration table");
+    }
+
     // Step 1: Check migrations table
     echo("Scanning database for executed migrations... ");
     $sql = "SELECT * FROM devops_migration";
