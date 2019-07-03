@@ -1,4 +1,6 @@
-﻿<h3 class="redBg">{{modalData.HazardDto.Hazard_name}}</h3>
+﻿<h3 class="redBg">{{modalData.HazardDto.Hazard_name}}
+    <span class="pull-right" style="font-style: italic; font-weight: 100;">(Shared Rooms)</span>
+</h3>
 <div class="modal-body" style="border-bottom:none">
     <ul>
         <li ng-repeat="room in modalData.PI.Rooms | filter:{'HasMultiplePIs': true} | orderBy:['Building.Name','Name']" ng-show="matches.length">
