@@ -242,17 +242,17 @@ $KNOWN_ACTIONS = array(
     new MoveAction( 10563, "High Hazard Equipment and Processes" , 10423),
     new MoveAction( 11054, "High Hazard Equipment and Processes" , 10423),
 
-    new DeleteAction(11166, "Guillotine", 10423),
-    new DeleteAction(11167, "UV Transilluminator", 10423),
-    new DeleteAction(11168, "Ultracentrifuge", 10423),
-    new DeleteAction(11169, "Cryostat / Microtome", 10423),
-    new DeleteAction(11170, "Schlenk Line", 10423),
-    new DeleteAction(11171, "Oil Bath", 10423),
-    new DeleteAction(11172, "3D Printing", 10423),
-    new DeleteAction(11173, "Drone", 10423),
-    new DeleteAction(11174, "Flight Simulator", 10423),
-    new DeleteAction(11175, "Cold Room", 10423),
-    new DeleteAction(11176, "Fiber Cutting", 10423),
+    new DeleteAction(11166, "JL Request Delete: 20190705", "Guillotine"),
+    new DeleteAction(11167, "JL Request Delete: 20190705", "UV Transilluminator"),
+    new DeleteAction(11168, "JL Request Delete: 20190705", "Ultracentrifuge"),
+    new DeleteAction(11169, "JL Request Delete: 20190705", "Cryostat / Microtome"),
+    new DeleteAction(11170, "JL Request Delete: 20190705", "Schlenk Line"),
+    new DeleteAction(11171, "JL Request Delete: 20190705", "Oil Bath"),
+    new DeleteAction(11172, "JL Request Delete: 20190705", "3D Printing"),
+    new DeleteAction(11173, "JL Request Delete: 20190705", "Drone"),
+    new DeleteAction(11174, "JL Request Delete: 20190705", "Flight Simulator"),
+    new DeleteAction(11175, "JL Request Delete: 20190705", "Cold Room"),
+    new DeleteAction(11176, "JL Request Delete: 20190705", "Fiber Cutting"),
 
     new ReorderAction( 10000, 'Reorder all leaf nodes')
 );
