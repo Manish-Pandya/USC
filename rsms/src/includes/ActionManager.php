@@ -2528,7 +2528,12 @@ class ActionManager {
             // Initialize present-hazard flags
             $room->getHazardTypesArePresent();
 
-            $pis = $room->getPrincipalInvestigators();
+            // Retrieve all PIs, including Active
+            $pis = $dao->getRelatedItemsById(
+                $room->getKey_Id(),
+                DataRelationship::fromArray(Room::$PIS_RELATIONSHIP),
+                NULL, FALSE, TRUE);
+
             $piDtos = array();
             foreach($pis as $pi){
                 $dto = $this->getPIDetails($pi);
