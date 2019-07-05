@@ -189,7 +189,7 @@ class ActionManager {
             }
         }
 
-        $LOG->info("LDAP AUTHENTICATION FAILED");
+        $LOG->debug("LDAP AUTHENTICATION FAILED");
         return false;
     }
 
