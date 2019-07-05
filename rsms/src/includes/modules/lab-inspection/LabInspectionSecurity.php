@@ -269,5 +269,64 @@ class LabInspectionSecurity {
 
         return false;
     }
+
+    public static function userCanRemoveDeficiencySelection( $deficiencyId = null, $inspectionId = null ){
+        return self::inspectionIsNotArchived( $inspectionId );
+    }
+
+    /**
+     * Determine if user can modify items related to an inspection
+     */
+    public static function userCanEditInspectionItem( $obj = null ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+        $obj = $obj ?? JsonManager::decodeInputStream();
+
+        // Get the Inspection ID from obj
+        $inspectionId = null;
+
+        // DeficiencySelection
+        // SupplementalObservation, SupplementalRecommendation, SupplementalDeficiency
+        if ( $obj instanceof SupplementalRecommendation
+            || $obj instanceof SupplementalObservation
+            || $obj instanceof SupplementalDeficiency
+            || $obj instanceof DeficiencySelection )
+        {
+            $LOG->trace("Retrieving Inspection from " . get_class($obj));
+            $inspectionId = $obj->getResponse()->getInspection_id();
+        }
+
+        // RecommendationRelation, ObservationRelation
+        else if ( $obj instanceof RelationshipDto){
+            $LOG->trace("Retrieving Inspection from RelationshipDto");
+            $responseId = $obj->getMaster_id();
+            $responseDao = new GenericDAO(new Response());
+            $response = $responseDao->getById( $responseId );
+
+            $inspectionId = $response->getInspection_id();
+        }
+
+        return self::inspectionIsNotArchived( $inspectionId );
+    }
+
+    public static function inspectionIsNotArchived( $inspectionId ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $inspectionDao = new InspectionDAO();
+        $inspection = $inspectionDao->getById($inspectionId);
+
+        if( !isset($inspection) ){
+            // Cannot find associated Inspection!
+            $LOG->error("Unable to find related Inspection");
+            return false;
+        }
+        else if( $inspection->getIsArchived() ){
+            $LOG->warn("Related Inspection is archived");
+            return false;
+        }
+
+        // Allow only if inspection is not Archived
+        $LOG->debug("Related Inspection is not archived");
+        return true;
+    }
 }
 ?>

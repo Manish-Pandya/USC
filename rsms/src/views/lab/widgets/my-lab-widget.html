@@ -1,18 +1,28 @@
-<div class="widget-header {{group}}">
-    <h2>
-        <i ng-if="headerIcon" style="margin-top: -5px;font-size: 22px;margin-right: 4px;" class="{{headerIcon}}"></i>
-        <img ng-if="headerImage" ng-src="{{'../../img/' + headerImage}}" width="25px" style="margin-right:5px;" />
-        {{headerText}}
-        <span ng-if="alerts.length" class="pull-right badge badge-warning">{{alerts.length}}</span>
-    </h2>
-    <div ng-if="subheaderText" class="subheader">{{subheaderText}}</div>
-</div>
-<ng-include ng-if="contentTemplate" src="contentTemplate" ng-class="{saving: saving}"></ng-include>
-<span ng-if="saving">
-    <h1 style="z-index:30000; text-align:center; color:black;">
+<div>
+    <div class="widget-header {{group}}" ng-click="collapsed = !collapsed">
+        <h2>
+            <i ng-if="headerIcon" class="{{headerIcon}}"></i>
+            <img ng-if="headerImage" ng-src="{{'../../img/' + headerImage}}" width="25px" style="margin-right:5px;" />
+            <span class="widget-title">{{headerText}}</span>
+            <span class="actions">
+                <ng-include ng-if="toolbarTemplate" src="toolbarTemplate" ng-click="$event.stopPropagation();"></ng-include>
+                <span ng-if="alerts.length" class="badge badge-warning">{{alerts.length}}</span>
+                <i ng-class="{'icon-arrow-down': !collapsed, 'icon-arrow-right': collapsed}"></i>
+            </span>
+        </h2>
+        <div ng-if="subheaderText" class="subheader">{{subheaderText}}</div>
+    </div>
+    <ng-include ng-if="contentTemplate" ng-show="loaded" onload="contentLoaded()" src="contentTemplate" ng-class="{saving: saving, collapsed: collapsed}"></ng-include>
+    <span ng-if="saving">
+        <h1 style="z-index:30000; text-align:center; color:black;">
+            <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
+            {{$message}}
+        </h1>
+    </span>
+    <div ng-if="error" class="error message red">{{error}}</div>
+
+    <span ng-if="loaded && !contentTemplate">No data to display at this time.</span>
+    <h1 ng-if="!loaded" style="text-align:center; padding-top:20px;">
         <i style="color:black;" class="spinner icon-spinnery-dealie large"></i>
-        {{$message}}
     </h1>
-</span>
-<div ng-if="error" class="error message red">{{error}}</div>
-<span ng-if="!contentTemplate">No data to display at this time.</span>
+</div>

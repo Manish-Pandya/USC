@@ -1,6 +1,21 @@
 'use strict';
 
 angular.module('ng-EmailHub')
+    .filter('untemplatedTypes', function(){
+        return function(messageTypes, moduleName, templates){
+            if( !messageTypes || !templates ){
+                return messageTypes;
+            }
+
+            let usedTypes = templates
+                .filter( t => t.Module == moduleName)
+                .map( t => t.Message_type );
+
+            return messageTypes.filter( mt =>
+                mt.Module == moduleName
+                && usedTypes.indexOf(mt.TypeName) < 0 );
+        };
+    })
     .controller('EmailHubTemplateCtrl', function($rootScope, $scope, $q, $stateParams){
         console.debug("EmailHubTemplateCtrl running");
 
@@ -26,7 +41,34 @@ angular.module('ng-EmailHub')
                 $scope.EmailDisclaimer = (disclaimers || []).join('\n\n');
                 return $scope.EmailDisclaimer;
             })
-        ]);
+        ])
+        .then( function(){
+            // Find all registered module names
+            $scope.Modules = $scope.MessageTypes
+                // Map types to the Module names
+                .map(mt => mt.Module)
+
+                // Reduce module names to distinct list
+                .reduce( (_arr, _name) => {
+                    if( _arr.indexOf(_name) < 0 ){
+                        _arr.push(_name);
+                    }
+                    return _arr;
+                }, [])
+
+                // Create named Objects for each one
+                // with a sum of registered types
+                .map( moduleName => {
+                    return {
+                        Name: moduleName,
+                        TotalTypes: $scope.MessageTypes
+                            .filter(mt => mt.Module == moduleName)
+                            .length
+                    };
+                });
+
+            console.debug("All modules with registered message types:", $scope.Modules);
+        });
 
         // Register functions
         $scope.toggleActive = function toggleTemplateActive( template ){

@@ -384,17 +384,20 @@ class Equipment_ActionManager extends ActionManager {
         $rooms = $pi->getRooms();
         $room_ids = array_map(function($r){ return $r->getKey_id();}, $rooms);
 
-        // 2. Get Specified type of equipment for these Rooms
-        $piCabs = QueryUtil::selectFrom(new $equipmentClassName)
-            ->joinTo( DataRelationship::fromArray(array(
-                "className"	=>	"EquipmentInspection",
-                "tableName"	=>	"equipment_inspection",
-                "keyName"	=>	"key_id",
-                "foreignKeyName" =>	"equipment_id")))
-            ->where(Field::create('equipment_class', 'equipment_inspection'), '=', $equipmentClassName)
-            ->where(Field::create('room_id', 'equipment_inspection'), 'IN', $room_ids)
-            ->groupBy(Field::create('equipment_id', 'equipment_inspection'))
-            ->getAll();
+        $piCabs = array();
+        if( !empty($room_ids) ){
+            // 2. Get Specified type of equipment for these Rooms
+            $piCabs = QueryUtil::selectFrom(new $equipmentClassName)
+                ->joinTo( DataRelationship::fromArray(array(
+                    "className"	=>	"EquipmentInspection",
+                    "tableName"	=>	"equipment_inspection",
+                    "keyName"	=>	"key_id",
+                    "foreignKeyName" =>	"equipment_id")))
+                ->where(Field::create('equipment_class', 'equipment_inspection'), '=', $equipmentClassName)
+                ->where(Field::create('room_id', 'equipment_inspection'), 'IN', $room_ids)
+                ->groupBy(Field::create('equipment_id', 'equipment_inspection'))
+                ->getAll();
+        }
 
         EntityManager::with_entity_maps(EquipmentInspection::class, array(
             EntityMap::eager("getRoom")

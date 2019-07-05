@@ -563,6 +563,11 @@ mainController = function ($scope, $location, postInspectionFactory, convenience
 
     $rootScope.rbf = roleBasedFactory;
 
+    $scope.allowReturnToInspection = function allowReturnToInspection( inspection ){
+        // Disallow returning-to-inspection for closed-out inspections
+        return inspection.Status != Constants.INSPECTION.STATUS.CLOSED_OUT;
+    }
+
     // Lab Contact Verification - pre-Finalization requirement
     $scope.openUserHub = function openUserHub(){
         return window.open(window.GLOBAL_WEB_ROOT + 'views/hubs/UserHub.php#/labPersonnel');
@@ -699,6 +704,16 @@ inspectionDetailsController = function ($scope, $location, $anchorScroll, conven
 }
 
 inspectionConfirmationController = function ($scope, $location, $anchorScroll, convenienceMethods, postInspectionFactory, $rootScope, $q) {
+    $scope.confirmEmailTinymceOptions = {
+        branding: false,
+        plugins: ['link lists', 'autoresize', 'contextmenu'],
+        contextmenu_never_use_native: true,
+        toolbar: 'bold | italic | underline | link | lists | bullist | numlist',
+        menubar: false,
+        elementpath: false,
+        content_style: "p,ul li, ol li {font-size:14px}"
+    };
+
     // Retrieve Inspection
     var inspectionWillLoad = $q.defer();
 
@@ -744,9 +759,6 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
 
                 var templateLoaded = function(data){
                     console.debug(data);
-
-                    // Strip HTML
-                    data.Email.Body = new DOMParser().parseFromString(data.Email.Body, 'text/html').body.textContent || "";
 
                     $scope.inspectionEmailContext = data;
 

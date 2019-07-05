@@ -184,7 +184,7 @@
                         </ul>
                     </li>
 
-                    <li ng-if="!filteredPis.length"><span style="color:#f00;">Unassigned</span></li>
+                    <li ng-if="(room.edit ? roomCopy : room) | roomUnassignedFilter"><span style="color:#f00;">Unassigned</span></li>
                 </ul>
             </td>
             <!-- ^ new pi / dept ^-->

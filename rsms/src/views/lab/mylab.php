@@ -36,6 +36,7 @@ require_once '../../RequireUserLoggedIn.php';
                 data="widget.Data"
                 alerts="widget.Alerts"
                 full-width="widget.FullWidth"
+                stretch-content="widget.StretchContent"
                 group-name="{{widget.Group}}"
                 header-text="{{widget.Title}}"
                 subheader-text="{{widget.Subtitle}}"

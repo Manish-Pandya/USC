@@ -27,6 +27,21 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
             }
         );
 })
+.filter('roomUnassignedFilter', function(){
+    return function(room){
+        if( !room ){
+            return true;
+        }
+
+        // 'Unassigned' here means:
+        //   1. Assigned to Zero PIs
+        //   2. Assigned to Only Inactive PIs
+        let empty = (!room.PrincipalInvestigators || room.PrincipalInvestigators.length == 0);
+        let onlyInactive = room.PrincipalInvestigators.filter( pi => !pi.Is_active ).length == room.PrincipalInvestigators.length;
+
+        return empty || onlyInactive;
+    }
+})
 .filter('piActiveFilter', function(){
     return function(pis, search){
         if ( !search || !pis ){
@@ -35,12 +50,14 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
 
         var matched = [];
 
-        pis.forEach( pi => {
-            // Match the PI if its active status matches either filter
-            if( (search.activePis && pi.Is_active == search.activePis) || (search.inactivePis && !pi.Is_active == search.inactivePis) ){
-                matched.push(pi);
-            }
-        });
+        if( search.activePis || search.inactivePis ){
+            pis.forEach( pi => {
+                // Match the PI if its active status matches either filter
+                if( (search.activePis && pi.Is_active == search.activePis) || (search.inactivePis && !pi.Is_active == search.inactivePis) ){
+                    matched.push(pi);
+                }
+            });
+        }
 
         return matched;
     };
@@ -107,9 +124,44 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                         }
                     }
 
-                    // Filter Unassigned rooms
-                    if( !search.unassignedPis && (!item.PrincipalInvestigators || item.PrincipalInvestigators.length == 0) ){
-                        item_matched = false;
+                    // Filter based on mix of PI assignment and Is_active status
+                    //   (arbitrary block intentional)
+                    {
+                        let assignedToActive = false;
+                        let assignedToInactive = false;
+                        item.PrincipalInvestigators.forEach( pi => {
+                            if ( pi.Is_active ){
+                                assignedToActive = true;
+                            }
+                            else {
+                                assignedToInactive = true;
+                            }
+                        });
+
+                        let unassigned = !assignedToActive && !assignedToInactive;
+
+                        if( !search.activePis && assignedToActive ){
+                            // Exclude rooms assigned to Active PIs
+                            item_matched = false;
+                            console.debug("Exclude room assigned to Active PIs", item);
+                        }
+
+                        else if( !search.unassignedPis && unassigned ){
+                            // Exclude Unassigned rooms (assigned to no one OR only to Inactive)
+                            item_matched = false;
+                            console.debug("Exclude Unassigned room", item);
+                        }
+
+                        // Note that search.unassignedPis takes precedence over search.inactivePis
+                        //   due to an overlap in conditions
+                        // Therefore, they are mutually-exclusive for purposes of filtering Rooms.
+                        // While search.unassignedPis is active, search.inactivePis may only be used
+                        //   for display purposes (to show/hide Inactive PI names)
+                        else if( !search.inactivePis && assignedToInactive && !search.unassignedPis ){
+                            // Exclude rooms assigned to Inactive PIs
+                            item_matched = false;
+                            console.debug("Exclude room assigned to Inactive PIs", item);
+                        }
                     }
 
                     if( item.PrincipalInvestigators && item.PrincipalInvestigators.length > 0 ){
@@ -145,11 +197,6 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                                 }
                             }
                         }
-
-                        // Filter by PI Activity status if this room has any PI assignments
-                        // Note that this will not apply to unassigned rooms
-                        var filteredPis = $filter('piActiveFilter')(item.PrincipalInvestigators, search);
-                        item_matched = item_matched && filteredPis && filteredPis.length > 0;
                     }
                 }
 

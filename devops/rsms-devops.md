@@ -5,10 +5,10 @@ Core branches and their purpose:
 | Branch | Purpose |
 | :---- | :---- |
 | `master` | Main source branch, deployed to Prod server (and any other) |
-| `radon-support` | Support branch for legacy Radon server |
 | `develop` | Cutting-edge Development branch, deployed to any non-production server |
+| `stage/*` | 'Staging' branches intended for test builds |
 
-Feature development should be peformed on a specific branch before being merged into `develop`.
+Feature development should be peformed on a specific branch before being merged into a staging branch. Once a feature is tested and approved, it should be merged into `develop`.
 
 Generally, only `develop` should be merged into `master`
 
@@ -136,3 +136,6 @@ Ensure that the document uploads directory has group write permissions
 ```
 chmod g+rwx /var/www/html/rsms/biosafety-committees/protocol-documents/
 ```
+
+## Application Deployment
+

@@ -164,11 +164,13 @@ class Messaging_ActionManager extends ActionManager {
         $cc = $unsent->getCc_recipients();
 
         $roleFilter = ApplicationConfiguration::get(MessagingModule::$CONFIG_EMAIL_SEND_TO_ROLE, null);
+        $recipients_were_filetered = false;
         if( $roleFilter != null ){
             $LOG->info("Filtering email recipients and CCs to users with role: '$roleFilter'");
             // Filter target emails to only match users of a given role
             $recipients = $this->filterToEmailsOfRole($recipients, $roleFilter);
             $cc = $this->filterToEmailsOfRole($cc, $roleFilter);
+            $recipients_were_filetered = true;
         }
 
         // Append standard disclaimer
@@ -207,6 +209,11 @@ class Messaging_ActionManager extends ActionManager {
         // Instead, queued entries are updated as if they had been sent successfully
         if( ApplicationConfiguration::get(MessagingModule::$CONFIG_EMAIL_SUPPRESS_ALL, false)){
             $LOG->info("Suppressing sending of email due to configuration: " . MessagingModule::$CONFIG_EMAIL_SUPPRESS_ALL);
+            $is_sent = true;
+        }
+        // If [Recipients were filtered to nothing], display debug message & consider sent
+        else if( $recipients_were_filetered && empty($recipients)){
+            $LOG->debug("All recipients were filtered. Email will be flagged as sent.");
             $is_sent = true;
         }
         else{
@@ -491,11 +498,21 @@ class Messaging_ActionManager extends ActionManager {
         return $template;
     }
 
-    public function getEmails( $page, $size ){
+    public function getEmails( $page, $size, $module = null, $template = null, $search = null ){
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
         $pageNum = $this->getValueFromRequest('page', $page);
         $pageSize = $this->getValueFromRequest('size', $size);
+
+        // Filters
+        $module = $this->getValueFromRequest('module', $module);
+        $template = $this->getValueFromRequest('template', $template);
+        $search = $this->getValueFromRequest('search', $search);
+
+        // Trim filter values
+        if( $module ) $module = trim($module);
+        if( $template ) $template = trim($template);
+        if( $search ) $search = trim($search);
 
         $paging = array(
             'page' => $pageNum,
@@ -503,7 +520,7 @@ class Messaging_ActionManager extends ActionManager {
         );
 
         $emailDao = new QueuedEmailDAO();
-        $resultPage = $emailDao->getQueue($paging, null, false, false);
+        $resultPage = $emailDao->getQueue($paging, null, false, false, $module, $template, $search);
 
         return $resultPage;
     }

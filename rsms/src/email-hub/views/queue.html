@@ -2,10 +2,27 @@
 <div class="email-hub">
 
     <div class="card full">
-        <h1 style="margin: 10px 15px 5px 15px;">
+        <h1 class="expander">
             <span>Email Queue</span>
-            <span class="pull-right" ng-if="QueuedEmailsPage">({{QueuedEmailsPage.TotalCount}})</span>
+            <span ng-if="QueuedEmailsPage">({{QueuedEmailsPage.TotalCount}})</span>
         </h1>
+
+        <form class="filters" ng-submit="loadPage(1)">
+            <h4 style="flex-grow: 0; align-self: center;">Filter Results:</h4>
+            <select ng-model="filters.Module" ng-options="module for module in Modules" style="flex-grow: 0">
+                <option value="">-- Module --</option>
+            </select>
+
+            <select ng-model="filters.Template" ng-options="template.Key_id as template.Title for template in Templates | orderBy: ['Module', 'Title', 'Message_type']">
+                <option value="">-- Template --</option>
+            </select>
+
+            <input name="search" ng-model="filters.Search" placeholder="Search">
+
+            <button type="submit" class="btn btn-warning">
+                <i class="icon-search"></i>
+            </button>
+        </form>
     </div>
 
     <div class="card full">
@@ -13,18 +30,21 @@
             page="Pager.currentPage"
             items-per-page="Pager.numPerPage"
             on-select-page="loadPage(page)"
-            total-items="QueuedEmailsPage.TotalCount">
+            total-items="QueuedEmailsPage.TotalCount"
+            boundary-links="true"
+            max-size="10"
+            rotate="false">
         </pagination>
 
         <table ng-if="QueuedEmailsPage" class="table table-bordered templates">
             <thead>
                 <th></th>
                 <th>Module</th>
-                <th>Message Type</th>
                 <th>Template</th>
-                <th>Queue Date</th>
+                <th>Queued</th>
                 <th>Sent</th>
                 <th>Subject</th>
+                <th>Recipients</th>
             </thead>
             <tbody ng-repeat="email in QueuedEmailsPage.Results" ng-class="{closed: !email.ShowBody}">
                 <tr ng-class="{greenBg: email.ShowBody, greyBg: !email.Email_id}">
@@ -34,8 +54,10 @@
                         </a>
                     </td>
                     <td>{{email.Module}}</td>
-                    <td>{{email.Message_type}}</td>
-                    <td>{{email.Template_name}}</td>
+                    <td>
+                        <h4>{{email.Template_name}}</h4>
+                        <h5 class="subtitle">{{email.Message_type}}</h5>
+                    </td>
                     <td>{{email.Queued_date || email.Scheduled_date | dateToIsoTime}}</td>
                     <td ng-class="{orangeBg: !email.Sent_date && email.Email_id}">
                         <span ng-if="email.Sent_date">{{email.Sent_date | dateToIsoTime}}</span>
@@ -44,6 +66,13 @@
                         </span>
                     </td>
                     <td>{{email.Subject}}</td>
+                    <td>
+                        <ul style="list-style: none; margin: unset;">
+                            <li ng-if="to_cc" ng-repeat="to_cc in (email.Recipients + (email.Cc_recipients || '')).split(',')">
+                                <code>{{to_cc}}</code>
+                            </li>
+                        </ul>
+                    </td>
                 </tr>
                 <tr ng-if="email.ShowBody">
                     <td colspan="7">

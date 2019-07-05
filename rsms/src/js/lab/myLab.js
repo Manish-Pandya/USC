@@ -180,6 +180,7 @@ var myLab = angular.module('myLab', [
             // loose validation; invalid only if they're too short
             validation.valid = false;
             validation.errorFields[phones[i]] = true;
+            validation.error = "Phone Number is too short";
           }
         }
       }

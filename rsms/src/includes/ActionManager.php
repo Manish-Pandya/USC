@@ -128,6 +128,32 @@ class ActionManager {
         return $roles;
     }
 
+    public function getDepartmentForUser( User &$user ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $department = null;
+        $department_id = $user->getPrimary_department_id();
+
+        if( $department_id == NULL ){
+
+            $pi = $this->getPrincipalInvestigatorOrSupervisorForUser( $user );
+
+            try{
+                // user is a PI and may not have a 'primary department' assigned
+                $department = $pi->getDepartments()[0];
+            }
+            catch( Exception $err ){
+                $LOG->error("Unable to determine Department for this PI user");
+            }
+        }
+        else {
+            $dao = new GenericDAO(new Department());
+            $department = $dao->getById($department_id);
+        }
+
+        return $department;
+    }
+
     /**
      * Authenticate via LDAP
      */
@@ -163,7 +189,7 @@ class ActionManager {
             }
         }
 
-        $LOG->info("LDAP AUTHENTICATION FAILED");
+        $LOG->debug("LDAP AUTHENTICATION FAILED");
         return false;
     }
 
@@ -1284,6 +1310,14 @@ class ActionManager {
             return $decodedObject;
         }
         else{
+
+            // Verify that the related Inspection isn't archived
+            $inspection = $decodedObject->getResponse()->getInspection();
+            if( $inspection->getIsArchived() ){
+                // Forbid modifications to this inspection
+                return new ActionError("Cannot save recommendation for an Archived inspection", 403);
+            }
+
             $dao = $this->getDao(new SupplementalRecommendation());
             $dao->save($decodedObject);
             return $decodedObject;
@@ -1676,7 +1710,7 @@ class ActionManager {
                 // First, validate any PI removals
                 $canSaveRoom = $this->_before_save_room_check_room_pis(
                     $room,
-                    $room->getPrincipalInvestigators(),
+                    $room->getPrincipalInvestigators() ?? [],
                     $decodedObject->getPrincipalInvestigators()
                 );
 
@@ -2312,12 +2346,15 @@ class ActionManager {
         $buildingDtos = DtoFactory::buildDtos($piBuildings, 'DtoFactory::buildingToDto');
         $deptDtos = DtoFactory::buildDtos($pi->getDepartments(), 'DtoFactory::departmentToDto');
         $roomDtos = DtoFactory::buildDtos($pi->getRooms(), 'DtoFactory::roomToDto');
+        $personnelDtos = DtoFactory::buildDtos($pi->getLabPersonnel(), 'DtoFactory::userToDto');
 
         return DtoFactory::buildDto($pi, array(
             'Name' => $pi->getName(),
+            'Position' => $pi->getUser()->getPosition(),
             'Departments' => $deptDtos,
             'Buildings' => $buildingDtos,
-            'Rooms' => $roomDtos
+            'Rooms' => $roomDtos,
+            'LabPersonnel' => $personnelDtos
         ));
     }
 
@@ -2501,7 +2538,12 @@ class ActionManager {
             // Initialize present-hazard flags
             $room->getHazardTypesArePresent();
 
-            $pis = $room->getPrincipalInvestigators();
+            // Retrieve all PIs, including Active
+            $pis = $dao->getRelatedItemsById(
+                $room->getKey_Id(),
+                DataRelationship::fromArray(Room::$PIS_RELATIONSHIP),
+                NULL, FALSE, TRUE);
+
             $piDtos = array();
             foreach($pis as $pi){
                 $dto = $this->getPIDetails($pi);
@@ -4367,7 +4409,11 @@ class ActionManager {
                 return true;
             }
 
+            // Retrieve a fresh copy of the modified object
+            //  by first Evicting the cached entry
+            GenericDAO::$_ENTITY_CACHE->evict($ds);
             $selection = $dao->getById($ds->getKey_id());
+
             EntityManager::with_entity_maps(DeficiencySelection::class, array(
                 EntityMap::eager("getRooms"),
                 EntityMap::lazy("getCorrectiveActions"),
@@ -4653,123 +4699,137 @@ class ActionManager {
 
         $id = $this->getValueFromRequest('id', $id);
         $report = $this->getValueFromRequest('report', $report);
-        if( $id !== NULL ){
-            $dao = $this->getDao(new Inspection());
 
-            //get inspection
-            $inspection = $dao->getById($id);
+        if( $id === NULL ){
+            //error
+            return new ActionError("No request parameter 'id' was provided", 400);
+        }
 
-            if( !isset($inspection) || ($inspection instanceof ActionError) ){
-                return new ActionError("No such Inspection $id", 404);
-            }
+        $dao = $this->getDao(new Inspection());
 
-            // check if this is an inspection we're just starting
-            if( $inspection->getDate_started() == NULL ) {
-                $inspection->setDate_started(date("Y-m-d H:i:s"));
-                $dao->save($inspection);
-            }
+        //get inspection
+        $inspection = $dao->getById($id);
 
-            // Remove previous checklists (if any) and recalculate the required checklist.
-            $oldChecklists = $inspection->getChecklists();
-            if (!empty($oldChecklists) && $report == null) {
+        if( !isset($inspection) || ($inspection instanceof ActionError) ){
+            return new ActionError("No such Inspection $id", 404);
+        }
+
+        // check if this is an inspection we're just starting
+        if( $inspection->getDate_started() == NULL ) {
+            $inspection->setDate_started(date("Y-m-d H:i:s"));
+            $dao->save($inspection);
+        }
+
+        // Force 'report' mode if requested OR if inspection is archived
+        //   * Archived reports should never be modified!
+        $REPORT_MODE = $report ?? $inspection->getIsArchived();
+
+        // Log a warning if someone attempted to view an archived inspection in non-report mode
+        if( $report == null && $REPORT_MODE){
+            $LOG->warn("Requested non-report mode for Archived inspection $inspection. Report-mode will be forced.");
+        }
+
+        // Remove previous checklists (if any) and recalculate the required checklist.
+        $oldChecklists = $inspection->getChecklists();
+
+        // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
+        if(!$REPORT_MODE){
+            $LOG->info("Recalculating list of Checklists for $inspection");
+
+            if (!empty($oldChecklists)) {
+                $LOG->debug("Removing all old Checklists from $inspection");
                 // remove the old checklists
                 foreach ($oldChecklists as $oldChecklist) {
                     $dao->removeRelatedItems($oldChecklist->getKey_id(),
-                    						 $inspection->getKey_id(),
-                    						 DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+                                                $inspection->getKey_id(),
+                                                DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
                 }
             }
 
+            $LOG->debug("Generating new list of Checklists for $inspection");
+            $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
 
-            // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
-            if($report == null){
-                $LOG->debug('should be getting new list of checklists');
-                $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
-            }
-            //if we are loading a report instead of a list of checklists for an inspection, we don't update the list of checklists
-            else{
-                $LOG->debug('should be retrieving old checklists');
-                $checklists = $oldChecklists;
-            }
-
-            $hazardIds = array();
             // add the checklists to this inspection
+            $LOG->debug("Assigning new Checklists to $inspection");
             foreach ($checklists as $checklist){
-                if($report == null){
-                    $dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
-                    $checklist->setInspectionId($inspection->getKey_id());
-                    $checklist->setRooms($inspection->getRooms());
-                    //filter the rooms, but only for hazards that aren't in the General branch, which should always have all the rooms for an inspection
-                    //9999 is the key_id for General Hazard
-                    if($checklist->getMaster_id() != 9999){
-                        $checklist->filterRooms($inspection->getPrincipal_investigator_id());
-                    }
+                $LOG->trace("Add $checklist to $inspection");
+
+                $dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+                $checklist->setInspectionId($inspection->getKey_id());
+                $checklist->setRooms($inspection->getRooms());
+                //filter the rooms, but only for hazards that aren't in the General branch, which should always have all the rooms for an inspection
+                //9999 is the key_id for General Hazard
+                if($checklist->getMaster_id() != 9999){
+                    $checklist->filterRooms($inspection->getPrincipal_investigator_id());
                 }
-
-                $hazardIds[] = $checklist->getHazard_id();
-
             }
+        }
+        //if we are loading a report instead of a list of checklists for an inspection, we don't update the list of checklists
+        else {
+            $checklists = $oldChecklists;
+        }
 
-			//recurse down hazard tree.  look in checklists array for each hazard.  if checklist is found, push it into ordered array.
-            $orderedChecklists = array();
-            $orderedChecklists = $this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $this->getHazardById(10000));
+        // Build array of Hazard IDs for each checklist
+        $hazardIds = array_map(
+            function($checklist){
+                return $checklist->getHazard_id();
+            },
+            $checklists
+        );
 
-            if( !empty($checklists) ){
-                $LOG->warn("Not all Checklists were matched:\n\t" . implode("\n\t", $checklists));
-            }
+        //recurse down hazard tree.  look in checklists array for each hazard.  if checklist is found, push it into ordered array.
+        $orderedChecklists = array();
+        $orderedChecklists = $this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $this->getHazardById(10000));
 
-            $inspection->setChecklists( $orderedChecklists );
+        if( !empty($checklists) ){
+            $LOG->warn("Not all Checklists were matched:\n\t" . implode("\n\t", $checklists));
+        }
 
-            //make sure we get the right rooms for our branch level checklists
-            //ids of the branch level hazards, excluding general, which is always in every room
-            $realBranchIds = array(1,10009,10010);
-            $neededRoomIds = array();
-            $neededRooms   = array();
-            foreach($orderedChecklists as $list){
+        $inspection->setChecklists( $orderedChecklists );
 
-                if(in_array($list->getHazard_id(), $realBranchIds)){
-                    //if(!in_array(,$neededRoomIds))
-                    //evaluate what rooms we need.  any room a checklist for a child of this one has should be pushed
-                    $childLists =  $this->getChildLists($list, $orderedChecklists);
-                    foreach($childLists as $childList){
-                        $childInspectionRooms = $childList->getInspectionRooms();
-                        if( !empty($childInspectionRooms) ){
-                            foreach($childList->getInspectionRooms() as $room){
-                                if(!in_array($room->getKey_id(), $neededRoomIds)){
-                                    array_push($neededRoomIds, $room->getKey_id());
-                                    array_push($neededRooms, $room);
-                                }
+        //make sure we get the right rooms for our branch level checklists
+        //ids of the branch level hazards, excluding general, which is always in every room
+        $realBranchIds = array(1,10009,10010);
+        $neededRoomIds = array();
+        $neededRooms   = array();
+        foreach($orderedChecklists as $list){
+
+            if(in_array($list->getHazard_id(), $realBranchIds)){
+                //if(!in_array(,$neededRoomIds))
+                //evaluate what rooms we need.  any room a checklist for a child of this one has should be pushed
+                $childLists =  $this->getChildLists($list, $orderedChecklists);
+                foreach($childLists as $childList){
+                    $childInspectionRooms = $childList->getInspectionRooms();
+                    if( !empty($childInspectionRooms) ){
+                        foreach($childList->getInspectionRooms() as $room){
+                            if(!in_array($room->getKey_id(), $neededRoomIds)){
+                                array_push($neededRoomIds, $room->getKey_id());
+                                array_push($neededRooms, $room);
                             }
                         }
                     }
-                    $list->setInspectionRooms($neededRooms);
                 }
+                $list->setInspectionRooms($neededRooms);
             }
-
-            EntityManager::with_entity_maps(Checklist::class, array(
-                EntityMap::lazy("getHazard"),
-                EntityMap::lazy("getRooms"),
-                EntityMap::eager("getInspectionRooms"),
-                EntityMap::eager("getQuestions")
-            ));
-
-            EntityManager::with_entity_maps(Inspection::class, array(
-                EntityMap::eager("getInspectors"),
-                EntityMap::eager("getRooms"),
-                EntityMap::lazy("getResponses"),
-                EntityMap::eager("getPrincipalInvestigator"),
-                EntityMap::eager("getChecklists"),
-                EntityMap::eager("getInspection_wipe_tests")
-            ));
-
-            return $inspection;
-        }
-        else{
-            //error
-            return new ActionError("No request parameter 'id' was provided");
         }
 
+        EntityManager::with_entity_maps(Checklist::class, array(
+            EntityMap::lazy("getHazard"),
+            EntityMap::lazy("getRooms"),
+            EntityMap::eager("getInspectionRooms"),
+            EntityMap::eager("getQuestions")
+        ));
 
+        EntityManager::with_entity_maps(Inspection::class, array(
+            EntityMap::eager("getInspectors"),
+            EntityMap::eager("getRooms"),
+            EntityMap::lazy("getResponses"),
+            EntityMap::eager("getPrincipalInvestigator"),
+            EntityMap::eager("getChecklists"),
+            EntityMap::eager("getInspection_wipe_tests")
+        ));
+
+        return $inspection;
     }
 
     private function getChildLists(Checklist $list, array $orderedChecklists){
@@ -5524,6 +5584,8 @@ class ActionManager {
             return new ActionError("No such user", 404);
         }
 
+        $department = $this->getDepartmentForUser( $user );
+
         // Collect User Info
         // Notes:
         //   Phone number inclusion varies by Role:
@@ -5534,7 +5596,8 @@ class ActionManager {
             'First_name' => $user->getFirst_name(),
             'Last_name' => $user->getLast_name(),
             'Name' => $user->getName(),
-            'Position' => $user->getPosition()
+            'Position' => $user->getPosition(),
+            'Department' => $department->getName() ?? null
         );
 
         if( CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
@@ -5542,6 +5605,14 @@ class ActionManager {
             $userData['Emergency_phone'] = $user->getEmergency_phone() ?? '';
         }
         else{
+
+            // Add PI details
+            $pi = $this->getPrincipalInvestigatorOrSupervisorForUser( $user );
+            $userData['PI'] = array(
+                'Name' => $pi->getUser()->getName(),
+                'Position' => $pi->getUser()->getPosition()
+            );
+
             if( CoreSecurity::userHasRoles($user, array('Lab Personnel')) ){
                 $userData['Lab_phone'] = $user->getLab_phone() ?? '';
             }

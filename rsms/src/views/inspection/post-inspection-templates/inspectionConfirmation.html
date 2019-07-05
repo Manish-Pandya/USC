@@ -37,7 +37,7 @@
       </div>
   </div>
   <h3 style="margin:20px 0 15px;">Email message sent with inpection report:</h3>
-  <textarea ng-model="defaultNote.Text" style="width:800px;" rows="10" html-text></textarea><br>
+  <textarea ui-tinymce="confirmEmailTinymceOptions" ng-model="defaultNote.Text"></textarea><br>
 
   <a ng-click="sendEmail()" class="btn btn-large btn-success left" style="float:left;"><i class="icon-email"></i>Send Inspection Report</a>
   <img style="margin-top: 18px;" ng-show="sending" class="smallLoading" src="../../img/loading.gif"/>

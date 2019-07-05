@@ -302,9 +302,13 @@ session_start();
                         <ul class="subRooms hazInvSubRooms" ng-if="getShowRooms(child, room, key)" ng-repeat="(key, rooms) in child.InspectionRooms | groupBy: 'Building_name'">
                             <li>
                                 <span ng-show="relevantRooms.length">{{ key }}:</span>
+
                                 <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms | orderBy: convenienceMethods.sortAlphaNum('Room_name'))">
 
-                                    <a ng-click="openMultiplePIHazardsModal(child, room)" ng-class="{'other':room.OtherLab && !room.ContainsHazard, 'shared':room.OtherLab && room.ContainsHazard, 'stored':room.Stored}">
+                                    <span ng-if="!room.HasMultiplePIs && !room.OtherLab">{{ room.Room_name }}</span>
+                                    <a    ng-if="room.HasMultiplePIs || room.OtherLab"
+                                          ng-click="openMultiplePIHazardsModal(child, room)"
+                                          ng-class="{'other':room.OtherLab && !room.ContainsHazard, 'shared':room.OtherLab && room.ContainsHazard, 'stored':room.Stored}">
                                         {{ room.Room_name }}
                                         <span ng-if="room.HasMultiplePIs || room.OtherLab"><i class="icon-users" title="{{child.Hazard_name}} is used by more than one lab in room {{room.Room_name}}"></i></span>
                                         <span ng-if="room.Stored" class="stored">
@@ -363,7 +367,10 @@ session_start();
                                 <span ng-show="relevantRooms.length">{{ key }}:</span>
                                 <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms)">
 
-                                    <a ng-click="openMultiplePIHazardsModal(child, room)" ng-class="{'other':room.OtherLab && !room.ContainsHazard, 'shared':room.OtherLab && room.ContainsHazard, 'stored':room.Stored}">
+                                    <span ng-if="!room.HasMultiplePIs && !room.OtherLab">{{ room.Room_name }}</span>
+                                    <a    ng-if="room.HasMultiplePIs || room.OtherLab"
+                                          ng-click="openMultiplePIHazardsModal(child, room)"
+                                          ng-class="{'other':room.OtherLab && !room.ContainsHazard, 'shared':room.OtherLab && room.ContainsHazard, 'stored':room.Stored}">
                                         {{ room.Room_name }}
                                         <span ng-if="room.HasMultiplePIs || room.OtherLab"><i class="icon-users" title="{{child.Hazard_name}} is used by more than one lab in room {{room.Room_name}}"></i></span>
                                         <span ng-if="room.Stored" class="stored">
