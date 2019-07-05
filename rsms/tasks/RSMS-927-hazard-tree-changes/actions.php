@@ -242,6 +242,18 @@ $KNOWN_ACTIONS = array(
     new MoveAction( 10563, "High Hazard Equipment and Processes" , 10423),
     new MoveAction( 11054, "High Hazard Equipment and Processes" , 10423),
 
+    new DeleteAction(11166, "Guillotine", 10423),
+    new DeleteAction(11167, "UV Transilluminator", 10423),
+    new DeleteAction(11168, "Ultracentrifuge", 10423),
+    new DeleteAction(11169, "Cryostat / Microtome", 10423),
+    new DeleteAction(11170, "Schlenk Line", 10423),
+    new DeleteAction(11171, "Oil Bath", 10423),
+    new DeleteAction(11172, "3D Printing", 10423),
+    new DeleteAction(11173, "Drone", 10423),
+    new DeleteAction(11174, "Flight Simulator", 10423),
+    new DeleteAction(11175, "Cold Room", 10423),
+    new DeleteAction(11176, "Fiber Cutting", 10423),
+
     new ReorderAction( 10000, 'Reorder all leaf nodes')
 );
 
