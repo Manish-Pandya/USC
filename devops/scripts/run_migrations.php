@@ -194,7 +194,7 @@
 
     // Step 4: Execute the scripts and update migration table
     print "
-Processing unexecute migrations. Options are:
+Processing unexecuted migrations. Options are:
     [R]un:     Run the migration script against the database and Update the migration table
     [U]pdate:  Ignore the migration script and Update the migration table
     [S]kip:    Ignore the migration script and do not Update the migration table
@@ -214,7 +214,7 @@ Processing unexecute migrations. Options are:
         $migration->date = date("Y-m-d H:i:s");
 
         // Confirm that script should be executed
-        // TODO: Allow user to:
+        // Allow user to:
         //   [R]un script
         //   [U]pdate without execution
         //   [S]kip script
