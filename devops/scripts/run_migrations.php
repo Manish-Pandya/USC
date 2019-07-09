@@ -46,8 +46,8 @@
             $output = null;
             $exitcode = null;
             echo ("Executing '$scriptpath'...\n");
-            exec("mysql --defaults-file=$EXTRAS_FILE -h $ip $db < $scriptpath", $output, $exitcode) . "\n";
             echo "\n    ----- OUTPUT -----\n";
+            exec("mysql --defaults-file=$EXTRAS_FILE -h $ip $db < $scriptpath", $output, $exitcode) . "\n";
             foreach( $output as $ln ){
                 echo "    $ln\n";
             }
