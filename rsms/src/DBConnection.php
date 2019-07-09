@@ -23,7 +23,18 @@ class DBConnection {
         $LOG = Logger::getLogger(__CLASS__);
         $LOG->debug("Configuring " . __CLASS__);
 
-        self::$DB_CN = ApplicationConfiguration::get('server.db.connection');
+        // Construct database connection string
+        $dbhost = ApplicationConfiguration::get('server.db.host');
+        $dbname = ApplicationConfiguration::get('server.db.name');
+
+        if( isset($dbhost) && isset($dbname) ){
+            self::$DB_CN = "mysql:host=$dbhost;dbname=$dbname";
+        }
+        else {
+            // Fallback to supplied connection-string config
+            self::$DB_CN = ApplicationConfiguration::get('server.db.connection');
+        }
+
         self::$DB_UN = ApplicationConfiguration::get('server.db.username');
 
         /* WARNING:
