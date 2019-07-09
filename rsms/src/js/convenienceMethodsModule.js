@@ -633,6 +633,11 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
         return $sce.trustAsHtml(htmlCode);
     }
 }])
+.filter("isAre", function(){
+    return function(data){
+        return (data || []).length == 1 ? 'is' : 'are';
+    }
+})
 .directive('scrollTable', ['$window', '$location', '$rootScope', '$timeout', function($window, $location, $rootScope,$timeout) {
     return {
         restrict: 'A',
