@@ -1,7 +1,8 @@
 <?php
 
     // Set up RSMS application
-    require_once '/var/www/html/rsms/Application.php';
+    require_once '/var/www/html/rsms/ApplicationBootstrapper.php';
+    ApplicationBootstrapper::bootstrap();
 
     const EXTRAS_FILE = '/var/rsms/conf/.rsms.erasmus.my.cnf';
     const OPT_EXECUTE = 'EXECUTE';
