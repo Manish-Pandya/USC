@@ -1,7 +1,5 @@
 <?php
 
-require_once 'Application.php';
-
 /**
  * Autoloader class. Registers local directories to check for .php files
  *		within when a class is not found
@@ -132,8 +130,5 @@ class Autoloader {
 	}
 	
 }
-
-// auto-initialize autoloader when included (init() will not duplicate loaders)
-Autoloader::init();
 
 ?>

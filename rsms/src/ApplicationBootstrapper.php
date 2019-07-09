@@ -84,7 +84,7 @@ class ApplicationBootstrapper {
 
         ////////////////////////////////////////////
         // Enable Autoloading
-        require_once(self::$BOOTSTRAP_PATH . '/Autoloader.php');
+        ApplicationBootstrapper::init_autoloader();
 
         ////////////////////////////////////////////
         // LDAP Authentication
@@ -217,6 +217,16 @@ class ApplicationBootstrapper {
         }
 
         return '';
+    }
+
+    /**
+     * Initialize application auto-loading
+     *
+     * @return void
+     */
+    private static function init_autoloader(){
+        require_once(self::$BOOTSTRAP_PATH . '/Autoloader.php');
+        Autoloader::init();
     }
 
     /**
