@@ -47,6 +47,8 @@ class ApplicationBootstrapper {
     /*********************************************/
 
     private static $BOOTSTRAP_PATH;
+    private static $bootstrapping_processing = false;
+    private static $bootstrapping_complete = false;
 
     /**
      * Executes the RSMS Bootstrap Process.
@@ -56,7 +58,14 @@ class ApplicationBootstrapper {
      *
      * @return void
      */
-    public static function bootstrap( $overrideAppConfig = NULL ){
+    public static function bootstrap( $overrideAppConfig = NULL, $mergeOverrides = NULL ){
+        if( self::$bootstrapping_complete || self::$bootstrapping_processing ){
+            // Ignore subsequent calls
+            return;
+        }
+
+        self::$bootstrapping_processing = true;
+
         ////////////////////////////////////////////
         // Note the current path for bootstrapping
         self::$BOOTSTRAP_PATH = dirname(__FILE__);
@@ -94,6 +103,11 @@ class ApplicationBootstrapper {
         ////////////////////////////////////////////
         // Module Registration
         ApplicationBootstrapper::register_modules();
+
+        ////////////////////////////////////////////
+        // Bootstrapping complete
+        self::$bootstrapping_processing = false;
+        self::$bootstrapping_complete = true;
     }
 
     /**
