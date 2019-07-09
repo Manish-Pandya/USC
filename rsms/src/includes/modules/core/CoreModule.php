@@ -1,6 +1,12 @@
 <?php
 
 class CoreModule implements RSMS_Module, MyLabWidgetProvider {
+    public const CONFIG_SERVER_DB_HOST = 'server.db.host';
+    public const CONFIG_SERVER_DB_NAME = 'server.db.name';
+    public const CONFIG_SERVER_DB_USERNAME = 'server.db.username';
+    public const CONFIG_SERVER_DB_PASSWORD = 'server.db.password';
+    public const CONFIG_SERVER_DB_CONNECTION = 'server.db.connection';
+
     public static $NAME = 'Core';
 
     public function getModuleName(){
