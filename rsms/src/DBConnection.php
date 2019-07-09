@@ -24,25 +24,25 @@ class DBConnection {
         $LOG->debug("Configuring " . __CLASS__);
 
         // Construct database connection string
-        $dbhost = ApplicationConfiguration::get('server.db.host');
-        $dbname = ApplicationConfiguration::get('server.db.name');
+        $dbhost = ApplicationConfiguration::get(CoreModule::CONFIG_SERVER_DB_HOST);
+        $dbname = ApplicationConfiguration::get(CoreModule::CONFIG_SERVER_DB_NAME);
 
         if( isset($dbhost) && isset($dbname) ){
             self::$DB_CN = "mysql:host=$dbhost;dbname=$dbname";
         }
         else {
             // Fallback to supplied connection-string config
-            self::$DB_CN = ApplicationConfiguration::get('server.db.connection');
+            self::$DB_CN = ApplicationConfiguration::get(CoreModule::CONFIG_SERVER_DB_CONNECTION);
         }
 
-        self::$DB_UN = ApplicationConfiguration::get('server.db.username');
+        self::$DB_UN = ApplicationConfiguration::get(CoreModule::CONFIG_SERVER_DB_USERNAME);
 
         /* WARNING:
             There exists a bug in PDO (PHP <5.6) whereby if the password is empty or null,
             the construction will cause an out of memory error.
             Sipmly having the variable unset will prevent this issue
         */
-        $pw = @ApplicationConfiguration::get('server.db.password');
+        $pw = @ApplicationConfiguration::get(CoreModule::CONFIG_SERVER_DB_PASSWORD);
         if( isset($pw) && $pw !== '' ) {
             self::$DB_PW = $pw;
         }

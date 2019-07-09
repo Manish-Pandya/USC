@@ -39,8 +39,8 @@
     function run_script( $scriptpath ){
         if( file_exists($scriptpath) ){
             // Read ip/db from app config
-            $ip = ApplicationConfiguration::get('server.db.host');
-            $db = ApplicationConfiguration::get('server.db.name');
+            $ip = ApplicationConfiguration::get(CoreModule::CONFIG_SERVER_DB_HOST);
+            $db = ApplicationConfiguration::get(CoreModule::CONFIG_SERVER_DB_NAME);
             $EXTRAS_FILE = EXTRAS_FILE;
 
             $output = null;
@@ -75,8 +75,8 @@
 
     $envname = ApplicationConfiguration::get('server.env.name', '');
 
-    $db_ip   = ApplicationConfiguration::get('server.db.host');
-    $db_name = ApplicationConfiguration::get('server.db.name');
+    $db_ip   = ApplicationConfiguration::get(CoreModule::CONFIG_SERVER_DB_HOST);
+    $db_name = ApplicationConfiguration::get(CoreModule::CONFIG_SERVER_DB_NAME);
 
     $db_desc = "$db_ip:$db_name";
     $db_padding = str_pad('', strlen($db_desc), '-');
