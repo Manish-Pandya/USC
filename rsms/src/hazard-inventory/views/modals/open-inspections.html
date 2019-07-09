@@ -40,7 +40,7 @@
                             <ul style="margin:5px;">
                                 <li ng-repeat="(key,room) in building|orderBy:'Name'">
                                     <label class="checkbox inline">
-                                        <input type="checkbox" ng-change="af.saveInspectionRoomRelationship( inspection, room )" ng-model="room[inspection.Key_id+'checked']"/>
+                                        <input type="checkbox" ng-change="saveInspectionRoomRelationship( inspection, room )" ng-model="room[inspection.Key_id+'checked']"/>
                                         <span class="metro-checkbox"><span once-text="room.Name"></span><i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
                                     </label>
                                 </li>
