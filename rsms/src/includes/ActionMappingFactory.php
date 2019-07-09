@@ -189,7 +189,7 @@ class ActionMappingFactory {
         );
 
         // Only include Impersonation mappings if the feature is enabled
-        if( ApplicationConfiguration::get("module.Core.feature.impersonation", false) ){
+        if( ApplicationConfiguration::get( CoreModule::CONFIG_FEATURE_IMPERSONATION, false) ){
             $mappings["impersonateUserAction"] = new ActionMapping("impersonateUserAction", "", "", array("Admin"));
             $mappings["getImpersonatableUsernames"] = new ActionMapping("getImpersonatableUsernames", "", "", array("Admin"));
             $mappings["stopImpersonating"] = new ActionMapping("stopImpersonating", LOGIN_PAGE, LOGIN_PAGE, array(), false);

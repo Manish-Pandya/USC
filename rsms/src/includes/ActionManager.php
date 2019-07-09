@@ -158,7 +158,7 @@ class ActionManager {
      * Authenticate via LDAP
      */
     protected function loginLdap( $username, $password, $destination = NULL ){
-        if( !ApplicationConfiguration::get('server.auth.providers.ldap', false) ){
+        if( !ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_LDAP, false) ){
             // LDAP auth is disabled
             return false;
         }
@@ -199,14 +199,14 @@ class ActionManager {
      * than LDAP.
      */
     protected function loginDev( $username, $password, $destination = NULL ){
-        if( !ApplicationConfiguration::get('server.auth.providers.dev.impersonate', false) ){
+        if( !ApplicationConfiguration::get( ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_DEV_IMPERSONATE, false) ){
             // Dev impersonate auth is disabled
             return false;
         }
 
         $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
         $LOG->warn("Attempt DEV-IMPERSONATE authentication for '$username'");
-        if( $password == ApplicationConfiguration::get('server.auth.providers.dev.impersonate.password') ){
+        if( $password == ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_DEV_IMPERSONATE_PASSWORD) ){
             return $this->handleUsernameAuthorization($username);
         }
 
@@ -218,7 +218,7 @@ class ActionManager {
      * Validate login for impersonatable test user with variable role
      */
     protected function loginAsRole($username, $password, $destination){
-        if( !ApplicationConfiguration::get('server.auth.providers.dev.role', false) ){
+        if( !ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_DEV_ROLE, false) ){
             // Dev-role auth is disabled
             return false;
         }
@@ -234,7 +234,7 @@ class ActionManager {
 
         //the name of a real role was input in the form
         //hardcoded password for mock role login...
-        if ( in_array($username, $roles) && $password == ApplicationConfiguration::get('server.auth.providers.dev.role.password') ) {
+        if ( in_array($username, $roles) && $password == ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_DEV_ROLE_PASSWORD) ) {
             // Look up test user and mix in requested role
             // Default to Test User with ID 1
             $user = $this->getUserById(1);
@@ -292,7 +292,7 @@ class ActionManager {
      */
     protected function loginEmergency($username, $password, $destination = NULL){
         // Check configured Emergency auth; enable by default
-        if( !ApplicationConfiguration::get('server.auth.providers.emergency', true) ){
+        if( !ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_EMERGENCY, true) ){
             // Emergency auth is disabled
             return false;
         }
@@ -300,7 +300,7 @@ class ActionManager {
         $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
 
         // Hardcoded username and password for "emergency accounts"
-        if($username === "EmergencyUser" && $password === ApplicationConfiguration::get('server.auth.providers.emergency.password')) {
+        if($username === "EmergencyUser" && $password === ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_EMERGENCY_PASSWORD)) {
             $LOG->info("Attempt emergency-user authentication");
             return $this->handleUsernameAuthorization("EmergencyUser");
         }
@@ -5035,7 +5035,7 @@ class ActionManager {
 
         $username = $this->getValueFromRequest('username', $username);
 
-        if( ApplicationConfiguration::get('server.auth.providers.ldap', false) ){
+        if( ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_LDAP, false) ){
             // LDAP is enabled
             $LOG->info("Lookup user '$username' via LDAP");
 

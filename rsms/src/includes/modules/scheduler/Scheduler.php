@@ -1,6 +1,8 @@
 <?php
 
 class Scheduler {
+    public const CONFIG_TASKS_DISABLED = 'module.Scheduler.tasks.disabled';
+
     static $LOG;
     static $DISABLED_TASKS;
 
@@ -9,7 +11,7 @@ class Scheduler {
         self::$LOG->info("RSMS Scheduler Running");
 
         // Read configuration
-        self::$DISABLED_TASKS = ApplicationConfiguration::get('module.Scheduler.tasks.disabled', array());
+        self::$DISABLED_TASKS = ApplicationConfiguration::get(Scheduler::CONFIG_TASKS_DISABLED, array());
 
         $_module_filters = $moduleNames;
         if( $_module_filters != null ){

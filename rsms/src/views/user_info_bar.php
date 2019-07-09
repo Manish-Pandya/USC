@@ -1,6 +1,6 @@
 <?php if( isset($_SESSION['USER']) ) { ?>
     <?php $isImpersonating = isset($_SESSION['IMPERSONATOR']); ?>
-    <div class="user-info no-print" ng-controller="roleBasedCtrl" style="text-align: center; <?php echo ApplicationConfiguration::get('server.env.style', '') ?>">
+    <div class="user-info no-print" ng-controller="roleBasedCtrl" style="text-align: center; <?php echo ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_ENV_STYLE, '') ?>">
         <span style="float:left;">Signed in as <?php echo $_SESSION['USER']->getName(); ?></span>
         <span style="float:left; font-style:italic; font-weight:bold; padding-left:5px;"><?php
             if( $isImpersonating ){
