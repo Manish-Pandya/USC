@@ -148,12 +148,12 @@
                                 <li ng-if="inspection.warning.old.length">
                                     Room<span ng-if="inspection.warning.old.length != 1">s</span>
                                     <span class="subject">{{inspection.warning.old.join(', ')}}</span>
-                                    <span once-text="inspection.warning.old | isAre"></span> no longer assigned to this PI.
+                                    <span>{{inspection.warning.old | isAre}}</span> no longer assigned to this PI.
                                 </li>
                                 <li ng-if="inspection.warning.unselected.length">
                                     Room<span ng-if="inspection.warning.unselected.length != 1">s</span>
                                     <span class="subject">{{inspection.warning.unselected.join(', ')}}</span>
-                                    <span once-text="inspection.warning.unselected | isAre"></span> not selected for inspection.
+                                    <span>{{inspection.warning.unselected | isAre}}</span> not selected for inspection.
                                 </li>
                             </ul>
                         </div>
