@@ -22,17 +22,26 @@ class ApplicationConfiguration {
         return self::$CONFIG;
     }
 
-    public static function configure(){
-        $path = self::resolveConfigurationFile();
+    public static function configure( $overrideConfigPath = NULL ){
+        $path = self::resolveConfigurationFile( $overrideConfigPath );
         self::$CONFIG = self::readConfiguration($path);
     }
 
-    public static function resolveConfigurationFile(){
-        // Resolve configuration file
-        $configFile = dirname(__FILE__) . "/config/rsms-config.php";
-        if( !file_exists($configFile) ){
-            // Use default configuration file
-            $configFile = dirname(__FILE__) . "/config/rsms-config.default.php";
+    public static function resolveConfigurationFile( $overrideConfigPath ){
+        // Prepare array of possible config-file paths
+        $possiblePaths = array(
+            $overrideConfigPath,
+            dirname(__FILE__) . "/config/rsms-config.php",
+            dirname(__FILE__) . "/config/rsms-config.default.php"
+        );
+
+        // Resolve configuration file by finding first existing possible path
+        $configFile = null;
+        foreach ($possiblePaths as $path) {
+            if( file_exists($path) ){
+                $configFile = $path;
+                break;
+            }
         }
 
         return $configFile;
