@@ -73,7 +73,7 @@ class ApplicationBootstrapper {
         ////////////////////////////////////////////
         // Read application config before all else
         require_once self::$BOOTSTRAP_PATH . '/ApplicationConfiguration.php';
-        ApplicationConfiguration::configure( $overrideAppConfig );
+        ApplicationConfiguration::configure( $overrideAppConfig, $mergeOverrides );
 
         ////////////////////////////////////////////
         // Set up Logging with config parameters
