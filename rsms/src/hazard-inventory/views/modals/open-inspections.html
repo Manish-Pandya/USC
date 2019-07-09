@@ -138,6 +138,25 @@
                             <br>
                             <a target="_blank" style="margin:  5px 0;" class="btn btn-info left" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}""><i style="font-size: 21px;" class="icon-clipboard-2"></i>Submitted Report</a>
                         </span>
+
+                        <div ng-if="inspection.warning" class="inspection-warnings">
+                            <h4>
+                                <i class="icon-warning"></i>
+                                <span>Please verify that the selected rooms are correct.</span>
+                            </h4>
+                            <ul>
+                                <li ng-if="inspection.warning.old.length">
+                                    Room<span ng-if="inspection.warning.old.length != 1">s</span>
+                                    <span class="subject">{{inspection.warning.old.join(', ')}}</span>
+                                    <span once-text="inspection.warning.old | isAre"></span> no longer assigned to this PI.
+                                </li>
+                                <li ng-if="inspection.warning.unselected.length">
+                                    Room<span ng-if="inspection.warning.unselected.length != 1">s</span>
+                                    <span class="subject">{{inspection.warning.unselected.join(', ')}}</span>
+                                    <span once-text="inspection.warning.unselected | isAre"></span> not selected for inspection.
+                                </li>
+                            </ul>
+                        </div>
                     </span>
                 </td>
             </tr>
