@@ -4730,8 +4730,11 @@ class ActionManager {
             // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
             $LOG->info("Recalculating list of Checklists for $inspection");
 
+            $LOG->debug("Generating new list of Checklists for $inspection");
+            $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
+
+            // remove the old checklists
             if (!empty($oldChecklists)) {
-                // remove the old checklists
                 $LOG->debug("Removing all old Checklists from $inspection");
                 foreach ($oldChecklists as $oldChecklist) {
                     $dao->removeRelatedItems($oldChecklist->getKey_id(),
@@ -4739,9 +4742,6 @@ class ActionManager {
                                                 DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
                 }
             }
-
-            $LOG->debug("Generating new list of Checklists for $inspection");
-            $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
 
             // add the checklists to this inspection
             $LOG->debug("Assigning new Checklists to $inspection");
