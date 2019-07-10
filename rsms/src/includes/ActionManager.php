@@ -4713,22 +4713,26 @@ class ActionManager {
             $LOG->warn("Requested non-report mode for Archived inspection $inspection. Report-mode will be forced.");
         }
 
-        // Remove previous checklists (if any) and recalculate the required checklist.
+        // Retrieve current list of Checklists
         $oldChecklists = $inspection->getChecklists();
 
-        // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
         if(!$REPORT_MODE){
+            // Non-report mode: Recalculate applicable checklists
+
             // check if this is an inspection we're just starting
             if( $inspection->getDate_started() == NULL ) {
                 $inspection->setDate_started(date("Y-m-d H:i:s"));
+
+                $LOG->info("Setting start-date of $inspection");
                 $dao->save($inspection);
             }
 
+            // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
             $LOG->info("Recalculating list of Checklists for $inspection");
 
             if (!empty($oldChecklists)) {
-                $LOG->debug("Removing all old Checklists from $inspection");
                 // remove the old checklists
+                $LOG->debug("Removing all old Checklists from $inspection");
                 foreach ($oldChecklists as $oldChecklist) {
                     $dao->removeRelatedItems($oldChecklist->getKey_id(),
                                                 $inspection->getKey_id(),
@@ -4754,8 +4758,8 @@ class ActionManager {
                 }
             }
         }
-        //if we are loading a report instead of a list of checklists for an inspection, we don't update the list of checklists
         else {
+            //if we are loading a report instead of a list of checklists for an inspection, we don't update the list of checklists
             $checklists = $oldChecklists;
         }
 
