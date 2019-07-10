@@ -4704,12 +4704,6 @@ class ActionManager {
             return new ActionError("No such Inspection $id", 404);
         }
 
-        // check if this is an inspection we're just starting
-        if( $inspection->getDate_started() == NULL ) {
-            $inspection->setDate_started(date("Y-m-d H:i:s"));
-            $dao->save($inspection);
-        }
-
         // Force 'report' mode if requested OR if inspection is archived
         //   * Archived reports should never be modified!
         $REPORT_MODE = $report ?? $inspection->getIsArchived();
@@ -4724,6 +4718,12 @@ class ActionManager {
 
         // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
         if(!$REPORT_MODE){
+            // check if this is an inspection we're just starting
+            if( $inspection->getDate_started() == NULL ) {
+                $inspection->setDate_started(date("Y-m-d H:i:s"));
+                $dao->save($inspection);
+            }
+
             $LOG->info("Recalculating list of Checklists for $inspection");
 
             if (!empty($oldChecklists)) {
