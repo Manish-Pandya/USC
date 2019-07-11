@@ -6,7 +6,7 @@ class RoomDAO extends GenericDAO {
     public function __construct(){
         parent::__construct(new Room());
         if( !isset(self::$HAZARDS_PRESENT_CACHE)){
-            self::$HAZARDS_PRESENT_CACHE = new AppCache('Room/Hazards');
+            self::$HAZARDS_PRESENT_CACHE = CacheFactory::create('Room/Hazards');
         }
     }
 

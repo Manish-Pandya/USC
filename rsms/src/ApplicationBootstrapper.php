@@ -23,6 +23,8 @@ class ApplicationBootstrapper {
     public const CONFIG_SERVER_AUTH_PROVIDE_DEV_IMPERSONATE = 'server.auth.providers.dev.impersonate';
     public const CONFIG_SERVER_AUTH_PROVIDE_DEV_IMPERSONATE_PASSWORD = 'server.auth.providers.dev.impersonate.password';
 
+    public const CONFIG_SERVER_CACHE_ENABLE = 'server.cache.enabled';
+
     // Server Environment
     public const CONFIG_SERVER_ENV_NAME = 'server.env.name';
     public const CONFIG_SERVER_ENV_SHOW_DETAILS = 'server.env.display_details';
@@ -85,6 +87,12 @@ class ApplicationBootstrapper {
         ////////////////////////////////////////////
         // Enable Autoloading
         ApplicationBootstrapper::init_autoloader();
+
+        ////////////////////////////////////////////
+        // Configure Entity Caching
+        CacheFactory::init(
+            ApplicationConfiguration::get( ApplicationBootstrapper::CONFIG_SERVER_CACHE_ENABLE, true )
+        );
 
         ////////////////////////////////////////////
         // LDAP Authentication
