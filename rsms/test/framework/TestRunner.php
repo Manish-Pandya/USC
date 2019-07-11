@@ -32,13 +32,22 @@ class TestRunner {
         $methods = get_class_methods( $tests_name );
         foreach($methods as $method){
             if( substr($method, 0, strlen(TestRunner::TEST_PREFIX)) == TestRunner::TEST_PREFIX ){
-                $results[$method] = $this->run_test( array($tests, $method) );
+                Assert::logAssertions();
+
+                // Run test(s)
+                $overall_result = $this->run_test( array($tests, $method) );
+
+                // Get logged assertions
+                $assertions = Assert::getAssertions();
+
+                $results[$method] = array(
+                    'pass' => $overall_result,
+                    'assertions' => $assertions
+                );
             }
         }
 
         $this->results[$tests_name] = $results;
-
-        $LOG->info($results);
 
         return $results;
     }

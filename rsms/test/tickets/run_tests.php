@@ -3,12 +3,14 @@
 // Include test framework
 // TODO: Autoload this
 require_once dirname(__FILE__) . '/../framework/I_Test.php';
+require_once dirname(__FILE__) . '/../framework/Assert.php';
 require_once dirname(__FILE__) . '/../framework/TestRunner.php';
 
 // Set up RSMS application
 require_once '/var/www/html/rsms/ApplicationBootstrapper.php';
 ApplicationBootstrapper::bootstrap(null, array(
-    ApplicationBootstrapper::CONFIG_SERVER_CACHE_ENABLE => false
+    ApplicationBootstrapper::CONFIG_SERVER_CACHE_ENABLE => false,
+    ApplicationBootstrapper::CONFIG_LOGGING_CONFIGFILE => dirname(__FILE__) . '/test-log4php.php',
 ));
 
 // Make sure we throw exceptions on assertion failures
@@ -51,13 +53,20 @@ if( empty($test_classes) ){
 $runner->runAll( $test_classes );
 
 // Echo results
-function pass(      ){ return "\e[0;32mPASS\e[0m"; }
-function fail( $str ){ return "\e[0;31mFAIL: $str\e[0m"; }
+function pass( $str = NULL ){ return "\e[0;32mPASS" . (isset($str) ? ": $str" : '') . "\e[0m"; }
+function fail( $str = NULL ){ return "\e[0;31mFAIL" . (isset($str) ? ": $str" : '') . "\e[0m"; }
 
 foreach( $runner->getResults() as $testname => $testresults ){
     echo "$testname:\n";
     foreach( $testresults as $test => $res ){
-        echo "  $test: " . ($res === true ? pass() : fail($res)) . "\n";
+        $passOrError = $res['pass'];
+        $assertions = $res['assertions'];
+
+        echo "  $test: " . ($passOrError === true ? pass() : fail($passOrError)) . "\n";
+        foreach( $assertions as $a ){
+
+            echo "    " . ($a[1] ? pass($a[0]) : fail($a[0])) . "\n";
+        }
     }
 }
 ?>
