@@ -1,7 +1,17 @@
 <?php
 class ApplicationConfiguration {
 
+    private static $CONFIG_FILE;
     private static $CONFIG;
+    private static $CONFIG_OVERRIDES;
+
+    public static function getConfigFilePath(){
+        return self::$CONFIG_FILE;
+    }
+
+    public static function getOverriddenConfigNames(){
+        return array_keys( self::$CONFIG_OVERRIDES );
+    }
 
     public static function get( $key = NULL, $defaultValue = NULL ){
         // If key provided, attempt to retrieve configured value
@@ -23,14 +33,16 @@ class ApplicationConfiguration {
     }
 
     public static function configure( $overrideConfigPath = NULL, $mergeOverrides = NULL ){
-        $path = self::resolveConfigurationFile( $overrideConfigPath );
-        self::$CONFIG = self::readConfiguration($path);
+        self::$CONFIG_FILE = self::resolveConfigurationFile( $overrideConfigPath );
+        self::$CONFIG = self::readConfiguration(self::$CONFIG_FILE);
 
         if( isset($mergeOverrides) && is_array($mergeOverrides) ){
+            self::$CONFIG_OVERRIDES = $mergeOverrides;
+
             // Merge parameter into our configuration, giving precedence to overrides
             self::$CONFIG = array_merge(
                 self::$CONFIG,
-                $mergeOverrides
+                self::$CONFIG_OVERRIDES
             );
         }
     }
