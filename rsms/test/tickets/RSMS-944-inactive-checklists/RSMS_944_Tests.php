@@ -44,8 +44,8 @@ class RSMS_944_Tests implements I_Test {
             $this->actionmanager->saveHazard( $testHazard );
         }
 
-        assert( $testHazard->getIs_active(), 'Hazard is active');
-        assert( $testHazard->getChecklist()->getIs_active(), 'Checklist is active');
+        Assert::true( $testHazard->getIs_active(), 'Hazard is active');
+        Assert::true( $testHazard->getChecklist()->getIs_active(), 'Checklist is active');
 
         // Generate Checklists
         $LOG->info("Generating checklists ($testHazard)");
@@ -57,14 +57,14 @@ class RSMS_944_Tests implements I_Test {
             return $c->getHazard_id() == $testHazard->getKey_id();
         });
 
-        assert( count($matches) == 1, "Test checklist is present");
+        Assert::eq( count($matches), 1, "Test checklist is present");
 
         // Inactivate the hazard
         $LOG->info("Inactivating test hazard");
         $testHazard->setIs_active(false);
         $this->actionmanager->saveHazard($testHazard);
-        assert( !$testHazard->getIs_active(), 'Hazard is inactive');
-        assert( !$testHazard->getChecklist()->getIs_active(), 'Checklist is inactive');
+        Assert::false( $testHazard->getIs_active(), 'Hazard is inactive');
+        Assert::false( $testHazard->getChecklist()->getIs_active(), 'Checklist is inactive');
 
         // Regenerate the Checklists
         $LOG->info("Generating checklists ($testHazard)");
@@ -74,7 +74,7 @@ class RSMS_944_Tests implements I_Test {
         $matches = array_filter( $inspectionWithChecklists_without_test->getChecklists(), function($c) use ($testHazard){
             return $c->getHazard_id() == $testHazard->getKey_id();
         });
-        assert( empty($matches), "Test checklist is not present after inactivation");
+        Assert::empty( $matches, "Test checklist is not present after inactivation");
     }
 
     /**
@@ -113,8 +113,8 @@ class RSMS_944_Tests implements I_Test {
             $this->actionmanager->saveHazard( $testHazard );
         }
 
-        assert( $testHazard->getIs_active(), 'Hazard is active');
-        assert( $testHazard->getChecklist()->getIs_active(), 'Checklist is active');
+        Assert::true( $testHazard->getIs_active(), 'Hazard is active');
+        Assert::true( $testHazard->getChecklist()->getIs_active(), 'Checklist is active');
 
         // Generate Checklists
         $LOG->info("Generating checklists ($testHazard)");
@@ -126,7 +126,7 @@ class RSMS_944_Tests implements I_Test {
             return $c->getHazard_id() == $testHazard->getKey_id();
         });
 
-        assert( count($matches) == 1, "Test checklist is present");
+        Assert::eq( count($matches), 1, "Test checklist is present");
 
         // Record a response to the test checklist
         // Note use of array_values, becuase the above filtering retains indecies as keys
@@ -138,14 +138,14 @@ class RSMS_944_Tests implements I_Test {
         $response->setQuestion_id($q->getKey_id());
         $this->responseDao->save($response);
 
-        assert( $response->hasPrimaryKeyValue(), 'Response was saved');
+        Assert::true( $response->hasPrimaryKeyValue(), 'Response was saved');
 
         // Inactivate the hazard
         $LOG->info("Inactivating test hazard");
         $testHazard->setIs_active(false);
         $this->actionmanager->saveHazard($testHazard);
-        assert( !$testHazard->getIs_active(), 'Hazard is inactive');
-        assert( !$testHazard->getChecklist()->getIs_active(), 'Checklist is inactive');
+        Assert::false( $testHazard->getIs_active(), 'Hazard is inactive');
+        Assert::false( $testHazard->getChecklist()->getIs_active(), 'Checklist is inactive');
 
         // Regenerate the Checklists
         $LOG->info("Generating checklists ($testHazard)");
@@ -155,7 +155,7 @@ class RSMS_944_Tests implements I_Test {
         $matches = array_filter( $inspectionWithChecklists_without_test->getChecklists(), function($c) use ($testHazard){
             return $c->getHazard_id() == $testHazard->getKey_id();
         });
-        assert( count($matches) == 1, "Test checklist is still present after inactivation");
+        Assert::eq( count($matches), 1, "Test checklist is still present after inactivation");
     }
 }
 
