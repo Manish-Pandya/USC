@@ -1,5 +1,6 @@
 <?php
-class AppCache {
+class AppCache implements I_EntityCache {
+
     private $_CACHE = array();
 	private $_STATS = array(
 		'WRITES' => 0,
@@ -74,6 +75,17 @@ class AppCache {
 
 		// nothing to evict
 		return false;
+	}
+
+	public function evictAll(){
+		$LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
+		$LOG->debug("Evicting all cached items");
+
+		foreach( $this->_CACHE as $key => $val){
+			$this->evict($key);
+		}
+
+		return true;
 	}
 
 	public function getCachedEntity($key){

@@ -48,7 +48,7 @@ class GenericDAO {
 		$this->logprefix = "[$this->modelClassName" . "DAO]";
 
 		if( !isset(self::$_ENTITY_CACHE) ){
-			self::$_ENTITY_CACHE = new AppCache('Entity');
+			self::$_ENTITY_CACHE = CacheFactory::create('Entity');
 		}
 
 		$this->LOG = Logger::getLogger( __CLASS__ . "." . $this->modelClassName );
