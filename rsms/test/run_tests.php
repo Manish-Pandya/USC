@@ -23,15 +23,15 @@ ini_set('assert.exception', 1);
 
 // Identify tests to run
 $LOG->debug("Read script arguments");
-$ticket_dirs = null;
+$include_dirs = null;
 if( $argc > 1 ){
-    $ticket_dirs = array_slice($argv, 1);
-    $LOG->trace( implode(',', $ticket_dirs));
+    $include_dirs = array_slice($argv, 1);
+    $LOG->trace( implode(',', $include_dirs));
 }
 
 // Load all files in specified dirs
 $LOG->debug("Load scripts in specified directories");
-foreach( $ticket_dirs as $dir ){
+foreach( $include_dirs as $dir ){
     $results = scandir($dir);
     foreach ($results as $result){
         //ignore these
