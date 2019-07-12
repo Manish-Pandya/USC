@@ -1,19 +1,14 @@
 <?php
 
-// Include test framework
-// TODO: Autoload this
-require_once dirname(__FILE__) . '/../framework/I_Test.php';
-require_once dirname(__FILE__) . '/../framework/Assert.php';
-require_once dirname(__FILE__) . '/../framework/TestRunner.php';
-require_once dirname(__FILE__) . '/../framework/I_TestCollector.php';
-require_once dirname(__FILE__) . '/../framework/DeclaredClassTestCollector.php';
-
 // Set up RSMS application
 require_once '/var/www/html/rsms/ApplicationBootstrapper.php';
 ApplicationBootstrapper::bootstrap(null, array(
     ApplicationBootstrapper::CONFIG_SERVER_CACHE_ENABLE => false,
     ApplicationBootstrapper::CONFIG_LOGGING_CONFIGFILE => dirname(__FILE__) . '/test-log4php.php',
 ));
+
+// Register the test framework for autoloading
+Autoloader::register_class_dir( dirname(__FILE__) . '/framework');
 
 $LOG = Logger::getLogger('run_tests');
 
@@ -52,6 +47,11 @@ $results = $runner->runTests();
 
 // Echo results
 $LOG->debug("Print test results");
+echo "+---------------+\n";
+echo "| Test Results\n";
+echo "| Tests run: " . count($results) . "\n";
+echo "+---------------+\n\n";
+
 function pass( $str = NULL ){ return "\e[0;32m[PASS]" . (isset($str) ? ": $str" : '') . "\e[0m"; }
 function fail( $str = NULL ){ return "\e[0;31m[FAIL]" . (isset($str) ? ": $str" : '') . "\e[0m"; }
 
