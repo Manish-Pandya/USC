@@ -2,27 +2,41 @@
 class TestRunner {
     public const TEST_PREFIX = 'test__';
     private $results = array();
+    private $collector;
+
+    public function __construct( I_TestCollector $collector ){
+        $this->$collector = $collector;
+    }
 
     public function getResults(){
         return $this->results;
     }
 
-    public function runAll(Array $test_class_names){
+    public function runTests(){
         $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
+        $test_instances = $this->$collector->collect();
 
-        foreach($test_class_names as $class ){
-            $instance = new $class();
+        foreach($test_instances as $instance ){
+            $class = get_class($instance);
+
             if( $instance instanceof I_Test ){
                 $LOG->info("Running $class");
-                $this->run($instance);
+                $this->run_test_class($instance);
             }
             else{
-                $LOG->warn("'$class' does not implement I_Test");
+                $LOG->error("'$class' does not implement I_Test");
             }
         }
+
+        return $this->getResults();
     }
 
-    public function run( I_Test $tests ){
+    /**
+     * Runs all test functions in an instance of I_Test.
+     *
+     * @return Array of test results
+     */
+    public function run_test_class( I_Test $tests ){
         $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
 
         $tests_name = get_class($tests);
@@ -35,7 +49,7 @@ class TestRunner {
                 Assert::logAssertions();
 
                 // Run test(s)
-                $overall_result = $this->run_test( array($tests, $method) );
+                $overall_result = $this->run_test_method( array($tests, $method) );
 
                 // Get logged assertions
                 $assertions = Assert::getAssertions();
@@ -52,7 +66,14 @@ class TestRunner {
         return $results;
     }
 
-    function run_test( $callable ){
+    /**
+     * Runs a single test function
+     *
+     * @param Callable $callable Callable representing the test to run
+     *
+     * @return True if the test executed without error; string describing the error otherwise
+     */
+    function run_test_method( $callable ){
         $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
 
         try{
