@@ -89,7 +89,11 @@ class TestRunner {
             $LOG->error("Test $test_name failed due to error: " . $t->getMessage());
             $LOG->error($t->getMessage() . ":\n    " . str_replace("\n", "\n    ", $t->getTraceAsString()));
 
-            Assert::log_assert(false, $t->getMessage());
+            // Log additional assertion failure for non-assertion exception
+            if( (!$t instanceof AssertionError) ){
+                Assert::log_assert(false, $t->getMessage());
+            }
+
             return get_class($t) . ': ' . $t->getMessage();
         }
         finally {
