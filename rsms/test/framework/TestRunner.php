@@ -66,7 +66,10 @@ class TestRunner {
         }
         catch(Throwable $t){
             $LOG->error("Test $test_name failed due to error: " . $t->getMessage());
-            return $t->getMessage();
+            $LOG->error($t->getMessage() . ":\n    " . str_replace("\n", "\n    ", $t->getTraceAsString()));
+
+            Assert::log_assert(false, $t->getMessage());
+            return get_class($t) . ': ' . $t->getMessage();
         }
         finally {
             $LOG->info("*** TEAR DOWN $test_name ***");
