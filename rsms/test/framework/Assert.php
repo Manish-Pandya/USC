@@ -12,12 +12,24 @@ class Assert {
 
     private static function __assert( $pass, $message ){
         // Log assertion, if enabled
-        if( isset(Assert::$ASSERTION_LOG) ){
-            Assert::$ASSERTION_LOG[] = array( $message, $pass );
-        }
+        Assert::log_assert($pass, $message);
 
         // Use PHP internal assert
         assert( $pass, $message );
+    }
+
+    public static function log_assert( $pass, $message ){
+        if( isset(Assert::$ASSERTION_LOG) ){
+            Assert::$ASSERTION_LOG[] = array( $message, $pass );
+        }
+    }
+
+    public static function pass( $message = '' ){
+        Assert::__assert(true, $message);
+    }
+
+    public static function fail( $message ){
+        Assert::__assert(false, $message);
     }
 
     public static function eq( $actual, $expected, $message ){
