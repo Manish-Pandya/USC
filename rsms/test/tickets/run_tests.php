@@ -52,8 +52,8 @@ $results = $runner->runTests();
 
 // Echo results
 $LOG->debug("Print test results");
-function pass( $str = NULL ){ return "\e[0;32mPASS" . (isset($str) ? ": $str" : '') . "\e[0m"; }
-function fail( $str = NULL ){ return "\e[0;31mFAIL" . (isset($str) ? ": $str" : '') . "\e[0m"; }
+function pass( $str = NULL ){ return "\e[0;32m[PASS]" . (isset($str) ? ": $str" : '') . "\e[0m"; }
+function fail( $str = NULL ){ return "\e[0;31m[FAIL]" . (isset($str) ? ": $str" : '') . "\e[0m"; }
 
 foreach( $results as $testname => $testresults ){
     echo "$testname:\n";
