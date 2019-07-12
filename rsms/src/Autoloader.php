@@ -16,7 +16,8 @@ class Autoloader {
 	private static $loader;
 	
 	/** Array of directory paths to check when Autoloading */
-	public static $autoload_dirs;
+	private static $autoload_dirs;
+	private static $autoloaded_roots;
 	
 	/**
 	 * Initializes the Autoloader singleton.
@@ -36,27 +37,46 @@ class Autoloader {
 		//Define logger
 		self::$LOG = Logger::getLogger(__CLASS__);
 		self::$LOG->trace("Initializing Autoloader");
-		
-		Autoloader::scan_directories();
+
+		Autoloader::register_class_dir(dirname(__FILE__));
 		$this->register();
 		
 		self::$LOG->trace("Autoloader initialized");
+	}
+
+	public static function register_class_dir( $class_dir ){
+		Autoloader::scan_directories($class_dir);
 	}
 	
 	/**
 	 * Recursively scans the local directory for directory paths 
 	 */
-	static function scan_directories(){
-		self::$LOG->trace("Scanning for directories");
-		$dir = dirname(__FILE__);
-		
-		Autoloader::$autoload_dirs = array();
+	static function scan_directories( $root = NULL ){
+		$dir = $root;
+
+		if( !isset($dir) ){
+			throw new Exception("Cannot register empty path");
+		}
+
+		if( !isset( Autoloader::$autoloaded_roots ) ){
+			Autoloader::$autoloaded_roots = array();
+		}
+
+		if( in_array($dir, Autoloader::$autoloaded_roots) ){
+			self::$LOG->warn("$dir is already scanned for autoloading");
+		}
+
+		if( !isset( Autoloader::$autoload_dirs ) ){
+			Autoloader::$autoload_dirs = array();
+		}
+
+		self::$LOG->trace("Scanning for directories; root=$dir");
 		Autoloader::scanDirectoriesToArray($dir, Autoloader::$autoload_dirs);
 		
 		$dircount = sizeof(Autoloader::$autoload_dirs);
 		self::$LOG->trace("Loaded $dircount directories");
 	}
-	
+
 	/**
 	 * Recursive function that scans the named directory and adds directory names
 	 * to the given array
@@ -65,17 +85,22 @@ class Autoloader {
 	 * @param Array $list
 	 */
 	static function scanDirectoriesToArray( string $dir, Array &$list ){
+		// Scan directory
 		$results = scandir($dir);
-	
-		foreach ($results as $result){
-			//ignore these
-			if ($result === '.' or $result === '..') continue;
-	
-			$path = $dir . '/' . $result;
-	
-			if( is_dir($path) ){
-				array_push($list, $path);
-				Autoloader::scanDirectoriesToArray($path, $list);
+		if( !empty($results) ){
+			// Directory contains children; register it to our list
+			array_push($list, $dir);
+
+			// Scan child directories
+			foreach ($results as $result){
+				//ignore these
+				if ($result === '.' or $result === '..') continue;
+		
+				$path = $dir . '/' . $result;
+		
+				if( is_dir($path) ){
+					Autoloader::scanDirectoriesToArray($path, $list);
+				}
 			}
 		}
 	}
