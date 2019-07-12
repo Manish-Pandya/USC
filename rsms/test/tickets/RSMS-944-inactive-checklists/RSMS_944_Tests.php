@@ -9,6 +9,22 @@ class RSMS_944_Tests implements I_Test {
         $this->responseDao = new GenericDAO(new Response());
     }
 
+    function before__createReferenceData(){
+        $this->testHazard = $this->_getTestHazard( true );
+        $this->pi = $this->piDao->getById(1);
+        $this->room = $this->pi->getRooms()[0];
+
+        if( !isset($this->testHazard) || !isset($this->pi) || !isset($this->room) ){
+            throw new Exception("Error buildling test reference data");
+        }
+    }
+
+    function after_unsetReferenceData(){
+        unset($this->testHazard);
+        unset($this->pi);
+        unset($this->room);
+    }
+
     function _changeActiveStatus( $obj, $activeStatus ){
         $st = $activeStatus ? 'Active' : 'Inactive';
         $obj->setIs_active($activeStatus);
@@ -101,21 +117,12 @@ class RSMS_944_Tests implements I_Test {
     function test__getChecklistsForInspection_unassignedHazard_omitted(){
         $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
 
-        // Get reference data
-        $testHazard = $this->_getTestHazard( true );
-        $pi = $this->piDao->getById(1);
-        $room = $pi->getRooms()[0];
-
-        if( !isset($testHazard) || !isset($pi) || !isset($room) ){
-            throw new Exception("Error buildling test");
-        }
-
         // Do not assign testHazard to Room
 
-        $insp = $this->_createInspection($pi, $room);
+        $insp = $this->_createInspection($this->pi, $this->room);
 
         $checklists = $this->actionmanager->getChecklistsForInspection($insp->getKey_id());
-        $matches = $this->_getChecklistsForHazard( $checklists, $testHazard );
+        $matches = $this->_getChecklistsForHazard( $checklists, $this->testHazard );
         Assert::empty( $matches, 'Checklist is not included');
     }
 
@@ -126,29 +133,20 @@ class RSMS_944_Tests implements I_Test {
     function test__getChecklistsForInspection_assignedInactiveHazard_present(){
         $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
 
-        // Get reference data
-        $testHazard = $this->_getTestHazard( true );
-        $pi = $this->piDao->getById(1);
-        $room = $pi->getRooms()[0];
-
-        if( !isset($testHazard) || !isset($pi) || !isset($room) ){
-            throw new Exception("Error buildling test");
-        }
-
         // Assign testHazard to Room
-        $pihr = $this->_assignHazardToRoom($testHazard, $pi, $room);
+        $pihr = $this->_assignHazardToRoom($this->testHazard, $this->pi, $this->room);
 
-        $insp = $this->_createInspection($pi, $room);
+        $insp = $this->_createInspection($this->pi, $this->room);
 
         $checklists = $this->actionmanager->getChecklistsForInspection($insp->getKey_id());
-        $matches = $this->_getChecklistsForHazard( $checklists, $testHazard );
+        $matches = $this->_getChecklistsForHazard( $checklists, $this->testHazard );
         Assert::eq( count($matches), 1, 'Active Checklist is included');
 
         // Get inactive test hazard
-        $testHazard = $this->_changeActiveStatus( $testHazard, false );
+        $this->testHazard = $this->_changeActiveStatus( $this->testHazard, false );
 
         $checklists = $this->actionmanager->getChecklistsForInspection($insp->getKey_id());
-        $matches = $this->_getChecklistsForHazard( $checklists, $testHazard );
+        $matches = $this->_getChecklistsForHazard( $checklists, $this->testHazard );
         Assert::not_empty( $matches, 'Inactive Checklist is still included');
     }
 
@@ -160,46 +158,37 @@ class RSMS_944_Tests implements I_Test {
     function test__unused_checklist_removed(){
         $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
 
-        // Get reference data
-        $testHazard = $this->_getTestHazard( true );
-        $pi = $this->piDao->getById(1);
-        $room = $pi->getRooms()[0];
-
-        if( !isset($testHazard) || !isset($pi) || !isset($room) ){
-            throw new Exception("Error buildling test");
-        }
-
         // Assign the hazard
-        $pihr = $this->_assignHazardToRoom($testHazard, $pi, $room);
+        $pihr = $this->_assignHazardToRoom($this->testHazard, $this->pi, $this->room);
 
         // Create a new inspection
-        $insp = $this->_createInspection($pi, $room);
+        $insp = $this->_createInspection($this->pi, $this->room);
 
         // Generate Checklists
-        $LOG->info("Generating checklists ($testHazard)");
+        $LOG->info("Generating checklists ($this->testHazard)");
 
         $inspectionWithChecklists_with_test = $this->actionmanager->resetChecklists( $insp->getKey_id() );
 
         // Verify test hazard is included
-        $matches = $this->_getChecklistsForHazard( $inspectionWithChecklists_with_test->getChecklists(), $testHazard );
+        $matches = $this->_getChecklistsForHazard( $inspectionWithChecklists_with_test->getChecklists(), $this->testHazard );
 
         Assert::eq( count($matches), 1, "Test checklist is present");
 
         // Inactivate the hazard
         $LOG->info("Inactivating test hazard");
-        $testHazard = $this->_changeActiveStatus( $testHazard, false );
-        Assert::false( $testHazard->getIs_active(), 'Hazard is inactive');
-        Assert::false( $testHazard->getChecklist()->getIs_active(), 'Checklist is inactive');
+        $this->testHazard = $this->_changeActiveStatus( $this->testHazard, false );
+        Assert::false( $this->testHazard->getIs_active(), 'Hazard is inactive');
+        Assert::false( $this->testHazard->getChecklist()->getIs_active(), 'Checklist is inactive');
 
         // Unassign the hazard
         $this->_unassignFromRoom($pihr);
 
         // Regenerate the Checklists
-        $LOG->info("Generating checklists ($testHazard)");
+        $LOG->info("Generating checklists ($this->testHazard)");
         $inspectionWithChecklists_without_test = $this->actionmanager->resetChecklists( $insp->getKey_id() );
 
         // Verify test hazard is NOT included
-        $matches = $this->_getChecklistsForHazard( $inspectionWithChecklists_without_test->getChecklists(), $testHazard );
+        $matches = $this->_getChecklistsForHazard( $inspectionWithChecklists_without_test->getChecklists(), $this->testHazard );
         Assert::empty( $matches, "Test checklist is not present after inactivation");
     }
 
@@ -211,28 +200,19 @@ class RSMS_944_Tests implements I_Test {
     function test__used_checklist_retained(){
         $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
 
-        // Get reference data
-        $testHazard = $this->_getTestHazard( true );
-        $pi = $this->piDao->getById(1);
-        $room = $pi->getRooms()[0];
-
-        if( !isset($testHazard) || !isset($pi) || !isset($room) ){
-            throw new Exception("Error buildling test");
-        }
-
         // Assign the hazard
-        $pihr = $this->_assignHazardToRoom($testHazard, $pi, $room);
+        $pihr = $this->_assignHazardToRoom($this->testHazard, $this->pi, $this->room);
 
         // Create a new inspection
-        $insp = $this->_createInspection($pi, $room);
+        $insp = $this->_createInspection($this->pi, $this->room);
 
         // Generate Checklists
-        $LOG->info("Generating checklists ($testHazard)");
+        $LOG->info("Generating checklists ($this->testHazard)");
 
         $inspectionWithChecklists_with_test = $this->actionmanager->resetChecklists( $insp->getKey_id() );
 
         // Verify test hazard is included
-        $matches = $this->_getChecklistsForHazard( $inspectionWithChecklists_with_test->getChecklists(), $testHazard );
+        $matches = $this->_getChecklistsForHazard( $inspectionWithChecklists_with_test->getChecklists(), $this->testHazard );
 
         Assert::eq( count($matches), 1, "Test checklist is present");
 
@@ -253,9 +233,9 @@ class RSMS_944_Tests implements I_Test {
 
         // Inactivate the hazard
         $LOG->info("Inactivating test hazard");
-        $testHazard = $this->_changeActiveStatus( $testHazard, false );
-        Assert::false( $testHazard->getIs_active(), 'Hazard is inactive');
-        Assert::false( $testHazard->getChecklist()->getIs_active(), 'Checklist is inactive');
+        $this->testHazard = $this->_changeActiveStatus( $this->testHazard, false );
+        Assert::false( $this->testHazard->getIs_active(), 'Hazard is inactive');
+        Assert::false( $this->testHazard->getChecklist()->getIs_active(), 'Checklist is inactive');
 
         // Unassign the hazard
         $this->_unassignFromRoom($pihr);
@@ -264,11 +244,11 @@ class RSMS_944_Tests implements I_Test {
         Assert::not_empty( $usedChecklists, 'Inspection still has used checklists');
 
         // Regenerate the Checklists
-        $LOG->info("Regenerating checklists ($testHazard)");
+        $LOG->info("Regenerating checklists ($this->testHazard)");
         $inspectionWithChecklists_without_test = $this->actionmanager->resetChecklists( $insp->getKey_id() );
 
         // Verify test hazard is still included
-        $matches = $this->_getChecklistsForHazard( $inspectionWithChecklists_without_test->getChecklists(), $testHazard );
+        $matches = $this->_getChecklistsForHazard( $inspectionWithChecklists_without_test->getChecklists(), $this->testHazard );
         Assert::eq( count($matches), 1, "Test checklist is still present after inactivation");
     }
 }
