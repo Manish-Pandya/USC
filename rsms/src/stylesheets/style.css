@@ -2128,6 +2128,13 @@ detailsReportHeaderTable tr td {
   background: #9FE89F !important;
 }
 
+.detailsReportTable .inactive-checklist-item {
+  font-style: italic;
+  text-transform: none;
+  font-size: initial;
+  font-weight: initial;
+}
+
 .detailsReportTable tr td ul li .span11 span:nth-child(odd){
   width:50px;
   float:left;
