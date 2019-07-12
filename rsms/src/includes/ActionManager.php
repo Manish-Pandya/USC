@@ -5728,6 +5728,43 @@ class ActionManager {
 
     	return $hazards;
     }
+
+    /**
+     * Utility for merging one or more arrays of GenericCrud entities.
+     * This respects uniqueness since keys may be duplicated; to remain
+     * consistent with PHP's array_merge, an entity which has the same
+     * key as one already in the array will take precedence, thus overriding
+     * a pre-existing value.
+     *
+     * @param Array $arrays One or more Arrays of entities
+     */
+    public static function merge_entity_arrays( ...$arrays ){
+        $populated = array_filter($arrays, function($a){ return !empty($a); });
+        // No need to perform anything if there is only one populated arg
+        if( count($populated) == 1 ){
+            return array_values($populated)[0];
+        }
+
+        // Re-key arrays
+        $hashed_arrays = array();
+        foreach( $populated as $arr ){
+            $hashed = array();
+            foreach($arr as $entity){
+                $hash = get_class($entity) . $entity->getKey_id();
+                $hashed[$hash] = $entity;
+            }
+            $hashed_arrays[] = $hashed;
+        }
+
+        // Merge hashed arrays
+        // unpack the array-of-arrays and pass to array_merge to support varargs
+        // Return only values because we don't need the hashed keys
+        //  (plus they would preclude numeric key references, which other code expects to be able to do)
+        return array_values(
+            call_user_func_array('array_merge', $hashed_arrays)
+        );
+    }
+
     /*
      * sets a hazard's branch level parent's key id as its master_hazard_id and saves it
      * @param Hazard $hazard
