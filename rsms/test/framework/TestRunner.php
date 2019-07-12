@@ -5,7 +5,7 @@ class TestRunner {
     private $collector;
 
     public function __construct( I_TestCollector $collector ){
-        $this->$collector = $collector;
+        $this->collector = $collector;
     }
 
     public function getResults(){
@@ -14,7 +14,7 @@ class TestRunner {
 
     public function runTests(){
         $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
-        $test_instances = $this->$collector->collect();
+        $test_instances = $this->collector->collect();
 
         foreach($test_instances as $instance ){
             $class = get_class($instance);
