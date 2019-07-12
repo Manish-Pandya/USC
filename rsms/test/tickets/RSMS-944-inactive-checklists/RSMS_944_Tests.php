@@ -102,6 +102,7 @@ class RSMS_944_Tests implements I_Test {
         $insp->setSchedule_year( date("Y") );
         $this->inspectionDao->save($insp);
         $LOG->info("Created: $insp");
+        Assert::true( $insp->hasPrimaryKeyValue(), 'Inspection was saved');
 
         // Assign Rooms to Inspection
         $this->actionmanager->saveInspectionRoomRelation($room->getKey_id(), $insp->getKey_id(), true);
@@ -140,6 +141,9 @@ class RSMS_944_Tests implements I_Test {
 
         Assert::true( $response->hasPrimaryKeyValue(), 'Response was saved');
 
+        $usedChecklists = $this->inspectionDao->getChecklistsUsedInInspection( $insp->getKey_id() );
+        Assert::not_empty( $usedChecklists, 'Inspection has used checklists');
+
         // Inactivate the hazard
         $LOG->info("Inactivating test hazard");
         $testHazard->setIs_active(false);
@@ -147,8 +151,11 @@ class RSMS_944_Tests implements I_Test {
         Assert::false( $testHazard->getIs_active(), 'Hazard is inactive');
         Assert::false( $testHazard->getChecklist()->getIs_active(), 'Checklist is inactive');
 
+        $usedChecklists = $this->inspectionDao->getChecklistsUsedInInspection( $insp->getKey_id() );
+        Assert::not_empty( $usedChecklists, 'Inspection still has used checklists');
+
         // Regenerate the Checklists
-        $LOG->info("Generating checklists ($testHazard)");
+        $LOG->info("Regenerating checklists ($testHazard)");
         $inspectionWithChecklists_without_test = $this->actionmanager->resetChecklists( $insp->getKey_id() );
 
         // Verify test hazard is still included
