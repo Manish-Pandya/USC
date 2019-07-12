@@ -124,6 +124,11 @@ class Checklist extends GenericCrud {
 	public function setMaster_id($master_id){ $this->master_id = $master_id; }
 
 	public function getQuestions(){
+		if( !$this->hasPrimaryKeyValue() ){
+			// short-circuit
+			return array();
+		}
+
 		$thisDAO = new GenericDAO($this);
 		$this->questions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$QUESTIONS_RELATIONSHIP), array('order_index'));
 		return $this->filterQuestionsForInspection($this->questions);
