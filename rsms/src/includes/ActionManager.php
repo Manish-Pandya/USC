@@ -4517,6 +4517,7 @@ class ActionManager {
                 $orderedRooms[$room->getKey_id()] = $room;
             }
 
+            $checklists = array();
 
             $masterHazards = array();
             //iterate the rooms and find the hazards present
@@ -4695,7 +4696,7 @@ class ActionManager {
             return new ActionError("No request parameter 'id' was provided", 400);
         }
 
-        $dao = $this->getDao(new Inspection());
+        $dao = new InspectionDAO();
 
         //get inspection
         $inspection = $dao->getById($id);
@@ -4730,27 +4731,78 @@ class ActionManager {
             // Calculate the Checklists needed according to hazards currently present in the rooms covered by this inspection
             $LOG->info("Recalculating list of Checklists for $inspection");
 
+            // Get all active checklists which are relevant to the inspection
             $LOG->debug("Generating new list of Checklists for $inspection");
-            $checklists = $this->getChecklistsForInspection($inspection->getKey_id());
+            $relevantChecklists = $this->getChecklistsForInspection($inspection->getKey_id());
+            $LOG->debug("Found " . count($relevantChecklists) . " active checklists relevant to $inspection");
 
-            // remove the old checklists
-            if (!empty($oldChecklists)) {
-                $LOG->debug("Removing all old Checklists from $inspection");
-                foreach ($oldChecklists as $oldChecklist) {
-                    $dao->removeRelatedItems($oldChecklist->getKey_id(),
-                                                $inspection->getKey_id(),
-                                                DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+            // Get all checklists which are 'used' (responded to) in this Inspection
+            $usedChecklists = $dao->getChecklistsUsedInInspection( $inspection->getKey_id() );
+            $LOG->debug("Found " . count($usedChecklists) . " checklists already used in $inspection");
+
+            // Merge $relevantChecklists and $usedChecklists into one array of distinct checklists
+            $checklists = ActionManager::merge_entity_arrays($usedChecklists, $relevantChecklists);
+            $LOG->debug("Found " . count($checklists) . " total checklists relevant to $inspection");
+
+            // Determine if any old checklists need to be removed
+            // Any checklist NOT present in $checklists should be removed
+            $irrelevantChecklists = array_filter(
+                $oldChecklists,
+                function($old) use ($checklists){
+                    foreach($checklists as $current){
+                        if( $current->getKey_id() == $old->getKey_id() ){
+                            // Retain this checklist
+                            return false;
+                        }
+
+                    }
+
+                    // Checklist is no longer relevant
+                    return true;
+                }
+            );
+
+            $LOG->debug("Found " . count($irrelevantChecklists) . " checklists no longer relevant to $inspection");
+
+            $inspection_checklist_relationship = DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP);
+            // remove all irrelevant checklists
+            if( !empty($irrelevantChecklists) ){
+                $LOG->debug("Removing all irrelevant Checklists from $inspection");
+                foreach ($irrelevantChecklists as $oldChecklist) {
+                    $LOG->trace("Removing $oldChecklist from $inspection");
+                    $dao->removeRelatedItems(
+                        $oldChecklist->getKey_id(),
+                        $inspection->getKey_id(),
+                        $inspection_checklist_relationship
+                    );
                 }
             }
 
-            // add the checklists to this inspection
+            // Ensure all of $checklists is assigned to the inspection
+
+            // Retrieve list of Checklist IDs which are already assigned to the inspection
+            $assignedChecklistIds = $dao->getChecklistsAssignedToInspection( $inspection->getKey_id() );
+
             $LOG->debug("Assigning new Checklists to $inspection");
             foreach ($checklists as $checklist){
-                $LOG->trace("Add $checklist to $inspection");
+                // Determine if checklist is already assigned
+                if( !in_array($checklist->getKey_id(), $assignedChecklistIds) ){
+                    // Checklist is not assigned
+                    $LOG->trace("Add $checklist to $inspection");
+                    $dao->addRelatedItems(
+                        $checklist->getKey_id(),
+                        $inspection->getKey_id(),
+                        $inspection_checklist_relationship
+                    );
+                }
+                else {
+                    $LOG->trace("$checklist is already assigned to $inspection");
+                }
 
-                $dao->addRelatedItems($checklist->getKey_id(),$inspection->getKey_id(),DataRelationship::fromArray(Inspection::$CHECKLISTS_RELATIONSHIP));
+                // Assign inspection-related 'DTO' fields
                 $checklist->setInspectionId($inspection->getKey_id());
                 $checklist->setRooms($inspection->getRooms());
+
                 //filter the rooms, but only for hazards that aren't in the General branch, which should always have all the rooms for an inspection
                 //9999 is the key_id for General Hazard
                 if($checklist->getMaster_id() != 9999){
@@ -4772,8 +4824,14 @@ class ActionManager {
         );
 
         //recurse down hazard tree.  look in checklists array for each hazard.  if checklist is found, push it into ordered array.
+        $expected_size = count($checklists);
         $orderedChecklists = array();
-        $orderedChecklists = $this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $this->getHazardById(10000));
+        $orderedChecklists = $this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $this->getHazardById(10000), false);
+
+        if( count($orderedChecklists) != $expected_size){
+            $LOG->warn("Final checklist list is not expected size of $expected_size: actual size is " . count($orderedChecklists));
+        }
+
         $inspection->setChecklists( $orderedChecklists );
 
         //make sure we get the right rooms for our branch level checklists
@@ -4831,24 +4889,45 @@ class ActionManager {
         return $lists;
     }
 
-    private function  recurseHazardTreeForChecklists( &$checklists, $hazardIds, &$orderedChecklists, $hazard = null ) {
+    /**
+     * Pop items out of $checklists array and push them into $orderedChecklists array
+     * in natural order of their linked Hazard.
+     *
+     * This is done by visiting all Active hazards below the root $hazard parameter and
+     * recursing into each branch.
+     *
+     * @param Array $checklists
+     * @param Array $hazardIds
+     * @param Array $orderedChecklists
+     * @param $hazard
+     * @param bool $onlyActiveSubhazards
+     *
+     * @return Array of Checklists ordered by their Hazard
+     */
+    private function recurseHazardTreeForChecklists( &$checklists, $hazardIds, &$orderedChecklists, $hazard = null, $onlyActiveHazards = true ) {
     	$LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
     	if($hazard == null){
     		//get the "Root hazard".  It's key_id is 10000, hence the magic number
     		$hazard = $this->getHazardById(10000);
     	}
-    	if($orderedChecklists == NULL){
+
+        if($orderedChecklists == NULL){
     		$orderedChecklists = array();
-    	}
-	    foreach($hazard->getActiveSubHazards() as $child){
+        }
+
+        $subhazards = $onlyActiveHazards
+            ? $hazard->getActiveSubHazards()
+            : $hazard->getSubHazards();
+
+	    foreach($subhazards as $child){
 	    	$idx = $this->findChecklist( $child->getChecklist(), $checklists );
 	    	if(in_array($child->getKey_id(), $hazardIds)  && (int) $idx !== false ){
                 array_push($orderedChecklists,$checklists[$idx]);
 	    		unset($checklists[$idx]);
 	    	}
 
-    		$this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $child);
+			$this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $child, $onlyActiveHazards);
 	    }
 	    return $orderedChecklists;
 
