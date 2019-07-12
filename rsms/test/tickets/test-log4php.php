@@ -32,7 +32,7 @@ return array(
 			),
 			'params' => array(
 				'file' => constant('RSMS_LOGS') . '/tests.log',
-				'append' => true
+				'append' => false
 			)
 		)
 	)
