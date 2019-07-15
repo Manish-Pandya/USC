@@ -1732,6 +1732,12 @@ class ActionManager {
             $LOG->info("Saving... $decodedObject");
             $room = $dao->save($decodedObject);
 
+            // Retrieve active+inactive PIs now assigned to this room
+            // Set PIs into $room (as DTO), because the lazy-loaded accessor will only include active
+            $room->setPrincipalInvestigators(
+                $dao->getRoomPIs($room->getKey_id())
+            );
+
             EntityManager::with_entity_maps(Room::class, array(
                 EntityMap::eager("getPrincipalInvestigators"),
                 EntityMap::lazy("getHazards"),
