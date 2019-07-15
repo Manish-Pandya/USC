@@ -22,7 +22,7 @@
 
         <div ng-if="!checkingPiHazardsInRoom && PIs && !room.HasHazards">
             <h3 >Remove room {{room.Name}} from the following PI{{PIs.length == 1 ? '' : 's'}}?</h3>
-            <ul>
+            <ul style="margin-top: 10px;">
                 <li ng-repeat="pi in PIs"><h4>{{pi.User.Name}}</h4></li>
             </ul>
         </div>
