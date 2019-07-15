@@ -114,7 +114,7 @@
                 <span ng-if="!room.edit">{{room.Name}}</span>
             </td>
 
-            <td class="lhcol_hazards hazard-icons">
+            <td class="lhcol_hazards hazard-icons" ng-class="{'grayed-out': ((room.edit ? roomCopy : room) | roomUnassignedFilter)}">
                 <span ng-if="room.Bio_hazards_present"><img src="../../img/biohazard-largeicon.png" /></span>
                 <span ng-if="room.Chem_hazards_present"><img src="../../img/chemical-blue-icon.png" /></span>
                 <span ng-if="room.Rad_hazards_present"><img src="../../img/radiation-large-icon.png" /></span>
