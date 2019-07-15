@@ -1648,7 +1648,7 @@ class ActionManager {
             return $pi->getKey_id();
         };
 
-        $LOG->debug("Verifying room changes...");
+        $LOG->info("Verifying room changes...");
         $existingPiIds = array_map($getIds, $oldPIs);
         $LOG->debug("Existing PIs: " . implode(', ', $existingPiIds));
 
@@ -1657,11 +1657,11 @@ class ActionManager {
 
         $removingPiIds = array_diff($existingPiIds, $incomingPiIds);
         if( !empty($removingPiIds) ){
-            $LOG->debug("Validate unassignment of PIs: " . implode(', ', $removingPiIds));
+            $LOG->info("Validate unassignment of PIs: " . implode(', ', $removingPiIds));
             return $this->validateRoomUnassignments($room, $removingPiIds);
         }
 
-        $LOG->debug("No PIs are being unassigned");
+        $LOG->info("No PIs are being unassigned");
         return true;
     }
 
@@ -2780,12 +2780,12 @@ class ActionManager {
 
         if( empty($hazardRoomRelations) ){
             // No hazards in this room; nothing more to check
-            $LOG->debug("Room has no hazards");
+            $LOG->info("Room has no hazards");
             return true;
         }
         else {
             // This room has hazards assigned to it
-            $LOG->debug("Room has hazard assignments");
+            $LOG->info("Room has hazard assignments");
 
             // Map relations to their PI IDs
             $piAssignments = array_unique(
@@ -2796,7 +2796,7 @@ class ActionManager {
 
             // Verify that the specified PIs have no hazards in this room
             if( isset($removePiIds) && !empty($removePiIds) ) {
-                $LOG->debug("Checking hazard assignments for PIs: " . implode(', ', $removePiIds));
+                $LOG->info("Checking hazard assignments for PIs: " . implode(', ', $removePiIds));
 
                 $piAssignments = array_filter($piAssignments, function($assignedPiId) use ($removePiIds){
                     return in_array($assignedPiId, $removePiIds);
@@ -2804,7 +2804,7 @@ class ActionManager {
 
                 if( empty($piAssignments) ){
                     // The specified PIs have no hazards assigned to this room
-                    $LOG->debug("PIs have no assignments in room: " . implode(', ', $removePiIds));
+                    $LOG->info("PIs have no assignments in room: " . implode(', ', $removePiIds));
                     return true;
                 }
             }
