@@ -1648,7 +1648,7 @@ class ActionManager {
             return $pi->getKey_id();
         };
 
-        $LOG->debug("Verifying room changes...");
+        $LOG->info("Verifying room changes...");
         $existingPiIds = array_map($getIds, $oldPIs);
         $LOG->debug("Existing PIs: " . implode(', ', $existingPiIds));
 
@@ -1657,11 +1657,11 @@ class ActionManager {
 
         $removingPiIds = array_diff($existingPiIds, $incomingPiIds);
         if( !empty($removingPiIds) ){
-            $LOG->debug("Validate unassignment of PIs: " . implode(', ', $removingPiIds));
+            $LOG->info("Validate unassignment of PIs: " . implode(', ', $removingPiIds));
             return $this->validateRoomUnassignments($room, $removingPiIds);
         }
 
-        $LOG->debug("No PIs are being unassigned");
+        $LOG->info("No PIs are being unassigned");
         return true;
     }
 
@@ -1698,9 +1698,10 @@ class ActionManager {
                 $LOG->debug($decodedObject);
 
                 // First, validate any PI removals
+                $currentRoomPIs = $dao->getRoomPIs($room->getKey_id());    // Retrieve active+inactive PI assignments
                 $canSaveRoom = $this->_before_save_room_check_room_pis(
                     $room,
-                    $room->getPrincipalInvestigators() ?? [],
+                    $currentRoomPIs ?? [],
                     $decodedObject->getPrincipalInvestigators()
                 );
 
@@ -1730,6 +1731,12 @@ class ActionManager {
 
             $LOG->info("Saving... $decodedObject");
             $room = $dao->save($decodedObject);
+
+            // Retrieve active+inactive PIs now assigned to this room
+            // Set PIs into $room (as DTO), because the lazy-loaded accessor will only include active
+            $room->setPrincipalInvestigators(
+                $dao->getRoomPIs($room->getKey_id())
+            );
 
             EntityManager::with_entity_maps(Room::class, array(
                 EntityMap::eager("getPrincipalInvestigators"),
@@ -2780,12 +2787,12 @@ class ActionManager {
 
         if( empty($hazardRoomRelations) ){
             // No hazards in this room; nothing more to check
-            $LOG->debug("Room has no hazards");
+            $LOG->info("Room has no hazards");
             return true;
         }
         else {
             // This room has hazards assigned to it
-            $LOG->debug("Room has hazard assignments");
+            $LOG->info("Room has hazard assignments");
 
             // Map relations to their PI IDs
             $piAssignments = array_unique(
@@ -2796,7 +2803,7 @@ class ActionManager {
 
             // Verify that the specified PIs have no hazards in this room
             if( isset($removePiIds) && !empty($removePiIds) ) {
-                $LOG->debug("Checking hazard assignments for PIs: " . implode(', ', $removePiIds));
+                $LOG->info("Checking hazard assignments for PIs: " . implode(', ', $removePiIds));
 
                 $piAssignments = array_filter($piAssignments, function($assignedPiId) use ($removePiIds){
                     return in_array($assignedPiId, $removePiIds);
@@ -2804,7 +2811,7 @@ class ActionManager {
 
                 if( empty($piAssignments) ){
                     // The specified PIs have no hazards assigned to this room
-                    $LOG->debug("PIs have no assignments in room: " . implode(', ', $removePiIds));
+                    $LOG->info("PIs have no assignments in room: " . implode(', ', $removePiIds));
                     return true;
                 }
             }
@@ -5933,41 +5940,34 @@ class ActionManager {
 
     public function getRoomHasHazards($id = null, $piIds = null){
         $id = $this->getValueFromRequest("id", $id);
-        //if($id == null)return new ActionError("No room id provided");
-        if($piIds == null)$piIds = $this->getValueFromRequest("piIds", $piIds);
+        $piIds = $this->getValueFromRequest("piIds", $piIds);
+
         $l = Logger::getLogger(__FUNCTION__);
-        if($id == null || $piIds == null)return new ActionError("No id provided");
 
-        //$this->LOG->trace("$this->logprefix Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
+        if($id == null || $piIds == null)
+            return new ActionError("No id provided", 400);
 
-		// Get the db connection
-		$db = DBConnection::get();
-        $inQuery = implode(',', array_fill(0, count($piIds), '?'));
-        $l->debug($inQuery);
-		//Prepare to query all from the table
-		$sql = "SELECT COUNT(key_id) FROM principal_investigator_hazard_room where room_id = ?
-                             AND principal_investigator_id IN($inQuery)";
-		// Query the db and return an array of $this type of object
-        $stmt = DBConnection::prepareStatement($sql);
+        $roomDAO = new RoomDAO();
+        $pis = $roomDAO->getPrincipalInvestigatorsWithHazardInRoom($id, $piIds);
 
-        $stmt->bindValue( 1, $id );
-        $i = 2;
-        foreach($piIds as $val){
-            $stmt->bindValue( $i, $val );
-            $i++;
+        if( $pis instanceof QueryError){
+            return new ActionError("Error querying pi/hazard/room");
         }
 
-		if ($stmt->execute() ) {
-            $result = $stmt->fetch(PDO::FETCH_NUM);
-            return $result[0] != "0";
-		} else{
-			$error = $stmt->errorInfo();
-			$result = new QueryError($error);
-			$l->fatal('Returning QueryError with message: ' . $result->getMessage());
-            return new ActionError("query error");
-		}
+        $dto = new GenericDto(array(
+            'HasHazards' => !empty($pis),
+            'PI_ids' => array_map(
+                function($r){
+                    return new GenericDto(array(
+                        'Key_id' => $r->principal_investigator_id,
+                        'Hazard_count' => $r->hazard_count
+                    ));
+                },
+                $pis
+            )
+        ));
 
-
+        return $dto;
     }
 
     public function getPisAndRoomsByHazard($id = null){

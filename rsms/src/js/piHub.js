@@ -772,8 +772,8 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, piHubFactor
     $scope.room = room;
     $scope.checkingPiHazardsInRoom = true;
     $rootScope.loading = convenienceMethods.checkHazards(room, [PI]).then(function (r) {
-        // Convert r to boolean
-        room.HasHazards = (r && r == 'true');
+        // Read if room has Hazards
+        room.HasHazards = r.HasHazards;
         $scope.checkingPiHazardsInRoom = false;
         console.log(r, room);
     })

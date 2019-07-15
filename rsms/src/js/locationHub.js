@@ -700,16 +700,25 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
 
     }
 
-    $scope.handlePI = function (pi, idx) {
+    $scope.handlePI = function (pi, add) {
         // Handle PI selection
-        if (idx == undefined) {
+
+        if ( add ) {
+            // Add PI to list
             $scope.roomCopy.PrincipalInvestigators.push(pi);
         } else {
+            // Remove PI from list
+            // Find PI in room's list
+            let idx = $scope.roomCopy.PrincipalInvestigators.indexOf(pi);
+
+            console.debug("Remove index " + idx + " from room list");
             $scope.roomCopy.PrincipalInvestigators.splice(idx, 1);
         }
 
-        // Clear selection from dropdown
-        $scope.pis.selected = null;
+        // Clear selection from dropdown (if it's been initialized)
+        if( $scope.pis ){
+            $scope.pis.selected = null;
+        }
     }
 
     $scope.removeRoom = function (room, pi) {
@@ -751,7 +760,8 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
     $scope.confirmDeactivate = function (room) {
         if (room.PrincipalInvestigators && room.PrincipalInvestigators.length) {
             $rootScope.loadingHasHazards = $q.all([convenienceMethods.checkHazards(room, room.PrincipalInvestigators)]).then(function (r) {
-                if (r[0]) {
+                let resp = r[0];
+                if ( resp.HasHazards ) {
                     var modalInstance = $modal.open({
                         templateUrl: 'roomConfirmationModal.html',
                         controller: roomConfirmationController,
@@ -1036,9 +1046,16 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
     if( checkPIs.length ){
         $scope.checkingPiHazardsInRoom = true;
         $rootScope.loadingHasHazards = $q.all([convenienceMethods.checkHazards(room, checkPIs)]).then(function (r) {
+            let resp = r[0];
             $scope.checkingPiHazardsInRoom = false;
-            room.HasHazards = r[0] && r[0] == 'true';
-            console.log(r, room)
+            room.HasHazards = resp.HasHazards;
+            console.log(resp, room);
+
+            $scope.PIsWithHazards = checkPIs.filter( pi =>
+                resp.PI_ids.some(entry => entry.Key_id == pi.Key_id)
+            );
+
+            $scope.Pis_with_hazards = resp.PI_ids;
         })
     }
     else{
