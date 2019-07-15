@@ -21,7 +21,7 @@
         </div>
 
         <div ng-if="!checkingPiHazardsInRoom && PIs && !room.HasHazards">
-            <h3 >Remove room {{room.Name}} from the following Principal Investigator{{PIs.length == 1 ? '' : 's'}}?</h3>
+            <h3 >Remove room {{room.Name}} from the following PI{{PIs.length == 1 ? '' : 's'}}?</h3>
             <ul>
                 <li ng-repeat="pi in PIs"><h4>{{pi.User.Name}}</h4></li>
             </ul>
