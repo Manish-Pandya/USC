@@ -760,7 +760,8 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
     $scope.confirmDeactivate = function (room) {
         if (room.PrincipalInvestigators && room.PrincipalInvestigators.length) {
             $rootScope.loadingHasHazards = $q.all([convenienceMethods.checkHazards(room, room.PrincipalInvestigators)]).then(function (r) {
-                if (r[0]) {
+                let resp = r[0];
+                if ( resp.HasHazards ) {
                     var modalInstance = $modal.open({
                         templateUrl: 'roomConfirmationModal.html',
                         controller: roomConfirmationController,
