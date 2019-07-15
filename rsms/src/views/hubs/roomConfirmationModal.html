@@ -9,7 +9,7 @@
         <div ng-if="!checkingPiHazardsInRoom && room.HasHazards">
             <h3>These changes cannot be saved:</h3>
             <table class="table">
-                <tr ng-repeat="pi in PIs">
+                <tr ng-repeat="pi in PIsWithHazards">
                     <td><h3>{{pi.User.Name}} has hazards in {{room.Name}}</h3></td>
                     <td>
                         <a style="margin-left:5px" class="btn btn-warning left" href="../../hazard-inventory/#?pi={{pi.Key_id}}&{{room.roomUrlParam}}" target="_blank">

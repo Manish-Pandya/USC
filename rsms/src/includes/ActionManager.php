@@ -5820,41 +5820,34 @@ class ActionManager {
 
     public function getRoomHasHazards($id = null, $piIds = null){
         $id = $this->getValueFromRequest("id", $id);
-        //if($id == null)return new ActionError("No room id provided");
-        if($piIds == null)$piIds = $this->getValueFromRequest("piIds", $piIds);
+        $piIds = $this->getValueFromRequest("piIds", $piIds);
+
         $l = Logger::getLogger(__FUNCTION__);
-        if($id == null || $piIds == null)return new ActionError("No id provided");
 
-        //$this->LOG->trace("$this->logprefix Looking up all entities" . ($sortColumn == NULL ? '' : ", sorted by $sortColumn"));
+        if($id == null || $piIds == null)
+            return new ActionError("No id provided", 400);
 
-		// Get the db connection
-		$db = DBConnection::get();
-        $inQuery = implode(',', array_fill(0, count($piIds), '?'));
-        $l->debug($inQuery);
-		//Prepare to query all from the table
-		$sql = "SELECT COUNT(key_id) FROM principal_investigator_hazard_room where room_id = ?
-                             AND principal_investigator_id IN($inQuery)";
-		// Query the db and return an array of $this type of object
-        $stmt = DBConnection::prepareStatement($sql);
+        $roomDAO = new RoomDAO();
+        $pis = $roomDAO->getPrincipalInvestigatorsWithHazardInRoom($id, $piIds);
 
-        $stmt->bindValue( 1, $id );
-        $i = 2;
-        foreach($piIds as $val){
-            $stmt->bindValue( $i, $val );
-            $i++;
+        if( $pis instanceof QueryError){
+            return new ActionError("Error querying pi/hazard/room");
         }
 
-		if ($stmt->execute() ) {
-            $result = $stmt->fetch(PDO::FETCH_NUM);
-            return $result[0] != "0";
-		} else{
-			$error = $stmt->errorInfo();
-			$result = new QueryError($error);
-			$l->fatal('Returning QueryError with message: ' . $result->getMessage());
-            return new ActionError("query error");
-		}
+        $dto = new GenericDto(array(
+            'HasHazards' => !empty($pis),
+            'PI_ids' => array_map(
+                function($r){
+                    return new GenericDto(array(
+                        'Key_id' => $r->principal_investigator_id,
+                        'Hazard_count' => $r->hazard_count
+                    ));
+                },
+                $pis
+            )
+        ));
 
-
+        return $dto;
     }
 
     public function getPisAndRoomsByHazard($id = null){

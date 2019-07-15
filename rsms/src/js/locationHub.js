@@ -1045,9 +1045,16 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
     if( checkPIs.length ){
         $scope.checkingPiHazardsInRoom = true;
         $rootScope.loadingHasHazards = $q.all([convenienceMethods.checkHazards(room, checkPIs)]).then(function (r) {
+            let resp = r[0];
             $scope.checkingPiHazardsInRoom = false;
-            room.HasHazards = r[0] && r[0] == 'true';
-            console.log(r, room)
+            room.HasHazards = resp.HasHazards;
+            console.log(resp, room);
+
+            $scope.PIsWithHazards = checkPIs.filter( pi =>
+                resp.PI_ids.some(entry => entry.Key_id == pi.Key_id)
+            );
+
+            $scope.Pis_with_hazards = resp.PI_ids;
         })
     }
     else{
