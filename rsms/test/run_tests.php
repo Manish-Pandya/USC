@@ -25,15 +25,46 @@ if( $argc > 1 ){
 }
 
 // Load all files in specified dirs
-$LOG->debug("Load scripts in specified directories");
-foreach( $include_dirs as $dir ){
+function load_dir( $dir, $recurse = false ){
     $results = scandir($dir);
     foreach ($results as $result){
         //ignore these
         if ($result === '.' or $result === '..') continue;
+
         $path = "$dir/$result";
-        $LOG->debug("Loading $path");
-        require_once $path;
+
+        if( is_file($path) && file_exists($path) ){
+            load_path($path);
+        }
+        else if( $recurse && is_dir($path) && file_exists($path) ){
+            load_dir($path, $recurse);
+        }
+    }
+}
+
+function load_path( $path ){
+    global $LOG;
+    $LOG->debug("Loading $path");
+    require_once $path;
+}
+
+$LOG->debug("Load scripts in specified directories");
+foreach( $include_dirs as $param ){
+    $LOG->info("Check include param '$param'");
+
+    // Include a file
+    if( is_file($param) && file_exists($param) ){
+        load_path($param);
+    }
+
+    // Include contents of Directory
+    else if( is_dir($param) && file_exists($param) ){
+        load_dir($param, true);
+    }
+
+    // Invalid parameter
+    else {
+        $LOG->warn("Invalid parameter '$param'");
     }
 }
 
@@ -80,7 +111,12 @@ foreach( $results as $testname => $testresults ){
     echo "\n";
 }
 
-$percent = $passed / count($results) * 100;
+$total_tests = count($results);
+$percent = 0;
+if( $total_tests > 0 ){
+    $percent = $passed / $total_tests * 100;
+}
+
 $summary = "$passed / " . count($results) . " Passed ($percent%)";
 $div = str_pad('', strlen($summary) + 2, '-');
 
