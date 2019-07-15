@@ -1698,9 +1698,10 @@ class ActionManager {
                 $LOG->debug($decodedObject);
 
                 // First, validate any PI removals
+                $currentRoomPIs = $dao->getRoomPIs($room->getKey_id());    // Retrieve active+inactive PI assignments
                 $canSaveRoom = $this->_before_save_room_check_room_pis(
                     $room,
-                    $room->getPrincipalInvestigators() ?? [],
+                    $currentRoomPIs ?? [],
                     $decodedObject->getPrincipalInvestigators()
                 );
 

@@ -76,5 +76,12 @@ class RoomDAO extends GenericDAO {
 
 		return ($number_of_rows > 0);
     }
+
+    public function getRoomPIs( $roomId, $activeOnly = false ){
+        return $this->getRelatedItemsById($roomId,
+            DataRelationship::fromArray(Room::$PIS_RELATIONSHIP),
+            NULL, $activeOnly, $activeOnly
+        );
+    }
 }
 ?>
