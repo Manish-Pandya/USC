@@ -700,16 +700,25 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
 
     }
 
-    $scope.handlePI = function (pi, idx) {
+    $scope.handlePI = function (pi, add) {
         // Handle PI selection
-        if (idx == undefined) {
+
+        if ( add ) {
+            // Add PI to list
             $scope.roomCopy.PrincipalInvestigators.push(pi);
         } else {
+            // Remove PI from list
+            // Find PI in room's list
+            let idx = $scope.roomCopy.PrincipalInvestigators.indexOf(pi);
+
+            console.debug("Remove index " + idx + " from room list");
             $scope.roomCopy.PrincipalInvestigators.splice(idx, 1);
         }
 
-        // Clear selection from dropdown
-        $scope.pis.selected = null;
+        // Clear selection from dropdown (if it's been initialized)
+        if( $scope.pis ){
+            $scope.pis.selected = null;
+        }
     }
 
     $scope.removeRoom = function (room, pi) {
