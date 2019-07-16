@@ -1052,26 +1052,31 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
 
     $scope.room = room;
 
-    if( checkPIs.length ){
-        $scope.checkingPiHazardsInRoom = true;
-        $rootScope.loadingHasHazards = $q.all([convenienceMethods.checkHazards(room, checkPIs)]).then(function (r) {
-            let resp = r[0];
+    $scope.checkData = function checkData(){
+        if( checkPIs.length ){
+            $scope.checkingPiHazardsInRoom = true;
+            $rootScope.loadingHasHazards = $q.all([convenienceMethods.checkHazards(room, checkPIs)]).then(function (r) {
+                let resp = r[0];
+                $scope.checkingPiHazardsInRoom = false;
+                room.HasHazards = resp.HasHazards;
+                console.log(resp, room);
+
+                $scope.PIsWithHazards = checkPIs.filter( pi =>
+                    resp.PI_ids.some(entry => entry.Key_id == pi.Key_id)
+                );
+
+                $scope.Pis_with_hazards = resp.PI_ids;
+            })
+        }
+        else{
+            // No one to check
             $scope.checkingPiHazardsInRoom = false;
-            room.HasHazards = resp.HasHazards;
-            console.log(resp, room);
+            room.HasHazards = false;
+        }
+    };
 
-            $scope.PIsWithHazards = checkPIs.filter( pi =>
-                resp.PI_ids.some(entry => entry.Key_id == pi.Key_id)
-            );
-
-            $scope.Pis_with_hazards = resp.PI_ids;
-        })
-    }
-    else{
-        // No one to check
-        $scope.checkingPiHazardsInRoom = false;
-        room.HasHazards = false;
-    }
+    // Initially check the data
+    $scope.checkData();
 
     var hazardInventory = null;
     $scope.openHazardInventory = function openHazardInventory(pi){
@@ -1114,7 +1119,8 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
             }
 
             // Refresh the confirmation details
-            console.warn("TODO: Refresh confirmation dialog");
+            console.info("Linked Hazard-inventory window is unloading; Refresh confirmation dialog data");
+            $scope.checkData();
         };
     }
 
