@@ -1043,6 +1043,8 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
     }
 
     $scope.room = room;
+    $scope.roomIdParam = $.param({"room": [room.Key_id]});
+
     if( checkPIs.length ){
         $scope.checkingPiHazardsInRoom = true;
         $rootScope.loadingHasHazards = $q.all([convenienceMethods.checkHazards(room, checkPIs)]).then(function (r) {
