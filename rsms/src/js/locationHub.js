@@ -1051,7 +1051,6 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
     }
 
     $scope.room = room;
-    $scope.roomIdParam = $.param({"room": [room.Key_id]});
 
     if( checkPIs.length ){
         $scope.checkingPiHazardsInRoom = true;
@@ -1074,6 +1073,50 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
         room.HasHazards = false;
     }
 
+    var hazardInventory = null;
+    $scope.openHazardInventory = function openHazardInventory(pi){
+        let params = '?' + $.param({"pi": pi.Key_id}) +
+                     '&' + $.param({"room": [room.Key_id]});
+
+        // Open hazard inventory for PI & Room in a new window
+        hazardInventory = window.open(window.GLOBAL_WEB_ROOT + 'hazard-inventory/#' + params);
+
+        // Ensure a reminder toast is displayed both here and there
+        let loc_toast = undefined;
+        let inv_toast = undefined;
+
+        let reminder = function reminder(existingReminder, api, message){
+            if( !api ) return null;
+
+            // Create toast if we don't have a link to one or our linked one was dismissed (i.e. doesn't exist)
+            if( !existingReminder || !api.getToast(existingReminder.id) ){
+                return api.toast(message, api.ToastType.ERROR, -1);
+            }
+
+            return existingReminder;
+        };
+
+        // Re-remind periodically
+        let reminderInterval = setInterval(function(){
+            inv_toast = reminder(inv_toast, hazardInventory.ToastApi, "Close this Hazard Inventory to return to the Location Hub");
+            loc_toast = reminder(loc_toast, window.ToastApi, 'Close the Hazard Inventory window when you are done');
+        }, 5000);
+
+        // When the hazardInventory window is closed...
+        hazardInventory.onbeforeunload = function(){
+            // Cancel our reminder interval
+            clearInterval( reminderInterval );
+
+            // Dismiss our local toast
+            //   (we can ignore the remote toast, as it's unloaded)
+            if( loc_toast ){
+                ToastApi.dismissToast( loc_toast.id );
+            }
+
+            // Refresh the confirmation details
+            console.warn("TODO: Refresh confirmation dialog");
+        };
+    }
 
     $scope.confirm = function () {
         // Check if we're supposed to simply confirm...
@@ -1108,6 +1151,11 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
     }
 
     $scope.cancel = function () {
+        // If we have a hazard-inventory window linked, also close it
+        if( hazardInventory ){
+            hazardInventory.close();
+        }
+
         $modalInstance.dismiss('cancel');
     }
 
