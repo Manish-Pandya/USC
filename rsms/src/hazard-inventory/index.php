@@ -195,7 +195,7 @@ session_start();
                 </li>
             </ul>
         </div>
-        <div class="whiteBg" style="min-height:2000px;">
+        <div class="whiteBg">
             <div id="editPiForm" class="row-fluid">
                 <form class="form">
                     <div class="control-group span4">
