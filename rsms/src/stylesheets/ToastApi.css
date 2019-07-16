@@ -7,8 +7,12 @@
   
     display: flex;
     flex-direction: column;
+
+    width: 300px;
   }
+
   #toasts-container > *{
+    /* Spacing between toasts */
     margin-bottom: 5px;
   }
   
@@ -16,30 +20,33 @@
     background: white;
     padding: 8px;
     border: solid 1px black;
+
     font-size: large;
+    text-align: left;
   
     /* Hide toasts by default */
     display:none;
   
     /* Default to blue 'info' style */
-    border-left: solid 3px cornflowerblue;
+    border-left: solid 5px cornflowerblue;
   
     box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
-  }
-  
-  .toast.dismissable {
-    display: flex;
-    align-items: center;
   }
   
   .toast.dismissable:hover {
     box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.8);
     cursor: pointer;
   }
-  
-  .toast i {
-    margin-left: 10px;
+
+  .toast.dismissable i.icon-cancel-4 {
+    align-self: flex-start;
+  }
+
+  .toast .toast-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   
-  .toast.error { border-left: solid 3px red; }
+  .toast.error { border-left: solid 5px red; }
   

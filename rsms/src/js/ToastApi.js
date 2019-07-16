@@ -46,6 +46,9 @@
         },
 
         _animate_out_and_remove: function( toast, duration ){
+            // Unset click
+            toast.onclick = undefined;
+
             let _duration = duration || 500;
             $(toast).fadeOut(_duration, function(){
                 ToastApi._remove(toast);
@@ -67,23 +70,35 @@
             // Allow toast to be dismissed
             toast.classList.add('dismissable');
             toast.onclick = function(){
-                // Unset click
-                toast.onclick = undefined;
+                if( toast.autoDismissTimer ){
+                    // Remove timer since we're dismissing early
+                    clearTimer( toast.autoDismissTimer );
+                }
 
                 // Fast fade-out
                 ToastApi._animate_out_and_remove(toast, 100);
             };
 
-            // Set message text
-            toast.innerText = message;
+            // Create toast content
+            let content = document.createElement('span');
+            content.classList.add('toast-content');
 
-            // Add to container
+            // TODO: Cusom icons per-toast
+            let typeicon = "";
+            let messageHtml = "<span>" + message + "</span>";
+            let dismissIconHtml = "<i class='icon-cancel-4'></i>";
+            content.innerHTML = typeicon + messageHtml + dismissIconHtml;
+
+            // Add toast content
+            toast.appendChild(content);
+
+            // Add toast to container
             ToastApi._animate_in_and_add(toast);
 
             // Add timer to remove
             let _lifespan = lifespan || this.default_toast_lifespan;
             if( _lifespan > 0 ){
-                setTimeout(
+                toast.autoDismissTimer = setTimeout(
                     function(){
                         ToastApi._animate_out_and_remove(toast);
                     },
