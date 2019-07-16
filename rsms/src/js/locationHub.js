@@ -654,7 +654,15 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
             modalInstance.simpleConfirm = true;
             modalInstance.result.then(
                 () => verifyIfRequired.resolve(),
-                () => verifyIfRequired.reject()
+                () => {
+                    console.debug("User cancelled confirmation dialog");
+
+                    // Reject verification
+                    verifyIfRequired.reject();
+
+                    // Cancel the edit
+                    $scope.cancelEdit(originalRoom);
+                }
             );
         }
         else {
