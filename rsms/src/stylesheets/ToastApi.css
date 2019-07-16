@@ -1,0 +1,45 @@
+
+/* Toasts */
+#toasts-container {
+    position: absolute;
+    right: 60px;
+    top: 40px;
+  
+    display: flex;
+    flex-direction: column;
+  }
+  #toasts-container > *{
+    margin-bottom: 5px;
+  }
+  
+  .toast {
+    background: white;
+    padding: 8px;
+    border: solid 1px black;
+    font-size: large;
+  
+    /* Hide toasts by default */
+    display:none;
+  
+    /* Default to blue 'info' style */
+    border-left: solid 3px cornflowerblue;
+  
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
+  }
+  
+  .toast.dismissable {
+    display: flex;
+    align-items: center;
+  }
+  
+  .toast.dismissable:hover {
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.8);
+    cursor: pointer;
+  }
+  
+  .toast i {
+    margin-left: 10px;
+  }
+  
+  .toast.error { border-left: solid 3px red; }
+  
