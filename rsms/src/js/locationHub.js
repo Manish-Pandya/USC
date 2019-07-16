@@ -694,6 +694,8 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
                                     $scope.rooms = collection;
                                 }
                                 room.edit = false;
+
+                                ToastApi.toast('Room ' + room.Name + ' has been saved');
                         },
                         function (err) {
                             console.error(err);
@@ -1147,6 +1149,7 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
             function () {
                 $scope.saving = false;
                 $modalInstance.dismiss();
+                ToastApi.toast('Room ' + room.Name + ' has been saved');
             },
             function () {
                 $scope.saving = false;
