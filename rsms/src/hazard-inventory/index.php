@@ -163,6 +163,9 @@ session_start();
     <script type="text/javascript" src="scripts/filters/hazardInventoryFilters.js"></script>
     <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/tinymce.js"></script>
+
+    <script type='text/javascript' src='<?php echo WEB_ROOT?>js/ToastApi.js'></script>
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/ToastApi.css"/>
 </head>
 
 <body>
