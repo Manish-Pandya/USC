@@ -3,6 +3,10 @@
         element_id: 'toasts-container',
         default_toast_lifespan: 5000,
 
+        ToastType: {
+            ERROR: 'error'
+        },
+
         _generateToastId: function(){
             if( !this._idcounter ){
                 this._idcounter = 1;
