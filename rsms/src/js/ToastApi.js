@@ -72,7 +72,7 @@
             toast.onclick = function(){
                 if( toast.autoDismissTimer ){
                     // Remove timer since we're dismissing early
-                    clearTimer( toast.autoDismissTimer );
+                    clearTimeout( toast.autoDismissTimer );
                 }
 
                 // Fast fade-out
