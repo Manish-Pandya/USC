@@ -12,7 +12,7 @@
                 <h1 class="blueBg">Laboratory Locations</h1>
                 <div class="btn-group" style="margin:-22px 0 0 30px">
                     <a ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn-large btn" ng-click="editRoom()" style="padding:10px; margin-left:5px;"><i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>Add Lab Room</a>
-                    <a style="margin: 3px 0px 0 6px !important;font-size: 19px;height: 22px;" class="btn-large btn left" href="../../ajaxaction.php?action=getLocationCSV"><i class="icon-download"></i>Download Report</a>
+                    <a style="margin-left: 6px;font-size: 19px;height: 22px;" class="btn-large btn left" href="../../ajaxaction.php?action=getLocationCSV"><i class="icon-download"></i>Download Report</a>
                 </div>
 
                 <div class="blueBg" style="float:right; margin-top:-3px">
@@ -114,7 +114,7 @@
                 <span ng-if="!room.edit">{{room.Name}}</span>
             </td>
 
-            <td class="lhcol_hazards hazard-icons">
+            <td class="lhcol_hazards hazard-icons" ng-class="{'grayed-out': ((room.edit ? roomCopy : room) | roomUnassignedFilter)}">
                 <span ng-if="room.Bio_hazards_present"><img src="../../img/biohazard-largeicon.png" /></span>
                 <span ng-if="room.Chem_hazards_present"><img src="../../img/chemical-blue-icon.png" /></span>
                 <span ng-if="room.Rad_hazards_present"><img src="../../img/radiation-large-icon.png" /></span>
@@ -153,7 +153,7 @@
                             <div class="controls">
                                 <input ng-show="!pis" style="background:white;border-color:#999" type="text" placeholder="Getting PIs..." disabled="disabled">
                                 <i ng-show="!pis" class="icon-spinnery-dealie spinner small" style="margin-left: 177px;margin-top: -34px;"></i>
-                                <ui-select ng-show="pis" ng-model="pis.selected" theme="selectize" ng-disabled="disabled" on-select="handlePI($item)">
+                                <ui-select ng-show="pis" ng-model="pis.selected" theme="selectize" ng-disabled="disabled" on-select="handlePI($item, true)">
                                     <ui-select-match placeholder="Select A PI">{{$select.selected.Name}}</ui-select-match>
                                     <ui-select-choices repeat="pi in pis | propsFilter: {Name: $select.search}">
                                         <div once-text="pi.Name"></div>
@@ -167,7 +167,7 @@
 
                         <p ng-if="room.edit" style="margin-bottom:0;margin-top:2px" ng-class="{inactive: !pi.Is_active}">
                             {{pi.User.Name}} <span ng-if="!pi.Is_active">(Inactive)</span>
-                            <i ng-click="handlePI(pi, $index)" style="margin: 5px;" class="icon-cancel-2 danger"></i>
+                            <i ng-click="handlePI(pi, false)" style="margin: 5px;" class="icon-cancel-2 danger"></i>
                         </p>
 
                         <span ng-if="!room.edit">

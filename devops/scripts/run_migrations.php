@@ -1,7 +1,8 @@
 <?php
 
     // Set up RSMS application
-    require_once '/var/www/html/rsms/Application.php';
+    require_once '/var/www/html/rsms/ApplicationBootstrapper.php';
+    ApplicationBootstrapper::bootstrap();
 
     const EXTRAS_FILE = '/var/rsms/conf/.rsms.erasmus.my.cnf';
     const OPT_EXECUTE = 'EXECUTE';
@@ -39,8 +40,8 @@
     function run_script( $scriptpath ){
         if( file_exists($scriptpath) ){
             // Read ip/db from app config
-            $ip = ApplicationConfiguration::get('server.db.host');
-            $db = ApplicationConfiguration::get('server.db.name');
+            $ip = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_DB_HOST);
+            $db = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_DB_NAME);
             $EXTRAS_FILE = EXTRAS_FILE;
 
             $output = null;
@@ -73,10 +74,10 @@
         return $result;
     }
 
-    $envname = ApplicationConfiguration::get('server.env.name', '');
+    $envname = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_ENV_NAME, '');
 
-    $db_ip   = ApplicationConfiguration::get('server.db.host');
-    $db_name = ApplicationConfiguration::get('server.db.name');
+    $db_ip   = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_DB_HOST);
+    $db_name = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_DB_NAME);
 
     $db_desc = "$db_ip:$db_name";
     $db_padding = str_pad('', strlen($db_desc), '-');

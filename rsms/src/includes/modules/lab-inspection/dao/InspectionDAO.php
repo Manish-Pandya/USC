@@ -6,7 +6,7 @@ class InspectionDAO extends GenericDAO {
     public function __construct(){
         parent::__construct(new Inspection());
         if( !isset(self::$STATUS_CACHE)){
-            self::$STATUS_CACHE = new AppCache('Inspection Status');
+            self::$STATUS_CACHE = CacheFactory::create('Inspection Status');
         }
     }
 

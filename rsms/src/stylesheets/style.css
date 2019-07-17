@@ -2356,7 +2356,6 @@ ul.hazInvSubRooms li span i.icon-users {
   .hazardList {
     width: 30%;
     margin: 0 3% 0 0;
-    float: left;
   }
   /* line 1429, ../sass/style.scss */
   .hazardList.narrow {
@@ -2372,6 +2371,11 @@ ul.hazInvSubRooms li span i.icon-users {
     font-size: .85vw;
   }
 }
+
+.allHazardList {
+  display: flex;
+}
+
 /* line 1445, ../sass/style.scss */
 .allHazardList hr {
   border-top: 1px solid #999 !important;

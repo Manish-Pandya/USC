@@ -176,7 +176,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             $pi_widgets[] = $piLocationWidget;
 
             // Display Help block for PI users
-            $helpContact = $this->manager->getUserByUsername(ApplicationConfiguration::get('server.web.HELP_CONTACT_USERNAME'));
+            $helpContact = $this->manager->getUserByUsername(ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_WEB_HELP_CONTACT_USERNAME ));
             if( isset($helpContact) ){
                 $helpContactDto = new GenericDto(array(
                     'Name' => $helpContact->getName(),

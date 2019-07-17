@@ -181,7 +181,7 @@ class LabInspectionUpdatedMessage_Processor implements MessageTypeProcessor {
     }
 
     public static function getInspectionReportLink($inspection_id){
-        $urlBase = ApplicationConfiguration::get('server.web.url');
+        $urlBase = ApplicationConfiguration::get( ApplicationBootstrapper::CONFIG_SERVER_WEB_URL );
         $webRoot = WEB_ROOT;
         return "$urlBase$webRoot" . "views/inspection/InspectionConfirmation.php#/report?inspection=$inspection_id";
     }
