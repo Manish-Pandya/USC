@@ -1104,9 +1104,10 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
         };
 
         // Re-remind periodically
+        let reminderMessage = "Close the Hazard Inventory to refresh Hazards for Room " + room.Name + " in the Location Hub";
         let reminderInterval = setInterval(function(){
-            inv_toast = reminder(inv_toast, hazardInventory.ToastApi, "Close this Hazard Inventory to return to the Location Hub");
-            loc_toast = reminder(loc_toast, window.ToastApi, 'Close the Hazard Inventory window when you are done');
+            inv_toast = reminder(inv_toast, hazardInventory.ToastApi, reminderMessage);
+            loc_toast = reminder(loc_toast, window.ToastApi, reminderMessage);
         }, 5000);
 
         // When the hazardInventory window is closed...
