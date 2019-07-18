@@ -29,6 +29,9 @@ class TestPrincipalInvestigatorHazardRoomRelationDAO implements I_Test {
         // Create a Shared Room
         $this->test_shared_room = ReferenceData::create_room( $actionmanager, "Test Shared Room", true );
 
+        // Create an unused Room
+        $this->test_room_unused = ReferenceData::create_room( $actionmanager, "Unused Room", true );
+
         // Create a Hazard
         $this->test_hazard = ReferenceData::create_hazard(
             $actionmanager,
@@ -147,10 +150,13 @@ class TestPrincipalInvestigatorHazardRoomRelationDAO implements I_Test {
         $pi_id = $this->test_pi->getKey_id();
         $room_id = $this->test_room->getKey_id();
 
-        $roomIds = [$room_id];
-
         // Get inventory in room
-        $pihrDtos = $this->pihrDao->getHazardRoomDtosByPIId($pi_id, $roomIds);
+        $pihrDtos = $this->pihrDao->getHazardRoomDtosByPIId($pi_id, [$room_id]);
+
+        // Grab IDs of returned rooms
+        $roomIds = array_map( function($dto){ return $dto->getRoom_id(); }, $pihrDtos);
+        Assert::not_empty($roomIds, 'Room IDs extracted');
+        Assert::true( in_array($room_id, $roomIds), 'Test Room ID is included in data');
 
         // Get all hazard DTOs
         $hazardDtos = $this->pihrDao->getAllHazardDtos();
@@ -166,7 +172,50 @@ class TestPrincipalInvestigatorHazardRoomRelationDAO implements I_Test {
         Assert::eq( count($roomDtos), 1, "One PIHR DTO was returned");
         $dto = array_values($roomDtos)[0];
 
-        $inspectionRooms = $dto->getInspectionRooms();
+        $inspectionRooms = array_filter($dto->getInspectionRooms(), function($ir) use ($room_id) {
+            return $ir->getRoom_id() == $room_id;
+        });
+
+        Assert::eq( count($inspectionRooms), 1, "One PIHR is inspectable");
+        $pihr = array_values($inspectionRooms)[0];
+
+        Assert::true($pihr->getContainsHazard(), 'Room contains the Hazard');
+        Assert::false($pihr->getHasMultiplePis(), 'Room is not shared');
+        Assert::false($pihr->getOtherLab(), 'Room is not assigned only to Other PI');
+        Assert::false($pihr->getStored(), 'Hazard is not stored-only');
+    }
+
+    public function test__mergeHazardRoomDtos_soloRoom_SpecifyRooms_withExtra(){
+        $pi_id = $this->test_pi->getKey_id();
+        $room_id = $this->test_room->getKey_id();
+        $extra_room_id = $this->test_room_unused->getKey_id();
+
+        // Get inventory in room
+        $pihrDtos = $this->pihrDao->getHazardRoomDtosByPIId($pi_id, [$room_id, $extra_room_id]);
+
+        // Grab IDs of returned rooms
+        $roomIds = array_map( function($dto){ return $dto->getRoom_id(); }, $pihrDtos);
+        Assert::not_empty($roomIds, 'Room IDs extracted');
+        Assert::true( in_array($room_id, $roomIds), 'Test Room ID is included in data');
+
+        // Get all hazard DTOs
+        $hazardDtos = $this->pihrDao->getAllHazardDtos();
+
+        // Merge them
+        $mergedDtos = $this->pihrDao->mergeHazardRoomDtos($pi_id, $roomIds, $hazardDtos, $pihrDtos);
+
+        // Find DTOs for our test room
+        $roomDtos = array_filter( $mergedDtos, function($dto) {
+            return $dto->getIsPresent();
+        });
+
+        Assert::eq( count($roomDtos), 1, "One PIHR DTO was returned");
+        $dto = array_values($roomDtos)[0];
+
+        $inspectionRooms = array_filter($dto->getInspectionRooms(), function($ir) use ($room_id) {
+            return $ir->getRoom_id() == $room_id;
+        });
+
         Assert::eq( count($inspectionRooms), 1, "One PIHR is inspectable");
         $pihr = array_values($inspectionRooms)[0];
 
@@ -186,6 +235,7 @@ class TestPrincipalInvestigatorHazardRoomRelationDAO implements I_Test {
         // Grab IDs of returned rooms
         $roomIds = array_map( function($dto){ return $dto->getRoom_id(); }, $pihrDtos);
         Assert::not_empty($roomIds, 'Room IDs extracted');
+        Assert::true( in_array($room_id, $roomIds), 'Test Room ID is included in data');
 
         // Get all hazard DTOs
         $hazardDtos = $this->pihrDao->getAllHazardDtos();
@@ -226,10 +276,13 @@ class TestPrincipalInvestigatorHazardRoomRelationDAO implements I_Test {
         $pi_id = $this->test_shared_pi_1->getKey_id();
         $room_id = $this->test_shared_room->getKey_id();
 
-        $roomIds = [$room_id];
-
         // Get inventory in room
-        $pihrDtos = $this->pihrDao->getHazardRoomDtosByPIId($pi_id, $roomIds);
+        $pihrDtos = $this->pihrDao->getHazardRoomDtosByPIId($pi_id, [$room_id]);
+
+        // Grab IDs of returned rooms
+        $roomIds = array_map( function($dto){ return $dto->getRoom_id(); }, $pihrDtos);
+        Assert::not_empty($roomIds, 'Room IDs extracted');
+        Assert::true( in_array($room_id, $roomIds), 'Test Room ID is included in data');
 
         // Get all hazard DTOs
         $hazardDtos = $this->pihrDao->getAllHazardDtos();
@@ -245,7 +298,51 @@ class TestPrincipalInvestigatorHazardRoomRelationDAO implements I_Test {
         Assert::eq( count($roomDtos), 1, "One PIHR DTO was returned");
         $dto = array_values($roomDtos)[0];
 
-        $inspectionRooms = $dto->getInspectionRooms();
+        $inspectionRooms = array_filter($dto->getInspectionRooms(), function($ir) use ($room_id) {
+            return $ir->getRoom_id() == $room_id;
+        });
+
+        Assert::eq( count($inspectionRooms), 1, "One PIHR is inspectable");
+        $pihr = array_values($inspectionRooms)[0];
+
+        Assert::true($pihr->getContainsHazard(), 'Room contains the Hazard');
+        Assert::true($pihr->getHasMultiplePis(), 'Room is shared');
+        Assert::false($pihr->getOtherLab(), 'Room is not assigned only to Other PI');
+        Assert::false($pihr->getStored(), 'Hazard is not stored-only');
+    }
+
+    public function test__mergeHazardRoomDtos_sharedRoom_SpecifyRooms_withExtra(){
+        // Given a PI assigned a Shared Room
+        $pi_id = $this->test_shared_pi_1->getKey_id();
+        $room_id = $this->test_shared_room->getKey_id();
+        $extra_room_id = $this->test_room_unused->getKey_id();
+
+        // Get inventory in room
+        $pihrDtos = $this->pihrDao->getHazardRoomDtosByPIId($pi_id, [$room_id, $extra_room_id]);
+
+        // Grab IDs of returned rooms
+        $roomIds = array_map( function($dto){ return $dto->getRoom_id(); }, $pihrDtos);
+        Assert::not_empty($roomIds, 'Room IDs extracted');
+        Assert::true( in_array($room_id, $roomIds), 'Test Room ID is included in data');
+
+        // Get all hazard DTOs
+        $hazardDtos = $this->pihrDao->getAllHazardDtos();
+
+        // Merge them
+        $mergedDtos = $this->pihrDao->mergeHazardRoomDtos($pi_id, $roomIds, $hazardDtos, $pihrDtos);
+
+        // Find DTOs for our test room
+        $roomDtos = array_filter( $mergedDtos, function($dto) {
+            return $dto->getIsPresent();
+        });
+
+        Assert::eq( count($roomDtos), 1, "One PIHR DTO was returned");
+        $dto = array_values($roomDtos)[0];
+
+        $inspectionRooms = array_filter($dto->getInspectionRooms(), function($ir) use ($room_id) {
+            return $ir->getRoom_id() == $room_id;
+        });
+
         Assert::eq( count($inspectionRooms), 1, "One PIHR is inspectable");
         $pihr = array_values($inspectionRooms)[0];
 
@@ -266,6 +363,7 @@ class TestPrincipalInvestigatorHazardRoomRelationDAO implements I_Test {
         // Grab IDs of returned rooms
         $roomIds = array_map( function($dto){ return $dto->getRoom_id(); }, $pihrDtos);
         Assert::not_empty($roomIds, 'Room IDs extracted');
+        Assert::true( in_array($room_id, $roomIds), 'Test Room ID is included in data');
 
         // Get all hazard DTOs
         $hazardDtos = $this->pihrDao->getAllHazardDtos();

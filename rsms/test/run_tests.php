@@ -127,6 +127,7 @@ $div = str_pad('', strlen($summary) + 2, '-');
 // Decorate summary string
 $summary = ($percent == 100 ? green($summary) : red($summary));
 
+echo "\n";
 echo "+$div+\n";
 echo "|" . str_pad('Test Results', strlen($div), ' ', STR_PAD_BOTH) . "\n";
 echo "| $summary\n";
