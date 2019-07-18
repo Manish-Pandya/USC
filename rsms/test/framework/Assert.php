@@ -32,6 +32,14 @@ class Assert {
         Assert::__assert(false, $message);
     }
 
+    public static function not_null( $actual, $message ){
+        Assert::__assert( $actual !== NULL, "$message (expected non-null)");
+    }
+
+    public static function null( $actual, $message ){
+        Assert::__assert( $actual === NULL, "$message (expected null)");
+    }
+
     public static function eq( $actual, $expected, $message ){
         Assert::__assert( $actual == $expected, "$message (expected '$expected' | actual '$actual')");
     }
