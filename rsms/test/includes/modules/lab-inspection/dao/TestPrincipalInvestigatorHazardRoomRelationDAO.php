@@ -153,7 +153,7 @@ class TestPrincipalInvestigatorHazardRoomRelationDAO implements I_Test {
         );
     }
 
-    public function test__getPIsAssignedInRooms(){
+    public function test__getPIsAssignedInRooms_assignedOneRoom(){
         $room_id = $this->test_shared_room->getKey_id();
 
         $piIds = $this->pihrDao->getPIsAssignedInRooms( [$room_id] );
@@ -167,6 +167,43 @@ class TestPrincipalInvestigatorHazardRoomRelationDAO implements I_Test {
 
         Assert::true( in_array($this->test_shared_pi_1->getKey_id(), $vals), 'Shared PI 1 is assigned');
         Assert::true( in_array($this->test_shared_pi_2->getKey_id(), $vals), 'Shared PI 2 is assigned');
+    }
+
+    public function test__getPIsAssignedInRooms_assignedMultipleRooms(){
+
+        // Assign another room to test_shared_pi_1
+        $actionmanager = new ActionManager();
+        ReferenceData::assign_room( $actionmanager, $this->test_shared_pi_1, $this->test_room );
+
+        $room_id = $this->test_shared_room->getKey_id();
+        $extra_room_id = $this->test_room->getKey_id();
+
+        $piIds = $this->pihrDao->getPIsAssignedInRooms( [$room_id, $extra_room_id] );
+
+        Assert::eq( count($piIds), 2, 'Two Room lists are returned');
+
+        // One for test_room, one for test_shared_room
+        $shared_room_1 = null;
+        $shared_room_extra = null;
+        foreach($piIds as $r_id => $room_pi_ids ){
+            switch( $r_id ){
+                case $this->test_room->getKey_id():
+                    $shared_room_extra = $room_pi_ids;
+                    continue;
+                case $this->test_shared_room->getKey_id():
+                    $shared_room_1 = $room_pi_ids;
+                    continue;
+            }
+        }
+
+        Assert::not_null($shared_room_extra, 'Extra Room is included');
+        Assert::not_null($shared_room_1, 'Shared Room is included');
+
+        Assert::eq( count($shared_room_extra), 2, 'Extra room has 2 PIs');
+        Assert::true( in_array($this->test_shared_pi_1->getKey_id(), $shared_room_extra), 'Shared PI is included in Extra Room');
+
+        Assert::eq( count($shared_room_1), 2, 'Shared room has 2 PIs');
+        Assert::true( in_array($this->test_shared_pi_1->getKey_id(), $shared_room_1), 'Shared PI is included in Shared Room');
     }
 
     public function test__getPIHazardRoomRelations(){
@@ -239,7 +276,6 @@ class TestPrincipalInvestigatorHazardRoomRelationDAO implements I_Test {
         $this->pihrDao->determineHazardStatus( $hazardDto, $pihrDtos );
 
         // Then...
-        Logger::getRootLogger()->info($hazardDto);
 
         // Hazard is assigned to multiple PIs
         Assert::eq( $hazardDto->getHasMultiplePis(), self::IS_SHARED, 'Hazard is assigned to multiple PIs');
