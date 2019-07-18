@@ -139,8 +139,7 @@ class PrincipalInvestigatorHazardRoomRelationDAO extends GenericDAO {
             LEFT JOIN principal_investigator pi
                 ON pi_room.principal_investigator_id = pi.key_id
             WHERE pi.is_active = 1
-                AND pi_room.room_id IN ( $roomIds )
-            group by pi_room.principal_investigator_id";
+                AND pi_room.room_id IN ( $roomIds )";
 
 		$stmt = DBConnection::prepareStatement($queryString);
         $stmt->execute();
