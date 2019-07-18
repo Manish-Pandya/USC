@@ -6,40 +6,46 @@ class TestActionManager implements I_Test {
 
     public function before__createReferenceData(){
         // Create test hazard
-        $hazard = new Hazard();
-        $hazard->setIs_active(true);
-        $hazard->setName("Test Hazard");
-        $hazard->setParent_hazard_id(1);    // biological hazards
-        $this->test_hazard = $this->actionmanager->saveHazard($hazard);
+        $this->test_hazard = ReferenceData::create_hazard(
+            $this->actionmanager,
+            "Test Hazard",
+            1,              // biological hazards
+            true
+        );
 
         // Create test Room
-        $room = new Room();
-        $room->setIs_active(true);
-        $room->setName("Test Room");
-        $this->test_room = $this->actionmanager->saveRoom($room);
+        $this->test_room = ReferenceData::create_room(
+            $this->actionmanager,
+            "Test Room",
+            true
+        );
 
-        $user = new User();
-        $user->setIs_active(true);
-        $user->setFirst_name("TestUserFirstName");
-        $user->setLast_name("TestUserLastName");
-        $this->test_user = $this->actionmanager->saveUser($user);
+        // Create test user
+        $this->test_user = ReferenceData::create_user(
+            $this->actionmanager,
+            "TestUserFirstName",
+            "TestUserLastName",
+            "test@email.com",
+            true
+        );
 
         // Create test PI
-        $pidao = new PrincipalInvestigatorDAO();
-        $pi = new PrincipalInvestigator();
-        $pi->setIs_active(true);
-        $pi->setUser_id($user->getKey_id());
-        $this->test_pi = $pidao->save($pi);
+        $piDao = new PrincipalInvestigatorDAO();
+        $this->test_pi = ReferenceData::create_pi(
+            $piDao,
+            $this->test_user->getKey_id()
+        );
     }
 
     private function assign_hazard(){
         // Assign a hazard to the pi/room
-        $pihr_dao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation());
-        $pihr = new PrincipalInvestigatorHazardRoomRelation();
-        $pihr->setHazard_id($this->test_hazard->getKey_id());
-        $pihr->setPrincipal_investigator_id( $this->test_pi->getKey_id() );
-        $pihr->setRoom_id( $this->test_room->getKey_id() );
-        $pihr_dao->save($pihr);
+        $pihr_dao = new PrincipalInvestigatorHazardRoomRelationDAO();
+        return ReferenceData::assign_hazard(
+            $pihr_dao,
+            $this->test_pi,
+            $this->test_hazard,
+            $this->test_room
+        );
     }
 
     public function test__getRoomHasHazards(){

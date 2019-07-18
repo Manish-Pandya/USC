@@ -10,7 +10,11 @@ ApplicationBootstrapper::bootstrap(null, array(
 // Register the test framework for autoloading
 Autoloader::register_class_dir( dirname(__FILE__) . '/framework');
 
+// Register test utilities
+Autoloader::register_class_dir( dirname(__FILE__) . '/test-utils');
+
 $LOG = Logger::getLogger('run_tests');
+$LOG->info("+---------------------------------+");
 
 // Make sure we throw exceptions on assertion failures
 $LOG->debug("Enable assert exceptions");
