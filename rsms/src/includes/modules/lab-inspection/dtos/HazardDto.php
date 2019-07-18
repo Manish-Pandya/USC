@@ -60,6 +60,10 @@ class HazardDto {
 
     }
 
+    /**
+     *
+     * @param Array $rooms Array of PIHazardRoomDto
+     */
     public function filterRooms($rooms){
         $LOG = Logger::getLogger(__CLASS__ );
         $this->isPresent = false;
