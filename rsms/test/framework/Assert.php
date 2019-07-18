@@ -44,6 +44,10 @@ class Assert {
         Assert::__assert( $actual == $expected, "$message (expected '$expected' | actual '$actual')");
     }
 
+    public static function ne( $actual, $unexpected, $message ){
+        Assert::__assert( $actual != $expected, "$message (unexpected '$unexpected' | actual '$actual')");
+    }
+
     public static function true( $val, $message ){
         Assert::__assert( $val == true, "$message (" . ($val ? 'true' : 'false') . ")");
     }
