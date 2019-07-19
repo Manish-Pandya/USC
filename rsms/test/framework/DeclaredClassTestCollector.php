@@ -4,7 +4,7 @@
  */
 class DeclaredClassTestCollector implements I_TestCollector {
 
-    public function collect(){
+    public function collectTestsInstances(){
         // Collect all loaded I_Test implementations
         $classes = get_declared_classes();
         $test_instances = array();
@@ -16,6 +16,19 @@ class DeclaredClassTestCollector implements I_TestCollector {
         }
 
         return $test_instances;
+    }
+
+    public function collectTestMethods( $testClass ){
+        // Collect all methods which are prefixed as a test
+        $test_methods = array_filter(
+            get_class_methods( $testClass ),
+            function($name){
+                return TestRunner::str_starts_with( TestRunner::TEST_PREFIX, $name );
+            }
+        );
+
+        // Get just the values to prevent index holes
+        return array_values($test_methods);
     }
 }
 ?>

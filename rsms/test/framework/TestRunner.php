@@ -17,7 +17,7 @@ class TestRunner {
 
     public function runTests(){
         $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
-        $test_instances = $this->collector->collect();
+        $test_instances = $this->collector->collectTestsInstances();
 
         foreach($test_instances as $instance ){
             $class = get_class($instance);
@@ -53,15 +53,14 @@ class TestRunner {
         $methods = get_class_methods( $tests_name );
 
         // Collect method names for test execution
+        $test_methods = $this->collector->collectTestMethods( $tests_name );
+
+        // Collect method names for before/after execution
         $before_methods = array();
-        $test_methods = array();
         $after_methods = array();
 
         foreach($methods as $method){
-            if( self::str_starts_with(TestRunner::TEST_PREFIX, $method) ){
-                $test_methods[] = $method;
-            }
-            else if( self::str_starts_with(TestRunner::BEFORE_TEST_PREFIX, $method) ){
+            if( self::str_starts_with(TestRunner::BEFORE_TEST_PREFIX, $method) ){
                 $before_methods[] = $method;
             }
             else if( self::str_starts_with(TestRunner::AFTER_TEST_PREFIX, $method) ){
