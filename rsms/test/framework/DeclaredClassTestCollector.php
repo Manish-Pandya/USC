@@ -19,6 +19,10 @@ class DeclaredClassTestCollector implements I_TestCollector {
     }
 
     public function collectTestMethods( $testClass ){
+        return self::getAllDeclaredTestMethods($testClass);
+    }
+
+    public static function getAllDeclaredTestMethods( $testClass ){
         // Collect all methods which are prefixed as a test
         $test_methods = array_filter(
             get_class_methods( $testClass ),
@@ -30,5 +34,6 @@ class DeclaredClassTestCollector implements I_TestCollector {
         // Get just the values to prevent index holes
         return array_values($test_methods);
     }
+
 }
 ?>
