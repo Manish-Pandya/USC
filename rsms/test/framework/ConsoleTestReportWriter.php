@@ -4,7 +4,7 @@ class ConsoleTestReportWriter {
     public function write( Array $results ){
 
         function green($str){ return "\e[0;32m$str\e[0m"; }
-        function red($str){ return "\e[0;31m$str\e[0m"; }
+        function red($str){ return "\e[1;31m$str\e[0m"; }
         function pass( $str = NULL ){ return green("[PASS]" . (isset($str) ? ": $str" : '')); }
         function fail( $str = NULL ){ return red("[FAIL]" . (isset($str) ? ": $str" : '')); }
 
