@@ -1632,8 +1632,18 @@ class ActionManager {
         $length = count($list);
 
         foreach($list as $key=>$hazard){
-            if( $key != $length-1 && lcfirst( $list[$key]->getName() ) > lcfirst( $list[$key+1]->getName() ) )
-            return false;
+
+            if( $key != $length - 1 ){
+                $a = $list[$key]->getName();
+                $b = $list[$key + 1]->getName();
+
+                // A should be less-than B
+                $val = strcasecmp($a, $b);
+                if( $val > 0 ){
+                    // A is greater-than B
+                    return false;
+                }
+            }
         }
 
         return true;
@@ -4777,6 +4787,11 @@ class ActionManager {
         //recurse down hazard tree.  look in checklists array for each hazard.  if checklist is found, push it into ordered array.
         $orderedChecklists = array();
         $orderedChecklists = $this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $this->getHazardById(10000));
+
+        if( !empty($checklists) ){
+            $LOG->warn("Not all Checklists were matched:\n\t" . implode("\n\t", $checklists));
+        }
+
         $inspection->setChecklists( $orderedChecklists );
 
         //make sure we get the right rooms for our branch level checklists
