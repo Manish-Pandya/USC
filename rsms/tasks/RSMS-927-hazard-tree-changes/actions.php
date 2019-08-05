@@ -254,6 +254,8 @@ $KNOWN_ACTIONS = array(
     new DeleteAction(11175, "JL Request Delete: 20190705", "Cold Room"),
     new DeleteAction(11176, "JL Request Delete: 20190705", "Fiber Cutting"),
 
+    new DeleteAction(11095, "JL Request Delete: 20190805", "Pesticides"),
+
     new ReorderAction( 10000, 'Reorder all leaf nodes')
 );
 
