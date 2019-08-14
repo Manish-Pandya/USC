@@ -34,7 +34,7 @@ class LabInspectionReminder_Task implements ScheduledTask {
         return count($enqueued) . " $typeName messages have been enqueued. ";
     }
 
-    private function getReminderInspections(){
+    public function getReminderInspections(){
         // TODO: SELECT * FROM inspection_status WHERE status = 'INCOMPLETE CAP'
         // Join to inspection to check due date (notification_date + 14)
 
@@ -54,7 +54,7 @@ class LabInspectionReminder_Task implements ScheduledTask {
         return $this->getContextObjects($sql);
     }
 
-    private function getOverdueCapInspections(){
+    public function getOverdueCapInspections(){
         // TODO: SELECT * FROM inspection_status WHERE status = 'OVERDUE CAP'
         $sql = "SELECT
                 insp_status.inspection_id,
@@ -77,7 +77,7 @@ class LabInspectionReminder_Task implements ScheduledTask {
         return $this->getContextObjects($sql);
     }
 
-    private function getPendingCapInspections(){
+    public function getPendingCapInspections(){
         $STATUS_PENDING = CorrectiveAction::$STATUS_PENDING;
         $sql = "SELECT
                 inspection.key_id as inspection_id,
