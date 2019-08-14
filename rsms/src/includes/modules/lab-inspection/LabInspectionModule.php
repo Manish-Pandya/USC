@@ -59,7 +59,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
 
             // RSMS-826: Pending CAP Reminder
             new MessageTypeDto(self::$NAME, self::$MTYPE_CAP_REMINDER_PENDING,
-                'Automatic email sent two weeks after the CAP is submitted, ONLY when there are pending CAPs. Recurring email sent every two weeks until all pending CAPs are updated to complete or until December 31st of the inspection year.',
+                'Automatic email sent two weeks after the CAP is submitted, ONLY when there are pending CAPs. Recurring email sent every two weeks until all pending CAPs are updated to complete, inspection report has been closed out, or until December 31st of the inspection year.',
                 'LabInspectionReminder_Processor',
                 array('Inspection', 'LabInspectionReminderContext')),
 
