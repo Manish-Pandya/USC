@@ -83,6 +83,7 @@ class LabInspectionReminder_Task implements ScheduledTask {
                 inspection.key_id as inspection_id,
                 CURDATE() as reminder_date
             FROM inspection inspection
+            JOIN inspection_status inspection_status ON inspection_status.inspection_id = inspection.key_id
             JOIN response response ON response.inspection_id = inspection.key_id
             LEFT OUTER JOIN deficiency_selection defsel ON defsel.response_id = response.key_id
             LEFT OUTER JOIN supplemental_deficiency supdef ON supdef.response_id = response.key_id
@@ -93,6 +94,7 @@ class LabInspectionReminder_Task implements ScheduledTask {
             )
 
             WHERE inspection.schedule_year = YEAR(CURDATE())
+                AND inspection_status.inspection_status != 'CLOSED OUT'
                 AND cap.status = '$STATUS_PENDING'
                 AND CURDATE() > DATE(inspection.cap_submitted_date)
                 AND DATEDIFF(CURDATE(), DATE(inspection.cap_submitted_date)) % 14 = 0
