@@ -68,7 +68,7 @@
                         | filter:{Is_active: !showInactive}
                         | orderBy:[
                             'EquipmentInspections[EquipmentInspections.length - 1].Room.Building.Name',
-                            convenienceMethods.sortAlphaNum('EquipmentInspections[EquipmentInspections.length - 1].Room.Name')
+                            'EquipmentInspections[EquipmentInspections.length - 1].Room.Name'
                           ]
                     ) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
                     <td>
