@@ -124,8 +124,14 @@ class Checklist extends GenericCrud {
 	public function setMaster_id($master_id){ $this->master_id = $master_id; }
 
 	public function getQuestions(){
-		$thisDAO = new GenericDAO($this);
-		$this->questions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$QUESTIONS_RELATIONSHIP), array('order_index'));
+		if( $this->hasPrimaryKeyValue() ){
+			$thisDAO = new GenericDAO($this);
+			$this->questions = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$QUESTIONS_RELATIONSHIP), array('order_index'));
+		}
+		else {
+			$this->questions = [];
+		}
+
 		return $this->filterQuestionsForInspection($this->questions);
 	}
 	public function setQuestions($questions){ $this->questions = $questions; }

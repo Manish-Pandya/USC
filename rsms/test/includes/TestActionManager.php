@@ -67,5 +67,16 @@ class TestActionManager implements I_Test {
         Assert::false($pis->HasHazards, 'PI has no hazards');
         Assert::empty($pis->PI_ids, 'PI has no hazards in room');
     }
+
+    public function test__getChecklistByHazardId(){
+        // Load a checklist for a hazard which has no checklist
+        $c = $this->actionmanager->getChecklistByHazardId(10885);
+        Assert::true(isset($c), 'Checklist not null');
+        Assert::false($c->hasPrimaryKeyValue(), 'Cheklist is transient');
+
+        // Attempt to retrieve questions
+        $qs = $c->getQuestions();
+        Assert::empty($qs, 'Checklist has no questions');
+    }
 }
 ?>
