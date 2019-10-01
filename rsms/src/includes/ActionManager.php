@@ -4534,6 +4534,7 @@ class ActionManager {
                 $orderedRooms[$room->getKey_id()] = $room;
             }
 
+            $checklists = array();
 
             $masterHazards = array();
             //iterate the rooms and find the hazards present
