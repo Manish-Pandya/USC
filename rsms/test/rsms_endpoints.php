@@ -1,8 +1,16 @@
 <?php
-require_once '../src/Application.php';
+require_once '/var/www/html/rsms/Application.php';
 ?><html>
 <head>
     <style>
+        table {
+            font-size: 12px;
+        }
+
+        th h2, th h4 {
+            margin: 0;
+        }
+
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
@@ -51,8 +59,8 @@ foreach( ModuleManager::getAllModules() as $module ){
     ?>
     <tbody>
     <tr class="heading"><th colspan="11">
-        <div><?php echo $module->getModuleName(); ?> Module</div>
-        <div><?php echo get_class($actionManager) ?></div>
+        <h2><?php echo $module->getModuleName(); ?> Module</h2>
+        <h4><?php echo get_class($actionManager) ?></h4>
     </tr>
 
     <tr>
