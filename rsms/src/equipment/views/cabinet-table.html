@@ -66,10 +66,7 @@
                         | equipmentYear:selectedCertificationDate:uncertified:showInactive
                         | matchEquipmentCampus:campus.Key_id
                         | filter:{Is_active: !showInactive}
-                        | orderBy:[
-                            'EquipmentInspections[EquipmentInspections.length - 1].Room.Building.Name',
-                            'EquipmentInspections[EquipmentInspections.length - 1].Room.Name'
-                          ]
+                        | orderEquipmentByRoom
                     ) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
                     <td>
                         <i ng-click="openModal(cabinet, inspections[0], true)" class="icon-pencil primary" style="cursor:pointer"></i>
