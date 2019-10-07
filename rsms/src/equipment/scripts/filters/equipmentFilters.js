@@ -323,4 +323,107 @@ angular
             return pi.Is_active || pi.Date_last_modified >= insp.Date_created;
         });
     };
-});
+})
+
+.factory('roomSortService', function(){
+    let room_service = {
+        // Tokenize parts, normalize, sort
+        tokenizer_regexp: /\d+|\D+/g,
+
+        get_room: function get_room(equipment){
+            return equipment.EquipmentInspections[equipment.EquipmentInspections.length - 1].Room;
+        },
+
+        tokenize_room: function tokenize_room( room ){
+            let tokens = [];
+            if( room.Building ){
+                tokens.push( room.Building.Name );
+            }
+
+            return tokens.concat( room_service.tokenize_string(room.Name) )
+        },
+
+        tokenize_string: function tokenize_string( str ){
+            if( !str ) return [];
+            return str.match(room_service.tokenizer_regexp);
+        },
+
+        compareToken: function compareToken( a, b ){
+            if( a == b ) return 0;
+            if( !a ) return -1;
+            if( !b ) return  1;
+
+            let a_nan = isNaN(a);
+            let b_nan = isNaN(b);
+
+            let a_val = a;
+            let b_val = b;
+
+            if( a_nan == b_nan ){
+                // same class
+                if( !a_nan ){
+                    // Numeric; Normalize numbers to be padded to same length
+                    let len = Math.max( a.length, b.length );
+                    a_val = a.padEnd('0', len);
+                    b_val = b.padEnd('0', len);
+                }
+            }
+            else {
+                // different classes; convert to string and hope for best
+                a_val = '' + a;
+                b_val = '' + b;
+            }
+
+            return a_val.localeCompare(b_val);
+        },
+
+        token_sort: function token_sort( a_tokens, b_tokens ){
+            if( a_tokens == b_tokens ) return 0;
+            if( !a_tokens ) return -1;
+            if( !b_tokens ) return  1;
+
+            // Compare each paired token
+            let product = [];
+
+            let max = Math.max( a_tokens.length, b_tokens.length );
+            for( let i = 0; i < max; i++){
+                product[i] = room_service.compareToken( a_tokens[i], b_tokens[i] );
+            }
+
+            // Compute final equality from parts
+            for( let i = 0; i < product.length; i++ ){
+                if( product[i] !== 0 ){
+                    return product[i];
+                }
+            }
+
+            return 0;
+        },
+
+        sort_equipment: function sort( a, b ){
+            if( a == b ) return 0;
+            if( !a ) return -1;
+            if( !b ) return  1;
+
+            // Map equipments to their most-recent inspection's Room
+            // And use that room as their sort value
+            let a_room = room_service.get_room(a);
+            let b_room = room_service.get_room(b);
+
+            // Tokenize each room
+            let a_tokens = room_service.tokenize_room(a_room);
+            let b_tokens = room_service.tokenize_room(b_room);
+
+            return room_service.token_sort(a_tokens, b_tokens);
+        }
+    };
+
+    return room_service;
+})
+.filter('orderEquipmentByRoom', function(roomSortService){
+    return function( equips ){
+        if( !equips ) return equips;
+        return equips.sort( roomSortService.sort_equipment );
+    };
+})
+;
