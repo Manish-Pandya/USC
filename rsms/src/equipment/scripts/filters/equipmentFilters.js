@@ -361,20 +361,23 @@ angular
 
             if( a_nan == b_nan ){
                 // same class
-                if( !a_nan ){
-                    // Numeric; Normalize numbers to be padded to same length
-                    let len = Math.max( a.length, b.length );
-                    a_val = a.padEnd('0', len);
-                    b_val = b.padEnd('0', len);
+
+                if( a_nan ){
+                    // Strings, so compare naturally
+                    return a_val.localeCompare(b_val);
+                }
+                else {
+                    // Numeric; Compare as numbers rather than strings
+                    return parseInt(a) > parseInt(b) ? 1 : -1;
                 }
             }
             else {
                 // different classes; convert to string and hope for best
                 a_val = '' + a;
                 b_val = '' + b;
+                return a_val.localeCompare(b_val);
             }
 
-            return a_val.localeCompare(b_val);
         },
 
         token_sort: function token_sort( a_tokens, b_tokens ){
