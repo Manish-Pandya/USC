@@ -5616,10 +5616,13 @@ class ActionManager {
 
             // Add PI details
             $pi = $this->getPrincipalInvestigatorOrSupervisorForUser( $user );
-            $userData['PI'] = array(
-                'Name' => $pi->getUser()->getName(),
-                'Position' => $pi->getUser()->getPosition()
-            );
+
+            if( isset($pi) ){
+                $userData['PI'] = array(
+                    'Name' => $pi->getUser()->getName(),
+                    'Position' => $pi->getUser()->getPosition()
+                );
+            }
 
             if( CoreSecurity::userHasRoles($user, array('Lab Personnel')) ){
                 $userData['Lab_phone'] = $user->getLab_phone() ?? '';
