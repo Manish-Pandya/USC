@@ -14,6 +14,7 @@ class ActionMappingManager  {
         foreach( ModuleManager::getActiveModules() as $module ){
             // Get actions for module;
             $config = $module->getActionConfig();
+            // TODO: Determine if config contains REST-style paths
             if( array_key_exists($actionName, $config) ){
                 $moduleName = get_class($module);
                 $LOG->trace("Module $moduleName contains action mapping for '$actionName'");
