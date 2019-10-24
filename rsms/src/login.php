@@ -39,6 +39,26 @@ if( isset($_SESSION) && isset($_SESSION['USER']) && !isset($_SESSION['error']) )
     <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/datepicker.css"/>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css"/>
 
+    <script type="text/javascript">
+        function isSupportedBrowser() {
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf('MSIE ');
+            if (msie > 0) {
+                // IE 10 or older
+                return false
+            }
+
+            var trident = ua.indexOf('Trident/');
+            if (trident > 0) {
+                // IE 11
+                return false;
+            }
+
+            // other browser
+            return true;
+        }
+    </script>
+
     <style>
         img.usclogo {
             width: 310px;
@@ -107,10 +127,26 @@ if( isset($_SESSION) && isset($_SESSION['USER']) && !isset($_SESSION['error']) )
             </div>
         </form>
         <div id="disclaimers">
+            <div id="disclaimer-ie" style="font-weight:bold;"></div>
             <div id="disclaimer-network">
                 <span>This system can only be accessed from a secured University network (such as <b>uscfacstaff</b> or <b>uscstudent</b>) using your <a href="https://www.sc.edu/about/offices_and_divisions/university_technology_services/services/student/logins/networkusername.php">Network Username</a>.</span>
             </div>
         </div>
     </section>
+
+    <script>
+        if( !isSupportedBrowser() ){
+            // Disallow login
+            let button = document.getElementById('login');
+            button.parentNode.removeChild(button);
+
+            // Add warning
+            document.getElementById('disclaimer-ie').innerHTML = 'The browser you are using is not supported by RSMS. Please use a supported browser such as'
+                + '&nbsp;<a href="http://www.google.com/chrome/">Google Chrome</a>,'
+                + '&nbsp;<a href="https://www.mozilla.org/en-US/firefox/">Mozilla Firefox</a>,'
+                + '&nbsp;<a href="https://www.apple.com/safari/">Apple Safari</a>,'
+                + '&nbsp;or&nbsp;<a href="https://www.microsoft.com/en-us/windows/microsoft-edge">Microsoft Edge</a>';
+        }
+    </script>
 </body>
 
