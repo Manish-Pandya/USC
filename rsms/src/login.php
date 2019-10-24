@@ -38,37 +38,74 @@ if( isset($_SESSION) && isset($_SESSION['USER']) && !isset($_SESSION['error']) )
     <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/icomoon.css"/>
     <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/datepicker.css"/>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css"/>
+
+    <style>
+        img.usclogo {
+            width: 310px;
+            height: 53px;
+            padding-top: 25px;
+            padding-bottom: 25px;
+        }
+
+        section {
+            margin-left: 10%;
+            margin-right: 10%;
+        }
+
+        header {
+            font-family: "Berlingske Sans", "Arial", sans-serif;
+            font-size: 1.6em;
+            min-height: 50px;
+
+            padding-left: 10%;
+            padding-right: 10%;
+
+            display: flex;
+            align-items: center;
+
+            color: white;
+        }
+
+        header.main { background-color: black; }
+        header.sub { background-color: #73000a; }
+    </style>
 </head>
 <body>
-<div class="container-fluid">
-    <h2 style="padding:5px 0;">Welcome to the University of South Carolina Research Safety Management System</h2>
-    <form class="form form-horizontal" method="post" action="<?php echo WEB_ROOT?>action.php" style="padding:20px; background:white;">
-        <input type="hidden" name="action" value="loginAction">
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" class="form-control" name="username" placeholder="Enter Username">
-          </div>
-         <div class="form-group">
-            <label for="exampleInputPassword1">Password</label>
-            <input type="password" name="password" class="form-control" id="password" placeholder="Password">
-         </div>
+    <header class="main">
+        <img class="usclogo" src="<?php echo WEB_ROOT?>img/UofSC_Primary_RGB_REV_G.png"/>
+    </header>
+    <header class="sub">
+        <h2 style="color: white">Research Safety Management System</h2>
+    </header>
 
-         <?php if(isset($_SESSION) && isset($_SESSION['error']) && $_SESSION['error'] != NULL) {?>
-         <div class="form-group" style="width: 588px;margin-top: 10px;">
-             <h3 class="alert alert-danger"><?php echo $_SESSION['error'];?></h3>
-         </div>
-         <?php } ?>
+    <section>
+        <form class="form form-horizontal" method="post" action="<?php echo WEB_ROOT?>action.php" style="padding:20px; background:white;">
+            <input type="hidden" name="action" value="loginAction">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" name="username" placeholder="Enter Username">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <input type="password" name="password" class="form-control" id="password" placeholder="Password">
+            </div>
 
-        <?php if(isset($_SESSION) && isset($_SESSION['LOGGED_OUT']) && $_SESSION['LOGGED_OUT'] != NULL) {?>
-        <div class="form-group" style="width: 588px;margin-top: 10px;">
-            <h3 class="alert alert-danger"><?php echo $_SESSION['LOGGED_OUT'];?></h3>
-        </div>
-        <?php } ?>
+            <?php if(isset($_SESSION) && isset($_SESSION['error']) && $_SESSION['error'] != NULL) {?>
+            <div class="form-group" style="width: 588px;margin-top: 10px;">
+                <h3 class="alert alert-danger"><?php echo $_SESSION['error'];?></h3>
+            </div>
+            <?php } ?>
 
-         <div class="form-group" style="margin-top:20px;">
-            <button type="submit" name="submit" class="btn btn-large btn-success" id="login" style="padding:0 20px;">Login</button>
-         </div>
-    </form>
-</div>
+            <?php if(isset($_SESSION) && isset($_SESSION['LOGGED_OUT']) && $_SESSION['LOGGED_OUT'] != NULL) {?>
+            <div class="form-group" style="width: 588px;margin-top: 10px;">
+                <h3 class="alert alert-danger"><?php echo $_SESSION['LOGGED_OUT'];?></h3>
+            </div>
+            <?php } ?>
+
+            <div class="form-group" style="margin-top:20px;">
+                <button type="submit" name="submit" class="btn btn-large btn-success" id="login" style="padding:0 20px;">Login</button>
+            </div>
+        </form>
+    </section>
 </body>
 
