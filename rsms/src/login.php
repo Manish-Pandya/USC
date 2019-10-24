@@ -106,6 +106,11 @@ if( isset($_SESSION) && isset($_SESSION['USER']) && !isset($_SESSION['error']) )
                 <button type="submit" name="submit" class="btn btn-large btn-success" id="login" style="padding:0 20px;">Login</button>
             </div>
         </form>
+        <div id="disclaimers">
+            <div id="disclaimer-network">
+                <span>This system can only be accessed from a secured University network (such as <b>uscfacstaff</b> or <b>uscstudent</b>) using your <a href="https://www.sc.edu/about/offices_and_divisions/university_technology_services/services/student/logins/networkusername.php">Network Username</a>.</span>
+            </div>
+        </div>
     </section>
 </body>
 
