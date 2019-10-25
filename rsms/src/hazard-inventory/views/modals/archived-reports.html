@@ -20,7 +20,7 @@
                 <th>Inspection Report</th>
             </thead>
             <tbody>
-                <tr ng-repeat="(key, inspection) in previousInspections = (modalData.PI.Inspections | inspectionClosed:true)">
+                <tr ng-repeat="(key, inspection) in previousInspections = (modalData.PI.Inspections | inspectionClosed:true | orderBy: 'Date_started':true)">
                     <td>{{inspection.Schedule_year}}</td>
                     <td>{{inspection.Date_started | dateToISO}}</td>
                     <td>
