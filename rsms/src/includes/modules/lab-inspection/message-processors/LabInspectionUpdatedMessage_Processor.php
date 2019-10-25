@@ -75,7 +75,7 @@ class LabInspectionUpdatedMessage_Processor implements MessageTypeProcessor {
     private function getRecipientEmailAddressesFromInspection( $inspection ){
         $pi = $inspection->getPrincipalInvestigator();
         $inspectors = $inspection->getInspectors();
-        $lab_contacts = $pi->getLabPersonnel();
+        $lab_contacts = $inspection->getLabPersonnel();
 
         // Merge to a single array of users
         $users = array();
