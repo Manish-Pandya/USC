@@ -77,6 +77,10 @@ angular.module('ng-EmailHub')
             item.ShowBody = !item.ShowBody
         }
 
+        $scope.getAllRecipients = function getAllRecipients( email ){
+            return [email.Recipients, email.Cc_recipients].join(',').split(',');
+        }
+
         $scope.Pager = {
             currentPage: 1,
             numPerPage: 20

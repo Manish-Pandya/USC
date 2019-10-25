@@ -71,7 +71,7 @@
                     <td>{{email.Subject}}</td>
                     <td>
                         <ul style="list-style: none; margin: unset;">
-                            <li ng-if="to_cc" ng-repeat="to_cc in (email.Recipients + (email.Cc_recipients || '')).split(',')">
+                            <li ng-if="to_cc" ng-repeat="to_cc in getAllRecipients(email)">
                                 <code>{{to_cc}}</code>
                             </li>
                         </ul>
@@ -151,7 +151,10 @@
             page="Pager.currentPage"
             items-per-page="Pager.numPerPage"
             on-select-page="loadPage(page)"
-            total-items="QueuedEmailsPage.TotalCount">
+            total-items="QueuedEmailsPage.TotalCount"
+            boundary-links="true"
+            max-size="10"
+            rotate="false">
         </pagination>
     </div>
 
