@@ -188,9 +188,12 @@ my-lab-widget {
     color: #777;
 }
 
+.action-required {
+    background-color: lightgoldenrodyellow !important;
+}
+
 .table-row.inspection-archived {
     font-style: italic;
-    background-color: lightgray !important;
     color: lightslategray !important;
 }
 
