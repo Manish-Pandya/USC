@@ -59,6 +59,9 @@ angular.module('ng-EmailHub')
                     $scope.Pager.currentPage = page.PageNumber;
                     $scope.Pager.numPerPage = page.PageSize;
 
+                    // Update form state
+                    $scope.searchForm.$setPristine();
+
                     return $scope.QueuedEmails;
                 })
             ]);

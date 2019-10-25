@@ -72,7 +72,7 @@ class LabInspectionUpdatedMessage_Processor implements MessageTypeProcessor {
         return $this->prepareRecipientsArray( $match['recipients'], $match['cc_recipients'] );
     }
 
-    private function getRecipientsFromInspection( $inspection ){
+    private function getRecipientEmailAddressesFromInspection( $inspection ){
         $pi = $inspection->getPrincipalInvestigator();
         $inspectors = $inspection->getInspectors();
         $lab_contacts = $pi->getLabPersonnel();
@@ -94,15 +94,41 @@ class LabInspectionUpdatedMessage_Processor implements MessageTypeProcessor {
             $inspector_emails[] = $inspector->getUser()->getEmail();
         }
 
+        return [
+            'lab_emails' => $recipients,
+            'inspector_emails' => $inspector_emails
+        ];
+    }
+
+    private function getRecipientsFromInspection( $inspection ){
+        $emails = $this->getRecipientEmailAddressesFromInspection($inspection);
+
         // Implode arrays to csv
         return $this->prepareRecipientsArray(
-            implode(',', $recipients),
-            implode(',', $inspector_emails)
+            implode(',', $emails['lab_emails']),
+            implode(',', $emails['inspector_emails'])
+        );
+    }
+
+    private function union( Array &$a1, Array &$a2 ){
+        return array_filter(            // Empty filter function will remove falsy (empty-string) values
+            array_unique(               // Remove duplicate values
+                array_merge($a1, $a2)   // Merge the two arrays
+            )
         );
     }
 
     private function computeEmailRecipients( $inspection, $context ){
         $LOG = Logger::getLogger(__CLASS__);
+
+        // Always include standard recipients
+        // Send to:
+        //   PI
+        //   Lab Contacts
+        //   Inspectors
+        $recipient_arrays = $this->getRecipientEmailAddressesFromInspection( $inspection );
+        $to_addresses = $recipient_arrays['lab_emails'];
+        $cc_addresses = $recipient_arrays['inspector_emails'];
 
         //   "the PI and any other individuals sent the original inspection report email"
         // Problem: RSMS postInspection allows the inspector to selectively send email to PI, Contacts, and arbitrary addresses
@@ -116,18 +142,21 @@ class LabInspectionUpdatedMessage_Processor implements MessageTypeProcessor {
             $LOG->info("Found " . count($matches) . " previous email(s) for $context. Copying recipients from latest email");
 
             // Email(s) have been sent for this inspection before. Get the SAME recipients from the latest
-            return $this->getRecipientsFromReportEmail($matches[0]);
-        }
-        else{
-            $LOG->info("No previous emails have been sent for $context. Inferring recipients from Inspection");
-            // No emails have been sent for this context. While this is an unusual use-case, infer the recipients from the inspection
-            // Send to:
-            //   PI
-            //   Lab Contacts
-            //   Inspectors
+            $old_recipients = $this->getRecipientsFromReportEmail($matches[0]);
 
-            return $this->getRecipientsFromInspection( $inspection );
+            // Merge standard and old_recipients
+            $old_to = explode(',', $old_recipients['to']);
+            $to_addresses = $this->union($old_to, $to_addresses);
+
+            $old_cc = explode(',', $old_recipients['cc']);
+            $cc_addresses = $this->union($old_cc, $cc_addresses);
         }
+
+        // Implode arrays to csv
+        return $this->prepareRecipientsArray(
+            implode(',', $to_addresses),
+            implode(',', $cc_addresses)
+        );
     }
 
     private function findLatestInspectionReportEmail( $context ){
