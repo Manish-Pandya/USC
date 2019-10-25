@@ -19,13 +19,13 @@
                 <span ng-repeat="inspector in inspection.Inspectors">{{inspector}}<span ng-if="!$last">, </span></span>
             </div>
             <div class="hazard-icons">
-                <span ng-if="api.inspectionHasHazard( inspection, 'bio_hazards_present')" ng-class="{'grayed-out': inspection.Is_rad}">
+                <span ng-if="api.inspectionHasHazard( inspection, 'bio_hazards_present')" ng-show="!inspection.Is_rad">
                     <img ng-src="{{GLOBAL_WEB_ROOT}}/img/biohazard-largeicon.png" />
                 </span>
-                <span ng-if="api.inspectionHasHazard( inspection, 'chem_hazards_present')" ng-class="{'grayed-out': inspection.Is_rad}">
+                <span ng-if="api.inspectionHasHazard( inspection, 'chem_hazards_present')" ng-show="!inspection.Is_rad">
                     <img ng-src="{{GLOBAL_WEB_ROOT}}/img/chemical-blue-icon.png" />
                 </span>
-                <span ng-if="api.inspectionHasHazard( inspection, 'rad_hazards_present')" ng-class="{'grayed-out': !inspection.Is_rad}">
+                <span ng-if="api.inspectionHasHazard( inspection, 'rad_hazards_present')" ng-show="inspection.Is_rad">
                     <img ng-src="{{GLOBAL_WEB_ROOT}}/img/radiation-large-icon.png" />
                 </span>
             </div>
