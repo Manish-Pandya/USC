@@ -271,6 +271,8 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
                     'Key_id' => $inspection->getKey_id(),
                     'Status' => $status,
                     'Date_started' => $inspection->getDate_started(),
+                    'Date_closed' => $inspection->getDate_closed(),
+                    'Cap_submitted_date' => $inspection->getCap_submitted_date(),
                     'Is_rad' => $inspection->getIs_rad(),
                     'HazardInfo' => $dao->getInspectionHazardInfo($inspection->getKey_id()),
                     'Inspectors' => array_map( function($i){ return $i->getName(); }, $inspection->getInspectors())
