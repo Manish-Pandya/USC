@@ -171,7 +171,7 @@ session_start();
 <body>
     <?php require('../views/user_info_bar.php'); ?>
 
-    <div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" class="container-fluid" style="margin-top:25px;">
+    <div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" ng-cloak class="container-fluid" style="margin-top:25px;">
 
         <div cg-busy="{promise:piPromise,message:'Loading Principal Investigator Details',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:hazardPromise,message:'Loading Hazards',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
