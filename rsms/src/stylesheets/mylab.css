@@ -188,6 +188,12 @@ my-lab-widget {
     color: #777;
 }
 
+.table-row.inspection-archived {
+    font-style: italic;
+    background-color: lightgray !important;
+    color: lightslategray !important;
+}
+
 .tight-list {
     border: 3px solid rgb(205, 205, 205);
     padding: 9px;

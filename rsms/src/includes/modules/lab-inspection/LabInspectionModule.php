@@ -264,9 +264,12 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             // Look up hazard info for displayable inspections
             $dao = new InspectionDAO();
             foreach($inspections as $inspection){
+                $oldOrArchived = LabInspectionSecurity::inspectionIsOldOrArchived($inspection->getKey_id());
+                $status = $oldOrArchived ? 'Archived' : $inspection->getStatus();
+
                 $inspectionDtos[] = new GenericDto(array(
                     'Key_id' => $inspection->getKey_id(),
-                    'Status' => $inspection->getStatus(),
+                    'Status' => $status,
                     'Date_started' => $inspection->getDate_started(),
                     'Is_rad' => $inspection->getIs_rad(),
                     'HazardInfo' => $dao->getInspectionHazardInfo($inspection->getKey_id()),
