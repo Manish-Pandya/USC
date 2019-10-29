@@ -125,12 +125,12 @@ class LabInspectionSecurity {
 
             if( $is_archived ){
                 // Cannot edit archived inspection
-                $LOG->debug("$inspection is archived; deny user edits");
+                $LOG->debug("$inspection_id is archived; deny user edits");
                 return false;
             }
             else {
                 // Inspection is still open; OK to edit
-                $LOG->debug("$inspection is still open; OK to edit");
+                $LOG->debug("$inspection_id is still open; OK to edit");
                 return true;
             }
         }
