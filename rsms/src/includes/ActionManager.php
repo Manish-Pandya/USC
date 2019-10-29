@@ -572,6 +572,11 @@ class ActionManager {
     }
 
     public function getCurrentUser(){
+        if( !isset($_SESSION) ){
+            // No session
+            return null;
+        }
+
         // when a user is logged in and in session, return the currently logged in user.
         EntityManager::with_entity_maps(User::class, array(
             EntityMap::eager("getPrincipalInvestigator"),
