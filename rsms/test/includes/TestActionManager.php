@@ -9,7 +9,6 @@ class TestActionManager implements I_Test {
         $hazard = new Hazard();
         $hazard->setIs_active(true);
         $hazard->setName("Test Hazard");
-        $hazard->setParent_hazard_id(1);    // biological hazards
         $this->test_hazard = $this->actionmanager->saveHazard($hazard);
 
         // Create test Room
@@ -70,7 +69,7 @@ class TestActionManager implements I_Test {
 
     public function test__getChecklistByHazardId(){
         // Load a checklist for a hazard which has no checklist
-        $c = $this->actionmanager->getChecklistByHazardId(10885);
+        $c = $this->actionmanager->getChecklistByHazardId($this->test_hazard->getKey_id());
         Assert::true(isset($c), 'Checklist not null');
         Assert::false($c->hasPrimaryKeyValue(), 'Cheklist is transient');
 
