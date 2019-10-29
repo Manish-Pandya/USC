@@ -17,6 +17,12 @@ class TestActionManager implements I_Test {
         $room->setName("Test Room");
         $this->test_room = $this->actionmanager->saveRoom($room);
 
+        $roles = Core_TestDataProvider::create_named_roles([
+            'Principal Investigator'
+        ]);
+
+        $this->pi_role = $roles['Principal Investigator'];
+
         $user = new User();
         $user->setIs_active(true);
         $user->setFirst_name("TestUserFirstName");
@@ -76,6 +82,38 @@ class TestActionManager implements I_Test {
         // Attempt to retrieve questions
         $qs = $c->getQuestions();
         Assert::empty($qs, 'Checklist has no questions');
+    }
+
+    public function test__saveUser_existingPi_noDupe(){
+        // Given a PI User with data to change
+        $incoming = new User();
+        $incoming->setKey_id( $this->test_user->getKey_id() );
+        $incoming->setFirst_name( $this->test_user->getFirst_name() );
+        $incoming->setLast_name( $this->test_user->getLast_name() );
+        $incoming->setEmail( "changed-email@address.com" );             // Modified email address
+
+        $incoming->setRoles([
+            [
+                'Key_id' => $this->pi_role->getKey_id(),
+                'Name' => $this->pi_role->getName()
+            ]
+        ]);
+
+        // and an empty PI object
+        $incoming->setPrincipalInvestigator( new PrincipalInvestigator() );
+
+        // When we save this PI user
+        $saved = $this->actionmanager->saveUser($incoming);
+
+        // Then no duplicate PI is created
+        $piUsers = QueryUtil::selectFrom(new PrincipalInvestigator())
+            ->where(Field::create('user_id', 'principal_investigator'), '=', $this->test_user->getKey_id())
+            ->getAll();
+
+        Assert::eq( count($piUsers), 1, "Only one PI exists for $this->test_user");
+
+        // and email has been changed
+        Assert::eq( $saved->getEmail(), 'changed-email@address.com', 'Email address was changed');
     }
 }
 ?>

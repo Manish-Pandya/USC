@@ -987,6 +987,13 @@ class ActionManager {
                 $pi->setUser_id($user->getKey_id());
                 $pi->setIs_active($user->getIs_active());
 
+                // RSMS-1041:
+                // If there is an old PI, make sure the data we're about to save
+                //   references the PI ID
+                if( isset($old_pi) ){
+                    $pi->setKey_id($old_pi->getKey_id());
+                }
+
                 $newPi = $this->savePI($pi);
                 $LOG->info("Saved PI details: $pi");
 
