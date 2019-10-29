@@ -65,8 +65,9 @@ class TestLabInspectionReminder_Task implements I_Test {
         // Then the inspection is returned
         Assert::not_empty($pending, 'Pending items matched by Task');
         $inspection_id = $this->inspection->getKey_id();
-        $match = array_filter($pending, function($i) use ($inspection_id) { return $i->inspection_id == $inspection_id; })[0] ?? null;
-        Assert::true( isset($match), 'Test Inspection is matched by Task');
+        $matches = array_filter($pending, function($i) use ($inspection_id) { return $i->inspection_id == $inspection_id; });
+        Assert::eq( count($matches), 1, "One inspection is matched by Task");
+        Assert::eq( array_values($matches)[0]->inspection_id, $inspection_id, "Test Inspection (#$inspection_id) is matched by Task");
     }
 
     public function test__getPendingCapInspections_closedInspectionWithPendingCAP(){
