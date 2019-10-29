@@ -12,7 +12,7 @@
 class ActionManager {
 
 	public function getCurrentRoles(){
-		if($_SESSION && $_SESSION['USER']){
+		if( isset($_SESSION) && isset($_SESSION['USER']) ){
 			$user = $_SESSION['USER'];
 			$currentRoles = array();
 			foreach($user->getRoles() as $role){
