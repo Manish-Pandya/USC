@@ -35,6 +35,13 @@ class TestActionManager implements I_Test {
         $pi->setIs_active(true);
         $pi->setUser_id($user->getKey_id());
         $this->test_pi = $pidao->save($pi);
+
+        // Non-PI user
+        $user = new User();
+        $user->setIs_active(true);
+        $user->setFirst_name("NonPIFirst");
+        $user->setLast_name("NonPILast");
+        $this->test_non_pi_user = $this->actionmanager->saveUser($user);
     }
 
     private function assign_hazard(){
@@ -82,6 +89,31 @@ class TestActionManager implements I_Test {
         // Attempt to retrieve questions
         $qs = $c->getQuestions();
         Assert::empty($qs, 'Checklist has no questions');
+    }
+
+    public function test__saveUser_newPi(){
+        // Given a User who is given the PI role
+        $incoming = new User();
+        $incoming->setKey_id( $this->test_non_pi_user->getKey_id() );
+        $incoming->setFirst_name( $this->test_non_pi_user->getFirst_name() );
+        $incoming->setLast_name( $this->test_non_pi_user->getLast_name() );
+        $incoming->setEmail( $this->test_non_pi_user->getEmail() );
+        $incoming->setRoles([
+            [
+                'Key_id' => $this->pi_role->getKey_id(),
+                'Name' => $this->pi_role->getName()
+            ]
+        ]);
+
+        // When we save this PI user
+        $saved = $this->actionmanager->saveUser($incoming);
+
+        // Then a new PI is created
+        $piUsers = QueryUtil::selectFrom(new PrincipalInvestigator())
+            ->where(Field::create('user_id', 'principal_investigator'), '=', $this->test_non_pi_user->getKey_id())
+            ->getAll();
+
+        Assert::eq( count($piUsers), 1, "A new PI exists for $this->test_non_pi_user");
     }
 
     public function test__saveUser_existingPi_noDupe(){
