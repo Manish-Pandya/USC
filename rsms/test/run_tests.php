@@ -23,10 +23,11 @@ $reportWriter = TestSetup::getReportWriter();
 
 // Collect and Run tests
 $LOG->debug("Running tests");
-$results = $runner->runTests();
+$results = $runner->runTests( $reportWriter );
 
 // Analyze results and write Report(s)
 $LOG->debug("Print test results");
-$reportWriter->write($results);
+$reportWriter->writePhase('Generating Report');
+$reportWriter->writeReport($results);
 $LOG->debug("Completed test running");
 ?>

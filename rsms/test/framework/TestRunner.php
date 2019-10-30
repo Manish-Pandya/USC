@@ -15,16 +15,24 @@ class TestRunner {
         return $this->results;
     }
 
-    public function runTests(){
+    public function runTests( $writer ){
         $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
-        $test_instances = $this->collector->collectTestsInstances();
 
+        $writer->writePhase('Test Collection');
+        $test_instances = $this->collector->collectTestsInstances();
+        $writer->writePhaseProgress("Collected " . count($test_instances) . " Tests");
+        $writer->writePhaseEnd();
+
+        $writer->writePhase('Running Tests');
         foreach($test_instances as $instance ){
             $class = get_class($instance);
 
             if( $instance instanceof I_Test ){
                 $LOG->info("Running $class");
+
+                $writer->writePhaseProgress($class);
                 $this->run_test_class($instance);
+                $writer->writePhaseEnd($class);
             }
             else{
                 $LOG->error("'$class' does not implement I_Test");
