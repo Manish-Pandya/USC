@@ -20,7 +20,10 @@
 	</table>
 	<table ng-repeat="checklist in questionsByChecklist.biologicalHazards.checklists" ng-if="someAnswers(checklist)" class="table table-hover table-striped detailsReportTable table-bordered" style="border:3px solid black;">
 		<tr ng-if="someAnswers(checklist)"> 
-			<th colspan="2" class="bioHeader"><h3>{{checklist.Name}}</h3></th>
+			<th colspan="2" class="bioHeader">
+				<h3>{{checklist.Name}}</h3>
+				<span class="inactive-checklist-item" ng-if="!checklist.Is_active">This checklist is now inactive</span>
+			</th>
 		</tr>
 		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length || question.Responses.Recommendations.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
@@ -33,7 +36,10 @@
 	</table>
 	<table ng-repeat="checklist in questionsByChecklist.chemicalHazards.checklists" ng-if="someAnswers(checklist)" class="table table-hover table-striped detailsReportTable table-bordered" style="border:3px solid black;">
 		<tr>
-			<th colspan="2" class="chemHeader"><h3>{{checklist.Name}}</h3></th>
+			<th colspan="2" class="chemHeader">
+				<h3>{{checklist.Name}}</h3>
+				<span class="inactive-checklist-item" ng-if="!checklist.Is_active">This checklist is now inactive</span>
+			</th>
 		</tr>
 		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length || question.Responses.Recommendations.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
@@ -46,7 +52,10 @@
 	</table>
 	<table ng-repeat="checklist in questionsByChecklist.generalHazards.checklists" ng-if="someAnswers(checklist)" class="table table-hover table-striped detailsReportTable table-bordered" style="border:3px solid black;">
 		<tr>
-			<th colspan="2" class="genHeader"><h3>{{checklist.Name}}</h3></th>
+			<th colspan="2" class="genHeader">
+				<h3>{{checklist.Name}}</h3>
+				<span class="inactive-checklist-item" ng-if="!checklist.Is_active">This checklist is now inactive</span>
+			</th>
 		</tr>
 		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length || question.Responses.Recommendations.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
@@ -59,7 +68,10 @@
 	</table>
 	<table ng-repeat="checklist in questionsByChecklist.radiationHazards.checklists" ng-if="someAnswers(checklist) && inspection.Is_rad" class="table table-hover table-striped detailsReportTable table-bordered" style="border:3px solid black;">
 		<tr>
-			<th colspan="2" class="radHeader"><h3>{{checklist.Name}}</h3></th>
+			<th colspan="2" class="radHeader">
+				<h3>{{checklist.Name}}</h3>
+				<span class="inactive-checklist-item" ng-if="!checklist.Is_active">This checklist is now inactive</span>
+			</th>
 		</tr>
 		<tr ng-repeat="question in checklist.Questions" ng-if="question.Responses.Answer.length || question.Responses.Recommendations.length" ng-include="'post-inspection-templates/questiondetail.html'"></tr>
 	</table>
