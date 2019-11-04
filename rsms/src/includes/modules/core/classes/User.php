@@ -103,7 +103,14 @@ class User extends GenericCrud implements JsonSerializable {
 	public function __construct(){
 
 		
-    }
+	}
+
+	protected function getToStringParts(){
+		return array_merge( parent::getToStringParts(), [
+			'username=' . $this->username
+		]);
+	}
+
     public static function defaultEntityMaps(){
         // Define which subentities to load
 		$entityMaps = array();

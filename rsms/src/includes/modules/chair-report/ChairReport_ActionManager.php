@@ -79,7 +79,7 @@ class ChairReport_ActionManager extends ActionManager {
 
     protected function getMinimumReportYear(){
         // RSMS-837: Allow Admins to view back to 2017; otherwise 2018
-        if( in_array('Admin', $this->getCurrentRoles()) ){
+        if( $this->getCurrentUser() != null && in_array('Admin', $this->getCurrentRoles()) ){
             return 2017;
         }
         else{

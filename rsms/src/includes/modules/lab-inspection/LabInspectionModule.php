@@ -18,6 +18,11 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
     public static $MYLAB_GROUP_PROFILE = "000_my-profile";
     public static $MYLAB_GROUP_INSPECTIONS = '001_lab-inspections';
 
+    public const ROLE_PI = 'Principal Investigator';
+    public const ROLE_PERSONNEL = 'Lab Personnel';
+    public const ROLE_CONTACT = 'Lab Contact';
+    public const ROLE_INSPECTOR = 'Inspector';
+
     private $manager;
 
     public function getModuleName(){

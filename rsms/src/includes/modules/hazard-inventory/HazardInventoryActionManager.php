@@ -60,8 +60,22 @@ class HazardInventoryActionManager extends ActionManager {
 		}
 
 		if( $piId !== NULL ){
-			$dao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation());
-			$hazardDtos = $dao->getHazardRoomDtosByPIId($piId, $roomIds);
+			$dao = new PrincipalInvestigatorHazardRoomRelationDAO();
+
+			// Retrieve Hazard/Room DTOs for this PI & rooms
+			$hrDtos = $dao->getHazardRoomDtosByPIId($piId, $roomIds);
+
+			// Collect array of room IDs which were collected with H/R relations
+			$matchedRoomIds = array();
+			foreach($hrDtos as $room){
+				$matchedRoomIds[] = $room->getRoom_id();
+			}
+
+			// Get DTO for every hazard
+			$hazardDtos = $dao->getAllHazardDtos();
+
+			// Merge Hazard with PIHR data, and populate Hazard/Room statuses in each
+			$merged_hazardDtos = $dao->mergeHazardRoomDtos($piId, $matchedRoomIds, $hazardDtos, $hrDtos);
 
 			// Transform into DTOs
 			return array_map(function($hazard){
@@ -104,7 +118,7 @@ class HazardInventoryActionManager extends ActionManager {
 					"Order_index" => $hazard->getOrder_index(),
 					"BelongsToOtherPI" => $hazard->getBelongsToOtherPI()
 				));
-			}, $hazardDtos);
+			}, $merged_hazardDtos);
 
 		}
 		else{

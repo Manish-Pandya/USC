@@ -10,7 +10,11 @@ ApplicationBootstrapper::bootstrap(null, array(
 // Register the test framework for autoloading
 Autoloader::register_class_dir( dirname(__FILE__) . '/framework');
 
+// Register test utilities
+Autoloader::register_class_dir( dirname(__FILE__) . '/test-utils');
+
 $LOG = Logger::getLogger('run_tests');
+$LOG->info("+---------------------------------+");
 
 require_once dirname(__FILE__) . '/framework/TestSetup.php';
 
@@ -23,10 +27,11 @@ $reportWriter = TestSetup::getReportWriter();
 
 // Collect and Run tests
 $LOG->debug("Running tests");
-$results = $runner->runTests();
+$results = $runner->runTests( $reportWriter );
 
 // Analyze results and write Report(s)
 $LOG->debug("Print test results");
-$reportWriter->write($results);
+$reportWriter->writePhase('Generating Report');
+$reportWriter->writeReport($results);
 $LOG->debug("Completed test running");
 ?>

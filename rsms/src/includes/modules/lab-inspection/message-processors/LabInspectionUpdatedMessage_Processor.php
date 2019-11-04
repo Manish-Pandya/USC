@@ -58,7 +58,7 @@ class LabInspectionUpdatedMessage_Processor implements MessageTypeProcessor {
         );
     }
 
-    protected function prepareRecipientsArray( $labstaff, $inspectors ){
+    public function prepareRecipientsArray( $labstaff, $inspectors ){
         return array(
             'to' => $labstaff,
             'cc' => $inspectors
@@ -72,10 +72,18 @@ class LabInspectionUpdatedMessage_Processor implements MessageTypeProcessor {
         return $this->prepareRecipientsArray( $match['recipients'], $match['cc_recipients'] );
     }
 
-    private function getRecipientEmailAddressesFromInspection( $inspection ){
+    public function getRecipientEmailAddressesFromInspection( $inspection ){
+        $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
+
         $pi = $inspection->getPrincipalInvestigator();
         $inspectors = $inspection->getInspectors();
         $lab_contacts = $inspection->getLabPersonnel();
+
+        if( $LOG->isDebugEnabled() ){
+            $LOG->debug( "$pi assigned to $inspection");
+            $LOG->debug( count($inspectors) . " Inspector(s) assigned to $inspection");
+            $LOG->debug( count($lab_contacts) . " Personnel assigned to $inspection");
+        }
 
         // Merge to a single array of users
         $users = array();
@@ -118,7 +126,7 @@ class LabInspectionUpdatedMessage_Processor implements MessageTypeProcessor {
         );
     }
 
-    private function computeEmailRecipients( $inspection, $context ){
+    public function computeEmailRecipients( $inspection, $context ){
         $LOG = Logger::getLogger(__CLASS__);
 
         // Always include standard recipients

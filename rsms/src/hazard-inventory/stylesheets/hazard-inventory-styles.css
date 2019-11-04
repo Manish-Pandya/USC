@@ -27,3 +27,23 @@ li.hazard-room label label span.metro-checkbox:after{
 ul li.yellowed > label.checkbox input[type=checkbox]:checked ~ span.metro-checkbox::after, ul li.yellowed > span label.checkbox input[type=checkbox]:checked ~ span.metro-checkbox::after {
     color: rgb(211, 96, 96);
 }
+
+.inspection-warnings {
+    color: orangered;
+}
+
+.inspection-warnings h4 {
+    display: flex;
+}
+
+.inspection-warnings h4 i {
+    padding-right: 10px;
+}
+
+.inspection-warnings ul {
+    margin-left: 24px;
+}
+
+.inspection-warnings .subject {
+    font-style: italic;
+}
