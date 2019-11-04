@@ -13,7 +13,7 @@ class LabInspectionReminder_Processor extends LabInspectionUpdatedMessage_Proces
     /**
      * Override email inference to omit inspector emails
      */
-    protected function prepareRecipientsArray( $labstaff, $inspectors ){
+    public function prepareRecipientsArray( $labstaff, $inspectors ){
         return array(
             'to' => $labstaff,
             'cc' => null

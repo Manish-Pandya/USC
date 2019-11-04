@@ -39,6 +39,7 @@ class ApplicationBootstrapper {
     public const CONFIG_SERVER_WEB_LOGIN_PAGE = 'server.web.LOGIN_PAGE';
     public const CONFIG_SERVER_WEB_BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR = 'server.web.BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR';
     public const CONFIG_SERVER_WEB_HELP_CONTACT_USERNAME = 'server.web.HELP_CONTACT_USERNAME';
+    public const CONFIG_SERVER_WEB_TIMEZONE = 'server.web.timezone';
 
     // DB
     public const CONFIG_SERVER_DB_HOST = 'server.db.host';
@@ -76,6 +77,13 @@ class ApplicationBootstrapper {
         // Read application config before all else
         require_once self::$BOOTSTRAP_PATH . '/ApplicationConfiguration.php';
         ApplicationConfiguration::configure( $overrideAppConfig, $mergeOverrides );
+
+        //////////////////////////////////////////////////
+        // Override system-default Timezone if specified
+        $zone = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_WEB_TIMEZONE);
+        if( isset($zone) ){
+            date_default_timezone_set( $zone );
+        }
 
         ////////////////////////////////////////////
         // Set up Logging with config parameters

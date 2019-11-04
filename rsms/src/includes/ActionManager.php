@@ -12,7 +12,7 @@
 class ActionManager {
 
 	public function getCurrentRoles(){
-		if($_SESSION && $_SESSION['USER']){
+		if( isset($_SESSION) && isset($_SESSION['USER']) ){
 			$user = $_SESSION['USER'];
 			$currentRoles = array();
 			foreach($user->getRoles() as $role){
@@ -572,6 +572,11 @@ class ActionManager {
     }
 
     public function getCurrentUser(){
+        if( !isset($_SESSION) ){
+            // No session
+            return null;
+        }
+
         // when a user is logged in and in session, return the currently logged in user.
         EntityManager::with_entity_maps(User::class, array(
             EntityMap::eager("getPrincipalInvestigator"),
@@ -831,6 +836,8 @@ class ActionManager {
         $LOG->debug("Saving $user");
         $saved = $userDao->save($user);
 
+        HooksManager::hook('after_save_user_roles', $user);
+
         return $this->buildUserDTO($saved);
     }
 
@@ -867,183 +874,12 @@ class ActionManager {
             $LOG->info("Saved user details: $user");
 
             // Save Roles
-            if($decodedObject->getRoles() != NULL){
-                $LOG->debug("Updating user roles...");
-
-                // Collect IDs of existing & new roles
-                function fn_getRoleId($r){
-                    if( is_array($r) ){
-                        return $r['Key_id'];
-                    }
-                    else{
-                        return $r->getKey_id();
-                    }
-                };
-
-                $userDao = new GenericDAO(new User());
-                function updateRole($dao, $rid, $uid, $add) {
-                    if( $add ){
-                        $dao->addRelatedItems($rid, $uid, DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
-                    }
-                    else{
-                        $dao->removeRelatedItems($rid, $uid, DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
-                    }
-                }
-
-                $newRoleIds = array_map( 'fn_getRoleId', $decodedObject->getRoles() );
-                $oldRoleIds = array_map( 'fn_getRoleId', $user->getRoles());
-
-                $LOG->trace("New Role IDs: " . implode(', ', $newRoleIds));
-                $LOG->trace("Old Role IDs: " . implode(', ', $oldRoleIds));
-
-                /** Roles present in old entity which should be removed */
-                $rolesToUnlink = array_diff($oldRoleIds, $newRoleIds);
-
-                /** Roles not present in old entity which should be added */
-                $rolesToAdd = array_diff($newRoleIds, $oldRoleIds);
-
-                $LOG->debug("Roles requiring update: " . (count($rolesToUnlink) + count($rolesToAdd)));
-                if( !empty($rolesToUnlink) ){
-                    foreach($rolesToUnlink as $r){
-                        $LOG->debug("Unlink Role #$r from User #" . $user->getKey_id());
-                        updateRole($userDao, $r, $user->getKey_id(), false);
-                    }
-                }
-
-                if( !empty($rolesToAdd) ){
-                    foreach($rolesToAdd as $r){
-                        $LOG->debug("Link Role #$r from User #" . $user->getKey_id());
-                        updateRole($userDao, $r, $user->getKey_id(), true);
-                    }
-                }
-
-                // Special-case: If user is assigned Lab Contact, make sure they also have Lab Personnel
-                $allRoles = $this->getAllRoles();
-                $_contactRole = null;
-                $_personnelRole = null;
-                foreach ($allRoles as $role){
-                    if( $role->getName() == 'Lab Contact'){
-                        $_contactRole = $role;
-                    }
-                    else if( $role->getName() == 'Lab Personnel'){
-                        $_personnelRole = $role;
-                    }
-                }
-
-                $_roles = $user->getRoles();
-                $_isContact = in_array($_contactRole, $_roles);
-                $_isPersonnel = in_array($_personnelRole, $_roles);
-
-                if( $_isContact && !$_isPersonnel ){
-                    $LOG->warn("User is assigned Lab Contact role but not Lab Peronnel role");
-                    $LOG->info("Adding Lab Personnel role to user " . $user->getKey_id());
-                    updateRole($userDao, $_personnelRole->getKey_id(), $user->getKey_id(), true);
-                }
-
-                // Clear roles to force object update...
-                $user->setRoles(null);
-
-                // Is this a newly-added Lab Contact?
-                if( $_isContact ){
-                    HooksManager::hook('after_save_lab_contact', $user);
-                }
+            if($decodedObject->getRoles() !== NULL){
+                $this->_saveUser_roles($user, $decodedObject );
             }
 
             //see if we need to save a PI or Inspector object
-            $savePI = false;
-            $saveInspector = false;
-            if($decodedObject->getRoles() != NULL){
-                $LOG->debug("Check roles for special-cases");
-                foreach($decodedObject->getRoles() as $role){
-                    $role = $this->getRoleById($role['Key_id']);
-                    if($role->getName() == "Principal Investigator")$savePI 	   = true;
-                    if($role->getName() == "Safety Inspector")      $saveInspector = true;
-                }
-                $LOG->debug("PI:$savePI | inspector:$saveInspector");
-            }
-
-            //user was sent from client with Principal Investigator in roles array
-            if($savePI){
-                $LOG->debug("Processing PI details");
-                 //we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
-                if($decodedObject->getPrincipalInvestigator() != null){
-                    $LOG->debug("Retrieve PI details from incoming data");
-                    $pi = $decodedObject->getPrincipalInvestigator();
-                    // FIXME: Assemble array into PI; JsonManager decoding may not have gone deep enough
-                    if( is_array($pi) ){
-                        $pi = JsonManager::assembleObjectFromDecodedArray($pi, new PrincipalInvestigator());
-                    }
-                }else{
-                    $LOG->debug("Create new PI entity");
-                    $pi = new PrincipalInvestigator();
-                    $pi->setUser_id($user->getKey_id());
-                }
-
-                // Look up the old PI (if any)
-                $pi_dao = new PrincipalInvestigatorDAO();
-                $old_pi = $pi_dao->getByUserId( $user->getKey_id() );
-                $LOG->debug("Old PI: $old_pi");
-
-                $pi->setUser_id($user->getKey_id());
-                $pi->setIs_active($user->getIs_active());
-
-                $newPi = $this->savePI($pi);
-                $LOG->info("Saved PI details: $pi");
-
-                //set hazard relationships for any rooms the pi has
-                $LOG->debug("Process rooms");
-                foreach($newPi->getRooms() as $room){
-
-                    $room->getHazardTypesArePresent();
-                    $room = $this->saveRoom($room);
-                    $LOG->debug("Saved $room");
-                }
-
-                // TODO: Only remove department if it isn't incoming
-                if( isset($old_pi) && is_object($old_pi) ){
-                    $LOG->debug("Removing old departments from PI #" . $old_pi->getKey_id());
-                    // Remove all pre-existing departments
-                    $old_depts = $old_pi->getDepartments();
-                    if( isset($old_depts) ){
-                        foreach($old_depts as $dept){
-                            $LOG->debug("Unlink $dept");
-                            $pi_dao->removeRelatedItems($dept->getKey_id(), $old_pi->getKey_id(), DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
-                        }
-                    }
-                }
-                else{
-                    $LOG->debug("No old departments");
-                }
-
-                // Save incoming Departments
-                $depts = $pi->getDepartments();
-                if( isset($depts) ){
-                    $LOG->debug("Link " . count($depts) . " incoming departments");
-                    foreach($depts as $dept){
-                        $LOG->debug("Linking dept #" . $dept['Key_id']);
-                        $pi_dao->addRelatedItems($dept['Key_id'], $pi->getKey_id(), DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
-                    }
-                }
-
-                $newPi->setDepartments($pi->getDepartments());
-                $user->setPrincipalInvestigator($newPi);
-            }
-
-            //user was sent from client with Saftey Inspector in roles array
-            if($saveInspector){
-                $LOG->debug("Processing Inspector details");
-
-                //we have an inspector for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
-                if($user->getInspector() != null){
-                    $inspector = $user->getInspector();
-                }else{
-                    $inspector = new Inspector;
-                    $inspector->setUser_id($user->getKey_id());
-                }
-                $inspector->setIs_active($user->getIs_active());
-                $inspectorDao  = $this->getDao(new Inspector());
-                $user->setInspector($this->saveInspector($inspector));
-            }
+            $this->_saveUser_fanout( $user, $decodedObject );
 
             if($user->getKey_id()>0){
                 EntityManager::with_entity_maps(User::class, array(
@@ -1061,6 +897,203 @@ class ActionManager {
             }
         }
         return new ActionError('Could not save');
+    }
+
+    protected function _saveUser_fanout( &$user, &$decodedObject ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
+        $savePI = false;
+        $saveInspector = false;
+        if($decodedObject->getRoles() != NULL){
+            $LOG->debug("Check roles for special-cases");
+            foreach($decodedObject->getRoles() as $role){
+                $role = $this->getRoleById($role['Key_id']);
+                if($role->getName() == "Principal Investigator")$savePI 	   = true;
+                if($role->getName() == "Safety Inspector")      $saveInspector = true;
+            }
+            $LOG->debug("PI:$savePI | inspector:$saveInspector");
+        }
+
+        if($savePI){
+            //user was sent from client with Principal Investigator in roles array
+            $this->_saveUser_fanout_pi($user, $decodedObject);
+        }
+
+        if($saveInspector){
+            //user was sent from client with Saftey Inspector in roles array
+            $this->_saveUser_fanout_inspector($user, $decodedObject);
+        }
+    }
+
+    protected function _saveUser_fanout_pi( &$user, &$decodedObject ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+        $LOG->debug("Processing PI details");
+
+         //we have a PI for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
+        if($decodedObject->getPrincipalInvestigator() != null){
+            $LOG->debug("Retrieve PI details from incoming data");
+            $pi = $decodedObject->getPrincipalInvestigator();
+            // FIXME: Assemble array into PI; JsonManager decoding may not have gone deep enough
+            if( is_array($pi) ){
+                $pi = JsonManager::assembleObjectFromDecodedArray($pi, new PrincipalInvestigator());
+            }
+        }else{
+            $LOG->debug("Create new PI entity");
+            $pi = new PrincipalInvestigator();
+            $pi->setUser_id($user->getKey_id());
+        }
+
+        // Look up the old PI (if any)
+        $pi_dao = new PrincipalInvestigatorDAO();
+        $old_pi = $pi_dao->getByUserId( $user->getKey_id() );
+        $LOG->debug("Old PI: $old_pi");
+
+        $pi->setUser_id($user->getKey_id());
+        $pi->setIs_active($user->getIs_active());
+
+        // RSMS-1041:
+        // If there is an old PI, make sure the data we're about to save
+        //   references the PI ID
+        if( isset($old_pi) && $old_pi !== FALSE ){
+            $pi->setKey_id($old_pi->getKey_id());
+        }
+
+        $newPi = $this->savePI($pi);
+        $LOG->info("Saved PI details: $pi");
+
+        //set hazard relationships for any rooms the pi has
+        $LOG->debug("Process rooms");
+        foreach($newPi->getRooms() as $room){
+
+            $room->getHazardTypesArePresent();
+            $room = $this->saveRoom($room);
+            $LOG->debug("Saved $room");
+        }
+
+        // TODO: Only remove department if it isn't incoming
+        if( isset($old_pi) && is_object($old_pi) ){
+            $LOG->debug("Removing old departments from PI #" . $old_pi->getKey_id());
+            // Remove all pre-existing departments
+            $old_depts = $old_pi->getDepartments();
+            if( isset($old_depts) ){
+                foreach($old_depts as $dept){
+                    $LOG->debug("Unlink $dept");
+                    $pi_dao->removeRelatedItems($dept->getKey_id(), $old_pi->getKey_id(), DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
+                }
+            }
+        }
+        else{
+            $LOG->debug("No old departments");
+        }
+
+        // Save incoming Departments
+        $depts = $pi->getDepartments();
+        if( isset($depts) ){
+            $LOG->debug("Link " . count($depts) . " incoming departments");
+            foreach($depts as $dept){
+                $LOG->debug("Linking dept #" . $dept['Key_id']);
+                $pi_dao->addRelatedItems($dept['Key_id'], $pi->getKey_id(), DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
+            }
+        }
+
+        $newPi->setDepartments($pi->getDepartments());
+        $user->setPrincipalInvestigator($newPi);
+    }
+
+    protected function _saveUser_fanout_inspector( &$user, &$decodedObject ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+        $LOG->debug("Processing Inspector details");
+
+        //we have an inspector for this User.  We should set it's Is_active state equal to the user's is_active state, so that when a user with a PI is activated or deactivated, the PI record also is.
+        if($user->getInspector() != null){
+            $inspector = $user->getInspector();
+        }else{
+            $inspector = new Inspector;
+            $inspector->setUser_id($user->getKey_id());
+        }
+        $inspector->setIs_active($user->getIs_active());
+        $inspectorDao  = $this->getDao(new Inspector());
+        $user->setInspector($this->saveInspector($inspector));
+    }
+
+    private static function fn_getRoleId($r){
+        if( is_array($r) ){
+            return $r['Key_id'];
+        }
+        else{
+            return $r->getKey_id();
+        }
+    }
+
+    private static function fn_updateRole($dao, $rid, $uid, $add) {
+        if( $add ){
+            $dao->addRelatedItems($rid, $uid, DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
+        }
+        else{
+            $dao->removeRelatedItems($rid, $uid, DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
+        }
+    }
+
+    protected function _saveUser_roles( &$user, &$decodedObject ){
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+        $LOG->debug("Updating user roles...");
+
+        // Collect IDs of existing & new roles
+        $userDao = new GenericDAO(new User());
+        $newRoleIds = array_map( 'self::fn_getRoleId', $decodedObject->getRoles() );
+        $oldRoleIds = array_map( 'self::fn_getRoleId', $user->getRoles());
+
+        $LOG->trace("New Role IDs: " . implode(', ', $newRoleIds));
+        $LOG->trace("Old Role IDs: " . implode(', ', $oldRoleIds));
+
+        /** Roles present in old entity which should be removed */
+        $rolesToUnlink = array_diff($oldRoleIds, $newRoleIds);
+
+        /** Roles not present in old entity which should be added */
+        $rolesToAdd = array_diff($newRoleIds, $oldRoleIds);
+
+        $LOG->debug("Roles requiring update: " . (count($rolesToUnlink) + count($rolesToAdd)));
+        if( !empty($rolesToUnlink) ){
+            foreach($rolesToUnlink as $r){
+                $LOG->debug("Unlink Role #$r from User #" . $user->getKey_id());
+                self::fn_updateRole($userDao, $r, $user->getKey_id(), false);
+            }
+        }
+
+        if( !empty($rolesToAdd) ){
+            foreach($rolesToAdd as $r){
+                $LOG->debug("Link Role #$r to User #" . $user->getKey_id());
+                self::fn_updateRole($userDao, $r, $user->getKey_id(), true);
+            }
+        }
+
+        // Special-case: If user is assigned Lab Contact, make sure they also have Lab Personnel
+        $allRoles = $this->getAllRoles();
+        $_contactRole = null;
+        $_personnelRole = null;
+        foreach ($allRoles as $role){
+            if( $role->getName() == 'Lab Contact'){
+                $_contactRole = $role;
+            }
+            else if( $role->getName() == 'Lab Personnel'){
+                $_personnelRole = $role;
+            }
+        }
+
+        $_roles = $user->getRoles();
+        $_isContact = in_array($_contactRole, $_roles);
+        $_isPersonnel = in_array($_personnelRole, $_roles);
+
+        if( $_isContact && !$_isPersonnel ){
+            $LOG->warn("User is assigned Lab Contact role but not Lab Peronnel role");
+            $LOG->info("Adding Lab Personnel role to user " . $user->getKey_id());
+            self::fn_updateRole($userDao, $_personnelRole->getKey_id(), $user->getKey_id(), true);
+        }
+
+        // Clear roles to force object update...
+        $user->setRoles(null);
+
+        HooksManager::hook('after_save_user_roles', $user);
     }
 
     private function recurseHazardTree( $hazard = null, $weight = null){
@@ -1632,8 +1665,18 @@ class ActionManager {
         $length = count($list);
 
         foreach($list as $key=>$hazard){
-            if( $key != $length-1 && lcfirst( $list[$key]->getName() ) > lcfirst( $list[$key+1]->getName() ) )
-            return false;
+
+            if( $key != $length - 1 ){
+                $a = $list[$key]->getName();
+                $b = $list[$key + 1]->getName();
+
+                // A should be less-than B
+                $val = strcasecmp($a, $b);
+                if( $val > 0 ){
+                    // A is greater-than B
+                    return false;
+                }
+            }
         }
 
         return true;
@@ -2999,6 +3042,13 @@ class ActionManager {
 
         $userId = $this->getValueFromRequest('userId', $userId);
         $roleIds = $this->getValueFromRequest('roleIds', $roleIds);
+
+        $userDao = new UserDAO();
+        $user = $userDao->getById($userId);
+        if( !isset($user) ){
+            return new ActionError('No User', 404);
+        }
+
         $LOG->debug($roleIds);
         foreach($roleIds as $roleId){
             $relation = new RelationshipDto();
@@ -3007,6 +3057,9 @@ class ActionManager {
             $relation->setAdd(true);
             $this->saveUserRoleRelation($relation);
         }
+
+        $user->setRoles(null); // Force reload of roles
+        HooksManager::hook('after_save_user_roles', $user);
         return true;
     }
 
@@ -4524,6 +4577,7 @@ class ActionManager {
                 $orderedRooms[$room->getKey_id()] = $room;
             }
 
+            $checklists = array();
 
             $masterHazards = array();
             //iterate the rooms and find the hazards present
@@ -4777,6 +4831,11 @@ class ActionManager {
         //recurse down hazard tree.  look in checklists array for each hazard.  if checklist is found, push it into ordered array.
         $orderedChecklists = array();
         $orderedChecklists = $this->recurseHazardTreeForChecklists($checklists, $hazardIds, $orderedChecklists, $this->getHazardById(10000));
+
+        if( !empty($checklists) ){
+            $LOG->warn("Not all Checklists were matched:\n\t" . implode("\n\t", $checklists));
+        }
+
         $inspection->setChecklists( $orderedChecklists );
 
         //make sure we get the right rooms for our branch level checklists
@@ -5600,10 +5659,13 @@ class ActionManager {
 
             // Add PI details
             $pi = $this->getPrincipalInvestigatorOrSupervisorForUser( $user );
-            $userData['PI'] = array(
-                'Name' => $pi->getUser()->getName(),
-                'Position' => $pi->getUser()->getPosition()
-            );
+
+            if( isset($pi) ){
+                $userData['PI'] = array(
+                    'Name' => $pi->getUser()->getName(),
+                    'Position' => $pi->getUser()->getPosition()
+                );
+            }
 
             if( CoreSecurity::userHasRoles($user, array('Lab Personnel')) ){
                 $userData['Lab_phone'] = $user->getLab_phone() ?? '';

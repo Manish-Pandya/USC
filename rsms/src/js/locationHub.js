@@ -695,7 +695,8 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
                                 }
                                 room.edit = false;
 
-                                ToastApi.toast('Room ' + room.Name + ' has been saved');
+                                let name = (room.Building_name ? room.Building_name : 'Room') + ' ' + room.Name;
+                                ToastApi.toast( name + ' has been saved');
                         },
                         function (err) {
                             console.error(err);
@@ -1124,6 +1125,8 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
             // Refresh the confirmation details
             console.info("Linked Hazard-inventory window is unloading; Refresh confirmation dialog data");
             $scope.checkData();
+
+            $scope._closedHazardInventory = true;
         };
     }
 
@@ -1164,6 +1167,18 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
         // If we have a hazard-inventory window linked, also close it
         if( hazardInventory ){
             hazardInventory.close();
+        }
+
+        if( $scope._closedHazardInventory ){
+            // Hazard Inventory window was closed. Notify the user
+            // that cancelling this action will not refresh hazards
+            let name = $scope.room.Building_name + ' ' + $scope.room.Name;
+            ToastApi.toast(
+                "If you made changes to " + name + " in the Hazard Inventory, " +
+                "the hazard icons displayed here may not update until this page is refreshed.",
+                ToastApi.ToastType.WARNING,
+                -1
+            );
         }
 
         $modalInstance.dismiss('cancel');

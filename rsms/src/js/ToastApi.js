@@ -4,6 +4,7 @@
         default_toast_lifespan: 5000,
 
         ToastType: {
+            WARNING: 'warning',
             ERROR: 'error'
         },
 
@@ -23,7 +24,8 @@
             if( !type ) return null;
 
             switch( type.toLowerCase() ){
-                case 'error':
+                case ToastApi.ToastType.WARNING:
+                case ToastApi.ToastType.ERROR:
                     return type;
                 default:
                     console.warn("Invalid toast type:", type);

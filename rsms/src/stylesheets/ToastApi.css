@@ -48,5 +48,6 @@
     justify-content: space-between;
   }
   
+  .toast.warning { border-left: solid 5px orange; }
   .toast.error { border-left: solid 5px red; }
   
