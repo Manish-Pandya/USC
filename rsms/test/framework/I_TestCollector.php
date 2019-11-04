@@ -5,6 +5,8 @@ interface I_TestCollector {
      *
      * @return Array of I_Test instances
      */
-    function collect();
+    function collectTestsInstances();
+
+    function collectTestMethods( $testClass );
 }
 ?>

@@ -100,6 +100,10 @@ class Hazard extends GenericCrud {
 
     }
 
+	public function __toString(){
+		return '[' .get_class($this) . " key_id=" . $this->getKey_Id() . " name='$this->name'" . ($this->is_active ? '' : ' is_active=false') . "]";
+	}
+
     public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = EntityMap::lazy("getSubHazards");

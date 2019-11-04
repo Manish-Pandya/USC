@@ -63,6 +63,22 @@ class LabInspection_Hooks {
         }
     }
 
+    public static function after_save_user_roles( &$user ){
+        // If user is not Personnel, then ensure their Supervisor is unassigned
+        if( CoreSecurity::userHasAnyRole( $user, [ LabInspectionModule::ROLE_CONTACT]) ){
+            // Chain to lab-contact hook
+            HooksManager::hook('after_save_lab_contact', $user);
+        }
+        else if( !CoreSecurity::userHasAnyRole( $user, [LabInspectionModule::ROLE_PERSONNEL]) && $user->getSupervisor_id() != null ){
+            $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+            $LOG->info("Removing supervisor_id from non-personnel user: $user");
+
+            $user->setSupervisor_id( null );
+            $userDao = new UserDAO();
+            $userDao->save($user);
+        }
+    }
+
     public static function after_save_lab_contact( &$user ){
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
         $LOG->debug("Checking $user to ensure they are assigned to their Supervisor's Open Inspections");

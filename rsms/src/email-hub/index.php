@@ -72,6 +72,9 @@
     <script src="<?php echo WEB_ROOT?>ignorasmus/client-side-framework/models/FluxCompositerBase.js"></script>
     <script src="<?php echo WEB_ROOT?>ignorasmus/client-side-framework/models/ViewModelHolder.js"></script>
 
+    <!-- Toast API -->
+    <script type='text/javascript' src='<?php echo WEB_ROOT?>js/ToastApi.js'></script>
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/ToastApi.css"/>
 </head>
 
 <body>

@@ -15,16 +15,24 @@ class TestRunner {
         return $this->results;
     }
 
-    public function runTests(){
+    public function runTests( $writer ){
         $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
-        $test_instances = $this->collector->collect();
 
+        $writer->writePhase('Test Collection');
+        $test_instances = $this->collector->collectTestsInstances();
+        $writer->writePhaseProgress("Collected " . count($test_instances) . " Tests");
+        $writer->writePhaseEnd();
+
+        $writer->writePhase('Running Tests');
         foreach($test_instances as $instance ){
             $class = get_class($instance);
 
             if( $instance instanceof I_Test ){
                 $LOG->info("Running $class");
+
+                $writer->writePhaseProgress($class);
                 $this->run_test_class($instance);
+                $writer->writePhaseEnd($class);
             }
             else{
                 $LOG->error("'$class' does not implement I_Test");
@@ -53,15 +61,14 @@ class TestRunner {
         $methods = get_class_methods( $tests_name );
 
         // Collect method names for test execution
+        $test_methods = $this->collector->collectTestMethods( $tests_name );
+
+        // Collect method names for before/after execution
         $before_methods = array();
-        $test_methods = array();
         $after_methods = array();
 
         foreach($methods as $method){
-            if( self::str_starts_with(TestRunner::TEST_PREFIX, $method) ){
-                $test_methods[] = $method;
-            }
-            else if( self::str_starts_with(TestRunner::BEFORE_TEST_PREFIX, $method) ){
+            if( self::str_starts_with(TestRunner::BEFORE_TEST_PREFIX, $method) ){
                 $before_methods[] = $method;
             }
             else if( self::str_starts_with(TestRunner::AFTER_TEST_PREFIX, $method) ){

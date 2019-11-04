@@ -16,5 +16,7 @@
                 ?><a style="float:right;" href="<?php echo WEB_ROOT?>action.php?action=logoutAction">Sign Out</a><?php
             }
         ?>
+
+        <?php require('toasts.php'); ?>
     </div>
 <?php }?>

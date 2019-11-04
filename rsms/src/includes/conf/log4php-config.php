@@ -20,6 +20,9 @@ return array(
 		'ajaxaction' => configLogger('DEBUG'),
 		'action' => configLogger('DEBUG'),
 		'Metrics' => configLogger('INFO', array('metricsFileAppender')),
+
+		// Direct Task loggers to separate appender
+		'TASKS' => configLogger('DEBUG', array('tasksFileAppender')),
 	),
 
 	//Appenders
@@ -50,7 +53,21 @@ return array(
 				'file' => constant('RSMS_LOGS') . '/metrics.log',
 				'append' => true
 			)
-		)
+		),
+
+		'tasksFileAppender' => array(
+			'class' => 'LoggerAppenderRollingFile',
+			'layout' => array(
+				'class' => 'LoggerLayoutPattern',
+				'params' => array(
+					'conversionPattern' => '[%date{Y-m-d H:i:s}] [%5p] %message%newline'
+				)
+			),
+			'params' => array(
+				'file' => constant('RSMS_LOGS') . '/tasks.log',
+				'append' => true
+			)
+		),
 	)
 );
 ?>

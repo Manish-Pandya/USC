@@ -163,12 +163,15 @@ session_start();
     <script type="text/javascript" src="scripts/filters/hazardInventoryFilters.js"></script>
     <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/tinymce.js"></script>
+
+    <script type='text/javascript' src='<?php echo WEB_ROOT?>js/ToastApi.js'></script>
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/ToastApi.css"/>
 </head>
 
 <body>
     <?php require('../views/user_info_bar.php'); ?>
 
-    <div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" class="container-fluid" style="margin-top:25px;">
+    <div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" ng-cloak class="container-fluid" style="margin-top:25px;">
 
         <div cg-busy="{promise:piPromise,message:'Loading Principal Investigator Details',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:hazardPromise,message:'Loading Hazards',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
@@ -192,7 +195,7 @@ session_start();
                 </li>
             </ul>
         </div>
-        <div class="whiteBg" style="min-height:2000px;">
+        <div class="whiteBg">
             <div id="editPiForm" class="row-fluid">
                 <form class="form">
                     <div class="control-group span4">

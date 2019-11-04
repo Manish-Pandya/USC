@@ -33,7 +33,9 @@ class Assert {
     }
 
     public static function eq( $actual, $expected, $message ){
-        Assert::__assert( $actual == $expected, "$message (expected '$expected' | actual '$actual')");
+        $actual_str = is_array($actual) ? implode(', ', $actual) : "$actual";
+        $expected_str = is_array($expected) ? implode(', ', $expected) : "$expected";
+        Assert::__assert( $actual == $expected, "$message (expected '$expected_str' | actual '$actual_str')");
     }
 
     public static function true( $val, $message ){

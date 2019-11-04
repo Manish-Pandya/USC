@@ -18,6 +18,11 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
     public static $MYLAB_GROUP_PROFILE = "000_my-profile";
     public static $MYLAB_GROUP_INSPECTIONS = '001_lab-inspections';
 
+    public const ROLE_PI = 'Principal Investigator';
+    public const ROLE_PERSONNEL = 'Lab Personnel';
+    public const ROLE_CONTACT = 'Lab Contact';
+    public const ROLE_INSPECTOR = 'Inspector';
+
     private $manager;
 
     public function getModuleName(){
@@ -59,7 +64,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
 
             // RSMS-826: Pending CAP Reminder
             new MessageTypeDto(self::$NAME, self::$MTYPE_CAP_REMINDER_PENDING,
-                'Automatic email sent two weeks after the CAP is submitted, ONLY when there are pending CAPs. Recurring email sent every two weeks until all pending CAPs are updated to complete or until December 31st of the inspection year.',
+                'Automatic email sent two weeks after the CAP is submitted, ONLY when there are pending CAPs. Recurring email sent every two weeks until all pending CAPs are updated to complete, inspection report has been closed out, or until December 31st of the inspection year.',
                 'LabInspectionReminder_Processor',
                 array('Inspection', 'LabInspectionReminderContext')),
 
@@ -264,10 +269,15 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             // Look up hazard info for displayable inspections
             $dao = new InspectionDAO();
             foreach($inspections as $inspection){
+                $oldOrArchived = LabInspectionSecurity::inspectionIsOldOrArchived($inspection->getKey_id());
+                $status = $oldOrArchived ? 'Archived' : $inspection->getStatus();
+
                 $inspectionDtos[] = new GenericDto(array(
                     'Key_id' => $inspection->getKey_id(),
-                    'Status' => $inspection->getStatus(),
+                    'Status' => $status,
                     'Date_started' => $inspection->getDate_started(),
+                    'Date_closed' => $inspection->getDate_closed(),
+                    'Cap_submitted_date' => $inspection->getCap_submitted_date(),
                     'Is_rad' => $inspection->getIs_rad(),
                     'HazardInfo' => $dao->getInspectionHazardInfo($inspection->getKey_id()),
                     'Inspectors' => array_map( function($i){ return $i->getName(); }, $inspection->getInspectors())

@@ -152,6 +152,10 @@ session_start();
     <script type="text/javascript" src="<?php echo WEB_ROOT?>js/poptop.js"></script>
 
     <!-- filters -->
+
+    <!-- Toast API -->
+    <script type='text/javascript' src='<?php echo WEB_ROOT?>js/ToastApi.js'></script>
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/ToastApi.css"/>
 </head>
 
 <body>

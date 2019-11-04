@@ -59,6 +59,9 @@ angular.module('ng-EmailHub')
                     $scope.Pager.currentPage = page.PageNumber;
                     $scope.Pager.numPerPage = page.PageSize;
 
+                    // Update form state
+                    $scope.searchForm.$setPristine();
+
                     return $scope.QueuedEmails;
                 })
             ]);
@@ -72,6 +75,10 @@ angular.module('ng-EmailHub')
 
             // Open This one
             item.ShowBody = !item.ShowBody
+        }
+
+        $scope.getAllRecipients = function getAllRecipients( email ){
+            return [email.Recipients, email.Cc_recipients].join(',').split(',');
         }
 
         $scope.Pager = {
