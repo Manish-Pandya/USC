@@ -32,7 +32,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="(key, inspection) in openInspections = (modalData.PI.Inspections | orderBy:'Date_started':reverse | inspectionClosed:false)" ng-class="{new:inspection.Is_new, inactive:inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION || inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_CAP}">
+            <tr ng-repeat="(key, inspection) in openInspections = (modalData.PI.Inspections | orderBy:['Schedule_year', 'Schedule_month']:true | inspectionClosed:false)" ng-class="{new:inspection.Is_new, inactive:inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION || inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_CAP}">
                 <td>
                     <ul ng-init="processRooms(inspection, modalData.PI.Rooms)">
                         <li ng-repeat="(key, building) in inspection.Rooms | groupBy: 'Building.Name'">

@@ -120,60 +120,18 @@ class LabInspectionSecurity {
         }
 
         else if ( LabInspectionSecurity::userCanViewInspection( $inspection_id ) ){
-            // get the inspection
-            $inspection = LabInspectionSecurity::_get_inspection( $inspection_id );
 
-            if( !$inspection->getIsArchived() ){
-                // Verify that the both:
-                //   this inspection is for the year prior
-                //   current year's inspection has NOT yet been started
+            $is_archived = LabInspectionSecurity::inspectionIsOldOrArchived( $inspection_id );
 
-                // ==> A User May edit a non-archived Inspection until it is two years old OR another Inspection in Started in the following year (or later)
-
-                $currentYear = date("Y");
-                $lastYear = $currentYear - 1;
-
-                // #1: Inspection's schedule_year can be no older than 1 year
-                if( $inspection->getSchedule_year() < $lastYear ){
-                    $LOG->debug("$inspection is older than $lastYear; too old to be edited");
-                    return false;
-                }
-
-                // get all inspections from the years following this inspection (if any)
-                $following_year = (int)$inspection->getSchedule_year() + 1;
-
-                $pi = $inspection->getPrincipalInvestigator();
-                $dao = new InspectionDAO();
-                $inspectionsInNextYear = $dao->getPiInspectionsSince($pi->getKey_id(), $following_year);
-
-                // #2: No other Inspection may be started after the parameter Inspection's year
-                $startedInspectionId = null;
-                foreach($inspectionsInNextYear as $insp ){
-                    if( $insp->getDate_started() != null ){
-                        // Found an inspection which has been started
-                        $startedInspectionId = $insp->getKey_id();
-                        break;
-                    }
-                }
-
-                // Only allow if there is no other started Inspection, or the matched Started inspection is the parameter
-                if( !isset($startedInspectionId) ){
-                    $LOG->debug("No inspection for this PI has been started after $following_year");
-                    return true;
-                }
-                else if( $startedInspectionId == $inspection_id ){
-                    $LOG->debug("$inspection is the latest started inspection");
-                    return true;
-                }
-                else {
-                    $LOG->debug("At least one other inspection has been started after $following_year");
-                    return false;
-                }
-            }
-            else{
-                // Inspection is still open
+            if( $is_archived ){
+                // Cannot edit archived inspection
                 $LOG->debug("$inspection is archived; deny user edits");
                 return false;
+            }
+            else {
+                // Inspection is still open; OK to edit
+                $LOG->debug("$inspection is still open; OK to edit");
+                return true;
             }
         }
 
@@ -327,6 +285,66 @@ class LabInspectionSecurity {
         // Allow only if inspection is not Archived
         $LOG->debug("Related Inspection is not archived");
         return true;
+    }
+
+    // NEW
+    public static function inspectionIsOldOrArchived( $inspection_id ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        // get the inspection
+        $inspection = LabInspectionSecurity::_get_inspection( $inspection_id );
+
+        // Is Insepction Archived?
+        if( $inspection->getIsArchived() ){
+            return true;
+        }
+
+        // Is Inspection Old?
+
+        // Verify that the both:
+        //   this inspection is for the year prior
+        //   current year's inspection has NOT yet been started
+
+        // ==> An inspection remains unarchived until it is two years old OR another Inspection in Started in the following year (or later)
+        $currentYear = date("Y");
+        $lastYear = $currentYear - 1;
+
+        // #1: Inspection's schedule_year can be no older than 1 year
+        if( $inspection->getSchedule_year() < $lastYear ){
+            $LOG->debug("$inspection is older than $lastYear");
+            return true;
+        }
+
+        // get all inspections from the years following this inspection (if any)
+        $following_year = (int)$inspection->getSchedule_year() + 1;
+
+        $pi = $inspection->getPrincipalInvestigator();
+        $dao = new InspectionDAO();
+        $inspectionsInNextYear = $dao->getPiInspectionsSince($pi->getKey_id(), $following_year);
+
+        // #2: No other Inspection may be started after the parameter Inspection's year
+        $startedInspectionId = null;
+        foreach($inspectionsInNextYear as $insp ){
+            if( $insp->getDate_started() != null ){
+                // Found an inspection which has been started
+                $startedInspectionId = $insp->getKey_id();
+                break;
+            }
+        }
+
+        if( !isset($startedInspectionId) ){
+            $LOG->debug("No inspection for this PI has been started after $following_year");
+            return false;
+        }
+        else if( $startedInspectionId == $inspection_id ){
+            $LOG->debug("$inspection is the latest started inspection");
+            return false;
+        }
+        else {
+            $LOG->debug("At least one other inspection has been started after $following_year");
+            return true;
+        }
+
     }
 }
 ?>

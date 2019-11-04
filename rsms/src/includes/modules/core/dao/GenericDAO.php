@@ -48,7 +48,7 @@ class GenericDAO {
 		$this->logprefix = "[$this->modelClassName" . "DAO]";
 
 		if( !isset(self::$_ENTITY_CACHE) ){
-			self::$_ENTITY_CACHE = new AppCache('Entity');
+			self::$_ENTITY_CACHE = CacheFactory::create('Entity');
 		}
 
 		$this->LOG = Logger::getLogger( __CLASS__ . "." . $this->modelClassName );
@@ -904,6 +904,8 @@ class GenericDAO {
 		FROM department dept
 		LEFT OUTER JOIN principal_investigator_department pi_dept
 			ON (dept.key_id = pi_dept.department_id)
+        LEFT OUTER JOIN principal_investigator pi
+            ON pi.key_id = pi_dept.principal_investigator_id
 		LEFT OUTER JOIN principal_investigator_room pi_room
 			ON (pi_room.principal_investigator_id = pi_dept.principal_investigator_id)
 		LEFT OUTER JOIN room room
@@ -913,7 +915,10 @@ class GenericDAO {
 		LEFT OUTER JOIN campus campus
 			ON (campus.key_id = building.campus_id)
 
-		WHERE pi_room.room_id IS NOT NULL AND dept.key_id = :deptId
+		WHERE pi_room.room_id IS NOT NULL
+			AND dept.key_id = :deptId
+            AND pi.is_active = 1
+            AND room.is_active = 1
 
 		GROUP BY campus.name, dept.name
 		ORDER BY dept.name, campus.name";

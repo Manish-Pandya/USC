@@ -58,7 +58,16 @@
             </thead>
             <tbody>
                 <!--| orderBy:['EquipmentInspections[0].Room.Building.Name','EquipmentInspections[0].Room.Name']-->
-                <tr ng-repeat="cabinet in completeCabinets = (cabinets.data | pi:campus.filter.pi | status:campus.filter.status | matchEquipmentBuilding:selectedBuilding | equipmentYear:selectedCertificationDate:uncertified:showInactive | matchEquipmentCampus:campus.Key_id | filter:{Is_active: !showInactive} | orderBy:['EquipmentInspections[0].Room.Building.Name',convenienceMethods.sortAlphaNum('EquipmentInspections[0].Room.Name')]) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
+                <tr ng-repeat="cabinet in completeCabinets = (
+                    cabinets.data
+                        | pi:campus.filter.pi
+                        | status:campus.filter.status
+                        | matchEquipmentBuilding:selectedBuilding
+                        | equipmentYear:selectedCertificationDate:uncertified:showInactive
+                        | matchEquipmentCampus:campus.Key_id
+                        | filter:{Is_active: !showInactive}
+                        | orderEquipmentByRoom
+                    ) track by $index" ng-class="{'inactive':!cabinet.Is_active}">
                     <td>
                         <i ng-click="openModal(cabinet, inspections[0], true)" class="icon-pencil primary" style="cursor:pointer"></i>
                         <i class="icon-remove red" ng-click="deactivate(cabinet)" style="cursor:pointer"></i>

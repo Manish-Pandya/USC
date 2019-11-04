@@ -654,7 +654,15 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
             modalInstance.simpleConfirm = true;
             modalInstance.result.then(
                 () => verifyIfRequired.resolve(),
-                () => verifyIfRequired.reject()
+                () => {
+                    console.debug("User cancelled confirmation dialog");
+
+                    // Reject verification
+                    verifyIfRequired.reject();
+
+                    // Cancel the edit
+                    $scope.cancelEdit(originalRoom);
+                }
             );
         }
         else {
@@ -686,6 +694,9 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
                                     $scope.rooms = collection;
                                 }
                                 room.edit = false;
+
+                                let name = (room.Building_name ? room.Building_name : 'Room') + ' ' + room.Name;
+                                ToastApi.toast( name + ' has been saved');
                         },
                         function (err) {
                             console.error(err);
@@ -700,16 +711,25 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
 
     }
 
-    $scope.handlePI = function (pi, idx) {
+    $scope.handlePI = function (pi, add) {
         // Handle PI selection
-        if (idx == undefined) {
+
+        if ( add ) {
+            // Add PI to list
             $scope.roomCopy.PrincipalInvestigators.push(pi);
         } else {
+            // Remove PI from list
+            // Find PI in room's list
+            let idx = $scope.roomCopy.PrincipalInvestigators.indexOf(pi);
+
+            console.debug("Remove index " + idx + " from room list");
             $scope.roomCopy.PrincipalInvestigators.splice(idx, 1);
         }
 
-        // Clear selection from dropdown
-        $scope.pis.selected = null;
+        // Clear selection from dropdown (if it's been initialized)
+        if( $scope.pis ){
+            $scope.pis.selected = null;
+        }
     }
 
     $scope.removeRoom = function (room, pi) {
@@ -751,7 +771,8 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
     $scope.confirmDeactivate = function (room) {
         if (room.PrincipalInvestigators && room.PrincipalInvestigators.length) {
             $rootScope.loadingHasHazards = $q.all([convenienceMethods.checkHazards(room, room.PrincipalInvestigators)]).then(function (r) {
-                if (r[0]) {
+                let resp = r[0];
+                if ( resp.HasHazards ) {
                     var modalInstance = $modal.open({
                         templateUrl: 'roomConfirmationModal.html',
                         controller: roomConfirmationController,
@@ -1033,20 +1054,81 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
     }
 
     $scope.room = room;
-    if( checkPIs.length ){
-        $scope.checkingPiHazardsInRoom = true;
-        $rootScope.loadingHasHazards = $q.all([convenienceMethods.checkHazards(room, checkPIs)]).then(function (r) {
-            $scope.checkingPiHazardsInRoom = false;
-            room.HasHazards = r[0] && r[0] == 'true';
-            console.log(r, room)
-        })
-    }
-    else{
-        // No one to check
-        $scope.checkingPiHazardsInRoom = false;
-        room.HasHazards = false;
-    }
 
+    $scope.checkData = function checkData(){
+        if( checkPIs.length ){
+            $scope.checkingPiHazardsInRoom = true;
+            $rootScope.loadingHasHazards = $q.all([convenienceMethods.checkHazards(room, checkPIs)]).then(function (r) {
+                let resp = r[0];
+                $scope.checkingPiHazardsInRoom = false;
+                room.HasHazards = resp.HasHazards;
+                console.log(resp, room);
+
+                $scope.PIsWithHazards = checkPIs.filter( pi =>
+                    resp.PI_ids.some(entry => entry.Key_id == pi.Key_id)
+                );
+
+                $scope.Pis_with_hazards = resp.PI_ids;
+            })
+        }
+        else{
+            // No one to check
+            $scope.checkingPiHazardsInRoom = false;
+            room.HasHazards = false;
+        }
+    };
+
+    // Initially check the data
+    $scope.checkData();
+
+    var hazardInventory = null;
+    $scope.openHazardInventory = function openHazardInventory(pi){
+        let params = '?' + $.param({"pi": pi.Key_id}) +
+                     '&' + $.param({"room": [room.Key_id]});
+
+        // Open hazard inventory for PI & Room in a new window
+        hazardInventory = window.open(window.GLOBAL_WEB_ROOT + 'hazard-inventory/#' + params);
+
+        // Ensure a reminder toast is displayed both here and there
+        let loc_toast = undefined;
+        let inv_toast = undefined;
+
+        let reminder = function reminder(existingReminder, api, message){
+            if( !api ) return null;
+
+            // Create toast if we don't have a link to one or our linked one was dismissed (i.e. doesn't exist)
+            if( !existingReminder || !api.getToast(existingReminder.id) ){
+                return api.toast(message, api.ToastType.ERROR, -1);
+            }
+
+            return existingReminder;
+        };
+
+        // Re-remind periodically
+        let reminderMessage = "Close the Hazard Inventory to refresh Hazards for Room " + room.Name + " in the Location Hub";
+        let reminderInterval = setInterval(function(){
+            inv_toast = reminder(inv_toast, hazardInventory.ToastApi, reminderMessage);
+            loc_toast = reminder(loc_toast, window.ToastApi, reminderMessage);
+        }, 5000);
+
+        // When the hazardInventory window is closed...
+        hazardInventory.onbeforeunload = function(){
+            // Cancel our reminder interval
+            clearInterval( reminderInterval );
+
+            // Dismiss our local toast
+            //   (we can ignore the remote toast, as it's unloaded)
+            if( loc_toast ){
+                ToastApi.dismissToast( loc_toast.id );
+            }
+
+            // Refresh the confirmation details
+            console.info("Linked Hazard-inventory window is unloading; Refresh confirmation dialog data");
+            $scope.checkData();
+
+            $scope._closedHazardInventory = true;
+        };
+    }
 
     $scope.confirm = function () {
         // Check if we're supposed to simply confirm...
@@ -1071,6 +1153,7 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
             function () {
                 $scope.saving = false;
                 $modalInstance.dismiss();
+                ToastApi.toast('Room ' + room.Name + ' has been saved');
             },
             function () {
                 $scope.saving = false;
@@ -1081,6 +1164,23 @@ roomConfirmationController = function (PI, room, $scope, $rootScope, $modalInsta
     }
 
     $scope.cancel = function () {
+        // If we have a hazard-inventory window linked, also close it
+        if( hazardInventory ){
+            hazardInventory.close();
+        }
+
+        if( $scope._closedHazardInventory ){
+            // Hazard Inventory window was closed. Notify the user
+            // that cancelling this action will not refresh hazards
+            let name = $scope.room.Building_name + ' ' + $scope.room.Name;
+            ToastApi.toast(
+                "If you made changes to " + name + " in the Hazard Inventory, " +
+                "the hazard icons displayed here may not update until this page is refreshed.",
+                ToastApi.ToastType.WARNING,
+                -1
+            );
+        }
+
         $modalInstance.dismiss('cancel');
     }
 

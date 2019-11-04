@@ -301,9 +301,10 @@ class Room extends GenericCrud {
 	public function setHazards($hazards){ $this->hazards = $hazards; }
 
 	public function getPrincipalInvestigators(){
-		if($this->principalInvestigators == null && $this->hasPrimaryKeyvalue()) {
-			$thisDAO = new GenericDAO($this);
-			$this->principalInvestigators = $thisDAO->getRelatedItemsById($this->getKey_Id(), DataRelationship::fromArray(self::$PIS_RELATIONSHIP), NULL, TRUE, TRUE);
+		if( !isset($this->principalInvestigators) && $this->hasPrimaryKeyvalue()) {
+			// Populate with ACTIVE PIs
+			$thisDAO = new RoomDAO();
+			$this->principalInvestigators = $thisDAO->getRoomPIs($this->getKey_Id(), TRUE);
 		}
 		return $this->principalInvestigators;
 	}

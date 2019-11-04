@@ -88,6 +88,9 @@ session_start();
 <script type='text/javascript' src='<?php echo WEB_ROOT?>js/lib/jquery-1.9.1.js'></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/jquery-ui.js"></script>
 
+<script type='text/javascript' src='<?php echo WEB_ROOT?>js/ToastApi.js'></script>
+<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/ToastApi.css"/>
+
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/constants.js"></script>
     <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
 

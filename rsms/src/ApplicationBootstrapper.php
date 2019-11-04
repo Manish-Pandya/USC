@@ -23,6 +23,8 @@ class ApplicationBootstrapper {
     public const CONFIG_SERVER_AUTH_PROVIDE_DEV_IMPERSONATE = 'server.auth.providers.dev.impersonate';
     public const CONFIG_SERVER_AUTH_PROVIDE_DEV_IMPERSONATE_PASSWORD = 'server.auth.providers.dev.impersonate.password';
 
+    public const CONFIG_SERVER_CACHE_ENABLE = 'server.cache.enabled';
+
     // Server Environment
     public const CONFIG_SERVER_ENV_NAME = 'server.env.name';
     public const CONFIG_SERVER_ENV_SHOW_DETAILS = 'server.env.display_details';
@@ -37,6 +39,7 @@ class ApplicationBootstrapper {
     public const CONFIG_SERVER_WEB_LOGIN_PAGE = 'server.web.LOGIN_PAGE';
     public const CONFIG_SERVER_WEB_BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR = 'server.web.BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR';
     public const CONFIG_SERVER_WEB_HELP_CONTACT_USERNAME = 'server.web.HELP_CONTACT_USERNAME';
+    public const CONFIG_SERVER_WEB_TIMEZONE = 'server.web.timezone';
 
     // DB
     public const CONFIG_SERVER_DB_HOST = 'server.db.host';
@@ -75,6 +78,13 @@ class ApplicationBootstrapper {
         require_once self::$BOOTSTRAP_PATH . '/ApplicationConfiguration.php';
         ApplicationConfiguration::configure( $overrideAppConfig, $mergeOverrides );
 
+        //////////////////////////////////////////////////
+        // Override system-default Timezone if specified
+        $zone = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_WEB_TIMEZONE);
+        if( isset($zone) ){
+            date_default_timezone_set( $zone );
+        }
+
         ////////////////////////////////////////////
         // Set up Logging with config parameters
         ApplicationBootstrapper::init_logging(
@@ -85,6 +95,12 @@ class ApplicationBootstrapper {
         ////////////////////////////////////////////
         // Enable Autoloading
         ApplicationBootstrapper::init_autoloader();
+
+        ////////////////////////////////////////////
+        // Configure Entity Caching
+        CacheFactory::init(
+            ApplicationConfiguration::get( ApplicationBootstrapper::CONFIG_SERVER_CACHE_ENABLE, true )
+        );
 
         ////////////////////////////////////////////
         // LDAP Authentication

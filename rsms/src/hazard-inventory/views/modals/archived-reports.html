@@ -20,7 +20,7 @@
                 <th>Inspection Report</th>
             </thead>
             <tbody>
-                <tr ng-repeat="(key, inspection) in previousInspections = (modalData.PI.Inspections | inspectionClosed:true)">
+                <tr ng-repeat="(key, inspection) in previousInspections = (modalData.PI.Inspections | inspectionClosed:true | orderBy: 'Date_started':true)">
                     <td>{{inspection.Schedule_year}}</td>
                     <td>{{inspection.Date_started | dateToISO}}</td>
                     <td>
@@ -43,19 +43,19 @@
                         <span>{{inspection.Status}}</span>
                         <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.CLOSED_OUT">
                             <p>
-                                (CAP Submitted: {{inspection.Cap_submitted_date | dateToISO}})
+                                (Approved: {{inspection.Date_closed | dateToISO}})
                                 <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
                             </p>
                         </span>
 
-                        <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.PENDING_CLOSEOUT">
+                        <span ng-if="inspection.Status == Constants.INSPECTION.STATUS.SUBMITTED_CAP">
                             <p>
                                 (CAP Submitted: {{inspection.Cap_submitted_date | dateToISO}})
                                 <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
                             </p>
                         </span>
 
-                        <span ng-if="inspection.Status != Constants.INSPECTION.STATUS.PENDING_CLOSEOUT && inspection.Status != Constants.INSPECTION.STATUS.CLOSED_OUT">
+                        <span ng-if="inspection.Status != Constants.INSPECTION.STATUS.SUBMITTED_CAP && inspection.Status != Constants.INSPECTION.STATUS.CLOSED_OUT">
                             <p>
                                 <a target="_blank" style="margin-top: -4px; margin-left: 6px;padding: 4px 7px 6px 0px;" class="btn btn-info" href="../views/inspection/InspectionConfirmation.php#/report?inspection={{inspection.Key_id}}"><i style="font-size: 21px;" class="icon-clipboard-2"></i></a>
                             </p>

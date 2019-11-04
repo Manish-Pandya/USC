@@ -32,7 +32,7 @@ class JsonManager {
 	 */
 	public static function encode($value, $entityMaps = NULL){
 		if( !isset(self::$_SERIAL_CACHE) ){
-			self::$_SERIAL_CACHE = new AppCache('Serial');
+			self::$_SERIAL_CACHE = CacheFactory::create('Serial');
 		}
 
 		$mid = Metrics::start('Build JSON-able Value');
