@@ -36,8 +36,9 @@ class Test_LabInspectionUpdatedMessage_Processor implements I_Test {
     }
 
     public function test__computeEmailRecipients_nocontext(){
+        $ctx = new LabInspectionReminderContext(null, null);
         // Test that correct emails are computed
-        $emails = $this->processor->computeEmailRecipients( $this->inspection, $this->inspection_context );
+        $emails = $this->processor->computeEmailRecipients( $this->inspection, $ctx );
 
         Assert::eq( $emails['to'], 'pi@email.com,contact2@email.com', "To is set to PI and Inspection contact");
         Assert::eq( $emails['cc'], 'inspector@email.com', "CC is set to Inspector");
