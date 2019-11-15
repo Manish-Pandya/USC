@@ -520,6 +520,9 @@ angular.module('HazardInventory')
             inspection.warning = warning;
         };
 
+        $scope.getHazardRoom = function getHazardRoom( hazard, room_id ){
+            return hazard.InspectionRooms.find(r => r.Room_id == room_id );
+        }
     })
     .controller('SecondaryModalController', function ($scope, $q, $http, applicationControllerFactory, $modalInstance, convenienceMethods, roleBasedFactory) {
         $scope.constants = Constants;
