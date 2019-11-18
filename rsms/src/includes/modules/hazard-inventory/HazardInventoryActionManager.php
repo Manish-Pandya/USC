@@ -372,7 +372,7 @@ class HazardInventoryActionManager extends ActionManager {
                         FROM principal_investigator_room pir
                         LEFT JOIN principal_investigator pi
                         ON pir.principal_investigator_id = pi.key_id
-                        WHERE pi.is_active = 1 AND pir.room_id IN ( $newRoomIds ) group by pir.principal_investigator_id";
+                        WHERE pir.room_id IN ( $newRoomIds ) group by pir.principal_investigator_id";
 		$stmt = DBConnection::prepareStatement($queryString);
         foreach ($roomIds as $k => $id){
 		    $stmt->bindValue(($k+1), $id);
