@@ -100,7 +100,15 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 			$this->hazard = $userDAO->getById($this->hazard_id);
 		}
 		return $this->hazard;
-    }
+	}
+
+	public function getIsActivePi(){
+		$pi = QueryUtil::selectFrom( new PrincipalInvestigator() )
+			->where( Field::create('key_id', 'principal_investigator'), '=', $this->principal_investigator_id)
+			->getOne();
+
+		return $pi->getIs_active();
+	}
 
     public function getPiName(){
         if($this->piName == null && $this->principal_investigator_id != null){

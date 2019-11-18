@@ -47,3 +47,10 @@ ul li.yellowed > label.checkbox input[type=checkbox]:checked ~ span.metro-checkb
 .inspection-warnings .subject {
     font-style: italic;
 }
+
+.inactive-pi {
+    font-style: italic;
+}
+.inactive-pi::after {
+    content: " (Inactive PI)";
+}
