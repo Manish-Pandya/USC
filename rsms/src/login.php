@@ -126,9 +126,7 @@ if( isset($_SESSION) && isset($_SESSION['USER']) && !isset($_SESSION['error']) )
                 <button type="submit" name="submit" class="btn btn-large btn-success" id="login" style="padding:0 20px;">Login</button>
             </div>
         </form>
-        <div style="display: flex; font-weight:bold; font-size: 1.2em;">
-            <i class="red icon-warning" style="padding-right: 10px;"></i>
-            <span id="disclaimer-ie"></span>
+        <div id="disclaimer-ie" style="display: flex; font-weight:bold; font-size: 1.2em;">
         </div>
     </section>
 
@@ -147,12 +145,14 @@ if( isset($_SESSION) && isset($_SESSION['USER']) && !isset($_SESSION['error']) )
             form.parentNode.removeChild(form);
 
             // Add warning
-            document.getElementById('disclaimer-ie').innerHTML = 'The browser you are using is not supported by RSMS. Please use a supported browser such as'
+            document.getElementById('disclaimer-ie').innerHTML = '<i class="red icon-warning" style="padding-right: 10px;"></i>'
+                + '<span>The browser you are using is not supported by RSMS. Please use a supported browser such as'
                 + '&nbsp;<a target="_blank" href="http://www.google.com/chrome/">Google Chrome</a>,'
                 + '&nbsp;<a target="_blank" href="https://www.mozilla.org/firefox/">Mozilla Firefox</a>,'
                 + '&nbsp;<a target="_blank" href="https://www.apple.com/safari/">Apple Safari</a>,'
                 + '&nbsp;or'
-                + '&nbsp;<a target="_blank" href="https://www.microsoft.com/windows/microsoft-edge">Microsoft Edge</a>';
+                + '&nbsp;<a target="_blank" href="https://www.microsoft.com/windows/microsoft-edge">Microsoft Edge</a>'
+                + '</span>';
         }
     </script>
 </body>
