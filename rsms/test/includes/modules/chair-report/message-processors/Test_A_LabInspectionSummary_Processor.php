@@ -8,8 +8,11 @@ class Test_A_LabInspectionSummary_Processor implements I_Test {
     }
 
     public function before__createTestData(){
-        $roles = Core_TestDataProvider::create_named_roles(['Department Chair']);
-        $chairRole = $roles['Department Chair'];
+        $roles = Core_TestDataProvider::create_named_roles([
+            ChairReportModule::ROLE_CHAIR,
+            ChairReportModule::ROLE_COORDINATOR
+        ]);
+        $chairRole = $roles[ChairReportModule::ROLE_CHAIR];
 
         $userDao = new UserDAO();
         $deptDao = new GenericDAO(new Department());

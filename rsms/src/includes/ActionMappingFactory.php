@@ -32,7 +32,7 @@ class ActionMappingFactory {
             "LAB_PERSONNEL"			=> array("Lab Contact", "Principal Investigator", "Radiation User"),
             "EXCLUDE_READ_ONLY"		=> array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "Lab Contact", "Principal Investigator", "Radiation User"),
 
-            "REPORTS_ALL"           => array("Admin", "Department Chair")
+            "REPORTS_ALL"           => array("Admin", "Department Chair", "Department Safety Coordinator")
     );
 
     public function __construct(){

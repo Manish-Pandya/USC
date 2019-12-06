@@ -6,7 +6,7 @@
  */
 class A_LabInspectionSummary_Processor implements MessageTypeProcessor {
 
-    public function getRecipientsDescription(){ return "Chair"; }
+    public function getRecipientsDescription(){ return "Chair, Coordinator"; }
 
     public function process(Message $message, $macroResolverProvider){
         $LOG = Logger::getLogger(__CLASS__);
