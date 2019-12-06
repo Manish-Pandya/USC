@@ -226,7 +226,8 @@ var Constants = /** @class */ (function () {
             "Class II, Type B2",
             "Horizontal Flow Clean Bench",
             "Vertical Flow Clean Bench"
-        ]
+        ],
+        INACTIVATE_DISCLAIMER: "This cabinet must be unassigned from the PI to prevent the cabinet from being selected in the PI's Hazard Inventory"
     };
     Constants.CHEM_FUME_HOOD = {
         EQUIPMENT_CLASS: "ChemFumeHood",

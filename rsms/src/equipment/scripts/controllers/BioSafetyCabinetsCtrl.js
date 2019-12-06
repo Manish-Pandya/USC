@@ -79,7 +79,14 @@ angular.module('EquipmentModule')
     $scope.deactivate = function (cabinet) {
         cabinet.Retirement_date = convenienceMethods.getUnixDate(new Date());
         cabinet.Is_active = !cabinet.Is_active;
-        $scope.saving = af.save(cabinet);
+        $scope.saving = af.save(cabinet)
+            .then(saved => {
+                ToastApi.toast(
+                    Constants.BIOSAFETY_CABINET.INACTIVATE_DISCLAIMER,
+                    ToastApi.ToastType.WARNING,
+                    10000
+                );
+            });
     };
     $rootScope.getMostRecentComment = function (cab, inspection, modalContext) {
         if (modalContext === void 0) { modalContext = false; }

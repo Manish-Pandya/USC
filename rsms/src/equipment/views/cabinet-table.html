@@ -127,7 +127,12 @@
                     <td class="pis">
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | equipmentInspectionYear:selectedCertificationDate:uncertified:showInactive | hasMoved:'PrincipalInvestigators' | orderBy:'Due_date':true)">
-                                <span><a ng-class="{'red':!pi.Is_active}" style="display: block;padding: 3px 0;" ng-click="openPiInfoModal(pi)" ng-repeat="pi in pis = (inspection.PrincipalInvestigators | activeWhenInspected:inspection)">{{pi.User.Name}}<br ng-if="!$last"></a></span>
+                                <span>
+                                    <a ng-class="{'red':!pi.Is_active, 'assigned-inactive-cabinet': showInactive}" style="display: block;padding: 3px 0;" ng-click="openPiInfoModal(pi)" ng-repeat="pi in pis = (inspection.PrincipalInvestigators | activeWhenInspected:inspection)">
+                                        {{pi.User.Name}}
+                                        <br ng-if="!$last">
+                                    </a>
+                                </span>
                                 <span ng-if="!pis.length" class="red">Unsassigned</span>
                             </div>
                         </div>
@@ -177,5 +182,7 @@
                 </tr>
             </tbody>
         </table>
+
+        <div ng-if="showInactive" class="bold error padding">* Note: {{constants.BIOSAFETY_CABINET.INACTIVATE_DISCLAIMER}}</div>
     </div>
 </accordion-group>
