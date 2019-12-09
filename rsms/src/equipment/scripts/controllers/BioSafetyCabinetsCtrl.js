@@ -296,6 +296,10 @@ angular.module('EquipmentModule')
             controller: 'BioSafetyCabinetsHistoryModalCtrl'
         });
     };
+
+    $scope.showInactiveAssignedDisclaimer = function showInactiveAssignedDisclaimer(){
+        return document.querySelectorAll('.assigned-inactive-cabinet').length > 0;
+    };
 })
     .controller('BioSafetyCabinetsModalCtrl', function ($scope, $q, $modal, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {
     var af = $scope.af = applicationControllerFactory;
