@@ -18,6 +18,10 @@
                     <span class="title">Chair:</span>
                     <span ng-bind="data.Department.Chair_name"></span>
                 </li>
+                <li ng-if="data.Department.Coordinator_name">
+                    <span class="title">Safety Coordinator:</span>
+                    <span ng-bind="data.Department.Coordinator_name"></span>
+                </li>
             </ul>
         </div>
 
