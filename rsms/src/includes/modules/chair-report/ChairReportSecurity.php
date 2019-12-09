@@ -16,7 +16,7 @@ class ChairReportSecurity {
         // Grant equal access to 'Department Chair' and 'Department Safety Coordinator'
         $dept_access_roles = [ChairReportModule::ROLE_CHAIR, ChairReportModule::ROLE_COORDINATOR];
 
-        if( !CoreSecurity::userHasRoles($_SESSION['USER'], dept_access_roles) ){
+        if( !CoreSecurity::userHasAnyRole($_SESSION['USER'], $dept_access_roles) ){
             // User is not a department chair or admin
             $LOG->debug("User is not a Department Chair");
             return false;

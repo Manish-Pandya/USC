@@ -536,7 +536,7 @@ class ActionManager {
             }
 
             // non-PI Department Chair goes to Reports
-            else if( !$this->sessionHasRoles( array("Principal Investigator")) && $this->sessionHasRoles( array("Department Chair")) ){
+            else if( !$this->sessionHasRoles( array("Principal Investigator")) && $this->sessionHasRoles( array(ChairReportModule::ROLE_CHAIR, ChairReportModule::ROLE_COORDINATOR)) ){
                 $destination = "reports/";
                 $LOG->debug("User is a non-PI Department Chair");
             }
