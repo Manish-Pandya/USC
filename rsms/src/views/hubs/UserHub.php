@@ -20,7 +20,7 @@ require_once '../top_view.php';
       <div class="control-group" style="display:inline-block;">
          <label class="control-label" for="route" style="font-weight:bold; text-align: left; width:auto;">Select User Type:</label>
          <div class="controls" style="margin-left:128px;">
-            <select ng-model="selectedRoute" ng-change="setRoute()" id="route">
+            <select ng-model="selectedRoute" ng-change="setRoute()" id="route" style="min-width: 280px;">
               <option ng-repeat="view in userHubViews" ng-value="view.route" ng-selected="selectedRoute == view.route">{{view.name}}</option>
            </select>
          </div>
