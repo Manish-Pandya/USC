@@ -155,16 +155,26 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
             $whereClause = 'WHERE ' . implode(' AND ', $predicates);
         }
 
+        $rolename_chair = 'Department Chair';
+        $rolename_coord = 'Department Safety Coordinator';
+
         $sql = "SELECT
                 dept.key_id AS key_id,
                 dept.is_active AS is_active,
                 dept.name AS name,
                 COALESCE(dept.specialty_lab, false) AS specialty_lab,
+
                 chair.key_id AS chair_id,
                 chair.first_name AS chair_first_name,
                 chair.last_name AS chair_last_name,
                 (COALESCE(chair.name, CONCAT_WS(', ', chair.last_name, chair.first_name))) AS chair_name,
-                chair.email AS chair_email
+                chair.email AS chair_email,
+
+                coordinator.key_id AS coordinator_id,
+                coordinator.first_name AS coordinator_first_name,
+                coordinator.last_name AS coordinator_last_name,
+                (COALESCE(coordinator.name, CONCAT_WS(', ', coordinator.last_name, coordinator.first_name))) AS coordinator_name,
+                coordinator.email AS coordinator_email
 
             FROM department dept
 
@@ -184,10 +194,31 @@ class LabInspectionSummaryReportDAO extends GenericDAO {
                     user.`email`
                 FROM erasmus_user user
                 JOIN user_role ur ON ur.user_id = user.key_id
-                JOIN `role` r ON r.name = 'Department Chair' AND r.key_id = ur.role_id
+                JOIN `role` r ON r.name = '$rolename_chair' AND r.key_id = ur.role_id
                 LEFT OUTER JOIN principal_investigator pi ON pi.user_id = user.key_id
             ) chair
                 ON chair.primary_department_id = dept.key_id
+
+            -- Join to department coordinator users
+            LEFT OUTER JOIN (
+                SELECT
+                    user.`key_id`,
+                    user.`username`,
+                    user.`first_name`,
+                    user.`last_name`,
+                    user.`name`,
+                    COALESCE (
+                        user.`primary_department_id`,
+                        (SELECT department_id FROM principal_investigator_department pi_dept WHERE pi_dept.principal_investigator_id = pi.key_id LIMIT 1),
+                        NULL
+                    ) as `primary_department_id`,
+                    user.`email`
+                FROM erasmus_user user
+                JOIN user_role ur ON ur.user_id = user.key_id
+                JOIN `role` r ON r.name = '$rolename_coord' AND r.key_id = ur.role_id
+                LEFT OUTER JOIN principal_investigator pi ON pi.user_id = user.key_id
+            ) coordinator
+                ON coordinator.primary_department_id = dept.key_id
 
             $whereClause
         ";
