@@ -13,6 +13,7 @@ angular.module('HazardInventory')
         //do we have access to action functions?
         $scope.af = applicationControllerFactory;
         $scope.convenienceMethods = convenienceMethods;
+        $rootScope.webRoot = GLOBAL_WEB_ROOT;
 
         var af = applicationControllerFactory;
         var getAllPIs = function () {
