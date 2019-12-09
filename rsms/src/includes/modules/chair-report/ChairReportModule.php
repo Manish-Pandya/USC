@@ -65,7 +65,7 @@ class ChairReportModule implements RSMS_Module, MessageTypeProvider, MyLabWidget
         $widgets = array();
 
         // Only display summary reports widget to dept. chairs
-        if( CoreSecurity::userHasRoles($user, array(ChairReportModule::ROLE_CHAIR, ChairReportModule::ROLE_COORDINATOR)) ){
+        if( CoreSecurity::userHasAnyRole($user, array(ChairReportModule::ROLE_CHAIR, ChairReportModule::ROLE_COORDINATOR)) ){
             $summaryReportsWidget = new MyLabWidgetDto();
             $summaryReportsWidget->group = LabInspectionModule::$MYLAB_GROUP_INSPECTIONS;
             $summaryReportsWidget->title = "Chair Reports";
