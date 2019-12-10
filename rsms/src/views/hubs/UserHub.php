@@ -2,6 +2,12 @@
 require_once '../top_view.php';
 ?>
 <script src="../../js/userHub.js"></script>
+<style>
+.modal-body .controls .ui-select-container{
+    /* Override ui-select-container floating in user hub modals */
+    float:unset;
+}
+</style>
 
 <div class="navbar fixed">
     <ul class="nav pageMenu" style="min-height: 50px; background: #51a351; color:white !important; padding: 4px 0 0 0; width:100%">
