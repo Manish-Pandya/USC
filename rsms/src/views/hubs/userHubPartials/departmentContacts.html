@@ -1,7 +1,7 @@
 <table class="userList table table-striped table-hover piTable table-bordered" scroll-table watch="filtered.length" ng-show="neededUsers">
     <thead>
         <tr class="blueBg">
-            <th colspan="5" class="blueBg">
+            <th colspan="7" class="blueBg">
                 <h1 class="blueBg">DEPARTMENTAL CONTACTS</h1>
                 <div class="btn-group" style="margin: -18px 0 0 20px;">
                      <a class="btn btn-large" ng-click="showInactive = !showInactive; searchText = null;">
@@ -25,35 +25,39 @@
             <th>First Name</th>
             <th>Role</th>
             <th>Department</th>
+            <th>Office Phone</th>
+            <th>Email</th>
         </tr>
     </thead>
     <tbody>
         <tr ng-repeat="contact in (filtered = (users | isDepartmentContact | filter:activeFilter(showInactive) | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment))"
             ng-class="{inactive: !contact.Is_active}">
-            <td>
-                <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], ])" ng-hide="contact.edit" class="edit btn btn-primary" ng-click="openModal(contact,$index)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
+            <td style="width:8%;">
+                <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], ])" class="edit btn btn-primary" ng-hide="contact.edit" ng-click="openModal(contact,$index)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
                 <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], ])" class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && contact.Is_active > 0"><i class="icon-remove"></i></button>
                 <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], ])" class="btn btn-success btn DeactivateeRow" class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active || contact.Is_active == 0"><i class="icon-checkmark"></i></button>
                 <i class="icon-spinnery-dealie spinner small" style="margin-left:5px; " ng-show="contact.IsDirty"/>
-                <i class="spinner small icon-spinnery-dealie" src="../../img/loading.gif" style="margin-left:5px;margin-top: 10px;position: absolute;" ng-show="contact.IsDirty"/></i>
             </td>
 
-            <td once-text="contact.Last_name"></td>
-            <td once-text="contact.First_name"></td>
+            <td style="width:9%;" once-text="contact.Last_name"></td>
+            <td style="width:9%;" once-text="contact.First_name"></td>
 
-            <td>
+            <td style="width:16%;">
                 <ul>
                     <li ng-repeat="role in contact.Roles | isDepartmentalRole | orderBy:'Name'"><span once-text="role.Name"></span></li>
                 </ul>
             </td>
 
-            <td>
-                <ul>
+            <td style="width:20%;">
+                <ul class="department-list">
                     <li ng-if="contact.Primary_department"><span>{{contact.Primary_department.Name}}</span></li>
                     <li ng-if="contact.Supervisor" ng-repeat="dept in contact.Supervisor.Departments"><span once-text="dept.Name"></span></li>
                     <li ng-if="contact.PrincipalInvestigator" ng-repeat="dept in contact.PrincipalInvestigator.Departments"><span once-text="dept.Name"></span></li>
                 </ul>
             </td>
+
+            <td style="width:9%;">{{contact.Office_phone | tel}}</td>
+            <td style="width:12%;"><a ng-href="mailto:{{contact.Email}}">{{contact.Email}}</a></td>
         </tr>
     </tbody>
 </table>
