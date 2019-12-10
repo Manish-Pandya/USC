@@ -1,7 +1,8 @@
 <?php
 
     // Set up RSMS application
-    require_once '/var/www/html/rsms/Application.php';
+    require_once '/var/www/html/rsms/ApplicationBootstrapper.php';
+    ApplicationBootstrapper::bootstrap();
 
     const EXTRAS_FILE = '/var/rsms/conf/.rsms.erasmus.my.cnf';
     const OPT_EXECUTE = 'EXECUTE';
@@ -39,15 +40,15 @@
     function run_script( $scriptpath ){
         if( file_exists($scriptpath) ){
             // Read ip/db from app config
-            $ip = ApplicationConfiguration::get('server.db.host');
-            $db = ApplicationConfiguration::get('server.db.name');
+            $ip = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_DB_HOST);
+            $db = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_DB_NAME);
             $EXTRAS_FILE = EXTRAS_FILE;
 
             $output = null;
             $exitcode = null;
             echo ("Executing '$scriptpath'...\n");
-            exec("mysql --defaults-file=$EXTRAS_FILE -h $ip $db < $scriptpath", $output, $exitcode) . "\n";
             echo "\n    ----- OUTPUT -----\n";
+            exec("mysql --defaults-file=$EXTRAS_FILE -h $ip $db < $scriptpath", $output, $exitcode) . "\n";
             foreach( $output as $ln ){
                 echo "    $ln\n";
             }
@@ -73,10 +74,10 @@
         return $result;
     }
 
-    $envname = ApplicationConfiguration::get('server.env.name', '');
+    $envname = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_ENV_NAME, '');
 
-    $db_ip   = ApplicationConfiguration::get('server.db.host');
-    $db_name = ApplicationConfiguration::get('server.db.name');
+    $db_ip   = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_DB_HOST);
+    $db_name = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_DB_NAME);
 
     $db_desc = "$db_ip:$db_name";
     $db_padding = str_pad('', strlen($db_desc), '-');
@@ -91,6 +92,21 @@
 
     // Run / Check DB migrations
 
+    // Step 0: Ensure migrations table exists
+    echo("Verifying migration table... ");
+    $VERIFY_OR_CREATE_MIGRATION_TABLE = "CREATE TABLE IF NOT EXISTS `devops_migration` (
+        `version` varchar(12) NOT NULL,
+        `script` varchar(128) NOT NULL,
+        `date` timestamp DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`version`)
+    );";
+    $stmt = DBConnection::prepareStatement($VERIFY_OR_CREATE_MIGRATION_TABLE);
+    if( !$stmt->execute() ){
+        echo ("Unable to verify or create migration table$LINE");
+        echo (var_dump($stmt->errorInfo()));
+        exit("Unable to verify or create migration table");
+    }
+
     // Step 1: Check migrations table
     echo("Scanning database for executed migrations... ");
     $sql = "SELECT * FROM devops_migration";
@@ -98,7 +114,7 @@
     if( !$stmt->execute() ){
         echo ("Unable to query migration table$LINE");
         echo (var_dump($stmt->errorInfo()));
-        die;
+        exit("Failed to read from migration table");
     }
 
     $migrations = $stmt->fetchAll(PDO::FETCH_CLASS, Migration::class);
@@ -123,7 +139,7 @@
 
     if( empty($scripts) ){
         echo("No migration scripts to run in $cwd $LINE");
-        die;
+        exit(0);
     }
 
     echo( count($scripts) . " found:$LINE");
@@ -169,17 +185,17 @@
         echo($LINE . "ERROR: " . count($invalid_script_names) . " unexecuted scripts have conflicting version/id values$LINE");
         echo( "  " . implode("$LINE  ", $invalid_script_names) . $LINE);
         echo($LINE . "ERROR: Cannot perform migrartion operations until script version/ids are made unique$LINE");
-        die;
+        exit("Inavlid migration script numbers");
     }
 
     if( empty($scripts_to_execute) ){
         // Nothing left to do
-        die;
+        exit(0);
     }
 
     // Step 4: Execute the scripts and update migration table
     print "
-Processing unexecute migrations. Options are:
+Processing unexecuted migrations. Options are:
     [R]un:     Run the migration script against the database and Update the migration table
     [U]pdate:  Ignore the migration script and Update the migration table
     [S]kip:    Ignore the migration script and do not Update the migration table
@@ -199,7 +215,7 @@ Processing unexecute migrations. Options are:
         $migration->date = date("Y-m-d H:i:s");
 
         // Confirm that script should be executed
-        // TODO: Allow user to:
+        // Allow user to:
         //   [R]un script
         //   [U]pdate without execution
         //   [S]kip script
@@ -260,7 +276,7 @@ Processing unexecute migrations. Options are:
             // Run the script
             if( !run_script($migration->script) ){
                 echo( "Error executing migration file: $migration->script $LINE");
-                die;
+                exit("Error executing migration file: $migration->script");
             }
         }
 

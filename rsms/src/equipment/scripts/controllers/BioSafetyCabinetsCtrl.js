@@ -79,7 +79,14 @@ angular.module('EquipmentModule')
     $scope.deactivate = function (cabinet) {
         cabinet.Retirement_date = convenienceMethods.getUnixDate(new Date());
         cabinet.Is_active = !cabinet.Is_active;
-        $scope.saving = af.save(cabinet);
+        $scope.saving = af.save(cabinet)
+            .then(saved => {
+                ToastApi.toast(
+                    Constants.BIOSAFETY_CABINET.INACTIVATE_DISCLAIMER,
+                    ToastApi.ToastType.WARNING,
+                    10000
+                );
+            });
     };
     $rootScope.getMostRecentComment = function (cab, inspection, modalContext) {
         if (modalContext === void 0) { modalContext = false; }
@@ -288,6 +295,10 @@ angular.module('EquipmentModule')
             templateUrl: 'views/modals/cabinet-history-modal.html',
             controller: 'BioSafetyCabinetsHistoryModalCtrl'
         });
+    };
+
+    $scope.showInactiveAssignedDisclaimer = function showInactiveAssignedDisclaimer(){
+        return document.querySelectorAll('.assigned-inactive-cabinet').length > 0;
     };
 })
     .controller('BioSafetyCabinetsModalCtrl', function ($scope, $q, $modal, applicationControllerFactory, $stateParams, $rootScope, $modalInstance, convenienceMethods) {

@@ -8,7 +8,7 @@
 
 <div class="modal-body" style="border-bottom:none">
     <ul>
-        <li ng-repeat="pi in modalData.PIs"><h3>{{pi.User.Name}}</h3></li>
+        <li ng-repeat="pi in modalData.PIs | filter: {'Is_active':true}"><h3>{{pi.User.Name}}</h3></li>
     </ul>
 </div>
 <div class="modal-footer">

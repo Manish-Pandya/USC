@@ -152,7 +152,7 @@ class Messaging_ActionManager extends ActionManager {
     }
 
     public function getEmailDisclaimers(){
-        return ApplicationConfiguration::get('module.Messaging.email.disclaimers', array());
+        return ApplicationConfiguration::get(MessagingModule::CONFIG_EMAIL_DISCLAIMERS, array());
     }
 
     public function sendQueuedEmail($unsent) {
@@ -163,7 +163,7 @@ class Messaging_ActionManager extends ActionManager {
         $recipients = $unsent->getRecipients();
         $cc = $unsent->getCc_recipients();
 
-        $roleFilter = ApplicationConfiguration::get(MessagingModule::$CONFIG_EMAIL_SEND_TO_ROLE, null);
+        $roleFilter = ApplicationConfiguration::get(MessagingModule::CONFIG_EMAIL_SEND_TO_ROLE, null);
         $recipients_were_filetered = false;
         if( $roleFilter != null ){
             $LOG->info("Filtering email recipients and CCs to users with role: '$roleFilter'");
@@ -178,8 +178,8 @@ class Messaging_ActionManager extends ActionManager {
 
         $headers = array();
 
-        $default_send_from = ApplicationConfiguration::get(MessagingModule::$CONFIG_EMAIL_DEFAULT_SEND_FROM, null);
-        $return_path = ApplicationConfiguration::get(MessagingModule::$CONFIG_EMAIL_DEFAULT_RETURN_PATH, null);
+        $default_send_from = ApplicationConfiguration::get(MessagingModule::CONFIG_EMAIL_DEFAULT_SEND_FROM, null);
+        $return_path = ApplicationConfiguration::get(MessagingModule::CONFIG_EMAIL_DEFAULT_RETURN_PATH, null);
 
         if( $unsent->getSend_from() != null){
             $headers['From'] = $unsent->getSend_from();
@@ -207,7 +207,7 @@ class Messaging_ActionManager extends ActionManager {
         // Allow for the suppression of email-sending
         // Enabling this feature will result in the module not sending any email
         // Instead, queued entries are updated as if they had been sent successfully
-        if( ApplicationConfiguration::get(MessagingModule::$CONFIG_EMAIL_SUPPRESS_ALL, false)){
+        if( ApplicationConfiguration::get(MessagingModule::CONFIG_EMAIL_SUPPRESS_ALL, false)){
             $LOG->info("Suppressing sending of email due to configuration: " . MessagingModule::$CONFIG_EMAIL_SUPPRESS_ALL);
             $is_sent = true;
         }
@@ -263,7 +263,7 @@ class Messaging_ActionManager extends ActionManager {
 
         $headers = array();
 
-        $default_send_from = ApplicationConfiguration::get(MessagingModule::$CONFIG_EMAIL_DEFAULT_SEND_FROM, null);
+        $default_send_from = ApplicationConfiguration::get(MessagingModule::CONFIG_EMAIL_DEFAULT_SEND_FROM, null);
         if( isset($default_send_from) ){
             $headers['From'] = $default_send_from;
         }

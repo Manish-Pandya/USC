@@ -1363,7 +1363,7 @@ img.smallLoading {
   border: 1px solid #ddd;
   position: absolute;
   background: white;
-  z-index: 1000000000;
+  z-index: 500;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 /* line 925, ../sass/style.scss */
@@ -2128,6 +2128,13 @@ detailsReportHeaderTable tr td {
   background: #9FE89F !important;
 }
 
+.detailsReportTable .inactive-checklist-item {
+  font-style: italic;
+  text-transform: none;
+  font-size: initial;
+  font-weight: initial;
+}
+
 .detailsReportTable tr td ul li .span11 span:nth-child(odd){
   width:50px;
   float:left;
@@ -2356,7 +2363,6 @@ ul.hazInvSubRooms li span i.icon-users {
   .hazardList {
     width: 30%;
     margin: 0 3% 0 0;
-    float: left;
   }
   /* line 1429, ../sass/style.scss */
   .hazardList.narrow {
@@ -2372,6 +2378,11 @@ ul.hazInvSubRooms li span i.icon-users {
     font-size: .85vw;
   }
 }
+
+.allHazardList {
+  display: flex;
+}
+
 /* line 1445, ../sass/style.scss */
 .allHazardList hr {
   border-top: 1px solid #999 !important;

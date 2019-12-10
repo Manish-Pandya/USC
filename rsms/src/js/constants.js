@@ -42,6 +42,7 @@ var Constants = /** @class */ (function () {
             SAFETY_INSPECTOR: "Safety Inspector",
             RADIATION_INSPECTOR: "Radiation Inspector",
             DEPARTMENT_CHAIR: "Department Chair",
+            DEPARTMENT_COORDINATOR: "Department Safety Coordinator",
             PRINCIPAL_INVESTIGATOR: "Principal Investigator",
             LAB_CONTACT: "Lab Contact",
             LAB_PERSONNEL: "Lab Personnel",
@@ -226,7 +227,8 @@ var Constants = /** @class */ (function () {
             "Class II, Type B2",
             "Horizontal Flow Clean Bench",
             "Vertical Flow Clean Bench"
-        ]
+        ],
+        INACTIVATE_DISCLAIMER: "This cabinet must be unassigned from the PI to prevent the cabinet from being selected in the PI's Hazard Inventory"
     };
     Constants.CHEM_FUME_HOOD = {
         EQUIPMENT_CLASS: "ChemFumeHood",

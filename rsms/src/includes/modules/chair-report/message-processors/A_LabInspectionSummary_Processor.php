@@ -6,7 +6,7 @@
  */
 class A_LabInspectionSummary_Processor implements MessageTypeProcessor {
 
-    public function getRecipientsDescription(){ return "Chair"; }
+    public function getRecipientsDescription(){ return "Chair, Coordinator"; }
 
     public function process(Message $message, $macroResolverProvider){
         $LOG = Logger::getLogger(__CLASS__);
@@ -33,7 +33,7 @@ class A_LabInspectionSummary_Processor implements MessageTypeProcessor {
 
         // prepare email details
         $details = array(
-            'recipients' => array($departmentInfo->getChair_email()),
+            'recipients' => array($departmentInfo->getChair_email(), $departmentInfo->getCoordinator_email()),
             'macromap' => $macromap
         );
 
@@ -101,7 +101,7 @@ class A_LabInspectionSummary_Processor implements MessageTypeProcessor {
     }
 
     public static function getReportLink($departmentId, $reportYear){
-        $urlBase = ApplicationConfiguration::get('server.web.url');
+        $urlBase = ApplicationConfiguration::get( ApplicationBootstrapper::CONFIG_SERVER_WEB_URL );
         $webRoot = WEB_ROOT;
         return "$urlBase$webRoot" . "reports/#/inspection-summary/reports/$departmentId/$reportYear";
     }

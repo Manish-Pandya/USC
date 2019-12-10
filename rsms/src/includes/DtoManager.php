@@ -1,7 +1,5 @@
 <?php
 
-include_once dirname(__FILE__) . '/../Application.php';
-
 /**
  * Utility class containing static functions used to build Data Transfer Objects (DTOs).
  * 

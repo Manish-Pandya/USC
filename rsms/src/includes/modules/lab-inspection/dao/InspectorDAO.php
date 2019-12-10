@@ -7,7 +7,7 @@ class InspectorDAO extends GenericDAO {
         parent::__construct(new Inspector());
 
 		if( !isset(self::$_INSPECTOR_USER_CACHE) ){
-			self::$_INSPECTOR_USER_CACHE = new AppCache('Inspector-User');
+			self::$_INSPECTOR_USER_CACHE = CacheFactory::create('Inspector-User');
 		}
     }
 

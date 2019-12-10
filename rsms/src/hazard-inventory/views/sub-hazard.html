@@ -23,13 +23,16 @@
     <li>
         <span ng-show="relevantRooms.length">{{ key }}:</span>
         <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms | orderBy: convenienceMethods.sortAlphaNum('Room_name'))">
-            <a ng-click="openMultiplePIHazardsModal(child, room)" ng-class="{'other':room.OtherLab && !room.ContainsHazard, 'shared':room.OtherLab && room.ContainsHazard, 'stored':room.Stored}">
+            <span ng-if="!room.HasMultiplePIs && !room.OtherLab">{{ room.Room_name }}</span>
+            <a    ng-if="room.HasMultiplePIs || room.OtherLab"
+                  ng-click="openMultiplePIHazardsModal(child, room)"
+                  ng-class="{'other':room.OtherLab && !room.ContainsHazard, 'shared':room.OtherLab && room.ContainsHazard, 'stored':room.Stored}">
                 {{ room.Room_name }}
                 <span ng-if="room.HasMultiplePIs || room.OtherLab"><i class="icon-users" title="{{child.Hazard_name}} is used by more than one lab in room {{room.Room_name}}"></i></span>
-                <span ng-if="room.Stored" class="stored">
-                    <i class="icon-box" title="{{child.Hazard_name}} is stored by this lab in room {{room.Room_name}}"></i>
-                </span>
             </a>            
+            <span ng-if="room.Stored" class="stored">
+                <i class="icon-box" title="{{child.Hazard_name}} is stored by this lab in room {{room.Room_name}}"></i>
+            </span>
             <span style="margin-right: 1px;margin-left: -4px;" ng-if="!$last">, </span>
         </span>
     </li>

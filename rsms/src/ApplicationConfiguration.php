@@ -1,7 +1,17 @@
 <?php
 class ApplicationConfiguration {
 
+    private static $CONFIG_FILE;
     private static $CONFIG;
+    private static $CONFIG_OVERRIDES;
+
+    public static function getConfigFilePath(){
+        return self::$CONFIG_FILE;
+    }
+
+    public static function getOverriddenConfigNames(){
+        return array_keys( self::$CONFIG_OVERRIDES );
+    }
 
     public static function get( $key = NULL, $defaultValue = NULL ){
         // If key provided, attempt to retrieve configured value
@@ -22,17 +32,36 @@ class ApplicationConfiguration {
         return self::$CONFIG;
     }
 
-    public static function configure(){
-        $path = self::resolveConfigurationFile();
-        self::$CONFIG = self::readConfiguration($path);
+    public static function configure( $overrideConfigPath = NULL, $mergeOverrides = NULL ){
+        self::$CONFIG_FILE = self::resolveConfigurationFile( $overrideConfigPath );
+        self::$CONFIG = self::readConfiguration(self::$CONFIG_FILE);
+
+        if( isset($mergeOverrides) && is_array($mergeOverrides) ){
+            self::$CONFIG_OVERRIDES = $mergeOverrides;
+
+            // Merge parameter into our configuration, giving precedence to overrides
+            self::$CONFIG = array_merge(
+                self::$CONFIG,
+                self::$CONFIG_OVERRIDES
+            );
+        }
     }
 
-    public static function resolveConfigurationFile(){
-        // Resolve configuration file
-        $configFile = dirname(__FILE__) . "/config/rsms-config.php";
-        if( !file_exists($configFile) ){
-            // Use default configuration file
-            $configFile = dirname(__FILE__) . "/config/rsms-config.default.php";
+    public static function resolveConfigurationFile( $overrideConfigPath ){
+        // Prepare array of possible config-file paths
+        $possiblePaths = array(
+            $overrideConfigPath,
+            dirname(__FILE__) . "/config/rsms-config.php",
+            dirname(__FILE__) . "/config/rsms-config.default.php"
+        );
+
+        // Resolve configuration file by finding first existing possible path
+        $configFile = null;
+        foreach ($possiblePaths as $path) {
+            if( file_exists($path) ){
+                $configFile = $path;
+                break;
+            }
         }
 
         return $configFile;

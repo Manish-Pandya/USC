@@ -157,13 +157,9 @@ ul.banner-nav li a:hover {
     font-size: 2.3em;
 }
 
-.report-detail table.report-table th {
-    font-size: 30px;
-    padding: 10px;
-}
-
+.report-detail table.report-table th,
 .report-detail table.report-table th i {
-    font-size: 30px;
+    font-size: 24px;
     padding-top: 10px;
 }
 

@@ -13,6 +13,7 @@ angular.module('HazardInventory')
         //do we have access to action functions?
         $scope.af = applicationControllerFactory;
         $scope.convenienceMethods = convenienceMethods;
+        $rootScope.webRoot = GLOBAL_WEB_ROOT;
 
         var af = applicationControllerFactory;
         var getAllPIs = function () {
@@ -449,6 +450,10 @@ angular.module('HazardInventory')
                     inspection.Rooms.push(rooms[k]);
                 }
             }
+
+            // Generate initial warnings once processing is complete
+            updateRoomsWarning(inspection, $scope.modalData.PI);
+
             inspection.processed = true;
         }
 
@@ -462,9 +467,63 @@ angular.module('HazardInventory')
             return rooms;
         }
 
-        
+        /**
+         * Forward saving of data to ActionFunctions. This proxy allows us to also
+         * regenerate inspection warnings after room changes are completed
+         */
+        $scope.saveInspectionRoomRelationship = function saveInspectionRoomRelationship(inspection, room) {
+            af.saveInspectionRoomRelationship( inspection, room )
+                .then( saved => {
+                    updateRoomsWarning(inspection, $scope.modalData.PI);
+                });
+        };
 
+        var updateRoomsWarning = function updateRoomsWarning(inspection, pi){
+            let warning = null;
 
+            switch( inspection.Status ){
+                case Constants.INSPECTION.STATUS.SCHEDULED:
+                case Constants.INSPECTION.STATUS.NOT_ASSIGNED:
+                case Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION:{
+                    // Rooms are denoted as selected by a composite key boolean:
+                    let selectedkey = inspection.Key_id + 'checked';
+
+                    // Determine if inspection is missing or has extra Rooms
+
+                    // If room is NOT selected (and IS present in PI's Room list)
+                    let unselected = inspection.Rooms
+                        .filter( r => !r[selectedkey])
+                        .filter( r => pi.Rooms.some(pir => pir.Key_id == r.Key_id))
+                        .map(r => r.Name);
+
+                    // If room IS selected but is NOT present in PI's Room list (therefore not assigned to them)
+                    let old = inspection.Rooms
+                        .filter(r => r[selectedkey] )
+                        .filter(r => !pi.Rooms.some(pir => pir.Key_id == r.Key_id))
+                        .map(r => r.Name);
+
+                    // Generate warning object if either dataset is populated
+                    if( unselected.length || old.length ){
+                        warning = {
+                            Inspection_id: inspection.Key_id,
+                            old: old,
+                            unselected: unselected
+                        };
+                        console.debug("Inspection has warnings:", warning);
+                    }
+
+                    break;
+                }
+                default: break;
+            }
+
+            // Set warning object into the inspection
+            inspection.warning = warning;
+        };
+
+        $scope.getHazardRoom = function getHazardRoom( hazard, room_id ){
+            return hazard.InspectionRooms.find(r => r.Room_id == room_id );
+        }
     })
     .controller('SecondaryModalController', function ($scope, $q, $http, applicationControllerFactory, $modalInstance, convenienceMethods, roleBasedFactory) {
         $scope.constants = Constants;

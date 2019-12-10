@@ -10,8 +10,8 @@ class CoreMessageMacros {
             null,
             '[RSMS Login]', 'URL of the RSMS Login page',
             function(){
-                $urlBase = ApplicationConfiguration::get('server.web.url');
-                $loginPath = ApplicationConfiguration::get('server.web.LOGIN_PAGE', '/rsms');
+                $urlBase = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_WEB_URL);
+                $loginPath = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_WEB_LOGIN_PAGE, '/rsms');
                 return "$urlBase$loginPath";
             }
         );

@@ -32,6 +32,12 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         controller: labPersonnelController
       }
     )
+    .when('/departmentContacts',
+      {
+        templateUrl: 'userHubPartials/departmentContacts.html',
+        controller: departmentContactController
+      }
+    )
     .when('/uncategorized',
       {
         templateUrl: 'userHubPartials/uncategorized.html',
@@ -86,6 +92,30 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     return personnel;
   }
 }])
+.filter('isDepartmentContact', ['userHubFactory', function(userHubFactory){
+  return function(users){
+    if(!users)return;
+    var personnel = [];
+
+    personnel = users.filter(u => userHubFactory.hasRole(u, Constants.ROLE.NAME.DEPARTMENT_CHAIR)
+                               || userHubFactory.hasRole(u, Constants.ROLE.NAME.DEPARTMENT_COORDINATOR))
+
+    return personnel;
+  }
+}])
+.filter('isDepartmentalRole', ['userHubFactory', function(){
+  return function(roles){
+    if(!roles)return;
+
+    let departmental_role_names = [
+      Constants.ROLE.NAME.DEPARTMENT_CHAIR,
+      Constants.ROLE.NAME.DEPARTMENT_COORDINATOR
+    ];
+
+    return roles.filter(r => departmental_role_names.includes(r.Name));
+  }
+}])
+
 .filter('isNotContact',['userHubFactory', function(userHubFactory){
   return function(users){
     if(!users)return;
@@ -649,6 +679,11 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
         route: '/EHSPersonnel'
       },
       {
+        name: 'Department Chairs & Coordinators',
+        filter: 'isDepartmentContact',
+        route: '/departmentContacts'
+      },
+      {
         name: 'Uncategorized Users',
         filter: 'isUncat',
         route: '/uncategorized'
@@ -672,7 +707,10 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
       // by default pis are loaded, so set path to this, and update selectedRoute accordingly
       $location.path("/pis");
     }
-    if(!$scope.selectedRoute)$scope.selectedRoute = $location.path();
+
+    if(!$scope.selectedRoute){
+      $scope.selectedRoute = $location.path();
+    }
 
     $rootScope.showInactive = false;
 
@@ -932,6 +970,52 @@ var personnelController = function($scope, $modal, $rootScope, userHubFactory, c
     }
 }
 
+var departmentContactController = function($scope, $modal, $rootScope, userHubFactory, convenienceMethods, $timeout, $location) {
+    $rootScope.neededUsers = false;
+    $rootScope.order="Last_name";
+    $rootScope.error="";
+    $rootScope.renderDone = false;
+    $rootScope.constants = Constants;
+
+    userHubFactory.getAllUsers()
+      .then(
+        function(users){
+          $scope.users = userHubFactory.users;
+          $rootScope.neededUsers = true;
+          $timeout(function() {
+                $rootScope.renderDone = true;
+            }, 300);
+          return users;
+        },
+        function(){
+          $rootScope.error="There was problem getting the lab contacts.  Please check your internet connection and try again.";
+        }
+      )
+
+
+    $scope.openModal = function(user){
+        if(!user){
+          user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
+        }
+
+        userHubFactory.setModalData(user);
+
+        var modalInstance = $modal.open({
+          templateUrl: 'userHubPartials/departmentContactsModal.html',
+          controller: modalCtrl
+        });
+
+        modalInstance.result.then(function (returnedUser) {
+          if(user.Key_id){
+            console.debug("Saved Dept. Contact:", returnedUser);
+            angular.extend(user, returnedUser)
+          }else{
+            userHubFactory.users.push(returnedUser);
+          }
+        });
+    };
+}
+
 var labPersonnelController = function($scope, $modal, $rootScope, userHubFactory, $location) {
     $rootScope.neededUsers = false;
     $rootScope.error="";
@@ -1147,6 +1231,39 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
 
     }
 
+    /** Assign a department to a PI or Non-PI, respectively */
+    $scope.addDepartmentToDeptContact = function addDepartmentToDeptContact(department){
+      // If user is a PI, we apply Departments to their list
+      if( $scope.modalData.PrincipalInvestigator ){
+          console.debug("Add department to PI", $scope.modalData.PrincipalInvestigator, department);
+          $scope.modalError=""
+          var deptToAdd = convenienceMethods.copyObject(department);
+          $scope.modalData.PrincipalInvestigator.Departments.push(deptToAdd);
+      }
+      // Otherwise, we only support a single 'Primary' department
+      else {
+          console.debug("Set non-PI user Department", $scope.modalData, department);
+          $scope.modalData.Primary_department = department;
+          $scope.modalData.Primary_department_id = department.Key_id;
+      }
+    };
+
+    /** Remove a department from a PI or Non-PI, respectively */
+    $scope.removeDepartmentFromDeptContact = function(department){
+        $scope.modalError="";
+        
+        // If user is a PI, we apply Departments to their list
+        if( $scope.modalData.PrincipalInvestigator ){
+            // Defer to existing function to remove dept from a PI
+            $scope.removeDepartment(department);
+        }
+        // Otherwise, we only support a single 'Primary' department
+        else {
+            $scope.modalData.Primary_department = null;
+            $scope.modalData.Primary_department_id = null;
+        }
+    };
+
     $scope.allowRoleRemove = function (user, role){
       // Lab Personnel cannot be removed from a Lab Contact
       if( role.Name == Constants.ROLE.NAME.LAB_PERSONNEL ){
@@ -1248,10 +1365,14 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
                 returnedUser.PrincipalInvestigator.Departments = userDto.PrincipalInvestigator.Departments;
                 returnedUser.PrincipalInvestigator.Rooms = userDto.PrincipalInvestigator.Rooms;
               }
+
+              ToastApi.toast("Saved " + returnedUser.Name );
               return returnedUser;
             },
             function(){
-              $scope.modalError="The user could not be saved.  Please check your internet connection and try again."
+              $scope.modalError="The user could not be saved.  Please check your internet connection and try again.";
+
+              ToastApi.toast("The user could not be saved.", ToastApi.ToastType.ERROR );
             }
           )
     }

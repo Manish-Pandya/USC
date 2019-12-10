@@ -1,6 +1,11 @@
 <?php
 
 class CoreModule implements RSMS_Module, MyLabWidgetProvider {
+
+    /* Application Configuration Parameter Names */
+    public const CONFIG_FEATURE_IMPERSONATION = 'module.Core.feature.impersonation';
+    /*********************************************/
+
     public static $NAME = 'Core';
 
     public function getModuleName(){

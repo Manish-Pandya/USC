@@ -19,7 +19,7 @@
     </tr>
 </thead>
 <tbody>
-    <tr ng-repeat="room in PI.Rooms | orderBy:['Building.Name',convenienceMethods.sortAlphaNum('Name')] | activeOnly">
+    <tr ng-repeat="room in PI.Rooms | orderBy:['Building.Name', 'Name'] | activeOnly">
         <td><a class="btn btn-danger btn-large removeRow left" ng-click="removeRoom(room)" href="#" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i>Remove</a><img ng-show="room.IsDirty" class="smallLoading" src="../../img/loading.gif" /></td>
         <!--<td width="25%">{{room.Capmus}}</td>-->
         <td width="25%">{{room.Building.Name}}</td>

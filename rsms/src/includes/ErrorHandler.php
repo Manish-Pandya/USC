@@ -55,6 +55,12 @@ class ErrorHandler {
 	 */
 	function handleError($num, $str, $file, $line, $context = null){
 		//Logger::getLogger(__CLASS__)->debug('Handling Error');
+
+		// Omit handling of error if it was suppressed with @
+		//   see https://php.net/manual/en/language.operators.errorcontrol.php
+		if (error_reporting() == 0) {
+			return;
+		}
 		
 		// transform data into an ErrorException to pass to the exception handler
 		$exception = new ErrorException($str, 0, $num, $file, $line);

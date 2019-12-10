@@ -1,0 +1,125 @@
+------------------------------
+| Training Profile Management
+------------------------------
+
+List all ProfileQuestions (in a Recursive/Tree structure for sub-questions ('Dependant' questions?))
+Add new root-level Question
+For each Question
+    Actions:
+        Edit
+        Move Up/Down in parent list
+        Inactivate
+        Add new Sub-Question
+    Condensed display:
+        Text
+        Display conditions (role in/exclusions, required parent response)
+        Course assignments
+    Expanded display:
+        List sub-questions
+
+Editing (or creating) a Question
+    Assign 'Program Area' hazard (for root-level questions)
+        This will help to visually categorize the questions for user profiling
+    Edit Question Text
+    Delete/Inactivate Question (and all subquestions)
+    Specify role-specific Inclusion or Exclusion rules (exclusion take precedence)
+        +Admin: show if user has Admin role
+        -Admin: never show if user has Admin role
+        +Lab Personnel -Lab Contact: Show if user has Lab Personnel role, omit if Lab Contact        
+    Link Course Assignment(s) to the question's Yes/No responses
+        Modal selection with detailed info?
+        Simple Select?
+
+-------------------------------
+| Training Programs Management
+-------------------------------
+
+List all TrainingCourses
+Add new Course
+For each Course
+    Actions
+        Edit
+        Inactivate
+        Edit Quiz Question Bank
+    Condensed display:
+        Name
+        Hazard
+    Expanding displays additional detail:
+        Name
+        Description
+        Expectation
+        Delivery
+        Frequency
+        Principles
+        Quiz & Score
+
+Editing (or creating) a Course
+    Assign related Hazard
+    Name
+    Description
+    Expectation
+    Delivery
+    Frequency
+    Principles
+        Name
+        Description?
+    Quiz & Score
+
+-------------------------------------------
+| Training Programs Management - Quiz Bank
+-------------------------------------------
+
+View/Edit questions and answers for a single Course's Quiz Bank
+List all Course Principles
+    Actions
+        * Allow adding/removing/editing principles here?
+        Add Primary Question to Principle
+    Display
+        List all Primary Questions
+
+Primary Questions
+    Actions
+        Edit
+        Inactivate
+        Add Answer
+        Add Derivative Question
+    Display
+        Text
+        Answer Type
+        List Answers
+        List Derivative Questions
+
+Answers
+    Actions
+        Edit
+        Inactivate
+    Display
+        Text
+        Denote if this is a/the Correct answer
+
+Derivative Questions
+    Display as Primary Questions, without the option to add Deriviatives
+
+------------------------------
+| User Training Profile - Initial
+------------------------------
+User is presented with all root-level Profile Questions
+As each yes/no question is answered, additional questions are presented as necessary
+Upon submission, Course assignments are made, the profile is marked as Copmlete, and is given a renewal date
+
+------------------------------
+| User Training Profile - Amendments
+------------------------------
+User can amend their current Profile by submitting a new profile
+Existing answers are pre-filled, but any changes are stored as a new profile
+Changes to course assignments will be made:
+    * New responses which result in course assignments are handled normally (user is assigned to Course)
+    * Response changes which result in a course no longer being assigned are handled specially:
+    ** If user has not yet started the Course, the assignment is removed
+    ** If user has started the Course, the assignment is kept (perhaps no longer required?)
+
+
+------------------------------
+| User Training Library
+------------------------------
+Assigned Courses are listed along with status

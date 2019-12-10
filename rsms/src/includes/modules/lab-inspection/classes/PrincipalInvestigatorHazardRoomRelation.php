@@ -39,6 +39,15 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 
     }
 
+	public function __toString(){
+		return '[' .get_class($this) . " key_id=" . $this->getKey_Id() . ($this->is_active ? '' : ' is_active=false')
+			. " pi='$this->principal_investigator_id'"
+			. " room='$this->room_id'"
+			. " hazard='$this->hazard_id'"
+			. " status='$this->status'"
+			. "]";
+	}
+
     public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = EntityMap::eager("getRoom_id");
@@ -91,7 +100,15 @@ class PrincipalInvestigatorHazardRoomRelation extends GenericCrud {
 			$this->hazard = $userDAO->getById($this->hazard_id);
 		}
 		return $this->hazard;
-    }
+	}
+
+	public function getIsActivePi(){
+		$pi = QueryUtil::selectFrom( new PrincipalInvestigator() )
+			->where( Field::create('key_id', 'principal_investigator'), '=', $this->principal_investigator_id)
+			->getOne();
+
+		return $pi->getIs_active();
+	}
 
     public function getPiName(){
         if($this->piName == null && $this->principal_investigator_id != null){

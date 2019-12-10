@@ -103,7 +103,14 @@ class User extends GenericCrud implements JsonSerializable {
 	public function __construct(){
 
 		
-    }
+	}
+
+	protected function getToStringParts(){
+		return array_merge( parent::getToStringParts(), [
+			'username=' . $this->username
+		]);
+	}
+
     public static function defaultEntityMaps(){
         // Define which subentities to load
 		$entityMaps = array();
@@ -212,11 +219,26 @@ class User extends GenericCrud implements JsonSerializable {
 	public function getPosition(){ return $this->position; }
 	public function setPosition($position){ $this->position = $position;}
 
-	public function getPrimary_department() {
-		if($this->hasSupervisor() && $this->primary_department == null) {
-			$superDao = new PrincipalInvestigatorDAO();
-			$this->primary_department = $superDao->getPrimaryDepartment($this->getSupervisor_id());
+	private function load_primary_department(){
+		if( $this->primary_department_id != null ){
+			return QueryUtil::selectFrom(new Department())
+				->where(Field::create('key_id', 'department'), '=', $this->primary_department_id)
+				->getOne();
 		}
+
+		if($this->hasSupervisor()) {
+			$superDao = new PrincipalInvestigatorDAO();
+			return $superDao->getPrimaryDepartment($this->getSupervisor_id());
+		}
+
+		return null;
+	}
+
+	public function getPrimary_department() {
+		if($this->primary_department == null) {
+			$this->primary_department = $this->load_primary_department();
+		}
+
 		return $this->primary_department;
 	}
 	public function setPrimary_department($primary_department) {

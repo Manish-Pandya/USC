@@ -5,7 +5,7 @@ require_once 'top_view.php';
 <script>
 	window.RSMSCenterConfig = {};
 	<?php
-	if( ApplicationConfiguration::get("module.Core.feature.impersonation", false) ){
+	if( ApplicationConfiguration::get( CoreModule::CONFIG_FEATURE_IMPERSONATION, false) ){
 		echo "window.RSMSCenterConfig.impersonation = true;"; 
 	}
 	?>

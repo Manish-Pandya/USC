@@ -6,7 +6,7 @@ class InspectionDAO extends GenericDAO {
     public function __construct(){
         parent::__construct(new Inspection());
         if( !isset(self::$STATUS_CACHE)){
-            self::$STATUS_CACHE = new AppCache('Inspection Status');
+            self::$STATUS_CACHE = CacheFactory::create('Inspection Status');
         }
     }
 
@@ -155,5 +155,60 @@ class InspectionDAO extends GenericDAO {
 		catch(QueryException $er){
 			return new QueryError($er->getMessage());
 		}
+    }
+
+    /**
+     * Retrieve all Checklists which have Responses in an Inspection
+     *
+     * @param int $inspectionId The key_id of the Inspection
+     *
+     * @return Array of Checklists which have Responses in the Inspection
+     */
+    public function getChecklistsUsedInInspection( $inspectionId ){
+        $QUES_RESP_REL = DataRelationship::fromArray(array(
+            "className" => Response::class,
+            "tableName" => "response",
+            "foreignKeyName" => "question_id",
+            "sourceTableName" => 'question',
+            "keyName" => "key_id",
+        ));
+
+        $CHECK_QUES_REL = DataRelationship::fromArray(array(
+            "className" => Question::class,
+            "tableName" => "question",
+            "keyName" => "key_id",
+            "foreignKeyName" => "checklist_id"
+        ));
+
+        return QueryUtil::select('*', 'checklist', Checklist::class)
+            ->joinTo( $CHECK_QUES_REL )
+            ->joinTo( $QUES_RESP_REL )
+            ->where(Field::create('inspection_id', 'response'), '=', $inspectionId)
+            ->getAll();
+
+    }
+
+    /**
+     * Retrieve all Checklists which are assigned to an Inspection (whether they are used or not)
+     *
+     * @param int $inspectionId The key_id of the Inspection
+     *
+     * @return Array of IDs of the Checklists which are assigned to the Inspection
+     */
+    public function getChecklistsAssignedToInspection( $inspectionId ){
+        $rel = DataRelationship::fromArray(array(
+            "className" => "Checklist",
+            "tableName" => "inspection_checklist",
+            "foreignKeyName" => "checklist_id",
+            "sourceTableName" => "checklist",
+            "keyName" => "key_id",
+        ));
+
+        $checklists = QueryUtil::select('key_id', 'checklist', Checklist::class)
+            ->joinTo( $rel )
+            ->where(Field::create('inspection_id', $rel->getTableName()), '=', $inspectionId)
+            ->getAll();
+
+        return array_map(function($c){ return $c->getKey_id(); }, $checklists);
     }
 }

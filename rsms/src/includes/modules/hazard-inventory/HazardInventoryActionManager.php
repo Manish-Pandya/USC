@@ -60,13 +60,28 @@ class HazardInventoryActionManager extends ActionManager {
 		}
 
 		if( $piId !== NULL ){
-			$dao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation());
-			$hazardDtos = $dao->getHazardRoomDtosByPIId($piId, $roomIds);
+			$dao = new PrincipalInvestigatorHazardRoomRelationDAO();
+
+			// Retrieve Hazard/Room DTOs for this PI & rooms
+			$hrDtos = $dao->getHazardRoomDtosByPIId($piId, $roomIds);
+
+			// Collect array of room IDs which were collected with H/R relations
+			$matchedRoomIds = array();
+			foreach($hrDtos as $room){
+				$matchedRoomIds[] = $room->getRoom_id();
+			}
+
+			// Get DTO for every hazard
+			$hazardDtos = $dao->getAllHazardDtos();
+
+			// Merge Hazard with PIHR data, and populate Hazard/Room statuses in each
+			$merged_hazardDtos = $dao->mergeHazardRoomDtos($piId, $matchedRoomIds, $hazardDtos, $hrDtos);
 
 			// Transform into DTOs
 			return array_map(function($hazard){
 				// Transform InspectionRooms into DTOS
 				$rooms = array_map(function($room){
+					$mult = $room->getHasMultiplePis();
 					return new GenericDto(array(
 						"Class" => get_class($room),
 						"Principal_investigator_id" => $room->getPrincipal_investigator_id(),
@@ -79,7 +94,8 @@ class HazardInventoryActionManager extends ActionManager {
 						"Principal_investigator_hazard_room_relation_id" => $room->getPrincipal_investigator_hazard_room_relation_id(),
 						"ContainsHazard" => $room->getContainsHazard(),
 						"Status" => $room->getStatus(),
-						"HasMultiplePis" => $room->getHasMultiplePis(),
+						"HasMultiplePis" => $mult,
+						"HasMultiplePIs" => $mult,
 						"OtherLab" => $room->getOtherLab(),
 						"Stored" => $room->getStored(),
 					));
@@ -102,7 +118,7 @@ class HazardInventoryActionManager extends ActionManager {
 					"Order_index" => $hazard->getOrder_index(),
 					"BelongsToOtherPI" => $hazard->getBelongsToOtherPI()
 				));
-			}, $hazardDtos);
+			}, $merged_hazardDtos);
 
 		}
 		else{
@@ -353,10 +369,10 @@ class HazardInventoryActionManager extends ActionManager {
         $newRoomIds = implode(',', array_fill(0, count($roomIds), '?'));
 
 		$queryString = "SELECT principal_investigator_id
-                        FROM principal_investigator_room a
-                        LEFT JOIN principal_investigator b
-                        ON a.principal_investigator_id = b.key_id
-                        WHERE b.is_active = 1 AND a.room_id IN ( $newRoomIds ) group by a.principal_investigator_id";
+                        FROM principal_investigator_room pir
+                        LEFT JOIN principal_investigator pi
+                        ON pir.principal_investigator_id = pi.key_id
+                        WHERE pir.room_id IN ( $newRoomIds ) group by pir.principal_investigator_id";
 		$stmt = DBConnection::prepareStatement($queryString);
         foreach ($roomIds as $k => $id){
 		    $stmt->bindValue(($k+1), $id);
@@ -430,15 +446,25 @@ class HazardInventoryActionManager extends ActionManager {
         if($id == null)return new ActionError("No Id provided");
         $db = DBConnection::get();
 
-		$queryString = "SELECT a.* from biosafety_cabinet a
-                        left join  equipment_inspection b
-                        on a.key_id = b.equipment_id
-                        left join principal_investigator_equipment_inspection c
-                        on c.inspection_id = b.key_id
-                        where b.equipment_class = 'BioSafetyCabinet'
-                        AND c.principal_investigator_id = ?
-                        AND a.Is_active = 1
-                        GROUP BY a.key_id";
+        $queryString = "SELECT
+                            biosafety_cabinet.*
+
+                        -- Get cabinets
+                        FROM biosafety_cabinet biosafety_cabinet
+
+                        -- Join to each cabinet's Latest Inspections
+                        left join  latest_equipment_inspection latest_insp
+                            on biosafety_cabinet.key_id = latest_insp.equipment_id
+
+                        -- Join to inspected PI
+                        left join principal_investigator_equipment_inspection pi_equip_insp
+                            on pi_equip_insp.inspection_id = latest_insp.key_id
+
+                        where latest_insp.equipment_class = 'BioSafetyCabinet'
+                            AND pi_equip_insp.principal_investigator_id = ?
+                            AND biosafety_cabinet.Is_active = 1
+
+                        GROUP BY biosafety_cabinet.key_id";
         $stmt = DBConnection::prepareStatement($queryString);
         $stmt->bindValue(1, $id);
         $stmt->execute();

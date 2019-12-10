@@ -163,12 +163,15 @@ session_start();
     <script type="text/javascript" src="scripts/filters/hazardInventoryFilters.js"></script>
     <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/tinymce.js"></script>
+
+    <script type='text/javascript' src='<?php echo WEB_ROOT?>js/ToastApi.js'></script>
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/ToastApi.css"/>
 </head>
 
 <body>
     <?php require('../views/user_info_bar.php'); ?>
 
-    <div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" class="container-fluid" style="margin-top:25px;">
+    <div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" ng-cloak class="container-fluid" style="margin-top:25px;">
 
         <div cg-busy="{promise:piPromise,message:'Loading Principal Investigator Details',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:hazardPromise,message:'Loading Hazards',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
@@ -192,7 +195,7 @@ session_start();
                 </li>
             </ul>
         </div>
-        <div class="whiteBg" style="min-height:2000px;">
+        <div class="whiteBg">
             <div id="editPiForm" class="row-fluid">
                 <form class="form">
                     <div class="control-group span4">
@@ -302,9 +305,13 @@ session_start();
                         <ul class="subRooms hazInvSubRooms" ng-if="getShowRooms(child, room, key)" ng-repeat="(key, rooms) in child.InspectionRooms | groupBy: 'Building_name'">
                             <li>
                                 <span ng-show="relevantRooms.length">{{ key }}:</span>
+
                                 <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms | orderBy: convenienceMethods.sortAlphaNum('Room_name'))">
 
-                                    <a ng-click="openMultiplePIHazardsModal(child, room)" ng-class="{'other':room.OtherLab && !room.ContainsHazard, 'shared':room.OtherLab && room.ContainsHazard, 'stored':room.Stored}">
+                                    <span ng-if="!room.HasMultiplePIs && !room.OtherLab">{{ room.Room_name }}</span>
+                                    <a    ng-if="room.HasMultiplePIs || room.OtherLab"
+                                          ng-click="openMultiplePIHazardsModal(child, room)"
+                                          ng-class="{'other':room.OtherLab && !room.ContainsHazard, 'shared':room.OtherLab && room.ContainsHazard, 'stored':room.Stored}">
                                         {{ room.Room_name }}
                                         <span ng-if="room.HasMultiplePIs || room.OtherLab"><i class="icon-users" title="{{child.Hazard_name}} is used by more than one lab in room {{room.Room_name}}"></i></span>
                                         <span ng-if="room.Stored" class="stored">
@@ -317,7 +324,7 @@ session_start();
                              </li>
                         </ul>
                         <ul>
-                            <li ng-class="{'yellowed': child.Stored_only || child.storedOnly}" ng-repeat="child in child.ActiveSubHazards" ng-if="child.IsPresent || child.BelongsToOtherPI || child.Stored_only" ng-init="child.loadActiveSubHazards()" id="id-{{child.Hazard_id}}" class="hazardLi"><span data-ng-include="'views/sub-hazard.html'"></span></li>
+                            <li ng-class="{'yellowed': child.Stored_only || child.storedOnly}" ng-repeat="child in child.ActiveSubHazards | orderBy: 'Order_index'" ng-if="child.IsPresent || child.BelongsToOtherPI || child.Stored_only" ng-init="child.loadActiveSubHazards()" id="id-{{child.Hazard_id}}" class="hazardLi"><span data-ng-include="'views/sub-hazard.html'"></span></li>
                         </ul>
                     </li>
                 </ul>
@@ -363,7 +370,10 @@ session_start();
                                 <span ng-show="relevantRooms.length">{{ key }}:</span>
                                 <span ng-repeat="room in relevantRooms = ( rooms | relevantRooms)">
 
-                                    <a ng-click="openMultiplePIHazardsModal(child, room)" ng-class="{'other':room.OtherLab && !room.ContainsHazard, 'shared':room.OtherLab && room.ContainsHazard, 'stored':room.Stored}">
+                                    <span ng-if="!room.HasMultiplePIs && !room.OtherLab">{{ room.Room_name }}</span>
+                                    <a    ng-if="room.HasMultiplePIs || room.OtherLab"
+                                          ng-click="openMultiplePIHazardsModal(child, room)"
+                                          ng-class="{'other':room.OtherLab && !room.ContainsHazard, 'shared':room.OtherLab && room.ContainsHazard, 'stored':room.Stored}">
                                         {{ room.Room_name }}
                                         <span ng-if="room.HasMultiplePIs || room.OtherLab"><i class="icon-users" title="{{child.Hazard_name}} is used by more than one lab in room {{room.Room_name}}"></i></span>
                                         <span ng-if="room.Stored" class="stored">

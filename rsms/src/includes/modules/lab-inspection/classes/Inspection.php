@@ -210,8 +210,11 @@ class Inspection extends GenericCrud {
     public function setChecklists($checklists){ $this->checklists = $checklists; }
 
     public function getPrincipalInvestigator(){
-        $piDAO = new GenericDAO(new PrincipalInvestigator());
-        $this->principalInvestigator = $piDAO->getById($this->principal_investigator_id);
+        if( $this->principalInvestigator == null ){
+            $piDAO = new GenericDAO(new PrincipalInvestigator());
+            $this->principalInvestigator = $piDAO->getById($this->principal_investigator_id);
+        }
+
         return $this->principalInvestigator;
     }
     public function setPrincipalInvestigator($principalInvestigator){
