@@ -707,7 +707,10 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
       // by default pis are loaded, so set path to this, and update selectedRoute accordingly
       $location.path("/pis");
     }
-    if(!$scope.selectedRoute)$scope.selectedRoute = $location.path();
+
+    if(!$scope.selectedRoute){
+      $scope.selectedRoute = $location.path();
+    }
 
     $rootScope.showInactive = false;
 
@@ -1181,9 +1184,6 @@ modalCtrl = function($scope, userHubFactory, $modalInstance, convenienceMethods,
       user.Roles.push(role);
     }
 
-    $scope.asdf = function asdf(){
-      console.log("asdf");
-    }
     $scope.saveUser = function(){
         $scope.modalData.IsDirty = true;
 
