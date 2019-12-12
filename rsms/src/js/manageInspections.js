@@ -41,7 +41,6 @@ var getDate = function(time){
             formattedTime.formattedString = month + '/' + day + '/' + year;
             formattedTime.year = year;
             formattedTime.monthString = monthNames[date.getMonth()];
-            //console.log(formattedTime);
             return formattedTime;
         }
 
@@ -402,28 +401,6 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
         $rootScope.dtoCopy = false;
     }
 
-    factory.parseDtos = function (dto) {
-        var dtos = [];
-        var l = dto.Pis.length;
-        for (var i = 0; i < l; i++) {
-            var pi = dto.Pis[i];
-            pi = factory.getInspectionsByPi(pi, dto.Inpsections);       
-            
-            //create a dto obj for each inspection that the pi has
-            //cache an obj of uninspected rooms, grouped by building
-            var n = pi.Inspections.length;
-            for(var j = 0; j < n; j++){
-                var dtoTemplate = {
-                    Pi_name: pi.User.Name,
-                    pi_key_id: pi.User.Key_id,
-                }
-            }
-        }
-        //create a dto obj for each inspection the pi still needs
-        dtos = dto.Pis;
-        return dtos;
-    }
-
     factory.getInspectionsByPi = function (pi, inspections) {
         var l = inspections.length;
         pi.Inspections = [];
@@ -436,127 +413,123 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
         return pi;
     }
 
-    factory.collapseDtos = function (dtos) {
-        var l = dtos.length;
-        var ids = [];
-        var duplicateIds = [];
-        for (var i = 0; i < l; i++) {
-            var d = dtos[i];
-            invertRoomForNonMultiples(d);
-            if (!d.Inspections) continue;
-            if (ids.indexOf(d.Inspections.Key_id) < 0) {
-                ids.push(d.Inspections.Key_id);
-            } else if (duplicateIds.indexOf(d.Inspections.Key_id) < 0) {
-                duplicateIds.push(d.Inspections.Key_id);
-            }
-        }
-        
-        var masterIndex;
-        var l = duplicateIds.length;
-        for (var i = 0; i < l; i++) {
-            var id = duplicateIds[i];
-            var relevantDtos = dtos.reduce(function (relevantDtos, dto, index) {
-                if (dto.Inspections && dto.Inspections.Key_id == id) {
-                    relevantDtos.push(dto);
-                    if (!masterIndex) {
-                        var masterIndex = index;
-                    }
-                    dtos.splice(index, 1);
+    factory.reduceInspectionScheduleDTOs = function reduceInspectionScheduleDTOs(dtos){
+        // Process InspectionScheduleDTO items
+        //   1. Apply Campus/Building/Room hierarchy to each
+        //   2. Merge items with common Inspection_id to display together
+        //   3. 
+
+        // Group existing inspections by their Inspection_id
+        let existing_inspections = dtos.filter( dto => dto.Inspection_id != null );
+        let inspection_counts = existing_inspections.reduce( (items, dto, idx) => {
+                let group = items.find(g => g[0].Inspection_id == dto.Inspection_id);
+                if( !group ){
+                    group = [];
+                    items.push(group);
                 }
-                return relevantDtos;
+
+                // Add this item to the group
+                group.push(dto);
+
+                return items;
             }, []);
-            var masterDto = JSON.parse(JSON.stringify(relevantDtos[0]));
-            map = {
-                Building_rooms: null,
-                Campus_name: null,
-                Building_name: null,
-                Campus_key_id: null,
-                Building_key_id: null,
-                IsMultiple:true,
-                Bio_hazards_present: relevantDtos.some(function(dto){return dto.Bio_hazards_present }),
-                Chem_hazards_present: relevantDtos.some(function (dto) { return dto.Chem_hazards_present }),
-                Rad_hazards_present: relevantDtos.some(function (dto) { return dto.Rad_hazards_present }),
-                Inspection_rooms:relevantDtos.every(function(room){return room}),
-                Deficiency_selection_count: null,
-                Campuses: invertRooms(relevantDtos)
-            }
-            angular.extend(masterDto, map);
-            dtos.splice(masterIndex, 0, masterDto);
-        }
+        let multi_inspection_items = inspection_counts.filter( group => group.length > 1)
+        let multi_inspections = multi_inspection_items.map( inspectionGroupItems => {
+                // Remove all items in the group and reduce to dtos
+                let inspectionGroup = inspectionGroupItems.map( dto => {
+                    dtos.splice(dtos.indexOf(dto), 1);
+                    return dto;
+                });
 
-        function invertRooms(dtos) {
-            var campuses = [];
-            var campusIds = [];
-            var buildingIds = [];
-            var buildings = [];
-            var rooms = [];
-            var inspectionRooms = [];
-            dtos.forEach(function (dto) {
-                rooms = rooms.concat(dto.Building_rooms);
-                inspectionRooms = inspectionRooms.concat(dto.Inspection_rooms);
-                top: // loop through all rooms and flag those notInspected
-                for (var i = 0; i < rooms.length; i++) {
-                    for (var j = 0; j < inspectionRooms.length; j++) {
-                        if (rooms[i].Key_id == inspectionRooms[j].Key_id) continue top;
-                    }
-                    rooms[i].notInspected = true;
-                }
-                if (campusIds.indexOf(dto.Campus_key_id) == -1) {
-                    var campus = {
-                        Campus_key_id: dto.Campus_key_id,
-                        Campus_name: dto.Campus_name,
-                        Buildings: []
-                    }
-                    campuses.push(campus);
-                    campusIds.push(dto.Campus_key_id);
-                }
-                if (buildingIds.indexOf(dto.Building_id) == -1) {
-                    var bldg = {
-                        Building_name: dto.Building_name,
-                        Building_id: dto.Building_key_id,
-                        Campus_id: dto.Campus_key_id,
-                        Campus_name: dto.Campus_name,
-                        Rooms: []
-                    }
-                    buildings.push(bldg);
-                }
-            });
-            rooms.forEach(function (room, idx) {
-                buildings.forEach(function(bldg){
-                    if (room && room.Building_id == bldg.Building_id) {
-                        bldg.Rooms.push(room);
-                        campuses.forEach(function (c) {
-                            if (c.Buildings.indexOf(bldg) == -1 && c.Campus_key_id == bldg.Campus_id) {
-                                c.Buildings.push(bldg);
-                            }
-                        })
-                    }
-                })
+                // Replace each of these groups with a singular 'master' inspection object
+                let master = angular.copy(inspectionGroup[0]);
+
+                console.debug("Reducing inspection group to master DTO", master.Inspection_id);
+
+                // Prepare common fields
+                let merged = {
+                    Building_rooms: null,
+                    Campus_name: null,
+                    Building_name: null,
+                    Campus_key_id: null,
+                    Building_key_id: null,
+                    IsMultiple:true,
+                    Bio_hazards_present: inspectionGroup.some(function(dto){return dto.Bio_hazards_present }),
+                    Chem_hazards_present: inspectionGroup.some(function (dto) { return dto.Chem_hazards_present }),
+                    Rad_hazards_present: inspectionGroup.some(function (dto) { return dto.Rad_hazards_present }),
+                    Inspection_rooms: inspectionGroup.reduce( (prev, current) => prev.concat(current), []),
+                    Deficiency_selection_count: null,
+                    Campuses: factory.buildCampusTree(inspectionGroup)
+                };
+
+                // Apply common fields to master inspection
+                angular.extend(master, merged);
+
+                // Push
+                dtos.push(master);
             })
-            
-            return campuses;
-        }
+        ;
 
-        function invertRoomForNonMultiples(dto) {
-            var rooms = dto.Inspection_rooms || dto.Building_rooms;
-            var l = rooms.length;
-            dto.Campuses = [{
-                Campus_key_id: dto.Campus_key_id,
-                Campus_name: dto.Campus_name,
-                Buildings: [
-                    {
-                        Building_name: dto.Building_name,
-                        Building_id: dto.Building_id,
-                        Rooms: rooms.map(function (room, idx) {
-                            return room;
-                        })
-                    }
-                ]
-            }]
+        // Build campus tree for remaining singular items
+        dtos.filter( dto => !dto.IsMultiple )
+            .forEach( dto => dto.Campuses = factory.buildCampusTree(dto) );
 
-            return dto.Campuses;
-        }
         return dtos;
+    };
+
+    factory.buildCampusTree = function buildCampusTree( itemOrItems ){
+        let array = Array.isArray(itemOrItems) ? itemOrItems : [itemOrItems];
+
+        // Build Campus/Building/Room tree for each InspectionScheduleDTO in array
+        // Each of these DTOs is scoped to a single Building
+        let all_rooms = [];
+        let inspected_rooms = [];
+        let tree = [];
+
+        array.forEach( dto => {
+            // Join all Building_rooms and Inspection_rooms arrays together
+            dto.Building_rooms.forEach(room => all_rooms[room.Key_id] = room);
+
+            if( dto.Inspection_rooms ){
+                dto.Inspection_rooms.forEach(room => inspected_rooms[room.Key_id] = room);
+            }
+
+            // Get or init campus
+            let campus = tree.find(c => c.Campus_key_id == dto.Campus_key_id);
+            if( !campus ){
+                campus = {
+                    Campus_key_id: dto.Campus_key_id,
+                    Campus_name: dto.Campus_name,
+                    Buildings: []
+                };
+
+                tree.push(campus);
+            }
+
+            // Get or init building
+            let building = campus.Buildings.find(b => b.Building_id == dto.Building_key_id);
+            if( !building) {
+                building = {
+                    Building_name: dto.Building_name,
+                    Building_id: dto.Building_key_id,
+                    Campus_id: dto.Campus_key_id,
+                    Campus_name: dto.Campus_name,
+                    Rooms: []
+                };
+
+                campus.Buildings.push(building);
+            }
+
+            dto.Building_rooms.forEach( room => building.Rooms.push(room));
+        });
+
+        // Flag any room which is not inspected
+        if( array[0].Inspection_id != null ){
+            all_rooms.forEach(room => room.notInspected = inspected_rooms[room.Key_id] == undefined);
+        }
+
+        // Return the array of Campuses
+        return tree;
     }
 
     return factory;
@@ -590,9 +563,7 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
         return manageInspectionsFactory.getInspectionScheduleDtos(year)
             .then(
                 function (dtos) {
-                    //$scope.dtos = manageInspectionsFactory.parseDtos(dto);
-                    $scope.dtos = manageInspectionsFactory.collapseDtos(dtos);
-                    //$scope.dtos = dtos;
+                    $scope.dtos = manageInspectionsFactory.reduceInspectionScheduleDTOs(dtos);
                     $scope.loading = false;
                     $scope.genericFilter(true);
                 }
@@ -642,19 +613,7 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
         $scope.loading = true;
         $scope.dtos = [];
 
-        manageInspectionsFactory.getInspectionScheduleDtos($scope.yearHolder.selectedYear)
-            .then(
-                function (dtos) {
-                    //$scope.dtos = dtos;
-                    $scope.dtos = manageInspectionsFactory.collapseDtos(dtos);
-                    $scope.loading = false;
-                    $scope.genericFilter(true);
-
-                },
-                function (error) {
-                    $scope.error = "The system could not retrieve the list of inspections for the selected year.  Please check your internet connection and try again."
-                }
-            )
+        return getDtos( $scope.yearHolder.selectedYear);
     }
 
     $scope.genericFilter = function (init) {
@@ -796,7 +755,6 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
                             }
                             
                             if (item.Inspections && item.Inspections.Schedule_month) {
-                                //console.log(item.Inspections.Schedule_month);
                                 var j = monthNames2.length
                                 while (j--) {
                                     if (monthNames2[j].val == item.Inspections.Schedule_month) {
@@ -837,7 +795,6 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
         if (!dto.Inspection_rooms || !dto.Inspection_rooms.length)
             return dto;
         roomIds = [];
-        //console.log(dto);
         dto.Inspection_rooms.forEach(function (r) {
             roomIds.push(r.Key_id);
         })
