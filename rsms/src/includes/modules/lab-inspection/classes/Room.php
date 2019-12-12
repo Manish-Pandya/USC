@@ -9,7 +9,8 @@
 class Room extends GenericCrud {
 
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "room";
+	public const TABLE_NAME = 'room';
+	protected static $TABLE_NAME = Room::TABLE_NAME;
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
@@ -17,9 +18,8 @@ class Room extends GenericCrud {
 		"safety_contact_information" 	=> "text",
 		"animal_facility" 	=> "boolean",
 		"building_id"		=> "integer",
-		//"chem_hazards_present"			=> "boolean",
-		//"rad_hazards_present"			=> "boolean",
-		//"bio_hazards_present"			=> "boolean",
+		"purpose"	=>	"text",
+		"room_type" => "text",
 
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -28,8 +28,7 @@ class Room extends GenericCrud {
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer",
 		"created_user_id"	=> "integer",
-		"purpose"	=>	"text"
-							);
+	);
 
 
 	public static $PIS_RELATIONSHIP = array(
@@ -61,6 +60,8 @@ class Room extends GenericCrud {
 	);
 
 	private $name;
+
+	private $room_type = RoomType::RESEARCH_LAB;
 
 	private $purpose;
 
@@ -142,6 +143,9 @@ class Room extends GenericCrud {
 	// Accessors / Mutators
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }
+
+	public function getRoom_type(){ return $this->room_type; }
+	public function setRoom_type( $val ){ $this->room_type = $val; }
 
 	public function getPurpose(){ return $this->purpose; }
 	public function setPurpose($purpose){ $this->purpose = $purpose; }
@@ -387,4 +391,5 @@ class Room extends GenericCrud {
 
 
 }
+
 ?>
