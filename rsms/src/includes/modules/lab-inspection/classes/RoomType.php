@@ -25,6 +25,12 @@ class RoomType {
         }
     }
 
+    public static function getAll(){
+        RoomType::init_types();
+
+        return array_values( RoomType::$TYPES );
+    }
+
 	public static function of( string $name ){
         RoomType::init_types();
 		if( isset(RoomType::$TYPES[$name]) ){
@@ -43,6 +49,13 @@ class RoomType {
 		$this->label = $label;
 		$this->is_inspectable = $is_inspectable;
 	}
+
+    public function __toString(){
+        return '['
+            . get_class($this)
+            . " $this->name"
+        . ']';
+    }
 
 	public function getName(){ return $this->name; }
 	public function getLabel(){ return $this->label; }
