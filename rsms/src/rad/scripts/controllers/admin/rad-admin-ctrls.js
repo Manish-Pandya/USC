@@ -1754,11 +1754,6 @@ angular.module('00RsmsAngularOrmApp')
     };
     $scope.af = af;
     $rootScope.isotopesPromise = getAllIsotopes();
-    $scope.deactivate = function (isotope) {
-        var copy = dataStoreManager.createCopy(isotope);
-        copy.Is_active = !copy.Is_active;
-        af.saveIsotope(copy, isotope);
-    };
     $scope.openModal = function (object) {
         var modalData = {};
         if (!object) {
