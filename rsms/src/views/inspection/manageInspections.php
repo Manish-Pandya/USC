@@ -1,12 +1,13 @@
 <?php
 require_once '../top_view.php';
+require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.php';
 ?>
 <style>
     .hidey-thing{height:150px !important;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.6/lodash.min.js"></script>
 <script src="../../js/manageInspections.js"></script>
-<div ng-app="manageInspections" ng-controller="manageInspectionCtrl">
+<div ng-app="manageInspections" ng-controller="manageInspectionCtrl" ng-cloak>
 <div class="alert savingBox" ng-if="saving">
   <h1>
       <i style="color:white" class="icon-spinnery-dealie spinner large"></i>
