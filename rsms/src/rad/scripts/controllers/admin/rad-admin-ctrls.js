@@ -1757,13 +1757,13 @@ angular.module('00RsmsAngularOrmApp')
     $scope.deactivate = function (isotope) {
         var copy = dataStoreManager.createCopy(isotope);
         copy.Is_active = !copy.Is_active;
-        af.saveCarboy(copy, isotope);
+        af.saveIsotope(copy, isotope);
     };
     $scope.openModal = function (object) {
         var modalData = {};
         if (!object) {
-            object = new window.Carboy();
-            object.Class = "Carboy";
+            object = new window.Isotope();
+            object.Class = "Isotope";
         }
         modalData[object.Class] = object;
         af.setModalData(modalData);
