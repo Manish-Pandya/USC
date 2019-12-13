@@ -75,6 +75,10 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
     </div>
 
     <table class="table table-striped table-bordered userList manage-inspections-table" scroll-table watch="filtered.length" ng-show="dtos.length" style="margin-top:100px;">
+        <thead>
+            <tr>
+                <th colspan="8" style="padding:0"></th>
+            </tr>
             <tr>
                 <th>
                     Investigator<br>
