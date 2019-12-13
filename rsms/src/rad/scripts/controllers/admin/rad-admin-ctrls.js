@@ -1749,7 +1749,7 @@ angular.module('00RsmsAngularOrmApp')
     var getAllIsotopes = function () {
         af.getAllIsotopes()
             .then(function (isotopes) {
-            $scope.isotopes = sortIsotopes(dataStore.Isotope);
+            $scope.isotopes = dataStore.Isotope;
         }, function () { });
     };
     $scope.af = af;
@@ -1771,9 +1771,6 @@ angular.module('00RsmsAngularOrmApp')
             templateUrl: 'views/admin/admin-modals/isotope-modal.html',
             controller: 'IsotopeModalCtrl'
         });
-        modalInstance.result.then(function () {
-            $scope.isotopes = sortIsotopes(dataStore.Isotope);
-        });
     };
 })
     .controller('IsotopeModalCtrl', function ($scope, actionFunctionsFactory, $stateParams, $rootScope, $modalInstance) {
@@ -1789,8 +1786,12 @@ angular.module('00RsmsAngularOrmApp')
         af.saveIsotope(copy, isotope)
             .then($scope.close);
     };
-    $scope.close = function () {
+    $scope.cancel = function(){
         $modalInstance.dismiss();
+        af.deleteModalData();
+    }
+    $scope.close = function () {
+        $modalInstance.close();
         af.deleteModalData();
     };
 });
