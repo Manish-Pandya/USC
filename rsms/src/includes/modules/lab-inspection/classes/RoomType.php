@@ -17,10 +17,12 @@ class RoomType {
 
     private static function init_types(){
         if( !isset(RoomType::$TYPES) ){
+            $animal_img = WEB_ROOT . 'img/animal-facility.svg';
+
             RoomType::$TYPES = [
-                RoomType::RESEARCH_LAB => new RoomType( RoomType::RESEARCH_LAB, 'Research Lab', true),
-                RoomType::ANIMAL_FACILITY => new RoomType( RoomType::ANIMAL_FACILITY, 'Animal Facility', true),
-                RoomType::TEACHING_LAB => new RoomType( RoomType::TEACHING_LAB, 'Teaching Lab', false)
+                RoomType::RESEARCH_LAB => new RoomType( RoomType::RESEARCH_LAB, 'Research Lab', true, 'icon-lab'),
+                RoomType::ANIMAL_FACILITY => new RoomType( RoomType::ANIMAL_FACILITY, 'Animal Facility', true, $animal_img, false),
+                RoomType::TEACHING_LAB => new RoomType( RoomType::TEACHING_LAB, 'Teaching Lab', false, 'icon-users')
             ];
         }
     }
@@ -42,12 +44,21 @@ class RoomType {
 
 	private $name;
 	private $label;
-	private $is_inspectable;
+    private $is_inspectable;
+    private $icon_class;
+    private $img_path;
 
-	private function __construct( $name, $label, $is_inspectable ){
+	private function __construct( $name, $label, $is_inspectable, $glyphPath, $glyphIsIcon=TRUE ){
 		$this->name = $name;
 		$this->label = $label;
-		$this->is_inspectable = $is_inspectable;
+        $this->is_inspectable = $is_inspectable;
+
+        if( $glyphIsIcon ){
+            $this->icon_class = $glyphPath;
+        }
+        else {
+            $this->img_path = $glyphPath;
+        }
 	}
 
     public function __toString(){
@@ -60,6 +71,8 @@ class RoomType {
 	public function getName(){ return $this->name; }
 	public function getLabel(){ return $this->label; }
     public function isInspectable(){ return $this->is_inspectable; }
+    public function getIcon_class(){ return $this->icon_class; }
+    public function getImg_path(){ return $this->img_path; }
 
     public function getRestrictedToDepartments(){
         $inspectionTypeDeptsRel = DataRelationship::fromArray(RoomType::DEPT_ROOM_TYPE_RELATIONSHIP);

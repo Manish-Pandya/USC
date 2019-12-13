@@ -60,9 +60,8 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
             <label>Room Types:</label>
             <div ng-repeat="type in constants.ROOM_TYPE | toArray | filter:{inspectable:true}">
                 <label>
-                    <img ng-if="type.name == 'ANIMAL_FACILITY'" width="15px;" src="../../img/animal-facility.svg"/>
-                    <i ng-if="type.name == 'RESEARCH_LAB'" class="icon-lab"></i>
-                    <i ng-if="type.name == 'TEACHING_LAB'" class="icon-users"></i>
+                    <img ng-if="type.img_src" width="15px;" ng-src="{{type.img_src}}"/>
+                    <i ng-if="type.icon_class" class="{{type.icon_class}}"></i>
                 </label>
                 <span once-text="type.label"></span>
                 <span ng-if="type.departments" title="Rooms of this type are only inspected as part of this department">
@@ -134,10 +133,10 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
                         <div ng-repeat="building in campus.Buildings" style="margin-bottom:10px">
                             <div ng-class="{'red':room.notInspected}" ng-repeat="room in building.Rooms | orderBy: convenienceMethods.sortAlphaNum('Name')"
                                 style="display:flex;">
-                                <span class="italic" style="padding-right: 5px;">
-                                    <img ng-if="room.Room_type == 'ANIMAL_FACILITY'" width="15px;" class="grayed-out" src="../../img/animal-facility.svg"/>
-                                    <i ng-if="room.Room_type == 'RESEARCH_LAB'" class="icon-lab"></i>
-                                    <i ng-if="room.Room_type == 'TEACHING_LAB'" class="icon-users"></i>
+                                <span class="italic grayed-out" style="padding-right: 5px;"
+                                    ng-init="type = constants.ROOM_TYPE[room.Room_type]">
+                                    <img ng-if="type.img_src" width="15px;" ng-src="{{type.img_src}}"/>
+                                    <i ng-if="type.icon_class" class="{{type.icon_class}}"></i>
                                 </span>
                                 <span>{{room.Name}}</span>
                             </div>
