@@ -32,7 +32,7 @@
                         <li ng-if="parcel._showUses" class="parcel-row parcel-detail-row" ng-click="selectParcelForTransfer(parcel, null)">
                             <ul><li class="sub-label">&nbsp;</li><li>Unsed</li><li>{{parcel.Remainder}}</li></ul>
                         </li>
-                        <li ng-repeat-end ng-repeat="use in parcel.ParcelUses"
+                        <li ng-repeat-end ng-repeat="use in parcel.ParcelUses | activeOnly"
                             ng-if="parcel._showUses" ng-click="!use.Is_transfer && selectParcelForTransfer(parcel, use)"
                             class="parcel-row parcel-use-row parcel-detail-row" ng-class="{'yellow':parcel.Key_id == modalData.selectedParcel.Key_id, 'inactive':use.Is_transfer}">
                             <ul><li class="sub-label">{{use.Is_transfer ? 'Transferred' : '&nbsp;'}}</li><li><i class="icon-help pull-left" ng-if="use.Experiment_use" popover="{{use.Experiment_use}}"></i>Used: {{use.Date_used | dateToISO}}</li><li>{{use.Quantity}}</li></ul>
