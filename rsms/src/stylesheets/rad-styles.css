@@ -1415,6 +1415,10 @@ i.solids-containers {
     padding-right: 5px;
 }
 
+h1.isotopes {
+    display: flex;
+    align-items: center;
+}
 .isotope-report tr.empty td {
     color: #A0A0A0;
     font-style: italic;
