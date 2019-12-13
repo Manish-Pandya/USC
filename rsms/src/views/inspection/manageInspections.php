@@ -41,29 +41,40 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
       <i class="icon-spinnery-dealie spinner large"></i>
       <span>Loading...</span>
     </div>
-    <div class="filter-holder" ng-if="dtos.length">
+    <div class="fixed even-content filter-holder" ng-if="dtos.length">
         <div>
-            <label>Inspection Year:</label>
-            <select ng-model="yearHolder.selectedYear" ng-change="selectYear()" ng-options="year as year.Name for year in yearHolder.years">
-                <option value="">-- select year --</option>
-            </select>
+            <div>
+                <label>Inspection Year:</label>
+                <select ng-model="yearHolder.selectedYear" ng-change="selectYear()" ng-options="year as year.Name for year in yearHolder.years">
+                    <option value="">-- select year --</option>
+                </select>
+            </div>
+            <div>
+                <label>Inspection Type:</label>
+                <select ng-model="search.type" ng-options="v as v for (k, v) in constants.INSPECTION.TYPE" ng-change="genericFilter()">
+                    <option value="">All Types</option>
+                </select>
+            </div>
         </div>
-        <div>
-            <label>Inspection Type:</label>
-            <select ng-model="search.type" ng-options="v as v for (k, v) in constants.INSPECTION.TYPE" ng-change="genericFilter()">
-                <option value="">All Types</option>
-            </select>
+        <div class="legend">
+            <label>Room Types:</label>
+            <div ng-repeat="type in constants.ROOM_TYPE | toArray | filter:{inspectable:true}">
+                <label>
+                    <img ng-if="type.name == 'ANIMAL_FACILITY'" width="15px;" src="../../img/animal-facility.svg"/>
+                    <i ng-if="type.name == 'RESEARCH_LAB'" class="icon-lab"></i>
+                    <i ng-if="type.name == 'TEACHING_LAB'" class="icon-users"></i>
+                </label>
+                <span once-text="type.label"></span>
+                <span ng-if="type.departments" title="Rooms of this type are only inspected as part of this department">
+                    <span>(</span>
+                    <span ng-repeat="dept in type.departments" once-text="dept"></span>
+                    <span>)</span>
+                </span>
+            </div>
         </div>
-        
     </div>
 
     <table class="table table-striped table-bordered userList manage-inspections-table" scroll-table watch="filtered.length" ng-show="dtos.length" style="margin-top:100px;">
-        <thead>
-            <tr>
-                <th colspan="7" style="padding:0">
-                    
-                </th>
-            </tr>
             <tr>
                 <th>
                     Investigator<br>
@@ -117,8 +128,14 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
                 <td class="triple-inner-inner" style="width:8%">
                     <div ng-repeat="campus in dto.Campuses">
                         <div ng-repeat="building in campus.Buildings" style="margin-bottom:10px">
-                            <div ng-class="{'red':room.notInspected}" ng-repeat="room in building.Rooms | orderBy: convenienceMethods.sortAlphaNum('Name')">
-                                {{room.Name}}
+                            <div ng-class="{'red':room.notInspected}" ng-repeat="room in building.Rooms | orderBy: convenienceMethods.sortAlphaNum('Name')"
+                                style="display:flex;">
+                                <span class="italic" style="padding-right: 5px;">
+                                    <img ng-if="room.Room_type == 'ANIMAL_FACILITY'" width="15px;" class="grayed-out" src="../../img/animal-facility.svg"/>
+                                    <i ng-if="room.Room_type == 'RESEARCH_LAB'" class="icon-lab"></i>
+                                    <i ng-if="room.Room_type == 'TEACHING_LAB'" class="icon-users"></i>
+                                </span>
+                                <span>{{room.Name}}</span>
                             </div>
                         </div>
                     </div>

@@ -3837,6 +3837,7 @@ tbody tr:hover{/* background:#BDC3C7; */color: #FFFFFF !important;}
  // display:none;
   border:none;
 }
+
 .scrollTable thead{
   z-index: 1050;
   position: fixed;
@@ -4035,6 +4036,10 @@ btn-mini {
   z-index: 1060;
   margin-top: -31px;
   position: fixed;
+
+  /* Mimic bootstrapmetro's navbar.fixed position */
+  left: 70px;
+  right: 70px;
 }
 .filter-holder div{
   margin-right: 15px;
@@ -4049,6 +4054,15 @@ btn-mini {
 .filter-holder div select{
   margin-top:0;
 }
+
+.filter-holder div.legend {
+  margin-right: unset;
+}
+
+.filter-holder div.legend label {
+  padding-right: 3px;
+}
+
 input.error, input.ng-invalid.ng-dirty {
     border-color:red !important;
 }
@@ -4356,4 +4370,9 @@ table.quickdate-calendar td:hover {
 }
 .inactive-contact::after {
   content: " (Inactive)";
+}
+
+.even-content {
+  display: flex;
+  justify-content: space-between;
 }
