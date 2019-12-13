@@ -1758,6 +1758,7 @@ angular.module('00RsmsAngularOrmApp')
         var modalData = {};
         if (!object) {
             object = new window.Isotope();
+            object.Is_active = true;
             object.Class = "Isotope";
         }
         modalData[object.Class] = object;

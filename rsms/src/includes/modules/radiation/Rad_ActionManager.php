@@ -792,6 +792,9 @@ class Rad_ActionManager extends ActionManager {
         else {
             $dao = $this->getDao(new Isotope());
 
+            // RSMS-1103: Isotopes are never inactive
+            $decodedObject->setIs_active(true);
+
             //set the half_life in days, based on the display_half_life and unit
             //default to days, don't change half-life
             $factor = 1;
