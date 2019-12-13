@@ -20,7 +20,7 @@ class Isotope extends GenericCrud implements JsonSerializable {
 		"unit"					=> "text",
 		"auth_limit"            => "float",
         "is_mass"               => "boolean",
-        "license_line_item"     => "string",
+        "license_line_item"     => "text",
 		//GenericCrud
 		"key_id"				=> "integer",
 		"is_active"				=> "boolean",
