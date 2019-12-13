@@ -11,9 +11,9 @@
         </tr>
         <tr ng-repeat="invt in pi.CurrentIsotopeInventories">
             <td>{{invt.Isotope_name}}</td>
-            <td>{{invt.Auth_limit | roundFloat}}</td>
-            <td>{{invt.Amount_on_hand | roundFloat}}</td>
-            <td>{{invt.Usable_amount | roundFloat}}</td>
+            <td>{{invt.Auth_limit | roundFloat | unit:invt}}</td>
+            <td>{{invt.Amount_on_hand | unit:invt}}</td>
+            <td>{{invt.Usable_amount | unit:invt}}</td>
         </tr>
     </table>
 </div>
