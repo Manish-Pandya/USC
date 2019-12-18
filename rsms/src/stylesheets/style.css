@@ -3833,6 +3833,8 @@ tbody tr:hover{/* background:#BDC3C7; */color: #FFFFFF !important;}
 /* Sticky table headers */
 table.sticky-headers thead tr th {
   position: sticky;
+  z-index: 1;
+
   background-color: #fff;
 }
 
