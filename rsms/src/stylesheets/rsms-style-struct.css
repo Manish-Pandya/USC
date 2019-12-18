@@ -54,16 +54,15 @@
 .hub-banner ul.banner-nav li {
     display: inline-block;
     margin-right:10px;
+    font-size: 16px;
 }
 
 .hub-banner ul.banner-nav li a {
     font-weight: bold;
-    font-size: 12px;
     display: block;
 }
 
 ul.banner-nav li span {
     font-weight: bold;
-    font-size: 12px;
     display: block;
 }
