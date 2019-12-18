@@ -1,7 +1,7 @@
 <h1 class="alert alert-danger" ng-if="error">{{error}}</h1>
 <div cg-busy="{promise:saving,message:'Saving',backdrop:true,templateUrl:'../../client-side-framework/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:loadingHasHazards,message:'Loading',backdrop:true,templateUrl:'../../client-side-framework/busy-templates/full-page-busy.html'}"></div>
-<div class="loading" ng-if="loading" style="margin-top: 140px;">
+<div class="loading" ng-if="loading">
     <i class="icon-spinnery-dealie spinner large"></i>
     <span>Getting Lab Locations...</span>
 </div>
