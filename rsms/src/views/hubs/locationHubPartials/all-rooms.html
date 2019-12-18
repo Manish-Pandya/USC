@@ -5,9 +5,9 @@
     <i class="icon-spinnery-dealie spinner large"></i>
     <span>Getting Lab Locations...</span>
 </div>
-<table class="table table-striped table-hover piTable table-bordered locationTable" scroll-table watch="filtered.length" ng-if="rooms && !loading && !modal" style="margin-top: 140px;">
+<table class="table table-striped table-hover piTable table-bordered locationTable sticky-headers" watch="filtered.length" ng-if="rooms && !loading && !modal">
     <thead>
-        <tr class="blueBg">
+        <tr class="blueBg sticky-action-bar">
             <th colspan="5" class="blueBg">
                 <h1 class="blueBg">Laboratory Locations</h1>
                 <div class="btn-group" style="margin:-22px 0 0 30px">
@@ -33,14 +33,14 @@
                 </div>
             </th>
         </tr>
-        <tr>
+        <tr class="sticky-header-bar">
             <th class="lhcol_edit">Edit</th>
             <th class="lhcol_building">Building</th>
             <th class="lhcol_name">Room Number</th>
             <th class="lhcol_type">T</th>
             <th class="lhcol_campus">Campus</th>
         </tr>
-        <tr>
+        <tr class="sticky-filter-bar">
             <th class="lhcol_edit"></th>
             <th class="lhcol_building">
                 <input class="span2" ng-model="search.building" placeholder="Filter by Building" />

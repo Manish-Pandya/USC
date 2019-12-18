@@ -4,9 +4,9 @@
     <span>Getting Campuses...</span>
 </div>
 
-<table class="userList table table-striped table-hover piTable table-bordered locationTable editTable" ng-if="campuses && !loading" style="max-width:1300px;margin-top: 140px;" scroll-table watch="filtered.length">
+<table class="userList table table-striped table-hover piTable table-bordered locationTable sticky-headers" ng-if="campuses && !loading" watch="filtered.length">
     <thead>
-        <tr class="purpleBg">
+        <tr class="purpleBg sticky-action-bar">
             <th colspan="4" class="purpleBg">
                 <h1 class="purpleBg">Campuses</h1>
                 <div class="btn-group" style="margin:-22px 0 0 30px">
@@ -15,7 +15,7 @@
                 <h2 class="purpleBg" style="float:right; margin-top:8"><span class="bold underline">{{filtered.length}}</span> Campuses Displayed</h2>
             </th>
         </tr>
-        <tr>
+        <tr class="sticky-header-bar">
             <th>Edit</th>
             <th>
                 Campus

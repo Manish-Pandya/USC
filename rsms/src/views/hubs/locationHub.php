@@ -5,10 +5,10 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/locationHub.js"></script>
 <style>
     /* Location Hub - Rooms: Table column sizing */
-    .locationTable tr .lhcol_edit { width:6%; }
+    .locationTable tr .lhcol_edit { width:7%; }
     .locationTable tr .lhcol_building { width:18%; }
     .locationTable tr .lhcol_name { width:10%; }
-    .locationTable tr .lhcol_type { width:5%; }
+    .locationTable tr .lhcol_type { width:2%; }
     .locationTable tr .lhcol_hazards { width:10%; }
     .locationTable tr .lhcol_purpose { width:10%; }
     .locationTable tr .lhcol_pidept { width:34%; }
@@ -18,6 +18,7 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
     .lhcol_pidept .pi_filters span label { display: inline; }
     .lhcol_pidept .pi_filters span input { width: inherit !important; }
     .lhcol_pidept .pi_filters span { margin-right: 10%; }
+    .lhcol_pidept .pi_search input { max-width: 250px; }
 
     .locationTable {
         max-width: 100%;
@@ -67,7 +68,7 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
 </style>
 
 <span ng-app="locationHub" >
-<div class="navbar fixed">
+<div class="navbar">
     <ul class="nav pageMenu blueBg" style="min-height: 50px; color:white !important; padding: 4px 0 0 0; width:100%">
         <li class="span3" style="margin-left:0">
             <img src="<?php echo WEB_ROOT?>img/building-hub-large-icon.png" class="pull-left" style="height:50px" />
@@ -78,7 +79,7 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
         <div style="clear:both; height:0; font-size:0; ">&nbsp;</div>
     </ul>
 </div>
-        <div class="btn-group fixed" id="piButtons" ng-controller="routeCtrl" style="margin-left:-9px;z-index:1045;margin-top: 56px;">
+        <div class="btn-group" id="piButtons" ng-controller="routeCtrl">
             <a class="btn btn-large btn-info" ng-click="setRoute('/rooms')" ng-class="{selected: location=='/rooms'}" >All Rooms</a>
             <a class="btn btn-large btn-info" ng-click="setRoute('/rooms/research-labs')" ng-class="{selected: location=='/rooms/research-labs'}" >Research Labs</a>
             <a class="btn btn-large btn-info" ng-click="setRoute('/rooms/animal-facilities')" ng-class="{selected: location=='/rooms/animal-facilities'}" >Animal Facilities</a>

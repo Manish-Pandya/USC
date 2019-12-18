@@ -3,9 +3,9 @@
     <i class="icon-spinnery-dealie spinner large"></i>
     <span>Getting Buildings...</span>
 </div>
-<table class="userList table table-striped table-hover piTable table-bordered locationTable editTable" ng-if="buildings && !loading" style="max-width:1300px; margin-top:140px;" scroll-table watch="filtered.length">
+<table class="userList table table-striped table-hover piTable table-bordered locationTable sticky-headers" ng-if="buildings && !loading" watch="filtered.length">
     <thead>
-        <tr class="greenBg">
+        <tr class="greenBg sticky-action-bar">
             <th colspan="5" class="greenBg">
                 <h1 class="greenBg">Buildings</h1>
                 <div class="btn-group" style="margin:-22px 0 0 30px">
@@ -14,7 +14,7 @@
                 <h2 class="greenBg" style="float:right; margin-top:8"><span class="bold underline">{{filtered.length}}</span> Building Displayed</h2>
             </th>
         </tr>
-        <tr>
+        <tr class="sticky-header-bar">
             <th clas="temp">Edit</th>
             <th>
                 <a>Building</a><br>
