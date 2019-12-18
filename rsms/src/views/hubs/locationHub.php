@@ -11,7 +11,7 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
     .locationTable tr .lhcol_type { width:2%; }
     .locationTable tr .lhcol_hazards { width:10%; }
     .locationTable tr .lhcol_purpose { width:10%; }
-    .locationTable tr .lhcol_pidept { width:34%; }
+    .locationTable tr .lhcol_pidept { width:32%; }
 
     .locationTable tr .lhcol_campus { width:12%; }
 
@@ -22,6 +22,7 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
 
     h1 .room-type-icon {
         width: 25px;
+        padding-right: 10px;
 
         /* Apply same opacity as 'grayed-out' class,
             but force color to black to treat icons
@@ -98,6 +99,7 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
             <li><a class="" ng-click="setRoute('/rooms/research-labs')" ng-class="{selected: location=='/rooms/research-labs'}" >Research Labs</a></li>
             <li><a class="" ng-click="setRoute('/rooms/animal-facilities')" ng-class="{selected: location=='/rooms/animal-facilities'}" >Animal Facilities</a></li>
             <li><a class="" ng-click="setRoute('/rooms/teaching-labs')" ng-class="{selected: location=='/rooms/teaching-labs'}" >Teaching Labs</a></li>
+            <li>|</li>
             <li><a class="" ng-click="setRoute('/buildings')" ng-class="{selected: location=='/buildings'}" >Buildings</a></li>
             <li><a class="" ng-click="setRoute('/campuses')" ng-class="{selected: location=='/campuses'}" >Campuses</a></li>
         </ul>
