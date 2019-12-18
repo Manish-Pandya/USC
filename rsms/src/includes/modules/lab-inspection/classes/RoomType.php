@@ -20,9 +20,9 @@ class RoomType {
             $animal_img = WEB_ROOT . 'img/animal-facility.svg';
 
             RoomType::$TYPES = [
-                RoomType::RESEARCH_LAB => new RoomType( RoomType::RESEARCH_LAB, 'Research Lab', true, 'icon-lab'),
-                RoomType::ANIMAL_FACILITY => new RoomType( RoomType::ANIMAL_FACILITY, 'Animal Facility', true, $animal_img, false),
-                RoomType::TEACHING_LAB => new RoomType( RoomType::TEACHING_LAB, 'Teaching Lab', false, 'icon-users')
+                RoomType::RESEARCH_LAB => new RoomType( RoomType::RESEARCH_LAB, 'Research Lab', 'Research Labs', true, 'icon-lab'),
+                RoomType::ANIMAL_FACILITY => new RoomType( RoomType::ANIMAL_FACILITY, 'Animal Facility', 'Animal Facilities', true, $animal_img, false),
+                RoomType::TEACHING_LAB => new RoomType( RoomType::TEACHING_LAB, 'Teaching Lab', 'Teaching Labs', false, 'icon-users')
             ];
         }
     }
@@ -44,13 +44,15 @@ class RoomType {
 
 	private $name;
 	private $label;
+	private $plural_label;
     private $is_inspectable;
     private $icon_class;
     private $img_path;
 
-	private function __construct( $name, $label, $is_inspectable, $glyphPath, $glyphIsIcon=TRUE ){
+	private function __construct( $name, $label, $plural_label, $is_inspectable, $glyphPath, $glyphIsIcon=TRUE ){
 		$this->name = $name;
 		$this->label = $label;
+		$this->plural_label = $plural_label;
         $this->is_inspectable = $is_inspectable;
 
         if( $glyphIsIcon ){
@@ -70,6 +72,7 @@ class RoomType {
 
 	public function getName(){ return $this->name; }
 	public function getLabel(){ return $this->label; }
+	public function getPluralLabel(){ return $this->plural_label; }
     public function isInspectable(){ return $this->is_inspectable; }
     public function getIcon_class(){ return $this->icon_class; }
     public function getImg_path(){ return $this->img_path; }

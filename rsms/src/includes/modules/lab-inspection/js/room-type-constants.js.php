@@ -15,6 +15,7 @@ echo 'if( !window.Constants ){
     foreach( RoomType::getAll() as $type ){
         $name = $type->getName();
         $label = $type->getLabel();
+        $plural = $type->getPluralLabel();
         $inspectable = $type->isInspectable() ? 'true' : 'false';
         $img = $type->getImg_path();
         $icon = $type->getIcon_class();
@@ -25,6 +26,7 @@ echo 'if( !window.Constants ){
         echo "$name:{";
         echo  "name:'$name',";
         echo  "label:'$label',";
+        echo  "label_plural:'$plural',";
         echo  "inspectable:$inspectable,";
         echo  "departments:[$depts],";
         echo  "icon_class:'$icon',";
