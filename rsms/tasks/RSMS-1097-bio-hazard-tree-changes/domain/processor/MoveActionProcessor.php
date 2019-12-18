@@ -10,7 +10,7 @@ class MoveActionProcessor extends A_ActionProcessor {
         $this->meta->pihrDao = new GenericDAO( new PrincipalInvestigatorHazardRoomRelation() );
     }
 
-    public function validate( Action &$action ): ActionProcessorResult {
+    public function validate( A_HazardChangeAction &$action ): ActionProcessorResult {
         // Validate that hazard and target-parent exist
         $hazard = $this->_get_move_action_hazard($action);
         if( !$hazard ){
@@ -34,7 +34,7 @@ class MoveActionProcessor extends A_ActionProcessor {
         return new ActionProcessorResult(true);
     }
 
-    public function perform( Action &$action ): ActionProcessorResult {
+    public function perform( A_HazardChangeAction &$action ): ActionProcessorResult {
         $hazard = $this->_get_move_action_hazard($action);
         $target = $this->_get_move_action_target_hazard($action);
         $old_parent = $this->_get_hazard_by_id( $hazard->getParent_hazard_id() );
@@ -65,7 +65,7 @@ class MoveActionProcessor extends A_ActionProcessor {
         return new ActionProcessorResult(true, "Moved Hazard $savedHazard to $target | Added $total_added PI/Hazard/Room assignments | $diff" );
     }
 
-    function verify( Action &$action ): bool {
+    function verify( A_HazardChangeAction &$action ): bool {
         $hazard = $this->_get_move_action_hazard($action);
         $target = $this->_get_move_action_target_hazard($action);
 
@@ -100,7 +100,7 @@ class MoveActionProcessor extends A_ActionProcessor {
                 if( $a->getRoom_id() == $b->getRoom_id() ){
                     return 0;
                 }
-
+        
                 return $a->getRoom_id() - $b->getRoom_id();
             }
             else{
@@ -148,9 +148,44 @@ class MoveActionProcessor extends A_ActionProcessor {
         }
         else {
             // No target ID is specified, so target was new. get-by-name
-            $target = QueryUtil::selectFrom($this->meta->hazard)
-                ->where($this->meta->f_name, '=', $action->targetName)
-                ->getOne();
+
+            if( is_array($action->targetName) ){
+                // Target name specifies a path
+                // Use the path to search for parts
+                $view = null;
+                foreach( $action->targetName as $pathpart ){
+                    if( is_numeric($pathpart) ){
+                        // This part is a specific hazard; get by ID
+                        $view = $this->_get_hazard_by_id($pathpart);
+                    }
+                    else {
+                        // Find this part by unique name
+                        $q = QueryUtil::selectFrom($this->meta->hazard)
+                            ->where($this->meta->f_name, '=', $pathpart);
+
+                        // If we have a view set already, restrict to that hazard's children
+                        if( isset($view) ){
+                            $q->where($this->meta->f_parent_hazard, '=', $view->getKey_id());
+                        }
+
+                        $view = $q->getOne();
+                    }
+
+                    if( !isset($view) ){
+                        // Couldn't find this part
+                        return null;
+                    }
+                }
+
+                $target = $view;
+            }
+            else {
+                // Target is a name, expected to be unique
+                $target = QueryUtil::selectFrom($this->meta->hazard)
+                    ->where($this->meta->f_name, '=', $action->targetName)
+                    ->getOne();
+            }
+
 
             return $target;
         }
