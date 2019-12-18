@@ -37,7 +37,6 @@
             <th class="lhcol_edit">Edit</th>
             <th class="lhcol_building">Building</th>
             <th class="lhcol_name">Room Number</th>
-            <th class="lhcol_type">T</th>
             <th class="lhcol_campus">Campus</th>
         </tr>
         <tr class="sticky-filter-bar">
@@ -48,7 +47,6 @@
             <th class="lhcol_name">
                 <input class="span2" ng-model="search.room" placeholder="Filter by Lab Room" />
             </th>
-            <th class="lhcol_type"></th>
             <th class="lhcol_campus">
                 <input class="span2" ng-model="search.campus" placeholder="Filter by Campus" />
             </th>
@@ -83,14 +81,6 @@
             <td class="lhcol_name">
                 <input ng-model="roomCopy.Name" placeholder="Name" ng-if="room.edit" style="max-width:115px" />
                 <span ng-if="!room.edit">{{room.Name}}</span>
-            </td>
-
-            <td class="lhcol_type">
-                <span style="padding-right: 5px;"
-                    ng-init="type = constants.ROOM_TYPE[room.Room_type]">
-                    <img ng-if="type.img_src" width="15px;" ng-src="{{type.img_src}}"/>
-                    <i ng-if="type.icon_class" class="{{type.icon_class}}"></i>
-                </span>
             </td>
 
             <td class="lhcol_campus" once-text="room.Building.Campus.Name"></td>
