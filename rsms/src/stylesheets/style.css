@@ -714,7 +714,6 @@ div.rsmsCenterIconContainer a p {
 /* line 419, ../sass/style.scss */
 tr.edit {
   border: #999 solid 3px;
-  zoom: 1.1;
   transition: border .2s;
 }
 
