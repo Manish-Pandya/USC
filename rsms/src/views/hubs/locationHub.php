@@ -87,30 +87,31 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
     }
 </style>
 
-<span ng-app="locationHub" >
-<div class="navbar">
-    <ul class="nav pageMenu blueBg" style="min-height: 50px; color:white !important; padding: 4px 0 0 0; width:100%">
-        <li class="span3" style="margin-left:0">
-            <img src="<?php echo WEB_ROOT?>img/building-hub-large-icon.png" class="pull-left" style="height:50px" />
-                <h2 style="padding: 11px 0 5px 15px;">Location Hub
-                <a style="float:right;margin: 11px 28px 0 0;" href="<?php echo WEB_ROOT;?>"><i class="icon-home" style="font-size:40px;"></i></a>
-            </h2>
-        </li>
-        <div style="clear:both; height:0; font-size:0; ">&nbsp;</div>
-    </ul>
-</div>
-        <div class="btn-group" id="piButtons" ng-controller="routeCtrl">
-            <a class="btn btn-large btn-info" ng-click="setRoute('/rooms')" ng-class="{selected: location=='/rooms'}" >All Rooms</a>
-            <a class="btn btn-large btn-info" ng-click="setRoute('/rooms/research-labs')" ng-class="{selected: location=='/rooms/research-labs'}" >Research Labs</a>
-            <a class="btn btn-large btn-info" ng-click="setRoute('/rooms/animal-facilities')" ng-class="{selected: location=='/rooms/animal-facilities'}" >Animal Facilities</a>
-            <a class="btn btn-large btn-info" ng-click="setRoute('/rooms/teaching-labs')" ng-class="{selected: location=='/rooms/teaching-labs'}" >Teaching Labs</a>
-            <a class="btn btn-large btn-info" ng-click="setRoute('/buildings')" ng-class="{selected: location=='/buildings'}" >Buildings</a>
-            <a class="btn btn-large btn-info" ng-click="setRoute('/campuses')" ng-class="{selected: location=='/campuses'}" >Campuses</a>
-        </div>
+<span ng-app="locationHub">
+    <div class="navbar">
+        <ul class="nav pageMenu blueBg" style="min-height: 50px; color:white !important; padding: 4px 0 0 0; width:100%">
+            <li class="span3" style="margin-left:0">
+                <img src="<?php echo WEB_ROOT?>img/building-hub-large-icon.png" class="pull-left" style="height:50px" />
+                    <h2 style="padding: 11px 0 5px 15px;">Location Hub
+                    <a style="float:right;margin: 11px 28px 0 0;" href="<?php echo WEB_ROOT;?>"><i class="icon-home" style="font-size:40px;"></i></a>
+                </h2>
+            </li>
+            <div style="clear:both; height:0; font-size:0; ">&nbsp;</div>
+        </ul>
+    </div>
 
-        <span ng-hide="locations">
-            <ng-view></ng-view>
-        </span>
+    <div class="btn-group" id="piButtons" ng-controller="routeCtrl">
+        <a class="btn btn-large btn-info" ng-click="setRoute('/rooms')" ng-class="{selected: location=='/rooms'}" >All Rooms</a>
+        <a class="btn btn-large btn-info" ng-click="setRoute('/rooms/research-labs')" ng-class="{selected: location=='/rooms/research-labs'}" >Research Labs</a>
+        <a class="btn btn-large btn-info" ng-click="setRoute('/rooms/animal-facilities')" ng-class="{selected: location=='/rooms/animal-facilities'}" >Animal Facilities</a>
+        <a class="btn btn-large btn-info" ng-click="setRoute('/rooms/teaching-labs')" ng-class="{selected: location=='/rooms/teaching-labs'}" >Teaching Labs</a>
+        <a class="btn btn-large btn-info" ng-click="setRoute('/buildings')" ng-class="{selected: location=='/buildings'}" >Buildings</a>
+        <a class="btn btn-large btn-info" ng-click="setRoute('/campuses')" ng-class="{selected: location=='/campuses'}" >Campuses</a>
+    </div>
+
+    <span ng-hide="locations">
+        <ng-view></ng-view>
+    </span>
 </span>
 
 <?php
