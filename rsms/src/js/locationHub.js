@@ -5,8 +5,38 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
     $routeProvider
         .when('/rooms',
             {
-                templateUrl: 'locationHubPartials/rooms.html',
-                controller: roomsCtrl
+                templateUrl: 'locationHubPartials/all-rooms.html',
+                controller: roomsCtrl,
+                resolve: {
+                    roomType: () => null
+                }
+            }
+        )
+        .when('/rooms/research-labs',
+            {
+                templateUrl: 'locationHubPartials/pi_labs.html',
+                controller: roomsCtrl,
+                resolve: {
+                    roomType: () => Constants.ROOM_TYPE.RESEARCH_LAB
+                }
+            }
+        )
+        .when('/rooms/animal-facilities',
+            {
+                templateUrl: 'locationHubPartials/pi_labs.html',
+                controller: roomsCtrl,
+                resolve: {
+                    roomType: () => Constants.ROOM_TYPE.ANIMAL_FACILITY
+                }
+            }
+        )
+        .when('/rooms/teaching-labs',
+            {
+                templateUrl: 'locationHubPartials/non_pi_labs.html',
+                controller: roomsCtrl,
+                resolve: {
+                    roomType: () => Constants.ROOM_TYPE.TEACHING_LAB
+                }
             }
         )
         .when('/buildings',
@@ -510,13 +540,15 @@ routeCtrl = function($scope, $location,$rootScope){
     $rootScope.iterator=0;
 }
 
-roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $modal, locationHubFactory, roleBasedFactory){
+roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $modal, locationHubFactory, roleBasedFactory, roomType){
     $rootScope.modal = false;
     $scope.loading = true;
     var lhf = $scope.lhf = locationHubFactory;
     $rootScope.rbf = roleBasedFactory;
     $scope.constants = Constants;
     $scope.convenienceMethods = convenienceMethods;
+    $scope.roomType = roomType;
+    console.debug("Rooms controller | type=" + roomType);
 
     // Default search parameters
     $scope.search = {

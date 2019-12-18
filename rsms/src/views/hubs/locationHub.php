@@ -1,5 +1,6 @@
 <?php
 require_once '../top_view.php';
+require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.php';
 ?>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/locationHub.js"></script>
 <style>
@@ -7,6 +8,7 @@ require_once '../top_view.php';
     .locationTable tr .lhcol_edit { width:6%; }
     .locationTable tr .lhcol_building { width:18%; }
     .locationTable tr .lhcol_name { width:10%; }
+    .locationTable tr .lhcol_type { width:5%; }
     .locationTable tr .lhcol_hazards { width:10%; }
     .locationTable tr .lhcol_purpose { width:10%; }
     .locationTable tr .lhcol_pidept { width:34%; }
@@ -77,9 +79,12 @@ require_once '../top_view.php';
     </ul>
 </div>
         <div class="btn-group fixed" id="piButtons" ng-controller="routeCtrl" style="margin-left:-9px;z-index:1045;margin-top: 56px;">
-            <a ng-click="setRoute('/rooms')" ng-class="{selected: location=='/rooms'}" id="editPI" class="btn btn-large btn-info">Manage Lab Rooms</a>
-            <a ng-click="setRoute('/buildings')" ng-class="{selected: location=='/buildings'}" class="btn btn-large btn-success">Manage Buildings</a>
-            <a ng-click="setRoute('/campuses')" ng-class="{selected: location=='/campuses'}" class="btn btn-large btn-primary">Manage Campuses</a>
+            <a class="btn btn-large btn-info" ng-click="setRoute('/rooms')" ng-class="{selected: location=='/rooms'}" >All Rooms</a>
+            <a class="btn btn-large btn-info" ng-click="setRoute('/rooms/research-labs')" ng-class="{selected: location=='/rooms/research-labs'}" >Research Labs</a>
+            <a class="btn btn-large btn-info" ng-click="setRoute('/rooms/animal-facilities')" ng-class="{selected: location=='/rooms/animal-facilities'}" >Animal Facilities</a>
+            <a class="btn btn-large btn-info" ng-click="setRoute('/rooms/teaching-labs')" ng-class="{selected: location=='/rooms/teaching-labs'}" >Teaching Labs</a>
+            <a class="btn btn-large btn-info" ng-click="setRoute('/buildings')" ng-class="{selected: location=='/buildings'}" >Buildings</a>
+            <a class="btn btn-large btn-info" ng-click="setRoute('/campuses')" ng-class="{selected: location=='/campuses'}" >Campuses</a>
         </div>
 
         <span ng-hide="locations">
