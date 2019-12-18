@@ -20,6 +20,26 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
     .lhcol_pidept .pi_filters span { margin-right: 10%; }
     .lhcol_pidept .pi_search input { max-width: 250px; }
 
+    h1 .room-type-icon {
+        width: 25px;
+
+        /* Apply same opacity as 'grayed-out' class,
+            but force color to black to treat icons
+            and images the same */
+        color: black;
+        filter: grayscale(100%);
+        opacity: .4;
+    }
+
+    h1 .room-type-icon i {
+        width: 0.8em;
+        font-size: 1em;
+
+        /* Remove vertical alignment from bootstrap icon styling
+            to avoid dancing to make centered icons */
+        vertical-align: unset;
+    }
+
     .locationTable {
         max-width: 100%;
         overflow-x: scroll;

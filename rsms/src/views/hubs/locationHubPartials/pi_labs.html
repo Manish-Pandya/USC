@@ -10,8 +10,8 @@
         <tr class="blueBg sticky-action-bar">
             <th colspan="8" class="blueBg">
                 <h1 class="blueBg">
-                    <span class="grayed-out">
-                        <img ng-if="roomType.img_src" width="25px;" ng-src="{{roomType.img_src}}"/>
+                    <span class="room-type-icon">
+                        <img ng-if="roomType.img_src" width="25px" ng-src="{{roomType.img_src}}"/>
                         <i ng-if="roomType.icon_class" class="{{roomType.icon_class}}"></i>
                     </span>
                     {{roomType.label}}
