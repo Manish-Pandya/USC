@@ -1,0 +1,28 @@
+/*
+    This file defines Theme styles common to RSMS.
+    Application of this stylesheet should not modify
+    any structural CSS styles.
+
+    Structural styles should be applied in the corresponding *-struct.css
+*/
+.hub-banner {
+    color: white;
+}
+
+.hub-banner a.home-link {
+    color: white;
+}
+
+.hub-banner ul.banner-nav li a {
+    font-weight: bold;
+    color: #fff;
+}
+
+.hub-banner ul.banner-nav li a:hover {
+    color: #ddd;
+}
+
+ul.banner-nav li span {
+    color: #fff;
+    text-decoration: underline;
+}

@@ -1,0 +1,69 @@
+/*
+    This file defines Structural styles common to RSMS.
+    Application of this stylesheet should not modify
+    any non-structural CSS styles.
+
+    Structural styles should be applied in the corresponding *-theme.css
+*/
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}
+
+/*********************/
+/* General / Utility */
+.even-content {
+    display: flex;
+    justify-content: space-between;
+}
+
+/***********/
+/* Hubs    */
+.hub-banner {
+    display: flex;
+    align-items: center;
+    margin-top: -2px;
+    padding: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+.hub-banner a.home-link i {
+    width: 1em;
+    font-size: 4em;
+}
+
+.hub-banner img.title-icon {
+    height: 50px;
+}
+
+.hub-banner i.title-icon {
+    margin-right: 5px;
+    font-size: 35px;
+    width: auto;
+    line-height: 43px;
+}
+
+.hub-banner ul.banner-nav {
+    flex-grow: 1;
+    text-align: right;
+    margin: 0px;
+}
+
+.hub-banner ul.banner-nav li {
+    display: inline-block;
+    margin-right:10px;
+}
+
+.hub-banner ul.banner-nav li a {
+    font-weight: bold;
+    font-size: 12px;
+    display: block;
+}
+
+ul.banner-nav li span {
+    font-weight: bold;
+    font-size: 12px;
+    display: block;
+}
