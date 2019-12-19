@@ -48,6 +48,8 @@ ul.banner-nav li span {
     background: #088aa7;
 }
 
-.hub-theme-blue .theme-underlight-element {
+.hub-theme-blue .theme-underlight-element,
+.hub-theme-blue table tbody tr.theme-underlight-element td
+{
     background: #E8FDFF;
 }
