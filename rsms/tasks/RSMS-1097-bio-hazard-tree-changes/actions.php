@@ -125,8 +125,7 @@ $KNOWN_ACTIONS = array(
 
     //=================
     // (103) Human-Derived Materials (Blood or OPIM)
-    // (103) / (10283) Blood components
-    new AddAction(10283, 'Human Cell Lines'),
+    new AddAction(103, 'Human Cell Lines'),
 
     // MERGE Established + Immortalized (9x Immrotalized PIHR exist)
     new NoteAction(10294, "Merge with 'Immortalized cell lines' into 'Established cell lines'"), // (10294) Establinshed cell lines
