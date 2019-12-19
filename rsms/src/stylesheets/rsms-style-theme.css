@@ -13,10 +13,6 @@
     color: white;
 }
 
-.hub-banner a.home-link:hover {
-    text-decoration: none;
-}
-
 .hub-banner ul.banner-nav li a {
     font-weight: bold;
     color: #fff;
@@ -24,6 +20,11 @@
 
 .hub-banner ul.banner-nav li a:hover {
     color: #ddd;
+    text-decoration: none;
+}
+
+.hub-banner ul.banner-nav li a.active-nav {
+    text-decoration: underline;
 }
 
 ul.banner-nav li span {

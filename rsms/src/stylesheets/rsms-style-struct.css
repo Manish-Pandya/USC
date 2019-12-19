@@ -45,6 +45,7 @@
 }
 
 .hub-banner img.title-icon {
+    align-self: center;
     height: 50px;
 }
 
