@@ -1013,31 +1013,15 @@ li.minimized ol {
   cursor: pointer;
 }
 
-/*****************************************************************
-*   LOCATION HUB
-******************************************************************/
-.pagination .btn {
-    margin-left: -3px !important;
-    margin-right: -3px !important;
-}
-a.selected, button.selected{
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7) !important;
-}
-a.selected:hover, button.selected:hover{
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7) !important;
-}
-
-.locationTable td > ul{
-  margin:-4px -8px -1px !important;
-}
+/** Hazard-icon styles; refactored from location-hub block **/
 td.hazard-icons img{
-    width:25px;
+  width:25px;
 }
 
 .grayed-out img, img.grayed-out {
-    -webkit-filter: grayscale(100%);
-    filter: grayscale(100%);
-    opacity: .4;
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+  opacity: .4;
 }
 .grayed-out{
   color:#ccc;
@@ -1045,6 +1029,18 @@ td.hazard-icons img{
 li.grayed-out a{
   color: rgba(79, 147, 225, 0.51);
 }
+/*****************************************************************
+*   LOCATION HUB
+******************************************************************/
+.pagination .btn {
+    margin-left: -3px !important;
+    margin-right: -3px !important;
+}
+
+.locationTable td > ul{
+  margin:-4px -8px -1px !important;
+}
+
 .locationTable td > ul li{
   padding: 10px 8px 3px;
   border-bottom: 1px solid #d7d7d7 !important;
