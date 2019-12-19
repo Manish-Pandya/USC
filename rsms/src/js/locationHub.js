@@ -57,6 +57,24 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
             }
         );
 })
+.filter('roomTypeFilter', function(){
+    return function(rooms, roomTypeName){
+        if( !rooms || !roomTypeName ) return rooms;
+
+        // Include rooms which match the given room type
+        // Also include rooms which have not yet been saved
+        return rooms.filter(r => r.Room_type == roomTypeName || !r.Key_id);
+    }
+})
+.filter('toArray', function () {
+    return function (object) {
+        var array = [];
+        for (var prop in object) {
+            array.push(object[prop]);
+        }
+        return array;
+    }
+})
 .filter('roomUnassignedFilter', function(){
     return function(room){
         if( !room ){
@@ -113,6 +131,12 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
 
                 // Only apply filters if the item isn't new
                 if( !item.isNew ){
+                    if(search.room_type){
+                        if( item.Room_type != search.room_type ){
+                            item_matched = false;
+                        }
+                    }
+
                     if(search.building){
                         if( item.Building && item.Building.Name && item.Building.Name.toLowerCase().indexOf(search.building.toLowerCase() ) < 0 ){
                             item_matched = false;

@@ -47,7 +47,13 @@
         </tr>
         <tr class="sticky-filter-bar">
             <th class="lhcol_edit"></th>
-            <th class="lhcol_type"></th>
+            <th class="lhcol_type">
+                <select ng-model="search.room_type"
+                    ng-options="type.name as type.label for type in Constants.ROOM_TYPE | toArray"
+                    style="margin-bottom: 0;width: 142px;">
+                    <option value="">Select</option>
+                </select>
+            </th>
             <th class="lhcol_building">
                 <input class="span2" ng-model="search.building" placeholder="Filter by Building" />
             </th>
