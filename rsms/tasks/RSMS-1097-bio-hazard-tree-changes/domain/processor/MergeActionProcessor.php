@@ -18,15 +18,20 @@ class MergeActionProcessor extends A_ActionProcessor {
 
     const SQL_UPDATE_PIHR   = "UPDATE principal_investigator_hazard_room SET hazard_id = :target_id WHERE hazard_id = :constituent_id;";
     const SQL_DELETE_PIHR_IF_EXIST =
-        "DELETE FROM principal_investigator_hazard_room WHERE hazard_id = :constituent_id AND room_id IN (
-            SELECT room_id FROM principal_investigator_hazard_room WHERE hazard_id = :target_id
-        )";
+        "DELETE constituent_assignment
+        FROM principal_investigator_hazard_room constituent_assignment
+        JOIN principal_investigator_hazard_room target_assignment ON target_assignment.hazard_id = :target_id
+        WHERE constituent_assignment.hazard_id = :constituent_id
+          AND constituent_assignment.room_id = target_assignment.room_id
+          AND constituent_assignment.principal_investigator_id = target_assignment.principal_investigator_id";
 
     const SQL_UPDATE_HR     = "UPDATE hazard_room SET hazard_id = :target_id WHERE hazard_id = :constituent_id;";
     const SQL_DELETE_HR_IF_EXIST =
-        "DELETE FROM hazard_room WHERE hazard_id = :constituent_id AND room_id IN (
-            SELECT room_id FROM hazard_room WHERE hazard_id = :target_id
-        )";
+        "DELETE constituent_assignment
+        FROM hazard_room constituent_assignment
+        JOIN hazard_room target_assignment ON target_assignment.hazard_id = :target_id
+        WHERE constituent_assignment.hazard_id = :constituent_id
+          AND constituent_assignment.room_id = target_assignment.room_id";
 
 
     function validate( A_HazardChangeAction &$action ): ActionProcessorResult {
