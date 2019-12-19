@@ -1029,59 +1029,6 @@ td.hazard-icons img{
 li.grayed-out a{
   color: rgba(79, 147, 225, 0.51);
 }
-/*****************************************************************
-*   LOCATION HUB
-******************************************************************/
-.pagination .btn {
-    margin-left: -3px !important;
-    margin-right: -3px !important;
-}
-
-.locationTable td > ul{
-  margin:-4px -8px -1px !important;
-}
-
-.locationTable td > ul li{
-  padding: 10px 8px 3px;
-  border-bottom: 1px solid #d7d7d7 !important;
-}
-
-.locationTable td > ul li ul li{
-  border:none;
-}
-
-.locationTable td > ul li:last-child{
-  padding-bottom:0;
-  border-bottom:none !important;
-}
-.locationTable ul li:first-child{
-  padding-top:5px;
-}
-.locationTable ul li > span{
-    display:inline-block;
-}
-
-.locationTable ul li ul, .locationTable th ul {
-  list-style-type: none;
-  border-left: 1px solid #d7d7d7;
-  margin-left: 45%;
-  margin-top: -35px;
-  margin-bottom: -15px;
-  padding: 10px 5px 20px;
-}
-.locationTable th ul{
-  float: left;
-  width: 45%;
-  margin-left: 45%;
-  margin-bottom: -20px;
-  display: inline;
-  padding-top: 3px;
-}
-.locationTable th span{
-margin-bottom: -30px;}
-.locationTable th input{
-  width:90%;
-}
 
 
 /*******************************************************
