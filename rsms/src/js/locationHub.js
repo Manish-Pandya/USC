@@ -656,9 +656,12 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
                 edit: true
             }
         }
+
         $scope.roomCopy = angular.copy(room);
         room.edit = true;
         $scope.roomCopy.edit = true;
+        $scope.editingRoom = true;
+
         if (!room || !room.Key_id) $scope.rooms.unshift($scope.roomCopy)
         if (!$scope.pis) {
             locationHubFactory.getAllPis()
@@ -673,6 +676,7 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
     $scope.cancelEdit = function (room) {
         locationHubFactory.cancelEdit(room);
         delete $scope.roomCopy;
+        $scope.editingRoom = false;
         if (!room.Key_id) {
             $scope.rooms.splice($scope.rooms.indexOf(room), 1);
         }
