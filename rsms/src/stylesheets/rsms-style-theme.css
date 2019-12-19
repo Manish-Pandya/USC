@@ -13,6 +13,10 @@
     color: white;
 }
 
+.hub-banner a.home-link:hover {
+    text-decoration: none;
+}
+
 .hub-banner ul.banner-nav li a {
     font-weight: bold;
     color: #fff;
@@ -25,4 +29,24 @@
 ul.banner-nav li span {
     color: #fff;
     text-decoration: underline;
+}
+
+/* Blue Theme */
+.hub-theme-blue {}
+
+.hub-theme-blue .theme-main-element,
+.hub-theme-blue .hub-banner {
+    background-color: #49afcd;
+    border-color: #49afcd;
+    color: #fff;
+}
+
+.hub-theme-blue .theme-highlight-element,
+.hub-theme-blue .hub-banner .banner-nav a:hover,
+.hub-theme-blue .hub-banner .banner-nav a.active-nav {
+    background: #088aa7;
+}
+
+.hub-theme-blue .theme-underlight-element {
+    background: #E8FDFF;
 }

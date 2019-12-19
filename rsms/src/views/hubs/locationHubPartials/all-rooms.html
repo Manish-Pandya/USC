@@ -6,9 +6,9 @@
 </div>
 <table class="table table-striped table-hover piTable table-bordered locationTable sticky-headers" watch="filtered.length" ng-if="rooms && !loading && !modal">
     <thead>
-        <tr class="blueBg sticky-action-bar">
-            <th colspan="5" class="blueBg">
-                <h1 class="blueBg">
+        <tr class="sticky-action-bar">
+            <th colspan="5" class="theme-main-element">
+                <h1>
                     <span class="room-type-icon">
                         <i class="icon-enter"></i>
                     </span>
@@ -19,7 +19,7 @@
                     <a style="margin-left: 6px;font-size: 19px;height: 22px;" class="btn-large btn left" href="../../ajaxaction.php?action=getLocationCSV"><i class="icon-download"></i>Download Report</a>
                 </div>
 
-                <div class="blueBg" style="float:right; margin-top:-3px">
+                <div style="float:right; margin-top:-3px">
                     <p class="pagination" ng-init="paginationObj = {start:0, range:100}" 
                        style="position:absolute; margin-top:21px;right:5px">
                         <button class="btn btn-mini" ng-click="paginationObj.start = 0" ng-disabled="paginationObj.start == 0">First</button>
@@ -66,7 +66,7 @@
     </thead>
 
     <tbody>
-        <tr ng-repeat="room in (filtered = (rooms | orderBy:['isNew', 'Building_name', convenienceMethods.sortAlphaNum('Name')] | genericFilter:search)) | paginationFilter:paginationObj.start:100" ng-class="{'inactive': !room.Is_active, 'new': room.isNew, 'edit':room.edit}">
+        <tr ng-repeat="room in (filtered = (rooms | orderBy:['isNew', 'Building_name', convenienceMethods.sortAlphaNum('Name')] | genericFilter:search)) | paginationFilter:paginationObj.start:100" ng-class="{'inactive': !room.Is_active, 'new': room.isNew, 'theme-underlight-element':room.edit}">
             <td class="lhcol_edit">
                 <button ng-disabled="editingRoom || !userCanEditRoom" ng-if="!room.edit" class="edit btn btn btn-primary" ng-click="editRoom(room)" alt="Edit" title="Edit"><i class="icon-pencil"></i></button>
                 <button ng-disabled="editingRoom || !userCanEditRoom" class="btn btn-danger btn DeactivateeRow" ng-click="confirmDeactivate(room)" ng-if="room.Is_active && !room.edit" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
