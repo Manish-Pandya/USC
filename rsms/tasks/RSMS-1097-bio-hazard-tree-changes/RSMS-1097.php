@@ -22,6 +22,7 @@
     }
     catch(Exception $e){
         DBConnection::get()->rollback();
+        $LOG->error($e);
         $LOG->warn("***ROLLBACK TRANSACTION DUE TO ERROR***");
     }
 
