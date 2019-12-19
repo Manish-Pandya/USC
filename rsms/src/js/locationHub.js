@@ -369,15 +369,8 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
 
     factory.getBuildingByRoom = function( room )
     {
-        if(room.Building)return room.Building;
-        if(!room.trusted){
-            var i = this.buildings.length
-            while(i--){
-                room.trusted = true;
-                if(this.buildings[i].Key_id == room.Building_id){
-                    room.Building = this.buildings[i];
-                }
-            }
+        if(!room.Building){
+            room.Building = this.buildings.find( b => b.Key_id == room.Building_id);
         }
 
         return room.Building;
@@ -410,29 +403,83 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
         return factory.AllPisWillLoad.promise;
     }
 
+    factory.validateRoom = function (room) {
+        /* Room must have:
+             - Building
+             - Name
+             - Type
+        */
 
-    factory.saveRoom = function (roomDto) {
-        console.log(roomDto);
-        $rootScope.validationError='';
-        if(!roomDto.Key_id){
-            var defer = $q.defer();
-            if(this.roomAlreadyExists(roomDto)){
-                $rootScope.validationError = "Room " + roomDto.Name + " already exists in " + this.getBuildingByRoom(roomDto).Name + '.';
-                alert($rootScope.validationError);
-                roomDto.IsDirty=false;
-                return
+        let errors = [];
+
+        // Room must have: Type
+        if( !room.Room_type ){
+            errors.push("Room Type is required.");
+        }
+
+        // Room must have: Name
+        if( !room.Name ){
+            // Name is required
+            errors.push("Name is required.");
+        }
+
+        // Room must have: Building
+        // Room Name must be unique in its building
+        if( !room.Building_id ){
+            errors.push("Building is required.");
+        }
+        else {
+            // Find rooms in the same building with the same name
+            let name_lc = room.Name.toLowerCase();
+            let name_collissions = this.rooms.filter( r => {
+                // Ignore the same room
+                if( r.Key_id == room.Key_id ){
+                    return false;
+                }
+
+                if( r.Building_id == room.Building_id ){
+                    return r.Name.toLowerCase() == name_lc;
+                }
+
+                return false;
+            });
+
+            if( name_collissions.length > 0 ){
+                errors.push("Room " + room.Name + " already exists in " + this.getBuildingByRoom(room).Name + '.');
             }
         }
-        var url = GLOBAL_WEB_ROOT+"ajaxaction.php?action=saveRoom";
+
+        return errors;
+    }
+
+    factory.saveRoom = function (roomDto) {
+        this.clearErrors();
         var deferred = $q.defer();
-        convenienceMethods.saveDataAndDefer(url, roomDto).then(
-            function(promise){
-                deferred.resolve(promise);
-            },
-            function(promise){
-                deferred.reject();
-            }
-        );
+
+        console.log('Validating Room before save', roomDto);
+        let validationErrors = this.validateRoom(roomDto);
+
+        if( validationErrors.length > 0 ){
+            // Validation failed
+            $rootScope.validationErrors = validationErrors;
+
+            roomDto.IsDirty=false;
+            deferred.reject({ validation_failed: true, messages: validationErrors });
+        }
+        else {
+            // Validation passed
+
+            console.log('Attempt to save Room', roomDto);
+            var url = GLOBAL_WEB_ROOT+"ajaxaction.php?action=saveRoom";
+            convenienceMethods.saveDataAndDefer(url, roomDto).then(
+                function(promise){
+                    deferred.resolve(promise);
+                },
+                function(promise){
+                    deferred.reject();
+                }
+            );
+        }
         return deferred.promise
     }
 
@@ -525,8 +572,16 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
             $rootScope.copy = convenienceMethods.copyObject(obj);
     }
 
+    factory.clearErrors = function(){
+        $rootScope.validationErrors = null;
+        if( $rootScope.errorToast ){
+            ToastApi.dismissToast($rootScope.errorToast.id);
+        }
+    };
+
     factory.cancelEdit = function(obj, scope)
     {
+            this.clearErrors();
             $rootScope.copy = null;
             obj.edit = false;
 
@@ -586,10 +641,14 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
     ]);
 
     $scope.editRoom = function (room) {
+        locationHubFactory.clearErrors();
 
         if (!room) {
+            // Match room type from Scope or Search
+
             var room = {
                 Class: "Room",
+                Room_type: ($scope.roomType ? $scope.roomType.name : null) || $scope.search.room_type,
                 PrincipalInvestigators: [],
                 Name: "",
                 isNew: true,
@@ -612,6 +671,7 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
         }
     }
     $scope.cancelEdit = function (room) {
+        locationHubFactory.cancelEdit(room);
         delete $scope.roomCopy;
         if (!room.Key_id) {
             $scope.rooms.splice($scope.rooms.indexOf(room), 1);
@@ -761,7 +821,15 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
                         },
                         function (err) {
                             console.error(err);
-                            $scope.error = 'The' + room.Class + ' could not be saved.  Please check your internet connection and try again.';
+                            let msg = 'The ' + room.Class + ' could not be saved.';
+                            if( err.validation_failed ){
+                                msg += "<ul class='red'>"
+                                    + err.messages.map(m => "<li>" + m + "</li>").join('')
+                                    + "</ul>";
+
+                                $rootScope.errorToast = ToastApi.toast( msg, ToastApi.ToastType.ERROR, -1 );
+                            }
+
                             room.IsDirty = false;
                         }
                     )
