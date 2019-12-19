@@ -1026,18 +1026,14 @@ a.selected, button.selected{
 a.selected:hover, button.selected:hover{
   box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7) !important;
 }
-.locationTable td{
-  overflow:hidden;
-}
+
 .locationTable td > ul{
   margin:-4px -8px -1px !important;
 }
 td.hazard-icons img{
     width:25px;
 }
-.locationTable tr.edit td{
-  overflow:visible;
-}
+
 .grayed-out img, img.grayed-out {
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
