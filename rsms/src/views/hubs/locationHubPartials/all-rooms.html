@@ -49,7 +49,7 @@
             <th class="lhcol_type">
                 <select ng-model="search.room_type"
                     ng-options="type.name as type.label for type in Constants.ROOM_TYPE | toArray"
-                    style="margin-bottom: 0;width: 142px;">
+                    style="margin-bottom: 0; width: auto;">
                     <option value="">Select</option>
                 </select>
             </th>
@@ -78,11 +78,18 @@
             </td>
 
             <td class="lhcol_type">
-                <span style="padding-right: 5px;"
+                <span ng-if="!room.edit" style="padding-right: 5px;"
                     ng-init="type = constants.ROOM_TYPE[room.Room_type]">
                     <img ng-if="type.img_src" width="15px;" ng-src="{{type.img_src}}"/>
                     <i ng-if="type.icon_class" class="{{type.icon_class}}"></i>
                 </span>
+                <div class="control-group" ng-if="room.edit">
+                    <div class="controls">
+                        <select style="width: auto; margin:3px 0 0"
+                            ng-model="roomCopy.Room_type"
+                            ng-options="type.name as type.label for type in Constants.ROOM_TYPE | toArray"></select>
+                    </div>
+                </div>
             </td>
 
             <td class="lhcol_building">
