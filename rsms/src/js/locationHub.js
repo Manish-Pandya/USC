@@ -580,6 +580,11 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
         unassignedPis: true
     };
 
+    $scope.userCanEditRoom = roleBasedFactory.getHasPermission([
+        $rootScope.R[Constants.ROLE.NAME.ADMIN],
+        $rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]
+    ]);
+
     $scope.editRoom = function (room) {
 
         if (!room) {
@@ -859,6 +864,11 @@ var buildingsCtrl = function ($scope, $rootScope, $modal, locationHubFactory, ro
     $scope.loading = true;
     $scope.lhf = locationHubFactory;
 
+    $scope.userCanEditBuilding = roleBasedFactory.getHasPermission([
+        $rootScope.R[Constants.ROLE.NAME.ADMIN],
+        $rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]
+    ]);
+
     locationHubFactory.getBuildings()
         .then(
             function(buildings){
@@ -914,6 +924,11 @@ campusesCtrl = function($scope, $rootScope, locationHubFactory, roleBasedFactory
     $rootScope.rbf = roleBasedFactory;
     $scope.loading = true;
     $scope.lhf = locationHubFactory;
+
+    $scope.userCanEditCampus = roleBasedFactory.getHasPermission([
+        $rootScope.R[Constants.ROLE.NAME.ADMIN],
+        $rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]
+    ]);
 
     locationHubFactory.getCampuses()
         .then(
