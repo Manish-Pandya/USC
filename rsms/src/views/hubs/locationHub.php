@@ -9,7 +9,10 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
     <div class="hub-banner no-print">
         <img class="title-icon" src="<?php echo WEB_ROOT?>img/building-hub-large-icon.png" />
 
-        <h1>Location Hub</h1>
+        <span style="flex-direction: column; align-items: flex-start;">
+            <h1>Location Hub</h1>
+            <h4>Room, Building, and Campus Management</h4>
+        </span>
 
         <ul class="banner-nav" ng-controller="routeCtrl">
             <li><a class="" ng-click="setRoute('/rooms')" ng-class="{'active-nav': location=='/rooms'}" >All Rooms</a></li>
