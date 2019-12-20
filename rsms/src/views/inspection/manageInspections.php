@@ -215,6 +215,7 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
 
                 </td>
                 <td style="width:10.5%">
+                    <i class="inspection-schedule-marker" ng-class="{'existing': dto.Inspection_id, 'expected': !dto.Inspection_id }"></i>
                     <span ng-if="!dto.Inspection_id">{{constants.INSPECTION.STATUS.NOT_SCHEDULED}}</span>
                     <span ng-if="dto.Inspections.Status">
                         <span once-text="dto.Inspections.Status"></span>
