@@ -2,6 +2,13 @@
 class Test_RoomType implements I_Test {
     public function setup(){}
 
+    public function test__getAll(){
+        $types = RoomType::getAll();
+
+        Assert::not_null($types, 'RoomTypes are defined');
+        Assert::eq(count($types), 3, '3 RoomTypes are defined');
+    }
+
     public function test__of_types_exist(){
         $typenames = [
             RoomType::RESEARCH_LAB,
@@ -36,6 +43,5 @@ class Test_RoomType implements I_Test {
         $dept = $type->getRestrictedToDepartments()[0];
         Assert::true( stristr($dept->getName(), 'DLAR'), 'Animal Facilities is restricted to DLAR department');
     }
-
 }
 ?>
