@@ -170,10 +170,12 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
     factory.getYears = function () {
         var defer = $q.defer();
 
+        // TODO: Get years from Server?
         this.getCurrentYear()
             .then(
                 function (currentYear) {
-                    var maxYear = parseInt(currentYear) + 1;
+                    // List years from factory.minYear until the year after currentYear
+                    var maxYear = parseInt(currentYear) + 2;
                     var years = [];
                     while (maxYear-- && maxYear >= factory.minYear) {
                         var year = { Name: parseInt(maxYear) }
