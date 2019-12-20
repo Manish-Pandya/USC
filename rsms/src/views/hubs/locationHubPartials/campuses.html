@@ -30,9 +30,9 @@
             <td style="width:10%">
 
                 <span ng-if="!campus.edit">
-                    <button ng-disabled="!userCanEditCampus" class="edit btn btn btn-primary" ng-click="lhf.setEditState(campus, campuses)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
-                    <button ng-disabled="!userCanEditCampus" class="btn btn-danger btn" ng-click="lhf.handleObjectActive(campus)" ng-if="campus.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
-                    <button ng-disabled="!userCanEditCampus" class="btn btn-success btn" ng-click="lhf.handleObjectActive(campus)" ng-if="!campus.Is_active"><i class="icon-checkmark"></i></button>
+                    <button ng-disabled="lhf.isEditing || !userCanEditCampus" class="edit btn btn btn-primary" ng-click="lhf.setEditState(campus, campuses);" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
+                    <button ng-disabled="lhf.isEditing || !userCanEditCampus" class="btn btn-danger btn" ng-click="lhf.handleObjectActive(campus)" ng-if="campus.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
+                    <button ng-disabled="lhf.isEditing || !userCanEditCampus" class="btn btn-success btn" ng-click="lhf.handleObjectActive(campus)" ng-if="!campus.Is_active"><i class="icon-checkmark"></i></button>
                     <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="campus.IsDirty"></i>
                 </span>
 
