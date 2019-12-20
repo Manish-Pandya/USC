@@ -16,9 +16,10 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
 
         <ul class="banner-nav" ng-controller="routeCtrl">
             <li><a class="" ng-click="setRoute('/rooms')" ng-class="{'active-nav': location=='/rooms'}" >All Rooms</a></li>
+            <li><span>|</span></li>
             <li><a class="" ng-click="setRoute('/rooms/research-labs')" ng-class="{'active-nav': location=='/rooms/research-labs'}" >Research Labs</a></li>
-            <li><a class="" ng-click="setRoute('/rooms/animal-facilities')" ng-class="{'active-nav': location=='/rooms/animal-facilities'}" >Animal Facilities</a></li>
             <li><a class="" ng-click="setRoute('/rooms/teaching-labs')" ng-class="{'active-nav': location=='/rooms/teaching-labs'}" >Teaching Labs</a></li>
+            <li><a class="" ng-click="setRoute('/rooms/animal-facilities')" ng-class="{'active-nav': location=='/rooms/animal-facilities'}" >Animal Rooms</a></li>
             <li><span>|</span></li>
             <li><a class="" ng-click="setRoute('/buildings')" ng-class="{'active-nav': location=='/buildings'}" >Buildings</a></li>
             <li><a class="" ng-click="setRoute('/campuses')" ng-class="{'active-nav': location=='/campuses'}" >Campuses</a></li>
