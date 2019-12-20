@@ -2595,6 +2595,7 @@ class ActionManager {
             }
 
             $roomDto = DtoFactory::buildDto($room, array(
+                'Room_type' => $room->getRoom_type(),
                 'Name' => $room->getName(),
                 'Building_id' => $room->getBuilding_id(),
                 'Building_name' => $room->getBuilding_name(),
