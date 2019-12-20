@@ -40,8 +40,8 @@
         <tr class="sticky-header-bar">
             <th class="lhcol_edit">Edit</th>
             <th class="lhcol_type">Type</th>
-            <th class="lhcol_building">Building</th>
             <th class="lhcol_name">Room Number</th>
+            <th class="lhcol_building">Building</th>
             <th class="lhcol_campus">Campus</th>
         </tr>
         <tr class="sticky-filter-bar">
@@ -50,14 +50,14 @@
                 <select ng-model="search.room_type"
                     ng-options="type.name as type.label for type in Constants.ROOM_TYPE | toArray"
                     style="margin-bottom: 0; width: auto;">
-                    <option value="">Select</option>
+                    <option value="">Filter by Type</option>
                 </select>
-            </th>
-            <th class="lhcol_building">
-                <input class="span2" ng-model="search.building" placeholder="Filter by Building" />
             </th>
             <th class="lhcol_name">
                 <input class="span2" ng-model="search.room" placeholder="Filter by Lab Room" />
+            </th>
+            <th class="lhcol_building">
+                <input class="span2" ng-model="search.building" placeholder="Filter by Building" />
             </th>
             <th class="lhcol_campus">
                 <input class="span2" ng-model="search.campus" placeholder="Filter by Campus" />
@@ -66,7 +66,8 @@
     </thead>
 
     <tbody>
-        <tr ng-repeat="room in (filtered = (rooms | orderBy:['isNew', 'Building_name', convenienceMethods.sortAlphaNum('Name')] | genericFilter:search)) | paginationFilter:paginationObj.start:100" ng-class="{'inactive': !room.Is_active, 'new': room.isNew, 'theme-underlight-element':room.edit}">
+        <tr ng-repeat="room in (filtered = (rooms | orderBy:['isNew', 'Building_name', convenienceMethods.sortAlphaNum('Name')] | genericFilter:search)) | paginationFilter:paginationObj.start:100"
+            ng-class="{'inactive': !room.Is_active, 'new': room.isNew, 'theme-underlight-element':room.edit}">
             <td class="lhcol_edit">
                 <button ng-disabled="editingRoom || !userCanEditRoom" ng-if="!room.edit" class="edit btn btn btn-primary" ng-click="editRoom(room)" alt="Edit" title="Edit"><i class="icon-pencil"></i></button>
                 <button ng-disabled="editingRoom || !userCanEditRoom" class="btn btn-danger btn DeactivateeRow" ng-click="confirmDeactivate(room)" ng-if="room.Is_active && !room.edit" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
@@ -86,10 +87,17 @@
                 <div class="control-group" ng-if="room.edit">
                     <div class="controls">
                         <select style="width: auto; margin:3px 0 0"
-                            ng-model="roomCopy.Room_type"
-                            ng-options="type.name as type.label for type in Constants.ROOM_TYPE | toArray"></select>
+                                ng-model="roomCopy.Room_type"
+                                ng-options="type.name as type.label for type in Constants.ROOM_TYPE | toArray">
+                            <option value="">--Select Type--</option>
+                        </select>
                     </div>
                 </div>
+            </td>
+
+            <td class="lhcol_name">
+                <input ng-model="roomCopy.Name" placeholder="Name" ng-if="room.edit" style="max-width:115px" />
+                <span ng-if="!room.edit">{{room.Name}}</span>
             </td>
 
             <td class="lhcol_building">
@@ -103,11 +111,6 @@
                         </select>
                     </div>
                 </div>
-            </td>
-
-            <td class="lhcol_name">
-                <input ng-model="roomCopy.Name" placeholder="Name" ng-if="room.edit" style="max-width:115px" />
-                <span ng-if="!room.edit">{{room.Name}}</span>
             </td>
 
             <td class="lhcol_campus" once-text="room.Building.Campus.Name"></td>
