@@ -640,6 +640,15 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
                     var item = items[i];
                     matched = true;
 
+                    if (search.room_type) {
+                        let typedRooms = item.Campuses
+                            .map( c => c.Buildings ).reduce( (all, cur) => all.concat(cur), [])
+                            .map( b => b.Rooms ).reduce( (all, cur) => all.concat(cur), [])
+                            .filter( r => r.Room_type == search.room_type );
+
+                        matched = typedRooms.length > 0;
+                    }
+
                     if (search.building) {
                         matched = false
                         if (item.Campuses && item.Campuses.length) {

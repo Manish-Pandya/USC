@@ -93,6 +93,9 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
                 </th>
                 <th>
                     Lab Room(s)
+                    <select ng-model="search.room_type" style="margin-bottom:0; max-width:150px;" ng-options="type.name as type.label for type in roomTypes = (constants.ROOM_TYPE | toArray | filter:{inspectable:true})" ng-change="genericFilter()">
+                        <option value="">Select room type</option>
+                    </select>
                 </th>
                 <th>
                     Month Scheduled<br>
