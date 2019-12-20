@@ -569,6 +569,8 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
             obj.edit = !obj.edit;
             if(obj.Class == 'Building'  && obj.Campus == false)obj.Campus = '';
 
+            this.editing(obj.edit);
+
             $rootScope.copy = convenienceMethods.copyObject(obj);
     }
 
@@ -594,6 +596,8 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                 }
 
             }
+
+            this.editing(false);
     }
 
     factory.getCSV = function(){
@@ -821,7 +825,10 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
                                 room.edit = false;
 
                                 let name = (room.Building_name ? room.Building_name : 'Room') + ' ' + room.Name;
-                                ToastApi.toast( name + ' has been saved');
+                                ToastApi.toast( 'Saved room: ' + name);
+
+                                // Close the editor
+                                $scope.cancelEdit(room);
                         },
                         function (err) {
                             console.error(err);
@@ -969,6 +976,9 @@ var buildingsCtrl = function ($scope, $rootScope, $modal, locationHubFactory, ro
                         building.isNew = true;
                         angular.extend(building, returned);
                         building.Campus = returned.Campus;
+
+                        ToastApi.toast("Saved " + building.Name);
+                        locationHubFactory.cancelEdit(building, $scope.buildings);
                     },
                     function(error){
                         building.IsDirty = false;
@@ -1022,7 +1032,10 @@ campusesCtrl = function($scope, $rootScope, locationHubFactory, roleBasedFactory
                         campus.edit = false;
                         campus.isNew = true;
                         campus.index = false;
-                        angular.extend(campus, returned)
+                        angular.extend(campus, returned);
+
+                        ToastApi.toast("Saved " + campus.Name);
+                        locationHubFactory.cancelEdit(campus, $scope.campuses);
                     },
                     function(error){
                         campus.IsDirty = false;
