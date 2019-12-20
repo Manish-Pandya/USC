@@ -28,7 +28,7 @@ class InspectionScheduler {
         foreach( $inspectable_room_types as $room_type){
             /** Array containing expected/existing inspection items for this roomtype */
             $typed_schedules = $this->getTypedInspectionSchedule( $year, $room_type );
-            $LOG->debug("Collected " . count($schedule) . " inspections for " . $room_type->getName());
+            $LOG->debug("Collected " . count($typed_schedules) . " inspections for " . $room_type->getName());
 
             // Merge typed inspections into the schedule array
             foreach($typed_schedules as $insp){
