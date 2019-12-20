@@ -20,9 +20,9 @@ class RoomType {
             $animal_img = WEB_ROOT . 'img/animal-facility.svg';
 
             RoomType::$TYPES = [
-                RoomType::RESEARCH_LAB => new RoomType( RoomType::RESEARCH_LAB, 'Research Lab', 'Research Labs', true, 'icon-lab'),
+                RoomType::RESEARCH_LAB => new RoomType( RoomType::RESEARCH_LAB, 'Research Lab', 'Research Laboratories', true, 'icon-lab'),
                 RoomType::ANIMAL_FACILITY => new RoomType( RoomType::ANIMAL_FACILITY, 'Animal Facility', 'Animal Facilities', true, $animal_img, false),
-                RoomType::TEACHING_LAB => new RoomType( RoomType::TEACHING_LAB, 'Teaching Lab', 'Teaching Labs', false, 'icon-users')
+                RoomType::TEACHING_LAB => new RoomType( RoomType::TEACHING_LAB, 'Teaching Lab', 'Teaching Laboratories', false, 'icon-users')
             ];
         }
     }
