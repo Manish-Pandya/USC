@@ -328,7 +328,7 @@ angular.module('HazardInventory')
         }
 
     })
-    .controller('HazardInventoryModalCtrl', function ($scope, convenienceMethods, $rootScope, $q, $http, applicationControllerFactory, $modalInstance, $modal, roleBasedFactory) {
+    .controller('HazardInventoryModalCtrl', function ($scope, convenienceMethods, $rootScope, $q, $http, applicationControllerFactory, $modalInstance, $modal, roleBasedFactory, $timeout) {
         $scope.constants = Constants;
         $scope.convenienceMethods = convenienceMethods;
         var af = applicationControllerFactory;
@@ -338,6 +338,27 @@ angular.module('HazardInventory')
         $scope.dataStoreManager = dataStoreManager;
         $scope.USER = GLOBAL_SESSION_USER;
 
+        function getInspectionTypes(){
+            // Look at existing room assignments to determine inspeciton options
+            $scope.inspectable_room_types = $scope.modalData.PI.Rooms.map(r => r.Room_type)
+                .filter( (val, idx, self) => self.indexOf(val) === idx)
+                .map( name => Constants.ROOM_TYPE[name] )
+                .filter( type => type.inspectable );
+
+            $scope.inspectable_room_types.sort( (a,b) => a.name[0] - b.name[0] );
+
+            // Mock up a Rad room-type
+            $scope.inspectable_room_types.push({
+                name: 'RADIATION',
+                label: 'Radiation',
+                inspectable: true,
+                img_src: '../img/radiation-large-icon.png',
+                sort: 1
+            });
+
+            console.debug("Inspectable room types:", $scope.inspectable_room_types);
+        }
+
         if ($rootScope.PrincipalInvestigatorsBusy) {
             $scope.modalData.inspectionsPendings = true;
             $rootScope.PrincipalInvestigatorsBusy.then(function () {
@@ -346,7 +367,11 @@ angular.module('HazardInventory')
                     $scope.modalData.inspectionsPendings = false;
                     $scope.$apply();                    
                 }, 10);
+
+                // Grab PI from scope
                 $scope.pi = $scope.modalData.PI;
+
+                // Check for open inspections
                 for (var i = 0; i < $scope.modalData.PI.Inspections.length; i++) {
                     var insp = $scope.modalData.PI.Inspections[i];
                     if (!insp.Date_closed) {
@@ -354,7 +379,12 @@ angular.module('HazardInventory')
                         break;
                     }
                 }
+
             })
+            .then( getInspectionTypes )
+        }
+        else {
+            getInspectionTypes();
         }
 
         function openSecondaryModal(modalData) {
@@ -402,26 +432,70 @@ angular.module('HazardInventory')
             
         }
 
-        $scope.checkRad = function (pi, id) {
-            $scope.confirmer = {};
-            $scope.confirmer.needsRadConfirmation = false;
-            if (GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.RADIATION_INSPECTOR) > -1) {
-                af.initialiseInspection(pi, id, false, true);
-            } else {
-                $scope.confirmer.needsRadConfirmation = true;
-            }
-
+        function clearNewInspectionConfirmation(){
+            $timeout(function(){
+                // Clear out this inspection
+                $scope.newInspection = undefined;
+            });
         }
 
-        $scope.checkSafetyInspector = function (pi, id) {
-            $scope.confirmer = {};
-            $scope.confirmer.needsConfirmation = false;
-            if (GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.SAFETY_INSPECTOR) > -1) {
-                af.initialiseInspection(pi, id, false, false);
-            } else {
-                $scope.confirmer.needsConfirmation = true;
-            }
+        function createNewInspectionConfirmation( verifyUserFn, createInspectionFn, unverifiedUserMessage, roomType ){
+            $scope.newInspection = {
+                message: unverifiedUserMessage,
+                confirmation: $q.defer(),
+                roomType: roomType
+            };
 
+            $scope.newInspection.confirmation.promise.then(
+                confirm => {
+                    createInspectionFn().then(clearNewInspectionConfirmation);
+                },
+                reject  => clearNewInspectionConfirmation()
+            );
+
+            if( verifyUserFn() ){
+                // User doesn't require confirmation; resolve the promise immediately
+                $scope.newInspection.confirmation.resolve();
+            }
+            // Else require user to manually confirm
+        }
+
+        $scope.verifyOrCreateNewInspection = function(pi, id, roomType){
+            if( roomType.name === 'RADIATION' ){
+                // Special-case
+                $scope.checkRad(pi, id, roomType);
+            }
+            else {
+                $scope.checkSafetyInspector(pi, id, roomType);
+            }
+        }
+
+        $scope.checkRad = function (pi, id, roomType) {
+            createNewInspectionConfirmation(
+                // Verify by checking if user has Rad Inspector role
+                () => GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.RADIATION_INSPECTOR) > -1,
+
+                // Create rad inspection by initializing with pi/id, rad-inspection, null rooms, and no room-type
+                () => af.initialiseInspection(pi, id, false, true, null, null),
+
+                'You do not have a Radiation Inspector role. Please verify you want to continue this radiation inspection.',
+
+                roomType
+            );
+        }
+
+        $scope.checkSafetyInspector = function (pi, id, roomType) {
+            createNewInspectionConfirmation(
+                // Verify by checking if user has Safety Inspector role
+                () => GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.SAFETY_INSPECTOR) > -1,
+
+                // Create inspection by initializing with pi/id, null rooms, and specified room-type
+                () => af.initialiseInspection(pi, id, false, false, null, roomType),
+
+                'You do not have a Safety Inspector role. Please verify you want to continue this biochem inspection.',
+
+                roomType
+            );
         }
 
 

@@ -248,6 +248,7 @@ a.btn.btn-mini i {
 }
 .btn img{
   width:25px;
+  height:25px;
 }
 a.btn.right i, button.btn.right i{
   margin: 2px 2px 1px 6px!important;
