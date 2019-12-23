@@ -84,6 +84,7 @@
                 </span>
                 <div class="control-group" ng-if="room.edit">
                     <div class="controls">
+                        <room-type-icon room-type="roomCopy.Room_type"></room-type-icon>
                         <select style="width: auto; margin:3px 0 0"
                                 ng-model="roomCopy.Room_type"
                                 ng-options="type.name as type.label for type in Constants.ROOM_TYPE | toArray">
