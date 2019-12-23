@@ -36,12 +36,19 @@
                 <td>
                     <ul ng-init="processRooms(inspection, modalData.PI.Rooms)">
                         <li ng-repeat="(key, building) in inspection.Rooms | groupBy: 'Building.Name'">
-                        <span class="bold underline">{{key}}</span>
+                            <span class="bold underline">{{key}}</span>
                             <ul style="margin:5px;">
                                 <li ng-repeat="(key,room) in building|orderBy:'Name'">
                                     <label class="checkbox inline">
                                         <input type="checkbox" ng-change="saveInspectionRoomRelationship( inspection, room )" ng-model="room[inspection.Key_id+'checked']"/>
-                                        <span class="metro-checkbox"><span once-text="room.Name"></span><i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i></span>
+                                        <span class="metro-checkbox">
+                                            <span ng-init="type = constants.ROOM_TYPE[room.Room_type]">
+                                                <img ng-if="type.img_src" width="15px;" ng-src="{{type.img_src}}"/>
+                                                <i ng-if="type.icon_class" class="{{type.icon_class}}"></i>
+                                            </span>
+                                            <span once-text="room.Name"></span>
+                                            <i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i>
+                                        </span>
                                     </label>
                                 </li>
                             </ul>
