@@ -170,6 +170,7 @@ session_start();
 
 <body>
     <?php require('../views/user_info_bar.php'); ?>
+    <?php require('../includes/modules/lab-inspection/js/room-type-constants.js.php'); ?>
 
     <div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" ng-cloak class="container-fluid" style="margin-top:25px;">
 

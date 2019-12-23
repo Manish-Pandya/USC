@@ -60,8 +60,7 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
             <label>Room Types:</label>
             <div ng-repeat="type in constants.ROOM_TYPE | toArray | filter:{inspectable:true}">
                 <label>
-                    <img ng-if="type.img_src" width="15px;" ng-src="{{type.img_src}}"/>
-                    <i ng-if="type.icon_class" class="{{type.icon_class}}"></i>
+                    <room-type-icon room-type="type"></room-type-icon>
                 </label>
                 <span once-text="type.label"></span>
                 <span ng-if="type.departments" title="Rooms of this type are only inspected as part of this department">
@@ -136,10 +135,8 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
                         <div ng-repeat="building in campus.Buildings" style="margin-bottom:10px">
                             <div ng-class="{'red':room.notInspected}" ng-repeat="room in building.Rooms | orderBy: convenienceMethods.sortAlphaNum('Name')"
                                 style="display:flex;">
-                                <span class="italic grayed-out" style="padding-right: 5px;"
-                                    ng-init="type = constants.ROOM_TYPE[room.Room_type]">
-                                    <img ng-if="type.img_src" width="15px;" ng-src="{{type.img_src}}"/>
-                                    <i ng-if="type.icon_class" class="{{type.icon_class}}"></i>
+                                <span class="italic grayed-out" style="padding-right: 5px;">
+                                    <room-type-icon room-type-name="room.Room_type"></room-type-icon>
                                 </span>
                                 <span>{{room.Name}}</span>
                             </div>

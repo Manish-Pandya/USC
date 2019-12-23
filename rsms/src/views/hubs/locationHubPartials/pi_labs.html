@@ -10,8 +10,7 @@
             <th colspan="8" class="theme-main-element">
                 <h1>
                     <span class="room-type-icon">
-                        <img ng-if="roomType.img_src" width="30px" ng-src="{{roomType.img_src}}"/>
-                        <i ng-if="roomType.icon_class" class="{{roomType.icon_class}}"></i>
+                        <room-type-icon room-type="roomType"></room-type-icon>
                     </span>
                     {{roomType.label_plural}}
                 </h1>

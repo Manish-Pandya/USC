@@ -42,10 +42,7 @@
                                     <label class="checkbox inline">
                                         <input type="checkbox" ng-change="saveInspectionRoomRelationship( inspection, room )" ng-model="room[inspection.Key_id+'checked']"/>
                                         <span class="metro-checkbox">
-                                            <span ng-init="type = constants.ROOM_TYPE[room.Room_type]">
-                                                <img ng-if="type.img_src" width="15px;" ng-src="{{type.img_src}}"/>
-                                                <i ng-if="type.icon_class" class="{{type.icon_class}}"></i>
-                                            </span>
+                                            <room-type-icon room-type-name="room.Room_type"></room-type-icon>
                                             <span once-text="room.Name"></span>
                                             <i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i>
                                         </span>
