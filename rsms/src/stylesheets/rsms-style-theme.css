@@ -33,23 +33,45 @@ ul.banner-nav li span {
 }
 
 /* Blue Theme */
-.hub-theme-blue {}
+    .hub-theme-blue {}
 
-.hub-theme-blue .theme-main-element,
-.hub-theme-blue .hub-banner {
-    background-color: #49afcd;
-    border-color: #49afcd;
-    color: #fff;
-}
+    .hub-theme-blue .theme-main-element,
+    .hub-theme-blue .hub-banner {
+        background-color: #49afcd;
+        border-color: #49afcd;
+        color: #fff;
+    }
 
-.hub-theme-blue .theme-highlight-element,
-.hub-theme-blue .hub-banner .banner-nav a:hover,
-.hub-theme-blue .hub-banner .banner-nav a.active-nav {
-    background: #088aa7;
-}
+    .hub-theme-blue .theme-highlight-element,
+    .hub-theme-blue .hub-banner .banner-nav a:hover,
+    .hub-theme-blue .hub-banner .banner-nav a.active-nav {
+        background: #088aa7;
+    }
 
-.hub-theme-blue .theme-underlight-element,
-.hub-theme-blue table tbody tr.theme-underlight-element td
-{
-    background: #E8FDFF;
-}
+    .hub-theme-blue .theme-underlight-element,
+    .hub-theme-blue table tbody tr.theme-underlight-element td
+    {
+        background: #E8FDFF;
+    }
+
+/* Red Theme */
+    .hub-theme-red {}
+
+    .hub-theme-red .theme-main-element,
+    .hub-theme-red .hub-banner {
+        background-color: #d00;
+        border-color: #d00;
+        color: #fff;
+    }
+
+    .hub-theme-red .theme-highlight-element,
+    .hub-theme-red .hub-banner .banner-nav a:hover,
+    .hub-theme-red .hub-banner .banner-nav a.active-nav {
+        background: #754A48;
+    }
+
+    .hub-theme-red .theme-underlight-element,
+    .hub-theme-red table tbody tr.theme-underlight-element td
+    {
+        background: #D0B6B4;
+    }
