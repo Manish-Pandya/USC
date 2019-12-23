@@ -638,6 +638,47 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
         return (data || []).length == 1 ? 'is' : 'are';
     }
 })
+/**
+ * Display icon (and, optionally, Label) for a given Room Type
+ */
+.directive('roomTypeIcon', function(){
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: {
+            room: "=",
+            roomType: "=",
+            roomTypeName: "=",
+
+            showTypeLabel: "@"
+        },
+        template:
+        `<span>
+            <img ng-if="type.img_src" width="15px;" ng-src="{{type.img_src}}"/>
+            <i ng-if="type.icon_class" class="{{type.icon_class}}"></i>
+            <span ng-if="showTypeLabel">{{type.label}}</span>
+        </span>`,
+        link: function(scope, elem, attrs){
+            if( !Constants.ROOM_TYPE ){
+                console.error("No room type constants defined");
+                return;
+            }
+            else if( scope.roomType ){
+                scope.type = scope.roomType;
+            }
+            else if( scope.roomTypeName ){
+                scope.type = Constants.ROOM_TYPE[scope.roomTypeName];
+            }
+            else if( scope.room ){
+                scope.type = Constants.ROOM_TYPE[scope.room.Room_type];
+            }
+            else {
+                console.warn("No room type source in scope");
+                return;
+            }
+        }
+    };
+})
 .directive('scrollTable', ['$window', '$location', '$rootScope', '$timeout', function($window, $location, $rootScope,$timeout) {
     return {
         restrict: 'A',
