@@ -792,6 +792,15 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
         }
     }
 }])
+.filter('toArray', function () {
+    return function (object) {
+        var array = [];
+        for (var prop in object) {
+            array.push(object[prop]);
+        }
+        return array;
+    }
+})
 .filter('propsFilter', function () {
 
   return function(items, props) {

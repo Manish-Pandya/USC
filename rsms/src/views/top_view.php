@@ -95,6 +95,8 @@ session_start();
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/ToastApi.css"/>
 
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/constants.js"></script>
+
+<?php require_once dirname(__FILE__) . '/../includes/modules/lab-inspection/js/room-type-constants.js.php'; ?>
     <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
 
 <script src="<?php echo WEB_ROOT?>js/lib/jquery.mjs.nestedSortable.js"></script>

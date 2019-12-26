@@ -252,7 +252,9 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
     $scope.modalify = function(pi,adding){
 
           var modalInstance = $modal.open({
-          templateUrl: 'roomHandlerModal.html',
+          templateUrl: adding
+                        ? 'createRoomHandlerModal.html'
+                        : 'roomHandlerModal.html',
           controller: ModalInstanceCtrl,
           resolve: {
             PI: function () {
@@ -318,7 +320,14 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
     $scope.convenienceMethods = convenienceMethods;
     console.log(adding);
 
-    if(adding)$scope.addRoom = true;
+    if(adding){
+        $scope.addRoom = true;
+        $scope.newRoom = {
+            Is_active: true,
+            Room_type: Constants.ROOM_TYPE.RESEARCH_LAB.name
+        };
+    }
+
     if($rootScope.buildings)$scope.buildings = $rootScope.buildings;
     if(!$scope.buildings){
         var url = '../../ajaxaction.php?action=getAllBuildings&callback=JSON_CALLBACK';

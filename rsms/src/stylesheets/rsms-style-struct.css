@@ -26,6 +26,24 @@
     margin-left: -0.3em;
 }
 
+ul.grid-list {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+}
+
+ul.grid-list li {
+    width: 20%;
+    display: inline-flex;
+    align-items: center;
+    font-size: 15px;
+    line-height: 25px;
+}
+
+ul.grid-list li > * {
+    padding-right: 5px;
+}
+
 /***********/
 /* Hubs    */
 .hub-banner {
