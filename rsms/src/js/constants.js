@@ -53,7 +53,8 @@ var Constants = /** @class */ (function () {
             READ_ONLY: "Read Only",
             OCCUPATIONAL_HEALTH: "Occupational Health",
             IBC_MEMBER: "IBC Member",
-            IBC_CHAIR: "IBC Chair"
+            IBC_CHAIR: "IBC Chair",
+            TEACHING_LAB_CONTACT: "Teaching Lab Contact"
         }
     };
     Constants.CARBOY_USE_CYCLE = {
