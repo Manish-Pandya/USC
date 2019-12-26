@@ -20,9 +20,32 @@ class RoomType {
             $animal_img = WEB_ROOT . 'img/animal-facility.svg';
 
             RoomType::$TYPES = [
-                RoomType::RESEARCH_LAB => new RoomType( RoomType::RESEARCH_LAB, 'Research Lab', 'Research Laboratories', true, 'icon-lab'),
-                RoomType::ANIMAL_FACILITY => new RoomType( RoomType::ANIMAL_FACILITY, 'Animal Facility', 'Animal Facilities', true, $animal_img, false),
-                RoomType::TEACHING_LAB => new RoomType( RoomType::TEACHING_LAB, 'Teaching Lab', 'Teaching Laboratories', false, 'icon-users')
+                RoomType::RESEARCH_LAB => (new RoomType())
+                    ->setName(RoomType::RESEARCH_LAB)
+                    ->setLabel('Research Lab')
+                    ->setPluralLabel('Research Laboratories')
+                    ->setInspectable(true)
+                    ->setAssignable_to( PrincipalInvestigator::class )
+                    ->setIcon_class('icon-lab')
+                    ->setImg_path(null),
+
+                RoomType::ANIMAL_FACILITY => (new RoomType())
+                    ->setName(RoomType::ANIMAL_FACILITY)
+                    ->setLabel('Animal Facility')
+                    ->setPluralLabel('Animal Facilities')
+                    ->setInspectable(true)
+                    ->setAssignable_to( PrincipalInvestigator::class )
+                    ->setIcon_class(null)
+                    ->setImg_path($animal_img),
+
+                RoomType::TEACHING_LAB => (new RoomType())
+                    ->setName(RoomType::TEACHING_LAB)
+                    ->setLabel('Teaching Lab')
+                    ->setPluralLabel('Teaching Laboratories')
+                    ->setInspectable(false)
+                    ->setAssignable_to( User::class )
+                    ->setIcon_class('icon-users')
+                    ->setImg_path(null),
             ];
         }
     }
@@ -48,20 +71,9 @@ class RoomType {
     private $is_inspectable;
     private $icon_class;
     private $img_path;
+    private $assignable_to;
 
-	private function __construct( $name, $label, $plural_label, $is_inspectable, $glyphPath, $glyphIsIcon=TRUE ){
-		$this->name = $name;
-		$this->label = $label;
-		$this->plural_label = $plural_label;
-        $this->is_inspectable = $is_inspectable;
-
-        if( $glyphIsIcon ){
-            $this->icon_class = $glyphPath;
-        }
-        else {
-            $this->img_path = $glyphPath;
-        }
-	}
+    private function __construct(){}
 
     public function __toString(){
         return '['
@@ -76,6 +88,42 @@ class RoomType {
     public function isInspectable(){ return $this->is_inspectable; }
     public function getIcon_class(){ return $this->icon_class; }
     public function getImg_path(){ return $this->img_path; }
+    public function getAssignable_to(){ return $this->assignable_to; }
+
+    private function setName( $val ){
+        $this->name = $val;
+        return $this;
+    }
+
+	private function setLabel( $val ){
+        $this->label = $val;
+        return $this;
+    }
+
+	private function setPluralLabel( $val ){
+        $this->plural_label = $val;
+        return $this;
+    }
+
+    private function setInspectable( $val ){
+        $this->is_inspectable = $val;
+        return $this;
+    }
+
+    private function setIcon_class( $val ){
+        $this->icon_class = $val;
+        return $this;
+    }
+
+    private function setImg_path( $val ){
+        $this->img_path = $val;
+        return $this;
+    }
+
+    private function setAssignable_to( $val ){
+        $this->assignable_to = $val;
+        return $this;
+    }
 
     public function getRestrictedToDepartments(){
         $inspectionTypeDeptsRel = DataRelationship::fromArray(RoomType::DEPT_ROOM_TYPE_RELATIONSHIP);
