@@ -3,19 +3,20 @@ require_once '../top_view.php';
 ?>
 <script src="../../js/userHub.js"></script>
 
-<div class="navbar fixed">
-    <ul class="nav pageMenu" style="min-height: 50px; background: #51a351; color:white !important; padding: 4px 0 0 0; width:100%">
-        <li class="">
-            <img src="../../img/user-icon.png" class="pull-left" style="height:50px" />
-            <h2  style="padding: 11px 0 5px 85px;">User Hub
-                <a style="float:right;margin: 11px 28px 0 0;" href="<?php echo WEB_ROOT;?>"><i class="icon-home" style="font-size:40px;"></i></a>
-            </h2>
-        </li>
-    </ul>
-    <div class="clearfix"></div>
+<span ng-app="userList"  ng-controller="MainUserListController" style="clear:both; display: block; margin-top:120px">
+
+  <div class="navbar fixed">
+      <ul class="nav pageMenu" style="min-height: 50px; background: #51a351; color:white !important; padding: 4px 0 0 0; width:100%">
+          <li class="">
+              <img src="../../img/user-icon.png" class="pull-left" style="height:50px" />
+              <h2  style="padding: 11px 0 5px 85px;">User Hub
+                  <a style="float:right;margin: 11px 28px 0 0;" href="<?php echo WEB_ROOT;?>"><i class="icon-home" style="font-size:40px;"></i></a>
+              </h2>
+          </li>
+      </ul>
+      <div class="clearfix"></div>
 </div>
 
-<span ng-app="userList"  ng-controller="MainUserListController" style="clear:both; display: block; margin-top:120px">
     <form class="form-horizontal fixed" style="margin: -42px 0 0;background: rgb(221, 221, 221);z-index: 1047;">
       <div class="control-group" style="display:inline-block;">
          <label class="control-label" for="route" style="font-weight:bold; text-align: left; width:auto;">Select User Type:</label>
