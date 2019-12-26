@@ -32,8 +32,8 @@
                         <button class="btn btn-mini" ng-click="paginationObj.start = roundDown(filtered.length, paginationObj.range)" ng-disabled="filtered.length - paginationObj.start < 100">Last</button>
                     </p>
                     <span>
-                        <span class="bold underline">{{(filtered | filter:{Is_active: true}).length}}</span>
-                        {{roomType.label_plural}}
+                        <span class="bold underline">{{result_count = (filtered | filter:{Is_active: true}).length}}</span>
+                        {{result_count == 1 ? roomType.label : roomType.label_plural}}
                     </span>
                 </div>
             </th>
