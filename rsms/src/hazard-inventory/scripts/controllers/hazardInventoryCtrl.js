@@ -561,19 +561,29 @@ angular.module('HazardInventory')
                     // Rooms are denoted as selected by a composite key boolean:
                     let selectedkey = inspection.Key_id + 'checked';
 
+                    // Determine room type (or types) covered in this inspection
+                    let types = inspection.Rooms
+                        // Filter to selected rooms
+                        .filter( r => r[selectedkey] )
+                        // Map to room type
+                        .map(r => r.Room_type)
+                        // Filter to unique values
+                        .filter( (val, idx, self) => self.indexOf(val) === idx);
+
                     // Determine if inspection is missing or has extra Rooms
 
-                    // If room is NOT selected (and IS present in PI's Room list)
+                    // If room is NOT selected (and IS present in PI's Room list (limited by type) )
                     let unselected = inspection.Rooms
-                        .filter( r => !r[selectedkey])
-                        .filter( r => pi.Rooms.some(pir => pir.Key_id == r.Key_id))
-                        .map(r => r.Name);
+                        .filter( r => !r[selectedkey])                  // room is not selected for this inspection
+                        .filter( r => pi.Rooms
+                            .filter(r => types.includes(r.Room_type))   // room type is included in this inspection
+                            .some(pir => pir.Key_id == r.Key_id)        // room is present in PI's room assignments
+                        );
 
                     // If room IS selected but is NOT present in PI's Room list (therefore not assigned to them)
                     let old = inspection.Rooms
                         .filter(r => r[selectedkey] )
-                        .filter(r => !pi.Rooms.some(pir => pir.Key_id == r.Key_id))
-                        .map(r => r.Name);
+                        .filter(r => !pi.Rooms.some(pir => pir.Key_id == r.Key_id));
 
                     // Generate warning object if either dataset is populated
                     if( unselected.length || old.length ){

@@ -19,6 +19,13 @@
     justify-content: space-between;
 }
 
+.comma-separated > *:not(:first-child)::before {
+    content: ',';
+
+    /* Move comma over to the content */
+    margin-left: -0.3em;
+}
+
 /***********/
 /* Hubs    */
 .hub-banner {
