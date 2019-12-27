@@ -1682,34 +1682,9 @@ class ActionManager {
         return true;
     }
 
-    private function _before_save_room_check_room_pis(Room &$room, Array $oldPIs, Array $newPIs){
-        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
-
-        $getIds = function($pi){
-            if(is_array($pi) )
-                return $pi['Key_id'];
-            return $pi->getKey_id();
-        };
-
-        $LOG->info("Verifying room changes...");
-        $existingPiIds = array_map($getIds, $oldPIs);
-        $LOG->debug("Existing PIs: " . implode(', ', $existingPiIds));
-
-        $incomingPiIds = array_map($getIds, $newPIs);
-        $LOG->debug("Incoming PIs: " . implode(', ', $incomingPiIds));
-
-        $removingPiIds = array_diff($existingPiIds, $incomingPiIds);
-        if( !empty($removingPiIds) ){
-            $LOG->info("Validate unassignment of PIs: " . implode(', ', $removingPiIds));
-            return $this->validateRoomUnassignments($room, $removingPiIds);
-        }
-
-        $LOG->info("No PIs are being unassigned");
-        return true;
-    }
-
     public function saveRoom($room = null){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+
         if($room == null){
             $decodedObject = $this->convertInputJson();
         }else{
@@ -1722,81 +1697,26 @@ class ActionManager {
         else if( $decodedObject instanceof ActionError ){
             return $decodedObject;
         }
-        else{
-            $dao = new RoomDAO();
 
-            $room = null;
-            if( $decodedObject->hasPrimaryKeyValue() ){
-                // Update existing room
-                $room = $this->getRoomById($decodedObject->getKey_id());
-                $LOG->info("Update existing room $room");
-            }
-            else{
-                // Create new room
-                $room = new Room();
-                $LOG->info("Create new Room");
-            }
-
-            if(is_array( $decodedObject->getPrincipalInvestigators() )){
-                $LOG->debug($decodedObject);
-
-                // First, validate any PI removals for an existing Rooms
-                $currentRoomPIs = [];
-                if( $room->hasPrimaryKeyValue() ){
-                    $currentRoomPIs = $dao->getRoomPIs($room->getKey_id());    // Retrieve active+inactive PI assignments
-                }
-
-                $canSaveRoom = $this->_before_save_room_check_room_pis(
-                    $room,
-                    $currentRoomPIs ?? [],
-                    $decodedObject->getPrincipalInvestigators()
-                );
-
-                if( !$canSaveRoom ){
-                    return new ActionError("One or more PIs have Hazards assigned to room " . $room->getKey_id(), 200);
-                }
-
-                if( $room->getPrincipalInvestigators() != null ){
-                    // Remove any existing
-                    foreach ($room->getPrincipalInvestigators() as $child){
-                        $dao->removeRelatedItems($child->getKey_id(),$room->getKey_id(),DataRelationship::fromArray(Room::$PIS_RELATIONSHIP));
-                    }
-                }
-
-                // Add any new
-                foreach($decodedObject->getPrincipalInvestigators() as $pi){
-                    //$LOG->fatal($pi["Key_id"] . ' | room: ' . $room->getKey_id());
-                    if(gettype($pi) == "array"){
-                        $piId = $pi["Key_id"];
-                    }else{
-                        $piId = $pi->getKey_id();
-                    }
-                    $dao->addRelatedItems($piId,$room->getKey_id(),DataRelationship::fromArray(Room::$PIS_RELATIONSHIP));
-
-                }
-            }
-
-            $LOG->info("Saving... $decodedObject");
-            $room = $dao->save($decodedObject);
-
-            // Retrieve active+inactive PIs now assigned to this room
-            // Set PIs into $room (as DTO), because the lazy-loaded accessor will only include active
-            $room->setPrincipalInvestigators(
-                $dao->getRoomPIs($room->getKey_id())
-            );
-
-            EntityManager::with_entity_maps(Room::class, array(
-                EntityMap::eager("getPrincipalInvestigators"),
-                EntityMap::lazy("getHazards"),
-                EntityMap::lazy("getHazard_room_relations"),
-                EntityMap::lazy("getHas_hazards"),
-                EntityMap::eager("getBuilding"),
-                EntityMap::lazy("getSolidsContainers")
-            ));
-
-            $LOG->info("Saved $room");
-            return $room;
+        try {
+            $room = RoomManager::get()->saveRoom( $decodedObject );
         }
+        catch( Exception $e ){
+            $LOG->error($e);
+            return new ActionError($e->getMessage(), 200);
+        }
+
+        EntityManager::with_entity_maps(Room::class, array(
+            EntityMap::eager("getPrincipalInvestigators"),
+            EntityMap::lazy("getHazards"),
+            EntityMap::lazy("getHazard_room_relations"),
+            EntityMap::lazy("getHas_hazards"),
+            EntityMap::eager("getBuilding"),
+            EntityMap::lazy("getSolidsContainers")
+        ));
+
+        $LOG->info("Saved $room");
+        return $room;
     }
 
     public function removeResponse( $id = NULL ){
@@ -2825,50 +2745,6 @@ class ActionManager {
         }
     }
 
-    private function validateRoomUnassignments($room, Array $removePiIds = null){
-        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
-        $LOG->debug("Validating room unassignment: $room");
-
-        // Remove this room assignment
-        // First, check if this room has any hazards in it
-        $hazardRoomRelations = $room->getHazard_room_relations();
-
-        if( empty($hazardRoomRelations) ){
-            // No hazards in this room; nothing more to check
-            $LOG->info("Room has no hazards");
-            return true;
-        }
-        else {
-            // This room has hazards assigned to it
-            $LOG->info("Room has hazard assignments");
-
-            // Map relations to their PI IDs
-            $piAssignments = array_unique(
-                array_map(function($rel){
-                    return $rel->getPrincipal_investigator_id();
-                }, $hazardRoomRelations)
-            );
-
-            // Verify that the specified PIs have no hazards in this room
-            if( isset($removePiIds) && !empty($removePiIds) ) {
-                $LOG->info("Checking hazard assignments for PIs: " . implode(', ', $removePiIds));
-
-                $piAssignments = array_filter($piAssignments, function($assignedPiId) use ($removePiIds){
-                    return in_array($assignedPiId, $removePiIds);
-                });
-
-                if( empty($piAssignments) ){
-                    // The specified PIs have no hazards assigned to this room
-                    $LOG->info("PIs have no assignments in room: " . implode(', ', $removePiIds));
-                    return true;
-                }
-            }
-
-            $LOG->error("Cannot remove Room assignment: PIs (" . implode(', ', $piAssignments) . ") have Hazards assigned to $room");
-            return false;
-        }
-    }
-
     public function savePIRoomRelation($PIId = NULL,$roomId = NULL,$add= NULL){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         if($PIId == NULL && $roomId == NULL && $add == NULL){
@@ -2908,7 +2784,7 @@ class ActionManager {
 
             if( !$add ) {
                 // First, validate the unassignment
-                if( !$this->validateRoomUnassignments($room, array($PIId)) ){
+                if( !RoomManager::get()->validateRoomPIUnassignments($room, array($PIId)) ){
                     $LOG->error("Cannot remove Room assignment: PI #$PIId has Hazards assigned to room #$roomId");
                     return new ActionError("PI $PIId has Hazards assigned to room $roomId", 200);
                 }
