@@ -3777,12 +3777,6 @@ table.sticky-headers thead tr th {
   background-color: #fff;
 }
 
-table.sticky-headers thead tr.sticky-action-bar th { top: 22px; }
-table.sticky-headers thead tr.sticky-header-bar th { top: 87px; }
-table.sticky-headers thead tr.sticky-filter-bar th { top: 124px; }
-
-
-
 /*****/
 
 .fixed{
