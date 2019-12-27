@@ -74,6 +74,9 @@ class Room extends GenericCrud {
 	/** Array of PricipalInvestigator entities that manage this Room */
 	private $principalInvestigators;
 
+	/** Array of User references that manage this Room */
+	private $userAssignments;
+
 	/** Array of Hazard entities contained in this Room */
 	private $hazards;
 
@@ -112,17 +115,20 @@ class Room extends GenericCrud {
 
     }
 
-	public function __toString(){
-		return '[' .get_class($this)
-		. " key_id=" . $this->getKey_Id()
-		. ($this->is_active ? '' : ' is_active=false')
-		. " name='$this->name' purpose='$this->purpose'"
-		. "]";
+	protected function getToStringParts(){
+		return array_merge(
+			parent::getToStringParts(),
+			[
+				"name='$this->name'",
+				"purpose='$this->purpose'",
+				"room_type=$this->room_type",
+			]);
 	}
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = EntityMap::lazy("getPrincipalInvestigators");
+		$entityMaps[] = EntityMap::lazy("getAssignedUsers");
 		$entityMaps[] = EntityMap::lazy("getHazards");
 		$entityMaps[] = EntityMap::lazy("getHazard_room_relations");
 		$entityMaps[] = EntityMap::lazy("getHas_hazards");
@@ -313,6 +319,15 @@ class Room extends GenericCrud {
 		return $this->principalInvestigators;
 	}
 	public function setPrincipalInvestigators($principalInvestigators){ $this->principalInvestigators = $principalInvestigators; }
+
+	public function getUserAssignments() {
+		if( !isset($this->userAssignments) && $this->hasPrimaryKeyValue() ){
+			$this->userAssignments = RoomManager::get()->getRoomAssignments($this);
+		}
+
+		return $this->userAssignments;
+	}
+	public function setUserAssignments( $users ){ $this->userAssignments = $users; }
 
 	public function getSafety_contact_information(){ return $this->safety_contact_information; }
 	public function setSafety_contact_information($contactInformation){ $this->safety_contact_information = $contactInformation; }
