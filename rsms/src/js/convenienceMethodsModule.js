@@ -638,6 +638,46 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
         return (data || []).length == 1 ? 'is' : 'are';
     }
 })
+.directive('stickyHeaders', function($timeout){
+    return {
+        restrict: 'A',
+        scope: {
+            stickyTop: '@'
+        },
+        link: function(scope, elem, attrs) {
+            if( isNaN(scope.stickyTop) ){
+                scope.stickyTop = 22;
+                console.debug("Default stickyHeader top to " + scope.stickyTop);
+            }
+
+            // Ensure table has 'sticky-headers' class
+            $(elem).addClass('sticky-headers');
+
+            let setStickyHeaderHeight = function () {
+                // Find header rows
+                let sticky_rows = elem.find('thead').find('tr');
+
+                // Base position is 22px
+                let ceiling = 22;
+
+                sticky_rows.each( (idx, row) => {
+                    // Stick the row to the current ceiling
+                    $(row).find('th').css({ top: ceiling + 'px'});
+                    // Increment ceiling by the row's height
+                    ceiling += $(row).height();
+                });
+            }
+
+            // Watch a dummy value to trigger
+            scope.$watch('watch', function() {
+                $timeout(function(){
+                    setStickyHeaderHeight();
+               },300);
+
+            });
+        }
+    };
+})
 /**
  * Display icon (and, optionally, Label) for a given Room Type
  */
