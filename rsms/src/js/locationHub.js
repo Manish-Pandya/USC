@@ -615,6 +615,17 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
 
 
 routeCtrl = function($scope, $location,$rootScope){
+    $scope.locationHubViews = [
+        { route: '/rooms', name: 'All Rooms' },
+        {},
+        { route: '/rooms/research-labs', name: 'Research Labs' },
+        { route: '/rooms/teaching-labs', name: 'Teaching Labs' },
+        { route: '/rooms/animal-facilities', name: 'Animal Rooms' },
+        {},
+        { route: '/buildings', name: 'Buildings' },
+        { route: '/campuses', name: 'Campuses' }
+    ];
+
     $scope.location = $location.path();
     $scope.setRoute = function(route){
         $location.path(route);
