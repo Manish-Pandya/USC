@@ -102,3 +102,10 @@ ul.banner-nav li span {
 ul.grid-list li:hover {
     color: #888;
 }
+
+/* Combine 'icon-users' and 'icon-plus-3" */
+i.icon-add-users::before { content: "\e15e\e12c"; }
+i.icon-add-users {
+    width: 25px;
+    margin-right: 10px;
+}
