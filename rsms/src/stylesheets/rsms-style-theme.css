@@ -76,6 +76,28 @@ ul.banner-nav li span {
         background: #D0B6B4;
     }
 
+/* Green Theme */
+    .hub-theme-green {}
+
+    .hub-theme-green .theme-main-element,
+    .hub-theme-green .hub-banner {
+        background-color: #5bb75b;
+        border-color: #5bb75b;
+        color: #fff;
+    }
+
+    .hub-theme-green .theme-highlight-element,
+    .hub-theme-green .hub-banner .banner-nav a:hover,
+    .hub-theme-green .hub-banner .banner-nav a.active-nav {
+        background: #005500;
+    }
+
+    .hub-theme-green .theme-underlight-element,
+    .hub-theme-green table tbody tr.theme-underlight-element td
+    {
+        background: #789974;
+    }
+
 /* */
 ul.grid-list li:hover {
     color: #888;
