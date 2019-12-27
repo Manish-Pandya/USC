@@ -678,6 +678,64 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
         }
     };
 })
+.directive('hubBannerNav', function(){
+    return {
+        restrict: 'E',
+        //replace: true,
+        scope: {
+            /**
+             * Array of objects which define the following fields:
+             *   - route: Router path for the view, passed to $location service.
+             *   - name:  Name of the view, rendered as link text.
+             * Items which do not define these fields are treated as
+             * non-functional separators.
+             */
+            hubViews: "=",
+            hubIcon: "@",
+            hubImage: "@",
+            hubTitle: "@",
+            hubSubtitle: "@",
+        },
+        template:   `<div class="hub-banner no-print">
+                        <i ng-if="hubIcon" class="title-icon {{hubIcon}}"></i>
+                        <img ng-if="hubImage" class="title-icon" ng-src="{{hubImage}}"/>
+
+                        <span style="flex-direction: column; align-items: flex-start;">
+                            <h1 once-text="hubTitle"></h1>
+                            <h4 ng-if="hubSubtitle" once-text="hubSubtitle"></h4>
+                        </span>
+
+                        <ul class="banner-nav">
+                            <li ng-repeat="view in hubViews">
+                                <span ng-if="!view.route">|</span>
+                                <a  ng-if="view.route"
+                                    ng-click="setRoute(view.route)"
+                                    ng-class="{'active-nav': selectedRoute == view.route}">{{view.name}}</a>
+                            </li>
+
+                            <li>
+                                <a class="home-link" ng-href="{{appRoot}}">
+                                    <i class="icon-home"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>`,
+        link: function(){},
+        controller: function($scope, $location){
+            console.debug($scope);
+            $scope.selectedRoute = $location.path();
+            $scope.appRoot = window.GLOBAL_WEB_ROOT;
+
+            $scope.setRoute = function( route ){
+                if( route ){
+                    $scope.selectedRoute = route;
+                }
+
+                $location.path($scope.selectedRoute);
+            };
+        }
+    };
+})
 /**
  * Display icon (and, optionally, Label) for a given Room Type
  */
