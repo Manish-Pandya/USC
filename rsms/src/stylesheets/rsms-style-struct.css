@@ -76,9 +76,11 @@ ul.grid-list li > * {
 
 .hub-banner i.title-icon {
     margin-right: 5px;
-    font-size: 35px;
     width: auto;
     line-height: 43px;
+
+    font-size: 5em;
+    height: 100%;
 }
 
 .hub-banner ul.banner-nav {
@@ -99,3 +101,7 @@ ul.grid-list li > * {
     align-items: center;
     padding: 0 10px;
 }
+
+.hub-toolbar { margin-top: 10px; }
+
+.hub-body { }
