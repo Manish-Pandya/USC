@@ -212,9 +212,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     var uncat = [];
     var i = users.length
     while (i--) {
-        console.log(users[i].Inspector);
         if (!users[i].Roles || !users[i].Roles.length) {
-        console.log(users[i].Name, "no roles")
         uncat.unshift(users[i]);
       }
 
@@ -687,17 +685,17 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
 
     $rootScope.userHubViews = [
       {
-        name: 'Principal Investigator',
+        name: 'Principal Investigators',
         filter: 'isPI',
         route: '/pis'
       },
       {
-        name: 'Laboratory Contacts',
+        name: 'Lab Contacts',
         filter: 'isLabContact',
         route: '/contacts'
       },
       {
-        name: 'Laboratory Personnel',
+        name: 'Lab Personnel',
         filter: 'isLabPersonnel',
         route: '/labPersonnel'
       },
