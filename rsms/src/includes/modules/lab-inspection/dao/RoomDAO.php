@@ -131,5 +131,26 @@ class RoomDAO extends GenericDAO {
             NULL, $activeOnly, $activeOnly
         );
     }
+
+    public function getRoomAssignedUsers( int $roomId, string $roleName = null ){
+        // TODO: Join to principal_investigator_room to get a glimpse of ALL assignments?
+
+        $q = QueryUtil::selectFrom(new UserRoomAssignment())
+            ->where(
+                Field::create('room_id', UserRoomAssignment::TABLE_NAME),
+                '=',
+                $roomId
+            );
+
+        if( isset($roleName) ){
+            $q->where(
+                Field::create('role_name', UserRoomAssignment::TABLE_NAME),
+                '=',
+                $roleName
+            );
+        }
+
+        return $q->getAll();
+    }
 }
 ?>
