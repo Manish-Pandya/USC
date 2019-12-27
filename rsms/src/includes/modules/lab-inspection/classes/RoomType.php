@@ -25,7 +25,7 @@ class RoomType {
                     ->setLabel('Research Lab')
                     ->setPluralLabel('Research Laboratories')
                     ->setInspectable(true)
-                    ->setAssignable_to( PrincipalInvestigator::class )
+                    ->setAssignable_to( LabInspectionModule::ROLE_PI )
                     ->setIcon_class('icon-lab')
                     ->setImg_path(null),
 
@@ -34,7 +34,7 @@ class RoomType {
                     ->setLabel('Animal Facility')
                     ->setPluralLabel('Animal Facilities')
                     ->setInspectable(true)
-                    ->setAssignable_to( PrincipalInvestigator::class )
+                    ->setAssignable_to( LabInspectionModule::ROLE_PI )
                     ->setIcon_class(null)
                     ->setImg_path($animal_img),
 
@@ -43,7 +43,7 @@ class RoomType {
                     ->setLabel('Teaching Lab')
                     ->setPluralLabel('Teaching Laboratories')
                     ->setInspectable(false)
-                    ->setAssignable_to( User::class )
+                    ->setAssignable_to( LabInspectionModule::ROLE_TEACHING_LAB_CONTACT )
                     ->setIcon_class('icon-users')
                     ->setImg_path(null),
             ];

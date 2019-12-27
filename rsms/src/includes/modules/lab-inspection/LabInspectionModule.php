@@ -22,6 +22,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
     public const ROLE_PERSONNEL = 'Lab Personnel';
     public const ROLE_CONTACT = 'Lab Contact';
     public const ROLE_INSPECTOR = 'Inspector';
+    public const ROLE_TEACHING_LAB_CONTACT = 'Teaching Lab Contact';
 
     private $manager;
 

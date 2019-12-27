@@ -19,6 +19,7 @@ echo 'if( !window.Constants ){
         $inspectable = $type->isInspectable() ? 'true' : 'false';
         $img = $type->getImg_path();
         $icon = $type->getIcon_class();
+        $assignable_to = $type->getAssignable_to();
 
         // Build array of quoted department name strings
         $depts = implode(',', array_map(function($d){ return '"' . $d->getName() . '"'; }, $type->getRestrictedToDepartments()));
@@ -28,6 +29,7 @@ echo 'if( !window.Constants ){
         echo  "label:'$label',";
         echo  "label_plural:'$plural',";
         echo  "inspectable:$inspectable,";
+        echo  "assignable_to:'$assignable_to',";
         echo  "departments:[$depts],";
         echo  "icon_class:'$icon',";
         echo  "img_src:'$img'";
