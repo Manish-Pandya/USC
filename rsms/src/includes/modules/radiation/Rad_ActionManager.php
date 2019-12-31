@@ -3468,7 +3468,7 @@ class Rad_ActionManager extends ActionManager {
     }
 
     public function getTotalInventories(){
-        $dao = new GenericDAO(new Isotope());
+        $dao = new IsotopeDAO();
         return $dao->getIsotopeTotalsReport();
     }
 
