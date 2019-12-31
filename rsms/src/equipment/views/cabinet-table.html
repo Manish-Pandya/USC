@@ -85,7 +85,7 @@
                     <td>
                         <div>
                             <div ng-repeat="inspection in inspections = (cabinet.EquipmentInspections | equipmentInspectionYear:selectedCertificationDate:uncertified:showInactive | hasMoved:'Room' | orderBy:'Due_date':true)">
-                                <span>{{inspection.Room.Name}}</span>
+                                <span><room-type-icon room-type-name="inspection.Room.Room_type"></room-type-icon>{{inspection.Room.Name}}</span>
                             </div>
                         </div>
                     </td>

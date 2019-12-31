@@ -59,7 +59,8 @@
                    
             </td>
             <td>
-               {{inspection.Room.Name}}
+                <room-type-icon room-type-name="inspection.Room.Room_type"></room-type-icon>
+                {{inspection.Room.Name}}
             </td>
             <td>
                 <span><a ng-class="{'red':!pi.Is_active}" style="display: block;padding: 3px 0;" ng-click="openPiInfoModal(pi)" ng-repeat="pi in pis = (inspection.PrincipalInvestigators | activeWhenInspected:inspection)">{{pi.User.Name}}<br ng-if="!$last"></a></span>
