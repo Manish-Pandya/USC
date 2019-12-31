@@ -44,5 +44,20 @@ class UserDAO extends GenericDAO {
 
 		return $result;
 	}
+
+	function getUsersWithRole( Role $role ){
+		$user_x_role = DataRelationship::fromArray([
+			"className"	=>	"Role",
+			"tableName"	=>	"user_role",
+			"keyName"	=>	"key_id",
+			"foreignKeyName"	=>	"user_id"]
+		);
+
+        return QueryUtil::selectFrom( new User() )
+            ->joinTo( $user_x_role )
+            ->where( Field::create('role_id', 'user_role'), '=', $role->getKey_id())
+            ->where( Field::create('is_active', 'erasmus_user'), '=', true)
+            ->getAll();
+	}
 }
 ?>

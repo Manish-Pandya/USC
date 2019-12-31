@@ -27,6 +27,15 @@ class UserRoomAssignment extends GenericCrud {
 		return UserRoomAssignment::COLUMN_NAMES_AND_TYPES;
     }
 
+    public static function defaultEntityMaps(){
+		$entityMaps = [
+		    EntityMap::lazy("getRoom"),
+		    EntityMap::lazy("getUser"),
+		    EntityMap::lazy("getRole"),
+        ];
+		return $entityMaps;
+	}
+
     public function getRoom_id(){ return $this->room_id; }
     public function setRoom_id($val){ $this->room_id = $val; }
 
@@ -39,7 +48,8 @@ class UserRoomAssignment extends GenericCrud {
     public function getRoom(){
         if( $this->room == null && $this->hasPrimaryKeyValue() ){
             $this->room = QueryUtil::selectFrom( new Room() )
-                ->where(Field::create('key_id', 'room'), '=', $this->room_id);
+                ->where(Field::create('key_id', 'room'), '=', $this->room_id)
+                ->getOne();
         }
 
         return $this->room;
@@ -48,7 +58,8 @@ class UserRoomAssignment extends GenericCrud {
     public function getUser(){
         if( $this->user == null && $this->hasPrimaryKeyValue() ){
             $this->user = QueryUtil::selectFrom( new User() )
-                ->where(Field::create('key_id', 'erasmus_user'), '=', $this->user_id);
+                ->where(Field::create('key_id', 'erasmus_user'), '=', $this->user_id)
+                ->getOne();
         }
 
         return $this->user;
@@ -57,7 +68,8 @@ class UserRoomAssignment extends GenericCrud {
     public function getRole(){
         if( $this->role == null && $this->hasPrimaryKeyValue() ){
             $this->role = QueryUtil::selectFrom( new Role() )
-                ->where(Field::create('name', 'role'), '=', $this->role_id);
+                ->where(Field::create('name', 'role'), '=', $this->role_name)
+                ->getOne();
         }
 
         return $this->role;

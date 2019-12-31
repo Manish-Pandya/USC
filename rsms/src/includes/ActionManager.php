@@ -1723,8 +1723,12 @@ class ActionManager {
             EntityMap::lazy("getSolidsContainers")
         ));
 
+        EntityManager::with_entity_maps(UserRoomAssignment::class, array(
+		    EntityMap::eager("getUser"),
+        ));
+
         $LOG->info("Saved $room");
-        return $room;
+        return $this->getRoomDetails($room);
     }
 
     public function removeResponse( $id = NULL ){
@@ -2330,6 +2334,37 @@ class ActionManager {
         ));
     }
 
+    /**
+     * Retrieves User details (DTOs) for all active users which are assignable
+     * to the specified RoomType.
+     *
+     * @see ActionManager::getAllPIDetails
+     * @see ActionManager::buildAssignableUserDTO
+     * @see RoomManager::getAssignableUsers
+     */
+    public function getAllAssignableUserDetails( string $roomTypeName ){
+        $type = RoomType::of($roomTypeName);
+
+        if( !isset($type) ){
+            return new ActionError("Invalid type specified '$roomTypeName'");
+        }
+
+        // special-case for PIs
+        if( $type->getAssignable_to() == LabInspectionModule::ROLE_PI ){
+            return $this->getAllPIDetails();
+        }
+
+        $users = RoomManager::get()->getAssignableUsers( $type );
+
+        // Convert to DTO (base on room type?)
+        $dtos = [];
+        foreach($users as $user){
+            $dtos[] = $this->buildAssignableUserDTO($user);
+        }
+
+        return $dtos;
+    }
+
     public function buildUserDTO( User $user ){
         // Roles to DTOs
         $roleDtos = DtoFactory::buildDtos($user->getRoles(), 'DtoFactory::roleToDto');
@@ -2377,6 +2412,44 @@ class ActionManager {
             'PrincipalInvestigator' => $piDto,
             'Inspector' => $inspectorDto,
         ));
+    }
+
+    public function buildAssignableUserDTO( User $user ){
+        // Build generic User DTO
+        $userDto = $this->buildUserDTO($user);
+
+        // Determine the user's Department, as Array
+        // We create this as an array to support multi-department assignments,
+        //   such as with Principal Investigator users
+        $deptDto = null;
+        if( $userDto->Primary_department != null ){
+            $deptDto = [$userDto->Primary_department];
+        }
+        else if ( $userDto->PrincipalInvestigator != null ){
+            $deptDto = $userDto->PrincipalInvestigator->Departments;
+        }
+        else {
+            // error?
+            LogUtil::get_logger(__CLASS__, __FUNCTION__)->warn("$assignment user has no Department");
+        }
+
+        $userDto->Departments = $deptDto;
+        return $userDto;
+    }
+
+    public function buildUserAssignmentDTO( UserRoomAssignment $assignment ){
+        // Get the assignment's user information
+        $userDto = $this->buildAssignableUserDTO($assignment->getUser());
+
+        // Clear out User DTO fields we know we don't need
+        unset($userDto->PrincipalInvestigator);
+
+        return DtoFactory::buildDto($assignment, [
+            'User_id' => $assignment->getUser_id(),
+            'User' => $userDto,
+            'Role_name' => $assignment->getRole_name(),
+            'Room_id' => $assignment->getRoom_id(),
+        ]);
     }
 
     public function getUsersForPIHub(){
@@ -2501,52 +2574,70 @@ class ActionManager {
             EntityMap::lazy("getSolidsContainers")
         ));
 
+        EntityManager::with_entity_maps(UserRoomAssignment::class, array(
+		    EntityMap::eager("getUser"),
+        ));
+
         // Retrieve all rooms, ordered by Name
         $dao = new RoomDAO();
         $rooms = $dao->getAll("name");
 
         $roomDtos = array();
         foreach($rooms as $room){
-            // Initialize present-hazard flags
-            $room->getHazardTypesArePresent();
-
-            // Retrieve all PIs, including Active
-            $pis = $dao->getRelatedItemsById(
-                $room->getKey_Id(),
-                DataRelationship::fromArray(Room::$PIS_RELATIONSHIP),
-                NULL, FALSE, TRUE);
-
-            $piDtos = array();
-            foreach($pis as $pi){
-                $dto = $this->getPIDetails($pi);
-                $piDtos[] = $dto;
-            }
-
-            $roomDto = DtoFactory::buildDto($room, array(
-                'Room_type' => $room->getRoom_type(),
-                'Name' => $room->getName(),
-                'Building_id' => $room->getBuilding_id(),
-                'Building_name' => $room->getBuilding_name(),
-                'Purpose' => $room->getPurpose(),
-                'PrincipalInvestigators' => $piDtos,
-
-                'Bio_hazards_present' => $room->getBio_hazards_present(),
-                'Chem_hazards_present' => $room->getChem_hazards_present(),
-                'Rad_hazards_present' => $room->getRad_hazards_present(),
-                'Lasers_present' => $room->getLasers_present(),
-                'Xrays_present' => $room->getXrays_present(),
-                'Recombinant_dna_present' => $room->getRecombinant_dna_present(),
-                'Flammable_gas_present' => $room->getFlammable_gas_present(),
-                'Toxic_gas_present' => $room->getToxic_gas_present(),
-                'Corrosive_gas_present' => $room->getCorrosive_gas_present(),
-                'Hf_present' => $room->getHf_present(),
-                'Animal_facility' => $room->getAnimal_facility()
-            ));
-
-            $roomDtos[] = $roomDto;
+            $roomDtos[] = $this->getRoomDetails($room);
         }
 
         return $roomDtos;
+    }
+
+    public function getRoomDetails( Room &$room ){
+        // Initialize present-hazard flags
+        $room->getHazardTypesArePresent();
+
+        // Retrieve all PIs, including Active
+        $dao = $dao ?? new RoomDAO();
+        $pis = $dao->getRelatedItemsById(
+            $room->getKey_Id(),
+            DataRelationship::fromArray(Room::$PIS_RELATIONSHIP),
+            NULL, FALSE, TRUE);
+
+        $piDtos = array();
+        foreach($pis as $pi){
+            $dto = $this->getPIDetails($pi);
+            $piDtos[] = $dto;
+        }
+
+        $assignmentDtos = array();
+        foreach($room->getUserAssignments() as $assignment){
+            // Ignore non-assignment assignments (... PrincipalInvestigator assignments)
+            if( (!$assignment instanceof UserRoomAssignment) ){
+                break;
+            }
+
+            $assignmentDtos[] = $this->buildUserAssignmentDTO($assignment);
+        }
+
+        return DtoFactory::buildDto($room, array(
+            'Room_type' => $room->getRoom_type(),
+            'Name' => $room->getName(),
+            'Building_id' => $room->getBuilding_id(),
+            'Building_name' => $room->getBuilding_name(),
+            'Purpose' => $room->getPurpose(),
+            'PrincipalInvestigators' => $piDtos,
+            'UserAssignments' => $assignmentDtos,
+
+            'Bio_hazards_present' => $room->getBio_hazards_present(),
+            'Chem_hazards_present' => $room->getChem_hazards_present(),
+            'Rad_hazards_present' => $room->getRad_hazards_present(),
+            'Lasers_present' => $room->getLasers_present(),
+            'Xrays_present' => $room->getXrays_present(),
+            'Recombinant_dna_present' => $room->getRecombinant_dna_present(),
+            'Flammable_gas_present' => $room->getFlammable_gas_present(),
+            'Toxic_gas_present' => $room->getToxic_gas_present(),
+            'Corrosive_gas_present' => $room->getCorrosive_gas_present(),
+            'Hf_present' => $room->getHf_present(),
+            'Animal_facility' => $room->getAnimal_facility()
+        ));
     }
 
     public function getAllRooms($allLazy = NULL){
@@ -2788,6 +2879,11 @@ class ActionManager {
             $room = $this->getRoomById($roomId);
             if( !isset($room) ){
                 return new ActionError("No such room $roomId", 404);
+            }
+
+            $roomType = RoomType::of($room->getRoom_type());
+            if( $roomType->getAssignable_to() != LabInspectionModule::ROLE_PI ){
+                return new ActionError("Cannot assign a Principal Investigator to this room", 400);
             }
 
             if( !$add ) {

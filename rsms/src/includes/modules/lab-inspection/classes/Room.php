@@ -120,7 +120,6 @@ class Room extends GenericCrud {
 			parent::getToStringParts(),
 			[
 				"name='$this->name'",
-				"purpose='$this->purpose'",
 				"room_type=$this->room_type",
 			]);
 	}

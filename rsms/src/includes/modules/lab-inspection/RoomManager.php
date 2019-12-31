@@ -19,6 +19,16 @@ class RoomManager {
         $this->userDao = new UserDAO();
     }
 
+    /**
+     * Retrieve all Users which are assigned the Role defined by the specified RoomType.
+     */
+    public function getAssignableUsers( RoomType $type ) {
+        $role = $this->roleDao->getByName($type->getAssignable_to());
+
+        // Find all users with the applicable role
+        return $this->userDao->getUsersWithRole( $role );
+    }
+
     public function getRoomAssignments( Room &$room ){
         // Find assignment type
         $roomType = RoomType::of($room->getRoom_type() );
