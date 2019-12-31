@@ -306,7 +306,8 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     var j = user.Roles.length;
     while(j--){
       var userRole = user.Roles[j];
-      if(userRole.Name.toLowerCase().indexOf(role.toLowerCase())>-1) return true
+      if(userRole.Name.toLowerCase() == role.toLowerCase())
+        return true;
     }
     return false;
   }
