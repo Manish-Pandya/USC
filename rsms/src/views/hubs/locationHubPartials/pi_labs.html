@@ -144,6 +144,7 @@
             <td class="lhcol_purpose">
                 <span ng-init="roomCopy.custom = getIsCustom(room.Purpose)" ng-if="room.edit"></span>
                 <input ng-model="roomCopy.Purpose" 
+                       maxlength="255"
                        placeholder="Use" style="max-width:130px" 
                        ng-if="room.edit && roomCopy.custom" />
                 <select ng-if="!roomCopy.custom && room.edit" 

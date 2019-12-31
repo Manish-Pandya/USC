@@ -100,7 +100,7 @@
             </td>
 
             <td class="lhcol_purpose">
-                <textarea ng-model="roomCopy.Purpose" placeholder="Course(s)" ng-if="room.edit" />
+                <textarea ng-model="roomCopy.Purpose" placeholder="Course(s)" ng-if="room.edit" maxlength="255" />
                 <pre ng-if="!room.edit" class="no-background no-border" style="font-family: inherit;">{{room.Purpose}}</pre>
             </td>
 
