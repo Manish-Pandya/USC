@@ -218,6 +218,34 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                         }
                     }
 
+                    // Search througn User assignments
+                    if( item.UserAssignments && item.UserAssignments.length > 0 ){
+                        if( search.assignedUser || search.department ){
+                            let matches = item.UserAssignments
+                                .map(assignment => assignment.User)
+                                .filter(user => {
+                                    // User name includes user search value
+                                    let user_matches = false;
+                                    if( search.assignedUser ){
+                                        user_matches = (search.assignedUser && user.Name.toLowerCase().indexOf(search.assignedUser.toLowerCase()) > -1);
+                                    }
+
+                                    // Any of User's department names include dept search value
+                                    let dept_matches = false;
+                                    if( search.department) {
+                                        dept_matches = user.Departments
+                                            .filter( d => d.Name.toLowerCase().indexOf(search.department.toLowerCase()) > -1)
+                                            .length > 0;
+                                    }
+
+                                    return user_matches || dept_matches;
+                                });
+
+                            item_matched = matches.length > 0;
+                        }
+                    }
+
+                    // Search through PrincipalInvestigator assignments
                     if( item.PrincipalInvestigators && item.PrincipalInvestigators.length > 0 ){
 
                         if( search.pi || search.department ){
@@ -376,6 +404,49 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
         return room.Building;
     }
 
+    factory.getAssignableUsers = function(roomType){
+        // Get or init promise to load this type of user
+        if( !factory.AssignableUsers ){
+            factory.AssignableUsers = {};
+        }
+
+        // IF NOT INIT'D
+        if( !factory.AssignableUsers[roomType] ){
+            // Init data/promise container
+            factory.AssignableUsers[roomType] = {
+                loading: false,
+                data: undefined,
+                dataWillLoad: $q.defer()
+            };
+        }
+
+        let dataContainer = factory.AssignableUsers[roomType];
+
+        // IF NOT LOADING
+        if( !dataContainer.loading ){
+            dataContainer.loading = true;
+
+            // Load the data from endpoint
+            let endpoint = GLOBAL_WEB_ROOT + 'ajaxaction.php?callback=JSON_CALLBACK&action=getAllAssignableUserDetails&roomTypeName=' + roomType;
+            convenienceMethods.getDataAsDeferredPromise(endpoint).then(
+                function(promise){
+                    // Set container data
+                    dataContainer.data = promise;
+
+                    // Resolve container promise
+                    dataContainer.dataWillLoad.resolve(dataContainer.data);
+                },
+                function(promise){
+                    dataContainer.loading = false;
+                    dataContainer.dataWillLoad.reject();
+                    ToastApi.toast("Failed to load user list", ToastApi.ToastType.ERROR);
+                }
+            );
+        }
+
+        return dataContainer.dataWillLoad.promise;
+    };
+
     factory.getAllPis = function(){
         //lazy load
 
@@ -403,6 +474,25 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
         return factory.AllPisWillLoad.promise;
     }
 
+    /**
+     * Retrieve all assignments (both UserAssignment and PrincipalInvestigator) for the given Room
+     */
+    factory.getRoomAssignments = function(room) {
+        let assignments = (room.UserAssignments || []);
+        // Special-case: PIs are modeled differently, but we can mock them up as Assignments for validation
+        if( room.PrincipalInvestigators ){
+            assignments = assignments.concat( room.PrincipalInvestigators.map(pi => {
+                return {
+                    User_id: pi.User_id,
+                    User: pi.User,
+                    Role_name: Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR
+                };
+            }));
+        }
+
+        return assignments;
+    }
+
     factory.validateRoom = function (room) {
         /* Room must have:
              - Building
@@ -415,6 +505,27 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
         // Room must have: Type
         if( !room.Room_type ){
             errors.push("Room Type is required.");
+        }
+        else {
+            // Validate assignments
+            let assignments = this.getRoomAssignments(room);
+            // Selected type's assignable_to must be compatible with
+            //   any existing assignments
+            let type = Constants.ROOM_TYPE[room.Room_type];
+
+            if( assignments.length ){
+                let incompatible = assignments
+                    .filter( a => a.Role_name != type.assignable_to )   // Filter to assignments which are different from RoomType
+                    .map( a => a.Role_name );                           // Map to the assignable role name
+                let incompatible_types = incompatible
+                    .filter( (v, i, self) => self.indexOf(v) === i);    // Filter to unique values
+
+                if( incompatible.length ){
+                    // Incompatible assignments exist, so we cannot change to this room type
+                    errors.push("Cannot change Room Type to '" + type.label + "' - it is assigned to " + incompatible.length + ' '
+                        + incompatible_types.join(', ') + " user" + (incompatible.length != 1) ? 's' : '');
+                }
+            }
         }
 
         // Room must have: Name
@@ -475,8 +586,8 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                 function(promise){
                     deferred.resolve(promise);
                 },
-                function(promise){
-                    deferred.reject();
+                function(error){
+                    deferred.reject(error);
                 }
             );
         }
@@ -678,16 +789,26 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
         $scope.editingRoom = true;
 
         if (!room || !room.Key_id) $scope.rooms.unshift($scope.roomCopy)
-        if (!$scope.pis) {
-            locationHubFactory.getAllPis()
-                .then(
-                    function (pis) {
-                        $scope.pis = pis;
-                        $scope.pis.selected = false;
+
+        // Load all users who can be assigned to this Room
+        if( $scope.roomType ){
+            locationHubFactory.getAssignableUsers($scope.roomType.name)
+                .then(users => {
+                    $scope.assignableUsers = users;
+                    $scope.assignableUsers.selected = false;
+
+                    // Special-case match for PIs: Assign PI-users to 'pis' field
+                    if( $scope.roomType.assignable_to == Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR ){
+                        $scope.pis = $scope.assignableUsers;
                     }
-                )
+                    else if($scope.roomCopy.UserAssignments.length){
+                        $scope.assignableUsers.selected = $scope.assignableUsers.find(
+                            u => u.Key_id == $scope.roomCopy.UserAssignments[0].User_id);
+                    }
+                });
         }
     }
+
     $scope.cancelEdit = function (room) {
         locationHubFactory.cancelEdit(room);
         delete $scope.roomCopy;
@@ -843,13 +964,16 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
                         },
                         function (err) {
                             console.error(err);
-                            let msg = 'The ' + room.Class + ' could not be saved.';
                             if( err.validation_failed ){
+                                let msg = 'The ' + room.Class + ' could not be saved.';
                                 msg += "<ul class='red'>"
                                     + err.messages.map(m => "<li>" + m + "</li>").join('')
                                     + "</ul>";
 
                                 $rootScope.errorToast = ToastApi.toast( msg, ToastApi.ToastType.ERROR, -1 );
+                            }
+                            else if(err.Class == 'ActionError'){
+                                ToastApi.toast( err.Message, ToastApi.ToastType.ERROR );
                             }
 
                             room.IsDirty = false;
@@ -861,6 +985,27 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
         );
 
     }
+
+    /**
+     * Change the UserAssignment(s) for the edited Room.
+     *
+     * Note that while the data model supports multiple assignments,
+     * only one is displayed/modified due to lack of use-cases.
+     */
+    $scope.assignUser = function (user, add){
+        if( add ){
+            // Assign to user, overwriting any existing
+            let new_assignment = angular.extend({'User_id': user.Key_id}, user);
+            $scope.roomCopy.UserAssignments = [new_assignment];
+        }
+        else {
+            // Unassign all
+            $scope.roomCopy.UserAssignments = [];
+
+            // Clear out selected placeholder
+            $scope.assignableUsers.selected = null;
+        }
+    };
 
     $scope.handlePI = function (pi, add) {
         // Handle PI selection

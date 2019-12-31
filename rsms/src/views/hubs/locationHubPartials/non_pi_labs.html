@@ -7,7 +7,7 @@
 <table class="table table-striped table-hover piTable table-bordered locationTable sticky-headers" sticky-headers watch="filtered.length" ng-if="rooms && !loading && !modal">
     <thead>
         <tr>
-            <th colspan="5" class="theme-main-element">
+            <th colspan="7" class="theme-main-element">
                 <h1>
                     <span class="room-type-icon">
                         <img ng-if="roomType.img_src" width="25px" ng-src="{{roomType.img_src}}"/>
@@ -42,6 +42,10 @@
             <th class="lhcol_edit">Edit</th>
             <th class="lhcol_building">Building</th>
             <th class="lhcol_name">Room Number</th>
+            <th class="lhcol_purpose">Course(s)</th>
+            <th>Teaching Lab Contact</th>
+            <th>Department(s)</th>
+
             <th class="lhcol_campus">Campus</th>
         </tr>
         <tr>
@@ -51,6 +55,13 @@
             </th>
             <th class="lhcol_name">
                 <input class="span2" ng-model="search.room" placeholder="Filter by Lab Room" />
+            </th>
+            <th class="lhcol_purpose"></th>
+            <th>
+                <input class="span2" ng-model="search.assignedUser" placeholder="Filter by {{roomType.assignable_to}}" />
+            </th>
+            <th>
+                <input class="span2" ng-model="search.department" placeholder="Filter by {{roomType.assignable_to}} Department" />
             </th>
             <th class="lhcol_campus">
                 <input class="span2" ng-model="search.campus" placeholder="Filter by Campus" />
@@ -88,7 +99,81 @@
                 <span ng-if="!room.edit">{{room.Name}}</span>
             </td>
 
-            <td class="lhcol_campus" once-text="room.Building.Campus.Name"></td>
+            <td class="lhcol_purpose">
+                <textarea ng-model="roomCopy.Purpose" placeholder="Course(s)" ng-if="room.edit" />
+                <pre ng-if="!room.edit" class="no-background no-border" style="font-family: inherit;">{{room.Purpose}}</pre>
+            </td>
+
+            <!-- Edit-mode display of Assignee (1 col)-->
+            <td ng-if="room.edit" colspan="2">
+                <div ng-if="room.edit" class="control-group">
+                    <span ng-if="!assignableUsers" class="even-content" style="align-items: center;">
+                        <i class="icon-spinnery-dealie spinner small"></i>
+                        <input style="margin: 0; flex-grow: 1;"
+                            type="text"
+                            placeholder="Getting {{roomType.assignable_to}} users..."
+                            disabled="disabled"
+                            style="flex-grow:1;">
+                    </span>
+                    <div ng-if="assignableUsers" class="controls even-content">
+                        <a ng-click="assignUser(null, false)" class="btn btn-mini btn-danger left"
+                           title="Unassign">
+                            <i class="icon-cancel"></i>
+                        </a>
+
+                        <ui-select  ng-show="assignableUsers"
+                                    ng-model="assignableUsers.selected"
+                                    theme="selectize"
+                                    ng-disabled="disabled"
+                                    on-select="assignUser($item, true)"
+                                    style="flex-grow: 1;">
+                            <ui-select-match placeholder="Select a {{roomType.assignable_to}}">
+                                <div class="even-content" style="padding-right: 3%">
+                                    <span style="flex-grow: 1;">{{$select.selected.Name}}</span>
+                                    <div class="italic">
+                                        <span once-text="$select.selected.Departments[0].Name"></span>
+                                        <span ng-if="$select.selected.Departments.length > 1">, ({{$select.selected.Departments.length - 1}} more)...</span>
+                                    </div>
+                                </div>
+                            </ui-select-match>
+                            <ui-select-choices repeat="user in assignableUsers | propsFilter: {Name: $select.search}">
+                                <div class="even-content" style="padding-right: 5%;">
+                                    <span style="flex-grow: 1;">{{user.Name}}</span>
+                                    <div class="italic" style="text-align: right">
+                                        <div ng-repeat="dept in user.Departments" once-text="dept.Name"></div>
+                                    </div>
+                                </div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </td>
+
+            <!-- Non-edit mode Unassigned display (2 cols) -->
+            <td ng-if="!room.edit && !room.UserAssignments.length" class="italic">Unassigned</td>
+            <td ng-if="!room.edit && !room.UserAssignments.length" class="italic">Unassigned</td>
+
+            <!-- Non-edit mode Assignee display (2 cols)-->
+            <td ng-if="!room.edit && $index == 0" ng-repeat-start="assignment in room.UserAssignments"
+                ng-class="{
+                    inactive: room.UserAssignments[0] && !room.UserAssignments[0].User.Is_active
+                }">
+                <span ng-repeat="assignment in room.UserAssignments"
+                      ng-if="$index == 0"
+                      ng-class="{ 'inactive-contact': !assignment.User.Is_active }"
+                      once-text="assignment.User.Name"></span>
+            </td>
+            <td ng-if="!room.edit && $index == 0" ng-repeat-end>
+                <ul ng-repeat="assignment in room.UserAssignments" ng-if="$index == 0">
+                    <li ng-repeat="dept in assignment.User.Departments">{{ dept.Name }}</li>
+                    <li ng-if="!assignment.User.Departments.length" class="italic">Unassigned</li>
+                </ul>
+            </td>
+            <!---->
+
+            <td class="lhcol_campus">
+                <span once-text="room.Building.Campus.Name"></span>
+            </td>
         </tr>
     </tbody>
 </table>

@@ -3664,7 +3664,8 @@ div.fake-table .table-row.top-align div{
 div.fake-table .table-row:hover{
   background: rgba(221, 221, 221, 1) !important;
 }
-div.inactive{
+div.inactive,
+td.inactive{
   background: pink !important;
 }
 div.fake-table .table-row:hover > div{
@@ -3839,6 +3840,7 @@ button.btn-large{
     margin-left:0
 }
 .no-border{border:none !important}
+.no-background{background:none !important}
 
 /*clear floats after span classed elements in modals*/
 .modal .controls[class*="span"]{
