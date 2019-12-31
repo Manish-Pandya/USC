@@ -657,7 +657,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
                 // Find header rows
                 let sticky_rows = elem.find('thead').find('tr');
 
-                // Base position is 22px
+                // Set base sticky position
                 let ceiling = 22;
 
                 sticky_rows.each( (idx, row) => {
@@ -710,6 +710,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
                                 <span ng-if="!view.route">|</span>
                                 <a  ng-if="view.route"
                                     ng-click="setRoute(view.route)"
+                                    ng-href="#{{view.route}}"
                                     ng-class="{'active-nav': selectedRoute == view.route}">{{view.name}}</a>
                             </li>
 
