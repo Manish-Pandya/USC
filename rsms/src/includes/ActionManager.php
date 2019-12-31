@@ -1701,9 +1701,17 @@ class ActionManager {
         try {
             $room = RoomManager::get()->saveRoom( $decodedObject );
         }
+        catch( NotFoundException $e ){
+            $LOG->error($e);
+            return new ActionError($e->getMessage(), 404);
+        }
+        catch( IncompatibleRoomTypeException | HazardsInRoomException $e ){
+            $LOG->error($e);
+            return new ActionError($e->getMessage(), 400);
+        }
         catch( Exception $e ){
             $LOG->error($e);
-            return new ActionError($e->getMessage(), 200);
+            return new ActionError($e->getMessage(), 500);
         }
 
         EntityManager::with_entity_maps(Room::class, array(

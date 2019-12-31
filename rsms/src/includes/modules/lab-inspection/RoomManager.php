@@ -56,7 +56,7 @@ class RoomManager {
             // Update existing room
             $room = $this->roomDao->getById($roomChanges->getKey_id());
             if( $room == null ){
-                throw new Exception("No such room " . $roomChanges->getKey_id());
+                throw new NotFoundException("No such room " . $roomChanges->getKey_id());
             }
 
             $LOG->info("Update existing room $room");
@@ -77,7 +77,7 @@ class RoomManager {
         }
 
         if( $roomChanges->getRoom_type() != $room->getRoom_type() ){
-            $LOG->info("Validing change of Room Type: " . $room->getRoom_type() . ' => ' . $roomChanges->getRoom_type());
+            $LOG->info("Validating change of Room Type: " . $room->getRoom_type() . ' => ' . $roomChanges->getRoom_type());
 
             // Attempting change of Room type
             // Room Types may change freely as long as it is assigned to no one
@@ -92,8 +92,9 @@ class RoomManager {
                 // TODO: We may want to consider more explicitly defining the assignment model to check compatibility
                 if( $existing_type->getAssignable_to() != $target_type->getAssignable_to() ){
                     // Cannot change this Room's type because the target type conflicts with existing assignemnt(s)
-                    throw new Exception("Target RoomType '" . $target_type->getName()
-                                        . "' is incompatible with existing assignment(s) of $room");
+                    throw new IncompatibleRoomTypeException(
+                        'Room ' . $room->getName()
+                        . " has existing assignments which are incompatible with the '" . $target_type->getLabel() . "' room type");
                 }
                 // else OK to change type
                 $LOG->info("Changing RoomType - existing assignments are compatible");
@@ -218,7 +219,7 @@ class RoomManager {
         );
 
         if( !$canSaveRoom ){
-            throw new Exception("One or more PIs have Hazards assigned to room " . $existingRoom->getKey_id() );
+            throw new HazardsInRoomException("One or more PIs have Hazards assigned to room " . $existingRoom->getKey_id() );
         }
 
         if( $existingRoom->getPrincipalInvestigators() != null ){
