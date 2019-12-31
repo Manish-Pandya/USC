@@ -9,7 +9,8 @@
 class Room extends GenericCrud {
 
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "room";
+	public const TABLE_NAME = 'room';
+	protected static $TABLE_NAME = Room::TABLE_NAME;
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
@@ -17,9 +18,8 @@ class Room extends GenericCrud {
 		"safety_contact_information" 	=> "text",
 		"animal_facility" 	=> "boolean",
 		"building_id"		=> "integer",
-		//"chem_hazards_present"			=> "boolean",
-		//"rad_hazards_present"			=> "boolean",
-		//"bio_hazards_present"			=> "boolean",
+		"purpose"	=>	"text",
+		"room_type" => "text",
 
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -28,8 +28,7 @@ class Room extends GenericCrud {
 		"is_active"			=> "boolean",
 		"last_modified_user_id"			=> "integer",
 		"created_user_id"	=> "integer",
-		"purpose"	=>	"text"
-							);
+	);
 
 
 	public static $PIS_RELATIONSHIP = array(
@@ -62,6 +61,8 @@ class Room extends GenericCrud {
 
 	private $name;
 
+	private $room_type = RoomType::RESEARCH_LAB;
+
 	private $purpose;
 
 	/** Reference to the Building entity that contains this Room */
@@ -72,6 +73,9 @@ class Room extends GenericCrud {
 
 	/** Array of PricipalInvestigator entities that manage this Room */
 	private $principalInvestigators;
+
+	/** Array of User references that manage this Room */
+	private $userAssignments;
 
 	/** Array of Hazard entities contained in this Room */
 	private $hazards;
@@ -111,17 +115,19 @@ class Room extends GenericCrud {
 
     }
 
-	public function __toString(){
-		return '[' .get_class($this)
-		. " key_id=" . $this->getKey_Id()
-		. ($this->is_active ? '' : ' is_active=false')
-		. " name='$this->name' purpose='$this->purpose'"
-		. "]";
+	protected function getToStringParts(){
+		return array_merge(
+			parent::getToStringParts(),
+			[
+				"name='$this->name'",
+				"room_type=$this->room_type",
+			]);
 	}
 
     public static function defaultEntityMaps(){
 		$entityMaps = array();
 		$entityMaps[] = EntityMap::lazy("getPrincipalInvestigators");
+		$entityMaps[] = EntityMap::lazy("getAssignedUsers");
 		$entityMaps[] = EntityMap::lazy("getHazards");
 		$entityMaps[] = EntityMap::lazy("getHazard_room_relations");
 		$entityMaps[] = EntityMap::lazy("getHas_hazards");
@@ -142,6 +148,9 @@ class Room extends GenericCrud {
 	// Accessors / Mutators
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }
+
+	public function getRoom_type(){ return $this->room_type; }
+	public function setRoom_type( $val ){ $this->room_type = $val; }
 
 	public function getPurpose(){ return $this->purpose; }
 	public function setPurpose($purpose){ $this->purpose = $purpose; }
@@ -310,6 +319,15 @@ class Room extends GenericCrud {
 	}
 	public function setPrincipalInvestigators($principalInvestigators){ $this->principalInvestigators = $principalInvestigators; }
 
+	public function getUserAssignments() {
+		if( !isset($this->userAssignments) && $this->hasPrimaryKeyValue() ){
+			$this->userAssignments = RoomManager::get()->getRoomAssignments($this);
+		}
+
+		return $this->userAssignments;
+	}
+	public function setUserAssignments( $users ){ $this->userAssignments = $users; }
+
 	public function getSafety_contact_information(){ return $this->safety_contact_information; }
 	public function setSafety_contact_information($contactInformation){ $this->safety_contact_information = $contactInformation; }
 
@@ -387,4 +405,5 @@ class Room extends GenericCrud {
 
 
 }
+
 ?>

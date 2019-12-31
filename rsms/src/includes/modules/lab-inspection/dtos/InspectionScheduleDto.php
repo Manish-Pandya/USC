@@ -42,8 +42,19 @@ class InspectionScheduleDto {
     private $animal_facility;
 	private $xrays_present;
 
+	private $inspected_room_type;
+
 	public function __toString(){
-		return "[" . get_class($this) . " pi:$this->pi_key_id inspection:$this->inspection_id]";
+		return "[" . get_class($this)
+			. " pi:$this->pi_key_id"
+			. " building:$this->building_key_id"
+			. " inspection:" . ($this->inspection_id ?? '[]')
+			. " |"
+			. " pi:($this->pi_name)"
+			. " building:($this->building_name)"
+			. " animal_facility:$this->animal_facility"
+			. " type:" . ($this->inspected_room_type ?? 'MIXED')
+			. "]";
 	}
 
 	public function getPi_name(){return $this->pi_name;}
@@ -65,7 +76,8 @@ class InspectionScheduleDto {
 	public function getHf_present() {return (bool) $this->hf_present;}
 	public function getLasers_present() {return (bool) $this->lasers_present;}
     public function getAnimal_facility(){return (bool) $this->animal_facility;}
-    public function getXrays_present(){ return $this->xrays_present; }
+	public function getXrays_present(){ return $this->xrays_present; }
+	public function getInspected_room_type(){ return $this->inspected_room_type; }
 
 	public function setPi_name($pi_name){$this->pi_name = $pi_name;}
 	public function setPi_key_id($pi_key_id){$this->pi_key_id = $pi_key_id;}
@@ -89,5 +101,6 @@ class InspectionScheduleDto {
 	public function setDeficiency_selection_count($deficiency_selection_count){	$this->deficiency_selection_count = $deficiency_selection_count;}
     public function setAnimal_facility($present){$this->animal_facility = $present;}
 	public function setXrays_present($xrays_present){ $this->xrays_present = $xrays_present; }
+	public function setInspected_room_type($type){ $this->inspected_room_type = $type; }
 }
 ?>

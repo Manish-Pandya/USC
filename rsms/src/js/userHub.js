@@ -38,6 +38,12 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         controller: departmentContactController
       }
     )
+    .when('/teachingLabContacts',
+      {
+        templateUrl: 'userHubPartials/teachingLabContacts.html',
+        controller: teachingLabContactController
+      }
+    )
     .when('/uncategorized',
       {
         templateUrl: 'userHubPartials/uncategorized.html',
@@ -92,6 +98,16 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     return personnel;
   }
 }])
+.filter('isTeachingLabContact', ['userHubFactory', function(userHubFactory){
+  return function(users){
+    if(!users)return;
+    var personnel = [];
+
+    personnel = users.filter(u => userHubFactory.hasRole(u, Constants.ROLE.NAME.TEACHING_LAB_CONTACT));
+
+    return personnel;
+  }
+}])
 .filter('isDepartmentContact', ['userHubFactory', function(userHubFactory){
   return function(users){
     if(!users)return;
@@ -113,6 +129,18 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     ];
 
     return roles.filter(r => departmental_role_names.includes(r.Name));
+  }
+}])
+
+.filter('isTeachingRole', ['userHubFactory', function(){
+  return function(roles){
+    if(!roles)return;
+
+    let teaching_role_names = [
+      Constants.ROLE.NAME.TEACHING_LAB_CONTACT
+    ];
+
+    return roles.filter(r => teaching_role_names.includes(r.Name));
   }
 }])
 
@@ -184,9 +212,7 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     var uncat = [];
     var i = users.length
     while (i--) {
-        console.log(users[i].Inspector);
         if (!users[i].Roles || !users[i].Roles.length) {
-        console.log(users[i].Name, "no roles")
         uncat.unshift(users[i]);
       }
 
@@ -280,7 +306,8 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
     var j = user.Roles.length;
     while(j--){
       var userRole = user.Roles[j];
-      if(userRole.Name.toLowerCase().indexOf(role.toLowerCase())>-1) return true
+      if(userRole.Name.toLowerCase() == role.toLowerCase())
+        return true;
     }
     return false;
   }
@@ -659,17 +686,17 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
 
     $rootScope.userHubViews = [
       {
-        name: 'Principal Investigator',
+        name: 'Principal Investigators',
         filter: 'isPI',
         route: '/pis'
       },
       {
-        name: 'Laboratory Contacts',
+        name: 'Lab Contacts',
         filter: 'isLabContact',
         route: '/contacts'
       },
       {
-        name: 'Laboratory Personnel',
+        name: 'Lab Personnel',
         filter: 'isLabPersonnel',
         route: '/labPersonnel'
       },
@@ -682,6 +709,11 @@ var MainUserListController = function(userHubFactory, $scope, $rootScope, $locat
         name: 'Department Chairs & Coordinators',
         filter: 'isDepartmentContact',
         route: '/departmentContacts'
+      },
+      {
+        name: 'Teaching Lab Contacts',
+        filter: 'isTeachingLabContact',
+        route: '/teachingLabContacts'
       },
       {
         name: 'Uncategorized Users',
@@ -968,6 +1000,51 @@ var personnelController = function($scope, $modal, $rootScope, userHubFactory, c
         });
 
     }
+}
+
+var teachingLabContactController = function($scope, $modal, $rootScope, userHubFactory, convenienceMethods, $timeout, $location) {
+    $rootScope.neededUsers = false;
+    $rootScope.order="Last_name";
+    $rootScope.error="";
+    $rootScope.renderDone = false;
+    $rootScope.constants = Constants;
+
+    userHubFactory.getAllUsers()
+      .then(
+        function(users){
+          $scope.users = userHubFactory.users;
+          $rootScope.neededUsers = true;
+          $timeout(function() {
+                $rootScope.renderDone = true;
+            }, 300);
+          return users;
+        },
+        function(){
+          $rootScope.error="There was problem getting the teaching contacts.  Please check your internet connection and try again.";
+        }
+      )
+
+    $scope.openModal = function(user){
+        if(!user){
+          user = {Is_active:true, Roles:[], Class:'User', Is_new:true};
+        }
+
+        userHubFactory.setModalData(user);
+
+        var modalInstance = $modal.open({
+          templateUrl: 'userHubPartials/teachingLabContactsModal.html',
+          controller: modalCtrl
+        });
+
+        modalInstance.result.then(function (returnedUser) {
+          if(user.Key_id){
+            console.debug("Saved Teaching Lab Contact:", returnedUser);
+            angular.extend(user, returnedUser)
+          }else{
+            userHubFactory.users.push(returnedUser);
+          }
+        });
+    };
 }
 
 var departmentContactController = function($scope, $modal, $rootScope, userHubFactory, convenienceMethods, $timeout, $location) {

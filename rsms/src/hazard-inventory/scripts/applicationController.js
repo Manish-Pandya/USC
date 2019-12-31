@@ -377,7 +377,7 @@ angular
                 return $rootScope.RoomSaving;
         }
 
-        ac.initialiseInspection = function(PI, inspectorIds, inspectionId, rad, rooms){
+        ac.initialiseInspection = function(PI, inspectorIds, inspectionId, rad, rooms, roomType){
             //if we don't have a pi, get one from the server
             if (!inspectorIds) inspectorIds = [];
             if (typeof inspectorIds == "object") {
@@ -393,6 +393,8 @@ angular
             if (rad) url = url + "&rad=true";
 
             var roomIds;
+
+            // note that Rooms are passed when UPDATING an existing inspection; not when scheduling a new one
             console.log(rooms);
             if(rooms){
                 roomIds = rooms.filter(function(r){
@@ -400,8 +402,12 @@ angular
                 }).map(function(r){
                     return r.Key_id;
                 })
-            }else{
-                roomIds = PI.Rooms.map(function(r){return r.Key_id})
+            }
+            else {
+                // Collect rooms from PI, optionallly limiting by RoomType
+                roomIds = PI.Rooms
+                    .filter(r => !roomType || r.Room_type === roomType.name)
+                    .map(r => r.Key_id)
             }
             console.log(roomIds);
             if (roomIds) url = url + '&' + $.param({ roomIds: roomIds });
@@ -422,6 +428,8 @@ angular
                                                   }
                                               }
                                         );
+
+            return $rootScope.InspectionSaving;
         }
 
         ac.navigateToInspection = function (inspection) {

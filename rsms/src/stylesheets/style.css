@@ -248,6 +248,7 @@ a.btn.btn-mini i {
 }
 .btn img{
   width:25px;
+  height:25px;
 }
 a.btn.right i, button.btn.right i{
   margin: 2px 2px 1px 6px!important;
@@ -714,7 +715,6 @@ div.rsmsCenterIconContainer a p {
 /* line 419, ../sass/style.scss */
 tr.edit {
   border: #999 solid 3px;
-  zoom: 1.1;
   transition: border .2s;
 }
 
@@ -1014,82 +1014,21 @@ li.minimized ol {
   cursor: pointer;
 }
 
-/*****************************************************************
-*   LOCATION HUB
-******************************************************************/
-.pagination .btn {
-    margin-left: -3px !important;
-    margin-right: -3px !important;
-}
-a.selected, button.selected{
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7) !important;
-}
-a.selected:hover, button.selected:hover{
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7) !important;
-}
-.locationTable td{
-  overflow:hidden;
-}
-.locationTable td > ul{
-  margin:-4px -8px -1px !important;
-}
+/** Hazard-icon styles; refactored from location-hub block **/
 td.hazard-icons img{
-    width:25px;
+  width:25px;
 }
-.locationTable tr.edit td{
-  overflow:visible;
-}
+
 .grayed-out img, img.grayed-out {
-    -webkit-filter: grayscale(100%);
-    filter: grayscale(100%);
-    opacity: .4;
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+  opacity: .4;
 }
 .grayed-out{
   color:#ccc;
 }
 li.grayed-out a{
   color: rgba(79, 147, 225, 0.51);
-}
-.locationTable td > ul li{
-  padding: 10px 8px 3px;
-  border-bottom: 1px solid #d7d7d7 !important;
-}
-
-.locationTable td > ul li ul li{
-  border:none;
-}
-
-.locationTable td > ul li:last-child{
-  padding-bottom:0;
-  border-bottom:none !important;
-}
-.locationTable ul li:first-child{
-  padding-top:5px;
-}
-.locationTable ul li > span{
-    display:inline-block;
-}
-
-.locationTable ul li ul, .locationTable th ul {
-  list-style-type: none;
-  border-left: 1px solid #d7d7d7;
-  margin-left: 45%;
-  margin-top: -35px;
-  margin-bottom: -15px;
-  padding: 10px 5px 20px;
-}
-.locationTable th ul{
-  float: left;
-  width: 45%;
-  margin-left: 45%;
-  margin-bottom: -20px;
-  display: inline;
-  padding-top: 3px;
-}
-.locationTable th span{
-margin-bottom: -30px;}
-.locationTable th input{
-  width:90%;
 }
 
 
@@ -3725,7 +3664,8 @@ div.fake-table .table-row.top-align div{
 div.fake-table .table-row:hover{
   background: rgba(221, 221, 221, 1) !important;
 }
-div.inactive{
+div.inactive,
+td.inactive{
   background: pink !important;
 }
 div.fake-table .table-row:hover > div{
@@ -3830,6 +3770,15 @@ tbody tr:hover{/* background:#BDC3C7; */color: #FFFFFF !important;}
 }
 
 /*****/
+/* Sticky table headers */
+table.sticky-headers thead tr th {
+  position: sticky;
+  z-index: 1;
+
+  background-color: #fff;
+}
+
+/*****/
 
 .fixed{
   position:fixed;
@@ -3837,6 +3786,7 @@ tbody tr:hover{/* background:#BDC3C7; */color: #FFFFFF !important;}
  // display:none;
   border:none;
 }
+
 .scrollTable thead{
   z-index: 1050;
   position: fixed;
@@ -3890,6 +3840,7 @@ button.btn-large{
     margin-left:0
 }
 .no-border{border:none !important}
+.no-background{background:none !important}
 
 /*clear floats after span classed elements in modals*/
 .modal .controls[class*="span"]{
@@ -4035,6 +3986,10 @@ btn-mini {
   z-index: 1060;
   margin-top: -31px;
   position: fixed;
+
+  /* Mimic bootstrapmetro's navbar.fixed position */
+  left: 70px;
+  right: 70px;
 }
 .filter-holder div{
   margin-right: 15px;
@@ -4049,6 +4004,15 @@ btn-mini {
 .filter-holder div select{
   margin-top:0;
 }
+
+.filter-holder div.legend {
+  margin-right: unset;
+}
+
+.filter-holder div.legend label {
+  padding-right: 3px;
+}
+
 input.error, input.ng-invalid.ng-dirty {
     border-color:red !important;
 }
@@ -4356,4 +4320,9 @@ table.quickdate-calendar td:hover {
 }
 .inactive-contact::after {
   content: " (Inactive)";
+}
+
+.even-content {
+  display: flex;
+  justify-content: space-between;
 }

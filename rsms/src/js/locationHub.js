@@ -5,8 +5,38 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
     $routeProvider
         .when('/rooms',
             {
-                templateUrl: 'locationHubPartials/rooms.html',
-                controller: roomsCtrl
+                templateUrl: 'locationHubPartials/all-rooms.html',
+                controller: roomsCtrl,
+                resolve: {
+                    roomType: () => null
+                }
+            }
+        )
+        .when('/rooms/research-labs',
+            {
+                templateUrl: 'locationHubPartials/pi_labs.html',
+                controller: roomsCtrl,
+                resolve: {
+                    roomType: () => Constants.ROOM_TYPE.RESEARCH_LAB
+                }
+            }
+        )
+        .when('/rooms/animal-facilities',
+            {
+                templateUrl: 'locationHubPartials/pi_labs.html',
+                controller: roomsCtrl,
+                resolve: {
+                    roomType: () => Constants.ROOM_TYPE.ANIMAL_FACILITY
+                }
+            }
+        )
+        .when('/rooms/teaching-labs',
+            {
+                templateUrl: 'locationHubPartials/non_pi_labs.html',
+                controller: roomsCtrl,
+                resolve: {
+                    roomType: () => Constants.ROOM_TYPE.TEACHING_LAB
+                }
             }
         )
         .when('/buildings',
@@ -26,6 +56,24 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                 redirectTo: '/rooms'
             }
         );
+})
+.filter('roomTypeFilter', function(){
+    return function(rooms, roomTypeName){
+        if( !rooms || !roomTypeName ) return rooms;
+
+        // Include rooms which match the given room type
+        // Also include rooms which have not yet been saved
+        return rooms.filter(r => r.Room_type == roomTypeName || !r.Key_id);
+    }
+})
+.filter('toArray', function () {
+    return function (object) {
+        var array = [];
+        for (var prop in object) {
+            array.push(object[prop]);
+        }
+        return array;
+    }
 })
 .filter('roomUnassignedFilter', function(){
     return function(room){
@@ -83,6 +131,12 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
 
                 // Only apply filters if the item isn't new
                 if( !item.isNew ){
+                    if(search.room_type){
+                        if( item.Room_type != search.room_type ){
+                            item_matched = false;
+                        }
+                    }
+
                     if(search.building){
                         if( item.Building && item.Building.Name && item.Building.Name.toLowerCase().indexOf(search.building.toLowerCase() ) < 0 ){
                             item_matched = false;
@@ -164,6 +218,34 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                         }
                     }
 
+                    // Search througn User assignments
+                    if( item.UserAssignments && item.UserAssignments.length > 0 ){
+                        if( search.assignedUser || search.department ){
+                            let matches = item.UserAssignments
+                                .map(assignment => assignment.User)
+                                .filter(user => {
+                                    // User name includes user search value
+                                    let user_matches = false;
+                                    if( search.assignedUser ){
+                                        user_matches = (search.assignedUser && user.Name.toLowerCase().indexOf(search.assignedUser.toLowerCase()) > -1);
+                                    }
+
+                                    // Any of User's department names include dept search value
+                                    let dept_matches = false;
+                                    if( search.department) {
+                                        dept_matches = user.Departments
+                                            .filter( d => d.Name.toLowerCase().indexOf(search.department.toLowerCase()) > -1)
+                                            .length > 0;
+                                    }
+
+                                    return user_matches || dept_matches;
+                                });
+
+                            item_matched = matches.length > 0;
+                        }
+                    }
+
+                    // Search through PrincipalInvestigator assignments
                     if( item.PrincipalInvestigators && item.PrincipalInvestigators.length > 0 ){
 
                         if( search.pi || search.department ){
@@ -315,19 +397,55 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
 
     factory.getBuildingByRoom = function( room )
     {
-        if(room.Building)return room.Building;
-        if(!room.trusted){
-            var i = this.buildings.length
-            while(i--){
-                room.trusted = true;
-                if(this.buildings[i].Key_id == room.Building_id){
-                    room.Building = this.buildings[i];
-                }
-            }
+        if(!room.Building){
+            room.Building = this.buildings.find( b => b.Key_id == room.Building_id);
         }
 
         return room.Building;
     }
+
+    factory.getAssignableUsers = function(roomType){
+        // Get or init promise to load this type of user
+        if( !factory.AssignableUsers ){
+            factory.AssignableUsers = {};
+        }
+
+        // IF NOT INIT'D
+        if( !factory.AssignableUsers[roomType] ){
+            // Init data/promise container
+            factory.AssignableUsers[roomType] = {
+                loading: false,
+                data: undefined,
+                dataWillLoad: $q.defer()
+            };
+        }
+
+        let dataContainer = factory.AssignableUsers[roomType];
+
+        // IF NOT LOADING
+        if( !dataContainer.loading ){
+            dataContainer.loading = true;
+
+            // Load the data from endpoint
+            let endpoint = GLOBAL_WEB_ROOT + 'ajaxaction.php?callback=JSON_CALLBACK&action=getAllAssignableUserDetails&roomTypeName=' + roomType;
+            convenienceMethods.getDataAsDeferredPromise(endpoint).then(
+                function(promise){
+                    // Set container data
+                    dataContainer.data = promise;
+
+                    // Resolve container promise
+                    dataContainer.dataWillLoad.resolve(dataContainer.data);
+                },
+                function(promise){
+                    dataContainer.loading = false;
+                    dataContainer.dataWillLoad.reject();
+                    ToastApi.toast("Failed to load user list", ToastApi.ToastType.ERROR);
+                }
+            );
+        }
+
+        return dataContainer.dataWillLoad.promise;
+    };
 
     factory.getAllPis = function(){
         //lazy load
@@ -356,29 +474,123 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
         return factory.AllPisWillLoad.promise;
     }
 
+    /**
+     * Retrieve all assignments (both UserAssignment and PrincipalInvestigator) for the given Room
+     */
+    factory.getRoomAssignments = function(room) {
+        let assignments = (room.UserAssignments || []);
+        // Special-case: PIs are modeled differently, but we can mock them up as Assignments for validation
+        if( room.PrincipalInvestigators ){
+            assignments = assignments.concat( room.PrincipalInvestigators.map(pi => {
+                return {
+                    User_id: pi.User_id,
+                    User: pi.User,
+                    Role_name: Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR
+                };
+            }));
+        }
 
-    factory.saveRoom = function (roomDto) {
-        console.log(roomDto);
-        $rootScope.validationError='';
-        if(!roomDto.Key_id){
-            var defer = $q.defer();
-            if(this.roomAlreadyExists(roomDto)){
-                $rootScope.validationError = "Room " + roomDto.Name + " already exists in " + this.getBuildingByRoom(roomDto).Name + '.';
-                alert($rootScope.validationError);
-                roomDto.IsDirty=false;
-                return
+        return assignments;
+    }
+
+    factory.validateRoom = function (room) {
+        /* Room must have:
+             - Building
+             - Name
+             - Type
+        */
+
+        let errors = [];
+
+        // Room must have: Type
+        if( !room.Room_type ){
+            errors.push("Room Type is required.");
+        }
+        else {
+            // Validate assignments
+            let assignments = this.getRoomAssignments(room);
+            // Selected type's assignable_to must be compatible with
+            //   any existing assignments
+            let type = Constants.ROOM_TYPE[room.Room_type];
+
+            if( assignments.length ){
+                let incompatible = assignments
+                    .filter( a => a.Role_name != type.assignable_to )   // Filter to assignments which are different from RoomType
+                    .map( a => a.Role_name );                           // Map to the assignable role name
+                let incompatible_types = incompatible
+                    .filter( (v, i, self) => self.indexOf(v) === i);    // Filter to unique values
+
+                if( incompatible.length ){
+                    // Incompatible assignments exist, so we cannot change to this room type
+                    errors.push("Cannot change Room Type to '" + type.label + "' - it is assigned to " + incompatible.length + ' '
+                        + incompatible_types.join(', ') + " user" + (incompatible.length != 1) ? 's' : '');
+                }
             }
         }
-        var url = GLOBAL_WEB_ROOT+"ajaxaction.php?action=saveRoom";
-        var deferred = $q.defer();
-        convenienceMethods.saveDataAndDefer(url, roomDto).then(
-            function(promise){
-                deferred.resolve(promise);
-            },
-            function(promise){
-                deferred.reject();
+
+        // Room must have: Name
+        if( !room.Name ){
+            // Name is required
+            errors.push("Name is required.");
+        }
+
+        // Room must have: Building
+        // Room Name must be unique in its building
+        if( !room.Building_id ){
+            errors.push("Building is required.");
+        }
+        else {
+            // Find rooms in the same building with the same name
+            let name_lc = room.Name.toLowerCase();
+            let name_collissions = this.rooms.filter( r => {
+                // Ignore the same room
+                if( r.Key_id == room.Key_id ){
+                    return false;
+                }
+
+                if( r.Building_id == room.Building_id ){
+                    return r.Name.toLowerCase() == name_lc;
+                }
+
+                return false;
+            });
+
+            if( name_collissions.length > 0 ){
+                errors.push("Room " + room.Name + " already exists in " + this.getBuildingByRoom(room).Name + '.');
             }
-        );
+        }
+
+        return errors;
+    }
+
+    factory.saveRoom = function (roomDto) {
+        this.clearErrors();
+        var deferred = $q.defer();
+
+        console.log('Validating Room before save', roomDto);
+        let validationErrors = this.validateRoom(roomDto);
+
+        if( validationErrors.length > 0 ){
+            // Validation failed
+            $rootScope.validationErrors = validationErrors;
+
+            roomDto.IsDirty=false;
+            deferred.reject({ validation_failed: true, messages: validationErrors });
+        }
+        else {
+            // Validation passed
+
+            console.log('Attempt to save Room', roomDto);
+            var url = GLOBAL_WEB_ROOT+"ajaxaction.php?action=saveRoom";
+            convenienceMethods.saveDataAndDefer(url, roomDto).then(
+                function(promise){
+                    deferred.resolve(promise);
+                },
+                function(error){
+                    deferred.reject(error);
+                }
+            );
+        }
         return deferred.promise
     }
 
@@ -468,11 +680,21 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
             obj.edit = !obj.edit;
             if(obj.Class == 'Building'  && obj.Campus == false)obj.Campus = '';
 
+            this.editing(obj.edit);
+
             $rootScope.copy = convenienceMethods.copyObject(obj);
     }
 
+    factory.clearErrors = function(){
+        $rootScope.validationErrors = null;
+        if( $rootScope.errorToast ){
+            ToastApi.dismissToast($rootScope.errorToast.id);
+        }
+    };
+
     factory.cancelEdit = function(obj, scope)
     {
+            this.clearErrors();
             $rootScope.copy = null;
             obj.edit = false;
 
@@ -485,6 +707,8 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                 }
 
             }
+
+            this.editing(false);
     }
 
     factory.getCSV = function(){
@@ -502,6 +726,17 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
 
 
 routeCtrl = function($scope, $location,$rootScope){
+    $scope.locationHubViews = [
+        { route: '/rooms', name: 'All Rooms' },
+        {},
+        { route: '/rooms/research-labs', name: 'Research Labs' },
+        { route: '/rooms/teaching-labs', name: 'Teaching Labs' },
+        { route: '/rooms/animal-facilities', name: 'Animal Rooms' },
+        {},
+        { route: '/buildings', name: 'Buildings' },
+        { route: '/campuses', name: 'Campuses' }
+    ];
+
     $scope.location = $location.path();
     $scope.setRoute = function(route){
         $location.path(route);
@@ -510,13 +745,15 @@ routeCtrl = function($scope, $location,$rootScope){
     $rootScope.iterator=0;
 }
 
-roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $modal, locationHubFactory, roleBasedFactory){
+roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $modal, locationHubFactory, roleBasedFactory, roomType){
     $rootScope.modal = false;
     $scope.loading = true;
     var lhf = $scope.lhf = locationHubFactory;
     $rootScope.rbf = roleBasedFactory;
     $scope.constants = Constants;
     $scope.convenienceMethods = convenienceMethods;
+    $scope.roomType = roomType;
+    console.debug("Rooms controller | type=" + roomType);
 
     // Default search parameters
     $scope.search = {
@@ -524,11 +761,20 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
         unassignedPis: true
     };
 
+    $scope.userCanEditRoom = roleBasedFactory.getHasPermission([
+        $rootScope.R[Constants.ROLE.NAME.ADMIN],
+        $rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]
+    ]);
+
     $scope.editRoom = function (room) {
+        locationHubFactory.clearErrors();
 
         if (!room) {
+            // Match room type from Scope or Search
+
             var room = {
                 Class: "Room",
+                Room_type: ($scope.roomType ? $scope.roomType.name : null) || $scope.search.room_type,
                 PrincipalInvestigators: [],
                 Name: "",
                 isNew: true,
@@ -536,22 +782,37 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
                 edit: true
             }
         }
+
         $scope.roomCopy = angular.copy(room);
         room.edit = true;
         $scope.roomCopy.edit = true;
+        $scope.editingRoom = true;
+
         if (!room || !room.Key_id) $scope.rooms.unshift($scope.roomCopy)
-        if (!$scope.pis) {
-            locationHubFactory.getAllPis()
-                .then(
-                    function (pis) {
-                        $scope.pis = pis;
-                        $scope.pis.selected = false;
+
+        // Load all users who can be assigned to this Room
+        if( $scope.roomType ){
+            locationHubFactory.getAssignableUsers($scope.roomType.name)
+                .then(users => {
+                    $scope.assignableUsers = users;
+                    $scope.assignableUsers.selected = false;
+
+                    // Special-case match for PIs: Assign PI-users to 'pis' field
+                    if( $scope.roomType.assignable_to == Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR ){
+                        $scope.pis = $scope.assignableUsers;
                     }
-                )
+                    else if($scope.roomCopy.UserAssignments.length){
+                        $scope.assignableUsers.selected = $scope.assignableUsers.find(
+                            u => u.Key_id == $scope.roomCopy.UserAssignments[0].User_id);
+                    }
+                });
         }
     }
+
     $scope.cancelEdit = function (room) {
+        locationHubFactory.cancelEdit(room);
         delete $scope.roomCopy;
+        $scope.editingRoom = false;
         if (!room.Key_id) {
             $scope.rooms.splice($scope.rooms.indexOf(room), 1);
         }
@@ -696,11 +957,25 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
                                 room.edit = false;
 
                                 let name = (room.Building_name ? room.Building_name : 'Room') + ' ' + room.Name;
-                                ToastApi.toast( name + ' has been saved');
+                                ToastApi.toast( 'Saved room: ' + name);
+
+                                // Close the editor
+                                $scope.cancelEdit(room);
                         },
                         function (err) {
                             console.error(err);
-                            $scope.error = 'The' + room.Class + ' could not be saved.  Please check your internet connection and try again.';
+                            if( err.validation_failed ){
+                                let msg = 'The ' + room.Class + ' could not be saved.';
+                                msg += "<ul class='red'>"
+                                    + err.messages.map(m => "<li>" + m + "</li>").join('')
+                                    + "</ul>";
+
+                                $rootScope.errorToast = ToastApi.toast( msg, ToastApi.ToastType.ERROR, -1 );
+                            }
+                            else if(err.Class == 'ActionError'){
+                                ToastApi.toast( err.Message, ToastApi.ToastType.ERROR );
+                            }
+
                             room.IsDirty = false;
                         }
                     )
@@ -710,6 +985,27 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
         );
 
     }
+
+    /**
+     * Change the UserAssignment(s) for the edited Room.
+     *
+     * Note that while the data model supports multiple assignments,
+     * only one is displayed/modified due to lack of use-cases.
+     */
+    $scope.assignUser = function (user, add){
+        if( add ){
+            // Assign to user, overwriting any existing
+            let new_assignment = angular.extend({'User_id': user.Key_id}, user);
+            $scope.roomCopy.UserAssignments = [new_assignment];
+        }
+        else {
+            // Unassign all
+            $scope.roomCopy.UserAssignments = [];
+
+            // Clear out selected placeholder
+            $scope.assignableUsers.selected = null;
+        }
+    };
 
     $scope.handlePI = function (pi, add) {
         // Handle PI selection
@@ -803,6 +1099,11 @@ var buildingsCtrl = function ($scope, $rootScope, $modal, locationHubFactory, ro
     $scope.loading = true;
     $scope.lhf = locationHubFactory;
 
+    $scope.userCanEditBuilding = roleBasedFactory.getHasPermission([
+        $rootScope.R[Constants.ROLE.NAME.ADMIN],
+        $rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]
+    ]);
+
     locationHubFactory.getBuildings()
         .then(
             function(buildings){
@@ -831,6 +1132,9 @@ var buildingsCtrl = function ($scope, $rootScope, $modal, locationHubFactory, ro
                         building.isNew = true;
                         angular.extend(building, returned);
                         building.Campus = returned.Campus;
+
+                        ToastApi.toast("Saved " + building.Name);
+                        locationHubFactory.cancelEdit(building, $scope.buildings);
                     },
                     function(error){
                         building.IsDirty = false;
@@ -859,6 +1163,11 @@ campusesCtrl = function($scope, $rootScope, locationHubFactory, roleBasedFactory
     $scope.loading = true;
     $scope.lhf = locationHubFactory;
 
+    $scope.userCanEditCampus = roleBasedFactory.getHasPermission([
+        $rootScope.R[Constants.ROLE.NAME.ADMIN],
+        $rootScope.R[Constants.ROLE.NAME.RADIATION_ADMIN]
+    ]);
+
     locationHubFactory.getCampuses()
         .then(
             function(campuses){
@@ -879,7 +1188,10 @@ campusesCtrl = function($scope, $rootScope, locationHubFactory, roleBasedFactory
                         campus.edit = false;
                         campus.isNew = true;
                         campus.index = false;
-                        angular.extend(campus, returned)
+                        angular.extend(campus, returned);
+
+                        ToastApi.toast("Saved " + campus.Name);
+                        locationHubFactory.cancelEdit(campus, $scope.campuses);
                     },
                     function(error){
                         campus.IsDirty = false;

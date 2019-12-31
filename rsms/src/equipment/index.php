@@ -119,8 +119,11 @@ session_start();
     <!-- Toast API -->
     <script type='text/javascript' src='<?php echo WEB_ROOT?>js/ToastApi.js'></script>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/ToastApi.css"/>
+
+    <?php require_once '../includes/modules/lab-inspection/js/room-type-constants.js.php'; ?>
 </head>
 <body>
+
     <!--user-info...-->
     <?php require('../views/user_info_bar.php'); ?>
 

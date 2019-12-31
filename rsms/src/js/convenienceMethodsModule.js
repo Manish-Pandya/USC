@@ -638,6 +638,146 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
         return (data || []).length == 1 ? 'is' : 'are';
     }
 })
+.directive('stickyHeaders', function($timeout){
+    return {
+        restrict: 'A',
+        scope: {
+            stickyTop: '@'
+        },
+        link: function(scope, elem, attrs) {
+            if( isNaN(scope.stickyTop) ){
+                scope.stickyTop = 22;
+                console.debug("Default stickyHeader top to " + scope.stickyTop);
+            }
+
+            // Ensure table has 'sticky-headers' class
+            $(elem).addClass('sticky-headers');
+
+            let setStickyHeaderHeight = function () {
+                // Find header rows
+                let sticky_rows = elem.find('thead').find('tr');
+
+                // Set base sticky position
+                let ceiling = 22;
+
+                sticky_rows.each( (idx, row) => {
+                    // Stick the row to the current ceiling
+                    $(row).find('th').css({ top: ceiling + 'px'});
+                    // Increment ceiling by the row's height
+                    ceiling += $(row).height();
+                });
+            }
+
+            // Watch a dummy value to trigger
+            scope.$watch('watch', function() {
+                $timeout(function(){
+                    setStickyHeaderHeight();
+               },300);
+
+            });
+        }
+    };
+})
+.directive('hubBannerNav', function(){
+    return {
+        restrict: 'E',
+        //replace: true,
+        scope: {
+            /**
+             * Array of objects which define the following fields:
+             *   - route: Router path for the view, passed to $location service.
+             *   - name:  Name of the view, rendered as link text.
+             * Items which do not define these fields are treated as
+             * non-functional separators.
+             */
+            hubViews: "=",
+            hubIcon: "@",
+            hubImage: "@",
+            hubTitle: "@",
+            hubSubtitle: "@",
+        },
+        template:   `<div class="hub-banner no-print">
+                        <i ng-if="hubIcon" class="title-icon {{hubIcon}}"></i>
+                        <img ng-if="hubImage" class="title-icon" ng-src="{{hubImage}}"/>
+
+                        <span style="flex-direction: column; align-items: flex-start;">
+                            <h1 once-text="hubTitle"></h1>
+                            <h4 ng-if="hubSubtitle" once-text="hubSubtitle"></h4>
+                        </span>
+
+                        <ul class="banner-nav">
+                            <li ng-repeat="view in hubViews">
+                                <span ng-if="!view.route">|</span>
+                                <a  ng-if="view.route"
+                                    ng-click="setRoute(view.route)"
+                                    ng-href="#{{view.route}}"
+                                    ng-class="{'active-nav': selectedRoute == view.route}">{{view.name}}</a>
+                            </li>
+
+                            <li>
+                                <a class="home-link" ng-href="{{appRoot}}">
+                                    <i class="icon-home"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>`,
+        link: function(){},
+        controller: function($scope, $location){
+            console.debug($scope);
+            $scope.selectedRoute = $location.path();
+            $scope.appRoot = window.GLOBAL_WEB_ROOT;
+
+            $scope.setRoute = function( route ){
+                if( route ){
+                    $scope.selectedRoute = route;
+                }
+
+                $location.path($scope.selectedRoute);
+            };
+        }
+    };
+})
+/**
+ * Display icon (and, optionally, Label) for a given Room Type
+ */
+.directive('roomTypeIcon', function(){
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: {
+            room: "=",
+            roomType: "=",
+            roomTypeName: "=",
+
+            showTypeLabel: "@"
+        },
+        template:
+        `<span>
+            <img ng-if="type.img_src" width="15px;" ng-src="{{type.img_src}}"/>
+            <i ng-if="type.icon_class" class="{{type.icon_class}}"></i>
+            <span ng-if="showTypeLabel">{{type.label}}</span>
+        </span>`,
+        link: function(scope, elem, attrs){
+            if( !Constants.ROOM_TYPE ){
+                console.error("No room type constants defined");
+                return;
+            }
+            else if( scope.roomType ){
+                scope.type = scope.roomType;
+            }
+            else if( scope.roomTypeName ){
+                scope.type = Constants.ROOM_TYPE[scope.roomTypeName];
+            }
+            else if( scope.room ){
+                scope.type = Constants.ROOM_TYPE[scope.room.Room_type];
+            }
+            else {
+                console.warn("No room type source in scope");
+                return;
+            }
+        }
+    };
+})
 .directive('scrollTable', ['$window', '$location', '$rootScope', '$timeout', function($window, $location, $rootScope,$timeout) {
     return {
         restrict: 'A',
@@ -751,6 +891,15 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
         }
     }
 }])
+.filter('toArray', function () {
+    return function (object) {
+        var array = [];
+        for (var prop in object) {
+            array.push(object[prop]);
+        }
+        return array;
+    }
+})
 .filter('propsFilter', function () {
 
   return function(items, props) {

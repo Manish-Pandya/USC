@@ -92,6 +92,7 @@ class ActionMappingFactory {
                 "getAllPINames"=>new ActionMapping("getAllPINames", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getUsersForPIHub"=>new ActionMapping("getUsersForPIHub", "", "", $this::$ROLE_GROUPS["ADMIN"]),
 
+                "getAllAssignableUserDetails"=>new SecuredActionMapping("getAllAssignableUserDetails", $this::$ROLE_GROUPS["ADMIN"]),
                 "getAllPIDetails"=>new SecuredActionMapping("getAllPIDetails", array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "Emergency Account")),
                 "getAllPIs"=>new ActionMapping("getAllPIs", "", "", array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "Emergency Account")),
                 "getPisForUserHub"=>new ActionMapping("getPisForUserHub", "", "", $this::$ROLE_GROUPS["ADMIN"]),

@@ -1,15 +1,15 @@
-<table class="userList table table-striped table-hover piTable table-bordered scrollTable" scroll-table watch="filtered.length" ng-show="neededUsers">
-    <thead style="position:fixed;">
-        <tr class="orangeBg">
-            <th colspan="9" class="orangeBg">
-                <h1 class="orangeBg">Lab Personnel</h1>
+<table class="userList table table-striped table-hover piTable table-bordered sticky-headers" sticky-headers watch="filtered.length" ng-show="neededUsers">
+    <thead>
+        <tr>
+            <th colspan="9" class="theme-main-element">
+                <h1>Lab Personnel</h1>
                 <div class="btn-group" style="margin: -18px 0 0 20px;">
                      <a class="btn btn-large" ng-click="showInactive = !showInactive; searchText = null;">
                           <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
                          <span ng-show="showInactive">Show Active Personnel</span>
                          <span ng-hide="showInactive">Show Inactive Personnel</span>
                      </a>
-                     <a  ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN] ])" class="btn-large btn" ng-click="openModal()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add Personnel</a>
+                     <a  ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN] ])" class="btn-large btn" ng-click="openModal()" style="padding:10px; margin-left:5px;"><i class="icon-add-users"></i>Add Personnel</a>
                     <a class="btn-large btn" ng-if="piId" href="PIHub.php#/personnel?pi={{piId}}" style="padding:10px; margin-left:5px;"><img src="../../img/pi-icon.png" class="pull-left" style="height:27px" />Return to PI Hub</a>
                     <a class="btn btn-large" ng-click="showRad = !showRad; searchText = null;" style="margin-left:3px;">
                         <input type="hidden" ng-model="showRad" ng-init="showRad = false">
@@ -18,34 +18,46 @@
                         <span ng-show="showRad">Show All Personnel</span>
                     </a>
                 </div>
-                   <h2 style="margin-top:8px;float:right" class="orangeBg"><span class="bold underline">{{filtered.length}}</span> Lab Personnel Displayed</h2>
+                   <h2 style="margin-top:8px;float:right"><span class="bold underline">{{filtered.length}}</span> Lab Personnel Displayed</h2>
             </th>
         </tr>
         <tr>
             <th>Edit User</th>
-            <!--<th><a ng-click="order = 'Is_active'; reverse=!reverse">Activate/Deactivate User</a></th>-->
             <th>
-                <a ng-click="order = 'Last_name'; reverse=!reverse">Last Name<i ng-class="{ 'icon-arrow-up':Name.reverse, 'icon-arrow-down':!Name.reverse }"></i></a><br>
-                <input class="span2" ng-model="searchText.Name" placeholder="Filter by Name"/>
+                <a ng-click="order = 'Last_name'; reverse=!reverse">Last Name<i ng-class="{ 'icon-arrow-up':Name.reverse, 'icon-arrow-down':!Name.reverse }"></i></a>
             </th>
             <th>
                 First Name
             </th>
             <th>
-                <a ng-click="order = 'Supervisor.User.Name'; reverse=!reverse">Lab PI<i ng-class="{ 'icon-arrow-up':Supervisor.reverse, 'icon-arrow-down':!Supervisor.reverse }"></i></a><br>
+                <a ng-click="order = 'Supervisor.User.Name'; reverse=!reverse">Lab PI<i ng-class="{ 'icon-arrow-up':Supervisor.reverse, 'icon-arrow-down':!Supervisor.reverse }"></i></a>
+            </th>
+            <th>
+                <a ng-click="order = 'Position'; reverse=!reverse">Position<i ng-class="{ 'icon-arrow-up':Position.reverse, 'icon-arrow-down':!Position.reverse }"></i></a>
+            </th>
+            <th>
+                <a ng-click="order = 'Primary_department'; reverse=!reverse">Department(s)<i ng-class="{ 'icon-arrow-up':Primary_department.reverse, 'icon-arrow-down':!Primary_department.reverse }"></i></a>
+            </th>
+            <th>Email</th>
+            <th>Lab Phone</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th>
+                <input class="span2" ng-model="searchText.Name" placeholder="Filter by Name"/>
+            </th>
+            <th></th>
+            <th>
                 <input class="span2" ng-model="searchText.Supervisor.Name" placeholder="Filter by PI"/>
             </th>
             <th>
-                <a ng-click="order = 'Position'; reverse=!reverse">Position<i ng-class="{ 'icon-arrow-up':Position.reverse, 'icon-arrow-down':!Position.reverse }"></i></a><br>
                 <input class="span2" ng-model="searchText.Position" placeholder="Filter by PI" />
             </th>
             <th>
-                <a ng-click="order = 'Primary_department'; reverse=!reverse">Department(s)<i ng-class="{ 'icon-arrow-up':Primary_department.reverse, 'icon-arrow-down':!Primary_department.reverse }"></i></a><br>
                 <input class="span2" ng-model="searchText.Primary_department.Name" placeholder="Filter by Department"/>
             </th>
-            <!--<th>Lab Phone</th>-->
-            <th>Email</th>
-            <th>Lab Phone</th>
+            <th></th>
+            <th></th>
         </tr>
     </thead>
 
