@@ -172,7 +172,7 @@
             <li ng-repeat="(key,floor) in roomsByFloor" style="margin-top:15px">
                 <h3>Floor: {{key}}</h3>
                 <ul class="grid-list">
-                    <li ng-repeat="room in floor | orderBy:'Name' | activeOnly">
+                    <li ng-repeat="room in floor | assignableToPI | orderBy:'Name' | activeOnly">
                         <label class="checkbox inline">
                             <input type="checkbox" ng-model="room.piHasRel" ng-change="handleRoomChecked(room,chosenBuilding)" />
                             <span class="metro-checkbox">

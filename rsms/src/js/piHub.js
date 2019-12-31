@@ -26,6 +26,23 @@ var piHub = angular.module('piHub', ['ui.bootstrap', 'convenienceMethodWithRoleB
             }
         );
 })
+.filter('assignableToPI', function(){
+    /**
+     * Filter rooms which are of a RoomType which is
+     * assignable to Principal Investigator users.
+     */
+    return function (rooms){
+        if( !rooms || !rooms.length ) return;
+
+        // Find defined room types which are assignable to PIs
+        let pi_types = Object.keys(Constants.ROOM_TYPE)
+            .map(t => Constants.ROOM_TYPE[t])
+            .filter(t => t.assignable_to == Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR)
+            .map(t => t.name);
+
+        return rooms.filter(r => pi_types.includes(r.Room_type));
+    }
+})
 .filter("noSupervisor", function (userHubFactory) {
     return function (users) {
         if (!users || !users.length) return;
