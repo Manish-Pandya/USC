@@ -1,0 +1,207 @@
+<div cg-busy="{promise:saving,message:'Saving',backdrop:true,templateUrl:'../../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div cg-busy="{promise:loadingHasHazards,message:'Loading',backdrop:true,templateUrl:'../../client-side-framework/busy-templates/full-page-busy.html'}"></div>
+<div class="loading" ng-if="loading">
+    <i class="icon-spinnery-dealie spinner large"></i>
+    <span>Getting {{roomType.label}} data...</span>
+</div>
+<table class="table table-striped table-hover piTable table-bordered locationTable sticky-headers" sticky-headers watch="filtered.length" ng-if="rooms && !loading && !modal">
+    <thead>
+        <tr>
+            <th colspan="8" class="theme-main-element">
+                <h1>
+                    <span class="room-type-icon">
+                        <room-type-icon room-type="roomType"></room-type-icon>
+                    </span>
+                    {{roomType.label_plural}}
+                </h1>
+                <div class="btn-group" style="margin:-22px 0 0 30px">
+                    <a ng-if="userCanEditRoom"
+                        class="btn-large btn"
+                        ng-click="editRoom()"
+                        style="padding:10px; margin-left:5px;">
+                        <i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>
+                        Add {{roomType.label}}
+                    </a>
+                </div>
+
+                <div style="float:right; margin-top:-3px">
+                    <p class="pagination" ng-init="paginationObj = {start:0, range:100}" 
+                       style="position:absolute; margin-top:21px;right:5px">
+                        <button class="btn btn-mini" ng-click="paginationObj.start = 0" ng-disabled="paginationObj.start == 0">First</button>
+                        <button class="btn btn-mini" ng-click="paginationObj.start = paginationObj.start - 100" ng-disabled="paginationObj.start == 0"><<</button>
+                        <span style="margin-top:3px;display:inline-block;color:#333">
+                            {{paginationObj.start}} - {{paginationObj.start + 100}}
+                        </span>
+                        <button class="btn btn-mini" ng-click="paginationObj.start = paginationObj.start + 100" ng-disabled="filtered.length - paginationObj.start < 100">>></button>
+                        <button class="btn btn-mini" ng-click="paginationObj.start = roundDown(filtered.length, paginationObj.range)" ng-disabled="filtered.length - paginationObj.start < 100">Last</button>
+                    </p>
+                    <span>
+                        <span class="bold underline">{{result_count = (filtered | filter:{Is_active: true}).length}}</span>
+                        {{result_count == 1 ? roomType.label : roomType.label_plural}}
+                    </span>
+                </div>
+            </th>
+        </tr>
+        <tr>
+            <th class="lhcol_edit">Edit</th>
+            <th class="lhcol_building">Building</th>
+            <th class="lhcol_name">Room Number</th>
+            <th class="lhcol_hazards">Room Hazards</th>
+            <th class="lhcol_purpose">Room Use</th>
+            <th class="lhcol_pidept">
+                <span>Principal Investigator(s)</span>
+            </th>
+            <th class="lhcol_campus">Campus</th>
+        </tr>
+        <tr>
+            <th class="lhcol_edit"></th>
+            <th class="lhcol_building">
+                <input class="span2" ng-model="search.building" placeholder="Filter by Building" />
+            </th>
+            <th class="lhcol_name">
+                <input class="span2" ng-model="search.room" placeholder="Filter by Lab Room" />
+            </th>
+            <th class="lhcol_hazards">
+                <select ng-model="search.hazards" ng-options="v.value as v.label for v in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;">
+                    <option value="">Select</option>
+                </select>
+            </th>
+            <th class="lhcol_purpose">
+                <input class="span2" ng-model="search.purpose" placeholder="Filter by Lab Use" />
+            </th>
+            <th class="lhcol_pidept" >
+                <div class="pi_filters">
+                    <span>
+                        <label>Active PIs</label>
+                        <input ng-model="search.activePis" type="checkbox"/>
+                    </span>
+                    <span>
+                        <label>Inactive PIs</label>
+                        <input ng-model="search.inactivePis" type="checkbox"/>
+                    </span>
+                    <span>
+                        <label>Unassigned</label>
+                        <input ng-model="search.unassignedPis" type="checkbox"/>
+                    </span>
+                </div>
+                <div class="pi_search">
+                    <input class="span2" ng-model="search.pi" placeholder="Filter by PI" />
+                    <input class="span2" ng-model="search.department" placeholder="Filter by PI Department" style="margin-left: 25px;" />
+                </div>
+            </th>
+            <th class="lhcol_campus">
+                <input class="span2" ng-model="search.campus" placeholder="Filter by Campus" />
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr ng-repeat="room in (filtered = (rooms | roomTypeFilter:roomType.name | orderBy:['isNew', 'Building_name', convenienceMethods.sortAlphaNum('Name')] | genericFilter:search)) | paginationFilter:paginationObj.start:100" ng-class="{'inactive': !room.Is_active, 'new': room.isNew, 'theme-underlight-element':room.edit}">
+            <td class="lhcol_edit">
+                <button ng-disabled="editingRoom || !userCanEditRoom" ng-if="!room.edit" class="edit btn btn btn-primary" ng-click="editRoom(room)" alt="Edit" title="Edit"><i class="icon-pencil"></i></button>
+                <button ng-disabled="editingRoom || !userCanEditRoom" class="btn btn-danger btn DeactivateeRow" ng-click="confirmDeactivate(room)" ng-if="room.Is_active && !room.edit" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
+                <button ng-disabled="editingRoom || !userCanEditRoom" class="btn btn-success btn DeactivateeRow" ng-click="lhf.handleObjectActive(room)" ng-if="!room.Is_active && !room.edit"><i class="icon-checkmark"></i></button>
+
+                <button ng-disabled="!userCanEditRoom" class="btn btn-danger btn DeactivateeRow" ng-click="cancelEdit(room)" ng-if="room.edit"><i class="icon-cancel-2"></i></button>
+                <button ng-disabled="!userCanEditRoom" class="btn btn-success btn DeactivateeRow" ng-click="saveRoom(roomCopy, room)" ng-if="room.edit"><i class="icon-checkmark"></i></button>
+                <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="room.IsDirty"></i>
+            </td>
+
+            <td class="lhcol_building">
+                <span ng-if="!room.edit">{{lhf.getBuildingByRoom(room).Name}}</span>
+                <div class="control-group" ng-if="room.edit">
+                    <div class="controls">
+                        <select style="max-width:300px; margin:3px 0 0" value=""
+                                ng-model="roomCopy.Building_id" 
+                                ng-options="building.Key_id as building.Name for building in lhf.buildings | orderBy:'Name'">
+                            <option value="">--Select Building--</option>
+                        </select>
+                    </div>
+                </div>
+            </td>
+
+            <td class="lhcol_name">
+                <input ng-model="roomCopy.Name" placeholder="Name" ng-if="room.edit" style="max-width:115px" />
+                <span ng-if="!room.edit">{{room.Name}}</span>
+            </td>
+
+            <td class="lhcol_hazards hazard-icons" ng-class="{'grayed-out': ((room.edit ? roomCopy : room) | roomUnassignedFilter)}">
+                <span ng-if="room.Bio_hazards_present"><img src="../../img/biohazard-largeicon.png" /></span>
+                <span ng-if="room.Chem_hazards_present"><img src="../../img/chemical-blue-icon.png" /></span>
+                <span ng-if="room.Rad_hazards_present"><img src="../../img/radiation-large-icon.png" /></span>
+                <span ng-if="room.Recombinant_dna_present"><img src="../../img/dna.png" /></span>
+
+                <span ng-if="room.Corrosive_gas_present"><img src="../../img/corrosive-gas.png" /></span>
+                <span ng-if="room.Flammable_gas_present"><img src="../../img/flammable-gas.png" /></span>
+                <span ng-if="room.Toxic_gas_present"><img src="../../img/toxic-gas.png" /></span>
+                <span ng-if="room.Hf_present"><img src="../../img/hf.jpg" /></span>
+
+                <span ng-if="room.Lasers_present"><img src="../../img/laser.png" /></span>
+                <span ng-if="room.Xrays_present"><img src="../../img/xray.png" /></span>
+                <span ng-if="room.Animal_facility"><img style="height:25px; margin:1px" src="../../img/animal-facility.svg" /></span>
+            </td>
+
+            <td class="lhcol_purpose">
+                <span ng-init="roomCopy.custom = getIsCustom(room.Purpose)" ng-if="room.edit"></span>
+                <input ng-model="roomCopy.Purpose" 
+                       maxlength="255"
+                       placeholder="Use" style="max-width:130px" 
+                       ng-if="room.edit && roomCopy.custom" />
+                <select ng-if="!roomCopy.custom && room.edit" 
+                        ng-options="use.Name as use.Name for use in roomUses" ng-model="roomCopy.Purpose" 
+                        style="max-width:130px; margin:3px 0 0">
+                    <option value="">Select Use</option>
+                </select>
+                <i class="icon-pencil primary" ng-if="room.edit && !roomCopy.custom" ng-click="roomCopy.custom = true"></i>
+                <i class="icon-cancel-2 danger" style="margin-top: 6px; margin-left: -1px;" ng-if="room.edit && roomCopy.custom" ng-click="roomCopy.custom = false; roomCopy.Purpose = null"></i>
+                <span ng-if="!room.edit">{{room.Purpose}}</span>
+            </td>
+
+            <!-- v new pi / dept v-->
+            <td class="lhcol_pidept">
+                <ul>
+                    <li ng-if="room.edit">
+                        <div class="control-group" style="width:40%" ng-if="room.edit">
+                            <div class="controls">
+                                <input ng-show="!pis" style="background:white;border-color:#999" type="text" placeholder="Getting PIs..." disabled="disabled">
+                                <i ng-show="!pis" class="icon-spinnery-dealie spinner small" style="margin-left: 177px;margin-top: -34px;"></i>
+                                <ui-select ng-show="pis" ng-model="pis.selected" theme="selectize" ng-disabled="disabled" on-select="handlePI($item, true)">
+                                    <ui-select-match placeholder="Select A PI">{{$select.selected.Name}}</ui-select-match>
+                                    <ui-select-choices repeat="pi in pis | propsFilter: {Name: $select.search}">
+                                        <div once-text="pi.Name"></div>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li ng-repeat="pi in ( filteredPis = (room.edit ? roomCopy : room).PrincipalInvestigators | piActiveFilter:search)" class="piList" ng-class="{inactive: !pi.Is_active}">
+
+                        <p ng-if="room.edit" style="margin-bottom:0;margin-top:2px" ng-class="{inactive: !pi.Is_active}">
+                            {{pi.User.Name}} <span ng-if="!pi.Is_active">(Inactive)</span>
+                            <i ng-click="handlePI(pi, false)" style="margin: 5px;" class="icon-cancel-2 danger"></i>
+                        </p>
+
+                        <span ng-if="!room.edit">
+                            <a once-href="'PIHub.php#/rooms?pi='+pi.Key_id">
+                                <span once-text="pi.Name"></span> <span ng-if="!pi.Is_active">(Inactive)</span>
+                            </a>
+                        </span>
+
+                        <ul>
+                            <li ng-repeat="department in pi.Departments" class="piList">
+                                <span once-text="department.Name"></span>
+                            </li>
+                            <li ng-if="!pi.Departments.length"><span style="color:#f00;">Unassigned</span></li>
+                        </ul>
+                    </li>
+
+                    <li ng-if="(room.edit ? roomCopy : room) | roomUnassignedFilter"><span style="color:#f00;">Unassigned</span></li>
+                </ul>
+            </td>
+            <!-- ^ new pi / dept ^-->
+
+            <td class="lhcol_campus" once-text="room.Building.Campus.Name"></td>
+        </tr>
+    </tbody>
+</table>

@@ -70,12 +70,14 @@ class InspectionDAO extends GenericDAO {
 		}
 	}
 
-    function getNeededInspectionsByYear($year){
+    function getNeededInspectionsByYear($year, string $room_type, ?int $dept_id){
 
         // Get schedule created by stored procedure
-        $sql = "CALL GetInspectionScheduleForYear(?);";
+        $sql = "CALL GetInspectionScheduleForYear(?, ?, ?);";
         $stmt = DBConnection::prepareStatement($sql);
-		$stmt->bindParam(1,$year,PDO::PARAM_INT);
+        $stmt->bindParam(1, $year, PDO::PARAM_INT);
+        $stmt->bindParam(2, $room_type, PDO::PARAM_STR);
+        $stmt->bindParam(3, $dept_id, PDO::PARAM_INT);
 
 		// Query the db and return an array of $this type of object
 		if ($stmt->execute() ) {

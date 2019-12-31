@@ -146,8 +146,9 @@ class LabInspectionUpdatedMessage_Processor implements MessageTypeProcessor {
         */
         $matches = $this->findLatestInspectionReportEmail($context);
 
+        $LOG->info("Found " . count($matches) . " previous email(s) for $context.");
         if( count($matches) > 0 ){
-            $LOG->info("Found " . count($matches) . " previous email(s) for $context. Copying recipients from latest email");
+            $LOG->info("Copying recipients from latest email");
 
             // Email(s) have been sent for this inspection before. Get the SAME recipients from the latest
             $old_recipients = $this->getRecipientsFromReportEmail($matches[0]);

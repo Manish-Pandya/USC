@@ -28,7 +28,7 @@ abstract class GenericCrud {
 	protected $date_last_modified;
 
 	// Active
-	protected $is_active;
+	protected $is_active = true;
 
 	// User who last updated
 	protected $last_modified_user_id;

@@ -1,0 +1,131 @@
+<form name="form" ng-submit="saveUser()" class="form-horizontal form">
+    <div class="modal-header" style="padding:0;" class="">
+        <h2 style="padding:5px" ng-show="modalData.Key_id" class="blueBg">Editing {{modalData.Name}}</h2>
+        <h2 style="padding:5px" ng-hide="modalData.Key_id" class="blueBg">Add New Teaching Lab Contact</h2>
+    </div>
+    <div class="modal-body">
+        <h3 class="alert alert-danger" ng-if="modalError">{{modalError}}</h3>
+        <div class="control-group">
+            <label class="control-label" for="inputUsername">Username</label>
+            <div class="controls">
+                <div class="input-append" ng-if="!modalData.Username">
+                    <input type="text" id="inputUsername" ng-model="modalData.userNameForQuery" placeholder="Username"><a class="add-on greenBg" ng-click="getAuthUser(modalData)"><i class="icon-search"></i></a>
+                    <img ng-show="lookingForUser" class="smallLoading" src="../../img/loading.gif" />
+                </div>
+                <input type="text" ng-if="modalData.Username" id="inputUsername" disabled="disabled" ng-model="modalData.Username" placeholder="Username" required>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="inputNameFirst">First Name</label>
+            <div class="controls">
+                <input type="text" id="inputNameFirst" ng-model="modalData.First_name" ng-if="!modalData.Username" disabled="disabled" placeholder="First Name" required>
+                <input type="text" id="inputNameFirst" ng-model="modalData.First_name" ng-if="modalData.Username" placeholder="First Name" required>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="inputNameLast">Last Name</label>
+            <div class="controls">
+                <input type="text" id="inputNameLast" ng-model="modalData.Last_name" ng-if="!modalData.Username" disabled="disabled" placeholder="Last Name" required>
+                <input type="text" id="inputNameLast" ng-model="modalData.Last_name" ng-if="modalData.Username" placeholder="Last Name" required>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Email</label>
+            <div class="controls">
+                <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="!modalData.Username" disabled="disabled" placeholder="Email" required ng-pattern="emailPattern">
+                <input type="text" name="email" id="inputEmail" ng-model="modalData.Email" ng-if="modalData.Username" placeholder="Email" required ng-pattern="emailPattern">
+                <span class="help-block" ng-show="form.email.$error.pattern">{{emailErrorMsg}}</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="inputPhoneOffice">Office Phone</label>
+            <div class="controls">
+                <input type="text" name="officePhone" id="inputPhoneOffice" ng-model="modalData.Office_phone" ui-mask="(999) 999-9999" ng-if="!modalData.Username" disabled="disabled" ng-bind="modalData.Office_phone|tel">
+                <input type="text" name="officePhone" id="inputPhoneOffice" ng-model="modalData.Office_phone" ui-mask="(999) 999-9999" ng-if="modalData.Username" ng-bind="modalData.Office_phone|tel">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="inputPhoneEmergency">Emergency Phone</label>
+            <div class="controls">
+                <input type="text" name="emergencyPhone" id="inputPhoneEmergency" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="!modalData.Username" disabled="disabled" ng-bind="modalData.Emergency_phone|tel">
+                <input type="text" name="emergencyPhone" id="inputPhoneEmergency" ng-model="modalData.Emergency_phone" ui-mask="(999) 999-9999" ng-if="modalData.Username" ng-bind="modalData.Emergency_phone|tel">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="selectRoles">Roles(s)</label>
+            <div class="controls span4">
+                <ui-select name="selectRoles" ng-model="selectedRole" theme="selectize" ng-disabled="disabled" style="width:315px;" direction="up" on-select="onSelectRole($item, $model, $label)">
+                    <ui-select-match placeholder="Select A Role">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="role in roles | isTeachingRole | orderBy:'Name' | propsFilter: {Name: $select.search}">
+                        <div ng-bind-html="role.Name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+
+                <ul style="margin-top:3px;">
+                    <li ng-repeat="role in modalData.Roles | isTeachingRole | orderBy:'Name'">
+                        <a class="btn btn-danger btn-mini"
+                            ng-disabled="modalData.isContact && role.Name == Constants.ROLE.NAME.LAB_PERSONNEL"
+                            ng-click="removeRole(modalData,role)">
+                            <i class="icon-cancel"></i>
+                    </a>
+                        {{role.Name}}
+                        <img ng-show="role.IsDirty" class="smallLoading" src="../../img/loading.gif" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="selectDepartment">Department</label>
+            <div class="controls span4">
+                <input placeholder="Select A Department"
+                    name="selectDepartment"
+                    typeahead-on-select='addDepartmentToDeptContact($item, $model, $label)'
+                    type="text"
+                    ng-model="selectedDepartment"
+                    typeahead="department as department.Name for department in departments | filter:$viewValue"
+                    ng-if="!modalData.Username"
+                    disabled="disabled">
+                <ui-select direction="up"
+                    name="selectDepartment"
+                    ng-if="modalData.Username"
+                    ng-model="selectedDepartment"
+                    theme="selectize"
+                    direction="up"
+                    ng-disabled="disabled"
+                    on-select="addDepartmentToDeptContact($item, $model, $label)">
+                    <ui-select-match placeholder="Select or search for a Department">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="department in departments | propsFilter: {Name: $select.search}">
+                        <div ng-bind-html="department.Name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+                <ul>
+                    <li ng-if="!modalData.PrincipalInvestigator && modalData.Primary_department">
+                        <a class="btn btn-danger btn-mini" ng-click="removeDepartmentFromDeptContact(modalData.Primary_department)">
+                            <i class="icon-cancel"></i>
+                        </a>
+                        <span>{{modalData.Primary_department.Name}}</span>
+                    </li>
+                    <li ng-if="modalData.PrincipalInvestigator" ng-repeat="department in modalData.PrincipalInvestigator.Departments">
+                        <a class="btn btn-danger btn-mini" ng-click="removeDepartmentFromDeptContact(department)">
+                            <i class="icon-cancel"></i>
+                        </a>
+                        <span>{{department.Name}}</span>
+                    </li>
+                </ul>
+                <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="department.IsDirty"></i>
+            </div>
+        </div>
+    </div>
+        <div class="modal-footer">
+            <i class="spinner small icon-spinnery-dealie" src="../../img/loading.gif" style="margin:5px;" ng-show="modalData.IsDirty" />
+            <button type="submit" class="btn btn-success left btn-large" ng-disabled="form.$invalid" ng-click="asdf()"><i class="icon-checkmark" />Save</button>
+            <a class="btn btn-danger left btn-large" ng-click="cancel()"><i class="icon-cancel"></i>Cancel</a>
+        </div>
+</form>

@@ -1,12 +1,13 @@
 <?php
 require_once '../top_view.php';
+require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.php';
 ?>
 <style>
     .hidey-thing{height:150px !important;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.6/lodash.min.js"></script>
 <script src="../../js/manageInspections.js"></script>
-<div ng-app="manageInspections" ng-controller="manageInspectionCtrl">
+<div ng-app="manageInspections" ng-controller="manageInspectionCtrl" ng-cloak>
 <div class="alert savingBox" ng-if="saving">
   <h1>
       <i style="color:white" class="icon-spinnery-dealie spinner large"></i>
@@ -40,28 +41,41 @@ require_once '../top_view.php';
       <i class="icon-spinnery-dealie spinner large"></i>
       <span>Loading...</span>
     </div>
-    <div class="filter-holder" ng-if="dtos.length">
+    <div class="fixed even-content filter-holder" ng-if="dtos.length">
         <div>
-            <label>Inspection Year:</label>
-            <select ng-model="yearHolder.selectedYear" ng-change="selectYear()" ng-options="year as year.Name for year in yearHolder.years">
-                <option value="">-- select year --</option>
-            </select>
+            <div>
+                <label>Inspection Year:</label>
+                <select ng-model="yearHolder.selectedYear" ng-change="selectYear()" ng-options="year as year.Name for year in yearHolder.years">
+                    <option value="">-- select year --</option>
+                </select>
+            </div>
+            <div>
+                <label>Inspection Type:</label>
+                <select ng-model="search.type" ng-options="v as v for (k, v) in constants.INSPECTION.TYPE" ng-change="genericFilter()">
+                    <option value="">All Types</option>
+                </select>
+            </div>
         </div>
-        <div>
-            <label>Inspection Type:</label>
-            <select ng-model="search.type" ng-options="v as v for (k, v) in constants.INSPECTION.TYPE" ng-change="genericFilter()">
-                <option value="">All Types</option>
-            </select>
+        <div class="legend">
+            <label>Room Types:</label>
+            <div ng-repeat="type in constants.ROOM_TYPE | toArray | filter:{inspectable:true}">
+                <label>
+                    <room-type-icon room-type="type"></room-type-icon>
+                </label>
+                <span once-text="type.label"></span>
+                <span ng-if="type.departments" title="Rooms of this type are only inspected as part of this department">
+                    <span>(</span>
+                    <span ng-repeat="dept in type.departments" once-text="dept"></span>
+                    <span>)</span>
+                </span>
+            </div>
         </div>
-        
     </div>
 
     <table class="table table-striped table-bordered userList manage-inspections-table" scroll-table watch="filtered.length" ng-show="dtos.length" style="margin-top:100px;">
         <thead>
             <tr>
-                <th colspan="7" style="padding:0">
-                    
-                </th>
+                <th colspan="8" style="padding:0"></th>
             </tr>
             <tr>
                 <th>
@@ -78,6 +92,9 @@ require_once '../top_view.php';
                 </th>
                 <th>
                     Lab Room(s)
+                    <select ng-model="search.room_type" style="margin-bottom:0; max-width:150px;" ng-options="type.name as type.label for type in roomTypes = (constants.ROOM_TYPE | toArray | filter:{inspectable:true})" ng-change="genericFilter()">
+                        <option value="">Select room type</option>
+                    </select>
                 </th>
                 <th>
                     Month Scheduled<br>
@@ -116,8 +133,12 @@ require_once '../top_view.php';
                 <td class="triple-inner-inner" style="width:8%">
                     <div ng-repeat="campus in dto.Campuses">
                         <div ng-repeat="building in campus.Buildings" style="margin-bottom:10px">
-                            <div ng-class="{'red':room.notInspected}" ng-repeat="room in building.Rooms | orderBy: convenienceMethods.sortAlphaNum('Name')">
-                                {{room.Name}}
+                            <div ng-class="{'red':room.notInspected}" ng-repeat="room in building.Rooms | orderBy: convenienceMethods.sortAlphaNum('Name')"
+                                style="display:flex;">
+                                <span class="italic grayed-out" style="padding-right: 5px;">
+                                    <room-type-icon room-type-name="room.Room_type"></room-type-icon>
+                                </span>
+                                <span>{{room.Name}}</span>
                             </div>
                         </div>
                     </div>
@@ -191,6 +212,7 @@ require_once '../top_view.php';
 
                 </td>
                 <td style="width:10.5%">
+                    <i class="inspection-schedule-marker" ng-class="{'existing': dto.Inspection_id, 'expected': !dto.Inspection_id }"></i>
                     <span ng-if="!dto.Inspection_id">{{constants.INSPECTION.STATUS.NOT_SCHEDULED}}</span>
                     <span ng-if="dto.Inspections.Status">
                         <span once-text="dto.Inspections.Status"></span>

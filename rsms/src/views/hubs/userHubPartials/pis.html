@@ -1,38 +1,51 @@
-<table class="userList table table-striped table-hover piTable table-bordered" scroll-table watch="filtered.length" ng-if="neededUsers && pis">
+<table class="userList table table-striped table-hover piTable table-bordered sticky-headers" sticky-headers watch="filtered.length" ng-if="neededUsers && pis">
     <thead>
-        <tr class="blueBg">
-            <th colspan="10" class="blueBg">
-                <h1 class="blueBg">Principal Investigators</h1>
+        <tr>
+            <th colspan="10" class="theme-main-element">
+                <h1>Principal Investigators</h1>
                 <div class="btn-group" style="margin: -18px 0 0 20px;">
                      <a class="btn btn-large" ng-click="showInactive = !showInactive; searchText = null;">
                          <input type="hidden" ng-model="showInactive" ng-init="showInactive = false">
                          <span ng-show="showInactive">Show Active PI</span>
                          <span ng-hide="showInactive">Show Inactive PI</span>
                      </a>
-                     <a ng-if="rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" class="btn-large btn" ng-click="openModal()" style="padding:10px; margin-left:5px;"><img src='../../img/add-user-icon.png'>Add PI</a>
+                     <a ng-if="rbf.getHasPermission([ R['Admin'], R['Radiation Admin'] ])" class="btn-large btn" ng-click="openModal()" style="padding:10px; margin-left:5px;">
+                        <i class="icon-add-users"></i>Add PI</a>
                  </div>
-                 <h2 class="blueBg" style="float:right; margin-top:8px;"><span class="underline bold">{{filtered.length}}</span> Principal Investigators Displayed</h2>
+                 <h2 style="float:right; margin-top:8px;"><span class="underline bold">{{filtered.length}}</span> Principal Investigators Displayed</h2>
             </th>
         </tr>
         <tr>
             <th>Edit PI</th>
             <th>
                 <a ng-click="order = 'Last_name'; reverse=!reverse">Last Name<i ng-class="{ 'icon-arrow-up':Name.reverse, 'icon-arrow-down':!Name.reverse }"></i></a><br>
-                <input ng-model="searchText.Last_name" style="width:125px;" placeholder="Filter by Name"/>
             </th>
             <th>First Name</th>
             <th>
-                Department(s)<br>
-                <input ng-model="search.selectedDepartment" style="width:165px;" placeholder="Filter by Department"/>
+                Department(s)
             </th>
             <th>Office Phone</th>
             <th>Lab Phone</th>
             <th>
-                Building(s)<br>
-                <input ng-model="search.selectedBuilding" style="width:150px;" placeholder="Filter by Building"/>
+                Building(s)
             </th>
             <th><a ng-click="order = 'Email'; reverse=!reverse">Email</a></th>
             <th>Emergency Phone</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th><input ng-model="searchText.Last_name" style="width:125px;" placeholder="Filter by Name"/></th>
+            <th></th>
+            <th>
+                <input ng-model="search.selectedDepartment" style="width:165px;" placeholder="Filter by Department"/>
+            </th>
+            <th></th>
+            <th></th>
+            <th>
+                <input ng-model="search.selectedBuilding" style="width:150px;" placeholder="Filter by Building"/>
+            </th>
+            <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>

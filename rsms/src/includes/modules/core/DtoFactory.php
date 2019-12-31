@@ -56,7 +56,8 @@ class DtoFactory {
         return DtoFactory::buildDto($room, array(
             'Name' => $room->getName(),
             'Building_id' => $room->getBuilding_id(),
-            'Building_name' => $room->getBuilding_name()
+            'Building_name' => $room->getBuilding_name(),
+            'Room_type' => $room->getRoom_type()
         ));
     }
 

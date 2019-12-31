@@ -26,6 +26,23 @@ var piHub = angular.module('piHub', ['ui.bootstrap', 'convenienceMethodWithRoleB
             }
         );
 })
+.filter('assignableToPI', function(){
+    /**
+     * Filter rooms which are of a RoomType which is
+     * assignable to Principal Investigator users.
+     */
+    return function (rooms){
+        if( !rooms || !rooms.length ) return;
+
+        // Find defined room types which are assignable to PIs
+        let pi_types = Object.keys(Constants.ROOM_TYPE)
+            .map(t => Constants.ROOM_TYPE[t])
+            .filter(t => t.assignable_to == Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR)
+            .map(t => t.name);
+
+        return rooms.filter(r => pi_types.includes(r.Room_type));
+    }
+})
 .filter("noSupervisor", function (userHubFactory) {
     return function (users) {
         if (!users || !users.length) return;
@@ -252,7 +269,9 @@ piHubMainController = function($scope, $rootScope, $location, convenienceMethods
     $scope.modalify = function(pi,adding){
 
           var modalInstance = $modal.open({
-          templateUrl: 'roomHandlerModal.html',
+          templateUrl: adding
+                        ? 'createRoomHandlerModal.html'
+                        : 'roomHandlerModal.html',
           controller: ModalInstanceCtrl,
           resolve: {
             PI: function () {
@@ -318,7 +337,14 @@ var ModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, PI, adding
     $scope.convenienceMethods = convenienceMethods;
     console.log(adding);
 
-    if(adding)$scope.addRoom = true;
+    if(adding){
+        $scope.addRoom = true;
+        $scope.newRoom = {
+            Is_active: true,
+            Room_type: Constants.ROOM_TYPE.RESEARCH_LAB.name
+        };
+    }
+
     if($rootScope.buildings)$scope.buildings = $rootScope.buildings;
     if(!$scope.buildings){
         var url = '../../ajaxaction.php?action=getAllBuildings&callback=JSON_CALLBACK';

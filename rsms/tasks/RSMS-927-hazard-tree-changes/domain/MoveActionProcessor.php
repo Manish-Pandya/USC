@@ -100,7 +100,7 @@ class MoveActionProcessor extends A_ActionProcessor {
                 if( $a->getRoom_id() == $b->getRoom_id() ){
                     return 0;
                 }
-        
+
                 return $a->getRoom_id() - $b->getRoom_id();
             }
             else{

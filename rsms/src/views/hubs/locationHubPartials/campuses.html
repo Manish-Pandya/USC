@@ -1,18 +1,18 @@
-<h1 class="alert alert-danger" ng-if="error">{{error}}</h1>
-<div class="loading" ng-if="loading" style="margin-top: 140px;">
+<div class="loading" ng-if="loading">
     <i class="icon-spinnery-dealie spinner large"></i>
     <span>Getting Campuses...</span>
 </div>
 
-<table class="userList table table-striped table-hover piTable table-bordered locationTable editTable" ng-if="campuses && !loading" style="max-width:1300px;margin-top: 140px;" scroll-table watch="filtered.length">
+<table class="userList table table-striped table-hover piTable table-bordered locationTable sticky-headers" sticky-headers ng-if="campuses && !loading" watch="filtered.length"
+    style="max-width: 1300px;">
     <thead>
-        <tr class="purpleBg">
-            <th colspan="4" class="purpleBg">
-                <h1 class="purpleBg">Campuses</h1>
+        <tr>
+            <th colspan="4" class="theme-main-element">
+                <h1>Campuses</h1>
                 <div class="btn-group" style="margin:-22px 0 0 30px">
                  <a class="btn-large btn" ng-click="addCampus()" style="padding:10px; margin-left:5px;"><i class="icon-plus-2" style="margin: 3px 13px 0 0 !important;font-size: 21px;"></i>Add Campus</a>
                </div>
-                <h2 class="purpleBg" style="float:right; margin-top:8"><span class="bold underline">{{filtered.length}}</span> Campuses Displayed</h2>
+                <h2 style="float:right; margin-top:8"><span class="bold underline">{{filtered.length}}</span> Campuses Displayed</h2>
             </th>
         </tr>
         <tr>
@@ -24,19 +24,25 @@
     </thead>
 
     <tbody>
-        <tr ng-repeat="campus in (filtered = (campuses |  orderBy:['index', 'Name']))" ng-class="{inactive: !campus.Is_active, 'new': campus.isNew}">
-            <td style="width:12%">
-                <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" ng-if="!campus.edit" class="edit btn btn btn-primary" ng-click="lhf.setEditState(campus, campuses)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
-                <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" ng-if="campus.edit" class="edit btn btn btn-primary" disabled="disabled" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
+        <tr ng-repeat="campus in (filtered = (campuses |  orderBy:['index', 'Name']))"
+            ng-class="{inactive: !campus.Is_active, 'new': campus.isNew, 'theme-underlight-element': campus.edit}">
+
+            <td style="width:10%">
+
                 <span ng-if="!campus.edit">
-                    <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-danger btn" ng-click="lhf.handleObjectActive(campus)" ng-if="campus.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
-                    <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-success btn" ng-click="lhf.handleObjectActive(campus)" ng-if="!campus.Is_active"><i class="icon-checkmark"></i></button>
+                    <button ng-disabled="lhf.isEditing || !userCanEditCampus" class="edit btn btn btn-primary" ng-click="lhf.setEditState(campus, campuses);" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
+                    <button ng-disabled="lhf.isEditing || !userCanEditCampus" class="btn btn-danger btn" ng-click="lhf.handleObjectActive(campus)" ng-if="campus.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
+                    <button ng-disabled="lhf.isEditing || !userCanEditCampus" class="btn btn-success btn" ng-click="lhf.handleObjectActive(campus)" ng-if="!campus.Is_active"><i class="icon-checkmark"></i></button>
                     <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="campus.IsDirty"></i>
                 </span>
 
                 <span ng-if="campus.edit">
-                    <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-danger btn DeactivateeRow" disabled="disabled" ng-if="campus.Is_active"alt="Deactivate" title="Deactivate"><i class="icon-remove"></i></button>
-                    <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN]])" class="btn btn-success btn DeactivateeRow" disabled="disabled" ng-if="!campus.Is_active"><i class="icon-checkmark"></i></button>
+                    <button class="btn-danger btn" ng-click="lhf.cancelEdit(campus, campuses)"><i class="icon-cancel-2"></i></button>
+
+                    <button class="btn-success btn" ng-click="saveCampus(campus)" ng-if="copy.Name"><i class="icon-checkmark"></i></button>
+                    <button class="btn-success btn" ng-if="!copy.Name" disabled="disabled"><i class="icon-checkmark" disabled="disabled"></i></button>
+
+                    <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="campus.IsDirty"></i>
                 </span>
 
             </td>
@@ -44,12 +50,6 @@
             <td style="width:79%" >
                 <span ng-if="campus.edit">
                     <input ng-if="campus.edit" ng-model="copy.Name">
-                    <span class="absoluteBtns" style="margin-top:0">
-                        <a class="btn-success btn left" ng-click="saveCampus(campus)" ng-if="copy.Name"><i class="icon-checkmark"></i>Save</a>
-                        <a class="btn-success btn left" ng-if="!copy.Name" disabled="disabled"><i class="icon-checkmark" disabled="disabled"></i>Save</a>
-                        <a class="btn-danger btn left" ng-click="lhf.cancelEdit(campus, campuses)"><i class="icon-cancel-2"></i>Cancel</a>
-                        <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="campus.IsDirty"></i>
-                    </span>
                 </span>
                 <span ng-if="!campus.edit" once-text="campus.Name"></span>
             </td>

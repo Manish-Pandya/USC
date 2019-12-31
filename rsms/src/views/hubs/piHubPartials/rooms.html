@@ -7,26 +7,39 @@
 </div>
 <table class="roomList table table-striped table-hover list" id="rooms" ng-if="PI">
 <thead>
-    <tr><td colspan="5"><h2 class="alert" style="background: #49afcd; border-color:#49afcd;">{{PI.User.Name}}'s Rooms</h2></td></tr>
     <tr>
-        <td colspan="5">
+        <td colspan="6">
+            <h2 class="alert" style="background: #49afcd; border-color:#49afcd;">{{PI.User.Name}}'s Rooms</h2>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6">
             <a class="btn btn-info btn-large left" data-toggle="modal" ng-click="modalify(PI)">Assign Room</a>
             <a class="btn btn-primary btn-large left" ng-click="modalify(PI, true)">Create Room</a>
         </td>
     </tr>
     <tr>
-        <th>Remove Room</th><!--<th>Campus</th>--><th>Building</th><th>Room Number</th><th>Room Use</th><th>Room Hazards</th>
+        <th>Remove Room</th>
+        <th>Building</th>
+        <th>Room Number</th>
+        <th>Room Type</th>
+        <th>Room Use</th>
+        <th>Room Hazards</th>
     </tr>
 </thead>
 <tbody>
     <tr ng-repeat="room in PI.Rooms | orderBy:['Building.Name', 'Name'] | activeOnly">
-        <td><a class="btn btn-danger btn-large removeRow left" ng-click="removeRoom(room)" href="#" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i>Remove</a><img ng-show="room.IsDirty" class="smallLoading" src="../../img/loading.gif" /></td>
-        <!--<td width="25%">{{room.Capmus}}</td>-->
-        <td width="25%">{{room.Building.Name}}</td>
-        <td width="20%">{{room.Name}}</td>
-        <td width="25%">{{room.Purpose}}</td>
-        <!--&room%5B%5D=93&room%5B%5D=614&room%5B%5D=683&room%5B%5D=734&room%5B%5D=735&room%5B%5D=736&room%5B%5D=737&room%5B%5D=738&room%5B%5D=739-->
         <td>
+            <a class="btn btn-danger btn-large removeRow left" ng-click="removeRoom(room)" href="#" alt="Deactivate" title="Deactivate">
+                <i class="icon-remove"></i>Remove
+            </a>
+            <img ng-show="room.IsDirty" class="smallLoading" src="../../img/loading.gif" />
+        </td>
+        <td width="25%">{{room.Building.Name}}</td>
+        <td width="15%">{{room.Name}}</td>
+        <td width="10%"><room-type-icon room-type-name="room.Room_type" show-type-label="true"></room-type-icon></td>
+        <td width="25%">{{room.Purpose}}</td>
+        <td width="15%">
             <span ng-init="room = getRoomUrlString(room)"></span>
             <a class="edit btn btn-large btn-warning left" href="../../hazard-inventory/#?pi={{PI.Key_id}}&{{room.roomUrlParam}}" target="_blank"><i class="icon-lab"></i>Show Hazards</a>
         </td>
@@ -34,11 +47,109 @@
 </tbody>
 </table>
 
+<script type="text/ng-template" id="createRoomHandlerModal.html">
+    <div class="modal-header" style="padding:0;">
+        <h2 style="padding:5px;" class="purpleBg">Create a New Room</h2>
+    </div>
+
+    <div class="modal-body">
+        <form name="newRoomForm">
+            <div class="control-group">
+                <div class="controls span4">
+                    <label class="control-label bold" for="inputEmail">Select Building</label>
+                    <select required ng-change="onSelectBuilding(chosenBuilding)" ng-options="building as building.Name for building in buildings | orderBy: 'Name'" ng-model="chosenBuilding">
+                        <option style="display:none" value="">Select Building</option>
+                    </select>
+
+                    <span ng-if="!buildings">
+                        <input class="span4" style="background:white;border-color:#999; width:350px;"  type="text"  placeholder="Getting Buildings..." disabled="disabled">
+                        <img class="" style="height:23px; margin:-9px 0 0 -35px;" ng-src="{{webRoot}}img/loading.gif"/>
+                    </span>
+                </div>
+            </div>
+
+            <div ng-show="chosenBuilding">
+                <!-- Room Type -->
+                <div class="controls" style="margin-top: 10px;">
+                    <label class="control-label bold" for="selectType">Room Type:</label>
+                    <select  required name="selectType" style="width: auto; margin:3px 0 0"
+                            ng-model="newRoom.Room_type"
+                            ng-options="type.name as type.label for type in Constants.ROOM_TYPE | toArray">
+                        <option value="">--Select Type--</option>
+                    </select>
+                </div>
+
+                <!-- Room Number -->
+                <div class="controls" style="margin-top: 10px;" ng-show="newRoom.Room_type">
+                    <label class="control-label bold" for="roomName">Room Number:</label>
+                    <input required ng-model="newRoom.Name" name="roomName" placeholder="Enter new room number" style="width: 172px;">
+                </div>
+
+                <!-- Room Use -->
+                <div class="controls" style="margin-top: 10px;" ng-show="newRoom.Room_type">
+                    <label class="control-label bold">Room Use:</label>
+
+                    <span ng-init="newRoom.custom = getIsCustom(room.Purpose)"></span>
+                    <input ng-model="newRoom.Purpose"
+                        placeholder="Use" style="max-width:172px; margin-top:3px;"
+                        ng-if="newRoom.custom" />
+                    <select ng-if="!newRoom.custom"
+                            ng-options="use.Name as use.Name for use in roomUses" ng-model="newRoom.Purpose"
+                            style="max-width:172px; margin:3px 0 0">
+                        <option value="">Select Use</option>
+                    </select>
+
+                    <i class="icon-pencil primary" ng-if="!newRoom.custom" ng-click="newRoom.custom = true"></i>
+                    <i class="icon-cancel-2 danger" style="margin-top: 6px; margin-left: -1px;" ng-if="newRoom.custom" ng-click="newRoom.custom = false"></i>
+                </div>
+            </div>
+
+            <div ng-show="newRoom.Room_type && newRoom.Name" style="margin-top: 10px;">
+                <a class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)">
+                    <i class="icon-checkmark"></i>Save
+                </a>
+                <img ng-show="newRoom.IsDirty" class="smallLoading" src="../../img/loading.gif" />
+            </div>
+
+            <div style="margin-top:4px" ng-if="error" class="red"><h3>{{error}}</h3></div>
+        </form>
+
+        <hr/>
+
+        <ul ng-show="chosenBuilding" style="margin-top:15px; padding: 5px; border: 1px ridge lightgray;">
+            <li>
+                <h3 ng-show="chosenBuilding" style="font-size:19px; margin-bottom:15px; text-decoration:underline;">Rooms in {{chosenBuilding.Name}}:</h3>
+            </li>
+            <li style="margin-top:4px" ng-if="loadingBuildingRooms">
+                <img ng-show="loadingBuildingRooms" class="smallLoading" ng-src="{{webRoot}}img/loading.gif" />
+            </li>
+
+            <li ng-repeat="(key,floor) in roomsByFloor" style="margin-top:10px">
+                <h3>Floor: {{key}}</h3>
+                <ul class="grid-list">
+                    <li ng-repeat="room in floor | orderBy:'Name' | activeOnly" ng-class="{greenbg: room.Name == newRoomName}">
+                        <room-type-icon room-type-name="room.Room_type"></room-type-icon>
+                        {{room.Name}}
+                        <span ng-if="room.Purpose">&nbsp;({{room.Purpose}})</span>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="modal-footer">
+        <span ng-if="createRoomStatus" class="pull-left greybg" style="padding:5px;">
+            {{createRoomStatus}}
+        </span>
+        <a class="btn btn-large btn-primary" ng-click="close()">Close</a>
+    </div>
+</script>
+
 <script type="text/ng-template" id="roomHandlerModal.html">
     <div class="modal-header" style="padding:0;">
-        <h2 ng-show="!addRoom" style="padding:5px;" class="blueBg">Assign a Room to {{PI.User.Name}}</h2>
-        <h2 ng-show="addRoom" style="padding:5px;" class="purpleBg">Create a New Room</h2>
+        <h2 style="padding:5px;" class="blueBg">Assign a Room to {{PI.User.Name}}</h2>
     </div>
+
     <div class="modal-body">
         <div class="control-group">
          <div class="controls span4">
@@ -56,66 +167,33 @@
 
        <h3 ng-show="chosenBuilding" style="font-size:19px; margin-bottom:15px; text-decoration:underline;">Rooms in {{chosenBuilding.Name}}:</h3>
 
-       <ul ng-show="!addRoom" style="margin-top:5px">
+       <ul style="margin-top:5px">
             <img ng-show="loadingBuildingRooms" class="smallLoading" ng-src="{{webRoot}}img/loading.gif" />
-            <li ng-repeat="(key,floor) in roomsByFloor" style="margin-top:10px">
+            <li ng-repeat="(key,floor) in roomsByFloor" style="margin-top:15px">
                 <h3>Floor: {{key}}</h3>
-                <ul class="create-room">
-                    <li ng-repeat="room in floor | orderBy:'Name' | activeOnly">
+                <ul class="grid-list">
+                    <li ng-repeat="room in floor | assignableToPI | orderBy:'Name' | activeOnly">
                         <label class="checkbox inline">
                             <input type="checkbox" ng-model="room.piHasRel" ng-change="handleRoomChecked(room,chosenBuilding)" />
-                            <span class="metro-checkbox">{{room.Name}}<span ng-if="room.Purpose">&nbsp;({{room.Purpose}})</span><img ng-show="room.IsDirty" class="smallLoading" ng-src="{{webRoot}}img/loading.gif" /></span>
+                            <span class="metro-checkbox">
+                                <room-type-icon room-type-name="room.Room_type"></room-type-icon>
+                                {{room.Name}}
+                                <span ng-if="room.Purpose">&nbsp;({{room.Purpose}})</span>
+                                <img ng-show="room.IsDirty" class="smallLoading" ng-src="{{webRoot}}img/loading.gif" />
+                            </span>
                         </label>
                     </li>
                 </ul>
             </li>
        </ul>
-
-        <ul ng-show="addRoom" style="margin-top:5px">
-            <li>
-                <div class="controls span4">
-                    <label class="control-label bold" for="inputEmail">Room Number:</label>
-                    <input ng-model="newRoom.Name" ng-show="chosenBuilding" placeholder="Enter new room number" style="width: 172px;">
-                    <a style="margin: -2px 0 0 5px;" ng-show="chosenBuilding" class="btn btn-success btn-mini" ng-click="addRoomToBuidling(newRoom)"><i class="icon-checkmark"></i>Save</a><img ng-show="newRoom.IsDirty" class="smallLoading" src="../../img/loading.gif" />
-                 </div>
-            </li>
-            <li ng-show="chosenBuilding">
-                <span ng-init="newRoom.custom = getIsCustom(room.Purpose)"></span>
-                <input ng-model="newRoom.Purpose"
-                       placeholder="Use" style="max-width:172px; margin-top:3px;"
-                       ng-if="newRoom.custom" />
-                <select ng-if="!newRoom.custom"
-                        ng-options="use.Name as use.Name for use in roomUses" ng-model="newRoom.Purpose"
-                        style="max-width:172px; margin:3px 0 0">
-                    <option value="">Select Use</option>
-                </select>
-                <i class="icon-pencil primary" ng-if="!newRoom.custom" ng-click="newRoom.custom = true"></i>
-                <i class="icon-cancel-2 danger" style="margin-top: 6px; margin-left: -1px;" ng-if="newRoom.custom" ng-click="newRoom.custom = false"></i>
-            </li>
-            <li style="margin-top:4px" ng-if="error" class="red"><h3>{{error}}</h3></li>
-            <li style="margin-top:4px" ng-if="loadingBuildingRooms">
-                <img ng-show="loadingBuildingRooms" class="smallLoading" ng-src="{{webRoot}}img/loading.gif" />
-            </li>
-            <li ng-repeat="(key,floor) in roomsByFloor" style="margin-top:10px">
-                <h3>Floor: {{key}}</h3>
-                <ul class="create-room">
-                    <li ng-repeat="room in floor | orderBy:'Name' | activeOnly" ng-class="{greenbg: room.Name == newRoomName}">
-                        {{room.Name}}<span ng-if="room.Purpose">&nbsp;({{room.Purpose}})</span>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-
-
     </div>
     <div class="modal-footer">
         <span ng-if="createRoomStatus" class="pull-left greybg" style="padding:5px;">
             {{createRoomStatus}}
         </span>
-        <a class="btn btn-large" ng-class="{'btn-info': !addRoom, 'btn-primary': addRoom}" ng-click="close()">Close</a>
+        <a class="btn btn-large btn-info" ng-click="close()">Close</a>
     </div>
 </script>
-
 
 <script type="text/ng-template" id="roomHazardsModal.html">
     <div class="modal-header wide-modal" style="padding:0;">
