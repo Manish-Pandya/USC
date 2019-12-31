@@ -177,7 +177,7 @@ class RoomManager {
 
             foreach($toRemove as $removeAssignment) {
                 $LOG->info("Deleting $removeAssignment");
-                $this->assignmentDao->delete($removeAssignment);
+                $this->assignmentDao->deleteById($removeAssignment->getKey_id());
             }
         }
 
