@@ -104,7 +104,7 @@ class RadReportDTO
 	}
 
 	public function getAuth_limit(){
-		return (int) $this->auth_limit;
+		return (float) $this->auth_limit;
 	}
 
 	public function setAuth_limit($auth_limit){
