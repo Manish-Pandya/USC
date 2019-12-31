@@ -26,7 +26,7 @@ class RoomType {
                     ->setPluralLabel('Research Laboratories')
                     ->setInspectable(true)
                     ->setAssignable_to( LabInspectionModule::ROLE_PI )
-                    ->setIcon_class('icon-lab')
+                    ->setIcon_class('icon-clipboard-2')
                     ->setImg_path(null),
 
                 RoomType::ANIMAL_FACILITY => (new RoomType())
