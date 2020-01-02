@@ -46,12 +46,29 @@ ul.grid-list li > * {
 
 /***********/
 /* Hubs    */
+
+.hub {}
+
+.hub-full,
+.hub-full.container-fluid {
+    padding: 0;
+}
+
+.hub-full .hub-body {
+    padding: 0 70px;
+}
+
 .hub-banner {
     display: flex;
     align-items: stretch;
-    margin-top: -2px;
     padding-left: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+.hub-banner.sticky-banner {
+    position: sticky;
+    top: 25;
+    z-index: 1040;
 }
 
 .hub-banner > * {
@@ -68,6 +85,8 @@ ul.grid-list li > * {
     width: 1em;
     font-size: 3em;
 }
+
+.hub-banner .title-icon { padding-right: 10px; }
 
 .hub-banner img.title-icon {
     align-self: center;

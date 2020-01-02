@@ -13,9 +13,9 @@ tr.formError td{
   z-index: 1060;
   background: white;
   position: fixed;
-  height: 22px;
+  height: 25px;
   width: 100%;
-  margin-top: -25px;
+  top: 0;
   padding: 1px 13px;
   box-sizing: border-box;
 }
