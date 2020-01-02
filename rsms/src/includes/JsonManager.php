@@ -36,7 +36,7 @@ class JsonManager {
 		}
 
 		$mid = Metrics::start('Build JSON-able Value');
-		$jsonable = JsonManager::buildJsonableValue($value, $entityMaps);
+		$jsonable = JsonManager::buildJsonableValue($value, null, $entityMaps);
 		Metrics::stop($mid);
 
 		return json_encode($jsonable, JSON_PRETTY_PRINT);
@@ -46,14 +46,14 @@ class JsonManager {
 	 * Constructs a 'JSON-able' value based on the parameter. The returned value is either of a PHP primitive type,
 	 * or an array of such information that can be easily JSON-encoded.
 	 */
-	public static function buildJsonableValue(&$value, &$entityMaps = NULL){
+	public static function buildJsonableValue(&$value, $key = NULL, &$entityMaps = NULL){
 		$jsonable = $value;
 
 		//Differentiate Objects and Arrays
 		if( is_object($value) ){
 
 			try{
-				ObjectPathMapper::push($value);
+				ObjectPathMapper::push($value, $key);
 
 				//Simply convert the object
 				$jsonable = JsonManager::objectToBasicArray($value, $entityMaps);
@@ -65,15 +65,16 @@ class JsonManager {
 				// Omit it
 				$jsonable = null;
 				LogUtil::get_logger(__CLASS__, __FUNCTION__)->debug("Omit circular reference");
+				throw $e;
 			}
 		}
 		else if( is_array($value) ){
 			//Convert each element of the array
 			$jsonable = array();
 
-			foreach( $value as $element ){
+			foreach( $value as $idx => $element ){
 				// json-ify
-				$jsonable[] = JsonManager::buildJsonableValue($element, $entityMaps);
+				$jsonable[] = JsonManager::buildJsonableValue($element, "$key#$idx", $entityMaps);
 			}
 		}
 
@@ -332,7 +333,7 @@ class JsonManager {
 		}
 
 		foreach( $objectVars as $key=>&$value ){
-			$value = JsonManager::buildJsonableValue($value, $entityMaps);
+			$value = JsonManager::buildJsonableValue($value, $key, $entityMaps);
 		}
 
 		return $objectVars;
@@ -387,7 +388,7 @@ class JsonManager {
 
 		foreach ($accessors as $getter) {
 			//Call function to get value
-			$mid = Metrics::start('Call ' . ObjectPathMapper::describe($object) . "::$getter()");
+			$mid = Metrics::start('Call ' . ObjectPathMapper::describe($object, null) . "::$getter()");
 			$LOG->trace("  $classname::$getter()");
 			$value = $object->$getter();
 			Metrics::stop($mid);
@@ -454,21 +455,28 @@ class ObjectPathMapper {
 
 	}
 
-	public static function describe( &$object){
+	public static function describe( &$object, $idx = null ){
+		$desc = null;
 		if( method_exists($object, '__toString') ){
-			return $object->__toString();
+			$desc = $object->__toString();
 		}
 		else if (is_object($object) ){
-			return get_class($object);
+			$desc = get_class($object);
 		}
 		else{
-			return gettype($object);
+			$desc = gettype($object);
 		}
+
+		if( isset($idx) ){
+			return "($idx:$desc)";
+		}
+
+		return $desc;
 	}
 
-	public static function push(&$object){
+	public static function push(&$object, &$idx){
 		// Describe object
-		$key = self::describe($object);
+		$key = self::describe($object, $idx);
 		$uuid = spl_object_id($object);
 
 		// Check for possible circular references
