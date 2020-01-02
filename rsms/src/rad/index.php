@@ -234,13 +234,17 @@ if(!isset($_SESSION["USER"])){ ?>
         <?php require('../views/user_info_bar.php'); ?>
 
         <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid" style="margin-top:25px;">
-            <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-            <div cg-busy="{promise:saving,message:'Saving...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+        <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+        <div cg-busy="{promise:saving,message:'Saving...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+
         <!-- NAVIGATION -->
-        <div class="banner {{bannerClass | splitAtPeriod}} radiation no-print" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
+        <div class="banner {{bannerClass | splitAtPeriod}} radiation no-print"
+             ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
             <h1>{{viewLabel}}
                 <span ng-if="showPiNav && pi_name"> - {{pi_name}}</span>
-                <a style="float:right;margin: 11px 128px 0 0; color:black" ng-href="{{GLOBAL_WEB_ROOT}}"><i class="icon-home" style="font-size:40px;"></i></a>
+                <a style="float:right;margin: 11px 128px 0 0; color:black" ng-href="{{GLOBAL_WEB_ROOT}}">
+                    <i class="icon-home" style="font-size:40px;"></i>
+                </a>
             </h1>
             <ul class="piNav" ng-if="showPiNav">
                 <li><a ui-sref="pi-orders({ pi: navPi })">Orders</a></li>
@@ -255,6 +259,7 @@ if(!isset($_SESSION["USER"])){ ?>
                 <li ng-if="isAdminUser()"><a ui-sref="radmin()">Radiation Admin</a></li>
             </ul>
         </div>
+
         <!-- VIEW NESTING -->
         <div ui-view class="noBg"></div>
         </div>
