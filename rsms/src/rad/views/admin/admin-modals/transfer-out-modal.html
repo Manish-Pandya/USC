@@ -30,7 +30,7 @@
                             <ul><li><i class="pull-left" ng-class="{'icon-arrow-down': parcel._showUses, 'icon-arrow-right': !parcel.showUses}"></i> {{parcel.Rs_number}}</li><li>{{parcel.Authorization.IsotopeName}}</li><li>{{parcel.Remainder}} / {{parcel.Quantity}}</li></ul>
                         </li>
                         <li ng-if="parcel._showUses" class="parcel-row parcel-detail-row" ng-click="selectParcelForTransfer(parcel, null)">
-                            <ul><li class="sub-label">&nbsp;</li><li>Unsed</li><li>{{parcel.Remainder}}</li></ul>
+                            <ul><li class="sub-label">&nbsp;</li><li>Unused</li><li>{{parcel.Remainder}}</li></ul>
                         </li>
                         <li ng-repeat-end ng-repeat="use in parcel.ParcelUses | activeOnly"
                             ng-if="parcel._showUses" ng-click="!use.Is_transfer && selectParcelForTransfer(parcel, use)"
