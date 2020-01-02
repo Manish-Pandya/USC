@@ -31,7 +31,7 @@ class RoomType {
 
                 RoomType::ANIMAL_FACILITY => (new RoomType())
                     ->setName(RoomType::ANIMAL_FACILITY)
-                    ->setLabel('Animal Facility')
+                    ->setLabel('Animal Room')
                     ->setPluralLabel('Animal Facilities')
                     ->setInspectable(true)
                     ->setAssignable_to( LabInspectionModule::ROLE_PI )
