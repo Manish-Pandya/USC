@@ -91,6 +91,8 @@ if(!isset($_SESSION["USER"])){ ?>
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css"/>
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css" />
+<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rsms-style-theme.css"/>
+<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rsms-style-struct.css"/>
 <link href="../js/lib/ng-quick-date/ng-quick-date.css" rel="stylesheet" />
 
 <!-- included fonts
@@ -210,58 +212,38 @@ if(!isset($_SESSION["USER"])){ ?>
     -->
 <script src="scripts/models/rad-models-bundle.js"></script>
     <style>
-        ul.piNav {
-            margin-right: 160px;
-            float: right;
-            margin-top: -30px;
-        }
-            ul.piNav li {
-                display:inline-block;
-                margin-right:10px;
-            }
-                ul.piNav li a {
-                    font-weight: bold;
-                    font-size: 12px;
-                    color: rgba(51, 51, 51, 0.7);
-                    display: block;
-                }
-                    ul.piNav li a:hover {
-                        color: black;
-                    }
+        /* Adjust banner font-size based on view width */
+        .hub-banner ul.banner-nav li { font-size: 0.8vw; }
     </style>
 </head>
     <body>
         <?php require('../views/user_info_bar.php'); ?>
 
-        <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid" style="margin-top:25px;">
-        <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-        <div cg-busy="{promise:saving,message:'Saving...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+        <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid hub hub-full hub-theme-yellow" style="margin-top:25px;">
+            <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
+            <div cg-busy="{promise:saving,message:'Saving...',templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 
-        <!-- NAVIGATION -->
-        <div class="banner {{bannerClass | splitAtPeriod}} radiation no-print"
-             ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">
-            <h1>{{viewLabel}}
-                <span ng-if="showPiNav && pi_name"> - {{pi_name}}</span>
-                <a style="float:right;margin: 11px 128px 0 0; color:black" ng-href="{{GLOBAL_WEB_ROOT}}">
-                    <i class="icon-home" style="font-size:40px;"></i>
-                </a>
-            </h1>
-            <ul class="piNav" ng-if="showPiNav">
-                <li><a ui-sref="pi-orders({ pi: navPi })">Orders</a></li>
-                <li><a ui-sref="use-log({ pi: navPi})">Use Logs</a></li>
-                <li><a ui-sref="pickups({ pi: navPi})">Pickups</a></li>
-                <li><a ui-sref="containers({ pi:navPi})">Waste Containers</a></li>
-                <li><a ui-sref="current-inventories({ pi:navPi})">Inventory</a></li>
-                <li><a ui-sref="lab-wipes({ pi: navPi})">Wipe Tests</a></li>
-                <li><a ui-sref="pi-auths({ pi: navPi})">Authorizations</a></li>
-                <li>|</li>
-                <li><a ui-sref="pi-rad-management({ pi: navPi })">Rad Lab</a></li>
-                <li ng-if="isAdminUser()"><a ui-sref="radmin()">Radiation Admin</a></li>
-            </ul>
-        </div>
+            <!-- NAVIGATION -->
+            <hub-banner-nav
+                ng-controller="NavCtrl"
+                class="sticky-banner"
+                hub-title="{{viewLabel}}"
+                hub-subtitle="{{showPiNav && pi_name ? pi_name : ''}}"
+                hub-image="<?php echo WEB_ROOT?>img/radiation-large-icon.png">
+                    <li ng-if="showPiNav"><a ui-sref="pi-orders({ pi: navPi })">Orders</a></li>
+                    <li ng-if="showPiNav"><a ui-sref="use-log({ pi: navPi})">Use Logs</a></li>
+                    <li ng-if="showPiNav"><a ui-sref="pickups({ pi: navPi})">Pickups</a></li>
+                    <li ng-if="showPiNav"><a ui-sref="containers({ pi:navPi})">Waste Containers</a></li>
+                    <li ng-if="showPiNav"><a ui-sref="current-inventories({ pi:navPi})">Inventory</a></li>
+                    <li ng-if="showPiNav"><a ui-sref="lab-wipes({ pi: navPi})">Wipe Tests</a></li>
+                    <li ng-if="showPiNav"><a ui-sref="pi-auths({ pi: navPi})">Authorizations</a></li>
+                    <li ng-if="showPiNav"><span>|</span></li>
+                    <li ng-if="showPiNav"><a ui-sref="pi-rad-management({ pi: navPi })">Rad Lab</a></li>
+                    <li ng-if="showPiNav && isAdminUser()"><a ui-sref="radmin()">Radiation Admin</a></li>
+            </hub-banner-nav>
 
-        <!-- VIEW NESTING -->
-        <div ui-view class="noBg"></div>
+            <!-- VIEW NESTING -->
+            <div ui-view class="noBg hub-body"></div>
         </div>
     </body>
 </html>

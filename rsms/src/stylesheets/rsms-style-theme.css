@@ -98,6 +98,32 @@ ul.banner-nav li span {
         background: #789974;
     }
 
+/* Yellow Theme */
+    .hub-theme-yellow,
+    .hub-theme-yellow .hub-banner,
+    .hub-theme-yellow .hub-banner a.home-link,
+    .hub-theme-yellow .hub-banner ul.banner-nav li a,
+    .hub-theme-yellow .hub-banner ul.banner-nav li span { color: #000; }
+
+    .hub-theme-yellow .theme-main-element,
+    .hub-theme-yellow .hub-banner {
+        background-color: rgb(253, 241, 0);
+        border-color: rgb(253, 241, 0);
+        color: #000;
+    }
+
+    .hub-theme-yellow .theme-highlight-element,
+    .hub-theme-yellow .hub-banner .banner-nav a:hover,
+    .hub-theme-yellow .hub-banner .banner-nav a.active-nav {
+        background: #006B5F;
+    }
+
+    .hub-theme-yellow .theme-underlight-element,
+    .hub-theme-yellow table tbody tr.theme-underlight-element td
+    {
+        background: #789974;
+    }
+
 /* */
 ul.grid-list li:hover {
     color: #888;
