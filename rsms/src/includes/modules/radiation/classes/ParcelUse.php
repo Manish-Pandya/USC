@@ -124,7 +124,7 @@ class ParcelUse extends RadCrud {
 	}
 	public function setParcelUseAmounts($newUseAmounts) {$this->parcelUseAmounts = $newUseAmounts;}
 
-	public function getQuantity() {return $this->quantity;}
+	public function getQuantity() {return (float) $this->quantity;}
     public function setQuantity($quantity) {$this->quantity = $quantity;}
 
     public function getExperiment_use() {return $this->experiment_use;}

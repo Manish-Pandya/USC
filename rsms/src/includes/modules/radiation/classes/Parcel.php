@@ -200,7 +200,7 @@ class Parcel extends RadCrud {
     }
 	public function setArrival_date($newDate) { $this->arrival_date = $newDate; }
 
-	public function getQuantity() { return $this->quantity; }
+	public function getQuantity() { return (float) $this->quantity; }
 	public function setQuantity($newQuantity) { $this->quantity = $newQuantity; }
 
 	public function getParcelUses() {
@@ -226,7 +226,7 @@ class Parcel extends RadCrud {
 			// subtract the amount used from the initial quantity
 			$this->remainder = $this->getQuantity() - $usedAmount;
 		}
-		return $this->remainder;
+		return (float) $this->remainder;
 	}
 
 	public function getRs_number(){return $this->rs_number;}
@@ -339,7 +339,7 @@ class Parcel extends RadCrud {
 
         $this->amountOnHand = $this->getQuantity() - $totalPickedUp;
 
-        return $this->amountOnHand;
+        return (float) $this->amountOnHand;
     }
 
     public function getOriginal_pi_id(){return $this->original_pi_id;}
