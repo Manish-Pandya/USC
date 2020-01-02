@@ -3,15 +3,15 @@ class ConsoleTestReportWriter {
 
     public function writePhase( $name ){
         echo str_pad('+', strlen($name) + 2, '-') . "\n";
-        echo "|$name:\n";
+        echo "| $name:\n";
     }
 
     public function writePhaseProgress( $name ){
-        echo "|    $name...";
+        echo "|    $name...\n";
     }
 
     public function writePhaseEnd(){
-        echo "[DONE]\n";
+        echo "|    [DONE]\n";
     }
 
     public function writeReport( Array $results ){

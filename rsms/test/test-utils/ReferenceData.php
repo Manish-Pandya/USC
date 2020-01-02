@@ -16,7 +16,7 @@ class ReferenceData {
         $room = new Room();
         $room->setIs_active( $active );
         $room->setName( $room_name );
-        return $manager->saveRoom($room);
+        return RoomManager::get()->saveRoom($room);
     }
 
     public static function create_user( ActionManager &$manager, $first_name, $last_name, $email, $active = true){

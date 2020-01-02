@@ -18,7 +18,7 @@ class TestRoomDAO implements I_Test {
         $room = new Room();
         $room->setIs_active(true);
         $room->setName("Test Room");
-        $this->test_room = $this->actionmanager->saveRoom($room);
+        $this->test_room = RoomManager::get()->saveRoom($room);
 
         $user = new User();
         $user->setIs_active(true);

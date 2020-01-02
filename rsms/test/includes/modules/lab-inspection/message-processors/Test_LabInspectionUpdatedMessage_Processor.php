@@ -77,7 +77,7 @@ class Test_LabInspectionUpdatedMessage_Processor implements I_Test {
         $emails = $this->processor->computeEmailRecipients( $this->inspection, $ctx );
 
         // Then the extra email addresses are included along with defaults
-        Assert::eq( $emails['to'], 'pi@email.com,extra@email.com,contact2@email.com', "To is set to PI,Inspection contact, And Extra");
+        Assert::eq( $emails['to'], 'pi@email.com,extra@email.com,contact2@email.com', "To is set to PI, Inspection contact, and Extra");
         Assert::eq( $emails['cc'], 'inspector@email.com', "CC is set to Inspector");
 
     }
