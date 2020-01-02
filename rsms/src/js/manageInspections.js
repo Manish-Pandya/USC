@@ -174,8 +174,8 @@ var manageInspections = angular.module('manageInspections', ['cgBusy','convenien
         this.getCurrentYear()
             .then(
                 function (currentYear) {
-                    // List years from factory.minYear until the year after currentYear
-                    var maxYear = parseInt(currentYear) + 2;
+                    // List years from factory.minYear until the current year
+                    var maxYear = parseInt(currentYear) + 1;
                     var years = [];
                     while (maxYear-- && maxYear >= factory.minYear) {
                         var year = { Name: parseInt(maxYear) }
