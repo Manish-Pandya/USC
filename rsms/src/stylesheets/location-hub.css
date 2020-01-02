@@ -81,10 +81,13 @@ h1 .room-type-icon {
     opacity: .4;
 }
 
-h1 .room-type-icon i {
+h1 .room-type-icon i,
+h1 .room-type-icon img {
     width: 0.8em;
     font-size: 1em;
+}
 
+h1 .room-type-icon i {
     /* Remove vertical alignment from bootstrap icon styling
         to avoid dancing to make centered icons */
     vertical-align: unset;
