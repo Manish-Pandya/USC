@@ -95,6 +95,7 @@ class TestLabInspectionReminder_Task implements I_Test {
         // Given a 2-week old Inspection with a Pending CAP
         Assert::true( isset($this->inspection) && $this->inspection->hasPrimaryKeyValue(), 'Test Inspection exists');
         Assert::eq( $this->inspection->getStatus(), 'SUBMITTED CAP', 'Inspection is in SUBMITTED_CAP status');
+        Assert::true( in_array(CorrectiveAction::$STATUS_PENDING, $this->inspection->collectAllCorrectiveActionStatuses()), 'Inspection has Pending CAP' );
 
         // When we prepare pending CAP reminders
         $pending = $task->getPendingCapInspections();
