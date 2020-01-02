@@ -102,8 +102,9 @@ ul.grid-list li > * {
     height: 100%;
 }
 
+.hub-banner ul.banner-nav:first-of-type { flex-grow: 1; }
+
 .hub-banner ul.banner-nav {
-    flex-grow: 1;
     justify-content: flex-end;
     margin: 0px;
 }

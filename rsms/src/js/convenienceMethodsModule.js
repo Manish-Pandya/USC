@@ -681,7 +681,8 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
 .directive('hubBannerNav', function(){
     return {
         restrict: 'E',
-        //replace: true,
+        transclude: true,
+        replace: true,
         scope: {
             /**
              * Array of objects which define the following fields:
@@ -694,18 +695,21 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
             hubIcon: "@",
             hubImage: "@",
             hubTitle: "@",
-            hubSubtitle: "@",
+            hubSubtitle: "@"
         },
         template:   `<div class="hub-banner no-print">
                         <i ng-if="hubIcon" class="title-icon {{hubIcon}}"></i>
                         <img ng-if="hubImage" class="title-icon" ng-src="{{hubImage}}"/>
 
                         <span style="flex-direction: column; align-items: flex-start;">
-                            <h1 once-text="hubTitle"></h1>
-                            <h4 ng-if="hubSubtitle" once-text="hubSubtitle"></h4>
+                            <h1>{{hubTitle}}</h1>
+                            <h4 ng-if="hubSubtitle">{{hubSubtitle}}</h4>
                         </span>
 
-                        <ul class="banner-nav">
+                        <ul class="banner-nav" ng-transclude ng-if="!hubViews.length">
+                        </ul>
+
+                        <ul class="banner-nav" >
                             <li ng-repeat="view in hubViews">
                                 <span ng-if="!view.route">|</span>
                                 <a  ng-if="view.route"
