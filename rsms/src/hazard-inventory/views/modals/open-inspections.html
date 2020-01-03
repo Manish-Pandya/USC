@@ -54,7 +54,8 @@
                     new:inspection.Is_new,
                     inactive: inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION
                               || inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_CAP
-                }">
+                }"
+                ng-init="is_beginnable = (inspection | isScheduledForCurrentYear)">
                 <td>
                     <ul ng-init="processRooms(inspection, modalData.PI.Rooms)">
                         <li ng-repeat="(key, building) in inspection.Rooms | groupBy: 'Building.Name'">
@@ -107,7 +108,9 @@
                         <span ng-if="inspection.Status == constants.INSPECTION.STATUS.SCHEDULED">
                             <br>Scheduled ({{inspection.Schedule_month | getMonthName}})
                             <br>
-                            <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
+                            <a style="margin:5px 0;" class="btn btn-danger left"
+                                ng-disabled="!is_beginnable"
+                                ng-click="is_beginnable && validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
                         </span>
 
                         <span ng-if="inspection.Status == constants.INSPECTION.STATUS.PENDING_CLOSEOUT">
@@ -143,7 +146,9 @@
                         </span>
                         <span ng-if="inspection.Status == constants.INSPECTION.STATUS.NOT_ASSIGNED">
                             <p>
-                                <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
+                                <a style="margin:5px 0;" class="btn btn-danger left"
+                                    ng-disabled="!is_beginnable"
+                                    ng-click="is_beginnable && validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
                             </p>
                         </span>
                         <span ng-if="inspection.Status == constants.INSPECTION.STATUS.PENDING_EHS_APPROVAL">
@@ -159,7 +164,9 @@
                         <span ng-if="inspection.Status == constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION">
                             <span><br>(Scheduled for {{inspection.Schedule_month | getMonthName}})</span>
                             <br>
-                            <a style="margin:5px 0;" class="btn btn-danger left" ng-click="validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
+                            <a style="margin:5px 0;" class="btn btn-danger left"
+                                ng-disabled="!is_beginnable"
+                                ng-click="is_beginnable && validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
                         </span>
                         <span ng-if="inspection.Status ==  constants.INSPECTION.STATUS.SUBMITTED_CAP">
                             <span><br>(CAP Sent: {{inspection.Cap_submitted_date | dateToISO}})</span>

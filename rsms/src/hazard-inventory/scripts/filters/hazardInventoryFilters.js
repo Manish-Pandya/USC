@@ -25,6 +25,18 @@ angular
             return matches;
         }
     })
+    .filter('isScheduledForCurrentYear', function(){
+        return function(inspection){
+            if( !inspection ){
+                return inspection;
+            }
+
+            var now = new Date();
+            var thisYear = now.getFullYear();
+
+            return parseInt(inspection.Schedule_year) == thisYear;
+        }
+    })
     .filter('inspectionScheduledYearThreshold', function(){
         return function(inspections, yeardiff){
             if( !inspections || !inspections.length || isNaN(yeardiff)){
