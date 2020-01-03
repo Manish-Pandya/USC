@@ -243,6 +243,13 @@ var userList = angular.module('userList', ['ui.bootstrap','convenienceMethodWith
         return formatLocal('US', phoneNumber);
     }
 })
+.filter('hasRole', function(userHubFactory){
+  return function( users, role ){
+    if( !users || !role || !role.length ) return users;
+
+    return users.filter(u => userHubFactory.hasRole(u, role));
+  }
+})
 .factory('userHubFactory', function(convenienceMethods,$q, $rootScope, roleBasedFactory){
 
   var factory = {};
@@ -1047,17 +1054,26 @@ var teachingLabContactController = function($scope, $modal, $rootScope, userHubF
     };
 }
 
-var departmentContactController = function($scope, $modal, $rootScope, userHubFactory, convenienceMethods, $timeout, $location) {
+var departmentContactController = function($scope, $modal, $rootScope, userHubFactory, convenienceMethods, $timeout, $q) {
     $rootScope.neededUsers = false;
     $rootScope.order="Last_name";
     $rootScope.error="";
     $rootScope.renderDone = false;
     $rootScope.constants = Constants;
 
-    userHubFactory.getAllUsers()
-      .then(
-        function(users){
+    $scope.roles = userHubFactory.roles;
+
+    $q.all([
+      userHubFactory.getAllUsers(),
+      userHubFactory.getAllRoles()
+    ])
+    .then(
+        function(results){
+          let users = results[0];
+          let roles = results[1];
+
           $scope.users = userHubFactory.users;
+          $scope.roles = userHubFactory.roles;
           $rootScope.neededUsers = true;
           $timeout(function() {
                 $rootScope.renderDone = true;
