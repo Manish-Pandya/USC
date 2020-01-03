@@ -25,6 +25,19 @@ angular
             return matches;
         }
     })
+    .filter('inspectionScheduledYearThreshold', function(){
+        return function(inspections, yeardiff){
+            if( !inspections || !inspections.length || isNaN(yeardiff)){
+                return inspections;
+            }
+
+            var now = new Date();
+            var thisYear = now.getFullYear();
+            let minYear = thisYear + yeardiff;
+
+            return inspections.filter(i => parseInt(i.Schedule_year) >= minYear);
+        };
+    })
     .filter('inspectionClosed', function (convenienceMethods) {
         return function (inspections, closedOrNot) {
           console.log(convenienceMethods)
