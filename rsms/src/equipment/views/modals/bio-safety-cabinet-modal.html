@@ -20,12 +20,8 @@
                 <ui-select ng-if="modalData.selectedBuilding.UID" ng-model="modalData.selectedRoom" theme="selectize" ng-disabled="disabled" class="span2" on-select="getRoom($item.UID); modalData.BioSafetyCabinet.SelectedInspection.Room_id = $item.Key_id" style="margin-left:0; width:269px;">
                     <ui-select-match placeholder="Select or search for a Room">{{$select.selected.Name}}</ui-select-match>
                     <ui-select-choices repeat="r in  modalData.selectedBuilding.Rooms | activeOnly | nameFilter: $select.search | orderBy:convenienceMethods.sortAlphaNum('Name')">
-                        <div class="even-content">
-                            <div class="half" ng-bind="r.Name | highlight: $select.search"></div>
-                            <div class="half">
-                                <room-type-icon room-type-name="r.Room_type" show-type-label="true"></room-type-icon>
-                            </div>
-                        </div>
+                        <room-type-icon room-type-name="r.Room_type"></room-type-icon>
+                        <span ng-bind="r.Name | highlight: $select.search"></span>
                     </ui-select-choices>
 
                 </ui-select>
