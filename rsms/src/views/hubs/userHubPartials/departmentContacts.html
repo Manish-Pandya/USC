@@ -28,18 +28,24 @@
         </tr>
         <tr>
             <th></th>
-            <th>
-                <input class="span2" ng-model="searchText.Name" placeholder="Filter by Name"/>
+            <th colspan="2">
+                <input class="full" ng-model="searchText.Name" placeholder="Filter by Name"/>
             </th>
-            <th></th>
-            <th></th>
+
+            <th>
+                <select ng-model="search.role"
+                        ng-options="role.Name as role.Name for role in roles | isDepartmentalRole"
+                        style="margin: 0;">
+                    <option value="">-- Filter by Role --</option>
+                </select>
+            </th>
             <th></th>
             <th></th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="contact in (filtered = (users | isDepartmentContact | filter:activeFilter(showInactive) | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment))"
+        <tr ng-repeat="contact in (filtered = (users | isDepartmentContact | filter:activeFilter(showInactive) | filter:searchText | hasRole:search.role | orderBy:order:reverse))"
             ng-class="{inactive: !contact.Is_active}">
             <td style="width:8%;">
                 <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], ])" class="edit btn btn-primary" ng-hide="contact.edit" ng-click="openModal(contact,$index)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
