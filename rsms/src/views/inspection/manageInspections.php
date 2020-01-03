@@ -56,20 +56,6 @@ require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.ph
                 </select>
             </div>
         </div>
-        <div class="legend">
-            <label>Room Types:</label>
-            <div ng-repeat="type in constants.ROOM_TYPE | toArray | filter:{inspectable:true}">
-                <label>
-                    <room-type-icon room-type="type"></room-type-icon>
-                </label>
-                <span once-text="type.label"></span>
-                <span ng-if="type.departments" title="Rooms of this type are only inspected as part of this department">
-                    <span>(</span>
-                    <span ng-repeat="dept in type.departments" once-text="dept"></span>
-                    <span>)</span>
-                </span>
-            </div>
-        </div>
     </div>
 
     <table class="table table-striped table-bordered userList manage-inspections-table" scroll-table watch="filtered.length" ng-show="dtos.length" style="margin-top:100px;">
