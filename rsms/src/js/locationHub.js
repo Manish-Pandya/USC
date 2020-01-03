@@ -731,7 +731,7 @@ routeCtrl = function($scope, $location,$rootScope){
         {},
         { route: '/rooms/research-labs', name: 'Research Labs' },
         { route: '/rooms/teaching-labs', name: 'Teaching Labs' },
-        { route: '/rooms/animal-facilities', name: 'Animal Rooms' },
+        { route: '/rooms/animal-facilities', name: 'Animal Facilities' },
         {},
         { route: '/buildings', name: 'Buildings' },
         { route: '/campuses', name: 'Campuses' }
