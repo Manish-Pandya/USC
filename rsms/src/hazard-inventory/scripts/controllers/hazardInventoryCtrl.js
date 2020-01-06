@@ -234,7 +234,8 @@ angular.module('HazardInventory')
             af.setModalData(modalData);
             var modalInstance = $modal.open({
                 templateUrl: 'views/modals/open-inspections.html',
-                controller: 'HazardInventoryModalCtrl'
+                controller: 'HazardInventoryModalCtrl',
+                windowClass: 'open-inspections-modal'
             });
 
             modalInstance.result.then(function () {

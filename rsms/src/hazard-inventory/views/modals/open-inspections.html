@@ -32,66 +32,74 @@
     </h3>
 
     <!-- process the pis rooms and the inspections rooms so we can make a view model that incorporates all possible room for each inspeciton-->
-    <table ng-if="!modalData.inspectionsPendings" ng-show="openInspections.length && modalData.PI.Rooms" class="table table-striped table-bordered">
+    <table ng-if="!modalData.inspectionsPendings" ng-show="openInspections.length && modalData.PI.Rooms" class="table stripe-bodies table-bordered">
         <thead>
             <tr>
-                <th>Rooms</th>
+                <th style="width: 30%">Rooms</th>
                 <th>Year</th>
                 <th>Month</th>
                 <th>Inspector(s)</th>
                 <th>Lab Contact(s)</th>
-                <th>Hazards</th>
+                <th style="width: 10%">Hazards</th>
                 <th>Status / Action</th>
             </tr>
         </thead>
-        <tbody>
-            <tr ng-repeat="(key, inspection) in openInspections = (modalData.PI.Inspections
+        <tbody ng-repeat="(key, inspection) in openInspections = (modalData.PI.Inspections
                                                                 | orderBy:['Schedule_year', 'Schedule_month']:true
                                                                 | inspectionClosed:false
                                                                 | inspectionScheduledYearThreshold:-1
                 )"
+                ng-init="is_beginnable = (inspection | isScheduledForCurrentYear);
+                         processRooms(inspection, modalData.PI.Rooms);">
+
+            <tr ng-repeat="(buildingName, buildingRooms) in (group = inspection.Rooms | groupBy: 'Building.Name')"
                 ng-class="{
                     new:inspection.Is_new,
                     inactive: inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION
                               || inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_CAP
-                }"
-                ng-init="is_beginnable = (inspection | isScheduledForCurrentYear)">
-                <td>
-                    <ul ng-init="processRooms(inspection, modalData.PI.Rooms)">
-                        <li ng-repeat="(key, building) in inspection.Rooms | groupBy: 'Building.Name'">
-                            <span class="bold underline">{{key}}</span>
-                            <ul style="margin:5px;">
-                                <li ng-repeat="(key,room) in building|orderBy:'Name'" ng-init="roomType = Constants.ROOM_TYPE[room.Room_type]">
-                                    <label class="checkbox">
-                                        <input type="checkbox"
-                                            ng-change="saveInspectionRoomRelationship( inspection, room )"
-                                            ng-model="room[inspection.Key_id+'checked']"/>
-                                        <span class="metro-checkbox">
-                                            <room-type-icon room-type="roomType"></room-type-icon>
-                                            <span once-text="room.Name"></span>
-                                            <i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i>
-                                        </span>
-                                    </label>
-                                </li>
-                            </ul>
+                }">
+                <td ng-init="_expand_list = inspection.Rooms <= 5"
+                    class="room-cell"
+                    ng-class="{'no-border': !$last}">
+
+                    <a class="scroll-list-toggle" ng-click="_expand_list = !_expand_list">
+                        <i ng-class="{ 'icon-arrow-down': _expand_list, 'icon-arrow-right': !_expand_list}"></i>
+                        <span class="bold" style="flex-grow: 1;">
+                            {{buildingName}}
+                        </span>
+                        <small>({{buildingRooms.length}})</small>
+                    </a>
+
+                    <ul class="scroll-list" ng-show="_expand_list">
+                        <li ng-repeat="(key,room) in buildingRooms|orderBy:'Name'" ng-init="roomType = Constants.ROOM_TYPE[room.Room_type]">
+                            <label class="checkbox">
+                                <input type="checkbox"
+                                    ng-change="saveInspectionRoomRelationship( inspection, room )"
+                                    ng-model="room[inspection.Key_id+'checked']"/>
+                                <span class="metro-checkbox">
+                                    <room-type-icon room-type="roomType"></room-type-icon>
+                                    <span once-text="room.Name"></span>
+                                    <i ng-if="room.IsDirty" class="icon-spinnery-dealie spinner small"></i>
+                                </span>
+                            </label>
                         </li>
                     </ul>
                 </td>
-                <td once-text="inspection.Schedule_year"></td>
-                <td once-text="inspection.Text_schedule_month"></td>
-                <td>
+                <td ng-if="$index == 0" rowspan="{{group.length}}" once-text="inspection.Schedule_year"></td>
+                <td ng-if="$index == 0" rowspan="{{group.length}}" once-text="inspection.Text_schedule_month"></td>
+                <td ng-if="$index == 0" rowspan="{{group.length}}">
                     <ul>
                         <li ng-repeat='inspector in inspection.Inspectors' once-text='inspector.Name'></li>
                     </ul>
                 </td>
-                <td>
+                <td ng-if="$index == 0" rowspan="{{group.length}}">
                     <ul>
                         <li ng-repeat='contact in inspection.LabPersonnel' once-text='contact.Name'>
                             <span once-text="contact.Name" ng-class="{'inactive-contact':!contact.Is_active}"></span>
                         </li>
                     </ul>
                 </td>
-                <td>
+                <td ng-if="$index == 0" rowspan="{{group.length}}">
                     <span ng-if="af.hasHazardType(Constants.MASTER_HAZARD_IDS.BIOLOGICAL)" ng-class="{'grayed-out': inspection.Is_rad}">
                         <img src="../img/biohazard-largeicon.png" style="width: 41px; max-width:30%"/>
                     </span>
@@ -102,7 +110,7 @@
                         <img src="../img/radiation-large-icon.png" style="width: 41px; max-width:30%"/>
                     </span>
                 </td>
-                <td>
+                <td ng-if="$index == 0" rowspan="{{group.length}}">
                     <span ng-if="inspection.Status">
                         <span once-text="inspection.Status"></span>
                         <span ng-if="inspection.Status == constants.INSPECTION.STATUS.SCHEDULED">
@@ -185,6 +193,7 @@
                                     <span class="comma-separated">
                                         <span ng-repeat="room in inspection.warning.old" class="subject">
                                             <room-type-icon room-type-name="room.Room_type"></room-type-icon>
+                                            <span once-text="room.Building_name"></span>
                                             <span once-text="room.Name"></span>
                                         </span>
                                     </span>
@@ -195,6 +204,7 @@
                                     <span class="comma-separated">
                                         <span ng-repeat="room in inspection.warning.unselected" class="subject">
                                             <room-type-icon room-type-name="room.Room_type"></room-type-icon>
+                                            <span once-text="room.Building_name"></span>
                                             <span once-text="room.Name"></span>
                                         </span>
                                     </span>
