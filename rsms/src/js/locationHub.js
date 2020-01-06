@@ -523,7 +523,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                 if( incompatible.length ){
                     // Incompatible assignments exist, so we cannot change to this room type
                     errors.push("Cannot change Room Type to '" + type.label + "' - it is assigned to " + incompatible.length + ' '
-                        + incompatible_types.join(', ') + " user" + (incompatible.length != 1) ? 's' : '');
+                        + incompatible_types.join(', ') + " user" + (incompatible.length != 1 ? 's' : ''));
                 }
             }
         }
