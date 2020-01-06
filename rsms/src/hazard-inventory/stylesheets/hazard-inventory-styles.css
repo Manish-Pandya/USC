@@ -48,6 +48,11 @@ ul li.yellowed > label.checkbox input[type=checkbox]:checked ~ span.metro-checkb
     font-style: italic;
 }
 
+/* Move comma over to the content */
+.inspection-warnings .comma-separated > .subject:not(:first-child)::before {
+    margin-left: -0.3em;
+}
+
 .inactive-pi {
     font-style: italic;
 }
