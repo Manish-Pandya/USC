@@ -109,7 +109,7 @@
                             <br>Scheduled ({{inspection.Schedule_month | getMonthName}})
                             <br>
                             <a style="margin:5px 0;" class="btn btn-danger left"
-                                ng-disabled="!is_beginnable"
+                                ng-if="is_beginnable"
                                 ng-click="is_beginnable && validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
                         </span>
 
@@ -147,7 +147,7 @@
                         <span ng-if="inspection.Status == constants.INSPECTION.STATUS.NOT_ASSIGNED">
                             <p>
                                 <a style="margin:5px 0;" class="btn btn-danger left"
-                                    ng-disabled="!is_beginnable"
+                                    ng-if="is_beginnable"
                                     ng-click="is_beginnable && validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
                             </p>
                         </span>
@@ -165,7 +165,7 @@
                             <span><br>(Scheduled for {{inspection.Schedule_month | getMonthName}})</span>
                             <br>
                             <a style="margin:5px 0;" class="btn btn-danger left"
-                                ng-disabled="!is_beginnable"
+                                ng-if="is_beginnable"
                                 ng-click="is_beginnable && validateInspection(inspection)"><i style="font-size:21px;margin:3px 2px 0" class="icon-zoom-in"></i>Begin Inspection</a>
                         </span>
                         <span ng-if="inspection.Status ==  constants.INSPECTION.STATUS.SUBMITTED_CAP">
