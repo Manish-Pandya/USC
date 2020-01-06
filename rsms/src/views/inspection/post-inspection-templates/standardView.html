@@ -123,7 +123,7 @@
                 <span>{{inspection.Cap_submitted_date | dateToISO}}</span>
             </td>
             <td class="action">
-                <a class="btn btn-success btn-default-focus" ng-click="approveCAP(inspection)" ng-if="!handlingApproveCap && !inspection.Date_closed && inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'
+                <a class="btn btn-success" ng-click="approveCAP(inspection)" ng-if="!handlingApproveCap && !inspection.Date_closed && inspection.Cap_submitted_date && inspection.Cap_submitted_date != '0000-00-00 00:00:00'
                     && rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], R[Constants.ROLE.NAME.SAFETY_INSPECTOR], R[Constants.ROLE.NAME.RADIATION_INSPECTOR]])">
                     <span>Approve CAP</span>
                 </a>
