@@ -995,7 +995,12 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
     $scope.assignUser = function (user, add){
         if( add ){
             // Assign to user, overwriting any existing
-            let new_assignment = angular.extend({'User_id': user.Key_id}, user);
+            let new_assignment = {
+                'Class': 'UserRoomAssignment',
+                'Role_name': $scope.roomType.assignable_to,
+                'User_id': user.Key_id,
+                'User': user
+            };
             $scope.roomCopy.UserAssignments = [new_assignment];
         }
         else {
