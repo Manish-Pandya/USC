@@ -44,6 +44,25 @@ var myLab = angular.module('myLab', [
     });
   }
 })
+.filter('cleanTypeEquipment', function(){
+  function isCleanType(q){
+    return q.Type.toUpperCase().includes('CLEAN');
+  }
+
+  return function( equipmentObjOrArray ){
+    if( !equipmentObjOrArray ){
+      return equipmentObjOrArray;
+    }
+
+    if( Array.isArray(equipmentObjOrArray) ){
+      return equipmentObjOrArray.filter(q => isCleanType);
+    }
+    else {
+      return isCleanType(equipmentObjOrArray);
+    }
+
+  };
+})
 .controller('ActionWidgetModalCtrl', function($scope, $modalInstance, widget, widget_functions){
 
   $scope.widget = widget;

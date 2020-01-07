@@ -17,7 +17,10 @@
                     {{insp.Room.Building.Alias || insp.Room.Building.Name}} {{insp.Room.Name}}
                 </span>
             </div>
-            <div>{{equipment.Type}}</div>
+            <div>
+                <span>{{equipment.Type}}</span>
+                <span ng-if="equipment | cleanTypeEquipment">*</span>
+            </div>
             <div>{{equipment.Make}}</div>
             <div>{{equipment.Model}}</div>
             <div>{{equipment.Serial_number}}</div>
@@ -38,4 +41,9 @@
             </div>
         </div>
     </div>
+
+    <div class="footnotes">
+        <div ng-if="(data | cleanTypeEquipment).length > 0" class="italic">* A Clean Bench is not a Biosafety Cabinet and provides only product protection. Do not use a Clean Bench with toxic or biohazardous materials.</div>
+    </div>
+
 </div>
