@@ -58,7 +58,7 @@
                     inactive: inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION
                               || inspection.Status == Constants.INSPECTION.STATUS.OVERDUE_CAP
                 }">
-                <td ng-init="_expand_list = inspection.Rooms.length <= 5"
+                <td ng-init="_expand_list = inspection.Rooms.length <= 8"
                     class="room-cell"
                     ng-class="{'no-border': !$last}">
 
