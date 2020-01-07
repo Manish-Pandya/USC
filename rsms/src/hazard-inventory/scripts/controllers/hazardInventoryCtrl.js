@@ -145,6 +145,7 @@ angular.module('HazardInventory')
         $scope.openRoomsModal = function (hazard, masterHazard) {
             hazard.loadSubHazards();
             var modalData = {};
+            modalData.PI = $scope.PI;
             modalData.Hazard = hazard;
             if (masterHazard) modalData.GrandParent = masterHazard;
 
