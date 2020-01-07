@@ -93,6 +93,11 @@ td.room-cell a.scroll-list-toggle {
     justify-content: space-between;
 }
 
+/* Prevent wrapping of selected room counts */
+td.room-cell a.scroll-list-toggle small {
+    white-space: nowrap;
+}
+
 ul.scroll-list {
     /* Limit the height of room lists, and scroll them when needed */
     overflow-y: auto;
