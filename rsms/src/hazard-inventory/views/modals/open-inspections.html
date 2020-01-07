@@ -67,7 +67,7 @@
                         <span class="bold" style="flex-grow: 1;">
                             {{buildingName}}
                         </span>
-                        <small>({{buildingRooms.length}})</small>
+                        <small>({{(buildingRooms | selectedForInspection:inspection).length}} / {{buildingRooms.length}})</small>
                     </a>
 
                     <ul class="scroll-list" ng-show="_expand_list">
