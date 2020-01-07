@@ -64,6 +64,12 @@
 
 .locationTable tr .lhcol_campus { width:12%; }
 
+.locationTable tr .lhcol_courses { width:15%; }
+.locationTable tr .lhcol_courses pre {
+  font-family: inherit;
+  word-break: keep-all;
+}
+
 .lhcol_pidept .pi_filters span label { display: inline; }
 .lhcol_pidept .pi_filters span input { width: inherit !important; }
 .lhcol_pidept .pi_filters span { margin-right: 10%; }
