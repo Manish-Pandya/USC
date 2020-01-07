@@ -137,3 +137,18 @@ angular
             return 'Safety Equipment';
         };
     })
+
+    .filter('selectedForInspection', function () {
+        /**
+         * Returns any of the provided Rooms that are selected
+         * for the provided inspection
+         */
+        return function(rooms, inspection){
+            if( !inspection || !rooms || !rooms.length ){
+                return rooms;
+            }
+
+            let key = inspection.Key_id + 'checked';
+            return rooms.filter(r => r[key] == true );
+        }
+    })
