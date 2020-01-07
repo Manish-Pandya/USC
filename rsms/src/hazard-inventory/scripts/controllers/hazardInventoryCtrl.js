@@ -132,6 +132,7 @@ angular.module('HazardInventory')
         $scope.openSubsModal = function (hazard, parent) {
             hazard.loadSubHazards();
             var modalData = {};
+            modalData.PI = $scope.PI;
             modalData.Hazard = hazard;
             modalData.Parent = parent;
             af.setModalData(modalData);
