@@ -1,5 +1,5 @@
   <div cg-busy="{promise:piPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
-<div style="margin-top:85;">
+<div>
     <div class="alert alert-info inventory-due-message" ng-if="pi && pi.Quarterly_inventories.length && !pi.Quarterly_inventories[0].Sign_off_date">
         <h3>You have an inventory due on {{pi.Quarterly_inventories[0].Due_date | dateToISO}} <a ui-sref="quarterly-inventory({ pi: pi.Key_id})" class="btn">View Inventory</a></h3>
     </div>    
@@ -16,7 +16,7 @@
         <h3>Your Authorization #{{piAuth.Authorization_number}} is Terminated. Functionality will be limited.</h3>
     </div>
 
-    <div class="centerIcons" ng-if="pi" ng-class="{'move-down': pi.Quarterly_inventories.length && !pi.Quarterly_inventories[0].Sign_off_date || (pi && getNeedsLabWipes(pi))}">      
+    <div class="centerIcons" ng-if="pi" >
       <div class="span2 rsmsCenterIconContainer">
         <a class="span12 parcels" style="background: rgb(122, 6, 109);" ui-sref="pi-orders({ pi: pi.Key_id})">
           <i class="icon-box"></i>
