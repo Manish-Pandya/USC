@@ -3982,22 +3982,17 @@ btn-mini {
 .fa-tractor:before { content: "\f112"; }
 .fa-user-with-headset:before { content: "\f113"; }
 
-.filter-holder{
-  z-index: 1060;
-  margin-top: -31px;
-  position: fixed;
-
-  /* Mimic bootstrapmetro's navbar.fixed position */
-  left: 70px;
-  right: 70px;
+.filter-holder {
+  display: flex;
+  align-items: center;
 }
+
 .filter-holder div{
   margin-right: 15px;
   display: inline-block;
 }
 .filter-holder div label{
   font-size: 18px;
-  float:left;
   font-weight: bold;
   margin: 2px;
 }

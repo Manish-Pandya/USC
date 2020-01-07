@@ -22,7 +22,6 @@
         <th>Remove Room</th>
         <th>Building</th>
         <th>Room Number</th>
-        <th>Room Type</th>
         <th>Room Use</th>
         <th>Room Hazards</th>
     </tr>
@@ -36,8 +35,10 @@
             <img ng-show="room.IsDirty" class="smallLoading" src="../../img/loading.gif" />
         </td>
         <td width="25%">{{room.Building.Name}}</td>
-        <td width="15%">{{room.Name}}</td>
-        <td width="10%"><room-type-icon room-type-name="room.Room_type" show-type-label="true"></room-type-icon></td>
+        <td width="15%">
+            <room-type-icon room-type-name="room.Room_type"></room-type-icon>
+            {{room.Name}}
+        </td>
         <td width="25%">{{room.Purpose}}</td>
         <td width="15%">
             <span ng-init="room = getRoomUrlString(room)"></span>
@@ -74,7 +75,7 @@
                     <label class="control-label bold" for="selectType">Room Type:</label>
                     <select  required name="selectType" style="width: auto; margin:3px 0 0"
                             ng-model="newRoom.Room_type"
-                            ng-options="type.name as type.label for type in Constants.ROOM_TYPE | toArray">
+                            ng-options="type.name as type.label for type in Constants.ROOM_TYPE | toArray | filter:{assignable_to: Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR}">
                         <option value="">--Select Type--</option>
                     </select>
                 </div>

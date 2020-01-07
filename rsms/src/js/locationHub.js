@@ -523,7 +523,7 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                 if( incompatible.length ){
                     // Incompatible assignments exist, so we cannot change to this room type
                     errors.push("Cannot change Room Type to '" + type.label + "' - it is assigned to " + incompatible.length + ' '
-                        + incompatible_types.join(', ') + " user" + (incompatible.length != 1) ? 's' : '');
+                        + incompatible_types.join(', ') + " user" + (incompatible.length != 1 ? 's' : ''));
                 }
             }
         }
@@ -731,7 +731,7 @@ routeCtrl = function($scope, $location,$rootScope){
         {},
         { route: '/rooms/research-labs', name: 'Research Labs' },
         { route: '/rooms/teaching-labs', name: 'Teaching Labs' },
-        { route: '/rooms/animal-facilities', name: 'Animal Rooms' },
+        { route: '/rooms/animal-facilities', name: 'Animal Facilities' },
         {},
         { route: '/buildings', name: 'Buildings' },
         { route: '/campuses', name: 'Campuses' }
@@ -995,7 +995,12 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
     $scope.assignUser = function (user, add){
         if( add ){
             // Assign to user, overwriting any existing
-            let new_assignment = angular.extend({'User_id': user.Key_id}, user);
+            let new_assignment = {
+                'Class': 'UserRoomAssignment',
+                'Role_name': $scope.roomType.assignable_to,
+                'User_id': user.Key_id,
+                'User': user
+            };
             $scope.roomCopy.UserAssignments = [new_assignment];
         }
         else {

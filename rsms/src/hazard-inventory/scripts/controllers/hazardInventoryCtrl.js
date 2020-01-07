@@ -132,6 +132,7 @@ angular.module('HazardInventory')
         $scope.openSubsModal = function (hazard, parent) {
             hazard.loadSubHazards();
             var modalData = {};
+            modalData.PI = $scope.PI;
             modalData.Hazard = hazard;
             modalData.Parent = parent;
             af.setModalData(modalData);
@@ -144,6 +145,7 @@ angular.module('HazardInventory')
         $scope.openRoomsModal = function (hazard, masterHazard) {
             hazard.loadSubHazards();
             var modalData = {};
+            modalData.PI = $scope.PI;
             modalData.Hazard = hazard;
             if (masterHazard) modalData.GrandParent = masterHazard;
 
@@ -234,7 +236,8 @@ angular.module('HazardInventory')
             af.setModalData(modalData);
             var modalInstance = $modal.open({
                 templateUrl: 'views/modals/open-inspections.html',
-                controller: 'HazardInventoryModalCtrl'
+                controller: 'HazardInventoryModalCtrl',
+                windowClass: 'open-inspections-modal'
             });
 
             modalInstance.result.then(function () {
