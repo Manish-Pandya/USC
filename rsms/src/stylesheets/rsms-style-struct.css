@@ -102,3 +102,12 @@ ul.grid-list li > * {
 .hub-toolbar { margin-top: 10px; }
 
 .hub-body { }
+
+/* Building:Room List (CSV) */
+.room-list {
+    margin-left: 15px;
+}
+
+.room-list-building {
+    text-decoration: underline;
+}

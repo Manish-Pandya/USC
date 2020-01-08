@@ -41,7 +41,11 @@ ul li.yellowed > label.checkbox input[type=checkbox]:checked ~ span.metro-checkb
 }
 
 .inspection-warnings ul {
-    margin-left: 24px;
+    margin-left: 15px;
+}
+
+.inspection-warnings ul li {
+    margin-bottom: 10px;
 }
 
 .inspection-warnings .subject {

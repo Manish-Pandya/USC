@@ -185,30 +185,16 @@
                         <div ng-if="inspection.warning" class="inspection-warnings">
                             <h4>
                                 <i class="icon-warning"></i>
-                                <span>Please verify that the selected rooms are correct.</span>
+                                <span>Please verify the selected rooms.</span>
                             </h4>
                             <ul>
                                 <li ng-if="inspection.warning.old.length">
-                                    The following room<span ng-if="inspection.warning.old.length != 1">s</span>
-                                    <span>{{inspection.warning.old | isAre}}</span> no longer assigned to this PI:
-                                    <span class="comma-separated">
-                                        <span ng-repeat="room in inspection.warning.old" class="subject">
-                                            <room-type-icon room-type-name="room.Room_type"></room-type-icon>
-                                            <span once-text="room.Building_name"></span>
-                                            <span once-text="room.Name"></span>
-                                        </span>
-                                    </span>
+                                    The following <span>{{inspection.warning.old | isAre}}</span> no longer assigned to this PI:
+                                    <room-list rooms="inspection.warning.old"></room-list>
                                 </li>
                                 <li ng-if="inspection.warning.unselected.length">
-                                    The following room<span ng-if="inspection.warning.unselected.length != 1">s</span>
-                                    <span>{{inspection.warning.unselected | isAre}}</span> not selected for inspection:
-                                    <span class="comma-separated">
-                                        <span ng-repeat="room in inspection.warning.unselected" class="subject">
-                                            <room-type-icon room-type-name="room.Room_type"></room-type-icon>
-                                            <span once-text="room.Building_name"></span>
-                                            <span once-text="room.Name"></span>
-                                        </span>
-                                    </span>
+                                    The following <span>{{inspection.warning.unselected | isAre}}</span> not selected for inspection:
+                                    <room-list rooms="inspection.warning.unselected"></room-list>
                                 </li>
                             </ul>
                         </div>
