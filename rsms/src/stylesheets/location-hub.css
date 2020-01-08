@@ -67,6 +67,9 @@
 .locationTable tr .lhcol_courses { width:15%; }
 .locationTable tr .lhcol_courses pre {
   font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+
   word-break: keep-all;
 }
 
