@@ -73,7 +73,7 @@ var myLab = angular.module('myLab', [
     }
 
     if( Array.isArray(equipmentObjOrArray) ){
-      return equipmentObjOrArray.filter(q => isCleanType);
+      return equipmentObjOrArray.filter(isCleanType);
     }
     else {
       return isCleanType(equipmentObjOrArray);
