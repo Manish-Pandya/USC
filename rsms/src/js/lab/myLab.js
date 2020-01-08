@@ -29,20 +29,57 @@ var myLab = angular.module('myLab', [
   };
 })
 .filter('recentEquipmentInspections', function(){
+  // Get current year from client
   var current_year = new Date().getFullYear();
 
+  // Define EquipmentInspection date fields to check
+  var eq_inspection_date_fields = ['Certification_date', 'Due_date', 'Fail_date'];
+
+  /**
+   * Retrieves all inspections dated for this year or earlier
+   */
   return function(equipmentInspections){
     if(!equipmentInspections) return;
-    return equipmentInspections.filter(function(i){
-      // Include inspections which are either:
-      //  1. Uncertified and not yet failed or failed this year
-      var cond_one = (i.Is_uncertified || !i.Certification_date) && (!i.Fail_date || i.Fail_date.indexOf(current_year) > -1);
-      //  2. Certified or Due this year
-      var cond_two = (i.Certification_date && i.Certification_date.indexOf(current_year) > -1) || (i.Due_date && i.Due_date.indexOf(current_year) > -1);
 
-      return cond_one || cond_two;
+    return equipmentInspections.filter( i => {
+        return eq_inspection_date_fields.find(f => {
+            return i[f] && new Date(i[f]).getFullYear() <= current_year;
+        });
     });
+  };
+})
+.filter('hasReports', function(){
+  // EquipmentInspection fields which define file paths
+  var eq_inspection_report_fields = ['Report_path', 'Quote_path', 'Decon_path'];
+
+  /**
+   * Retrieves all inspections which include report data
+   */
+  return function(inspections){
+    if(!inspections) return inspections;
+
+    // Return any inspection which has any report field populated
+    return inspections.filter(i => eq_inspection_report_fields.find(f => i[f]));
+  };
+})
+.filter('cleanTypeEquipment', function(){
+  function isCleanType(q){
+    return q.Type.toUpperCase().includes('CLEAN');
   }
+
+  return function( equipmentObjOrArray ){
+    if( !equipmentObjOrArray ){
+      return equipmentObjOrArray;
+    }
+
+    if( Array.isArray(equipmentObjOrArray) ){
+      return equipmentObjOrArray.filter(q => isCleanType);
+    }
+    else {
+      return isCleanType(equipmentObjOrArray);
+    }
+
+  };
 })
 .controller('ActionWidgetModalCtrl', function($scope, $modalInstance, widget, widget_functions){
 

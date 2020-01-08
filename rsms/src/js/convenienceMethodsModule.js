@@ -782,6 +782,24 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
         }
     };
 })
+.directive('roomList', function(){
+    return {
+        restrict: 'E',
+        scope: {
+            rooms: "="
+        },
+        template:
+        `<div class="room-list" ng-repeat="(buildingName, rooms) in rooms | groupBy:'Building_name'">
+            <span class="room-list-building">{{buildingName}}:</span>
+            <span class="comma-separated">
+                <span ng-repeat="room in rooms | orderBy:'Name'" class="subject">
+                    <room-type-icon room-type-name="room.Room_type"></room-type-icon>
+                    <span once-text="room.Name"></span>
+                </span>
+            </span>
+        </div>`
+    };
+})
 .directive('scrollTable', ['$window', '$location', '$rootScope', '$timeout', function($window, $location, $rootScope,$timeout) {
     return {
         restrict: 'A',

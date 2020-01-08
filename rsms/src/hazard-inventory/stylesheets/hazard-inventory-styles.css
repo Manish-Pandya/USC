@@ -32,6 +32,11 @@ ul li.yellowed > label.checkbox input[type=checkbox]:checked ~ span.metro-checkb
     color: orangered;
 }
 
+.inspection-warnings .inspection-warning {
+    display: flex;
+    justify-content: flex-start;
+}
+
 .inspection-warnings h4 {
     display: flex;
 }
@@ -41,7 +46,11 @@ ul li.yellowed > label.checkbox input[type=checkbox]:checked ~ span.metro-checkb
 }
 
 .inspection-warnings ul {
-    margin-left: 24px;
+    margin-left: 10px;
+}
+
+.inspection-warnings ul li {
+    margin-bottom: 10px;
 }
 
 .inspection-warnings .subject {
