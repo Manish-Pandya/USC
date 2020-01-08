@@ -104,10 +104,6 @@ ul.grid-list li > * {
 .hub-body { }
 
 /* Building:Room List (CSV) */
-.room-list {
-    margin-left: 15px;
-}
-
 .room-list-building {
     text-decoration: underline;
 }

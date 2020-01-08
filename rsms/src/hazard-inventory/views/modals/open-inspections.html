@@ -183,18 +183,25 @@
                         </span>
 
                         <div ng-if="inspection.warning" class="inspection-warnings">
-                            <h4>
-                                <i class="icon-warning"></i>
-                                <span>Please verify the selected rooms.</span>
-                            </h4>
+                            <h4>Please verify the selected rooms.</h4>
                             <ul>
                                 <li ng-if="inspection.warning.old.length">
-                                    The following <span>{{inspection.warning.old | isAre}}</span> no longer assigned to this PI:
-                                    <room-list rooms="inspection.warning.old"></room-list>
+                                    <span class="inspection-warning">
+                                        <i class="icon-warning"></i>
+                                        <span style="padding-left:5px;">
+                                            The following <span>{{inspection.warning.old | isAre}}</span> no longer assigned to this PI:
+                                            <room-list rooms="inspection.warning.old"></room-list>
+                                        </span>
+                                    </span>
                                 </li>
                                 <li ng-if="inspection.warning.unselected.length">
-                                    The following <span>{{inspection.warning.unselected | isAre}}</span> not selected for inspection:
-                                    <room-list rooms="inspection.warning.unselected"></room-list>
+                                    <span class="inspection-warning">
+                                        <i class="icon-warning"></i>
+                                        <span style="padding-left:5px;">
+                                            The following <span>{{inspection.warning.unselected | isAre}}</span> not selected for inspection:
+                                            <room-list rooms="inspection.warning.unselected"></room-list>
+                                        </span>
+                                    </span>
                                 </li>
                             </ul>
                         </div>
