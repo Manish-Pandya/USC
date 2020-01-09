@@ -115,7 +115,7 @@ ul.banner-nav li span {
     .hub-theme-yellow .theme-highlight-element,
     .hub-theme-yellow .hub-banner .banner-nav a:hover,
     .hub-theme-yellow .hub-banner .banner-nav a.active-nav {
-        background: #006B5F;
+        background: lightyellow;
     }
 
     .hub-theme-yellow .theme-underlight-element,
