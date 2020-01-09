@@ -836,7 +836,6 @@ class Rad_ActionManager extends ActionManager {
         $LOG->debug("Read existing CarboyUseCycle $cycle_id");
         $cycle = $cycleDao->getById($cycle_id);
 
-        DBConnection::get()->beginTransaction();
         $newStatus = $dto['cycle']['status'];
 
         if( $newStatus != null && $newStatus != $cycle->getStatus() ){
@@ -894,8 +893,6 @@ class Rad_ActionManager extends ActionManager {
 
         // Save
         $cycle = $cycleDao->save($cycle);
-
-        DBConnection::get()->commit();
 
         $LOG->info("Saved Carboy cycle details: " . $cycle);
 
@@ -1578,14 +1575,9 @@ class Rad_ActionManager extends ActionManager {
         $LOG->debug("Read existing Pickup $pickup_id");
         $pickup = $pickupDao->getById($pickup_id);
 
-        $LOG->debug("Begin DB transaction...");
-        DBConnection::get()->beginTransaction();
         $pickup->setNotes( $pickup_notes );
 
         $pickup = $pickupDao->save($pickup);
-
-        DBConnection::get()->commit();
-        $LOG->debug("...Committed transaction");
 
         // Saved
         return true;
@@ -1616,9 +1608,6 @@ class Rad_ActionManager extends ActionManager {
         $LOG->debug("Read existing Pickup $pickup_id");
         $pickup = $pickupDao->getById($dto['pickup']['id']);
 
-        $LOG->debug("Begin DB transaction...");
-        DBConnection::get()->beginTransaction();
-
         // Update Pickup details
         // TODO: VALIDATE
         $newStatus = $dto['pickup']['status'];
@@ -1641,9 +1630,6 @@ class Rad_ActionManager extends ActionManager {
 
         // Handle partial Pickups - ensure no new pickup is required
         $this->handlePickup($pickup->getPrincipal_investigator_id());
-
-        DBConnection::get()->commit();
-        $LOG->debug("...Committed transaction");
 
         // Composite DTO
         $savedDto = new SavedPickupDetailsDto($pickup, $savedContainers);
