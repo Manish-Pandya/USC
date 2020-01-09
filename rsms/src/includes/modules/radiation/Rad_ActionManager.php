@@ -761,9 +761,10 @@ class Rad_ActionManager extends ActionManager {
     \*****************************************************************************/
 
 
-    function saveAuthorization() {
+    function saveAuthorization( Authorization $auth ) {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-        $decodedObject = $this->convertInputJson();
+        $decodedObject = $auth ?? $this->convertInputJson();
+
         if( $decodedObject === NULL ) {
             return new ActionError('Error converting input stream to Authorization', 202);
         }
@@ -780,9 +781,10 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
-    function saveIsotope() {
+    function saveIsotope( Isotope $isotope ) {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-        $decodedObject = $this->convertInputJson();
+        $decodedObject = $isotope ?? $this->convertInputJson();
+
         if( $decodedObject === NULL ) {
             return new ActionError('Error converting input stream to Isotope', 202);
         }
@@ -1192,9 +1194,9 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
-    function saveParcel() {
+    function saveParcel( $parcel = null ) {
         $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
-        $decodedObject = $this->convertInputJson();
+        $decodedObject = $parcel ?? $this->convertInputJson();
 
         if( $decodedObject === NULL ) {
             return new ActionError('Error converting input stream to Parcel', 202);
@@ -2972,9 +2974,9 @@ class Rad_ActionManager extends ActionManager {
 
     }
 
-    public function savePIAuthorization(){
+    public function savePIAuthorization( PIAuthorization $piauth ){
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
-    	$decodedObject = $this->convertInputJson();
+        $decodedObject = $piauth ?? $this->convertInputJson();
 
     	if( $decodedObject === NULL ) {
     		return new ActionError('Error converting input stream to PIAuthorization', 202);
