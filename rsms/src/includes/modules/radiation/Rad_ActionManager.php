@@ -9,6 +9,13 @@
  */
 class Rad_ActionManager extends ActionManager {
 
+    private const DECODE_FN = 'Rad_ActionManager::decodeObject';
+    private static function decodeObject( &$obj ){
+        // Ensure these have been decoded...
+        if(is_array($obj))
+            return JsonManager::assembleObjectFromDecodedArray($obj);
+        else return $obj;
+    }
 
     /*****************************************************************************\
      *                            Get Functions                                  *
@@ -1417,12 +1424,7 @@ class Rad_ActionManager extends ActionManager {
                 $amountDao = new GenericDAO(new ParcelUseAmount());
                 if($decodedObject->getParcelUseAmounts() != null){
                     $LOG->trace("Reading use-amounts from incoming data");
-                    $amounts = array_map( function($amt){
-                        // Ensure these have been decoded...
-                        if(is_array($amt))
-                            return JsonManager::assembleObjectFromDecodedArray($amt);
-                        else return $amt;
-                    }, $decodedObject->getParcelUseAmounts());
+                    $amounts = array_map( self::DECODE_FN, $decodedObject->getParcelUseAmounts());
 
                     $LOG->debug('Read ' . count($amounts) . ' ParcelUseAmounts');
                 }else{
@@ -2985,14 +2987,15 @@ class Rad_ActionManager extends ActionManager {
     		return $decodedObject;
     	}
     	else {
-            $rooms = $decodedObject->getRooms();
-            $users = $decodedObject->getUsers();
-            $conditions = $decodedObject->getConditions();
-            $departments = $decodedObject->getDepartments();
+            $rooms = $decodedObject->getRooms() ?? [];
+            $users = $decodedObject->getUsers() ?? [];
+            $conditions = $decodedObject->getConditions() ?? [];
+            $departments = $decodedObject->getDepartments() ?? [];
 
-            if( $conditions == null ){
-                $conditions = array();
-            }
+            $rooms = array_map(self::DECODE_FN, $rooms);
+            $users = array_map(self::DECODE_FN, $users);
+            $conditions = array_map(self::DECODE_FN, $conditions);
+            $departments = array_map(self::DECODE_FN, $departments);
 
     		//remove all the departments and rooms from the Authorization, if it is an old one
     		if($decodedObject->getKey_id() != NULL){
@@ -3027,49 +3030,51 @@ class Rad_ActionManager extends ActionManager {
     		$piAuth = $dao->save($decodedObject);
     		// add the relevant rooms and departments to the db
     		foreach($rooms as $room){
-    			$dao->addRelatedItems($room["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$ROOMS_RELATIONSHIP));
+    			$dao->addRelatedItems($room->getKey_id(),$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$ROOMS_RELATIONSHIP));
     		}
 
     		foreach($departments as $dept){
-    			$dao->addRelatedItems($dept["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$DEPARTMENTS_RELATIONSHIP));
+    			$dao->addRelatedItems($dept->getKey_id(),$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$DEPARTMENTS_RELATIONSHIP));
     		}
 
 
     		foreach($users as $user){
-    			$dao->addRelatedItems($user["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$USERS_RELATIONSHIP));
+    			$dao->addRelatedItems($user->getKey_id(),$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$USERS_RELATIONSHIP));
     		}
 
     		foreach($conditions as $condition){
                 $LOG->debug("Add to auth: $condition");
-    			$dao->addRelatedItems($condition["Key_id"],$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$CONDITIONS_RELATIONSHIP), $condition["Order_index"]);
+    			$dao->addRelatedItems($condition->getKey_id(),$decodedObject->getKey_id(),DataRelationship::fromArray(PIAuthorization::$CONDITIONS_RELATIONSHIP), $condition->getOrder_index());
     		}
 
 
 			//New PIAuthorizations may be amendments of old ones, in which case we save relationships for child Authorizations, if any
 			if($decodedObject->getAuthorizations() != NULL){
+                $authorizations = array_map(self::DECODE_FN, $decodedObject->getAuthorizations());
+
                 $authDao = new GenericDAO(new Authorization());
 
-				foreach($decodedObject->getAuthorizations() as $auth){
+				foreach($authorizations as $auth){
 					$newAuth = new Authorization();
 					$newAuth->setPi_authorization_id($piAuth->getKey_id());
-					$newAuth->setIsotope_id($auth["Isotope_id"]);
-					$newAuth->setMax_quantity($auth["Max_quantity"]);
+					$newAuth->setIsotope_id($auth->getIsotope_id());
+					$newAuth->setMax_quantity($auth->getMax_quantity());
 
                     if( array_key_exists('Approval_date', $auth) ){
-                        $newAuth->setApproval_date($auth["Approval_date"]);
+                        $newAuth->setApproval_date($auth->getApproval_date());
                     }
 
-                    $newAuth->setForm($auth["Form"]);
+                    $newAuth->setForm($auth->getForm());
 					$newAuth->setIs_active($decodedObject->getTermination_date() == null);
                     //if the PiAuthorization has a key_id, we know we are editing one that already exists.
                     //In that case, we should save it's old authorizations, rather than creating new ones, so we set the key_id for each of them
                     if($id != null){
                         if( array_key_exists('Key_id', $auth) ){
-                            $newAuth->setKey_id($auth["Key_id"]);
+                            $newAuth->setKey_id($auth->getKey_id());
                         }
 
                         if( array_key_exists('Date_created', $auth) ){
-                            $newAuth->setDate_created($auth["Date_created"]);
+                            $newAuth->setDate_created($auth->getDate_created());
                         }
                     }
                     $newAuth->makeOriginal_pi_auth_id();
