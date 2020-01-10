@@ -310,9 +310,12 @@ class ActionDispatcher {
     /**
      * Utility function for retrieving a request parameter by name.
      * Special conversions (such as for 'null' and 'false' strings) are performed.
+     *
+     * If a reflection parameter is passed and its declared type matches
+     * that of the parsed Request Body, the parsed body will be returned
      */
     public static function getValueFromRequest( &$paramOrName ){
-
+        $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
         $valueName = is_string($paramOrName) ? $paramOrName : $paramOrName->name;
 
         if( array_key_exists($valueName, $_REQUEST) ){
@@ -328,14 +331,52 @@ class ActionDispatcher {
                 }
             }
 
+            $LOG->trace("$valueName=$val");
             return $val;
         }
-        else if ( !is_string($paramOrName) && $paramOrName->isOptional() && $paramOrName->isDefaultValueAvailable() ){
-            return $paramOrName->getDefaultValue();
+        else if ( !is_string($paramOrName) ){
+            // This is a Parameter reflection
+
+            // Is there input which matches parameter type available?
+            $body = self::getRequestBody();
+            if( isset($body) && $paramOrName->hasType() && get_class($body) == $paramOrName->getType() ){
+                $LOG->trace("$valueName=$body");
+                return $body;
+            }
+
+            // Is there a default value available?
+            if ( $paramOrName->isOptional() && $paramOrName->isDefaultValueAvailable() ){
+                $LOG->trace("$valueName=DEFAULT");
+                return $paramOrName->getDefaultValue();
+            }
+
         }
-        else{
-            return null;
+
+        return null;
+    }
+
+    static $_REQUEST_BODY;
+    static $_DECODED_REQUEST_BODY = false;
+    static function getRequestBody(){
+        if( self::$_DECODED_REQUEST_BODY == true ){
+            return self::$_REQUEST_BODY;
         }
+
+        // If request body is json data, then decode it
+        if( isset($_SERVER["CONTENT_TYPE"]) && stristr($_SERVER["CONTENT_TYPE"], 'application/json') ){
+            $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
+            $LOG->trace("Attempt to parse input of type " . $_SERVER["CONTENT_TYPE"]);
+            try {
+                self::$_REQUEST_BODY = JsonManager::decodeInputStream();
+            }
+            catch( Exception $e ){
+                // eat it
+                $LOG->error($e);
+            }
+        }
+
+        self::$_DECODED_REQUEST_BODY = true;
+        return self::$_REQUEST_BODY;
     }
 }
 ?>
