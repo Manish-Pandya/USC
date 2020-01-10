@@ -1082,7 +1082,6 @@ div.fake-table .table-row > div div.pickup-comments {
 }
 
     .parcel-list ul.scroll-container {
-        max-height: 300px !important;
         overflow-y: auto;
         overflow-x: hidden
     }
