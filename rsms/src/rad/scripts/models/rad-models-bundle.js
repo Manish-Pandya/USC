@@ -592,6 +592,7 @@ extend(ParcelUse, GenericModel);
 //constructor
 var ParcelUseAmount = function () { };
 ParcelUseAmount.prototype = {
+    className: 'ParcelUseAmount',
 
     eagerAccessors: [
 		{ method: "loadCarboy", boolean: "Carboy_id" },

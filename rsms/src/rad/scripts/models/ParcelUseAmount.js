@@ -19,6 +19,7 @@ ParcelUseAmount.prototype = {
     	dataLoader.loadChildObject(this, "SolidsContainer", "SolidsContainer", this.SolidsContainer_id);
     },
 
+    className:"ParcelUseAmount",
     Class:"ParcelUseAmount"
 }
 
