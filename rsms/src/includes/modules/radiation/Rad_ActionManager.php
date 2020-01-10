@@ -480,6 +480,11 @@ class Rad_ActionManager extends ActionManager {
             EntityMap::lazy("getPour_allowed_date")
         ));
 
+        EntityManager::with_entity_maps(Carboy::class, array(
+            EntityMap::lazy("getCarboy_use_cycles"),
+            EntityMap::lazy("getCurrent_carboy_use_cycle")
+        ));
+
         EntityManager::with_entity_maps(WasteBag::class, array(
             EntityMap::lazy("getContainer"),
             EntityMap::lazy("getPickup"),
