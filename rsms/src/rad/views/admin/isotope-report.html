@@ -2,8 +2,10 @@
 
 <div class="right-column">
     <div class="well two-thirds auths">
-        <h1 class="auth-report">
-            <i class="icon-copy"></i>Total Inventory Report            
+        <h1 class="auth-report even-content" style="align-items: flex-start;">
+            <i class="icon-copy"></i>
+            <span style="flex-grow: 1;">Total Inventory Report</span>
+            <small ng-if="date_loaded" style="align-self: flex-end; font-style: italic;">Generated {{date_loaded | date:'short'}}</small>
         </h1>
         <div class="card full authReports">
             <table class="table striped isotope-report">

@@ -3219,6 +3219,9 @@ angular.module('00RsmsAngularOrmApp')
     .controller('IsotopeReportCtrl', function ($scope, actionFunctionsFactory, $rootScope) {
     $rootScope.loading = actionFunctionsFactory.getInventoryReport().then(function () {
         $scope.reports = dataStore.RadReportDTO;
+        if( $scope.reports && $scope.reports.length ){
+            $scope.date_loaded = new Date($scope.reports[0].ReportDate);
+        }
     });
 })
     .controller('ZapCtrl', function ($scope, $modal) {

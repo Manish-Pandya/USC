@@ -23,6 +23,9 @@ class RadReportDTO
 	private $auth_limit;
 	private $total_quantity;
 
+	public function getKey_id(){ return $this->getIsotope_id(); }
+	public function getReportDate(){ return date('Y-m-d G:i:s'); }
+
 	public function getTotal_quantity(){
 		return (float) $this->total_quantity;
 	}
