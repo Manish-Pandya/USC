@@ -98,6 +98,14 @@
 
     }
 
+	protected function getToStringParts(){
+		return [
+			'curie_level=' . $this->curie_level,
+            'waste_type_id=' . $this->waste_type_id,
+            'parcel_use_id=' . $this->parcel_use_id
+		];
+	}
+
     public static function defaultEntityMaps(){
     	$entityMaps = array();
     	$entityMaps[] = EntityMap::lazy("getCarboy");
