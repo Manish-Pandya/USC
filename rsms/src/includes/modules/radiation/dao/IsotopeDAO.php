@@ -13,18 +13,19 @@ class IsotopeDAO extends GenericDAO {
 			isotope_id,
 			isotope_name,
 			auth_limit,
-			ROUND( COALESCE(SUM( parcel_quantity ), 0), 7) AS total_ordered,
+			ROUND( COALESCE(SUM( parcel_quantity_ordered ), 0), 7) AS total_ordered,
 			ROUND( SUM( total_disposed ), 7) AS disposed,
 			ROUND( SUM( total_waste ), 7) AS waste,
-			ROUND( COALESCE(SUM( parcel_quantity ), 0) - SUM( total_disposed ), 7) AS total_quantity,
-			ROUND( COALESCE(SUM( parcel_quantity ), 0) - SUM( total_disposed ) - SUM( total_waste ), 7) AS total_unused
+			ROUND( COALESCE(SUM( parcel_quantity_current ), 0) - SUM( total_disposed ), 7) AS total_quantity,
+			ROUND( COALESCE(SUM( parcel_quantity_current ), 0) - SUM( total_disposed ) - SUM( total_waste ), 7) AS total_unused
 		FROM (
 			SELECT
 				isotope_id,
 				isotope_name,
 				auth_limit,
 				parcel_id,
-				parcel_quantity - COALESCE(SUM( transfer_amount ), 0) AS parcel_quantity,
+				parcel_quantity AS parcel_quantity_ordered,
+				parcel_quantity - COALESCE(SUM( transfer_amount ), 0) AS parcel_quantity_current,
 				COALESCE(SUM( use_quantity ), 0) AS amount,
 				COALESCE(SUM( disposed_amount ), 0) AS total_disposed,
 				COALESCE(SUM( waste_amount ), 0) AS total_waste
