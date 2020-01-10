@@ -701,6 +701,7 @@ angular.module('00RsmsAngularOrmApp')
                 }
             }
             else {
+                amt.Is_active = false;  // Sample use is always Inactive
                 amt.Curie_level = max - total;
                 amt.Curie_level = Math.round(amt.Curie_level * 10000000000) / 10000000000;
                 if (max < total || total < 0)
