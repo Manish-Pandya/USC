@@ -1523,6 +1523,16 @@ class Rad_ActionManager extends ActionManager {
                             }
                         }
 
+                        // Set active status
+                        // All use amounts are Active unless it is of type Sample
+                        if($newAmount->getWaste_type()->getName() == "Sample"){
+                            $newAmount->setIs_active(false);
+                        }
+                        else {
+                            $newAmount->setIs_active(true);
+                        }
+
+                        // Save the amount
                         $amountDao->save($newAmount);
                     }
                     //if a ParcelUseAmount has no activity, we assume it's supposed to be deleted
