@@ -10,10 +10,10 @@
 class Rad_ActionManager extends ActionManager {
 
     private const DECODE_FN = 'Rad_ActionManager::decodeObject';
-    private static function decodeObject( &$obj ){
+    private static function decodeObject( &$obj, $modelObject = null ){
         // Ensure these have been decoded...
         if(is_array($obj))
-            return JsonManager::assembleObjectFromDecodedArray($obj);
+            return JsonManager::assembleObjectFromDecodedArray($obj, $modelObject);
         else return $obj;
     }
 
@@ -1352,7 +1352,7 @@ class Rad_ActionManager extends ActionManager {
         }
     }
 
-    function saveParcelUse($parcel = NULL) {
+    function saveParcelUse( ParcelUse $parcel = NULL) {
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
 
         // check if this function was called from another action function
@@ -1411,7 +1411,7 @@ class Rad_ActionManager extends ActionManager {
                 }
 
                 $use = $dao->save($decodedObject);
-                $LOG->debug("Saved parcel use as transfer: $use");
+                $LOG->info("Saved parcel use as transfer: $use");
 
                 if($dParcel != null){
                     $dParcel->setTransfer_amount_id($use->getKey_id());
@@ -1451,45 +1451,44 @@ class Rad_ActionManager extends ActionManager {
 
                 // Save
                 foreach( $amounts as $amount ){
-                    $LOG->debug("Save $amount");
                     $amount = $amountDao->save($amount);
+                    $LOG->info("Saved transfer amount: $amount");
                 }
 
-                $LOG->debug("Saved " . count($amounts) . " transfer use-amount(s)");
+                $LOG->info("Saved " . count($amounts) . " transfer use-amount(s)");
             }else{
                 $LOG->debug("Save parcel use");
                 $use = $dao->save($decodedObject);
 
-                $amounts = $decodedObject->getParcelUseAmounts();
-                foreach($amounts as $amount){
-                    $amountDao = $this->getDao(new ParcelUseAmount());
+                $amountDao = $this->getDao(new ParcelUseAmount());
+                foreach($decodedObject->getParcelUseAmounts() as $rawAmount){
+                    $amount = $this->decodeObject($rawAmount, new ParcelUseAmount());
                     $newAmount = new ParcelUseAmount();
-                    if(!empty($amount['Curie_level']) && $amount['Curie_level'] > 0){
+                    if(!empty($amount->getCurie_level()) && $amount->getCurie_level() > 0){
                         $newAmount->setParcel_use_id($use->getKey_id());
-                        $newAmount->setCurie_level($amount['Curie_level']);
-                        $newAmount->setIs_active($amount['Is_active']);
+                        $newAmount->setCurie_level($amount->getCurie_level());
 
-                        if( !empty($amount['Key_id']) ){
-                            $newAmount->setKey_id($amount['Key_id']);
-                        }
-
-                        if(!empty($amount['Waste_bag_id'])){
-                            $newAmount->setWaste_bag_id($amount['Waste_bag_id']);
-                        }
-                        if(!empty($amount['Carboy_id'])){
-                            $newAmount->setCarboy_id($amount['Carboy_id']);
-                        }
-                        if(!empty($amount['Other_waste_container_id'])){
-                            $newAmount->setOther_waste_container_id($amount['Other_waste_container_id']);
-                            $newAmount->setOther_waste_type_id($amount['Other_waste_type_id']);
+                        if( !empty($amount->getKey_id()) ){
+                            $newAmount->setKey_id($amount->getKey_id());
                         }
 
-                        if(!empty($amount['Comments'])) {
-                            $newAmount->setComments($amount['Comments']);
+                        if(!empty($amount->getWaste_bag_id())){
+                            $newAmount->setWaste_bag_id($amount->getWaste_bag_id());
+                        }
+                        if(!empty($amount->getCarboy_id())){
+                            $newAmount->setCarboy_id($amount->getCarboy_id());
+                        }
+                        if(!empty($amount->getOther_waste_container_id())){
+                            $newAmount->setOther_waste_container_id($amount->getOther_waste_container_id());
+                            $newAmount->setOther_waste_type_id($amount->getOther_waste_type_id());
+                        }
+
+                        if(!empty($amount->getComments())) {
+                            $newAmount->setComments($amount->getComments());
                         }
 
                         // Validate waste type
-                        $newAmount->setWaste_type_id($amount['Waste_type_id']);
+                        $newAmount->setWaste_type_id($amount->getWaste_type_id());
                         if( $newAmount->getWaste_type_id() < 1 ){
                             $LOG->error("Invalid Waste Type Id given for $newAmount: " . $newAmount->getWaste_type_id());
                             return new ActionError("Invalid waste type " . $newAmount->getWaste_type_id(), 400);
@@ -1528,9 +1527,9 @@ class Rad_ActionManager extends ActionManager {
                     }
                     //if a ParcelUseAmount has no activity, we assume it's supposed to be deleted
                     else{
-                        if(!empty($amount['Key_id'])){
+                        if(!empty($amount->getKey_id())){
                             $amountDao = $this->getDao(new ParcelUseAmount());
-                            $amountDao->deleteById($amount['Key_id']);
+                            $amountDao->deleteById($amount->getKey_id());
                         }
                     }
                 }
