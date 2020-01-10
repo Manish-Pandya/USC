@@ -1437,7 +1437,14 @@ class Rad_ActionManager extends ActionManager {
 
                 $totalTransferQuantity = 0;
                 foreach( $amounts as $amount ){
-                    $amount->activateIfNotSet();
+                    // Always activate Transfers
+                    $amount->setIs_active(true);
+
+                    // Always convert waste type to Transfer
+                    $amount->setWaste_type_id(6);
+
+                    // Ensure amount is linked to its ParcelUse
+                    $amount->setParcel_use_id($use->getKey_id());
                     $LOG->debug("Use-amount: $amount");
 
                     $totalTransferQuantity += $amount->getCurie_level();
