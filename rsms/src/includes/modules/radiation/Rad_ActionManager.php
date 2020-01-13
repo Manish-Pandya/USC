@@ -492,6 +492,10 @@ class Rad_ActionManager extends ActionManager {
             EntityMap::eager("getParcelUseAmounts")
         ));
 
+        EntityManager::with_entity_maps(PIQuarterlyInventory::class, array(
+            EntityMap::lazy("getPrincipal_investigator")
+        ));
+
         return $pi;
     }
 
@@ -2913,6 +2917,10 @@ class Rad_ActionManager extends ActionManager {
             EntityMap::eager("getQuarterly_inventory")
         ));
 
+        EntityManager::with_entity_maps(QuarterlyInventory::class, array(
+            EntityMap::lazy("getPi_quarterly_inventories")
+        ));
+
         $invcount = count($inventories);
         $LOG->debug("Inventories for PI #$piId: $invcount");
         return $inventories;
@@ -2924,10 +2932,6 @@ class Rad_ActionManager extends ActionManager {
 
         $inventoriesDao = $this->getDao(new PIQuarterlyInventory());
         $inv = $inventoriesDao->getById($piId);
-
-        EntityManager::with_entity_maps(PIQuarterlyInventory::class, array(
-            EntityMap::eager("getAuthorization")
-        ));
 
         return $inv;
     }
