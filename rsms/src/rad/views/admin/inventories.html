@@ -71,8 +71,8 @@
                     <h3>Details</h3>
                 </div>
                 <div class="table-row" ng-repeat="inventory in piInventories" ng-class="{'complete':inventory.Status == 'COMPLETE', 'inactive':inventory.Status == 'OVERDUE'}">
-                    <div>{{inventory.Quarterly_inventory.Start_date | dateToISO   }}</div>
-                    <div>{{inventory.Quarterly_inventory.End_date | dateToISO   }}</div>
+                    <div>{{inventory.Start_date | dateToISO   }}</div>
+                    <div>{{inventory.End_date | dateToISO   }}</div>
                     <div>{{inventory.Sign_off_date | dateToISO   }}</div>
                     <div>{{inventory.Status}}</div>
                     <div><a class="btn btn-info left" ui-sref="radmin-quarterly-inventory({pi_inventory: inventory.Key_id})"><i class="icon-out"></i>View</a></div>
