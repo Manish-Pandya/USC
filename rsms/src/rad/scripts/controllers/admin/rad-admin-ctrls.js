@@ -2720,6 +2720,15 @@ angular.module('00RsmsAngularOrmApp')
                 return auths[auths.length - 1];
             }
         };
+
+        $scope.allowQuantityEdit = function(){
+            // Only allow editing of the quantity if:
+            // there is only a single use amount listed
+            // OR this is NOT a conversion of an existing use
+            return $scope.modalData.ParcelUseCopy.ParcelUseAmounts.length == 1
+                && $scope.modalData.ParcelUseCopy.Key_id == null;
+        }
+
         $scope.saveTransferIn = function (copy, parcel) {
             console.log(parcel);
             copy.Transfer_in_date = convenienceMethods.setMysqlTime(af.getDate(copy.view_Transfer_in_date));

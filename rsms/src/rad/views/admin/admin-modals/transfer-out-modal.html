@@ -61,12 +61,16 @@
                     <label>Transfer Quantity</label>
 
                     <div class="controls input-append">
-                        <input style="max-width:50%;" name="quantity" ng-model="modalData.ParcelUseCopy.Quantity" ng-disabled="modalData.ParcelUseCopy.ParcelUseAmounts.length > 1">
+                        <input style="max-width:50%;" name="quantity" ng-model="modalData.ParcelUseCopy.Quantity" ng-disabled="!allowQuantityEdit()">
                         <span class="add-on" style="">{{"" | unit:modalData.ParcelUseCopy}}</span>
                         <span ng-if="modalData.tooMuch" class="red error too-much">{{modalData.tooMuch}}</span>
                         <span ng-if="modalData.ParcelUseCopy.ParcelUseAmounts.length > 1" class="waste-transfer-notes">
                             <i class="icon-warning"></i>
                             This Transfer Quantity cannot be editied as it consists of multiple amounts.
+                        </span>
+                        <span ng-if="modalData.ParcelUseCopy.Key_id" class="waste-transfer-notes">
+                            <i class="icon-warning"></i>
+                            This Transfer Quantity cannot be editied.
                         </span>
                     </div>
                 </div>
