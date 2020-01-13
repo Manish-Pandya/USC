@@ -110,7 +110,7 @@ class Test_Rad_ActionManager implements I_Test {
 
         $sample_use = $this->radActionmanager->saveParcelUse( $use_log_entry );
         $sample_amount = $sample_use->getParcelUseAmounts()[0];
-        Logger::getRootLogger()->info($sample_use);
+
         Assert::not_null($sample_amount, 'Sample amount exists');
         Assert::not_null($sample_amount->getKey_id(), 'Sample amount has key');
         Assert::false($sample_amount->getIs_active(), 'Sample amount is inactive');
