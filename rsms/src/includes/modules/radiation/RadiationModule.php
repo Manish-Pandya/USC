@@ -1,6 +1,12 @@
 <?php
 
 class RadiationModule implements RSMS_Module, MyLabWidgetProvider {
+
+    public const ROLE_USER = 'Radiation User';
+    public const ROLE_CONTACT = 'Radiation Contact';
+    public const ROLE_INSPECTOR = 'Radiation Inspector';
+    public const ROLE_ADMIN = 'Radiation Admin';
+
     public function getModuleName(){
         return 'Radiation';
     }
@@ -29,8 +35,15 @@ class RadiationModule implements RSMS_Module, MyLabWidgetProvider {
     public function getMyLabWidgets( User $user ){
         $widgets = array();
 
-        // Show this widget for users that have the Radiation User role
-        if( CoreSecurity::userHasAnyRole($user, array('Radiation User')) ){
+        // Show this widget for users that have any Radiation role
+        $rad_roles = [
+            RadiationModule::ROLE_USER,
+            RadiationModule::ROLE_CONTACT,
+            RadiationModule::ROLE_INSPECTOR,
+            RadiationModule::ROLE_ADMIN
+        ];
+
+        if( CoreSecurity::userHasAnyRole($user, $rad_roles) ){
 
             $radWidget = new MyLabWidgetDto();
             $radWidget->title = "Radioactive Materials";
