@@ -20,6 +20,7 @@ class Room extends GenericCrud {
 		"building_id"		=> "integer",
 		"purpose"	=>	"text",
 		"room_type" => "text",
+		"max_occupants" => "integer",
 
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -62,6 +63,8 @@ class Room extends GenericCrud {
 	private $name;
 
 	private $room_type = RoomType::RESEARCH_LAB;
+
+	private $max_occupants;
 
 	private $purpose;
 
@@ -151,6 +154,9 @@ class Room extends GenericCrud {
 
 	public function getRoom_type(){ return $this->room_type; }
 	public function setRoom_type( $val ){ $this->room_type = $val; }
+
+	public function getMax_occupants(){ return (int) $this->max_occupants; }
+	public function setMax_occupants($val){ $this->max_occupants = (int) $val; }
 
 	public function getPurpose(){ return $this->purpose; }
 	public function setPurpose($purpose){ $this->purpose = $purpose; }
