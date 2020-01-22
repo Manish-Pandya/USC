@@ -98,6 +98,28 @@ ul.banner-nav li span {
         background: #789974;
     }
 
+/* Dark-Green Theme */
+    .hub-theme-green-dark {}
+
+    .hub-theme-green-dark .theme-main-element,
+    .hub-theme-green-dark .hub-banner {
+        background-color: #008641;
+        border-color: #008641;
+        color: #fff;
+    }
+
+    .hub-theme-green-dark .theme-highlight-element,
+    .hub-theme-green-dark .hub-banner .banner-nav a:hover,
+    .hub-theme-green-dark .hub-banner .banner-nav a.active-nav {
+        background: #005500;
+    }
+
+    .hub-theme-green-dark .theme-underlight-element,
+    .hub-theme-green-dark table tbody tr.theme-underlight-element td
+    {
+        background: #789974;
+    }
+
 /* */
 ul.grid-list li:hover {
     color: #888;

@@ -4,63 +4,6 @@
     }
 }
 
-.banner {
-    margin-top: -2px;
-    color: white;
-    padding: 10px;
-    background-repeat: no-repeat !important;
-    background-size: 70px !Important;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7)
-}
-
-.banner.dashboard-banner {
-    position: fixed;
-    width: 100%;
-    left: 0;
-    z-index: 1040;
-}
-
-.dashboard {
-    padding-top: 75px;
-}
-
-.title-icon {
-    margin-right: 5px;
-    font-size: 35px;
-    width: auto;
-    line-height: 43px;
-}
-
-ul.banner-nav {
-    margin-right: 160px;
-    float: right;
-    margin-top: -30px;
-}
-
-ul.banner-nav li {
-    display:inline-block;
-    margin-right:10px;
-}
-
-ul.banner-nav li a {
-    font-weight: bold;
-    font-size: 12px;
-    color: #fff;
-    display: block;
-}
-
-ul.banner-nav li a:hover {
-    color: #ddd;
-}
-
-ul.banner-nav li span {
-    font-weight: bold;
-    font-size: 12px;
-    color: #fff;
-    display: block;
-    text-decoration: underline;
-}
-
 .card .expander {
     padding: 10px 15px 5px 15px; cursor: pointer;
     display: flex;
