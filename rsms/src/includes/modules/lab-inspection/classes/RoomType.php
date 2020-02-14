@@ -4,7 +4,8 @@ class RoomType {
 
 	public const RESEARCH_LAB = 'RESEARCH_LAB';
 	public const ANIMAL_FACILITY = 'ANIMAL_FACILITY';
-	public const TEACHING_LAB = 'TEACHING_LAB';
+    public const TEACHING_LAB = 'TEACHING_LAB';
+    public const TRAINING_ROOM = 'TRAINING_ROOM';
 
 	public const DEPT_ROOM_TYPE_RELATIONSHIP = array(
         "className"	=>	Department::class,
@@ -45,6 +46,15 @@ class RoomType {
                     ->setInspectable(false)
                     ->setAssignable_to( LabInspectionModule::ROLE_TEACHING_LAB_CONTACT )
                     ->setIcon_class('icon-users')
+                    ->setImg_path(null),
+
+                RoomType::TRAINING_ROOM => (new RoomType())
+                    ->setName(RoomType::TRAINING_ROOM)
+                    ->setLabel('Training Room')
+                    ->setPluralLabel('Training Rooms')
+                    ->setInspectable(false)
+                    ->setAssignable_to( null )
+                    ->setIcon_class('icon-book-2')
                     ->setImg_path(null),
             ];
         }

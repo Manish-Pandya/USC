@@ -48,6 +48,11 @@ class RoomManager {
                 return $this->roomDao->getRoomAssignedUsers($room->getKey_id(), $roomType->getAssignable_to());
             }
 
+            // Non-assignable rooms
+            case null: {
+                return [];
+            }
+
             default: {
                 throw new Exception("Invalid assignment model for $target_type" );
             }
@@ -130,6 +135,12 @@ class RoomManager {
             // User / Teaching Lab Contact
             case LabInspectionModule::ROLE_TEACHING_LAB_CONTACT: {
                 $updatedAssignments = $this->updateAssignedUsers($roomChanges, $room, LabInspectionModule::ROLE_TEACHING_LAB_CONTACT);
+                break;
+            }
+
+            // Non-assignable rooms
+            case null: {
+                $updatedAssignments = [];
                 break;
             }
 
