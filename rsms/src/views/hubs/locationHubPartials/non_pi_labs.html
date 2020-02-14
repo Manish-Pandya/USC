@@ -42,7 +42,6 @@
             <th class="lhcol_edit">Edit</th>
             <th class="lhcol_building">Building</th>
             <th class="lhcol_name">Room Number</th>
-            <th class="lhcol_occupants">Occupancy</th>
             <th class="lhcol_courses">Course(s)</th>
             <th>Teaching Lab Contact</th>
             <th>Department</th>
@@ -57,7 +56,6 @@
             <th class="lhcol_name">
                 <input class="span2" ng-model="search.room" placeholder="Filter by Lab Room" />
             </th>
-            <th class="lhcol_occupants"></th class="lhcol_occupants">
             <th class="lhcol_courses"></th>
             <th>
                 <input class="span2" ng-model="search.assignedUser" placeholder="Filter by {{roomType.assignable_to}}" />
@@ -99,11 +97,6 @@
             <td class="lhcol_name">
                 <input ng-model="roomCopy.Name" placeholder="Name" ng-if="room.edit" style="max-width:115px" />
                 <span ng-if="!room.edit">{{room.Name}}</span>
-            </td>
-
-            <td class="lhcol_occupants">
-                <input ng-model="roomCopy.Max_occupants" ng-if="room.edit" type="number" min="1" max="999">
-                <span ng-if="!room.edit && room.Max_occupants">{{room.Max_occupants}}</span>
             </td>
 
             <td class="lhcol_courses">
