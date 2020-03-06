@@ -572,7 +572,7 @@ class ActionManager {
     }
 
     public function getCurrentUser(){
-        if( !isset($_SESSION) ){
+        if( !isset($_SESSION) || !isset($_SESSION['USER']) ){
             // No session
             return null;
         }
