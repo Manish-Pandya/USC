@@ -78,6 +78,10 @@
     <!-- Toast API -->
     <script type='text/javascript' src='<?php echo WEB_ROOT?>js/ToastApi.js'></script>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/ToastApi.css"/>
+
+    <script>
+        var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
+    </script>
 </head>
 
 <body>
