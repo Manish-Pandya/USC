@@ -17,9 +17,8 @@
         </tr>
         <tr>
             <th>Edit</th>
-            <th>
-                Campus
-            </th>
+            <th>Campus</th>
+            <th>Alias</th>
         </tr>
     </thead>
 
@@ -47,11 +46,18 @@
 
             </td>
 
-            <td style="width:79%" >
+            <td style="width:35%" >
                 <span ng-if="campus.edit">
                     <input ng-if="campus.edit" ng-model="copy.Name">
                 </span>
                 <span ng-if="!campus.edit" once-text="campus.Name"></span>
+            </td>
+
+            <td style="width:35%" >
+                <span ng-if="campus.edit">
+                    <input ng-if="campus.edit" ng-model="copy.Alias">
+                </span>
+                <span ng-if="!campus.edit" once-text="campus.Alias"></span>
             </td>
         </tr>
     </tbody>
