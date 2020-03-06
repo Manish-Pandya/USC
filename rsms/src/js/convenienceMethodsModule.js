@@ -32,7 +32,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
 .run(function($rootScope) {
     $rootScope.Constants = Constants;
 })
-.factory('convenienceMethods', function ($http, $q, $rootScope, naturalService) {
+.factory('convenienceMethods', function ($http, $q, $rootScope, $modal, naturalService) {
     var methods =  {
         
         //
@@ -504,8 +504,52 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
             var piIds = pis.map(function (pi) { return pi.Key_id });
             urlSegment += "&" + $.param({ piIds: piIds });
             return $http.get(urlSegment).then(function (r) { return r.data; });
+        },
+
+        /**
+         * Opens a generic app-styled confirmation dialog
+         * @param {String} title - Dialog title (defaults to 'Confirmation')
+         * @param {String} message - Dialog message
+         * @param {String} confirm_text - Confirm button text (defaults to 'Continue')
+         * @param {String} cancel_text  - Reject button text (defaults to 'Cancel')
+         */
+        modalConfirm: function (title, message, confirm_text, cancel_text){
+            let instance = $modal.open({
+                resolve: {
+                    title: function(){return title; },
+                    message: function(){return message; },
+                    confirm_text: function(){return confirm_text; },
+                    cancel_text: function(){return cancel_text; }
+                },
+                controller: function($scope, $modalInstance, title, message, confirm_text, cancel_text){
+                    $scope.title = title;
+                    $scope.message = message;
+                    $scope.confirm_text = confirm_text;
+                    $scope.cancel_text = cancel_text;
+                    $scope.cancel = () => $modalInstance.dismiss(),
+                    $scope.confirm = () => $modalInstance.close()
+                },
+                template: `<div>
+                            <div class="modal-header theme-main-element" style="padding:0;">
+                                <h2 style="padding:5px">{{title || 'Confirmation'}}</h2>
+                            </div>
+
+                            <div class="modal-body" ng-if="message">
+                                <p ng-bind-html="message"></p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <a class="btn btn-large btn-success left" ng-click="confirm()"><i class="icon-checkmark"></i>{{confirm_text || 'Continue'}}</a>
+                                <a class="btn btn-large btn-danger left" ng-click="cancel()"><i class="icon-cancel-2"></i>{{cancel_text || 'Cancel'}}</a>
+                            </div>
+                        </div>`
+            });
+
+            // Return the modal instances promise
+            //    Dismiss => reject
+            //    Close   => resolve
+            return instance.result;
         }
-        
     }
     return methods;
 })
