@@ -258,7 +258,7 @@ class ActionDispatcher {
             $func_args = array();
             foreach( $reflected->getParameters() as $arg ){
                 $param_names[] = $arg->name;
-                $func_args[ $arg->name ] = self::getValueFromRequest($arg->name);
+                $func_args[ $arg->name ] = self::getValueFromRequest($arg);
             }
 
             ////
@@ -311,7 +311,9 @@ class ActionDispatcher {
      * Utility function for retrieving a request parameter by name.
      * Special conversions (such as for 'null' and 'false' strings) are performed.
      */
-    public static function getValueFromRequest( $valueName ){
+    public static function getValueFromRequest( &$paramOrName ){
+
+        $valueName = is_string($paramOrName) ? $paramOrName : $paramOrName->name;
 
         if( array_key_exists($valueName, $_REQUEST) ){
             $val = $_REQUEST[ $valueName ];
@@ -327,6 +329,9 @@ class ActionDispatcher {
             }
 
             return $val;
+        }
+        else if ( !is_string($paramOrName) && $paramOrName->isOptional() && $paramOrName->isDefaultValueAvailable() ){
+            return $paramOrName->getDefaultValue();
         }
         else{
             return null;

@@ -241,19 +241,37 @@ angular
             return;
         if (!dateString)
             return inspections;
-        if (!showInactive) {
-            return inspections.filter(function (i) {
-                return uncertified ? i.Is_uncertified || (!i.Certification_date && (!i.Fail_date || i.Fail_date.indexOf(dateString) != -1)) : !i.Is_uncertified && ((i.Certification_date && i.Certification_date.indexOf(dateString) > -1) || (i.Due_date && i.Due_date.indexOf(dateString) > -1) || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1));
+
+        let insps = inspections.filter(function (i) {
+            return uncertified
+                // Is uncertified
+                ? i.Is_uncertified
+                //  OR has NO Certification date
+                //      AND (has NO fail date OR was failed this year)
+                    || (!i.Certification_date && (!i.Fail_date || i.Fail_date.indexOf(dateString) != -1))
+                // Is NOT uncertified
+                : !i.Is_uncertified
+                    // AND
+                    && (
+                        // Is certified this year
+                        (i.Certification_date && i.Certification_date.indexOf(dateString) > -1)
+                        // OR is due this year
+                        || (i.Due_date && i.Due_date.indexOf(dateString) > -1)
+                        // Or is failed this year
+                        || (i.Fail_date && i.Fail_date.indexOf(dateString) > -1)
+                );
             });
-        }
-        else {
-            var insps = inspections.filter(function (i) { return i.Fail_date || i.Certification_date; });
-            if (!insps)
-                insps = inspections;
-            return [insps.sort(function (a, b) {
+
+        // Inactive inspections may not match date filtering
+        if( showInactive && !insps.length) {
+            // If none match while showing Inactive inspections,
+            //    just sort by Date_created and match the first item
+            insps = [inspections.sort(function (a, b) {
                     return a.Date_created > b.Date_created;
                 })[0]];
         }
+
+        return insps;
     };
 })
     .filter("getSharedRooms", function () {

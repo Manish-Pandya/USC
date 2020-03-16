@@ -32,8 +32,22 @@ class Assert {
         Assert::__assert(false, $message);
     }
 
+    public static function not_null( $actual, $message ){
+        Assert::__assert( $actual !== NULL, "$message (expected non-null)");
+    }
+
+    public static function null( $actual, $message ){
+        Assert::__assert( $actual === NULL, "$message (expected null)");
+    }
+
     public static function eq( $actual, $expected, $message ){
-        Assert::__assert( $actual == $expected, "$message (expected '$expected' | actual '$actual')");
+        $actual_str = is_array($actual) ? implode(', ', $actual) : "$actual";
+        $expected_str = is_array($expected) ? implode(', ', $expected) : "$expected";
+        Assert::__assert( $actual == $expected, "$message (expected '$expected_str' | actual '$actual_str')");
+    }
+
+    public static function ne( $actual, $unexpected, $message ){
+        Assert::__assert( $actual != $expected, "$message (unexpected '$unexpected' | actual '$actual')");
     }
 
     public static function true( $val, $message ){

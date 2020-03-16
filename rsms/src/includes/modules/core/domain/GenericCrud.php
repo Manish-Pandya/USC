@@ -28,7 +28,7 @@ abstract class GenericCrud {
 	protected $date_last_modified;
 
 	// Active
-	protected $is_active;
+	protected $is_active = true;
 
 	// User who last updated
 	protected $last_modified_user_id;
@@ -40,7 +40,15 @@ abstract class GenericCrud {
 	protected $entityMaps;
 
 	public function __toString(){
-		return '[' .get_class($this) . " key_id=" . $this->getKey_Id() . ($this->is_active ? '' : ' is_active=false') . "]";
+		return '[' . implode(' ', $this->getToStringParts()) . ']';
+	}
+
+	protected function getToStringParts(){
+		return [
+			get_class($this),
+			"key_id=" . $this->getKey_id(),
+			($this->is_active ? '' : ' is_active=false')
+		];
 	}
 
 	// Accessors / Mutators

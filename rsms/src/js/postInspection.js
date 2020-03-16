@@ -820,12 +820,13 @@ inspectionConfirmationController = function ($scope, $location, $anchorScroll, c
 
         var contactList = [];
 
-        if ($scope.inspection.PrincipalInvestigator.User.include) contactList.push($scope.inspection.PrincipalInvestigator.User.Key_id)
-
-        var i = $scope.inspection.PrincipalInvestigator.LabPersonnel.length;
-        while (i--) {
-            if ($scope.inspection.PrincipalInvestigator.LabPersonnel[i].include) contactList.push($scope.inspection.PrincipalInvestigator.LabPersonnel[i].Key_id);
+        if ($scope.inspection.PrincipalInvestigator.User.include) {
+            contactList.push($scope.inspection.PrincipalInvestigator.User.Key_id);
         }
+
+        $scope.inspection.LabPersonnel
+            .filter( p => p.include )
+            .forEach(p => contactList.push(p.Key_id));
 
         var emailDto = {
             Class: "EmailDto",

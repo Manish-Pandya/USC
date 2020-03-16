@@ -13,6 +13,13 @@ class DepartmentDetailDto {
     private $chair_last_name;
     private $chair_id;
     private $chair_email;
+
+    private $coordinator_name;
+    private $coordinator_first_name;
+    private $coordinator_last_name;
+    private $coordinator_id;
+    private $coordinator_email;
+
     private $availableInspectionYears;
     private $campuses;
 
@@ -87,6 +94,17 @@ class DepartmentDetailDto {
     public function setChair_email( $val ){
         $this->chair_email = $val;
     }
+
+    public function getCoordinator_name(){ return $this->coordinator_name; }
+    public function setCoordinator_name( $val ){ $this->coordinator_name = $val; }
+    public function getCoordinator_first_name(){ return $this->coordinator_first_name; }
+    public function setCoordinator_first_name( $val ){ $this->coordinator_first_name = $val; }
+    public function getCoordinator_last_name(){ return $this->coordinator_last_name; }
+    public function setCoordinator_last_name( $val ){ $this->coordinator_last_name = $val; }
+    public function getCoordinator_id(){ return $this->coordinator_id; }
+    public function setCoordinator_id( $val ){ $this->coordinator_id = $val; }
+    public function getCoordinator_email(){ return $this->coordinator_email; }
+    public function setCoordinator_email( $val ){ $this->coordinator_email = $val; }
 
     public function getAvailableInspectionYears(){
         return $this->availableInspectionYears;

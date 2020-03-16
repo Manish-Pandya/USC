@@ -32,7 +32,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
 .run(function($rootScope) {
     $rootScope.Constants = Constants;
 })
-.factory('convenienceMethods', function ($http, $q, $rootScope, naturalService) {
+.factory('convenienceMethods', function ($http, $q, $rootScope, $modal, naturalService) {
     var methods =  {
         
         //
@@ -504,8 +504,52 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
             var piIds = pis.map(function (pi) { return pi.Key_id });
             urlSegment += "&" + $.param({ piIds: piIds });
             return $http.get(urlSegment).then(function (r) { return r.data; });
+        },
+
+        /**
+         * Opens a generic app-styled confirmation dialog
+         * @param {String} title - Dialog title (defaults to 'Confirmation')
+         * @param {String} message - Dialog message
+         * @param {String} confirm_text - Confirm button text (defaults to 'Continue')
+         * @param {String} cancel_text  - Reject button text (defaults to 'Cancel')
+         */
+        modalConfirm: function (title, message, confirm_text, cancel_text){
+            let instance = $modal.open({
+                resolve: {
+                    title: function(){return title; },
+                    message: function(){return message; },
+                    confirm_text: function(){return confirm_text; },
+                    cancel_text: function(){return cancel_text; }
+                },
+                controller: function($scope, $modalInstance, title, message, confirm_text, cancel_text){
+                    $scope.title = title;
+                    $scope.message = message;
+                    $scope.confirm_text = confirm_text;
+                    $scope.cancel_text = cancel_text;
+                    $scope.cancel = () => $modalInstance.dismiss(),
+                    $scope.confirm = () => $modalInstance.close()
+                },
+                template: `<div>
+                            <div class="modal-header theme-main-element" style="padding:0;">
+                                <h2 style="padding:5px">{{title || 'Confirmation'}}</h2>
+                            </div>
+
+                            <div class="modal-body" ng-if="message">
+                                <p ng-bind-html="message"></p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <a class="btn btn-large btn-success left" ng-click="confirm()"><i class="icon-checkmark"></i>{{confirm_text || 'Continue'}}</a>
+                                <a class="btn btn-large btn-danger left" ng-click="cancel()"><i class="icon-cancel-2"></i>{{cancel_text || 'Cancel'}}</a>
+                            </div>
+                        </div>`
+            });
+
+            // Return the modal instances promise
+            //    Dismiss => reject
+            //    Close   => resolve
+            return instance.result;
         }
-        
     }
     return methods;
 })
@@ -633,6 +677,169 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
         return $sce.trustAsHtml(htmlCode);
     }
 }])
+.filter("isAre", function(){
+    return function(data){
+        return (data || []).length == 1 ? 'is' : 'are';
+    }
+})
+.directive('stickyHeaders', function($timeout){
+    return {
+        restrict: 'A',
+        scope: {
+            stickyTop: '@'
+        },
+        link: function(scope, elem, attrs) {
+            if( isNaN(scope.stickyTop) ){
+                scope.stickyTop = 22;
+                console.debug("Default stickyHeader top to " + scope.stickyTop);
+            }
+
+            // Ensure table has 'sticky-headers' class
+            $(elem).addClass('sticky-headers');
+
+            let setStickyHeaderHeight = function () {
+                // Find header rows
+                let sticky_rows = elem.find('thead').find('tr');
+
+                // Set base sticky position
+                let ceiling = 22;
+
+                sticky_rows.each( (idx, row) => {
+                    // Stick the row to the current ceiling
+                    $(row).find('th').css({ top: ceiling + 'px'});
+                    // Increment ceiling by the row's height
+                    ceiling += $(row).height();
+                });
+            }
+
+            // Watch a dummy value to trigger
+            scope.$watch('watch', function() {
+                $timeout(function(){
+                    setStickyHeaderHeight();
+               },300);
+
+            });
+        }
+    };
+})
+.directive('hubBannerNav', function(){
+    return {
+        restrict: 'E',
+        //replace: true,
+        scope: {
+            /**
+             * Array of objects which define the following fields:
+             *   - route: Router path for the view, passed to $location service.
+             *   - name:  Name of the view, rendered as link text.
+             * Items which do not define these fields are treated as
+             * non-functional separators.
+             */
+            hubViews: "=",
+            hubIcon: "@",
+            hubImage: "@",
+            hubTitle: "@",
+            hubSubtitle: "@",
+        },
+        template:   `<div class="hub-banner no-print">
+                        <i ng-if="hubIcon" class="title-icon {{hubIcon}}"></i>
+                        <img ng-if="hubImage" class="title-icon" ng-src="{{hubImage}}"/>
+
+                        <span style="flex-direction: column; align-items: flex-start;">
+                            <h1 once-text="hubTitle"></h1>
+                            <h4 ng-if="hubSubtitle" once-text="hubSubtitle"></h4>
+                        </span>
+
+                        <ul class="banner-nav">
+                            <li ng-repeat="view in hubViews">
+                                <span ng-if="!view.route">|</span>
+                                <a  ng-if="view.route"
+                                    ng-click="setRoute(view.route)"
+                                    ng-href="#{{view.route}}"
+                                    ng-class="{'active-nav': selectedRoute == view.route}">{{view.name}}</a>
+                            </li>
+
+                            <li>
+                                <a class="home-link" ng-href="{{appRoot}}">
+                                    <i class="icon-home"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>`,
+        link: function(){},
+        controller: function($scope, $location){
+            console.debug($scope);
+            $scope.selectedRoute = $location.path();
+            $scope.appRoot = window.GLOBAL_WEB_ROOT;
+
+            $scope.setRoute = function( route ){
+                if( route ){
+                    $scope.selectedRoute = route;
+                }
+
+                $location.path($scope.selectedRoute);
+            };
+        }
+    };
+})
+/**
+ * Display icon (and, optionally, Label) for a given Room Type
+ */
+.directive('roomTypeIcon', function(){
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: {
+            room: "=",
+            roomType: "=",
+            roomTypeName: "=",
+
+            showTypeLabel: "@"
+        },
+        template:
+        `<span>
+            <img ng-if="type.img_src" width="15px;" ng-src="{{type.img_src}}"/>
+            <i ng-if="type.icon_class" class="{{type.icon_class}}"></i>
+            <span ng-if="showTypeLabel">{{type.label}}</span>
+        </span>`,
+        link: function(scope, elem, attrs){
+            if( !Constants.ROOM_TYPE ){
+                console.error("No room type constants defined");
+                return;
+            }
+            else if( scope.roomType ){
+                scope.type = scope.roomType;
+            }
+            else if( scope.roomTypeName ){
+                scope.type = Constants.ROOM_TYPE[scope.roomTypeName];
+            }
+            else if( scope.room ){
+                scope.type = Constants.ROOM_TYPE[scope.room.Room_type];
+            }
+            else {
+                console.warn("No room type source in scope");
+                return;
+            }
+        }
+    };
+})
+.directive('roomList', function(){
+    return {
+        restrict: 'E',
+        scope: {
+            rooms: "="
+        },
+        template:
+        `<div class="room-list" ng-repeat="(buildingName, rooms) in rooms | groupBy:'Building_name'">
+            <span class="room-list-building">{{buildingName}}:</span>
+            <span class="comma-separated">
+                <span ng-repeat="room in rooms | orderBy:'Name'" class="subject">
+                    <room-type-icon room-type-name="room.Room_type"></room-type-icon>
+                    <span once-text="room.Name"></span>
+                </span>
+            </span>
+        </div>`
+    };
+})
 .directive('scrollTable', ['$window', '$location', '$rootScope', '$timeout', function($window, $location, $rootScope,$timeout) {
     return {
         restrict: 'A',
@@ -746,6 +953,15 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
         }
     }
 }])
+.filter('toArray', function () {
+    return function (object) {
+        var array = [];
+        for (var prop in object) {
+            array.push(object[prop]);
+        }
+        return array;
+    }
+})
 .filter('propsFilter', function () {
 
   return function(items, props) {

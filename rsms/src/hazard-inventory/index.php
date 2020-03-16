@@ -90,6 +90,9 @@ session_start();
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/angular-busy.css">
     <link type="text/css" rel="stylesheet" href="stylesheets/hazard-inventory-styles.css">
 
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rsms-style-theme.css"/>
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rsms-style-struct.css"/>
+
     <!-- included fonts
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
 -->
@@ -170,8 +173,9 @@ session_start();
 
 <body>
     <?php require('../views/user_info_bar.php'); ?>
+    <?php require('../includes/modules/lab-inspection/js/room-type-constants.js.php'); ?>
 
-    <div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" class="container-fluid" style="margin-top:25px;">
+    <div ng-app="HazardInventory" ng-controller="HazardInventoryCtrl" ng-cloak class="container-fluid" style="margin-top:25px;">
 
         <div cg-busy="{promise:piPromise,message:'Loading Principal Investigator Details',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
         <div cg-busy="{promise:hazardPromise,message:'Loading Hazards',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>

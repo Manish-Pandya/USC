@@ -2,12 +2,12 @@
 <div class="email-hub">
 
     <div class="card full">
-        <h1 class="expander">
+        <h1 class="expander theme-main-element">
             <span>Email Queue</span>
             <span ng-if="QueuedEmailsPage">({{QueuedEmailsPage.TotalCount}})</span>
         </h1>
 
-        <form class="filters" ng-submit="loadPage(1)">
+        <form name="searchForm" class="filters" ng-submit="loadPage(1)">
             <h4 style="flex-grow: 0; align-self: center;">Filter Results:</h4>
             <select ng-model="filters.Module" ng-options="module for module in Modules" style="flex-grow: 0">
                 <option value="">-- Module --</option>
@@ -19,7 +19,10 @@
 
             <input name="search" ng-model="filters.Search" placeholder="Search">
 
-            <button type="submit" class="btn btn-warning">
+            <button type="submit" class="btn btn-warning" ng-class="{
+                'btn-warning': !searchForm.$dirty,
+                'btn-success': searchForm.$dirty
+            }">
                 <i class="icon-search"></i>
             </button>
         </form>
@@ -68,7 +71,7 @@
                     <td>{{email.Subject}}</td>
                     <td>
                         <ul style="list-style: none; margin: unset;">
-                            <li ng-if="to_cc" ng-repeat="to_cc in (email.Recipients + (email.Cc_recipients || '')).split(',')">
+                            <li ng-if="to_cc" ng-repeat="to_cc in getAllRecipients(email)">
                                 <code>{{to_cc}}</code>
                             </li>
                         </ul>
@@ -148,7 +151,10 @@
             page="Pager.currentPage"
             items-per-page="Pager.numPerPage"
             on-select-page="loadPage(page)"
-            total-items="QueuedEmailsPage.TotalCount">
+            total-items="QueuedEmailsPage.TotalCount"
+            boundary-links="true"
+            max-size="10"
+            rotate="false">
         </pagination>
     </div>
 

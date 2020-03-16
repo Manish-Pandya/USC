@@ -25,6 +25,31 @@ angular
             return matches;
         }
     })
+    .filter('isScheduledForCurrentYear', function(){
+        return function(inspection){
+            if( !inspection ){
+                return inspection;
+            }
+
+            var now = new Date();
+            var thisYear = now.getFullYear();
+
+            return parseInt(inspection.Schedule_year) == thisYear;
+        }
+    })
+    .filter('inspectionScheduledYearThreshold', function(){
+        return function(inspections, yeardiff){
+            if( !inspections || !inspections.length || isNaN(yeardiff)){
+                return inspections;
+            }
+
+            var now = new Date();
+            var thisYear = now.getFullYear();
+            let minYear = thisYear + yeardiff;
+
+            return inspections.filter(i => parseInt(i.Schedule_year) >= minYear);
+        };
+    })
     .filter('inspectionClosed', function (convenienceMethods) {
         return function (inspections, closedOrNot) {
           console.log(convenienceMethods)
@@ -111,4 +136,19 @@ angular
 
             return 'Safety Equipment';
         };
+    })
+
+    .filter('selectedForInspection', function () {
+        /**
+         * Returns any of the provided Rooms that are selected
+         * for the provided inspection
+         */
+        return function(rooms, inspection){
+            if( !inspection || !rooms || !rooms.length ){
+                return rooms;
+            }
+
+            let key = inspection.Key_id + 'checked';
+            return rooms.filter(r => r[key] == true );
+        }
     })

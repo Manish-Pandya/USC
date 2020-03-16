@@ -42,6 +42,7 @@ var Constants = /** @class */ (function () {
             SAFETY_INSPECTOR: "Safety Inspector",
             RADIATION_INSPECTOR: "Radiation Inspector",
             DEPARTMENT_CHAIR: "Department Chair",
+            DEPARTMENT_COORDINATOR: "Department Safety Coordinator",
             PRINCIPAL_INVESTIGATOR: "Principal Investigator",
             LAB_CONTACT: "Lab Contact",
             LAB_PERSONNEL: "Lab Personnel",
@@ -52,7 +53,8 @@ var Constants = /** @class */ (function () {
             READ_ONLY: "Read Only",
             OCCUPATIONAL_HEALTH: "Occupational Health",
             IBC_MEMBER: "IBC Member",
-            IBC_CHAIR: "IBC Chair"
+            IBC_CHAIR: "IBC Chair",
+            TEACHING_LAB_CONTACT: "Teaching Lab Contact"
         }
     };
     Constants.CARBOY_USE_CYCLE = {
@@ -226,7 +228,8 @@ var Constants = /** @class */ (function () {
             "Class II, Type B2",
             "Horizontal Flow Clean Bench",
             "Vertical Flow Clean Bench"
-        ]
+        ],
+        INACTIVATE_DISCLAIMER: "This cabinet must be unassigned from the PI to prevent the cabinet from being selected in the PI's Hazard Inventory"
     };
     Constants.CHEM_FUME_HOOD = {
         EQUIPMENT_CLASS: "ChemFumeHood",

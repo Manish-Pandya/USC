@@ -7,6 +7,9 @@ class ChairReportModule implements RSMS_Module, MessageTypeProvider, MyLabWidget
     public static $MTYPE_INSPECTION_SUMMARY_READY = 'LabInspectionSummaryReady';
     public static $MTYPE_INSPECTION_SUMMARY_YEARLY = 'LabInspectionSummaryYearly';
 
+    public const ROLE_CHAIR = 'Department Chair';
+    public const ROLE_COORDINATOR = 'Department Safety Coordinator';
+
     public function getModuleName(){
         return self::$NAME;
     }
@@ -40,7 +43,7 @@ class ChairReportModule implements RSMS_Module, MessageTypeProvider, MyLabWidget
                 self::$NAME,
                 ChairReportModule::$MTYPE_INSPECTION_SUMMARY_READY,
                 'Automatic email sent when ' . LabInspectionSummaryReady_Task::$COMPLETION_THRESHOLD . '% of the PIs in a department have been inspected.',
-                'LabInspectionSummaryReady_Processor',
+                LabInspectionSummaryReady_Processor::class,
                 array('DepartmentDetailDto', 'LabInspectionSummaryContext')
             ),
 
@@ -48,7 +51,7 @@ class ChairReportModule implements RSMS_Module, MessageTypeProvider, MyLabWidget
                 self::$NAME,
                 ChairReportModule::$MTYPE_INSPECTION_SUMMARY_YEARLY,
                 'Automatic email sent on December 1st each year.',
-                'LabInspectionSummaryYearly_Processor',
+                LabInspectionSummaryYearly_Processor::class,
                 array('DepartmentDetailDto', 'LabInspectionSummaryContext')
             )
         );
@@ -62,7 +65,7 @@ class ChairReportModule implements RSMS_Module, MessageTypeProvider, MyLabWidget
         $widgets = array();
 
         // Only display summary reports widget to dept. chairs
-        if( CoreSecurity::userHasRoles($user, array('Department Chair')) ){
+        if( CoreSecurity::userHasAnyRole($user, array(ChairReportModule::ROLE_CHAIR, ChairReportModule::ROLE_COORDINATOR)) ){
             $summaryReportsWidget = new MyLabWidgetDto();
             $summaryReportsWidget->group = LabInspectionModule::$MYLAB_GROUP_INSPECTIONS;
             $summaryReportsWidget->title = "Chair Reports";

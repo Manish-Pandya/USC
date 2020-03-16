@@ -60,8 +60,22 @@ class HazardInventoryActionManager extends ActionManager {
 		}
 
 		if( $piId !== NULL ){
-			$dao = new GenericDAO(new PrincipalInvestigatorHazardRoomRelation());
-			$hazardDtos = $dao->getHazardRoomDtosByPIId($piId, $roomIds);
+			$dao = new PrincipalInvestigatorHazardRoomRelationDAO();
+
+			// Retrieve Hazard/Room DTOs for this PI & rooms
+			$hrDtos = $dao->getHazardRoomDtosByPIId($piId, $roomIds);
+
+			// Collect array of room IDs which were collected with H/R relations
+			$matchedRoomIds = array();
+			foreach($hrDtos as $room){
+				$matchedRoomIds[] = $room->getRoom_id();
+			}
+
+			// Get DTO for every hazard
+			$hazardDtos = $dao->getAllHazardDtos();
+
+			// Merge Hazard with PIHR data, and populate Hazard/Room statuses in each
+			$merged_hazardDtos = $dao->mergeHazardRoomDtos($piId, $matchedRoomIds, $hazardDtos, $hrDtos);
 
 			// Transform into DTOs
 			return array_map(function($hazard){
@@ -104,7 +118,7 @@ class HazardInventoryActionManager extends ActionManager {
 					"Order_index" => $hazard->getOrder_index(),
 					"BelongsToOtherPI" => $hazard->getBelongsToOtherPI()
 				));
-			}, $hazardDtos);
+			}, $merged_hazardDtos);
 
 		}
 		else{
@@ -355,10 +369,10 @@ class HazardInventoryActionManager extends ActionManager {
         $newRoomIds = implode(',', array_fill(0, count($roomIds), '?'));
 
 		$queryString = "SELECT principal_investigator_id
-                        FROM principal_investigator_room a
-                        LEFT JOIN principal_investigator b
-                        ON a.principal_investigator_id = b.key_id
-                        WHERE b.is_active = 1 AND a.room_id IN ( $newRoomIds ) group by a.principal_investigator_id";
+                        FROM principal_investigator_room pir
+                        LEFT JOIN principal_investigator pi
+                        ON pir.principal_investigator_id = pi.key_id
+                        WHERE pir.room_id IN ( $newRoomIds ) group by pir.principal_investigator_id";
 		$stmt = DBConnection::prepareStatement($queryString);
         foreach ($roomIds as $k => $id){
 		    $stmt->bindValue(($k+1), $id);

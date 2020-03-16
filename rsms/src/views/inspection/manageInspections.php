@@ -1,100 +1,104 @@
 <?php
 require_once '../top_view.php';
+require_once '../../includes/modules/lab-inspection/js/room-type-constants.js.php';
 ?>
-<style>
-    .hidey-thing{height:150px !important;}
-</style>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.6/lodash.min.js"></script>
 <script src="../../js/manageInspections.js"></script>
-<div ng-app="manageInspections" ng-controller="manageInspectionCtrl">
-<div class="alert savingBox" ng-if="saving">
-  <h1>
-      <i style="color:white" class="icon-spinnery-dealie spinner large"></i>
-      <span style="margin-left: 13px;display: inline-block;">Scheduling Inspection...</span>
-  </h1>
-</div>
- 
-<div class="alert savingBox" ng-if="filtering"><!---->
-  <h1>
-      <i class="icon-clock large" style="margin-bottom: -30px;
-    font-size: 66px;
-    color: white;
-    width: 59px;
-    margin-top: 20px;"></i>
-      <span style="margin-left: 13px;display: inline-block;">Filtering Inspections...</span>
-  </h1>
-</div>
+<div ng-app="manageInspections" ng-controller="manageInspectionCtrl" class="hub-theme-red" ng-cloak>
 
-<div class="navbar fixed">
-    <ul class="nav pageMenu" style="min-height: 50px; background: #d00; color:white !important; padding: 2px 0 2px 0; width:100%">
-        <li class="">
-            <img src="../../img/manage-inspections-icon.png" class="pull-left" style="height:50px" />
-            <h2  style="padding: 11px 0 5px 0px;">Manage Inspections
-                <a style="float:right;margin: 11px 28px 0 0;" href="<?php echo WEB_ROOT;?>"><i class="icon-home" style="font-size:40px;"></i></a>
-                <span style="float:right;" ng-if="filtered">{{filtered.length}} Inspections Displayed</span>
-            </h2>
+    <div class="alert savingBox" ng-if="saving">
+    <h1>
+        <i style="color:white" class="icon-spinnery-dealie spinner large"></i>
+        <span style="margin-left: 13px;display: inline-block;">Scheduling Inspection...</span>
+    </h1>
+    </div>
+    
+    <div class="alert savingBox" ng-if="filtering"><!---->
+    <h1>
+        <i class="icon-clock large" style="margin-bottom: -30px;
+        font-size: 66px;
+        color: white;
+        width: 59px;
+        margin-top: 20px;"></i>
+        <span style="margin-left: 13px;display: inline-block;">Filtering Inspections...</span>
+    </h1>
+    </div>
+
+    <hub-banner-nav
+        hub-title="Manage Inspections"
+        hub-image="../../img/manage-inspections-icon.png">
+        <li>
         </li>
-    </ul>
-</div>
-    <div class="loading" ng-if="loading" style="position:fixed; margin-top:70px; z-index:9999">
-      <i class="icon-spinnery-dealie spinner large"></i>
-      <span>Loading...</span>
-    </div>
-    <div class="filter-holder" ng-if="dtos.length">
-        <div>
-            <label>Inspection Year:</label>
-            <select ng-model="yearHolder.selectedYear" ng-change="selectYear()" ng-options="year as year.Name for year in yearHolder.years">
-                <option value="">-- select year --</option>
-            </select>
+    </hub-banner-nav>
+
+    <div class="hub-toolbar">
+        <div class="loading" ng-if="loading" style="z-index:9999">
+            <i class="icon-spinnery-dealie spinner large"></i>
+            <span>Loading...</span>
         </div>
-        <div>
-            <label>Inspection Type:</label>
-            <select ng-model="search.type" ng-options="v as v for (k, v) in constants.INSPECTION.TYPE" ng-change="genericFilter()">
-                <option value="">All Types</option>
-            </select>
-        </div>
-        
     </div>
 
-    <table class="table table-striped table-bordered userList manage-inspections-table" scroll-table watch="filtered.length" ng-show="dtos.length" style="margin-top:100px;">
+    <table class="table table-striped table-bordered userList manage-inspections-table sticky-headers"
+        sticky-headers watch="filtered.length" ng-if="dtos.length">
         <thead>
             <tr>
-                <th colspan="7" style="padding:0">
-                    
+                <th colspan="8" class="theme-main-element">
+                    <div class="filter-holder">
+                        <div>
+                            <label>Inspection Year:</label>
+                            <select ng-model="yearHolder.selectedYear" ng-change="selectYear()" ng-options="year as year.Name for year in yearHolder.years">
+                                <option value="">-- select year --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Inspection Type:</label>
+                            <select ng-model="search.type" ng-options="v as v for (k, v) in constants.INSPECTION.TYPE" ng-change="genericFilter()">
+                                <option value="">All Types</option>
+                            </select>
+                        </div>
+                        <h2 style="flex-grow: 1; text-align: right;">
+                            <span class="underline">{{filtered.length || 0}}</span>
+                            <span>Inspections Displayed</span>
+                        </h2>
+                    </div>
                 </th>
             </tr>
             <tr>
-                <th>
+                <th ng-class="{'theme-underlight-element': search.pi}">
                     Investigator<br>
                     <input class="span2" ng-model="search.pi" placeholder="Filter by PI" blur-it="genericFilter()" /><i ng-if="search.pi" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
                 </th>
-                <th>                    
+                <th ng-class="{'theme-underlight-element': search.campus}">
                     Campus<br>
                     <input class="span2" ng-model="search.campus" placeholder="Filter by Campus " blur-it="genericFilter()" /><i ng-if="search.campus" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
                  </th>
-                <th>
+                <th ng-class="{'theme-underlight-element': search.building}">
                     Building<br>
                     <input class="span2" ng-model="search.building" placeholder="Filter by Building" blur-it="genericFilter()" /><i ng-if="search.building" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
                 </th>
-                <th>
+                <th ng-class="{'theme-underlight-element': search.room_type}">
                     Lab Room(s)
+                    <select ng-model="search.room_type" style="margin-bottom:0; max-width:150px;" ng-options="type.name as type.label for type in roomTypes = (constants.ROOM_TYPE | toArray | filter:{inspectable:true})" ng-change="genericFilter()">
+                        <option value="">Select room type</option>
+                    </select>
                 </th>
-                <th>
+                <th ng-class="{'theme-underlight-element': search.date}">
                     Month Scheduled<br>
                     <input class="span2" ng-model="search.date" placeholder="Filter by Date" blur-it="genericFilter()" /><i ng-if="search.date" class="icon-magnifying-glass" ng-click="genericFilter()"></i><i ng-if="search.date" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
                 </th>
-                <th>
+                <th ng-class="{'theme-underlight-element': search.inspector}">
                     EHS Inspector<br>
                     <input class="span2" ng-model="search.inspector" placeholder="Filter by Inspector" blur-it="genericFilter()" /><i ng-if="search.inspector" class="icon-magnifying-glass" ng-click="genericFilter()"></i>
 
                 </th>
-                <th>
+                <th ng-class="{'theme-underlight-element': search.status}">
                     Status<br>
                     <select ng-model="search.status" style="margin-bottom:0; max-width:185px;" ng-options="status as status for status in statuses = (constants.INSPECTION.STATUS | toArray | filterableInspectionStatus)" ng-change="genericFilter()">
                         <option value="">Select a status</option>
                     </select>
                 </th>
-                <th>
+                <th ng-class="{'theme-underlight-element': search.hazards}">
                     Lab Hazards
                     <select ng-model="search.hazards" ng-options="v.value as v.label for v in constants.ROOM_HAZARDS" style="margin-bottom: 0;width: 142px;" ng-change="genericFilter()">
                         <option value="">Select</option>
@@ -116,8 +120,12 @@ require_once '../top_view.php';
                 <td class="triple-inner-inner" style="width:8%">
                     <div ng-repeat="campus in dto.Campuses">
                         <div ng-repeat="building in campus.Buildings" style="margin-bottom:10px">
-                            <div ng-class="{'red':room.notInspected}" ng-repeat="room in building.Rooms | orderBy: convenienceMethods.sortAlphaNum('Name')">
-                                {{room.Name}}
+                            <div ng-class="{'red':room.notInspected}" ng-repeat="room in building.Rooms | orderBy: convenienceMethods.sortAlphaNum('Name')"
+                                style="display:flex;">
+                                <span class="italic grayed-out" style="padding-right: 5px;">
+                                    <room-type-icon room-type-name="room.Room_type"></room-type-icon>
+                                </span>
+                                <span>{{room.Name}}</span>
                             </div>
                         </div>
                     </div>
@@ -191,6 +199,7 @@ require_once '../top_view.php';
 
                 </td>
                 <td style="width:10.5%">
+                    <i class="inspection-schedule-marker" ng-class="{'existing': dto.Inspection_id, 'expected': !dto.Inspection_id }"></i>
                     <span ng-if="!dto.Inspection_id">{{constants.INSPECTION.STATUS.NOT_SCHEDULED}}</span>
                     <span ng-if="dto.Inspections.Status">
                         <span once-text="dto.Inspections.Status"></span>

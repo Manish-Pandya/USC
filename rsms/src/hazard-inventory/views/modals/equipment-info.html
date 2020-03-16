@@ -46,6 +46,16 @@
             </td>
         </tr>
     </table>
+    <div ng-if="!cabs.length" class="bold error" style="padding: 10px;">
+        <p>
+            <span>No Biosafety Cabinet data was found for {{pi.User.Name}}.</span>
+            <span>Data may be missing due to one or more Inactive cabinets being assigned to this PI.</span>
+        </p>
+        <p>
+            <span>Inactive Biosafety Cabinet information can be reviewed in the</span>
+            <a ng-href="{{webRoot}}equipment/#/home/bio-safety-cabinets" target="_blank">Equipment Hub</a> and selecting <span style="font-style: italic;">Show Inactive</span>
+        </p>
+    </div>
 </div>
 <div class="modal-footer">
     <a ng-click="close()" class="btn left btn-large"><i class="icon-cancel-2"></i>Close</a>

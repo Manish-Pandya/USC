@@ -1,0 +1,66 @@
+<table class="userList table table-striped table-hover piTable table-bordered sticky-headers" sticky-headers watch="filtered.length" ng-show="neededUsers">
+    <thead>
+        <tr>
+            <th colspan="7" class="theme-main-element">
+                <h1>TEACHING LAB CONTACTS</h1>
+                <div class="btn-group" style="margin: -18px 0 0 20px;">
+                     <a class="btn btn-large" ng-click="showInactive = !showInactive; searchText = null;">
+                         <input type="hidden" ng-model="showInactive" ng-init="showInactive = false;">
+                         <span ng-show="showInactive">Show Active Users</span>
+                         <span ng-hide="showInactive">Show Inactive Users</span>
+                     </a>
+                     <a ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN] ])" class="btn-large btn" ng-click="openModal()" style="padding:10px; margin-left:5px;">
+                        <i class="icon-add-users"></i>Add Contact</a>
+               </div>
+                <h2 style="float:right; margin-top:8px;"><span class="underline bold">{{filtered.length}}</span> Users Displayed</h2>
+            </th>
+        </tr>
+        <tr>
+            <th>Edit User</th>
+            <th>
+                <a ng-click="order = 'Last_name'; reverse=!reverse">Last Name<i ng-class="{ 'icon-arrow-up':reverse, 'icon-arrow-down':!reverse }"></i></a><br>
+            </th>
+            <th>First Name</th>
+            <th>Department</th>
+            <th>Email</th>
+            <th>Office Phone</th>
+            <th>Emergency Phone</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th><input class="span2" ng-model="searchText.Name" placeholder="Filter by Name"/></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="contact in (filtered = (users | isTeachingLabContact | filter:activeFilter(showInactive) | orderBy:order:reverse | filter:searchText | filter:selectedPi | filter:selectedDepartment))"
+            ng-class="{inactive: !contact.Is_active}">
+            <td>
+                <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], ])" ng-hide="contact.edit" class="edit btn btn-primary" ng-click="openModal(contact,$index)" alt="Edit" title="Edit" title="Edit"><i class="icon-pencil"></i></button>
+                <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], ])" class="btn btn-danger btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="contact.Is_active && contact.Is_active > 0"><i class="icon-remove"></i></button>
+                <button ng-disabled="!rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN], R[Constants.ROLE.NAME.RADIATION_ADMIN], ])" class="btn btn-success btn DeactivateeRow" class="btn btn-success btn DeactivateeRow" ng-click="handleUserActive(contact)" ng-if="!contact.Is_active || contact.Is_active == 0"><i class="icon-checkmark"></i></button>
+                <i class="icon-spinnery-dealie spinner small" style="margin-left:5px; " ng-show="contact.IsDirty"/>
+                <i class="spinner small icon-spinnery-dealie" src="../../img/loading.gif" style="margin-left:5px;margin-top: 10px;position: absolute;" ng-show="contact.IsDirty"/></i>
+            </td>
+
+            <td once-text="contact.Last_name"></td>
+            <td once-text="contact.First_name"></td>
+
+            <td>
+                <ul>
+                    <li ng-if="contact.Primary_department"><span>{{contact.Primary_department.Name}}</span></li>
+                    <li ng-if="contact.Supervisor" ng-repeat="dept in contact.Supervisor.Departments"><span once-text="dept.Name"></span></li>
+                    <li ng-if="contact.PrincipalInvestigator" ng-repeat="dept in contact.PrincipalInvestigator.Departments"><span once-text="dept.Name"></span></li>
+                </ul>
+            </td>
+
+            <td once-text="contact.Email"></td>
+            <td>{{contact.Office_phone | tel}}</td>
+            <td>{{contact.Emergency_phone | tel}}</td>
+        </tr>
+    </tbody>
+</table>

@@ -1,7 +1,20 @@
 <?php
 class ConsoleTestReportWriter {
 
-    public function write( Array $results ){
+    public function writePhase( $name ){
+        echo str_pad('+', strlen($name) + 2, '-') . "\n";
+        echo "| $name:\n";
+    }
+
+    public function writePhaseProgress( $name ){
+        echo "|    $name...\n";
+    }
+
+    public function writePhaseEnd(){
+        echo "|    [DONE]\n";
+    }
+
+    public function writeReport( Array $results ){
 
         function green($str){ return "\e[0;32m$str\e[0m"; }
         function red($str){ return "\e[1;31m$str\e[0m"; }

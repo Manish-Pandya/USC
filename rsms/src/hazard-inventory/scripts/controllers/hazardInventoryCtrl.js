@@ -13,6 +13,7 @@ angular.module('HazardInventory')
         //do we have access to action functions?
         $scope.af = applicationControllerFactory;
         $scope.convenienceMethods = convenienceMethods;
+        $rootScope.webRoot = GLOBAL_WEB_ROOT;
 
         var af = applicationControllerFactory;
         var getAllPIs = function () {
@@ -131,6 +132,7 @@ angular.module('HazardInventory')
         $scope.openSubsModal = function (hazard, parent) {
             hazard.loadSubHazards();
             var modalData = {};
+            modalData.PI = $scope.PI;
             modalData.Hazard = hazard;
             modalData.Parent = parent;
             af.setModalData(modalData);
@@ -143,6 +145,7 @@ angular.module('HazardInventory')
         $scope.openRoomsModal = function (hazard, masterHazard) {
             hazard.loadSubHazards();
             var modalData = {};
+            modalData.PI = $scope.PI;
             modalData.Hazard = hazard;
             if (masterHazard) modalData.GrandParent = masterHazard;
 
@@ -233,7 +236,8 @@ angular.module('HazardInventory')
             af.setModalData(modalData);
             var modalInstance = $modal.open({
                 templateUrl: 'views/modals/open-inspections.html',
-                controller: 'HazardInventoryModalCtrl'
+                controller: 'HazardInventoryModalCtrl',
+                windowClass: 'open-inspections-modal'
             });
 
             modalInstance.result.then(function () {
@@ -328,7 +332,7 @@ angular.module('HazardInventory')
         }
 
     })
-    .controller('HazardInventoryModalCtrl', function ($scope, convenienceMethods, $rootScope, $q, $http, applicationControllerFactory, $modalInstance, $modal, roleBasedFactory) {
+    .controller('HazardInventoryModalCtrl', function ($scope, convenienceMethods, $rootScope, $q, $http, applicationControllerFactory, $modalInstance, $modal, roleBasedFactory, $timeout) {
         $scope.constants = Constants;
         $scope.convenienceMethods = convenienceMethods;
         var af = applicationControllerFactory;
@@ -338,6 +342,27 @@ angular.module('HazardInventory')
         $scope.dataStoreManager = dataStoreManager;
         $scope.USER = GLOBAL_SESSION_USER;
 
+        function getInspectionTypes(){
+            // Look at existing room assignments to determine inspeciton options
+            $scope.inspectable_room_types = $scope.modalData.PI.Rooms.map(r => r.Room_type)
+                .filter( (val, idx, self) => self.indexOf(val) === idx)
+                .map( name => Constants.ROOM_TYPE[name] )
+                .filter( type => type.inspectable );
+
+            $scope.inspectable_room_types.sort( (a,b) => a.name[0] - b.name[0] );
+
+            // Mock up a Rad room-type
+            $scope.inspectable_room_types.push({
+                name: 'RADIATION',
+                label: 'Radiation',
+                inspectable: true,
+                img_src: '../img/radiation-large-icon.png',
+                sort: 1
+            });
+
+            console.debug("Inspectable room types:", $scope.inspectable_room_types);
+        }
+
         if ($rootScope.PrincipalInvestigatorsBusy) {
             $scope.modalData.inspectionsPendings = true;
             $rootScope.PrincipalInvestigatorsBusy.then(function () {
@@ -346,7 +371,11 @@ angular.module('HazardInventory')
                     $scope.modalData.inspectionsPendings = false;
                     $scope.$apply();                    
                 }, 10);
+
+                // Grab PI from scope
                 $scope.pi = $scope.modalData.PI;
+
+                // Check for open inspections
                 for (var i = 0; i < $scope.modalData.PI.Inspections.length; i++) {
                     var insp = $scope.modalData.PI.Inspections[i];
                     if (!insp.Date_closed) {
@@ -354,7 +383,12 @@ angular.module('HazardInventory')
                         break;
                     }
                 }
+
             })
+            .then( getInspectionTypes )
+        }
+        else {
+            getInspectionTypes();
         }
 
         function openSecondaryModal(modalData) {
@@ -402,26 +436,70 @@ angular.module('HazardInventory')
             
         }
 
-        $scope.checkRad = function (pi, id) {
-            $scope.confirmer = {};
-            $scope.confirmer.needsRadConfirmation = false;
-            if (GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.RADIATION_INSPECTOR) > -1) {
-                af.initialiseInspection(pi, id, false, true);
-            } else {
-                $scope.confirmer.needsRadConfirmation = true;
-            }
-
+        function clearNewInspectionConfirmation(){
+            $timeout(function(){
+                // Clear out this inspection
+                $scope.newInspection = undefined;
+            });
         }
 
-        $scope.checkSafetyInspector = function (pi, id) {
-            $scope.confirmer = {};
-            $scope.confirmer.needsConfirmation = false;
-            if (GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.SAFETY_INSPECTOR) > -1) {
-                af.initialiseInspection(pi, id, false, false);
-            } else {
-                $scope.confirmer.needsConfirmation = true;
-            }
+        function createNewInspectionConfirmation( verifyUserFn, createInspectionFn, unverifiedUserMessage, roomType ){
+            $scope.newInspection = {
+                message: unverifiedUserMessage,
+                confirmation: $q.defer(),
+                roomType: roomType
+            };
 
+            $scope.newInspection.confirmation.promise.then(
+                confirm => {
+                    createInspectionFn().then(clearNewInspectionConfirmation);
+                },
+                reject  => clearNewInspectionConfirmation()
+            );
+
+            if( verifyUserFn() ){
+                // User doesn't require confirmation; resolve the promise immediately
+                $scope.newInspection.confirmation.resolve();
+            }
+            // Else require user to manually confirm
+        }
+
+        $scope.verifyOrCreateNewInspection = function(pi, id, roomType){
+            if( roomType.name === 'RADIATION' ){
+                // Special-case
+                $scope.checkRad(pi, id, roomType);
+            }
+            else {
+                $scope.checkSafetyInspector(pi, id, roomType);
+            }
+        }
+
+        $scope.checkRad = function (pi, id, roomType) {
+            createNewInspectionConfirmation(
+                // Verify by checking if user has Rad Inspector role
+                () => GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.RADIATION_INSPECTOR) > -1,
+
+                // Create rad inspection by initializing with pi/id, rad-inspection, null rooms, and no room-type
+                () => af.initialiseInspection(pi, id, false, true, null, null),
+
+                'You do not have a Radiation Inspector role. Please verify you want to continue this radiation inspection.',
+
+                roomType
+            );
+        }
+
+        $scope.checkSafetyInspector = function (pi, id, roomType) {
+            createNewInspectionConfirmation(
+                // Verify by checking if user has Safety Inspector role
+                () => GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.SAFETY_INSPECTOR) > -1,
+
+                // Create inspection by initializing with pi/id, null rooms, and specified room-type
+                () => af.initialiseInspection(pi, id, false, false, null, roomType),
+
+                'You do not have a Safety Inspector role. Please verify you want to continue this biochem inspection.',
+
+                roomType
+            );
         }
 
 
@@ -449,6 +527,10 @@ angular.module('HazardInventory')
                     inspection.Rooms.push(rooms[k]);
                 }
             }
+
+            // Generate initial warnings once processing is complete
+            updateRoomsWarning(inspection, $scope.modalData.PI);
+
             inspection.processed = true;
         }
 
@@ -462,9 +544,73 @@ angular.module('HazardInventory')
             return rooms;
         }
 
-        
+        /**
+         * Forward saving of data to ActionFunctions. This proxy allows us to also
+         * regenerate inspection warnings after room changes are completed
+         */
+        $scope.saveInspectionRoomRelationship = function saveInspectionRoomRelationship(inspection, room) {
+            af.saveInspectionRoomRelationship( inspection, room )
+                .then( saved => {
+                    updateRoomsWarning(inspection, $scope.modalData.PI);
+                });
+        };
 
+        var updateRoomsWarning = function updateRoomsWarning(inspection, pi){
+            let warning = null;
 
+            switch( inspection.Status ){
+                case Constants.INSPECTION.STATUS.SCHEDULED:
+                case Constants.INSPECTION.STATUS.NOT_ASSIGNED:
+                case Constants.INSPECTION.STATUS.OVERDUE_FOR_INSPECTION:{
+                    // Rooms are denoted as selected by a composite key boolean:
+                    let selectedkey = inspection.Key_id + 'checked';
+
+                    // Determine room type (or types) covered in this inspection
+                    let types = inspection.Rooms
+                        // Filter to selected rooms
+                        .filter( r => r[selectedkey] )
+                        // Map to room type
+                        .map(r => r.Room_type)
+                        // Filter to unique values
+                        .filter( (val, idx, self) => self.indexOf(val) === idx);
+
+                    // Determine if inspection is missing or has extra Rooms
+
+                    // If room is NOT selected (and IS present in PI's Room list (limited by type) )
+                    let unselected = inspection.Rooms
+                        .filter( r => !r[selectedkey])                  // room is not selected for this inspection
+                        .filter( r => pi.Rooms
+                            .filter(r => types.includes(r.Room_type))   // room type is included in this inspection
+                            .some(pir => pir.Key_id == r.Key_id)        // room is present in PI's room assignments
+                        );
+
+                    // If room IS selected but is NOT present in PI's Room list (therefore not assigned to them)
+                    let old = inspection.Rooms
+                        .filter(r => r[selectedkey] )
+                        .filter(r => !pi.Rooms.some(pir => pir.Key_id == r.Key_id));
+
+                    // Generate warning object if either dataset is populated
+                    if( unselected.length || old.length ){
+                        warning = {
+                            Inspection_id: inspection.Key_id,
+                            old: old,
+                            unselected: unselected
+                        };
+                        console.debug("Inspection has warnings:", warning);
+                    }
+
+                    break;
+                }
+                default: break;
+            }
+
+            // Set warning object into the inspection
+            inspection.warning = warning;
+        };
+
+        $scope.getHazardRoom = function getHazardRoom( hazard, room_id ){
+            return hazard.InspectionRooms.find(r => r.Room_id == room_id );
+        }
     })
     .controller('SecondaryModalController', function ($scope, $q, $http, applicationControllerFactory, $modalInstance, convenienceMethods, roleBasedFactory) {
         $scope.constants = Constants;

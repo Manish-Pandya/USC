@@ -18,6 +18,12 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
     public static $MYLAB_GROUP_PROFILE = "000_my-profile";
     public static $MYLAB_GROUP_INSPECTIONS = '001_lab-inspections';
 
+    public const ROLE_PI = 'Principal Investigator';
+    public const ROLE_PERSONNEL = 'Lab Personnel';
+    public const ROLE_CONTACT = 'Lab Contact';
+    public const ROLE_INSPECTOR = 'Inspector';
+    public const ROLE_TEACHING_LAB_CONTACT = 'Teaching Lab Contact';
+
     private $manager;
 
     public function getModuleName(){
@@ -264,10 +270,15 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
             // Look up hazard info for displayable inspections
             $dao = new InspectionDAO();
             foreach($inspections as $inspection){
+                $oldOrArchived = LabInspectionSecurity::inspectionIsOldOrArchived($inspection->getKey_id());
+                $status = $oldOrArchived ? 'Archived' : $inspection->getStatus();
+
                 $inspectionDtos[] = new GenericDto(array(
                     'Key_id' => $inspection->getKey_id(),
-                    'Status' => $inspection->getStatus(),
+                    'Status' => $status,
                     'Date_started' => $inspection->getDate_started(),
+                    'Date_closed' => $inspection->getDate_closed(),
+                    'Cap_submitted_date' => $inspection->getCap_submitted_date(),
                     'Is_rad' => $inspection->getIs_rad(),
                     'HazardInfo' => $dao->getInspectionHazardInfo($inspection->getKey_id()),
                     'Inspectors' => array_map( function($i){ return $i->getName(); }, $inspection->getInspectors())

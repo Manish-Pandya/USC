@@ -27,3 +27,101 @@ li.hazard-room label label span.metro-checkbox:after{
 ul li.yellowed > label.checkbox input[type=checkbox]:checked ~ span.metro-checkbox::after, ul li.yellowed > span label.checkbox input[type=checkbox]:checked ~ span.metro-checkbox::after {
     color: rgb(211, 96, 96);
 }
+
+.inspection-warnings {
+    color: orangered;
+    font-size: 0.9em;
+}
+
+.inspection-warnings .inspection-warning {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.inspection-warnings h4 {
+    display: flex;
+}
+
+.inspection-warnings h4 i {
+    padding-right: 10px;
+}
+
+.inspection-warnings ul {
+    margin-left: 10px;
+}
+
+.inspection-warnings ul li {
+    margin-bottom: 10px;
+}
+
+.inspection-warnings .subject {
+    font-style: italic;
+}
+
+/* Move comma over to the content */
+.inspection-warnings .comma-separated > .subject:not(:first-child)::before {
+    margin-left: -0.3em;
+}
+
+.inactive-pi {
+    font-style: italic;
+}
+.inactive-pi::after {
+    content: " (Inactive PI)";
+}
+
+
+/* Stripe table bodies, rather than table rows */
+table.stripe-bodies tbody:nth-child(even) { background: #ECF0F1; }
+table.stripe-bodies tbody tr { background: inherit; }
+
+/* Force modal position near the top of the screen to allow for dynamic expansion of Room lists */
+.open-inspections-modal {
+    top: 5% !important;
+}
+
+/* Align Room lists to the top of the cell */
+td.room-cell {
+    vertical-align: top !important;
+}
+
+/* Highlight room toggle element whenever the cell is active */
+td.room-cell:hover a.scroll-list-toggle {
+    background: lightgray;
+    text-decoration: none;
+}
+
+/* Stretch the toggle element across the cell */
+td.room-cell a.scroll-list-toggle {
+    color: initial;
+
+    /* Apply negative margin to stretch to cell borders */
+    margin: -10px -8px;
+    padding: 10px 8px;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Prevent wrapping of selected room counts */
+td.room-cell a.scroll-list-toggle small {
+    white-space: nowrap;
+}
+
+ul.scroll-list {
+    /* Limit the height of room lists, and scroll them when needed */
+    overflow-y: auto;
+    max-height: 250px !important;
+
+    /* Apply margin to account for toggle-element */
+    margin: 15px 0 0 10px;
+
+    /* Indent */
+    padding-left: 10px;
+    border-left: 3px solid black;
+}
+
+ul.scroll-list li { padding: 3px; }
+ul.scroll-list li:hover {
+    background: lightgray;
+}

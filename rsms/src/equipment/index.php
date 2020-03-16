@@ -6,6 +6,7 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
 }else{
     require_once('../Application.php');
 }
+session_start();
 
 
 ?>
@@ -118,9 +119,15 @@ if(stristr($_SERVER['REQUEST_URI'],'/RSMScenter')){
     <!-- Toast API -->
     <script type='text/javascript' src='<?php echo WEB_ROOT?>js/ToastApi.js'></script>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/ToastApi.css"/>
+
+    <?php require_once '../includes/modules/lab-inspection/js/room-type-constants.js.php'; ?>
 </head>
 <body>
-    <div ng-app="EquipmentModule" ng-controller="NavCtrl" class="container-fluid">
+
+    <!--user-info...-->
+    <?php require('../views/user_info_bar.php'); ?>
+
+    <div ng-app="EquipmentModule" ng-controller="NavCtrl" class="container-fluid" style="margin-top:25px;">
     <div cg-busy="{promise:loading,message:'Loading...',templateUrl:'../client-side-framework/busy-templates/full-page-busy.html'}"></div>
     <!-- NAVIGATION -->
       <div class="banner {{bannerClass | splitAtPeriod}} equipment" ng-class="{'dashboard-banner':dashboardView, 'hide': noHead}">

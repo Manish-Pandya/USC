@@ -7,16 +7,11 @@ require_once '../../RequireUserLoggedIn.php';
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/mylab.css"/>
 
-<div ng-app="myLab" ng-controller="myLabController">
+<div ng-app="myLab" ng-controller="myLabController" class="hub-theme-green" ng-cloak>
     <div cg-busy="{promise:inspectionPromise,message:'Loading', backdrop:true,templateUrl:'../../rad/views/busy-templates/full-page-busy.html'}"></div>
 
-    <div class="banner bg-color-greendark">
-        <h1>
-            My Laboratory
-        </h1>
-        <ul class="banner-nav">
-        </ul>
-    </div>
+    <hub-banner-nav hub-title="My Laboratory">
+    </hub-banner-nav>
 
     <div ng-if="AllAlerts.length" class="alert alert-info my-lab-alert">
         <ul ng-repeat="widget in MyLabWidgets">
