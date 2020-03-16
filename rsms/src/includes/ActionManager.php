@@ -2619,6 +2619,7 @@ class ActionManager {
 
         return DtoFactory::buildDto($room, array(
             'Room_type' => $room->getRoom_type(),
+            'Max_occupants' => $room->getMax_occupants(),
             'Name' => $room->getName(),
             'Building_id' => $room->getBuilding_id(),
             'Building_name' => $room->getBuilding_name(),

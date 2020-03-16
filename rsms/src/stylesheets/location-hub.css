@@ -57,6 +57,11 @@
 .locationTable tr .lhcol_edit { width:7%; }
 .locationTable tr .lhcol_building { width:18%; }
 .locationTable tr .lhcol_name { width:10%; }
+.locationTable tr .lhcol_occupants { width: 5% }
+.locationTable tr .lhcol_occupants input {
+  width: auto;
+}
+
 .locationTable tr .lhcol_type { width:2%; }
 .locationTable tr .lhcol_hazards { width:10%; }
 .locationTable tr .lhcol_purpose { width:10%; }
