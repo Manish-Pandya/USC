@@ -47,8 +47,8 @@ class RequestLog {
         self::$logger->info(self::$username . " >>>     " . self::$desc);
     }
 
-    public static function log_stop( &$actionResult, $contentSize ){
-        self::$logger->info(self::$username . " <<< " . $actionResult->statusCode . ' ' . self::$desc . " content-length: $contentSize");
+    public static function log_stop( $status_code, $contentSize ){
+        self::$logger->info(self::$username . " <<< " . $status_code . ' ' . self::$desc . " content-length: $contentSize");
         Metrics::stop(self::$desc);
     }
 }

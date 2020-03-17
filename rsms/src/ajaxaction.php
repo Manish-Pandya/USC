@@ -66,7 +66,7 @@ if($actionResult->statusCode == 302){
 //http_response_code(404);
 
 // Output JSON (with possible callback)
-RequestLog::log_stop( $actionResult, strlen($json));
+RequestLog::log_stop( $actionResult->statusCode, strlen($json));
 
 //If a callback function is requested
 if( array_key_exists('callback', $_GET) ){
