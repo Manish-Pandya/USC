@@ -51,6 +51,7 @@ class LocationResourceTransformer {
             $locations = [];
             foreach($pi->getRooms() as $room){
                 $locations[] = new GenericDto([
+                    'class' => 'LocationInfo',
                     'room' => $this->transform_room($room, false),
                     'building' => $this->transform_building($room->getBuilding(), false),
                     'campus' => $this->transform_campus($room->getBuilding()->getCampus(), false),
