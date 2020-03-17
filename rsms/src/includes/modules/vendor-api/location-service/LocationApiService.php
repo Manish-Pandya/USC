@@ -91,6 +91,10 @@ class LocationApiService {
             $LOG->warn("User with username='$username' does not exist");
             throw new ResourceNotFoundException("Resource not found");
         }
+        else if ( !$result->getIs_active() ){
+            // Inactive
+            throw new ResourceNotFoundException("Resource not found");
+        }
 
         // PI may be the user's supervisor, or the PI
         $pi = null;
@@ -114,7 +118,7 @@ class LocationApiService {
 
         $result = $dao->getById($id);
 
-        if( !isset($result) || $result instanceof ActionError ){
+        if( !isset($result) || $result instanceof ActionError || !$result->getIs_active() ){
             throw new ResourceNotFoundException("$resource #$id not found");
         }
 
@@ -126,7 +130,7 @@ class LocationApiService {
 
         $result = $dao->getById($id);
 
-        if( !isset($result) || $result instanceof ActionError ){
+        if( !isset($result) || $result instanceof ActionError || !$result->getIs_active()){
             throw new ResourceNotFoundException("$resource #$id not found");
         }
 
