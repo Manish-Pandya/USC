@@ -48,7 +48,23 @@ class LocationApiService {
 
     public function getAll( string $resource ){
         $dao = $this->get_resource_dao( $resource );
-        $results = $dao->getAll();
+
+        // Get only Active items
+        $results = $dao->getAll( null, false, true );
+
+        // Special filter for PIs
+        //   Ignore any which are not linked to their User
+        if( self::_get_resource_class($resource) == PrincipalInvestigator::class ){
+            $count_before = count($results);
+            $results = array_filter($results, function($pi){
+                return $pi->getUser() != NULL;
+            });
+
+            if( count($results) != $count_before ){
+                LogUtil::get_logger(__CLASS__, __FUNCTION__)->warn("Filtered PrincipalInvestigator item(s) which have no User");
+            }
+        }
+
         return $this->transform($results, false);
     }
 
