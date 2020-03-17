@@ -27,7 +27,7 @@ $json = '';
 // Write standard headers before calling action.
 //   Some actions (such as attachment download) may trigger sending
 //     of headers.
-header('content-type: application/javascript');
+header('content-type: application/json');
 
 $actionDispatcher = new ApiRequestDispatcher($_REQUEST, $_SESSION);
 
