@@ -91,7 +91,7 @@ class LocationApiService {
             $LOG->warn("User with username='$username' does not exist");
             throw new ResourceNotFoundException("Resource not found");
         }
-        else if ( !$result->getIs_active() ){
+        else if ( !$user->getIs_active() ){
             // Inactive
             throw new ResourceNotFoundException("Resource not found");
         }
