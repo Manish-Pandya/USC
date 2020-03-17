@@ -5,8 +5,8 @@ class RequestLog {
     private static $desc;
     private static $logger;
 
-    public static function init(&$actionName, &$dataSource){
-        self::$logger = Logger::getLogger('request.ajax');
+    public static function init(&$actionName, &$dataSource, $logger_name = 'request.ajax'){
+        self::$logger = Logger::getLogger($logger_name);
 
         // attempt to get module...
         $module = '';
