@@ -25,14 +25,26 @@ class LocationResourceTransformer {
 
     public function transform_principalinvestigator( PrincipalInvestigator $pi, bool $detail ){
         // Merge PI and their User
+
         $data = [
             'class' => (string) $this->describeClass($pi, $detail),
             'key_id' => (int) $pi->getKey_id(),
-            'username' => (string) $pi->getUser()->getUsername(),
-            'first_name' => (string) $pi->getUser()->getFirst_name(),
-            'last_name' => (string) $pi->getUser()->getLast_name(),
-            'email' => (string) $pi->getUser()->getEmail()
         ];
+
+        $user = $pi->getUser();
+        if( isset($user) ){
+            $user_data = [
+                'username' => (string) $user->getUsername(),
+                'first_name' => (string) $user->getFirst_name(),
+                'last_name' => (string) $user->getLast_name(),
+                'email' => (string) $user->getEmail()
+            ];
+
+            $data = array_merge( $data, $user_data );
+        }
+        else {
+            LogUtil::get_logger(__CLASS__, __FUNCTION__)->warn("$pi has no User data");
+        }
 
         if( $detail === true ){
             // Map locations
