@@ -272,7 +272,7 @@ class ActionManager {
                 }
             }
             else{
-                if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/MyLab.php';
+                if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/mylab.php';
             }
 
             if(isset($_SESSION["REDIRECT"])){
@@ -543,7 +543,7 @@ class ActionManager {
 
             // Otherwise, go to My Lab
             else {
-                $destination = 'views/lab/MyLab.php';
+                $destination = 'views/lab/mylab.php';
                 $LOG->debug("User has no special-case roles");
             }
 
