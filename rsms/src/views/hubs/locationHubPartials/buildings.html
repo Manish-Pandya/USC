@@ -64,8 +64,37 @@
             </td>
 
             <td style="width:15%">
-                <span ng-if="!building.edit" once-text="building.Physical_address"></span>
-                <input ng-if="building.edit" ng-model="copy.Physical_address" ng-change="lhf.editing(true)">
+                <div ng-if="!building.edit" class="even-content" style="align-items: center;">
+                    <div once-text="building.Physical_address"></div>
+                    <a class="btn btn-info" target="_blank"
+                       title="View Map"
+                       ng-if="building.Map_url" ng-href="{{building.Map_url}}">
+                        <i class="icon-map-pin-fill"></i>
+                    </a>
+                </div>
+                <div ng-if="building.edit">
+                    <div class="full even-content">
+                        <input ng-model="copy.Physical_address" ng-change="lhf.editing(true)" style="width: 80%"
+                            placeholder="Address">
+
+                        <a ng-if="!copy.Map_url && !copy.showmap" ng-click="copy.showmap = true"
+                            class="btn"
+                            style="font-size: small; margin-left:auto;"
+                            title="Add a maps link (such as from Google Maps) to this Building">
+                            <i class="icon-map-pin-fill"></i>
+                        </a>
+                    </div>
+
+                    <div ng-if="copy.Map_url || copy.showmap" class="even-content full" style="margin-top: 10px; align-items: flex-start;">
+                        <input type="url" ng-model="copy.Map_url" ng-change="lhf.editing(true)"
+                            placeholder="Maps link" style="width: 80%">
+
+                        <a class="btn btn-info" target="_blank"
+                           ng-if="copy.Map_url" ng-href="{{copy.Map_url}}">
+                            <i class="icon-map-pin-fill"></i>
+                        </a>
+                    </div>
+                </div>
             </td>
             <td style="width:15%">
                 <span ng-if="building.edit">
