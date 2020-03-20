@@ -56,11 +56,11 @@
 
             <td style="width:15%">
                 <span ng-if="!building.edit" once-text="building.Name"></span>
-                <input ng-if="building.edit" ng-model="copy.Name" ng-change="lhf.editing(true)">
+                <input ng-if="building.edit" ng-model="copy.Name" ng-change="lhf.editing(true)" class="full" placeholder="Name">
             </td>
             <td style="width:15%">
                 <span ng-if="!building.edit" once-text="building.Alias"></span>
-                <input ng-if="building.edit" ng-model="copy.Alias" ng-change="lhf.editing(true)">
+                <input ng-if="building.edit" ng-model="copy.Alias" ng-change="lhf.editing(true)" placeholder="Alias">
             </td>
 
             <td style="width:15%">
