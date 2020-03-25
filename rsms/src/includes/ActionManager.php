@@ -154,198 +154,6 @@ class ActionManager {
         return $department;
     }
 
-    /**
-     * Authenticate via LDAP
-     */
-    protected function loginLdap( $username, $password, $destination = NULL ){
-        if( !ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_LDAP, false) ){
-            // LDAP auth is disabled
-            return false;
-        }
-
-        $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
-        $LOG->debug("Attempt LDAP authentication for $username");
-
-        // LDAP may not be loaded
-        if( !class_exists('LDAP') ){
-            $LOG->error("Attempting LDAP authentication, but no LDAP provider has been defined");
-            return false;
-        }
-
-        $ldap = new LDAP();
-
-        // if successfully authenticates by LDAP:
-        try{
-            if ($ldap->IsAuthenticated($username,$password)) {
-                return $this->handleUsernameAuthorization($username);
-            }
-        }
-        catch(Exception $e){
-            if( stristr($e->getMessage(), 'Invalid Credentials') ){
-                // Ignore this exception; it just indicates wrong password
-            }
-            else{
-                $LOG->error("Error authenticating user over LDAP: " . $e->getMessage());
-            }
-        }
-
-        $LOG->debug("LDAP AUTHENTICATION FAILED");
-        return false;
-    }
-
-    /**
-     * Wrapper for non-production login.
-     * Because RSMS does not track passwords, this is a less-secure path
-     * than LDAP.
-     */
-    protected function loginDev( $username, $password, $destination = NULL ){
-        if( !ApplicationConfiguration::get( ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_DEV_IMPERSONATE, false) ){
-            // Dev impersonate auth is disabled
-            return false;
-        }
-
-        $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
-        $LOG->warn("Attempt DEV-IMPERSONATE authentication for '$username'");
-        if( $password == ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_DEV_IMPERSONATE_PASSWORD) ){
-            return $this->handleUsernameAuthorization($username);
-        }
-
-        $LOG->info("DEV-IMPERSONATE AUTHENTICATION FAILED");
-        return false;
-    }
-
-    /**
-     * Validate login for impersonatable test user with variable role
-     */
-    protected function loginAsRole($username, $password, $destination){
-        if( !ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_DEV_ROLE, false) ){
-            // Dev-role auth is disabled
-            return false;
-        }
-
-        $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
-        $LOG->debug("Attempt DEV-ROLE authentication for $username");
-
-        // ROLE assignment will be based on username, if it directly matches a role name
-        $roles = array();
-        foreach($this->getAllRoles() as $role) {
-            $roles[] = $role->getName();
-        }
-
-        //the name of a real role was input in the form
-        //hardcoded password for mock role login...
-        if ( in_array($username, $roles) && $password == ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_DEV_ROLE_PASSWORD) ) {
-            // Look up test user and mix in requested role
-            // Default to Test User with ID 1
-            $user = $this->getUserById(1);
-
-            $roleDao = $this->getDao(new Role());
-            $whereClauseGroup = new WhereClauseGroup(array(new WhereClause("name", "=", $username)));
-            $fakeRoles = $roleDao->getAllWhere($whereClauseGroup);
-
-            $user->setFirst_name("Test user with role:");
-            $user->setLast_name($username);
-
-            if($username != "Principal Investigator"){
-                $user->setSupervisor_id(1);
-                $user->setInspector_id(10);
-                $user->setInspector($this->getInspector(10));
-            }else{
-                $principalInvestigator = $this->getPIById(1);
-                $user->setPrincipalInvestigator($principalInvestigator);
-            }
-
-            $user->setRoles($fakeRoles);
-            $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
-
-            // put the USER into session
-            $_SESSION['USER'] = $user;
-
-            $LOG->debug($_SESSION['ROLE']['userRoles']);
-
-            //get the proper destination based on the user's role
-            $nonLabRoles = array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector", "EmergencyUser");
-            $LOG->debug(count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)));
-            if( count(array_intersect($_SESSION['ROLE']['userRoles'], $nonLabRoles)) != 0 ){
-                if($destination == NULL){
-                    $_SESSION["DESTINATION"] = 'views/RSMSCenter.php';
-                }
-            }
-            else{
-                if($destination == NULL)$_SESSION["DESTINATION"] = 'views/lab/mylab.php';
-            }
-
-            if(isset($_SESSION["REDIRECT"])){
-                $_SESSION['DESTINATION'] = $this->getDestination();
-                $LOG->info("should redirect to " . $_SESSION['DESTINATION']);
-            }
-
-            // return true to indicate success
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Login to hard-coded 'emergency' user
-     */
-    protected function loginEmergency($username, $password, $destination = NULL){
-        // Check configured Emergency auth; enable by default
-        if( !ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_EMERGENCY, true) ){
-            // Emergency auth is disabled
-            return false;
-        }
-
-        $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
-
-        // Hardcoded username and password for "emergency accounts"
-        if($username === "EmergencyUser" && $password === ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_EMERGENCY_PASSWORD)) {
-            $LOG->info("Attempt emergency-user authentication");
-            return $this->handleUsernameAuthorization("EmergencyUser");
-        }
-
-        return false;
-    }
-
-    /**
-     * Perform final login actions for the given username.
-     * It is assumed that the requestor has already been authenticated
-     */
-    protected function handleUsernameAuthorization($username){
-        $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
-
-        // Make sure they're an Erasmus user by username lookup
-        $dao = new UserDAO();
-        $user = $dao->getUserByUsername($username);
-
-        if ($user == null) {
-            // User does not exist
-            $LOG->info("No such user '$username'");
-            return false;
-        }
-        else if( !$user->getIs_active() ){
-            // User is not active
-            $LOG->info("Local authentication succeeded, but the user is inactive: $user");
-
-            // successful LDAP login, but not an enabled Erasmus user, return false
-            $_SESSION['ERROR'] = "Your account has been disabled. If you believe this is in error, please contact your administrator.";
-            return false;
-        }
-        else {
-            //the name of a real role was NOT input in the form, get the actual user's roles
-            $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
-
-            // put the USER into session
-            $_SESSION['USER'] = $user;
-
-            $_SESSION['DESTINATION'] = $this->getDestination();
-
-            // return true to indicate success
-            return true;
-        }
-    }
-
     public function impersonateUserAction($impersonateUsername = NULL, $currentPassword = NULL) {
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $LOG->info("User " . $this->getCurrentUser()->getUsername() . " attempting to impersonate $impersonateUsername");
@@ -359,13 +167,17 @@ class ActionManager {
         }
 
         // TODO: Verify current user's password
+        $auth_manager = new AuthManager();
+        $authentication = new AuthenticationResult( true, $impersonateUsername );
+
         // copy current-user info into session
         $_SESSION['IMPERSONATOR'] = array(
             'USER' => $_SESSION['USER'],
             'ROLE' => $_SESSION['ROLE']
         );
 
-        return $this->handleUsernameAuthorization( $impersonateUsername );
+        $authorization = $auth_manager->authorize( $authentication );
+        return $this->applySessionUser($authorization);
     }
 
     public function stopImpersonating(){
@@ -395,7 +207,7 @@ class ActionManager {
         return array_map( function($u){ return new ImpersonatableUser($u); }, $allUsers);
     }
 
-     public function loginAction( $username = NULL ,$password = NULL, $destination = NULL ) {
+     public function loginAction( $username = NULL, $password = NULL, $destination = NULL ) {
         $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
 
         $username = $this->getValueFromRequest('username', $username);
@@ -404,32 +216,63 @@ class ActionManager {
 
         if($destination != NULL)$_SESSION['DESTINATION'] = $destination;
 
-        $loggedIn = false;
+        $auth_manager = new AuthManager();
 
-        // Handle special cases: hard-coded logins
-        $special = $this->loginEmergency($username, $password, $destination)
-            ||     $this->loginAsRole($username, $password, $destination);
+        ///////////////////////////////////////
+        // Authenticate provided credentials
+        $authentication = $auth_manager->authenticate( $username, $password );
 
-        if( $special ){
-            $LOG->warn("Handled hard-coded login of user '$username'");
-            $loggedIn = true;
-        }
-        else {
-            // Handle 'normal' login
-            $loggedIn = $this->loginLdap($username, $password, $destination)
-                ||      $this->loginDev($username, $password, $destination);
-        }
-
-        if( !$loggedIn ){
+        if( !$authentication->success() ){
+            // Credentials are invalid
             $LOG->info("Failed login attempt for '$username'");
             // otherwise, return false to indicate failure
             $_SESSION['ERROR'] = "The username or password you entered was incorrect.";
             return false;
         }
-        else{
-            $LOG->info("Successful login attempt for '$username'");
-            return true;
+
+        ///////////////////////////////////////
+        // Credentials are authentic
+        // Authorize provided name
+        $authorization = $auth_manager->authorize( $authentication );
+
+        if( !$authorization->success() ){
+            // Authorization failed
+
+            if( $authorization->getAuthorization() == null ){
+                // Not a system user
+                // TODO: Allow enrollment request
+                $_SESSION['ERROR'] = "You are not authorized to use this system.";
+            }
+            else {
+                // User exists, but is inactive
+                $_SESSION['ERROR'] = "Your account has been disabled. If you believe this is in error, please contact your administrator.";
+            }
+
+            return false;
         }
+
+        ///////////////////////////////////////
+        // Authorization successful
+        // Apply user to session
+        $this->applySessionUser($authorization);
+
+        $LOG->info("Successful login attempt for '$username'");
+        return true;
+    }
+
+    /**
+     * Applies the authorization User details to this Session
+     * It is assumed that the requestor has already been authenticated
+     */
+    private function applySessionUser( AuthorizationResult &$authorization ){
+        if( $authorization->success() ){
+            $user = $authorization->getAuthorization();
+            $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
+            $_SESSION['USER'] = $user;
+            $_SESSION['DESTINATION'] = $this->getDestination();
+        }
+
+        return $authorization->success();
     }
 
     /**
