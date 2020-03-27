@@ -1,0 +1,28 @@
+img.usclogo {
+    width: 310px;
+    height: 53px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+section {
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+header {
+    font-family: "Berlingske Sans", "Arial", sans-serif;
+    font-size: 1.6em;
+    min-height: 50px;
+
+    padding-left: 10%;
+    padding-right: 10%;
+
+    display: flex;
+    align-items: center;
+
+    color: white;
+}
+
+header.main { background-color: black; }
+header.sub { background-color: #73000a; }
