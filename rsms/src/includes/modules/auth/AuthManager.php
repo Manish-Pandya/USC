@@ -7,6 +7,21 @@
 class AuthManager {
     public function __toString(){ return get_class($this); }
 
+    public static function hasCurrentUser(){
+        return isset($_SESSION) && isset($_SESSION['USER']);
+    }
+
+    public static function getCurrentUser(){
+        if( self::hasCurrentUser() ){
+            $id = $_SESSION['USER']->getKey_id();
+            $dao = new UserDAO();
+            $user = $dao->getById($id);
+            return $user;
+        }
+
+        return null;
+    }
+
     function getAuthenticationHandlers(){
         // TODO: Externalize list of handlers to app config?
         $handlers = [

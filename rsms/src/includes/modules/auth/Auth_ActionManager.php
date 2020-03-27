@@ -1,6 +1,5 @@
 <?php
-// TODO: Divorce this from ActionManager
-class Auth_ActionManager extends ActionManager {
+class Auth_ActionManager {
 
     public function loginAction( $username, $password, $destination = NULL ) {
         $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
@@ -66,9 +65,11 @@ class Auth_ActionManager extends ActionManager {
 
     public function impersonateUserAction($impersonateUsername = NULL, $currentPassword = NULL) {
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
-        $LOG->info("User " . $this->getCurrentUser()->getUsername() . " attempting to impersonate $impersonateUsername");
 
-        if( $impersonateUsername == $this->getCurrentUser()->getUsername() ){
+        $current_user = AuthManager::getCurrentUser();
+        $LOG->info("User " . $current_user->getUsername() . " attempting to impersonate $impersonateUsername");
+
+        if( $impersonateUsername == $current_user->getUsername() ){
             return new ActionError("Cannot impersonate yourself", 400);
         }
 
@@ -127,10 +128,12 @@ class Auth_ActionManager extends ActionManager {
 
             $_SESSION['AUTH_TYPE'] = $authorization->getType();
 
+            $coreActionManager = ModuleManager::getModuleByName( CoreModule::$NAME )->getActionManager();
+
             if( $authorization->getType() == AuthModule::AUTH_TYPE_ACTIVE_USER ){
-                $_SESSION['ROLE'] = $this->getCurrentUserRoles($user);
+                $_SESSION['ROLE'] = $coreActionManager->getCurrentUserRoles($user);
                 $_SESSION['USER'] = $user;
-                $_SESSION['DESTINATION'] = $this->getUserDefaultPage();
+                $_SESSION['DESTINATION'] = $coreActionManager->getUserDefaultPage();
             }
             else if( $authorization->getType() == AuthModule::AUTH_TYPE_CANDIDATE_USER ){
                 $_SESSION['CANDIDATE'] = $user;
