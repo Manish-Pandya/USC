@@ -247,25 +247,25 @@ class ActionManager {
 
             // Non-lab roles go to RSMSCenter
             if( $this->sessionHasRoles(array("Admin", "Radiation Admin", "Safety Inspector", "Radiation Inspector")) ){
-                $destination = 'views/RSMSCenter.php';
+                $destination = WEB_ROOT . 'views/RSMSCenter.php';
                 $LOG->debug("User has non-lab roles");
             }
 
             // Emergency account goes to emergency hub
             else if( $this->sessionHasRoles( array("Emergency Account")) ){
-                $destination = "views/hubs/emergencyInformationHub.php";
+                $destination = WEB_ROOT . "views/hubs/emergencyInformationHub.php";
                 $LOG->debug("User has emergency role");
             }
 
             // non-PI Department Chair goes to Reports
             else if( !$this->sessionHasRoles( array("Principal Investigator")) && $this->sessionHasRoles( array(ChairReportModule::ROLE_CHAIR, ChairReportModule::ROLE_COORDINATOR)) ){
-                $destination = "reports/";
+                $destination = WEB_ROOT . "reports/";
                 $LOG->debug("User is a non-PI Department Chair");
             }
 
             // Otherwise, go to My Lab
             else {
-                $destination = 'views/lab/mylab.php';
+                $destination = WEB_ROOT . 'views/lab/mylab.php';
                 $LOG->debug("User has no special-case roles");
             }
 
