@@ -120,6 +120,28 @@ ul.banner-nav li span {
         background: #789974;
     }
 
+/* Black Theme */
+    .hub-theme-black {}
+
+    .hub-theme-black .theme-main-element,
+    .hub-theme-black .hub-banner {
+        background-color: #1c1c1c;
+        border-color: #1c1c1c;
+        color: #fff;
+    }
+
+    .hub-theme-black .theme-highlight-element,
+    .hub-theme-black .hub-banner .banner-nav a:hover,
+    .hub-theme-black .hub-banner .banner-nav a.active-nav {
+        background: #1c1c1c;
+    }
+
+    .hub-theme-black .theme-underlight-element,
+    .hub-theme-black table tbody tr.theme-underlight-element td
+    {
+        background: #1c1c1c;
+    }
+
 /* */
 ul.grid-list li:hover {
     color: #888;
