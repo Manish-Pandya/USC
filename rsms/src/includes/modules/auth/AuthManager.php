@@ -18,6 +18,13 @@ class AuthManager {
         return array_filter($handlers, function($h){ return $h->is_enabled(); });
     }
 
+    function getAuthorizationHandlers(){
+        return [
+            new ActiveUserAuthorizationHandler(),
+            new CandidateUserAuthorizationHandler()
+        ];
+    }
+
     /**
      * 
      */
@@ -32,10 +39,13 @@ class AuthManager {
         foreach ($handlers as $handler) {
             $LOG->debug("Authenticating via $handler");
             $result = $handler->do_auth($username, $password);
-            $LOG->debug("Result: $result");
 
             if( $result ){
+                $LOG->info("Successfully authenticated '$username' via $handler");
                 break;
+            }
+            else {
+                $LOG->info("Failed authentication of '$username' via $handler");
             }
         }
 
@@ -43,9 +53,24 @@ class AuthManager {
     }
 
     public function authorize( AuthenticationResult $authentication ){
-        // Only case for authorization is that the authenticated subject is an Active User
-        $authHandler = new ActiveUserAuthorizationHandler();
-        return $authHandler->authorize( $authentication );
+        $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
+        $handlers = $this->getAuthorizationHandlers();
+
+        // Try each handler until one works
+        $subject = null;
+        $authtype = null;
+        foreach ($handlers as $handler) {
+            $LOG->debug("Authorizing via $handler");
+            $subject = $handler->authorize($authentication);
+            $LOG->debug("Result: $subject");
+
+            if( $subject !== false ){
+                $authtype = $handler->type();
+                break;
+            }
+        }
+
+        return new AuthorizationResult($subject !== false, $subject, $authtype);
     }
 
 }

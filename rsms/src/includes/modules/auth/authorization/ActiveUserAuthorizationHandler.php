@@ -7,14 +7,16 @@
  * @see User
  */
 class ActiveUserAuthorizationHandler implements I_AuthorizationHandler {
+    public function __toString(){ return get_class($this); }
     public function is_enabled(){ return true; }
+    public function type(){ return AuthModule::AUTH_TYPE_ACTIVE_USER; }
 
     public function authorize( AuthenticationResult &$authentication ){
         $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
 
         if( !$authentication->success() ){
             $LOG->error("Provided AuthenticationResult is unsuccessful");
-            return new AuthorizationResult(false, null);
+            return false;
         }
 
         $username = $authentication->getSubject();
@@ -26,18 +28,19 @@ class ActiveUserAuthorizationHandler implements I_AuthorizationHandler {
         if ($user == null) {
             // User does not exist
             $LOG->info("No such user '$username'");
-            return new AuthorizationResult(false, null);
+            return false;
         }
         else if( !$user->getIs_active() ){
             // User is not active
             $LOG->info("Local authentication succeeded, but the user is inactive: $user");
 
             // successful login, but not an enabled Erasmus user, return false
-            return new AuthorizationResult(false, $user);
+            return false;
         }
         else {
-            // return true to indicate success
-            return new AuthorizationResult(true, $user);
+            // return authorized user
+            $LOG->info("Authorized user: $user");
+            return $user;
         }
     }
 }
