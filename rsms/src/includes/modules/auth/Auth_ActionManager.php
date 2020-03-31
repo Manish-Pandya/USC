@@ -126,6 +126,39 @@ class Auth_ActionManager {
         return array_map( function($u){ return new ImpersonatableUser($u); }, $allUsers);
     }
 
+    //////////////////////////////////////
+    // New-User Access-Request Actions  //
+    //////////////////////////////////////
+
+    /**
+     * Retrieve department listing available for new-user requests
+     */
+    public function getNewUserDepartmentListing(){
+        $dao = new GenericDAO(new Department());
+        $depts = $dao->getAll();
+
+        $dtos = DtoFactory::buildDtos($depts, function($d){
+            $d_pis = DtoFactory::buildDtos( $d->getPrincipalInvestigators(), function($pi){
+                return new GenericDto([
+                    'Key_id' => $pi->getKey_id(),
+                    'Name' => $pi->getName()
+                ]);
+            });
+
+            return new GenericDto([
+                'Key_id' => $d->getKey_id(),
+                'Name' => $d->getName(),
+                'PrincipalInvestigators' => $d_pis
+            ]);
+        });
+
+        return $dtos;
+    }
+
+    //////////////////////////////////////
+    // Action-related utility functions //
+    //////////////////////////////////////
+
     /**
      * Applies the authorization User details to this Session
      * It is assumed that the requestor has already been authenticated

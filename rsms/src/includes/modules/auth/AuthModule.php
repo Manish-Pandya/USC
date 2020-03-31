@@ -15,8 +15,12 @@ class AuthModule implements RSMS_Module {
 
     public function getActionConfig(){
         $mappings = [
+            // Login/Logout
             "loginAction"   => new ActionMapping("loginAction", "views/RSMSCenter.php", LOGIN_PAGE, array(), false),
             "logoutAction"  => new ActionMapping("logoutAction",LOGIN_PAGE, LOGIN_PAGE, array(), false),
+
+            // new-user requests
+            "getNewUserDepartmentListing" => new SecuredActionMapping("getNewUserDepartmentListing", [], 'AuthSecurity::userIsCandidate'),
         ];
 
         // Only include Impersonation mappings if the feature is enabled
