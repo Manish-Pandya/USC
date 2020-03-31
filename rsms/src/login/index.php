@@ -44,8 +44,11 @@ require_once('../ForwardUserToDefaultPage.php');
     <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/metro-ui-light.css"/>
     <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/icomoon.css"/>
     <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT?>css/datepicker.css"/>
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css" />
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css"/>
 
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rsms-style-theme.css"/>
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rsms-style-struct.css"/>
     <link type="text/css" rel="stylesheet" href="auth-styles.css" />
 
     <script src="<?php echo WEB_ROOT?>js/lib/jQuery.3.1.1/Content/Scripts/jquery-3.1.1.min.js"></script>
@@ -64,6 +67,7 @@ require_once('../ForwardUserToDefaultPage.php');
 
     <script src="<?php echo WEB_ROOT?>js/modalPosition.js"></script>
 
+    <script src="<?php echo WEB_ROOT?>js/lib/angular-animate.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/angular-busy.min.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/angular-ui-router.min.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/cycle.js"></script>
@@ -134,14 +138,18 @@ require_once('../ForwardUserToDefaultPage.php');
         <h2 style="color: white">Research Safety Management System</h2>
     </header>
 
-    <section style="padding:20px; background:white;">
-        <div ui-view class="noBg authapp"></div>
+    <section style="padding:20px; background:white;" class="even-content">
+        <div id="app-wrapper" style="width: 50%;">
+            <div id="authapp" ui-view class="noBg authapp"></div>
+            <div id="disclaimer-ie" style="display: flex; font-weight:bold; font-size: 1.2em;"></div>
+        </div>
 
-        <hr/>
-        <h3>PHP Session</h3>
-        <pre><?php
-            var_dump( $_SESSION );
-        ?></pre>
+        <div id="app-info" style="width: 45%; margin-left: 5%">
+            <h3>PHP Session</h3>
+            <pre><?php
+                var_dump( $_SESSION );
+            ?></pre>
+        <div>
     </section>
 
     <section>
@@ -155,8 +163,8 @@ require_once('../ForwardUserToDefaultPage.php');
     <script>
         if( !isSupportedBrowser() ){
             // Disallow login
-            let form = document.getElementById('loginform');
-            form.parentNode.removeChild(form);
+            let authapp = document.getElementById('authapp');
+            authapp.parentNode.removeChild(authapp);
 
             // Add warning
             document.getElementById('disclaimer-ie').innerHTML = '<i class="red icon-warning" style="padding-right: 10px;"></i>'
