@@ -1,0 +1,101 @@
+<form class="access-request">
+    <div class="well">
+        <h3 class="auth-form-header">RSMS Request for User Access</h3>
+
+        <div class="overlay-container">
+            <div class="overlay" ng-if="data.selection.submitting">
+                <i class="icon-spinnery-dealie spinner"></i>
+                <span>Submitting Access Request for {{data.selection.username}}...</span>
+            </div>
+
+            <div class="auth-form-fields overlay-container">
+                <div class="overlay" ng-if="!data.listing.length">
+                    <i class="icon-spinnery-dealie spinner"></i>
+                    <span>Loading...</span>
+                </div>
+
+                <h5 ng-show="data.listing.length" class="fadein bold">
+                    <span>Complete the following form to submit a request for access to <i>RSMS</i>.</span>
+                </h5>
+
+                <hr/>
+
+                <div ng-show="data.listing.length" class="card auth-element fadein"
+                    ng-class="{ 'selection-made': data.selection.username, 'selection-empty': !data.selection.username }">
+                    <h3 class="even-content">
+                        <span>Confirm Your Network Username</span>
+                        <span class="badge">1/4</span>
+                    </h3>
+                    <div>
+                        <pre class="auth-username" once-text="data.candidate.Username"></pre>
+                    </div>
+                    <div ng-show="!data.selection.username" class="fadein auth-form-footer">
+                        <a class="btn btn-success" ng-click="data.selection.username = data.candidate.Username">
+                            <i class="icon-checkmark"></i>
+                        </a>
+
+                        <a class="btn btn-danger" ng-href="{{GLOBAL_WEB_ROOT}}action.php?action=logoutAction">
+                            <i class="icon-cancel"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div ng-show="data.listing.length && data.selection.username" class="card auth-element fadein"
+                    ng-class="{ 'selection-made': data.selection.department, 'selection-empty': !data.selection.department }">
+                    <h3 class="even-content">
+                        <span>Select Your Department</span>
+                        <span class="badge">2/4</span>
+                    </h3>
+                    <ui-select ng-model="data.selection.department" theme="selectize" ng-disabled="disabled" on-select="data.selection.pi = null">
+                        <ui-select-match placeholder="Select or search for a Department">{{$select.selected.Name}}</ui-select-match>
+                        <ui-select-choices repeat="dept in data.listing | filter: {Name:$select.search} | orderBy:'Name'">
+                            <span ng-bind-html="dept.Name"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+
+                <div ng-show="data.selection.department" class="card auth-element fadein"
+                    ng-class="{ 'selection-made': data.selection.pi, 'selection-empty': !data.selection.pi }">
+                    <h3 class="even-content">
+                        <div>
+                            <div>Select Your Principal Investigator</div>
+                            <h5 style="font-style: italic;">
+                                <strong>Department:</strong>
+                                <span>{{data.selection.department.Name}}</span>
+                            </h5>
+                        </div>
+
+                        <span class="badge">3/4</span>
+                    </h3>
+                    <ui-select ng-model="data.selection.pi" theme="selectize" ng-disabled="disabled">
+                        <ui-select-match placeholder="Select or search for a Principal Investigator">{{$select.selected.Name}}</ui-select-match>
+                        <ui-select-choices repeat="pi in data.selection.department.PrincipalInvestigators | filter: $select.search | orderBy:'Name'">
+                            <span ng-bind-html="pi.Name"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+
+                <hr ng-show="data.selection.pi"/>
+
+                <div ng-show="data.selection.pi" class="card auth-element fadein"
+                    ng-class="{ 'selection-made': data.selection.submitting, 'selection-empty': !data.selection.submitting }">
+                    <h3 class="even-content">
+                        <span>Submit Access Request</span>
+                        <span class="badge">4/4</span>
+                    </h3>
+
+                    <h5>
+                        <span>You are about to request access to <i>RSMS</i> as Laboratory Personnel of <strong><i>{{data.selection.pi.Name}}</i></strong>.</span>
+                        <span>Your submitted request will be reviewed by your <i>Principal Investigator</i> and you will be notified when it has been completed.</span>
+                    </h5>
+
+                    <div class="auth-form-footer">
+                        <a ng-click="submitRequest()" class="btn btn-success">Submit Access Request</a>
+
+                        <a class="btn btn-danger" ng-href="{{GLOBAL_WEB_ROOT}}action.php?action=logoutAction">Cancel Request</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
