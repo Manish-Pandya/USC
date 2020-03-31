@@ -1,6 +1,10 @@
 <?php
 class Auth_ActionManager {
 
+    ///////////////////////////////
+    // Core Login/Logout actions //
+    ///////////////////////////////
+
     public function loginAction( $username, $password, $destination = NULL ) {
         $LOG = Logger::getLogger( __CLASS__ . '.' . __function__ );
 
@@ -62,6 +66,10 @@ class Auth_ActionManager {
         $_SESSION['ROLE'] = null;
         return true;
     }
+
+    ///////////////////////////
+    // Impersonation Actions //
+    ///////////////////////////
 
     public function impersonateUserAction($impersonateUsername = NULL, $currentPassword = NULL) {
         $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
@@ -130,15 +138,23 @@ class Auth_ActionManager {
 
             $coreActionManager = ModuleManager::getModuleByName( CoreModule::$NAME )->getActionManager();
 
+            /////////////////
+            // Save user details to session, based on auth type
+
+            // Normal, Active, User
             if( $authorization->getType() == AuthModule::AUTH_TYPE_ACTIVE_USER ){
                 $_SESSION['ROLE'] = $coreActionManager->getCurrentUserRoles($user);
                 $_SESSION['USER'] = $user;
                 $_SESSION['DESTINATION'] = $coreActionManager->getUserDefaultPage();
             }
+
+            // Candidate user
             else if( $authorization->getType() == AuthModule::AUTH_TYPE_CANDIDATE_USER ){
                 $_SESSION['CANDIDATE'] = $user;
                 unset($_SESSION['DESTINATION']);// = LOGIN_PAGE;
             }
+
+            // Unknown
             else {
                 Logger::getRootLogger()->error("Invalid authorization type '" . $authorization->getType() . "'");
             }
