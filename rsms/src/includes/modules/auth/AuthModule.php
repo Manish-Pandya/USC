@@ -21,6 +21,7 @@ class AuthModule implements RSMS_Module {
 
             // new-user requests
             "getNewUserDepartmentListing" => new SecuredActionMapping("getNewUserDepartmentListing", [], 'AuthSecurity::userIsCandidate'),
+            "submitAccessRequest" => new SecuredActionMapping("submitAccessRequest", [], 'AuthSecurity::candidateCanSubmitNewRequest'),
         ];
 
         // Only include Impersonation mappings if the feature is enabled

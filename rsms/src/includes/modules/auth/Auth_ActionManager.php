@@ -155,6 +155,41 @@ class Auth_ActionManager {
         return $dtos;
     }
 
+    public function submitAccessRequest( int $pi_id ){
+        $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
+
+        if( !isset($pi_id) ){
+            return new ActionError("Missing data", 400);
+        }
+
+        // Retrieve & Validate PI selection
+        $piDao = new PrincipalInvestigatorDAO();
+        $pi = $piDao->getById($pi_id);
+
+        if( !isset($pi) ){
+            return new ActionError("Invalid PI", 404);
+        }
+
+        // Prepare access request
+        $candidate = AuthManager::getCandidateUser();
+        $LOG->info("Submitting access request for $candidate. PI:$pi");
+
+        // Create a new PENDING request for the username and selected PI
+        $accessRequest = new UserAccessRequest();
+        $accessRequest->setNetwork_username($candidate->getUsername());
+        $accessRequest->setPrincipal_investigator_id($pi->getKey_id());
+        $accessRequest->setStatus( UserAccessRequest::STATUS_PENDING );
+
+        $requestDao = new GenericDAO( $accessRequest );
+        $accessRequest = $requestDao->save($accessRequest);
+        $LOG->info("Saved $accessRequest");
+
+        // TODO: Notify PI
+        $LOG->info("TODO: Notify $pi of new request");
+
+        return $accessRequest;
+    }
+
     //////////////////////////////////////
     // Action-related utility functions //
     //////////////////////////////////////

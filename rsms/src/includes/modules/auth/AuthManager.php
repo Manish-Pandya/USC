@@ -8,7 +8,7 @@ class AuthManager {
     public function __toString(){ return get_class($this); }
 
     public static function hasCurrentUser(){
-        return isset($_SESSION) && isset($_SESSION['USER']);
+        return isset($_SESSION) && isset($_SESSION['USER']) && $_SESSION['USER'] != null;
     }
 
     public static function getCurrentUser(){
@@ -17,6 +17,18 @@ class AuthManager {
             $dao = new UserDAO();
             $user = $dao->getById($id);
             return $user;
+        }
+
+        return null;
+    }
+
+    public static function hasCandidateUser(){
+        return isset($_SESSION) && isset($_SESSION['CANDIDATE']) && $_SESSION['CANDIDATE'] != null;
+    }
+
+    public static function getCandidateUser(){
+        if( self::hasCandidateUser() ){
+            return $_SESSION['CANDIDATE'];
         }
 
         return null;

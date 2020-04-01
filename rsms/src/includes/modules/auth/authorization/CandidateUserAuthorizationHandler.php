@@ -25,18 +25,20 @@ class CandidateUserAuthorizationHandler implements I_AuthorizationHandler {
         $dao = new UserDAO();
         $user = $dao->getUserByUsername($username);
 
-        if ($user == null) {
-            // User does not exist
-            $LOG->info("User '$username' does not exist, and is a new-user candidate");
-
-            // TODO: Look up user name, email, etc
-            $candidate = new CandidateUser($username);
-            return $candidate;
-        }
-        else {
+        if( $user != null ){
             // User exists, so username is not a new-user candidate
             return false;
         }
+
+        // User does not exist, and is therefore a candidate
+
+        // Look up any existing AccessRequests for this user
+        $requestDao = new UserAccessRequestDAO();
+        $pending_requests = $requestDao->getByNetworkUsername( $username );
+
+        // TODO: Look up and include user name, email, etc
+        $candidate = new CandidateUser( $username, $pending_requests );
+        return $candidate;
     }
 }
 ?>
