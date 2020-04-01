@@ -1,6 +1,5 @@
 <form name="loginform" id="loginform" class="form form-horizontal"
       method="post" action="{{GLOBAL_WEB_ROOT + 'action.php'}}">
-<!--ng-submit="login()">-->
 
     <input type="hidden" name="action" value="loginAction">
 
@@ -21,6 +20,5 @@
     <div class="form-group" style="margin-top:20px;">
         <button type="submit" name="submit" class="btn btn-large btn-success" id="login" style="padding:0 20px;"
             ng-click="_submitted = !_submitted">Login</button>
-        <a ng-click="login()" class="btn btn-large btn-warning">Login AJAX</a>
     </div>
 </form>

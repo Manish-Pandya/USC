@@ -25,20 +25,18 @@ angular
             controller: function ($scope, AuthAPI){
                 console.debug("login ctrl");
                 $scope.data = { username:'', password:'' };
-
-                $scope.login = function(){
-                    let willLogIn = AuthAPI.login( $scope.data );
-                    $scope.data = { username:'', password:'' };
-
-                    return willLogIn;
-                }
             }
         })
         .state('request-access', {
             url: '/request-access',
             templateUrl: 'views/request-access.html',
-            controller: function($scope, $timeout, AuthAPI ){
+            controller: function($scope, $state, $timeout, $filter, AuthAPI ){
                 console.debug("request-access ctrl");
+
+                if( !window.user_access_request ){
+                    $state.go('login');
+                    return;
+                }
 
                 $scope.data = {
                     candidate: window.user_access_request,
@@ -48,19 +46,35 @@ angular
                         username: null,
                         department: null,
                         pi: null,
-                        submitting: false
+
+                        submitting: false,
+                        submission_complete: false
                     }
                 };
 
-                // Load data
-                AuthAPI.getNewUserDepartmentListing()
-                .then(listing => {
-                    $timeout(function(){
-                        $scope.data.listing = listing;
+                // Filter candidate requests to determine if there are any pending
+                $scope.data.pending_requests = $filter('pendingRequests')($scope.data.candidate.Access_requests);
+
+                // Load data if we can submit a new request
+                if( $scope.data.pending_requests.length == 0 ){
+                    console.debug("Candidate has no pending reqeusts; load listing data");
+                    AuthAPI.getNewUserDepartmentListing()
+                    .then(listing => {
+                        $timeout(function(){
+                            console.debug("Listing data loaded");
+                            $scope.data.listing = listing;
+                        });
                     });
-                });
+                }
+                else{
+                    console.debug("Candidate has pending reqeust(s); do not load listing data");
+                }
 
                 // Scope functions
+                $scope.getDate = function(d){
+                    return new Date(d);
+                };
+
                 $scope.submitRequest = function(){
                     if( !$scope.data.selection.pi.Key_id ){
                         // Invalid request; we need a PI's ID
@@ -72,9 +86,21 @@ angular
                     AuthAPI.submitRequest( $scope.data.selection.pi.Key_id )
                     .then(
                         result => {
+                            let request = result.data;
                             console.info("Access-request result:", result);
 
-                            $scope.data.selection.submitting = false;
+                            // if access request is saved, display its status
+                            // if access request isn't saved, display error and go nowhere
+                            $timeout(function(){
+                                // Push the newly-created request into our model
+                                $scope.data.candidate.Access_requests.push(request);
+
+                                // Re-filter the pending_requests since we aren't $watch'ing it
+                                $scope.data.pending_requests = $filter('pendingRequests')($scope.data.candidate.Access_requests);
+
+                                // Flag that the request is complete
+                                $scope.data.selection.submission_complete = true;
+                            });
                         },
                         error => {
                             console.error("Error submitting access request", error);
@@ -91,8 +117,14 @@ angular
     $rootScope.GLOBAL_WEB_ROOT = GLOBAL_WEB_ROOT;
     $rootScope.auth_errors = auth_errors;
 
+    // Disregard requested URL and decide where to go based on data:
     if( window.user_access_request ){
+        // Candidate data exists
         $state.go('request-access');
+    }
+    else {
+        // No data; login
+        $state.go('login');
     }
 })
 .factory('AuthAPI', function( $http ){
@@ -117,27 +149,6 @@ angular
 
         },
 
-        login: function login(formData){
-            if( !formData.action ){
-                formData.action = 'loginAction';
-            }
-
-            let requestOptions = {
-                method: 'POST',
-                url: this.endpoint_url,
-                headers: this.formdata_headers,
-                data: $.param(formData),
-            };
-
-            $http( requestOptions)
-            .success( (data, status, headers, config) => {
-                console.log("LOGIN SUCCESS", data, status, config);
-            })
-            .error( (data, status, headers, config) => {
-                console.error("LOGIN ERROR", data, status, config);
-            });
-        },
-
         submitRequest: async function( pi_id ){
             let formData = {
                 action: 'submitAccessRequest',
@@ -151,16 +162,18 @@ angular
                 data: $.param(formData),
             };
 
-            $http( requestOptions)
+            return $http( requestOptions)
             .success( (data, status, headers, config) => {
                 console.log("SUBMISSION SUCCESS", data, status, config);
-
-                // if access request is saved, display its status
-                // if access request isn't saved, display error and go nowhere
             })
             .error( (data, status, headers, config) => {
                 console.error("SUBMISSION ERROR", data, status, config);
             });
         }
     };
+})
+.filter('pendingRequests', function(){
+    return function( requests ){
+        return requests.filter(r => r.Status == 'PENDING');
+    }
 });
