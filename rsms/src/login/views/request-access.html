@@ -2,7 +2,7 @@
     <div class="well">
         <h3 class="auth-form-header">RSMS Request for User Access</h3>
 
-        <div class="overlay-container fadein" ng-show="!data.pending_requests.length">
+        <div class="overlay-container fadein" ng-show="!data.candidate.IsFulfilled && !data.pending_requests.length">
             <div class="overlay" ng-if="data.selection.submitting && !data.selection.submission_complete">
                 <i class="icon-spinnery-dealie spinner"></i>
                 <span>Submitting Access Request for {{data.selection.username}}...</span>
@@ -111,11 +111,22 @@
             </div>
         </div>
 
+        <div ng-if="data.candidate.IsFulfilled">
+            <h5>
+                <span>Your request for access has been approved!</span>
+                <a ng-href="{{GLOBAL_WEB_ROOT}}action.php?action=logoutAction">Log in here</a>
+            </h5>
+        </div>
+
         <div class="request-status fadein" ng-show="data.candidate.Access_requests.length">
             <hr ng-if="data.pending_requests.length"/>
             <h5 ng-repeat="request in data.pending_requests">
                 <span>You submitted a request for access under {{request.Principal_investigator_name}} on {{getDate(request.Date_created) | date:'shortDate'}}.</span>
-                <span>This request is being reviewed.</span>
+                <span>This request is being reviewed and you will be notified via email when it is complete.</span>
+
+                <p>
+                    <a class="btn btn-success" ng-href="{{GLOBAL_WEB_ROOT}}action.php?action=logoutAction">Back to Login</a>
+                </p>
             </h5>
 
             <a ng-if="data.candidate.Access_requests.length > 1"
