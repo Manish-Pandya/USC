@@ -1,0 +1,44 @@
+<div class="fake-table striped bordered content-container">
+    <div class="table-header">
+        <h3>Request Date</h3>
+        <h3>Network Username</h3>
+        <h3>Email</h3>
+        <h3>Last Name</h3>
+        <h3>First Name</h3>
+        <h3></h3>
+    </div>
+    <div class="table-row" ng-repeat="request in requests">
+        <div>{{request.Date_created}}</div>
+        <div>{{request.Network_username}}</div>
+        <div>{{request.Email}}</div>
+        <div>{{request.Last_name}}</div>
+        <div>{{request.First_name}}</div>
+
+        <div ng-if="request.Status != 'PENDING'">
+            <span class="badge" ng-class="{
+                'badge-success': request.Status == 'APPROVED',
+                'badge-important': request.Status == 'DENIED'
+            }">{{request.Status}}</span>
+        </div>
+        <div ng-if="request.Status == 'PENDING'">
+            <div class="overlay-container">
+                <div class="overlay" ng-if="request._saving">
+                    <i class="icon-spinnery-dealie spinner"></i>
+                </div>
+                <a class="btn btn-success" ng-click="resolveRequest(request, true)">
+                    <i class="icon-checkmark"></i>
+                </a>
+
+                <a class="btn btn-danger" ng-click="resolveRequest(request, false)">
+                    <i class="icon-cancel"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toolbar-container">
+    <div class="toolbar">
+        <h5><i class="icon-warning" style="margin:10px;"></i>Please review these access requests</h4>
+    </div>
+</div>
