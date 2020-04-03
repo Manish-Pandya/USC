@@ -1,8 +1,6 @@
 <?php
     require_once('../Application.php');
 
-    session_start();
-
     // Check that user is logged in
     require_once('../RequireUserLoggedIn.php');
 ?>
