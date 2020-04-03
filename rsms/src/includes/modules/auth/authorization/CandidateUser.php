@@ -21,9 +21,15 @@ class CandidateUser {
     public function getLast_name(){ return $this->last_name; }
     public function getEmail(){ return $this->email; }
 
-    public function getAccess_requests(){
+    public function getCurrent_access_request(){
         $dao = new UserAccessRequestDAO();
-        return $dao->getByNetworkUsername($this->username);
+        $all = $dao->getByNetworkUsername($this->username);
+
+        if( empty($all) ){
+            return null;
+        }
+
+        return $all[0];
     }
 
     public function getIsFulfilled(){

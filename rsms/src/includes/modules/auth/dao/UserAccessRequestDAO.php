@@ -10,7 +10,8 @@ class UserAccessRequestDAO extends GenericDAO {
         $f_username = Field::create('network_username', UserAccessRequest::TABLE_NAME);
 
         $q = QueryUtil::selectFrom( $this->modelObject )
-            ->where( $f_username, '=', $username);
+            ->where( $f_username, '=', $username)
+            ->orderBy( UserAccessRequest::TABLE_NAME, 'date_created', 'DESC', false );
 
         if( $status != null ){
             $f_status = Field::create('status', UserAccessRequest::TABLE_NAME);
@@ -25,7 +26,8 @@ class UserAccessRequestDAO extends GenericDAO {
         $f_pi = Field::create('principal_investigator_id', UserAccessRequest::TABLE_NAME);
 
         $q = QueryUtil::selectFrom( $this->modelObject )
-            ->where( $f_pi, '=', $pi_id);
+            ->where( $f_pi, '=', $pi_id)
+            ->orderBy( UserAccessRequest::TABLE_NAME, 'date_created', 'DESC', false );
 
         if( $status != null ){
             $f_status = Field::create('status', UserAccessRequest::TABLE_NAME);

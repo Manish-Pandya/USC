@@ -2,7 +2,36 @@
     <div class="well">
         <h3 class="auth-form-header">RSMS Request for User Access</h3>
 
-        <div class="overlay-container fadein" ng-show="!data.candidate.IsFulfilled && !data.pending_requests.length">
+        <div ng-if="data.candidate.IsFulfilled">
+            <h4 style="color: green;">
+                <i class="icon-info"></i>
+                <span>Your request for access under {{data.candidate.Current_access_request.Principal_investigator_name}} on {{getDate(data.candidate.Current_access_request.Date_created) | date:'shortDate'}} has been Approved.</span>
+            </h4>
+
+            <p class="auth-element">
+                <a class="btn btn-success" ng-href="{{GLOBAL_WEB_ROOT}}action.php?action=logoutAction">Log in here</a>
+            </p>
+        </div>
+
+        <div class="request-status fadein" ng-show="!data.candidate.IsFulfilled && data.candidate.Current_access_request">
+            <h5 ng-if="data.candidate.Current_access_request.Status == 'PENDING'">
+                <span>You submitted a request for access under {{data.candidate.Current_access_request.Principal_investigator_name}} on {{getDate(data.candidate.Current_access_request.Date_created) | date:'shortDate'}}.</span>
+                <span>This request is being reviewed and you will be notified via email when it is complete.</span>
+
+                <p class="auth-element">
+                    <a class="btn btn-success" ng-href="{{GLOBAL_WEB_ROOT}}action.php?action=logoutAction">Back to Login</a>
+                </p>
+            </h5>
+
+            <div ng-if="data.candidate.Current_access_request.Status == 'DENIED'">
+                <h4 class="red">
+                    <i class="icon-warning"></i>
+                    <span>Your request for access under {{data.candidate.Current_access_request.Principal_investigator_name}} on {{getDate(data.candidate.Current_access_request.Date_created) | date:'shortDate'}} was Denied.</span>
+                </h4>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;" class="overlay-container fadein" ng-show="!data.candidate.IsFulfilled && data.candidate.Current_access_request.Status != 'PENDING'">
             <div class="overlay" ng-if="data.selection.submitting && !data.selection.submission_complete">
                 <i class="icon-spinnery-dealie spinner"></i>
                 <span>Submitting Access Request for {{data.selection.username}}...</span>
@@ -28,7 +57,7 @@
                 </div>
 
                 <h5 ng-show="data.listing.length" class="fadein bold">
-                    <span>Complete the following form to submit a request for access to <i>RSMS</i>.</span>
+                    <span>Complete the following form to submit a new request for access to <i>RSMS</i>.</span>
                 </h5>
 
                 <hr/>
@@ -108,51 +137,6 @@
                         <a class="btn btn-danger" ng-href="{{GLOBAL_WEB_ROOT}}action.php?action=logoutAction">Cancel Request</a>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div ng-if="data.candidate.IsFulfilled">
-            <h5>
-                <span>Your request for access has been approved!</span>
-                <a ng-href="{{GLOBAL_WEB_ROOT}}action.php?action=logoutAction">Log in here</a>
-            </h5>
-        </div>
-
-        <div class="request-status fadein" ng-show="data.candidate.Access_requests.length">
-            <hr ng-if="data.pending_requests.length"/>
-            <h5 ng-repeat="request in data.pending_requests">
-                <span>You submitted a request for access under {{request.Principal_investigator_name}} on {{getDate(request.Date_created) | date:'shortDate'}}.</span>
-                <span>This request is being reviewed and you will be notified via email when it is complete.</span>
-
-                <p>
-                    <a class="btn btn-success" ng-href="{{GLOBAL_WEB_ROOT}}action.php?action=logoutAction">Back to Login</a>
-                </p>
-            </h5>
-
-            <a ng-if="data.candidate.Access_requests.length > 1"
-               ng-click="data.show_request_history = !data.show_request_history">
-               <span>{{ data.show_request_history ? 'Hide' : 'Show'}} request history</span>
-            </a>
-
-            <div class="fadein" ng-show="data.show_request_history">
-                <h3>Your Requests:</h3>
-                <table class="table table-bordered table-hover">
-                    <tr>
-                        <th>Request Date</th>
-                        <th>Principal Investigator</th>
-                        <th>Status</th>
-                    </tr>
-                    <tr ng-repeat="request in data.candidate.Access_requests | orderBy:'-Date_created'">
-                        <td>{{getDate(request.Date_created) | date:'shortDate'}}</td>
-                        <td>{{request.Principal_investigator_name}}</td>
-                        <td>
-                            <span class="badge" ng-class="{
-                                'badge-success': request.Status == 'APPROVED',
-                                'badge-important': request.Status == 'DENIED'
-                            }">{{request.Status}}</span>
-                        </td>
-                    </tr>
-                </table>
             </div>
         </div>
     </div>

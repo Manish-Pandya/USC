@@ -52,12 +52,10 @@ angular
                     }
                 };
 
-                // Filter candidate requests to determine if there are any pending
-                $scope.data.pending_requests = $filter('pendingRequests')($scope.data.candidate.Access_requests);
-
+                // Look at candidate's 'current' request, if any
                 // Load data if we can submit a new request
-                if( $scope.data.pending_requests.length == 0 ){
-                    console.debug("Candidate has no pending reqeusts; load listing data");
+                if( !$scope.data.candidate.Current_access_request || $scope.data.candidate.Current_access_request.Status != 'PENDING' ){
+                    console.debug("Candidate has no active reqeusts; load listing data");
                     AuthAPI.getNewUserDepartmentListing()
                     .then(listing => {
                         $timeout(function(){
@@ -67,7 +65,7 @@ angular
                     });
                 }
                 else{
-                    console.debug("Candidate has pending reqeust(s); do not load listing data");
+                    console.debug("Candidate has active reqeust(s); do not load listing data");
                 }
 
                 // Scope functions
@@ -93,10 +91,7 @@ angular
                             // if access request isn't saved, display error and go nowhere
                             $timeout(function(){
                                 // Push the newly-created request into our model
-                                $scope.data.candidate.Access_requests.push(request);
-
-                                // Re-filter the pending_requests since we aren't $watch'ing it
-                                $scope.data.pending_requests = $filter('pendingRequests')($scope.data.candidate.Access_requests);
+                                $scope.data.candidate.Current_access_request = request;
 
                                 // Flag that the request is complete
                                 $scope.data.selection.submission_complete = true;
