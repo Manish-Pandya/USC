@@ -1,5 +1,5 @@
 <?php
-class AuthModule implements RSMS_Module {
+class AuthModule implements RSMS_Module, MyLabWidgetProvider {
     public const NAME = 'Auth';
 
     public const AUTH_TYPE_ACTIVE_USER = 'ACTIVE_USER';
@@ -41,5 +41,35 @@ class AuthModule implements RSMS_Module {
         return $mappings;
     }
 
+    public function getMyLabWidgets( User $user ){
+        $widgets = [];
+
+        $piDao = new PrincipalInvestigatorDAO();
+        $pi = $piDao->getByUserId( $user->getKey_id());
+
+        // For Principal Investigators
+        if( isset($pi) && $pi != null ){
+            // List any PENDING requests
+            $requestDao = new UserAccessRequestDAO();
+            $pendingRequests = $requestDao->getByPrincipalInvestigator( $pi->getKey_id(), UserAccessRequest::STATUS_PENDING );
+
+            if( !empty($pendingRequests) ){
+                $pendingRequestsWidget = new MyLabWidgetDto();
+                $pendingRequestsWidget->title = "User Access Requests";
+                $pendingRequestsWidget->icon = "icon-contact";
+                $pendingRequestsWidget->group = '000_access_requests';
+                $pendingRequestsWidget->template = 'user-access-requests';
+                $pendingRequestsWidget->fullWidth = 1;
+                $pendingRequestsWidget->toolbar = 0;
+                $pendingRequestsWidget->data = $pendingRequests;
+
+                $widgets[] = $pendingRequestsWidget;
+            }
+            // otherwise do nothing
+        }
+        // otherwise do nothing
+
+        return $widgets;
+    }
 }
 ?>

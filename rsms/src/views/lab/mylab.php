@@ -5,6 +5,8 @@ require_once '../top_view.php';
 <script src="../../js/lab/myLab.js"></script>
 <script src="widgets/my-lab-widget.js"></script>
 
+<script src="../../login/scripts/directives/UserAccessRequestTable.js"></script>
+
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/mylab.css"/>
 
 <div ng-app="myLab" ng-controller="myLabController" class="hub-theme-green" ng-cloak>

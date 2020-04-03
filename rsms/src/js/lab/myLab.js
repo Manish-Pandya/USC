@@ -5,7 +5,8 @@ var myLab = angular.module('myLab', [
   'once',
   'cgBusy',
   'angular.filter',
-  'text-mask'])
+  'text-mask',
+  'rsms-AuthDirectives'])
 .filter('openInspections', function () {
   return function (inspections) {
         if(!inspections)return;
