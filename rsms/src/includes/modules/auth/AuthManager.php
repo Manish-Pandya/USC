@@ -34,7 +34,7 @@ class AuthManager {
         return null;
     }
 
-    function getAuthenticationHandlers(){
+    static function getAuthenticationHandlers(){
         // TODO: Externalize list of handlers to app config?
         $handlers = [
             new EmergencyAuthenticationHandler(),
@@ -45,21 +45,32 @@ class AuthManager {
         return array_filter($handlers, function($h){ return $h->is_enabled(); });
     }
 
-    function getAuthorizationHandlers(){
-        return [
+    static function getAuthorizationHandlers(){
+        $handlers = [
             new ActiveUserAuthorizationHandler(),
             new CandidateUserAuthorizationHandler()
         ];
+
+        return array_filter($handlers, function($h){ return $h->is_enabled(); });
+    }
+
+    static function getUserDetailProviders(){
+        $providers = [
+            new LDAPUserDetailProvider(),
+            new ExistingUserDetailProvider()
+        ];
+
+        return array_filter($providers, function($p){ return $p->is_enabled(); });
     }
 
     /**
      * 
      */
-    public function authenticate( string $username, string $password ){
+    public static function authenticate( string $username, string $password ){
         $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
 
         // Get all configured authentication handlers
-        $handlers = $this->getAuthenticationHandlers();
+        $handlers = self::getAuthenticationHandlers();
 
         // Try each handler until one works
         $result = null;
@@ -79,9 +90,9 @@ class AuthManager {
         return new AuthenticationResult( $result, $username );
     }
 
-    public function authorize( AuthenticationResult $authentication ){
+    public static function authorize( AuthenticationResult $authentication ){
         $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
-        $handlers = $this->getAuthorizationHandlers();
+        $handlers = self::getAuthorizationHandlers();
 
         // Try each handler until one works
         $subject = null;
@@ -100,6 +111,35 @@ class AuthManager {
         return new AuthorizationResult($subject !== false, $subject, $authtype);
     }
 
+    public static function getUserDetails( string $username ){
+        $providers = self::getUserDetailProviders();
+
+        $details = null;
+        foreach( $providers as $provider ){
+            $details = $provider->getUserDetails($username);
+
+            if( $details ){
+                break;
+            }
+        }
+
+        return $details;
+    }
+
+    public static function prepareUserFromAccessRequest( UserAccessRequest &$request ){
+        if( !$request ){
+            return null;
+        }
+
+        // Prepare a new User based on incoming request
+        $user = new User();
+        $user->setUsername($request->getNetwork_username());
+        $user->setFirst_name($request->getFirst_name());
+        $user->setLast_name($request->getLast_name());
+        $user->setEmail($request->getEmail());
+
+        return $user;
+    }
 }
 
 ?>

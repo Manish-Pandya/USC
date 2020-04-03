@@ -4,9 +4,19 @@ class UserAccessRequest extends GenericCrud {
     public const STATUS_APPROVED = 'APPROVED';
     public const STATUS_DENIED = 'DENIED';
 
+    public const ALL_STATUSES = [
+        self::STATUS_PENDING,
+        self::STATUS_APPROVED,
+        self::STATUS_DENIED
+    ];
+
     public const TABLE_NAME = 'user_access_request';
     protected const COLUMN_NAMES_AND_TYPES = array(
         "network_username" => "text",
+		"first_name" => "text",
+		"last_name"		=> "text",
+        "email"		=> "text",
+
         "principal_investigator_id" => "integer",
         "status" => "text",
 
@@ -24,6 +34,9 @@ class UserAccessRequest extends GenericCrud {
     public function getColumnData(){ return self::COLUMN_NAMES_AND_TYPES; }
 
     private $network_username;
+	private $first_name;
+	private $last_name;
+	private $email;
     private $principal_investigator_id;
     private $status = self::STATUS_PENDING;
 
@@ -31,6 +44,15 @@ class UserAccessRequest extends GenericCrud {
 
     public function getNetwork_username(){ return $this->network_username; }
     public function setNetwork_username( $val ){ $this->network_username = $val; }
+
+	public function getFirst_name(){ return $this->first_name; }
+	public function setFirst_name($first_name){ $this->first_name = $first_name; }
+
+	public function getLast_name(){ return $this->last_name; }
+	public function setLast_name($last_name){ $this->last_name = $last_name; }
+
+	public function getEmail(){ return $this->email; }
+	public function setEmail($email){ $this->email = $email; }
 
     public function getPrincipal_investigator_id(){ return $this->principal_investigator_id; }
     public function setPrincipal_investigator_id( $val ){ $this->principal_investigator_id = $val; }

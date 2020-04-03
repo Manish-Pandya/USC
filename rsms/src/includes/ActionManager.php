@@ -18,7 +18,7 @@ class ActionManager {
 			foreach($user->getRoles() as $role){
 				$currentRoles[] = $role->getName();
 			}
-			$this->getPropertyByName("PrincipalInvestigator", 1, "rooms" );
+
 			return $currentRoles;
 		}
 		return array();
@@ -4879,39 +4879,11 @@ class ActionManager {
 
         $username = $this->getValueFromRequest('username', $username);
 
-        if( ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_AUTH_PROVIDE_LDAP, false) ){
-            // LDAP is enabled
-            $LOG->info("Lookup user '$username' via LDAP");
-
-            $ldap = new LDAP();
-
-            $fieldsToFind = array("cn","sn","givenName","mail");
-            if ($ldapData = $ldap->GetAttr($username, $fieldsToFind)){
-                $user = new User();
-                $user->setFirst_name(ucfirst(strtolower($ldapData["givenName"])));
-                $user->setLast_name(ucfirst(strtolower($ldapData["sn"])));
-                $user->setEmail(strtolower($ldapData["mail"]));
-                $user->setUsername($ldapData["cn"]);
-
-                return $user;
-            } else {
-                return false;
-            }
+        if( !isset($username) || $username == null ){
+            return new ActionError('Invalid request', 400);
         }
-        else{
-            // LDAP is disabled; look up user just from our database
-            $LOG->info("Lookup user '$username' in local database");
-            $dao = new UserDAO();
-            $user = $dao->getUserByUsername($username);
 
-            if( !$user ){
-                $LOG->info("No user '$username' found in local database");
-                $user = new User();
-                $user->setUsername($username);
-            }
-
-            return $user;
-        }
+        return AuthManager::getUserDetails($username);
     }
 
     public function sendInspectionEmail(){

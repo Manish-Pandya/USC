@@ -31,13 +31,16 @@ class CandidateUserAuthorizationHandler implements I_AuthorizationHandler {
         }
 
         // User does not exist, and is therefore a candidate
+        // Look up and include user name, email, etc
+        $user_details = AuthManager::getUserDetails($username);
 
-        // Look up any existing AccessRequests for this user
-        $requestDao = new UserAccessRequestDAO();
-        $pending_requests = $requestDao->getByNetworkUsername( $username );
+        $candidate = new CandidateUser(
+            $username,
+            $user_details->getFirst_name() ?? '',
+            $user_details->getLast_name() ?? '',
+            $user_details->getEmail() ?? ''
+        );
 
-        // TODO: Look up and include user name, email, etc
-        $candidate = new CandidateUser( $username, $pending_requests );
         return $candidate;
     }
 }

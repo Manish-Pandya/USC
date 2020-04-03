@@ -12,12 +12,10 @@ class Auth_ActionManager {
             $_SESSION['DESTINATION'] = $destination;
         }
 
-        $auth_manager = new AuthManager();
-
         ///////////////////////////////////////
         // Authenticate provided credentials
         $LOG->debug("Authenticating '$username'...");
-        $authentication = $auth_manager->authenticate( $username, $password );
+        $authentication = AuthManager::authenticate( $username, $password );
 
         if( !$authentication->success() ){
             // Credentials are invalid
@@ -33,7 +31,7 @@ class Auth_ActionManager {
         // Credentials are authentic
         // Authorize provided name
         $LOG->debug("Authorizing '$username'...");
-        $authorization = $auth_manager->authorize( $authentication );
+        $authorization = AuthManager::authorize( $authentication );
 
         if( !$authorization->success() ){
             // Authorization failed
@@ -86,7 +84,6 @@ class Auth_ActionManager {
         }
 
         // TODO: Verify current user's password
-        $auth_manager = new AuthManager();
         $authentication = new AuthenticationResult( true, $impersonateUsername );
 
         // copy current-user info into session
@@ -95,7 +92,7 @@ class Auth_ActionManager {
             'ROLE' => $_SESSION['ROLE']
         );
 
-        $authorization = $auth_manager->authorize( $authentication );
+        $authorization = AuthManager::authorize( $authentication );
         return $this->applySessionAuthorization($authorization);
     }
 
@@ -177,17 +174,130 @@ class Auth_ActionManager {
         // Create a new PENDING request for the username and selected PI
         $accessRequest = new UserAccessRequest();
         $accessRequest->setNetwork_username($candidate->getUsername());
+        $accessRequest->setFirst_name($candidate->getFirst_name());
+        $accessRequest->setLast_name($candidate->getLast_name());
+        $accessRequest->setEmail($candidate->getEmail());
         $accessRequest->setPrincipal_investigator_id($pi->getKey_id());
         $accessRequest->setStatus( UserAccessRequest::STATUS_PENDING );
 
         $requestDao = new GenericDAO( $accessRequest );
         $accessRequest = $requestDao->save($accessRequest);
+
+        if( !($accessRequest instanceof UserAccessRequest) ){
+            $LOG->error("Error saving Access Request: $accessRequest");
+            $LOG->error($accessRequest);
+            return new ActionError("Failure to save submitted access request", 500);
+        }
+
         $LOG->info("Saved $accessRequest");
 
         // TODO: Notify PI
         $LOG->info("TODO: Notify $pi of new request");
 
         return $accessRequest;
+    }
+
+    public function getAllAccessRequests( ?int $pi_id ){
+        if( !isset($pi_id) ){
+            return new ActionError('Invalid PI', 400);
+        }
+
+        $piDao = new PrincipalInvestigatorDAO();
+        $pi = $piDao->getById($pi_id);
+
+        if( !isset($pi) || $pi == null ){
+            return new ActionError('Invalid PI', 404);
+        }
+
+        $dao = new UserAccessRequestDAO();
+        $requests = $dao->getByPrincipalInvestigator( $pi_id );
+
+        return $requests;
+    }
+
+    public function resolveAccessRequest( $request_id, $newStatus, $notes = null ){
+        $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
+        if( !isset($request_id) ){
+            return new ActionError('Invalid PI', 400);
+        }
+
+        // Validate status
+        if( !isset($newStatus) ){
+            return new ActionError('Invalid Status', 400);
+        }
+        else if( !in_array(strtoupper($newStatus), UserAccessRequest::ALL_STATUSES) ){
+            return new ActionError('Invalid Status', 400);
+        }
+
+        // Look up request
+        $requestDao = new UserAccessRequestDAO();
+        $request = $requestDao->getById( $request_id );
+
+        if( !isset($request) || $request == null ){
+            return new ActionError('Invalid AccessRequest', 404);
+        }
+
+        // TODO: Validate Transition
+        // TODO: Save Notes
+        $request->setStatus( $newStatus );
+        $request = $requestDao->save($request);
+
+        // Process request resolution
+        $this->processAccessRequestResolution( $request );
+
+        // Return the updated Request
+        return $request;
+    }
+
+    function processAccessRequestResolution( UserAccessRequest &$request ){
+        $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
+
+        // Action is only requred for Approval
+        if( $request->getStatus() === UserAccessRequest::STATUS_APPROVED ){
+            // Requets is approved, ensure User exists
+            $username = $request->getNetwork_username();
+
+            $userDao = new UserDAO();
+            $user = $userDao->getUserByUsername( $username );
+
+            if( isset($user) && $user != null && $user->hasPrimaryKeyValue() ){
+                // User already exists; nothing to do
+                // Note that this is unexpected and unlikely, but we want to prevent dupes
+                $LOG->warn("Cannot process approval of $request; User with username '$username' already exists as $user");
+                return $user;
+            }
+
+            // User does not exist; create one
+            $LOG->info("Proccessing approval of $request");
+            $user = AuthManager::prepareUserFromAccessRequest( $request );
+
+            if( !$user || !($user instanceof User) ){
+                $LOG->error("No user details returned for '$username':");
+                $LOG->error( $user );
+
+                throw new Exception("Unable to create new user '$username'");
+            }
+
+            if( !$user->hasPrimaryKeyValue() ){
+                $LOG->debug("Saving $user...");
+                $userDao->save($user);
+                $LOG->info("Saved $user");
+            }
+
+            // Now that the user has been created,
+            // Defer to CoreModule to assign them as a non-contact Lab User to the PI
+            $coreActionManager = ModuleManager::getModuleByName( CoreModule::$NAME )->getActionManager();
+            $userDto = $coreActionManager->assignLabUserToPI(
+                $request->getPrincipal_investigator_id(),
+                $user->getKey_id(),
+                false
+            );
+
+            return $userDao->getById( $user->getKey_id() );
+        }
+
+        $LOG->debug("$request is not approved; nothing to do");
+        return null;
     }
 
     //////////////////////////////////////

@@ -14,21 +14,28 @@ class AuthModule implements RSMS_Module {
     }
 
     public function getActionConfig(){
+        $r_any = [];
+        $r_admin = ['Admin'];
+        $r_mgmt = array_merge( $r_admin, [LabInspectionModule::ROLE_PI] );
+
         $mappings = [
             // Login/Logout
-            "loginAction"   => new ActionMapping("loginAction", "views/RSMSCenter.php", LOGIN_PAGE, array(), false),
-            "logoutAction"  => new ActionMapping("logoutAction",LOGIN_PAGE, LOGIN_PAGE, array(), false),
+            "loginAction"   => new ActionMapping("loginAction", "views/RSMSCenter.php", LOGIN_PAGE, $r_any, false),
+            "logoutAction"  => new ActionMapping("logoutAction",LOGIN_PAGE, LOGIN_PAGE, $r_any, false),
 
             // new-user requests
-            "getNewUserDepartmentListing" => new SecuredActionMapping("getNewUserDepartmentListing", [], 'AuthSecurity::userIsCandidate'),
-            "submitAccessRequest" => new SecuredActionMapping("submitAccessRequest", [], 'AuthSecurity::candidateCanSubmitNewRequest'),
+            "getNewUserDepartmentListing" => new SecuredActionMapping("getNewUserDepartmentListing", $r_any, 'AuthSecurity::userIsCandidate'),
+            "submitAccessRequest" => new SecuredActionMapping("submitAccessRequest", $r_any, 'AuthSecurity::candidateCanSubmitNewRequest'),
+
+            "getAllAccessRequests" => new SecuredActionMapping("getAllAccessRequests", $r_mgmt),
+            "resolveAccessRequest" => new SecuredActionMapping("resolveAccessRequest", $r_mgmt),
         ];
 
         // Only include Impersonation mappings if the feature is enabled
         if( ApplicationConfiguration::get( CoreModule::CONFIG_FEATURE_IMPERSONATION, false) ){
-            $mappings["impersonateUserAction"] = new ActionMapping("impersonateUserAction", "", "", array("Admin"));
-            $mappings["getImpersonatableUsernames"] = new ActionMapping("getImpersonatableUsernames", "", "", array("Admin"));
-            $mappings["stopImpersonating"] = new ActionMapping("stopImpersonating", LOGIN_PAGE, LOGIN_PAGE, array(), false);
+            $mappings["impersonateUserAction"] = new ActionMapping("impersonateUserAction", "", "", $r_admin);
+            $mappings["getImpersonatableUsernames"] = new ActionMapping("getImpersonatableUsernames", "", "", $r_admin);
+            $mappings["stopImpersonating"] = new ActionMapping("stopImpersonating", LOGIN_PAGE, LOGIN_PAGE, $r_any, false);
         }
 
         return $mappings;
