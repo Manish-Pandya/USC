@@ -48,6 +48,23 @@
     .overlay-container { min-height: 100px; }
 /*************************/
 
+
+/*********/
+/* Login */
+#loginform input {
+    margin: 5px;
+    border-radius: 7px;
+    padding: 15px;
+}
+
+.login-error {
+    margin-top: 10px;
+    color: #c00;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+/**********/
+
 /******************/
 /* Access Request */
     .access-request .card { padding: 15px; }

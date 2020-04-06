@@ -4,17 +4,13 @@
     <input type="hidden" name="action" value="loginAction">
 
     <div class="form-group">
-        <label for="username">Username</label>
-        <input ng-model="data.username" required type="text" class="form-control" name="username" placeholder="Enter Username" autocomplete="username">
-    </div>
-
-    <div class="form-group">
-        <label for="password">Password</label>
+        <input ng-model="data.username" autofocus required type="text" class="form-control" name="username" placeholder="Enter Username" autocomplete="username">
+        <br>
         <input ng-model="data.password" type="password" name="password" class="form-control" id="password" placeholder="Password" autocomplete="current-password">
     </div>
 
-    <div ng-repeat="error in auth_errors" class="form-group" style="width: 588px;margin-top: 10px;">
-        <h3 class="alert alert-danger">{{error}}<h3>
+    <div class="form-group" ng-if="auth_errors.length">
+        <p ng-repeat="error in auth_errors" class="login-error">{{error}}<p>
     </div>
 
     <div class="form-group" style="margin-top:20px;">
