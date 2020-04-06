@@ -145,10 +145,7 @@ require_once('../ForwardUserToDefaultPage.php');
         </div>
 
         <div id="app-info" style="width: 45%; margin-left: 5%">
-            <h3>PHP Session</h3>
-            <pre><?php
-                var_dump( $_SESSION );
-            ?></pre>
+            <!-- TODO: Display general information? -->
         <div>
     </section>
 
