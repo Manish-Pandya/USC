@@ -35,15 +35,8 @@ class Auth_ActionManager {
 
         if( !$authorization->success() ){
             // Authorization failed
-
-            if( $authorization->getAuthorization() == null ){
-                throw new Exception("No authorization object provided for authenticated user!!");
-            }
-            else {
-                // User exists, but is inactive
-                $LOG->info("User '$username' is inactive");
-                $_SESSION['ERROR'] = "Your account has been disabled. If you believe this is in error, please contact your administrator.";
-            }
+            $LOG->info("User '$username' is not authorized; likely inactive");
+            $_SESSION['ERROR'] = "Your account has been disabled. If you believe this is in error, please contact your administrator.";
 
             return false;
         }
