@@ -134,8 +134,10 @@ class Auth_ActionManager {
         $dao = new GenericDAO(new Department());
         $depts = $dao->getAll();
 
-        $dtos = DtoFactory::buildDtos($depts, function($d){
-            $d_pis = DtoFactory::buildDtos( $d->getPrincipalInvestigators(), function($pi){
+        $piDao = new PrincipalInvestigatorDAO();
+        $dtos = DtoFactory::buildDtos($depts, function($d) use ($piDao) {
+            // Include all ACTIVE PIs from this dept
+            $d_pis = DtoFactory::buildDtos( $piDao->getByDepartment($d->getKey_id()), function($pi){
                 return new GenericDto([
                     'Key_id' => $pi->getKey_id(),
                     'Name' => $pi->getName()

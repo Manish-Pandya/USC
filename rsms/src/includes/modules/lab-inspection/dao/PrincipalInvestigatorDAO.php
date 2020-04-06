@@ -87,5 +87,20 @@ class PrincipalInvestigatorDAO extends GenericDAO {
 			return new QueryError($er->getMessage());
 		}
     }
+
+    public function getByDepartment( $department_id, $active_only = true ){
+        $_pi_x_pidept = DataRelationship::fromArray([
+            "className"	=>	Department::class,
+            "tableName"	=>	"principal_investigator_department",
+            "keyName"	=>	"key_id",
+            "foreignKeyName" =>	"principal_investigator_id"
+        ]);
+
+        return QueryUtil::selectFrom( new PrincipalInvestigator() )
+            ->joinTo( $_pi_x_pidept )
+            ->where( Field::create('is_active', 'principal_investigator'), '=', TRUE)
+            ->where( Field::create('department_id', 'principal_investigator_department'), '=', $department_id)
+            ->getAll();
+    }
 }
 ?>
