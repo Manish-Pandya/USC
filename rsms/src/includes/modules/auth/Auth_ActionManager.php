@@ -191,8 +191,8 @@ class Auth_ActionManager {
 
         $LOG->info("Saved $accessRequest");
 
-        // TODO: Notify PI
-        $LOG->info("TODO: Notify $pi of new request");
+        // TODO: Enqueue 'request submitted' message
+        HooksManager::hook('after_access_request_submitted', $accessRequest);
 
         return $accessRequest;
     }
@@ -238,12 +238,23 @@ class Auth_ActionManager {
         }
 
         // TODO: Validate Transition
-        // TODO: Save Notes
-        $request->setStatus( $newStatus );
-        $request = $requestDao->save($request);
+        try {
+            // TODO: Save Notes
+            // update status
+            $request->setStatus( $newStatus );
 
-        // Process request resolution
-        $this->processAccessRequestResolution( $request );
+            // Process request resolution
+            $this->processAccessRequestResolution( $request );
+
+            // Save updated request
+            $request = $requestDao->save($request);
+
+            HooksManager::hook('after_access_request_resolved', $request);
+        }
+        catch( Exception $e ){
+            // TODO: ROLLBACK!!
+            $LOG->error("Error resolving request: " . $e->getMessage());
+        }
 
         // Return the updated Request
         return $request;

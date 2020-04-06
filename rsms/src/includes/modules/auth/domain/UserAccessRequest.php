@@ -29,7 +29,11 @@ class UserAccessRequest extends GenericCrud {
         "created_user_id"       => "integer"
     );
 
-    public static function defaultEntityMaps(){ return []; }
+    public static function defaultEntityMaps(){
+        return [
+            EntityMap::lazy("getPrincipalInvestigator")
+        ];
+    }
     public function getTableName(){ return self::TABLE_NAME; }
     public function getColumnData(){ return self::COLUMN_NAMES_AND_TYPES; }
 
@@ -39,6 +43,9 @@ class UserAccessRequest extends GenericCrud {
 	private $email;
     private $principal_investigator_id;
     private $status = self::STATUS_PENDING;
+
+    // Transient
+    private $pi;
 
     public function __construct(){}
 
@@ -61,11 +68,17 @@ class UserAccessRequest extends GenericCrud {
     public function setStatus( $val ){ $this->status = $val; }
 
     // Transient
-    public function getPrincipal_investigator_name(){
-        $pi = QueryUtil::selectFrom(new PrincipalInvestigator())
-            ->where(Field::create('key_id', 'principal_investigator'), '=', $this->principal_investigator_id)
-            ->getOne();
+    public function getPrincipalInvestigator(){
+        if( !isset($this->pi) ){
+            $this->pi = QueryUtil::selectFrom(new PrincipalInvestigator())
+                ->where(Field::create('key_id', 'principal_investigator'), '=', $this->principal_investigator_id)
+                ->getOne();
+        }
 
+        return $this->pi;
+    }
+    public function getPrincipal_investigator_name(){
+        $pi = $this->getPrincipalInvestigator();
         return $pi->getName();
     }
 }

@@ -1,9 +1,16 @@
 <?php
-class AuthModule implements RSMS_Module, MyLabWidgetProvider {
+class AuthModule implements RSMS_Module, MessageTypeProvider, MyLabWidgetProvider {
     public const NAME = 'Auth';
 
     public const AUTH_TYPE_ACTIVE_USER = 'ACTIVE_USER';
     public const AUTH_TYPE_CANDIDATE_USER = 'CANDIDATE_USER';
+
+    //////////////////
+    // Message Types
+    public const MTYPE_ACCESS_REQUEST_SUBMITTED = 'AccessRequestSubmitted'; // Personnel requests access from PI (to:pi)
+    public const MTYPE_ACCESS_REQUEST_DENIED    = 'AccessRequestDenied';    // PI denies acceess (to:user)
+    public const MTYPE_ACCESS_REQUEST_APPROVED  = 'AccessRequestApproved';  // PI approves acceess (to:user)
+    //////////////////
 
     public function getModuleName(){ return self::NAME; }
     public function getUiRoot(){ return '/auth'; }
@@ -70,6 +77,31 @@ class AuthModule implements RSMS_Module, MyLabWidgetProvider {
         // otherwise do nothing
 
         return $widgets;
+    }
+
+    public function getMessageTypes(){
+        $mtypes = [
+            new MessageTypeDto(self::NAME, self::MTYPE_ACCESS_REQUEST_SUBMITTED,
+                'Automatic email is sent when a new user requests access to RSMS.',
+                PrincipalInvestigator_UARMessageProcessor::class,
+                [UserAccessRequest::class]),
+
+            new MessageTypeDto(self::NAME, self::MTYPE_ACCESS_REQUEST_APPROVED,
+                'Automatic email is sent when an access request is Approved.',
+                Requester_UARMessageProcessor::class,
+                [UserAccessRequest::class]),
+
+            new MessageTypeDto(self::NAME, self::MTYPE_ACCESS_REQUEST_DENIED,
+                'Automatic email is sent when an access request is Denied.',
+                Requester_UARMessageProcessor::class,
+                [UserAccessRequest::class]),
+        ];
+
+        return $mtypes;
+    }
+
+    public function getMacroResolvers(){
+        return [];
     }
 }
 ?>
