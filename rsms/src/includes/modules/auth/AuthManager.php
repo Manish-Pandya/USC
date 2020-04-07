@@ -95,7 +95,7 @@ class AuthManager {
         $handlers = self::getAuthorizationHandlers();
 
         // Try each handler until one works
-        $subject = null;
+        $subject = false;
         $authtype = null;
         foreach ($handlers as $handler) {
             $LOG->debug("Authorizing via $handler");
