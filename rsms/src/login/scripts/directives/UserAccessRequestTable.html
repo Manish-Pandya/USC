@@ -8,7 +8,7 @@
         <h3></h3>
     </div>
     <div class="table-row" ng-repeat="request in requests">
-        <div>{{request.Date_created}}</div>
+        <div>{{ getDate(request.Date_created) | date:'shortDate'}}</div>
         <div>{{request.Network_username}}</div>
         <div>{{request.Email}}</div>
         <div>{{request.Last_name}}</div>

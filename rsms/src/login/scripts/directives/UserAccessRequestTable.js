@@ -17,6 +17,10 @@ angular.module('rsms-AuthDirectives', ['angular.filter'])
             console.debug("UserAccessRequestTable controller");
             $scope.GLOBAL_WEB_ROOT = window.GLOBAL_WEB_ROOT;
 
+            $scope.getDate = function getDate( d ){
+                return new Date(d);
+            }
+
             let endpoint_base = window.GLOBAL_WEB_ROOT + 'ajaxaction.php';
             $scope.resolveRequest = async function resolveRequest( request, approved ){
                 let cfg = {
