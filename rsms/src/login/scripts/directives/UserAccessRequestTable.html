@@ -25,11 +25,15 @@
                 <div class="overlay" ng-if="request._saving">
                     <i class="icon-spinnery-dealie spinner"></i>
                 </div>
-                <a class="btn btn-success" ng-click="resolveRequest(request, true)">
+                <a class="btn btn-success"
+                   title="Approve this request"
+                   ng-click="resolveRequest(request, true)">
                     <i class="icon-checkmark"></i>
                 </a>
 
-                <a class="btn btn-danger" ng-click="resolveRequest(request, false)">
+                <a class="btn btn-danger"
+                   title="Deny this request"
+                   ng-click="resolveRequest(request, false)">
                     <i class="icon-cancel"></i>
                 </a>
             </div>
