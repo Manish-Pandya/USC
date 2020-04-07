@@ -1,3 +1,10 @@
 <div class="content-container">
+    <h5 style="display: flex; margin: 10px 0;">
+        <i class="icon-warning red" style="margin-right: 10px;"></i>
+        <span>The following {{data.length == 1 ? 'individual has' : 'individuals have'}} requested that they be added as your Lab Personnel in <i>RSMS</i>.
+            Please review {{data.length == 1 ? 'this request' : 'these requests'}} and Approve/Deny as you deem appropriate.
+        </span>
+    </h5>
+
     <user-access-request-table requests="data"></user-access-request-table>
 </div>
