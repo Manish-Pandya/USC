@@ -1,0 +1,116 @@
+<table class="userList table table-striped table-hover piTable table-bordered sticky-headers"
+       sticky-headers
+       watch="filtered.length"
+       ng-if="users">
+    <thead>
+        <tr>
+            <th colspan="13" class="theme-main-element">
+                <h1>{{category.name}}</h1>
+                <div class="btn-group" style="margin: -18px 0 0 20px;">
+                     <a class="btn btn-large"
+                        ng-click="showInactive = !showInactive; searchText = null;">
+                         <input type="hidden"
+                                ng-model="showInactive"
+                                ng-init="showInactive = false">
+                         <span ng-show="showInactive">Show Active USERs</span>
+                         <span ng-hide="showInactive">Show Inactive USERs</span>
+                     </a>
+                     <a ng-if="config.show_admin_controls"
+                        class="btn-large btn"
+                        ng-click="editUser()"
+                        style="padding:10px; margin-left:5px;">
+                        <i class="icon-add-users"></i>Add USER</a>
+                 </div>
+                 <h2 style="float:right; margin-top:8px;">
+                    <span class="underline bold">{{filtered.length}}</span>
+                    <span>{{category.name}} Displayed</span>
+                </h2>
+            </th>
+        </tr>
+        <tr>
+            <th style="white-space: nowrap;">Edit USER</th>
+
+            <th ng-if="config.show_field_username">Username</th>
+            <th ng-if="config.show_field_last_name">Last Name</th>
+            <th ng-if="config.show_field_first_name">First Name</th>
+            <th ng-if="config.show_field_principal_investigator">Lab PI</th>
+            <th ng-if="config.show_field_position">Position</th>
+            <th ng-if="config.show_field_email">Email</th>
+            <th ng-if="config.show_field_lab_phone">Lab Phone</th>
+            <th ng-if="config.show_field_building">Building(s)</th>
+            <th ng-if="config.show_field_office_phone">Office Phone</th>
+            <th ng-if="config.show_field_emergency_phone">Emergency Phone</th>
+            <th ng-if="config.show_field_roles">Role(s)</th>
+            <th ng-if="config.show_field_department">Department(s)</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th ng-if="config.show_field_username">[filter/search by Username]</th>
+            <th ng-if="config.show_field_last_name">[filter/search by Last Name]</th>
+            <th ng-if="config.show_field_first_name">[filter/search by First Name]</th>
+            <th ng-if="config.show_field_principal_investigator">[filter/search by PI]</th>
+            <th ng-if="config.show_field_position">[filter/search by Position]</th>
+            <th ng-if="config.show_field_email">[filter/search by Email]</th>
+            <th ng-if="config.show_field_lab_phone">[filter/search by Lab Phone]</th>
+            <th ng-if="config.show_field_building">[filter/search by Building]</th>
+            <th ng-if="config.show_field_office_phone">[filter/search by Office Phone]</th>
+            <th ng-if="config.show_field_emergency_phone">[filter/search by Emergency Phone]</th>
+            <th ng-if="config.show_field_roles">[filter/search by Roles]</th>
+            <th ng-if="config.show_field_department">[filter/search by Department]</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="user in (filtered = (users | categoryFilter:category | filter:activeFilter(showInactive) | filter:searchText | orderBy:order:reverse ))"
+            ng-class="{inactive: !user.Is_active}">
+            <td>
+                <button ng-disabled="!config.show_admin_controls"
+                        class="edit btn btn-primary"
+                        ng-click="editUser(user, $index)"
+                        alt="Edit" title="Edit" title="Edit">
+                    <i class="icon-pencil"></i>
+                </button>
+                <button ng-disabled="!config.show_admin_controls"
+                        class="btn DeactivateeRow"
+                        ng-class="{
+                            'btn-success': !user.Is_active,
+                            'btn-danger': user.Is_active
+                        }"
+                        ng-click="toggleUserActive(user)">
+                    <i ng-class="{
+                        'icon-checkmark': !user.Is_active,
+                        'icon-remove': user.Is_active
+                    }"></i>
+                </button>
+
+                <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="pi.PrincipalInvestigator.IsDirty"></i>
+            </td>
+            <td ng-if="config.show_field_username">{{user.Username}}</td>
+            <td ng-if="config.show_field_last_name">{{user.Last_name}}</td>
+            <td ng-if="config.show_field_first_name">{{user.First_name}}</td>
+            <td ng-if="config.show_field_principal_investigator">
+                <span ng-if="user.Supervisor_id">{{user.Supervisor.Name}}</span>
+            </td>
+            <td ng-if="config.show_field_position">{{user.Position}}</td>
+            <td ng-if="config.show_field_email">{{user.Email}}</td>
+            <td ng-if="config.show_field_lab_phone">{{user.Lab_phone | tel}}</td>
+            <td ng-if="config.show_field_building">
+                <ul class="department-list">
+                    <li ng-repeat="building in user.Buildings">{{building.Name}}</li>
+                </ul>
+            </td>
+            <td ng-if="config.show_field_office_phone">{{user.Office_phone | tel}}</td>
+            <td ng-if="config.show_field_emergency_phone">{{user.Emergency_phone | tel}}</td>
+            <td ng-if="config.show_field_roles">
+                <ul class="department-list">
+                    <li ng-repeat="role in user.Roles">{{role.Name}}</li>
+                </ul>
+            </td>
+            <td ng-if="config.show_field_department">
+                <ul class="department-list">
+                    <li ng-if="user.Primary_department">{{user.Primary_department.Name}}</li>
+                    <li ng-if="user.PrincipalInvestigator" ng-repeat="dept in user.PrincipalInvestigator.Departments">{{dept.Name}}</li>
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>

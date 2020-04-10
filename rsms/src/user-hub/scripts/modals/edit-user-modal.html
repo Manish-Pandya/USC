@@ -1,0 +1,201 @@
+<form id="edit-user-form" class="form-horizontal form" ng-submit="submit()">
+    <div class="modal-header theme-main-element">
+        <h2 class="even-content" style="align-items: center;">
+            <span ng-if="user.Key_id">Editing User</span>
+            <span ng-if="!user.Key_id">Add New User</span>
+            <span class="badge badge-success">{{category.name}}</span>
+        </h2>
+    </div>
+
+    <div class="modal-body">
+        <style>
+            /*TODO: Move to stylesheet*/
+            .modal-dialog-wide .modal-dialog, .modal-dialog-wide.modal {
+                width: 1000px;
+            }
+
+            #edit-user-form{
+                margin-bottom: 0;
+            }
+
+            .control-group label {
+                /* Decorate text */
+                font-weight: bold;
+                text-align: right;
+
+                /* Restrict width to display inline with input */
+                display: inline-block;
+                width: 150px;
+                padding-right: 10px;
+
+                /* Add spacing between following lines */
+                margin-bottom: 20px;
+            }
+
+            .control-group .ui-select-container {
+                width: 260px;
+                margin-left: 3px;
+            }
+
+            .selected-list {
+                display: flex;
+                flex-wrap: wrap;
+                width: 260px;
+            }
+
+            .selected-list .selected-list-item {
+                display: inline-flex;
+                align-items: baseline;
+                padding: 0 5px;
+                margin: 3px;
+                border: solid 1px #aaa;
+                border-radius: 6px;
+                background: lightblue;
+            }
+
+            .selected-list .selected-list-item:hover { background: lightcyan; }
+            .selected-list .selected-list-item i { font-size: 0.8em; }
+        </style>
+
+        <div class="even-content">
+            <div class="content-main" style="width: 50%">
+                <div id="user-username" class="control-group">
+                    <label for="username">*Username</label>
+                    <input required name="username" ng-model="user.Username"
+                           ng-disabled="state.allow_edit || state.lookup_user">
+                    <a ng-if="!state.allow_edit"
+                       ng-enabled="!state.lookup_user"
+                       ng-click="lookupUserDetails()">
+                        <i ng-class="{
+                            'icon-spinnery-dealie spinner': state.lookup_user,
+                            'icon-search': !state.lookup_user,
+                        }"></i>
+                    </a>
+                </div>
+
+                <div id="user-details" class="control-group">
+                    <label for="firstname">*First Name</label>
+                    <input ng-disabled="!state.allow_edit" required type="text" name="firstname" ng-model="user.First_name">
+
+                    <label for="lastname">*Last Name</label>
+                    <input ng-disabled="!state.allow_edit" required type="text" name="lastname" ng-model="user.Last_name">
+
+                    <label for="email">*Email</label>
+                    <input ng-disabled="!state.allow_edit" required type="email" name="email" ng-model="user.Email">
+                </div>
+
+                <div id="category-details" class="control-group">
+                    <label for="position">Position</label>
+                    <input ng-disabled="!state.allow_edit" type="text" name="position" ng-model="user.Position">
+                    
+                    <label for="lab_phone">Lab Phone</label>
+                    <input ng-disabled="!state.allow_edit" type="tel" name="lab_phone" ng-model="user.Lab_phone" ui-mask="(999) 999-9999">
+
+                    <label for="office_phone">Office Phone</label>
+                    <input ng-disabled="!state.allow_edit" type="tel" name="office_phone" ng-model="user.Office_phone" ui-mask="(999) 999-9999">
+
+                    <label for="emergency_phone">Emergency Phone</label>
+                    <input ng-disabled="!state.allow_edit" type="tel" name="emergency_phone" ng-model="user.Emergency_phone" ui-mask="(999) 999-9999">
+
+                    <div style="display:flex;">
+                        <label for="principal_investigator">Principal Investigator</label>
+                        <i ng-if="!state.all_pis" class="icon-spinnery-dealie spinner"></i>
+                        <ui-select ng-if="state.all_pis"
+                                ng-model="user.PrincipalInvestigator" theme="selectize"
+                                ng-disabled="!state.allow_edit"
+                                direction="up"
+                                on-select="onSelectPI($item, $model, $label)">
+                            <ui-select-match placeholder="Select A Principal Investigator">{{$select.selected.Name}}</ui-select-match>
+                            <ui-select-choices repeat="pi in state.all_pis
+                                                        | propsFilter: {Name: $select.search}
+                                                        | orderBy:'Name'
+                                                        | limitTo:25">
+                                <div ng-bind-html="pi.Name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+
+                    <div style="display:flex;">
+                        <label for="roles">Role(s)</label>
+                        <i ng-if="!state.all_roles" class="icon-spinnery-dealie spinner"></i>
+                        <div ng-if="state.all_roles">
+                            <ui-select ng-model="state.selectedRole" theme="selectize"
+                                    ng-disabled="!state.allow_edit"
+                                    direction="up"
+                                    on-select="onSelectRole($item, $model, $label)">
+                                <ui-select-match placeholder="Select A Role"></ui-select-match>
+                                <ui-select-choices repeat="role in state.all_roles
+                                                            | propsFilter: {Name: $select.search}
+                                                            | orderBy:'Name'">
+                                    <div ng-bind-html="role.Name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+
+                            <div class="selected-list">
+                                <a ng-repeat="role in user.Roles | orderBy:'Name'"
+                                    ng-disabled="!canRemoveRole(role)"
+                                    ng-click="removeRole(role)"
+                                    class="selected-list-item">
+                                    <i class="icon-x"></i>
+                                    <span>{{role.Name}}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;">
+                        <label for="roles">Department(s)</label>
+                        <i ng-if="!state.all_departments" class="icon-spinnery-dealie spinner"></i>
+                        <div ng-if="state.all_departments">
+                            <ui-select ng-model="state.selectedDepartment" theme="selectize"
+                                    ng-disabled="!state.allow_edit"
+                                    direction="up"
+                                    on-select="onSelectDepartment($item, $model, $label)">
+                                <ui-select-match placeholder="Select A Department"></ui-select-match>
+                                <ui-select-choices repeat="dept in state.all_departments
+                                                            | propsFilter: {Name: $select.search}
+                                                            | orderBy:'Name'">
+                                    <div ng-bind-html="dept.Name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+
+                            <div class="selected-list">
+                                <a ng-repeat="dept in user.Departments | orderBy:'Name'"
+                                    ng-disabled="!canRemoveDepartment(dept)"
+                                    ng-click="removeDepartment(dept)"
+                                    class="selected-list-item">
+                                    <i class="icon-x"></i>
+                                    <span>{{dept.Name}}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-sidebar well" style="width: 45%">
+                <h4>Categories</h4>
+                <div style="display: flex; flex-wrap: wrap;">
+                    <span class="badge" ng-repeat="c in categories | userCategories:user">{{c.name}}</span>
+                </div>
+
+                <h4 style="margin-top: 15px;">Role Requirements</h4>
+                <table>
+                    <tbody ng-repeat="role in category.roles">
+                        <tr ng-repeat="requirement in RoleRequirements | filter:{RoleName:role}">
+                            <td>{{requirement.RoleName}}</td>
+                            <td>{{requirement.Property}}</td>
+                            <td>{{requirement.Operator}}</td>
+                            <td>{{requirement.Value}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success">SAVE</button>
+        <a class="btn btn-danger" ng-click="cancel()">CANCEL</a>
+    </div>
+</form>
