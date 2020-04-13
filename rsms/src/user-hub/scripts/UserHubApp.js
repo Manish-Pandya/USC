@@ -57,6 +57,17 @@ angular
         });
     }
 })
+.filter('restrictRolesFilter', function(){
+    return function( roles, category ){
+        if( !roles || !category ) return roles;
+
+        // If unrestricted, leave roles as-is
+        if( !category.config.restrictRoles ) return roles;
+
+        // Otherwise restrict roles to those listed in category
+        return roles.filter(r => category.roles.includes(r.Name));
+    }
+})
 .controller('AppCtrl', function ($rootScope, $scope, $modal, $timeout, UserHubAPI) {
     console.debug("rsms-UserHub running");
 
@@ -81,16 +92,25 @@ angular
 
     let ROLE = Constants.ROLE.NAME;
 
-    function UserHubCategory( name, code, roles, columns ){
+    // TODO: Add configuration for user-editing:
+    /*
+        ** Added config.newUserRoles to specify roles to be added to new users
+        ** Added config.restrictRoles to specify that a category's Roles should be filtered to list only pertinent ones
+        Should category-roles be allowed to be removed?
+    */
+    function UserHubCategory( name, code, roles, columns, editFields, config ){
         this.name = name;
         this.code = code;
         this.roles = roles;
         this.columns = columns;
+        this.editFields = editFields;
+        this.config = config;
     }
 
     $rootScope.categories = [];
     $rootScope.categories.push(
-        new UserHubCategory('Principal Investigators', 'pis', [ROLE.PRINCIPAL_INVESTIGATOR], [
+        new UserHubCategory('Principal Investigators', 'pis', [ROLE.PRINCIPAL_INVESTIGATOR],
+        [ // display fields
             COL_LAST_NAME,
             COL_FIRST_NAME,
             COL_DEPARTMENT,
@@ -99,11 +119,22 @@ angular
             COL_BUILDING,
             COL_EMAIL,
             COL_EMERGENCY_PHONE
-        ])
+        ],
+        [ // edit fields
+            COL_DEPARTMENT,
+            COL_OFFICE_PHONE,
+            COL_LAB_PHONE,
+            COL_EMERGENCY_PHONE
+        ],
+        {
+            restrictRoles: false,
+            newUserRoles: [ROLE.PRINCIPAL_INVESTIGATOR]
+        })
     );
 
     $rootScope.categories.push(
-        new UserHubCategory('Lab Contacts', 'contacts', [ROLE.LAB_CONTACT], [
+        new UserHubCategory('Lab Contacts', 'contacts', [ROLE.LAB_CONTACT],
+        [ // display fields
             COL_LAST_NAME,
             COL_FIRST_NAME,
             COL_PRINCIPAL_INVESTIGATOR,
@@ -111,11 +142,22 @@ angular
             COL_EMAIL,
             COL_LAB_PHONE,
             COL_EMERGENCY_PHONE
-        ])
+        ],
+        [ // edit fields
+            COL_EMERGENCY_PHONE,
+            COL_LAB_PHONE,
+            COL_PRINCIPAL_INVESTIGATOR,
+            COL_POSITION
+        ],
+        {
+            restrictRoles: false,
+            newUserRoles: [ROLE.LAB_CONTACT, ROLE.LAB_PERSONNEL]
+        })
     );
 
     $rootScope.categories.push(
-        new UserHubCategory('Lab Personnel', 'labPersonnel', [ROLE.LAB_PERSONNEL], [
+        new UserHubCategory('Lab Personnel', 'labPersonnel', [ROLE.LAB_PERSONNEL],
+        [ // display fields
             COL_LAST_NAME,
             COL_FIRST_NAME,
             COL_PRINCIPAL_INVESTIGATOR,
@@ -123,12 +165,22 @@ angular
             COL_DEPARTMENT,
             COL_EMAIL,
             COL_LAB_PHONE
-        ])
+        ],
+        [ // edit fields
+            COL_EMERGENCY_PHONE,
+            COL_LAB_PHONE,
+            COL_PRINCIPAL_INVESTIGATOR,
+            COL_POSITION
+        ],
+        {
+            restrictRoles: false,
+            newUserRoles: [ROLE.LAB_PERSONNEL]
+        })
     );
 
     $rootScope.categories.push(
         new UserHubCategory('EHS Personnel', 'EHSPersonnel',
-            [
+            [ // included roles
                 ROLE.ADMIN,
                 ROLE.SAFETY_INSPECTOR,
                 ROLE.RADIATION_USER,
@@ -136,7 +188,8 @@ angular
                 ROLE.RADIATION_INSPECTOR,
                 ROLE.OCCUPATIONAL_HEALTH,
                 ROLE.READ_ONLY
-            ], [
+            ],
+            [ // display fields
                 COL_LAST_NAME,
                 COL_FIRST_NAME,
                 COL_ROLES,
@@ -144,36 +197,65 @@ angular
                 COL_OFFICE_PHONE,
                 COL_EMAIL,
                 COL_EMERGENCY_PHONE
-            ]
+            ],
+            [ // edit fields
+                COL_OFFICE_PHONE,
+                COL_EMERGENCY_PHONE,
+                COL_POSITION
+            ],
+            {
+                restrictRoles: false,
+                newUserRoles: []
+            }
         )
     );
 
     $rootScope.categories.push(
         new UserHubCategory('Department Chairs & Coordinators', 'departmentContacts',
-            [
+            [ // included roles
                 ROLE.DEPARTMENT_CHAIR,
                 ROLE.DEPARTMENT_COORDINATOR
             ],
-            [
+            [ // display fields
                 COL_LAST_NAME,
                 COL_FIRST_NAME,
                 COL_ROLES,
                 COL_DEPARTMENT,
                 COL_OFFICE_PHONE,
                 COL_EMAIL
-            ]
+            ],
+            [ // edit fields
+                COL_OFFICE_PHONE,
+                COL_EMERGENCY_PHONE,
+                COL_DEPARTMENT
+            ],
+            {
+                restrictRoles: true,
+                newUserRoles: []
+            }
         )
     );
 
     $rootScope.categories.push(
-        new UserHubCategory('Teaching Lab Contacts', 'teachingLabContacts', [ROLE.TEACHING_LAB_CONTACT], [
-            COL_LAST_NAME,
-            COL_FIRST_NAME,
-            COL_DEPARTMENT,
-            COL_EMAIL,
-            COL_OFFICE_PHONE,
-            COL_EMERGENCY_PHONE
-        ])
+        new UserHubCategory('Teaching Lab Contacts', 'teachingLabContacts', [ROLE.TEACHING_LAB_CONTACT],
+            [ // display fields
+                COL_LAST_NAME,
+                COL_FIRST_NAME,
+                COL_DEPARTMENT,
+                COL_EMAIL,
+                COL_OFFICE_PHONE,
+                COL_EMERGENCY_PHONE
+            ],
+            [ // edit fields
+                COL_OFFICE_PHONE,
+                COL_EMERGENCY_PHONE,
+                COL_DEPARTMENT
+            ],
+            {
+                restrictRoles: true,
+                newUserRoles: [ROLE.TEACHING_LAB_CONTACT]
+            }
+        )
     );
 
     // Generate 'uncategorized' as any role not included in another category
@@ -191,10 +273,13 @@ angular
 
     $rootScope.categories.push(
         new UserHubCategory('Uncategorized Users', 'uncategorized', uncategorized_roles,
-        [
-            COL_LAST_NAME,
-            COL_FIRST_NAME
-        ])
+            [ // display fields
+                COL_LAST_NAME,
+                COL_FIRST_NAME
+            ],
+            [ /* edit fields */ ],
+            {}
+        )
     );
 
     // Eagerly load all users
@@ -238,9 +323,26 @@ angular
 
     // Set up scope
     $scope.category = category;
-    $scope.user = user ? angular.copy(user)
-                       : {};
 
+    // Prepare new user
+    if( !user ){
+        $scope.user = {
+            Class: 'User',
+            Roles: [],
+        };
+    }
+    else {
+        $scope.user = angular.copy(user);
+    }
+
+    // Configure
+    $scope.config = {};
+
+    $scope.category.editFields.forEach( col => {
+        $scope.config['show_field_' + col] = true;
+    });
+
+    // Initialize state
     $scope.state = {
         allow_edit: $scope.user.Key_id,
 
@@ -298,7 +400,17 @@ angular
             }
 
             $timeout(() => {
+                // Apply new-user Details
                 angular.extend( $scope.user, details );
+
+                // Apply category defaults
+                if( $scope.category.config.newUserRoles.length ){
+                    $scope.user.Roles = [];
+                    $scope.category.config.newUserRoles
+                        .map( defaultRoleName => $scope.state.all_roles.find(r => r.Name == defaultRoleName))
+                        .forEach( role => $scope.user.Roles.push(role) );
+                }
+
                 $scope.state.allow_edit = true;
                 $scope.state.lookup_user = undefined;
             });
