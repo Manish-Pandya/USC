@@ -95,7 +95,7 @@
             <td ng-if="config.show_field_lab_phone">{{user.Lab_phone | tel}}</td>
             <td ng-if="config.show_field_building">
                 <ul class="department-list">
-                    <li ng-repeat="building in user.Buildings">{{building.Name}}</li>
+                    <li ng-repeat="building in user.PrincipalInvestigator.Buildings">{{building.Name}}</li>
                 </ul>
             </td>
             <td ng-if="config.show_field_office_phone">{{user.Office_phone | tel}}</td>
