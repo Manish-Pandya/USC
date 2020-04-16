@@ -1,0 +1,15 @@
+table.userList td {
+    white-space: nowrap;
+}
+
+.category-roles-container {
+    display: inline-block;
+    margin: 0;
+    padding: 10px;
+    padding-bottom: 15px;
+    border: solid 1px;
+    border-bottom: none;
+    border-radius: 10px;
+    margin-bottom: -7px;
+}
+

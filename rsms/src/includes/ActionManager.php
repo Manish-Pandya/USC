@@ -681,7 +681,7 @@ class ActionManager {
         foreach($newPi->getRooms() as $room){
 
             $room->getHazardTypesArePresent();
-            $room = $this->saveRoom($room);
+            $saved_room = $this->saveRoom($room);
             $LOG->debug("Saved $room");
         }
 
@@ -706,9 +706,13 @@ class ActionManager {
         if( isset($depts) ){
             $LOG->debug("Link " . count($depts) . " incoming departments");
             foreach($depts as $dept){
+                // Note that dept is an array...
                 $LOG->debug("Linking dept #" . $dept['Key_id']);
                 $pi_dao->addRelatedItems($dept['Key_id'], $pi->getKey_id(), DataRelationship::fromArray(PrincipalInvestigator::$DEPARTMENTS_RELATIONSHIP));
             }
+
+            // Clear $pi departments to force re-qurey
+            $pi->setDepartments(null);
         }
 
         $newPi->setDepartments($pi->getDepartments());
