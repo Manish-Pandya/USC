@@ -27,7 +27,10 @@ angular
         .state('user-hub.users.category', {
             url: '/:category',
             template: `
-                <p><span class='badge badge-inverse' style="margin-right: 5px;" ng-repeat="role in category.roles">{{role}}</span></p>
+                <p>
+                    <span class='badge badge-inverse' style="margin-right: 5px;" ng-repeat="role in category.roles">{{role}}</span>
+                    <span class='badge badge-inverse' ng-if="category.config.includeRoleless">Unassigned</span>
+                </p>
                 <user-hub-category-table users="Users" category="category">
                 </user-hub-category-table>
             `,
@@ -43,8 +46,10 @@ angular
 
         // Filter to users who have any listed category role
         return users.filter(u => {
-            // Ignore users without roles
-            if( !u || !u.Roles ){ return false; }
+            // Ignore/Include users without roles based on category configuration
+            if( !u || !u.Roles || !u.Roles.length ){
+                return category.config.includeRoleless;
+            }
 
             return u.Roles.filter( user_role => category.roles.includes(user_role.Name)).length > 0;
         });
@@ -275,10 +280,13 @@ angular
         new UserHubCategory('Uncategorized Users', 'uncategorized', uncategorized_roles,
             [ // display fields
                 COL_LAST_NAME,
-                COL_FIRST_NAME
+                COL_FIRST_NAME,
+                COL_ROLES
             ],
             [ /* edit fields */ ],
-            {}
+            {
+                includeRoleless: true
+            }
         )
     );
 
