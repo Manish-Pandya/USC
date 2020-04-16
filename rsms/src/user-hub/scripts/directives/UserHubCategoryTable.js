@@ -18,30 +18,6 @@ angular.module('rsms-UserHub')
             console.debug("UserHubCategoryTable controller");
             $scope.GLOBAL_WEB_ROOT = window.GLOBAL_WEB_ROOT;
 
-            console.log($scope.config);
-
-            function UserHubTableField( name, property, sortable ){
-                this.name = name;
-                this.property = property;
-                this.sortable = sortable;
-            }
-
-            // TODO: Analyze our Category to determine Fields
-            $scope.table = {};
-            $scope.table.fields = [
-                new UserHubTableField( 'Last Name', 'Last_name', true ),
-                new UserHubTableField( 'First Name', 'First_name', false ),
-                new UserHubTableField( 'Role', 'Roles', false ),
-                new UserHubTableField( 'Lab PI', 'Supervisor', true ),
-                new UserHubTableField( 'Position', 'Position', true ),
-                new UserHubTableField( 'Department(s)', 'Departments', true ),
-                new UserHubTableField( 'Office Phone', 'Office_phone', false ),
-                new UserHubTableField( 'Lab Phone', 'Lab_phone', false ),
-                new UserHubTableField( 'Building(s)', 'Buildings', false ),
-                new UserHubTableField( 'Email', 'Email', false ),
-                new UserHubTableField( 'Emergency Phone', 'Emergency_phone', false ),
-            ];
-
             // Set up configuration
             $scope.config = {};
 
@@ -53,7 +29,7 @@ angular.module('rsms-UserHub')
 
             $scope.config.show_admin_controls = roleBasedFactory.getHasPermission(admin_roles);
 
-            // TODO: Configure columns based on Category
+            // Configure columns based on Category
             $scope.category.columns.forEach( col => {
                 $scope.config['show_field_' + col] = true;
             });
@@ -69,7 +45,7 @@ angular.module('rsms-UserHub')
                 let modalInstance = $modal.open({
                     templateUrl: 'scripts/modals/edit-user-modal.html',
                     controller: 'EditUserModalCtrl',
-                    windowClass: 'modal-dialog-wide',
+                    //windowClass: 'modal-dialog-wide',
                     resolve: {
                         category: function(){ return $scope.category; },
                         user: function(){ return user; }

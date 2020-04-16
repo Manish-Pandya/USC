@@ -73,11 +73,75 @@ angular
         return roles.filter(r => category.roles.includes(r.Name));
     }
 })
+.filter('incompatibleRoles', function($rootScope){
+
+    /**
+     * Find user roles which are incompatible to this one
+     */
+    return function( roleOrRoles, user ){
+        if( !roleOrRoles || !user ) return [];
+
+        let role_names = (Array.isArray(roleOrRoles) ? roleOrRoles : [roleOrRoles]).map(r => r.Name);
+
+        return user.Roles
+            // map user role objects to tuples listing their incompatibilities
+            .map( r => {
+                return { RoleName: r.Name, Incompatibilities: $rootScope.RoleIncompatibilities[r.Name] };
+            })
+            // Filter down to roles whith list the incoming role(s) as imcompatible
+            .filter( r => {
+                return r.Incompatibilities
+                    && r.Incompatibilities.filter( i => role_names.includes(i) ).length > 0;
+            })
+            // Map filtered list to the incompatible role name
+            .map( r => r.RoleName);
+    }
+})
 .controller('AppCtrl', function ($rootScope, $scope, $modal, $timeout, UserHubAPI) {
     console.debug("rsms-UserHub running");
 
     // Expose Role Requirements
     $rootScope.RoleRequirements = RoleRequirements;
+
+    //////////////////////
+    // Compare requirements to determine compatibilities
+    // A role is incompatible with another if both have conflicting rules for the same property
+    let requirementsPerProperty = $rootScope.RoleRequirements
+        // Ignore 'optional' rules
+        .filter( requirement => requirement.Operator != 'optional')
+
+        // Group requirements by Property
+        .reduce( (grouped, requirement) => {
+            let group_name = [requirement.Property, (requirement.Value || '*')].join(':');
+            let group = grouped[group_name] || [];
+            group.push(requirement);
+
+            grouped[group_name] = group;
+            return grouped;
+        }, {});
+
+    // Groups are placed into an object for convenience of the previous instr.
+    // We don't care about the keys going forward, so just look at its values
+
+    // Compare each property rule to determine incompatibilities
+    $rootScope.RoleIncompatibilities = Object.values(requirementsPerProperty)
+        .reduce( (incompatibilities, group) => {
+
+            for( let i = 0; i < group.length; i++ ){
+                let rule = group[i];
+                let incompatible_roles = group
+                    .filter( r => r.Operator != rule.Operator )
+                    .map( r => r.RoleName);
+
+                if( incompatible_roles.length ){
+                    incompatibilities[rule.RoleName] = (incompatibilities[rule.RoleName] || []).concat(incompatible_roles);
+                }
+            }
+
+            return incompatibilities;
+        }, []);
+    console.log($rootScope.RoleIncompatibilities);
+    //////////////////////
 
     // Expose Constants to views
     $rootScope.constants = Constants;
@@ -327,7 +391,7 @@ angular
         $modalInstance.dismiss();
     }
 })
-.controller('EditUserModalCtrl', function($scope, $modalInstance, $timeout, UserHubAPI, category, user){
+.controller('EditUserModalCtrl', function($rootScope, $scope, $modalInstance, $timeout, $q, $filter, UserHubAPI, category, user){
 
     // Set up scope
     $scope.category = category;
@@ -340,15 +404,19 @@ angular
         };
     }
     else {
+        $scope.originalUser = user;
         $scope.user = angular.copy(user);
     }
 
     // Configure
     $scope.config = {};
 
+    // Configure fields to display
     $scope.category.editFields.forEach( col => {
         $scope.config['show_field_' + col] = true;
     });
+
+    // Configure fields to require
 
     // Initialize state
     $scope.state = {
@@ -365,22 +433,209 @@ angular
 
     /////////////////////
     // Async load data
-    UserHubAPI.getAllPIs().then( pis => {
-        $timeout(function(){
+    $q.all([
+        UserHubAPI.getAllPIs(),
+        UserHubAPI.getAllRoles(),
+        UserHubAPI.getAllDepartments()
+    ])
+    .then( (data) => {
+        let pis = data[0];
+        let roles = data[1];
+        let depts = data[2];
+
+        $timeout( () => {
             $scope.state.all_pis = pis;
+            $scope.state.all_roles = roles;
+            $scope.state.all_departments = depts;
         });
     });
 
-    UserHubAPI.getAllRoles().then( roles => {
-        $timeout(function(){ $scope.state.all_roles = roles;});
+    // Watch for changes to user Roles
+    $scope.$watchCollection('user.Roles', (newRoles, oldRoles, scope) => {
+        console.debug('User.Roles have changed');
+
+        //////////////////////////////////////////
+        // Apply any special-case considerations
+
+        // PI users must have a PrincipalInvestigator child
+        if( newRoles.find(r => r.Name == Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR) ){
+            // This is a PI; ensure a PI child exists
+            if( !scope.user.PrincipalInvestigator ){
+                scope.user.PrincipalInvestigator = {
+                    Class: 'PrincipalInvestigator',
+                    Departments: []
+                };
+            }
+        }
+
+        //////////////////////////////////////////
+        // Recalculate and validate field requirements any time roles change
+        getUserRoleRequirements(scope.user);
+        scope.validateRoleRequirements();
     });
 
-    UserHubAPI.getAllDepartments().then( depts => {
-        $timeout(function(){ $scope.state.all_departments = depts;});
+    // Validate role requirements whenever anything changes
+    let watch_paths = [
+        'user',
+        'user.Roles',
+        'user.PrincipalInvestigator',
+        'user.PrincipalInvestigator.Departments'
+    ];
+
+    watch_paths.forEach( expr => {
+        $scope.$watchCollection(expr, (newData, oldData, scope) => {
+            scope.validateRoleRequirements();
+        });
     });
 
     ////////////////////
+    // Utility Functions
+    function includesItem( list, keyed_object ){
+        return list.find( i => i.Key_id == keyed_object.Key_id );
+    }
+
+    function validateSubjectValue( subject, operator, property, value ){
+        require_value = (v) => {
+            // If value is provided, v must equal value
+            if( value ) return v == value;
+
+            // Otherwise v must have any value
+            return v != null && v != undefined;
+        };
+
+        prohibit_value = (v) => {
+            // If value is provided, v must not equal value
+            if( value ) return v != value;
+
+            // Otherwise v must have an empty value
+            return v == null || v == undefined;
+        };
+
+        let is_valid;
+        switch( operator ){
+            case 'required': {
+                is_valid = require_value( subject[property] );
+                break;
+            }
+
+            case 'prohibited':{
+                is_valid = prohibit_value( subject[property] );
+                break;
+            }
+
+            default: {
+                // any value or non-value is fine
+                is_valid = true;
+                break;
+            }
+        }
+
+        return is_valid;
+    }
+
+    function validateRoleRequirement( role_requirement, user ){
+        console.debug("Validate ", role_requirement);
+
+        // Match property special-cases
+        if( role_requirement.Property == 'Role.Name' ){
+            // Look at each Role
+            let is_valid = false;
+            for( idx in user.Roles ){
+                is_valid = validateSubjectValue( user.Roles[idx], role_requirement.Operator, 'Name', role_requirement.Value );
+                if( is_valid ){
+                    break;
+                }
+            }
+
+            return is_valid;
+        }
+        else if( role_requirement.Property == 'Department' ){
+            // Department is applied in 2 possible ways -
+            //   1. Principal Investigators have a list of Departments at User.PrincipalInvestigator.Departments
+            //   2. Non-principal-investigators have a single 'primary' department at User.Primary_department_id
+            // Note that both of these possibilites may exist for a given user, depending on how that user's department(s) have been applied
+
+            let dept_ids = [];
+            let depts = [];
+            if( user.Primary_department ){
+                depts.push(user.Primary_department);
+                dept_ids.push(user.Primary_department_id);
+            }
+
+            if( user.PrincipalInvestigator ){
+                depts = depts.concat(user.PrincipalInvestigator.Departments);
+                dept_ids = dept_ids.concat( user.PrincipalInvestigator.Departments.map(d => d.Key_id));
+            }
+
+            // There is not currently a use-case for requiring specific departments, so this is a binary check
+            let is_valid = dept_ids.length > 0;
+            return is_valid;
+        }
+
+        else {
+            // Validate this requirement as a simple path
+            let is_valid = validateSubjectValue( user, role_requirement.Operator, role_requirement.Property, role_requirement.Value );
+            return is_valid;
+        }
+      
+    }
+
+    function getUserRoleRequirements( user ){
+        console.debug("Collect role-based requirements for ", user);
+
+        $scope.role_requirements = user.Roles
+            // Collect all requirements for each role
+            .map(role => {
+                return $rootScope.RoleRequirements.filter(req => req.RoleName == role.Name);
+            })
+            // Remove any empty lists
+            .filter( reqs => reqs.length > 0 )
+            .reduce( (_arr, _reqs) => {
+                return _arr.concat( _reqs );
+            }, []);
+
+        return $scope.role_requirements;
+    }
+
+    ////////////////////
     // Scope Functions
+    $scope.validateRoleRequirements = function validateRoleRequirements(){
+        // Wrap in timeout to ensure $scope.user will be up-to-date here
+        $timeout( () => {
+            // If there are requirements, validate current state
+            if( $scope.role_requirements.length ){
+                $scope.validation = $scope.role_requirements.map(req => {
+                    // Check for special-case placeholders for 'friendly' terms
+                    let prop = req.Property;
+                    if     ( prop == 'Role.Name' ) prop = 'Role';
+                    else if( prop == 'Supervisor_id' ) prop = 'Principal Investigator';
+
+                    // Build descriptiong for this rule
+                    let desc = prop + (req.Value ? ' of "' + req.Value + '" ' : ' ')
+                                + ' is ' + req.Operator
+                                + ' for ' + req.RoleName + ' users';
+
+                    // Validate this rule
+                    return {
+                        valid: validateRoleRequirement(req, $scope.user),
+                        field: req.Property,
+                        desc: desc
+                    };
+                });
+
+                if( $scope.validation.find(v => !v.valid) ){
+                    return false;
+                }
+            }
+            else {
+                console.debug("No role requirements to check");
+                $scope.validation = [];
+            }
+
+            return true;
+        });
+    }
+
     $scope.lookupUserDetails = async function lookupUserDetails(){
         // Ignore if there's no username to look up
         if( !$scope.user.Username ) return;
@@ -437,14 +692,24 @@ angular
     }
 
     $scope.submit = async function submit(){
-        console.log("TODO: Save", $scope.user);
+        console.log("Save", $scope.user);
 
-        // TODO: Validate current category
+        // Validate current category
+        if( !$scope.validation ){
+            console.warn("Cannot submit; no post-validation data");
+            return;
+        }
+        else if( $scope.validation.find( v => !v.valid )){
+            console.warn("Cannot submit due to failed validation");
+            return;
+        }
 
         // Save user
         try{
+            $scope.saving = true;
             let saved = await UserHubAPI.saveUser( $scope.user );
             ToastApi.toast('Saved ' + saved.Username);
+            $scope.saving = false;
 
             $modalInstance.close( saved );
         }
@@ -454,22 +719,33 @@ angular
         }
     }
 
-    $scope.tagHandler = function tagHandler(tag){return null;}
-
-    $scope.validateCategory = function validateCategory(){
-        // TODO: Validate rules of $scope.category
-    };
-
     $scope.onSelectPI = function onSelectPI( pi ){
-        $scope.user.Supervisor_id = pi.Key_id;
+        if( pi ){
+            $scope.user.Supervisor_id = pi.Key_id;
+        }
+        else {
+            $scope.user.Supervisor_id = null;
+            $scope.user.Supervisor = null;
+        }
     }
 
     ////////////////////
     // Role management
+    $scope.isRoleIncompatible = function isRoleIncompatible(role){
+        // Determine if the incoming role is incompatible with any other selected
+
+        let incompatible_role_names = $filter('incompatibleRoles')(role, $scope.user);
+        return incompatible_role_names.length > 0;
+    }
+
     /** Can the role be removed from a User in this category? */
     $scope.canRemoveRole = function canRemoveRole(role){
-        // TODO
-        return true;
+        // Check if other user roles reference this role as required
+        let requirement = $scope.role_requirements.find( req => {
+            return req.Property == 'Role.Name' && req.Value == role.Name;
+        });
+
+        return !requirement;
     }
 
     $scope.removeRole = function removeRole( role ){
@@ -488,7 +764,7 @@ angular
             $scope.user.Roles = [];
         }
 
-        if( !$scope.user.Roles.includes(role) ){
+        if( !includesItem($scope.user.Roles, role) ){
             console.debug("Push new role", role);
             $timeout(() => $scope.user.Roles.push(role));
         }
@@ -500,36 +776,51 @@ angular
 
     ////////////////////
     // Dept Management
-
-    /** Can the role be removed from a User in this category? */
-    $scope.canRemoveDepartment = function canRemoveDepartment(role){
-        // TODO
-        return true;
-    }
-
     $scope.removeDepartment = function removeDepartment( dept ){
-        let idx = $scope.user.Departments.indexOf(dept);
-        if( idx > -1 ){
-            console.debug("Remove dept from list", dept);
-            $timeout(() => $scope.user.Departments.splice(idx, 1));
+        // Check both 'primary department' and 'Departments' list
+        if( $scope.user.Primary_department_id && $scope.user.Primary_department_id == dept.Key_id ){
+            console.debug("Remove primary dept", dept);
+            $scope.user.Primary_department_id = null;
+            $scope.user.Primary_department = null;
+            return;
         }
-        else {
-            console.debug("Dept to remove is not present in list");
+
+        if( $scope.user.PrincipalInvestigator ){
+            let idx = $scope.user.PrincipalInvestigator.Departments.indexOf(dept);
+            if( idx > -1 ){
+                console.debug("Remove dept from list", dept);
+                $timeout(() => $scope.user.PrincipalInvestigator.Departments.splice(idx, 1));
+            }
+            else {
+                console.debug("Dept to remove is not present in list");
+            }
         }
     }
 
     $scope.onSelectDepartment = function onSelectDepartment( dept ){
-        if( !$scope.user.Departments ){
-            $scope.user.Departments = [];
+        // Does this user support sinlge- or multiple-departments?
+        // Only PIs support multiple depts
+        if( $scope.user.PrincipalInvestigator ){
+            console.debug("Add dept to PI dept list");
+            if( !$scope.user.PrincipalInvestigator.Departments ){
+                $scope.user.PrincipalInvestigator.Departments = [];
+            }
+    
+            if( !includesItem($scope.user.PrincipalInvestigator.Departments, dept) ){
+                console.debug("Push new dept", dept);
+                $timeout(() => $scope.user.PrincipalInvestigator.Departments.push(dept));
+            }
+            else{
+                console.debug("Dept is already selected");
+            }
+        }
+        else {
+            console.debug("Set user primary dept");
+            $scope.user.Primary_department = dept;
+            $scope.user.Primary_department_id = dept.Key_id;
         }
 
-        if( !$scope.user.Departments.includes(dept) ){
-            console.debug("Push new dept", dept);
-            $timeout(() => $scope.user.Departments.push(dept));
-        }
-        else{
-            console.debug("Dept is already selected");
-        }
+        $timeout( () => $scope.state.selectedDepartment = null );
     }
 })
 .factory('UserHubAPI', function($http){
