@@ -21,7 +21,10 @@ angular
             abstract: true,
             url: '/users',
             template: `
-                <h2 ng-if="!Users">Loading Users <i class="icon-spinnery-dealie spinner"></i></h2>
+                <h1 ng-if="!Users" style="display:flex; align-items:center;">
+                    <span style="padding-right: 10px;">Loading Users</span>
+                    <i class="icon-spinnery-dealie spinner large"></i>
+                </h1>
                 <ui-view ng-if="Users"/>`
         })
         .state('user-hub.users.category', {
