@@ -966,7 +966,7 @@ class ActionManager {
         foreach($newPi->getRooms() as $room){
 
             $room->getHazardTypesArePresent();
-            $room = $this->saveRoom($room);
+            $saved_room = $this->saveRoom($room);
             $LOG->debug("Saved $room");
         }
 
