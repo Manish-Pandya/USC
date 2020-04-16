@@ -8,27 +8,26 @@
                 <h1>{{category.name}}</h1>
                 <div class="btn-group" style="margin: -18px 0 0 20px;">
                      <a class="btn btn-large"
-                        ng-click="showInactive = !showInactive; searchText = null;">
+                        ng-click="config.active_status = !config.active_status;">
                          <input type="hidden"
-                                ng-model="showInactive"
-                                ng-init="showInactive = false">
-                         <span ng-show="showInactive">Show Active USERs</span>
-                         <span ng-hide="showInactive">Show Inactive USERs</span>
+                                ng-model="config.active_status">
+                         <span ng-show="config.active_status">Show Active</span>
+                         <span ng-hide="config.active_status">Show Inactive</span>
                      </a>
                      <a ng-if="config.show_admin_controls"
                         class="btn-large btn"
                         ng-click="editUser()"
                         style="padding:10px; margin-left:5px;">
-                        <i class="icon-add-users"></i>Add USER</a>
+                        <i class="icon-add-users"></i>Add</a>
                  </div>
                  <h2 style="float:right; margin-top:8px;">
                     <span class="underline bold">{{filtered.length}}</span>
-                    <span>{{category.name}} Displayed</span>
+                    <span>Displayed</span>
                 </h2>
             </th>
         </tr>
         <tr>
-            <th style="white-space: nowrap;">Edit USER</th>
+            <th>Edit</th>
 
             <th ng-if="config.show_field_username">Username</th>
             <th ng-if="config.show_field_last_name">Last Name</th>
@@ -77,7 +76,7 @@
     <tbody>
         <tr ng-repeat="user in (filtered = (users
                                             | categoryFilter:category
-                                            | filter:activeFilter(showInactive)
+                                            | filter:{ Is_active: config.active_status }
                                             | userSearchFilter:search
                                             | orderBy:order:reverse ))"
             ng-class="{inactive: !user.Is_active}">

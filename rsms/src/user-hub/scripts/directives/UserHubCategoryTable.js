@@ -19,7 +19,9 @@ angular.module('rsms-UserHub')
             $scope.GLOBAL_WEB_ROOT = window.GLOBAL_WEB_ROOT;
 
             // Set up configuration
-            $scope.config = {};
+            $scope.config = {
+                active_status: true
+            };
 
             let roles = roleBasedFactory.getRoles();
             let admin_roles = [
