@@ -45,22 +45,41 @@
         </tr>
         <tr>
             <th></th>
-            <th ng-if="config.show_field_username">[filter/search by Username]</th>
-            <th ng-if="config.show_field_last_name">[filter/search by Last Name]</th>
-            <th ng-if="config.show_field_first_name">[filter/search by First Name]</th>
-            <th ng-if="config.show_field_principal_investigator">[filter/search by PI]</th>
-            <th ng-if="config.show_field_position">[filter/search by Position]</th>
-            <th ng-if="config.show_field_email">[filter/search by Email]</th>
-            <th ng-if="config.show_field_lab_phone">[filter/search by Lab Phone]</th>
-            <th ng-if="config.show_field_building">[filter/search by Building]</th>
-            <th ng-if="config.show_field_office_phone">[filter/search by Office Phone]</th>
-            <th ng-if="config.show_field_emergency_phone">[filter/search by Emergency Phone]</th>
-            <th ng-if="config.show_field_roles">[filter/search by Roles]</th>
-            <th ng-if="config.show_field_department">[filter/search by Department]</th>
+            <th ng-if="config.show_field_username"></th>
+            <th ng-if="config.show_field_last_name && config.show_field_first_name" colspan="2">
+                <input class="full" ng-model="search.Name" placeholder="Filter by Name"/>
+            </th>
+            <th ng-if="config.show_field_principal_investigator">
+                <input ng-model="search.SupervisorName" placeholder="Filter by PI"/>
+            </th>
+            <th ng-if="config.show_field_position">
+                <input ng-model="search.Position" placeholder="Filter by Position" />
+            </th>
+            <th ng-if="config.show_field_email"></th>
+            <th ng-if="config.show_field_lab_phone"></th>
+            <th ng-if="config.show_field_building">
+                <input ng-model="search.BuildingName" placeholder="Filter by Building"/>
+            </th>
+            <th ng-if="config.show_field_office_phone"></th>
+            <th ng-if="config.show_field_emergency_phone"></th>
+            <th ng-if="config.show_field_roles">
+                <select ng-model="search.RoleName"
+                        ng-options="role for role in category.roles"
+                        style="margin: 0;">
+                    <option value="">-- Filter by Role --</option>
+                </select>
+            </th>
+            <th ng-if="config.show_field_department">
+                <input ng-model="search.DepartmentName" placeholder="Filter by Department"/>
+            </th>
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="user in (filtered = (users | categoryFilter:category | filter:activeFilter(showInactive) | filter:searchText | orderBy:order:reverse ))"
+        <tr ng-repeat="user in (filtered = (users
+                                            | categoryFilter:category
+                                            | filter:activeFilter(showInactive)
+                                            | userSearchFilter:search
+                                            | orderBy:order:reverse ))"
             ng-class="{inactive: !user.Is_active}">
             <td>
                 <button ng-disabled="!config.show_admin_controls"
@@ -102,7 +121,7 @@
             <td ng-if="config.show_field_emergency_phone">{{user.Emergency_phone | tel}}</td>
             <td ng-if="config.show_field_roles">
                 <ul class="department-list">
-                    <li ng-repeat="role in user.Roles">{{role.Name}}</li>
+                    <li ng-repeat="role in user.Roles | restrictRolesFilter: category">{{role.Name}}</li>
                 </ul>
             </td>
             <td ng-if="config.show_field_department">

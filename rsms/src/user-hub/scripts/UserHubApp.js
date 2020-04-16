@@ -97,6 +97,77 @@ angular
             .map( r => r.RoleName);
     }
 })
+.filter('userSearchFilter', function( $filter ){
+    let complex_filters = [
+        'SupervisorName',
+        'BuildingName',
+        'RoleName',
+        'DepartmentName',
+    ];
+    return function( users, search ){
+        if( !users || !search ) return users;
+
+        /*
+            search.Name => 'Name'
+            search.Position => 'Position'
+            search.SupervisorName => 'Supervisor.Name'
+            search.BuildingName => 'PrincipalInvestigator.Building.Name'
+            search.RoleName => 'Roles.Name'
+            search.DepartmentName => [
+                'PrincipalInvestigator.Departments.Name'
+                'Primary_department.Name'
+            ]
+        */
+
+        // Defer to $filter('filter') to handle filtering
+        let f = $filter('filter');
+
+        // Simple filters look just at users; nested ones need to look elsewhere
+        let simple_searches = Object.keys(search)
+            .filter( k => !complex_filters.includes(k) )
+            .map(k => { return { key:k, value:search[k] }; })
+            .filter(s => s.value)
+            .reduce( (obj, s) => {
+                obj[s.key] = s.value;
+                return obj;
+            }, {});
+
+        let results = f(users, simple_searches);
+
+        if( search.SupervisorName ){
+            let obj = { Name:search.SupervisorName };
+            results = results.filter(u => f([u.Supervisor], obj).length );
+        }
+
+        if( search.BuildingName ){
+            let obj = { Name: search.BuildingName };
+            results = results.filter( u => u.PrincipalInvestigator && f(u.PrincipalInvestigator.Buildings, obj ).length );
+        }
+
+        if( search.RoleName ){
+            let obj = { Name: search.RoleName };
+            results = results.filter( u => u.Roles && f(u.Roles, obj ).length );
+        }
+
+        if( search.DepartmentName ){
+            // Search User.Primary_department OR User.PrincipalInvestigator.Departments
+            let obj = { Name: search.DepartmentName };
+            results = results.filter( u => {
+                let user_depts = [];
+                
+                if( u.PrincipalInvestigator )
+                    user_depts = u.PrincipalInvestigator.Departments || [];
+
+                if( u.Primary_department )
+                    user_depts.push(u.Primary_department);
+
+                return f(user_depts, obj).length;
+            });
+        }
+
+        return results;
+    }
+})
 .controller('AppCtrl', function ($rootScope, $scope, $modal, $timeout, UserHubAPI) {
     console.debug("rsms-UserHub running");
 

@@ -34,6 +34,9 @@ angular.module('rsms-UserHub')
                 $scope.config['show_field_' + col] = true;
             });
 
+            // Prep filtering
+            $scope.search = {};
+
             ////////////////////
             // Scope functions
             $scope.toggleUserActive = function toggleUserActive( user ){
