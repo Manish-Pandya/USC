@@ -23,7 +23,7 @@ require_once('../RequireUserLoggedIn.php');
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/angular-busy.css"/>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css" />
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css" />
-    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>email-hub/email-hub-styles.css" />
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>user-hub/user-hub-styles.css" />
 
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rsms-style-theme.css"/>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rsms-style-struct.css"/>

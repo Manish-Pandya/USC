@@ -27,9 +27,14 @@ angular
         .state('user-hub.users.category', {
             url: '/:category',
             template: `
-                <p>
-                    <span class='badge badge-inverse' style="margin-right: 5px;" ng-repeat="role in category.roles">{{role}}</span>
-                    <span class='badge badge-inverse' ng-if="category.config.includeRoleless">Unassigned</span>
+                <p class="theme-highlight-element category-roles-container">
+                    <span class='badge badge-success' style="margin-right: 5px;" ng-repeat="role in category.roles">{{role}}</span>
+                    <span class='badge' ng-if="category.config.includeRoleless">Unassigned</span>
+
+                    <i class="icon-help pull-right"
+                        title="Roles included in this category"
+                        style="color: lightgray; padding-left: 20px;"></i>
+
                 </p>
                 <user-hub-category-table users="Users" category="category">
                 </user-hub-category-table>
