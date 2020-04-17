@@ -48,6 +48,11 @@ angular
             }
         });
 })
+.filter('hasRole', function(){
+    return function( user, roleName ){
+        return user.Roles.map(r => r.Name).includes(roleName);
+    }
+})
 .filter('categoryFilter', function(){
     return function( users, category ){
         if( !users || !category ) return users;
@@ -225,6 +230,7 @@ angular
     // Expose Constants to views
     $rootScope.constants = Constants;
 
+    let COL_CONTACT_ICONS = 'contact_icons';
     let COL_USERNAME = 'username';
     let COL_LAST_NAME = 'last_name';
     let COL_FIRST_NAME = 'first_name';
@@ -306,6 +312,7 @@ angular
     $rootScope.categories.push(
         new UserHubCategory('Lab Personnel', 'labPersonnel', [ROLE.LAB_PERSONNEL],
         [ // display fields
+            COL_CONTACT_ICONS,
             COL_LAST_NAME,
             COL_FIRST_NAME,
             COL_PRINCIPAL_INVESTIGATOR,
@@ -329,6 +336,7 @@ angular
     $rootScope.categories.push(
         new UserHubCategory('Rad Contacts', 'radContacts', [ROLE.RADIATION_CONTACT],
         [ // display fields
+            COL_CONTACT_ICONS,
             COL_LAST_NAME,
             COL_FIRST_NAME,
             COL_PRINCIPAL_INVESTIGATOR,

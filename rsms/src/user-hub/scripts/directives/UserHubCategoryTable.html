@@ -101,6 +101,18 @@
                 </button>
 
                 <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="pi.PrincipalInvestigator.IsDirty"></i>
+
+                <div ng-if="config.show_field_contact_icons">
+                    <span ng-if="user | hasRole:'Lab Contact'">
+                        <img ng-if="user.Emergency_phone" src="../img/phone.png" style="width:35px" title="Emgergency Phone# {{user.Emergency_phone | tel}}">
+                        <img ng-if="!user.Emergency_phone" src="../img/phone.png" style="width:35px" title="Emergency Phone# Unkown">
+                    </span>
+
+                    <span ng-if="user | hasRole:'Radiation Contact'">
+                        <img ng-if="user.Emergency_phone" src="../img/radiation-large-icon.png" style="width:35px" title="Emgergency Phone# {{user.Emergency_phone | tel}}">
+                        <img ng-if="!user.Emergency_phone" src="../img/radiation-large-icon.png" style="width:35px" title="Emergency Phone# Unkown">
+                    </span>
+                </div>
             </td>
             <td ng-if="config.show_field_username">{{user.Username}}</td>
             <td ng-if="config.show_field_last_name">{{user.Last_name}}</td>
