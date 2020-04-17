@@ -1,3 +1,9 @@
+/* Reduce the padding in the overall container */
+.container-fluid {
+    padding-left: 35px;
+    padding-right: 35px;
+}
+
 table.userList td {
     white-space: nowrap;
 }

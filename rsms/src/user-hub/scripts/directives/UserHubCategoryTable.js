@@ -20,7 +20,11 @@ angular.module('rsms-UserHub')
 
             // Set up configuration
             $scope.config = {
-                active_status: true
+                active_status: true,
+                sorter: {
+                    expr: 'Last_name',
+                    asc: true
+                }
             };
 
             let roles = roleBasedFactory.getRoles();
@@ -68,6 +72,39 @@ angular.module('rsms-UserHub')
                         $scope.users.push( saved );
                     }
                 });
+            }
+        }
+    };
+})
+.directive('userHubSortField', function(){
+    return {
+        restrict: 'E',
+        scope: {
+            fieldExpr: "@",
+            sorter: "=",
+        },
+        replace: false,
+        transclude: true,
+        template: `
+            <a ng-click="toggleSort()">
+                <span ng-transclude/>
+                <i ng-if="sorter.expr == fieldExpr" ng-class="{
+                    'icon-arrow-up': sorter.asc,
+                    'icon-arrow-down': !sorter.asc
+                }"></i>
+            </a>
+        `,
+        controller: function($scope){
+            $scope.toggleSort = function toggleSort(){
+                if( $scope.sorter.expr == $scope.fieldExpr ){
+                    // Simply toggle our order
+                    $scope.sorter.asc = !$scope.sorter.asc;
+                }
+                else {
+                    // Init new sort
+                    $scope.sorter.expr = $scope.fieldExpr;
+                    $scope.sorter.asc = true;
+                }
             }
         }
     };
