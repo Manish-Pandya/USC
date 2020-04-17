@@ -62,7 +62,7 @@ class AuthModule implements RSMS_Module, MessageTypeProvider, MyLabWidgetProvide
 
             if( !empty($pendingRequests) ){
                 $pendingRequestsWidget = new MyLabWidgetDto();
-                $pendingRequestsWidget->title = "User Access Requests";
+                $pendingRequestsWidget->title = "Lab Member Access Request" . (count($pendingRequests) != 1 ? 's' : '');
                 $pendingRequestsWidget->icon = "icon-contact";
                 $pendingRequestsWidget->group = '000_access_requests';
                 $pendingRequestsWidget->template = 'user-access-requests';

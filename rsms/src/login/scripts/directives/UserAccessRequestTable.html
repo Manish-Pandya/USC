@@ -1,18 +1,16 @@
 <div class="fake-table striped bordered content-container">
     <div class="table-header">
         <h3>Request Date</h3>
+        <h3>Name</h3>
         <h3>Network Username</h3>
         <h3>Email</h3>
-        <h3>Last Name</h3>
-        <h3>First Name</h3>
         <h3></h3>
     </div>
     <div class="table-row" ng-repeat="request in requests">
-        <div>{{ getDate(request.Date_created) | date:'shortDate'}}</div>
+        <div>{{ getDate(request.Date_created) | date:'MM/dd/yyyy'}}</div>
+        <div>{{request.First_name}} {{request.Last_name}}</div>
         <div>{{request.Network_username}}</div>
         <div>{{request.Email}}</div>
-        <div>{{request.Last_name}}</div>
-        <div>{{request.First_name}}</div>
 
         <div ng-if="request.Status != 'PENDING'">
             <span class="badge" ng-class="{
@@ -28,13 +26,13 @@
                 <a class="btn btn-success"
                    title="Approve this request"
                    ng-click="resolveRequest(request, true)">
-                    <i class="icon-checkmark"></i>
+                    Approve
                 </a>
 
                 <a class="btn btn-danger"
                    title="Deny this request"
                    ng-click="resolveRequest(request, false)">
-                    <i class="icon-cancel"></i>
+                    Deny
                 </a>
             </div>
         </div>
