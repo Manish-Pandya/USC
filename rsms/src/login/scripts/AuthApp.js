@@ -60,6 +60,7 @@ angular
                     .then(listing => {
                         $timeout(function(){
                             console.debug("Listing data loaded");
+                            $scope.data.selection.username = $scope.data.candidate.Username;
                             $scope.data.listing = listing;
                         });
                     });
