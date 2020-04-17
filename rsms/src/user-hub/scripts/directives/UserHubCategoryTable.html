@@ -32,12 +32,12 @@
             <th ng-if="config.show_field_username">Username</th>
             <th ng-if="config.show_field_last_name">Last Name</th>
             <th ng-if="config.show_field_first_name">First Name</th>
+            <th ng-if="config.show_field_email">Email</th>
             <th ng-if="config.show_field_roles">Role(s)</th>
             <th ng-if="config.show_field_principal_investigator">Lab PI</th>
             <th ng-if="config.show_field_position">Position</th>
             <th ng-if="config.show_field_department">Department(s)</th>
             <th ng-if="config.show_field_office_phone">Office Phone</th>
-            <th ng-if="config.show_field_email">Email</th>
             <th ng-if="config.show_field_lab_phone">Lab Phone</th>
             <th ng-if="config.show_field_building">Building(s)</th>
             <th ng-if="config.show_field_emergency_phone">Emergency Phone</th>
@@ -48,6 +48,7 @@
             <th ng-if="config.show_field_last_name && config.show_field_first_name" colspan="2">
                 <input class="full" ng-model="search.Name" placeholder="Filter by Name"/>
             </th>
+            <th ng-if="config.show_field_email"></th>
             <th ng-if="config.show_field_roles">
                 <select ng-model="search.RoleName"
                         ng-options="role for role in category.roles"
@@ -65,7 +66,6 @@
                 <input ng-model="search.DepartmentName" placeholder="Filter by Department"/>
             </th>
             <th ng-if="config.show_field_office_phone"></th>
-            <th ng-if="config.show_field_email"></th>
             <th ng-if="config.show_field_lab_phone"></th>
             <th ng-if="config.show_field_building">
                 <input ng-model="search.BuildingName" placeholder="Filter by Building"/>
@@ -105,6 +105,7 @@
             <td ng-if="config.show_field_username">{{user.Username}}</td>
             <td ng-if="config.show_field_last_name">{{user.Last_name}}</td>
             <td ng-if="config.show_field_first_name">{{user.First_name}}</td>
+            <td ng-if="config.show_field_email">{{user.Email}}</td>
             <td ng-if="config.show_field_roles">
                 <ul class="department-list">
                     <li ng-repeat="role in user.Roles | restrictRolesFilter: category">{{role.Name}}</li>
@@ -121,7 +122,6 @@
                 </ul>
             </td>
             <td ng-if="config.show_field_office_phone">{{user.Office_phone | tel}}</td>
-            <td ng-if="config.show_field_email">{{user.Email}}</td>
             <td ng-if="config.show_field_lab_phone">{{user.Lab_phone | tel}}</td>
             <td ng-if="config.show_field_building">
                 <ul class="department-list">
