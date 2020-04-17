@@ -327,6 +327,29 @@ angular
     );
 
     $rootScope.categories.push(
+        new UserHubCategory('Rad Contacts', 'radContacts', [ROLE.RADIATION_CONTACT],
+        [ // display fields
+            COL_LAST_NAME,
+            COL_FIRST_NAME,
+            COL_PRINCIPAL_INVESTIGATOR,
+            COL_POSITION,
+            COL_DEPARTMENT,
+            COL_EMAIL,
+            COL_LAB_PHONE
+        ],
+        [ // edit fields
+            COL_EMERGENCY_PHONE,
+            COL_LAB_PHONE,
+            COL_PRINCIPAL_INVESTIGATOR,
+            COL_POSITION
+        ],
+        {
+            restrictRoles: false,
+            newUserRoles: [ROLE.LAB_PERSONNEL, ROLE.RADIATION_CONTACT]
+        })
+    );
+
+    $rootScope.categories.push(
         new UserHubCategory('EHS Personnel', 'EHSPersonnel',
             [ // included roles
                 ROLE.ADMIN,
