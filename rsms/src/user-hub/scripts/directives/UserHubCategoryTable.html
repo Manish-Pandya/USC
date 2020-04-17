@@ -30,12 +30,20 @@
             <th>Edit</th>
 
             <th ng-if="config.show_field_username">Username</th>
-            <th ng-if="config.show_field_last_name">Last Name</th>
+            <th ng-if="config.show_field_last_name">
+                <user-hub-sort-field sorter="config.sorter" field-expr="Last_name">Last Name</user-hub-sort-field>
+            </th>
             <th ng-if="config.show_field_first_name">First Name</th>
-            <th ng-if="config.show_field_email">Email</th>
+            <th ng-if="config.show_field_email">
+                <user-hub-sort-field sorter="config.sorter" field-expr="Email">Email</user-hub-sort-field>
+            </th>
             <th ng-if="config.show_field_roles">Role(s)</th>
-            <th ng-if="config.show_field_principal_investigator">Lab PI</th>
-            <th ng-if="config.show_field_position">Position</th>
+            <th ng-if="config.show_field_principal_investigator">
+                <user-hub-sort-field sorter="config.sorter" field-expr="Supervisor.Name">Lab PI</user-hub-sort-field>
+            </th>
+            <th ng-if="config.show_field_position">
+                <user-hub-sort-field sorter="config.sorter" field-expr="Position">Position</user-hub-sort-field>
+            </th>
             <th ng-if="config.show_field_department">Department(s)</th>
             <th ng-if="config.show_field_office_phone">Office Phone</th>
             <th ng-if="config.show_field_lab_phone">Lab Phone</th>
@@ -78,7 +86,7 @@
                                             | categoryFilter:category
                                             | filter:{ Is_active: config.active_status }
                                             | userSearchFilter:search
-                                            | orderBy:order:reverse ))"
+                                            | orderBy: config.sorter.expr : !config.sorter.asc ))"
             ng-class="{inactive: !user.Is_active}">
             <td>
                 <button ng-disabled="!config.show_admin_controls"
