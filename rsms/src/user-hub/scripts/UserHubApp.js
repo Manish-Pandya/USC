@@ -401,6 +401,7 @@ angular
                 COL_ROLES,
                 COL_DEPARTMENT,
                 COL_OFFICE_PHONE,
+                COL_EMERGENCY_PHONE,
                 COL_EMAIL
             ],
             [ // edit fields
