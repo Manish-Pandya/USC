@@ -149,14 +149,6 @@ require_once('../ForwardUserToDefaultPage.php');
         <div>
     </section>
 
-    <section>
-        <div id="disclaimers">
-            <div id="disclaimer-network">
-                <span>This system can only be accessed from a secured University network (such as <b>uscfacstaff</b> or <b>uscstudent</b>) using your <a href="https://www.sc.edu/about/offices_and_divisions/university_technology_services/services/student/logins/networkusername.php">Network Username</a>.</span>
-            </div>
-        </div>
-    </section>
-
     <script>
         if( !isSupportedBrowser() ){
             // Disallow login
