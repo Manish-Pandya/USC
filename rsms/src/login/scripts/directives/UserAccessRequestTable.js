@@ -1,7 +1,7 @@
 // Get the path to this script file so that we can assume path to template
 // This allows the directive to be included by other modules, such as My Lab
 var scripts = document.getElementsByTagName("script");
-var currentScriptPath = scripts[scripts.length-1].src;
+var userAccessRequestTableScriptPath = scripts[scripts.length-1].src;
 
 angular.module('rsms-AuthDirectives', ['angular.filter'])
 .directive('userAccessRequestTable', function(){
@@ -12,7 +12,7 @@ angular.module('rsms-AuthDirectives', ['angular.filter'])
         },
         replace: false,
         transclude: false,
-        templateUrl: currentScriptPath.replace('UserAccessRequestTable.js', 'UserAccessRequestTable.html'),
+        templateUrl: userAccessRequestTableScriptPath.replace('UserAccessRequestTable.js', 'UserAccessRequestTable.html'),
         controller: function($scope, $http, $timeout){
             console.debug("UserAccessRequestTable controller");
             $scope.GLOBAL_WEB_ROOT = window.GLOBAL_WEB_ROOT;
