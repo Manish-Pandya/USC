@@ -1,7 +1,7 @@
 <?php
 
 class StaticTrainingModule implements RSMS_Module, MyLabWidgetProvider {
-    public const NAME = 'StaticTraining'
+    public const NAME = 'StaticTraining';
     public function getModuleName(){
         return self::NAME;
     }
