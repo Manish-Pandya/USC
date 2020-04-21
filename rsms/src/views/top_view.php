@@ -1,7 +1,6 @@
 <?php
 
 require_once dirname(__FILE__) . '/../Application.php';
-session_start();
 require_once dirname(__FILE__) . '/../RequireUserLoggedIn.php';
 
 ?>
