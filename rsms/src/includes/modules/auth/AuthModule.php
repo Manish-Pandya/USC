@@ -30,6 +30,8 @@ class AuthModule implements RSMS_Module, MessageTypeProvider, MyLabWidgetProvide
             "loginAction"   => new ActionMapping("loginAction", "views/RSMSCenter.php", LOGIN_PAGE, $r_any, false),
             "logoutAction"  => new ActionMapping("logoutAction",LOGIN_PAGE, LOGIN_PAGE, $r_any, false),
 
+            "getAdministratorContact" => new SecuredActionMapping("getAdministratorContact", $r_any),
+
             // new-user requests
             "getNewUserDepartmentListing" => new SecuredActionMapping("getNewUserDepartmentListing", $r_any, 'AuthSecurity::userIsCandidate'),
             "submitAccessRequest" => new SecuredActionMapping("submitAccessRequest", $r_any, 'AuthSecurity::candidateCanSubmitNewRequest'),

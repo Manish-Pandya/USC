@@ -52,6 +52,12 @@ angular
                     }
                 };
 
+                AuthAPI.getAdminDetails().then( admin => {
+                    $timeout(() => {
+                        $scope.adminContactInfo = admin;
+                    });
+                });
+
                 // Look at candidate's 'current' request, if any
                 // Load data if we can submit a new request
                 if( !$scope.data.candidate.Current_access_request || $scope.data.candidate.Current_access_request.Status != 'PENDING' ){
@@ -128,6 +134,22 @@ angular
         endpoint_url: GLOBAL_WEB_ROOT + 'ajaxaction.php',
         api_headers: {'Content-Type': 'application/json' },
         formdata_headers: {'Content-Type': 'application/x-www-form-urlencoded' },
+
+        getAdminDetails: async function(){
+            
+            let cfg = {
+                method:'GET',
+                url: this.endpoint_url + '?action=getAdministratorContact',
+            };
+
+            try {
+                let resp = await $http(cfg);
+                return resp.data;
+            }
+            catch(error){
+                console.error("Error loading admin contact", error);
+            }
+        },
 
         getNewUserDepartmentListing: async function (){
             let cfg = {

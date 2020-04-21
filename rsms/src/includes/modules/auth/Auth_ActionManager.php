@@ -121,6 +121,26 @@ class Auth_ActionManager {
     //////////////////////////////////////
 
     /**
+     * Retrieve contact information for the configured RSMS Administrator
+     */
+    public function getAdministratorContact(){
+        $admin_username = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_WEB_HELP_CONTACT_USERNAME );
+        $userDao = new UserDAO();
+        $helpContact = $userDao->getUserByUsername( $admin_username );
+        if( isset($helpContact) ){
+            $helpContactDto = new GenericDto(array(
+                'Name' => $helpContact->getName(),
+                'Email' => $helpContact->getEmail(),
+                'Office_phone' => $helpContact->getOffice_phone()
+            ));
+
+            return $helpContactDto;
+        }
+
+        return false;
+    }
+
+    /**
      * Retrieve department listing available for new-user requests
      */
     public function getNewUserDepartmentListing(){

@@ -62,6 +62,11 @@
                     <span>Complete the following form to submit a request for access to this system.</span>
                 </h5>
 
+                <div ng-if="adminContactInfo" style="margin-top: 10px; color:#777">
+                    <h5 style="font-size:1em;">If you are a Principal Investigator requiring access to this system, please contact {{adminContactInfo.Name}} at <a ng-href="mailto:{{adminContactInfo.Email}}">{{adminContactInfo.Email}}</a>.</h5>
+                    <h5 style="font-size:1em;">Only university research laboratory personnel are authorized to access this system.</h5>
+                </div>
+
                 <hr/>
 
                 <div ng-show="data.listing.length && data.selection.username" class="card auth-element fadein"
