@@ -1,6 +1,7 @@
 <?php
-require_once '../top_view.php';
+require_once '../../Application.php';
 require_once '../../RequireUserLoggedIn.php';
+require_once '../top_view.php';
 ?>
 <script src="../../js/lab/myLab.js"></script>
 <script src="widgets/my-lab-widget.js"></script>
