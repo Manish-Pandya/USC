@@ -37,7 +37,11 @@ class StaticTrainingModule implements RSMS_Module, MyLabWidgetProvider {
         // stopgap training documents
         // TODO: Dynamically load list of files?
         $fileinfo = new GenericDto([
-            'text' => "Will you be conducting research involving human-derived materials that may contain bloodborne pathogens?",
+            'disclaimers' => [
+                "Note: Bloodborne Pathogens Training will not be offered as a classroom course during the University closure due to COVID-19.  This course will now be delivered using the Research Safety Management System.",
+                "Answering 'Yes' below will download a file which you can open to complete this training course."
+            ],
+            'text' => "Will you be conducting research involving human-derived materials and need to take bloodborne pathogens training?",
             'name' => "Bloodborne Pathogen Training",
             'path' => WEB_ROOT . "/static-training/courses/online-training-bloodborne-pathogens-for-labs.pptx"
         ]);
