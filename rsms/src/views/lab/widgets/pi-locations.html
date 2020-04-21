@@ -1,20 +1,10 @@
 <div class="content-container">
-    <div class="tight-list" ng-repeat="(building_id, rooms) in data.Rooms | groupBy: 'Building_id'" ng-init="_hide = false">
-        <div class="fake-table striped">
-            <div class="table-header">
-                <h3 ng-click="_hide = !_hide">
-                    <div class="collapsible-table-header">
-                        <span ng-repeat="b in (data.Buildings | filter : {'Key_id': building_id} : true)">{{b.Name}}</span>
-                        <span>
-                            ({{rooms.length}})
-                            <i ng-class="{'icon-arrow-down': !_hide, 'icon-arrow-right': _hide}"></i>
-                        </span>
-                    </div>
-                </h3>
+    <div class="fake-table striped">
+        <div ng-repeat="room in data.Rooms | orderBy: ['Building_id', 'Name']" ng-init="_hide = false" class="table-row">
+            <div>
+                <span ng-repeat="b in (data.Buildings | filter : {'Key_id': room.Building_id} : true)">{{b.Name}}</span>
             </div>
-            <div ng-if="!_hide" ng-repeat="room in rooms | orderBy: 'Name'" class="table-row">
-                <div style="padding-left: 25px;">{{room.Name}}</div>
-            </div>
+            <div>{{room.Name}}</div>
         </div>
     </div>
 </div>

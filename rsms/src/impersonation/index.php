@@ -1,5 +1,6 @@
 <?php
     require_once('../Application.php');
+    session_start();
 
     session_start();
 
