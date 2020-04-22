@@ -541,9 +541,39 @@ angular
     $scope.config = {};
 
     // Configure fields to display
-    $scope.category.editFields.forEach( col => {
-        $scope.config['show_field_' + col] = true;
-    });
+    function configureFields(){
+
+        // Look at the modal's Category as well as user Categories
+        let cats = $filter('userCategories')($rootScope.categories, $scope.user) || [];
+
+        if( !cats.includes($scope.category) ){
+            cats.push($scope.category);
+        }
+
+        let fields = cats.map(cat => cat.editFields)
+            .reduce( (showFields, catFields) => {
+                catFields.forEach( f => {
+                    if( !showFields.includes(f)){
+                        showFields.push(f);
+                    }
+                });
+
+                return showFields;
+            }, []);
+
+        $timeout(() => {
+            // Clear out fields
+            $scope.config.fields = {};
+            fields.forEach( col => $scope.config.fields['show_field_' + col] = true)
+        });
+
+        return fields;
+    }
+
+    /*$scope.category.editFields.forEach( col => {
+        $scope.config.fields['show_field_' + col] = true;
+    });*/
+    configureFields();
 
     // Configure fields to require
 
@@ -601,6 +631,9 @@ angular
         // Recalculate and validate field requirements any time roles change
         getUserRoleRequirements(scope.user);
         scope.validateRoleRequirements();
+
+        // Configure displayed fields
+        configureFields();
     });
 
     // Validate role requirements whenever anything changes

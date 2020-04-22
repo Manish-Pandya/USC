@@ -24,7 +24,8 @@ angular.module('rsms-UserHub')
                 sorter: {
                     expr: 'Last_name',
                     asc: true
-                }
+                },
+                fields: {}
             };
 
             let roles = roleBasedFactory.getRoles();
@@ -36,8 +37,9 @@ angular.module('rsms-UserHub')
             $scope.config.show_admin_controls = roleBasedFactory.getHasPermission(admin_roles);
 
             // Configure columns based on Category
+            $scope.config.fields = {};
             $scope.category.columns.forEach( col => {
-                $scope.config['show_field_' + col] = true;
+                $scope.config.fields['show_field_' + col] = true;
             });
 
             // Prep filtering
