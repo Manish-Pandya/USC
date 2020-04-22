@@ -1,12 +1,8 @@
 <?php
-if(stristr($_SERVER['REQUEST_URI'],'/RSMSCenter')){
-    require_once('../Application.php');
-}elseif(stristr($_SERVER['REQUEST_URI'],'/login')){
-    require_once('../rsms/src/Application.php');
-}else{
-    require_once('../../Application.php');
-}
-session_start();
+
+require_once dirname(__FILE__) . '/../Application.php';
+require_once dirname(__FILE__) . '/../RequireUserLoggedIn.php';
+
 ?>
 <?php if(!isset($_SESSION["USER"])){ ?>
 <script>
