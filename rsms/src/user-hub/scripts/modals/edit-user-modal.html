@@ -106,10 +106,12 @@
                                     on-select="onSelectRole($item, $model, $label)">
                                 <ui-select-match placeholder="Select A Role"></ui-select-match>
                                 <ui-select-choices repeat="role in state.all_roles
-                                                            | restrictRolesFilter: category
+                                                            | flagCategoryRoles: category
                                                             | propsFilter: {Name: $select.search}
-                                                            | orderBy:'Name'">
-                                    <div ng-bind-html="role.Name | highlight: $select.search"></div>
+                                                            | orderBy:['-_category_role', 'Name']">
+                                    <div class="selectable-role" ng-class="{
+                                        'non-restricted-role': !role._category_role
+                                    }" ng-bind-html="role.Name | highlight: $select.search"></div>
                                 </ui-select-choices>
                             </ui-select>
 

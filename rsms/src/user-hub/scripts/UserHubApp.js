@@ -86,6 +86,33 @@ angular
         return roles.filter(r => category.roles.includes(r.Name));
     }
 })
+.filter('flagCategoryRoles', function(){
+    return function( roles, categoryOrCategories ){
+        if( !roles || !categoryOrCategories ) return roles;
+
+        // Look at the incoming roles and flag any which are included in the incoming category (or categories)
+        let cats = Array.isArray(categoryOrCategories)
+            ? categoryOrCategories
+            : [categoryOrCategories];
+
+        let referencedRoleNames = cats
+            .map( c => c.roles )
+            .reduce( (referencedRoleNames, categoryRoleNames) => {
+                categoryRoleNames.forEach( r => {
+                    if( !referencedRoleNames.includes(r) ){
+                        referencedRoleNames.push(r);
+                    }
+                });
+
+                return referencedRoleNames;
+            }, []);
+
+        // Flag category roles
+        roles.forEach( r => r._category_role = referencedRoleNames.includes(r.Name) );
+
+        return roles;
+    }
+})
 .filter('incompatibleRoles', function($rootScope){
 
     /**
