@@ -191,10 +191,10 @@ var myLab = angular.module('myLab', [
     getProfilePositionOptions: function(){
       switch( widget_functions.getProfilePositionRequiredRole() ){
         case Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR:
-          return Constants.PI_POSITION;
+          return Constants.POSITION.PI;
 
         case Constants.ROLE.NAME.LAB_PERSONNEL:
-          return Constants.POSITION;
+          return Constants.POSITION.LAB_PERSONNEL;
 
         default: return [];
       }

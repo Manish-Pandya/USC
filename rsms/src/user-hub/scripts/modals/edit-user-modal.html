@@ -177,7 +177,7 @@
                         <select name="position"
                                 ng-disabled="!state.allow_edit"
                                 ng-model="user.Position"
-                                ng-options="position as position for position in constants.POSITION"
+                                ng-options="position as position for position in category.config.positionOptions"
                                 ng-required="state.require_field_position">
                             <option value="" style="display:none">--Select a Position--</option>
                         </select>

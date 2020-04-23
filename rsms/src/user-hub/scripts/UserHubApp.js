@@ -323,7 +323,8 @@ angular
         ],
         {
             restrictRoles: false,
-            newUserRoles: [ROLE.LAB_CONTACT, ROLE.LAB_PERSONNEL]
+            newUserRoles: [ROLE.LAB_CONTACT, ROLE.LAB_PERSONNEL],
+            positionOptions: Constants.POSITION.LAB_PERSONNEL
         })
     );
 
@@ -347,7 +348,8 @@ angular
         ],
         {
             restrictRoles: false,
-            newUserRoles: [ROLE.LAB_PERSONNEL]
+            newUserRoles: [ROLE.LAB_PERSONNEL],
+            positionOptions: Constants.POSITION.LAB_PERSONNEL
         })
     );
 
@@ -371,7 +373,8 @@ angular
         ],
         {
             restrictRoles: false,
-            newUserRoles: [ROLE.LAB_PERSONNEL, ROLE.RADIATION_CONTACT]
+            newUserRoles: [ROLE.LAB_PERSONNEL, ROLE.RADIATION_CONTACT],
+            positionOptions: Constants.POSITION.LAB_PERSONNEL
         })
     );
 
@@ -402,7 +405,8 @@ angular
             ],
             {
                 restrictRoles: false,
-                newUserRoles: []
+                newUserRoles: [],
+                positionOptions: Constants.POSITION.EHS_PERSONNEL
             }
         )
     );
