@@ -570,10 +570,51 @@ angular
         return fields;
     }
 
-    /*$scope.category.editFields.forEach( col => {
-        $scope.config.fields['show_field_' + col] = true;
-    });*/
+    function CategoryDiff( category, diff_val ){
+        this.name = category.name;
+        this.value = diff_val;
+    }
+
+    /**
+     * Identify if there are categorical changes and, if so, what categories will be used post-save.
+     */
+    function diffUserCategories(){
+        let diff = [];
+
+        if( $rootScope.categories && $scope.user && $scope.originalUser && $scope.originalUser.Key_id ){
+
+            // Only care about names..
+            let current_role_names = $scope.user.Roles.map(r => r.Name);
+            let original_role_names = $scope.originalUser.Roles.map(r => r.Name);
+
+            // Categories are based on roles, so we'll diff the roles before we look at cats
+            let roles_added = current_role_names.find( r => !original_role_names.includes(r));
+            let roles_removed = original_role_names.find( r => !current_role_names.includes(r));
+
+            if( roles_added || roles_removed ){
+                // Roles are different, so categories are different
+                let new_categories = $filter('userCategories')($rootScope.categories, $scope.user);
+                let original_categories = $filter('userCategories')($rootScope.categories, $scope.originalUser);
+
+                // list all 'current' categories, flagging those which are newly-added (i.e. not present in original)
+                // Merge this with original categories which were removed, flagging those as well
+                // flag is an integer:
+                //    -1: removed
+                //     0: unchanged
+                //     1: added
+                diff = new_categories.map( c => {
+                    let diff_val = original_categories.includes(c.Name) ? 0 : 1;
+                    return new CategoryDiff(c, diff_val);
+                });
+            }
+        }
+
+        $scope.userCategoryDiff = diff;
+    }
+
+    // Initial configuration of fields & role diff
     configureFields();
+    diffUserCategories();
 
     // Configure fields to require
 
@@ -632,8 +673,9 @@ angular
         getUserRoleRequirements(scope.user);
         scope.validateRoleRequirements();
 
-        // Configure displayed fields
+        // Reconfigure fields and category-diff
         configureFields();
+        diffUserCategories();
     });
 
     // Validate role requirements whenever anything changes
