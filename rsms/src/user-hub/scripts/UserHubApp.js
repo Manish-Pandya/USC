@@ -30,15 +30,6 @@ angular
         .state('user-hub.users.category', {
             url: '/:category',
             template: `
-                <p class="theme-highlight-element category-roles-container">
-                    <span class='badge badge-success' style="margin-right: 5px;" ng-repeat="role in category.roles">{{role}}</span>
-                    <span class='badge' ng-if="category.config.includeRoleless">Unassigned</span>
-
-                    <i class="icon-help pull-right"
-                        title="Roles included in this category"
-                        style="color: lightgray; padding-left: 20px;"></i>
-
-                </p>
                 <user-hub-category-table users="Users" category="category">
                 </user-hub-category-table>
             `,
@@ -84,6 +75,33 @@ angular
 
         // Otherwise restrict roles to those listed in category
         return roles.filter(r => category.roles.includes(r.Name));
+    }
+})
+.filter('flagCategoryRoles', function(){
+    return function( roles, categoryOrCategories ){
+        if( !roles || !categoryOrCategories ) return roles;
+
+        // Look at the incoming roles and flag any which are included in the incoming category (or categories)
+        let cats = Array.isArray(categoryOrCategories)
+            ? categoryOrCategories
+            : [categoryOrCategories];
+
+        let referencedRoleNames = cats
+            .map( c => c.roles )
+            .reduce( (referencedRoleNames, categoryRoleNames) => {
+                categoryRoleNames.forEach( r => {
+                    if( !referencedRoleNames.includes(r) ){
+                        referencedRoleNames.push(r);
+                    }
+                });
+
+                return referencedRoleNames;
+            }, []);
+
+        // Flag category roles
+        roles.forEach( r => r._category_role = referencedRoleNames.includes(r.Name) );
+
+        return roles;
     }
 })
 .filter('incompatibleRoles', function($rootScope){
@@ -305,7 +323,8 @@ angular
         ],
         {
             restrictRoles: false,
-            newUserRoles: [ROLE.LAB_CONTACT, ROLE.LAB_PERSONNEL]
+            newUserRoles: [ROLE.LAB_CONTACT, ROLE.LAB_PERSONNEL],
+            positionOptions: Constants.POSITION.LAB_PERSONNEL
         })
     );
 
@@ -329,7 +348,8 @@ angular
         ],
         {
             restrictRoles: false,
-            newUserRoles: [ROLE.LAB_PERSONNEL]
+            newUserRoles: [ROLE.LAB_PERSONNEL],
+            positionOptions: Constants.POSITION.LAB_PERSONNEL
         })
     );
 
@@ -353,7 +373,8 @@ angular
         ],
         {
             restrictRoles: false,
-            newUserRoles: [ROLE.LAB_PERSONNEL, ROLE.RADIATION_CONTACT]
+            newUserRoles: [ROLE.LAB_PERSONNEL, ROLE.RADIATION_CONTACT],
+            positionOptions: Constants.POSITION.LAB_PERSONNEL
         })
     );
 
@@ -384,7 +405,8 @@ angular
             ],
             {
                 restrictRoles: false,
-                newUserRoles: []
+                newUserRoles: [],
+                positionOptions: Constants.POSITION.EHS_PERSONNEL
             }
         )
     );
@@ -523,9 +545,80 @@ angular
     $scope.config = {};
 
     // Configure fields to display
-    $scope.category.editFields.forEach( col => {
-        $scope.config['show_field_' + col] = true;
-    });
+    function configureFields(){
+
+        // Look at the modal's Category as well as user Categories
+        let cats = $filter('userCategories')($rootScope.categories, $scope.user) || [];
+
+        if( !cats.includes($scope.category) ){
+            cats.push($scope.category);
+        }
+
+        let fields = cats.map(cat => cat.editFields)
+            .reduce( (showFields, catFields) => {
+                catFields.forEach( f => {
+                    if( !showFields.includes(f)){
+                        showFields.push(f);
+                    }
+                });
+
+                return showFields;
+            }, []);
+
+        $timeout(() => {
+            // Clear out fields
+            $scope.config.fields = {};
+            fields.forEach( col => $scope.config.fields['show_field_' + col] = true)
+        });
+
+        return fields;
+    }
+
+    function CategoryDiff( category, diff_val ){
+        this.name = category.name;
+        this.value = diff_val;
+    }
+
+    /**
+     * Identify if there are categorical changes and, if so, what categories will be used post-save.
+     */
+    function diffUserCategories(){
+        let diff = [];
+
+        if( $rootScope.categories && $scope.user && $scope.originalUser && $scope.originalUser.Key_id ){
+
+            // Only care about names..
+            let current_role_names = $scope.user.Roles.map(r => r.Name);
+            let original_role_names = $scope.originalUser.Roles.map(r => r.Name);
+
+            // Categories are based on roles, so we'll diff the roles before we look at cats
+            let roles_added = current_role_names.find( r => !original_role_names.includes(r));
+            let roles_removed = original_role_names.find( r => !current_role_names.includes(r));
+
+            if( roles_added || roles_removed ){
+                // Roles are different, so categories are different
+                let new_categories = $filter('userCategories')($rootScope.categories, $scope.user);
+                let original_categories = $filter('userCategories')($rootScope.categories, $scope.originalUser);
+
+                // list all 'current' categories, flagging those which are newly-added (i.e. not present in original)
+                // Merge this with original categories which were removed, flagging those as well
+                // flag is an integer:
+                //    -1: removed
+                //     0: unchanged
+                //     1: added
+                diff = new_categories.map( c => {
+                    let diff_val = original_categories.includes(c.Name) ? 0 : 1;
+                    return new CategoryDiff(c, diff_val);
+                });
+            }
+        }
+
+        $scope.userCategoryDiff = diff;
+    }
+
+    // Initial configuration of fields & role diff
+    configureFields();
+    diffUserCategories();
 
     // Configure fields to require
 
@@ -539,7 +632,9 @@ angular
         all_departments: null,
         selectedDepartment: null,
 
-        all_pis: null
+        all_pis: null,
+
+        cache: {}
     };
 
     /////////////////////
@@ -561,28 +656,95 @@ angular
         });
     });
 
+    //////////////
+    // Build role-related triggers which perform updates when certain roles are present
+    function RoleUpdateTrigger( name, fn ){
+        this.name = name;
+        this.fn = fn;
+    }
+
+    let role_triggers = [
+        new RoleUpdateTrigger('Init PI', function(newRoles, scope){
+            // Includes PI? Create PrincipalInvestigator obj
+            // PI users must have a PrincipalInvestigator child
+            if( includesNamedItem(newRoles, Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR) ){
+                // This is a PI; ensure a PI child exists
+                if( !scope.user.PrincipalInvestigator ){
+                    if( scope.state.cache.PrincipalInvestigator ){
+                        console.debug("Copy cached PrincipalInvestigator object");
+                        scope.user.PrincipalInvestigator = scope.state.cache.PrincipalInvestigator;
+                    }
+                    else {
+                        console.debug("Initialize PrincipalInvestigator object");
+                        scope.user.PrincipalInvestigator = {
+                            Class: 'PrincipalInvestigator',
+                            Departments: []
+                        };
+
+                        // Move Primary_department as first PI Department
+                        if( scope.user.Primary_department ){
+                            scope.user.PrincipalInvestigator.Departments.push( scope.user.Primary_department );
+                            scope.user.Primary_department = null;
+                        }
+                    }
+                }
+            }
+        }),
+
+        new RoleUpdateTrigger('Tear Down PI', function(newRoles, scope){
+            // Excludes PI? Remvoe PrincipalInvestigator obj
+            // Non-PI users should not contain PI object
+            if( !includesNamedItem(newRoles, Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR) ){
+                if( scope.user.PrincipalInvestigator ){
+                    // cache object in case user adds PI role back
+                    scope.state.cache.PrincipalInvestigator = scope.user.PrincipalInvestigator;
+
+                    console.debug("Remove user.PrincipalInvestigator object");
+                    scope.user.PrincipalInvestigator = null;
+                }
+            }
+        }),
+
+        new RoleUpdateTrigger('Add Lab Personnel to Lab Contact', function(newRoles, scope){
+            // Add Lab Contact? Also add Lab Personnel
+            if( includesNamedItem(newRoles, Constants.ROLE.NAME.LAB_CONTACT) ){
+                if( !includesNamedItem(newRoles, Constants.ROLE.NAME.LAB_PERSONNEL) ){
+                    console.debug("Adding Lab Personnel to Lab Contact user");
+                    let personnel_role = scope.state.all_roles.find( r => r.Name == Constants.ROLE.NAME.LAB_PERSONNEL);
+                    newRoles.push( personnel_role );
+                }
+            }
+        }),
+
+        new RoleUpdateTrigger('Clear Supervisor from non-Lab Personnel', function(newRoles, scope){
+            // Remove Lab Personnel? Clear Supervisor/Supervisor_id
+            if( !includesNamedItem(newRoles, Constants.ROLE.NAME.LAB_PERSONNEL) ){
+                if( scope.user.Supervisor_id ){
+                    console.debug("Clear user supervisor");
+                    scope.user.Supervisor = null;
+                    scope.user.SupervisorName = null;
+                    scope.user.Supervisor_id = null;
+                }
+            }
+        })
+    ];
+
     // Watch for changes to user Roles
     $scope.$watchCollection('user.Roles', (newRoles, oldRoles, scope) => {
         console.debug('User.Roles have changed');
 
         //////////////////////////////////////////
         // Apply any special-case considerations
-
-        // PI users must have a PrincipalInvestigator child
-        if( newRoles.find(r => r.Name == Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR) ){
-            // This is a PI; ensure a PI child exists
-            if( !scope.user.PrincipalInvestigator ){
-                scope.user.PrincipalInvestigator = {
-                    Class: 'PrincipalInvestigator',
-                    Departments: []
-                };
-            }
-        }
+        role_triggers.forEach( rule => rule.fn(newRoles, scope));
 
         //////////////////////////////////////////
         // Recalculate and validate field requirements any time roles change
         getUserRoleRequirements(scope.user);
         scope.validateRoleRequirements();
+
+        // Reconfigure fields and category-diff
+        configureFields();
+        diffUserCategories();
     });
 
     // Validate role requirements whenever anything changes
@@ -603,6 +765,10 @@ angular
     // Utility Functions
     function includesItem( list, keyed_object ){
         return list.find( i => i.Key_id == keyed_object.Key_id );
+    }
+
+    function includesNamedItem( list, name ){
+        return list.find( i => i.Name == name );
     }
 
     function validateSubjectValue( subject, operator, property, value ){
@@ -1009,6 +1175,16 @@ angular
 
         saveUser: async function( user ){
             return this._post_action('saveUser', user);
+        },
+
+        toggleUserActivation: async function (user){
+            let parts = [
+                'setUserActivation',
+                'user_id=' + user.Key_id,
+                'active=' + (user.Is_active ? 'false':'true')
+
+            ];
+            return this._post_action(parts.join('&'));
         }
     };
 })

@@ -89,3 +89,7 @@ table.userList td {
 }
 
 .red-button:hover { color: #fff; }
+
+.selectable-role.non-restricted-role {
+    font-style: italic;
+}

@@ -309,6 +309,23 @@ class ActionManager {
         return $_SESSION['USER'];
     }
 
+    public function setUserActivation( $user_id, $active = true ){
+        if( !isset($user_id) || !is_numeric($user_id) ){
+            return new ActionError("Invalid id", 400);
+        }
+
+        $dao = new UserDAO();
+        $user = $dao->getById($user_id);
+        if( !isset($user) || $user == null ){
+            return new ActionError("No such user", 404);
+        }
+
+        $user->setIs_active($active);
+        $user = $dao->save($user);
+
+        return true;
+    }
+
     public function activate(){
         //Get the user
         $LOG = Logger::getLogger('Action:' . __function__);

@@ -14,7 +14,7 @@ angular.module('rsms-UserHub')
         replace: false,
         transclude: false,
         templateUrl: currentScriptPath.replace('UserHubCategoryTable.js', 'UserHubCategoryTable.html'),
-        controller: function($scope, $modal, $timeout, roleBasedFactory){
+        controller: function($scope, $modal, $timeout, roleBasedFactory, UserHubAPI){
             console.debug("UserHubCategoryTable controller");
             $scope.GLOBAL_WEB_ROOT = window.GLOBAL_WEB_ROOT;
 
@@ -24,7 +24,8 @@ angular.module('rsms-UserHub')
                 sorter: {
                     expr: 'Last_name',
                     asc: true
-                }
+                },
+                fields: {}
             };
 
             let roles = roleBasedFactory.getRoles();
@@ -36,8 +37,9 @@ angular.module('rsms-UserHub')
             $scope.config.show_admin_controls = roleBasedFactory.getHasPermission(admin_roles);
 
             // Configure columns based on Category
+            $scope.config.fields = {};
             $scope.category.columns.forEach( col => {
-                $scope.config['show_field_' + col] = true;
+                $scope.config.fields['show_field_' + col] = true;
             });
 
             // Prep filtering
@@ -45,9 +47,32 @@ angular.module('rsms-UserHub')
 
             ////////////////////
             // Scope functions
-            $scope.toggleUserActive = function toggleUserActive( user ){
-                console.log("TODO: Flip active status of ", user);
-                user.Is_active = !user.Is_active;
+            $scope.toggleUserActive = async function toggleUserActive( user ){
+                console.debug("Flip active status of ", user);
+
+                $timeout( () => user._saving = true );
+                try {
+                    let saved = await UserHubAPI.toggleUserActivation( user );
+
+                    if( saved ){
+                        // success!
+                        $timeout( () => {
+                            user.Is_active = !user.Is_active;
+                            ToastApi.toast( (user.Is_active ? 'Activated' : 'Inactivated') + ' ' + user.Name);
+                        });
+                    }
+                    else {
+                        // error
+                        ToastApi.toast( 'Unable to ' + (!user.Is_active ? 'Activate' : 'Inactivate') + ' ' + user.Name, ToastApi.ToastType.ERROR);
+                    }
+                }
+                catch(err){
+                    console.error("Error toggling user activation", err);
+                    ToastApi.toast( 'Unable to ' + (!user.Is_active ? 'Activate' : 'Inactivate') + ' ' + user.Name, ToastApi.ToastType.ERROR);
+                }
+                finally{
+                    $timeout( () => user._saving = undefined );
+                }
             }
 
             $scope.editUser = function editUser(user, $user_index){

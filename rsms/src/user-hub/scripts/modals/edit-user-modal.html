@@ -52,25 +52,25 @@
                 </div>
 
                 <div id="category-details" class="control-group">
-                    <div ng-if="config.show_field_office_phone">
+                    <div ng-if="config.fields.show_field_office_phone">
                         <label for="office_phone">Office Phone</label>
                         <input ng-disabled="!state.allow_edit" type="tel" name="office_phone" ng-model="user.Office_phone" ui-mask="(999) 999-9999"
                                ng-required="state.require_field_office_phone">
                     </div>
 
-                    <div ng-if="config.show_field_emergency_phone">
+                    <div ng-if="config.fields.show_field_emergency_phone">
                         <label for="emergency_phone">Emergency Phone</label>
                         <input ng-disabled="!state.allow_edit" type="tel" name="emergency_phone" ng-model="user.Emergency_phone" ui-mask="(999) 999-9999"
                                ng-required="state.require_field_emergency_phone">
                     </div>
 
-                    <div ng-if="config.show_field_lab_phone">
+                    <div ng-if="config.fields.show_field_lab_phone">
                         <label for="lab_phone">Lab Phone</label>
                         <input ng-disabled="!state.allow_edit" type="tel" name="lab_phone" ng-model="user.Lab_phone" ui-mask="(999) 999-9999"
                                ng-required="state.require_field_lab_phone">
                     </div>
 
-                    <div ng-if="config.show_field_principal_investigator"
+                    <div ng-if="config.fields.show_field_principal_investigator"
                          style="display:flex;">
                         <label for="principal_investigator">Principal Investigator</label>
                         <i ng-if="!state.all_pis" class="icon-spinnery-dealie spinner"></i>
@@ -106,10 +106,12 @@
                                     on-select="onSelectRole($item, $model, $label)">
                                 <ui-select-match placeholder="Select A Role"></ui-select-match>
                                 <ui-select-choices repeat="role in state.all_roles
-                                                            | restrictRolesFilter: category
+                                                            | flagCategoryRoles: category
                                                             | propsFilter: {Name: $select.search}
-                                                            | orderBy:'Name'">
-                                    <div ng-bind-html="role.Name | highlight: $select.search"></div>
+                                                            | orderBy:['-_category_role', 'Name']">
+                                    <div class="selectable-role" ng-class="{
+                                        'non-restricted-role': !role._category_role
+                                    }" ng-bind-html="role.Name | highlight: $select.search"></div>
                                 </ui-select-choices>
                             </ui-select>
 
@@ -135,7 +137,7 @@
                 </div>
 
                 <div id="category-departments" class="control-group">
-                    <div ng-if="config.show_field_department" style="display:flex;">
+                    <div ng-if="config.fields.show_field_department" style="display:flex;">
                         <label for="roles">Department(s)</label>
                         <i ng-if="!state.all_departments" class="icon-spinnery-dealie spinner"></i>
                         <div ng-if="state.all_departments">
@@ -170,52 +172,46 @@
                         </div>
                     </div>
 
-                    <div ng-if="config.show_field_position">
+                    <div ng-if="config.fields.show_field_position">
                         <label for="position">Position</label>
                         <select name="position"
                                 ng-disabled="!state.allow_edit"
                                 ng-model="user.Position"
-                                ng-options="position as position for position in constants.POSITION"
+                                ng-options="position as position for position in category.config.positionOptions"
                                 ng-required="state.require_field_position">
                             <option value="" style="display:none">--Select a Position--</option>
                         </select>
                     </div>
                 </div>
             </div>
-
-            <!--
-            <div class="content-sidebar well" style="width: 45%">
-                <p>
-                    <h4>Original Categories</h4>
-                    <div style="display: flex; flex-wrap: wrap;">
-                        <span style="margin: 3px;" class="badge" ng-repeat="c in categories | userCategories:originalUser">{{c.name}}</span>
-                    </div>
-                </p>
-                <p>
-                    <h4>Categories</h4>
-                    <div style="display: flex; flex-wrap: wrap;">
-                        <span style="margin: 3px;" class="badge" ng-repeat="c in categories | userCategories:user">{{c.name}}</span>
-                    </div>
-                </p>
-            </div>
-            -->
         </div>
     </div>
 
     <div class="modal-footer">
-        <div>
-            <ul class="red" style="text-align: left; list-style: none;">
-                <li ng-repeat="rule in validation | filter:{valid:false}"
-                    style="display: flex; align-items: center;">
-                    <i style="margin-right: 5px;" ng-class="{
-                        'icon-checkmark':rule.valid,
-                        'icon-x':!rule.valid
-                    }"></i>
-                    {{rule.desc}}
-                </li>
-            </ul>
-        </div>
+        <div style="text-align: left;">
+            <div>
+                <ul class="red" style="list-style: none;">
+                    <li ng-repeat="rule in invalid_rules = (validation | filter:{valid:false})"
+                        style="display: flex; align-items: center;">
+                        <i style="margin-right: 5px;" ng-class="{
+                            'icon-checkmark':rule.valid,
+                            'icon-x':!rule.valid
+                        }"></i>
+                        {{rule.desc}}
+                    </li>
+                </ul>
+            </div>
 
+            <div ng-if="!invalid_rules.length && userCategoryDiff.length">
+                <h5>Due to changes in Role, this user will appear in the following {{userCategoryDiff.length == 1 ? 'category' : 'categories'}} after saving:</h5>
+                <span style="display: flex;">
+                    <span class="badge badge-info" style="margin: 3px;"
+                        ng-repeat="category in categories | userCategories:user | orderBy:'Name'">
+                        {{category.name}}
+                    </span>
+                </span>
+            </div>
+        </div>
         <div>
             <button type="submit" class="btn btn-success"
                 ng-disabled="saving || !state.allow_edit || userForm.$invalid">SAVE</button>

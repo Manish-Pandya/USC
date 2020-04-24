@@ -56,6 +56,7 @@ class ActionMappingFactory {
 				"getPropertyByName"=>new ActionMapping("getPropertyByName","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
                 //Generic
+                "setUserActivation" => new SecuredActionMapping("setUserActivation", $this::$ROLE_GROUPS["ADMIN"]),
                 "activate"=>new ActionMapping("activate", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "deactivate"=>new ActionMapping("deactivate", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getCurrentUser"=>new ActionMapping("getCurrentUser", "", ""),
