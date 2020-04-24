@@ -632,7 +632,9 @@ angular
         all_departments: null,
         selectedDepartment: null,
 
-        all_pis: null
+        all_pis: null,
+
+        cache: {}
     };
 
     /////////////////////
@@ -654,23 +656,86 @@ angular
         });
     });
 
+    //////////////
+    // Build role-related triggers which perform updates when certain roles are present
+    function RoleUpdateTrigger( name, fn ){
+        this.name = name;
+        this.fn = fn;
+    }
+
+    let role_triggers = [
+        new RoleUpdateTrigger('Init PI', function(newRoles, scope){
+            // Includes PI? Create PrincipalInvestigator obj
+            // PI users must have a PrincipalInvestigator child
+            if( includesNamedItem(newRoles, Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR) ){
+                // This is a PI; ensure a PI child exists
+                if( !scope.user.PrincipalInvestigator ){
+                    if( scope.state.cache.PrincipalInvestigator ){
+                        console.debug("Copy cached PrincipalInvestigator object");
+                        scope.user.PrincipalInvestigator = scope.state.cache.PrincipalInvestigator;
+                    }
+                    else {
+                        console.debug("Initialize PrincipalInvestigator object");
+                        scope.user.PrincipalInvestigator = {
+                            Class: 'PrincipalInvestigator',
+                            Departments: []
+                        };
+
+                        // Move Primary_department as first PI Department
+                        if( scope.user.Primary_department ){
+                            scope.user.PrincipalInvestigator.Departments.push( scope.user.Primary_department );
+                            scope.user.Primary_department = null;
+                        }
+                    }
+                }
+            }
+        }),
+
+        new RoleUpdateTrigger('Tear Down PI', function(newRoles, scope){
+            // Excludes PI? Remvoe PrincipalInvestigator obj
+            // Non-PI users should not contain PI object
+            if( !includesNamedItem(newRoles, Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR) ){
+                if( scope.user.PrincipalInvestigator ){
+                    // cache object in case user adds PI role back
+                    scope.state.cache.PrincipalInvestigator = scope.user.PrincipalInvestigator;
+
+                    console.debug("Remove user.PrincipalInvestigator object");
+                    scope.user.PrincipalInvestigator = null;
+                }
+            }
+        }),
+
+        new RoleUpdateTrigger('Add Lab Personnel to Lab Contact', function(newRoles, scope){
+            // Add Lab Contact? Also add Lab Personnel
+            if( includesNamedItem(newRoles, Constants.ROLE.NAME.LAB_CONTACT) ){
+                if( !includesNamedItem(newRoles, Constants.ROLE.NAME.LAB_PERSONNEL) ){
+                    console.debug("Adding Lab Personnel to Lab Contact user");
+                    let personnel_role = scope.state.all_roles.find( r => r.Name == Constants.ROLE.NAME.LAB_PERSONNEL);
+                    newRoles.push( personnel_role );
+                }
+            }
+        }),
+
+        new RoleUpdateTrigger('Clear Supervisor from non-Lab Personnel', function(newRoles, scope){
+            // Remove Lab Personnel? Clear Supervisor/Supervisor_id
+            if( !includesNamedItem(newRoles, Constants.ROLE.NAME.LAB_PERSONNEL) ){
+                if( scope.user.Supervisor_id ){
+                    console.debug("Clear user supervisor");
+                    scope.user.Supervisor = null;
+                    scope.user.SupervisorName = null;
+                    scope.user.Supervisor_id = null;
+                }
+            }
+        })
+    ];
+
     // Watch for changes to user Roles
     $scope.$watchCollection('user.Roles', (newRoles, oldRoles, scope) => {
         console.debug('User.Roles have changed');
 
         //////////////////////////////////////////
         // Apply any special-case considerations
-
-        // PI users must have a PrincipalInvestigator child
-        if( newRoles.find(r => r.Name == Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR) ){
-            // This is a PI; ensure a PI child exists
-            if( !scope.user.PrincipalInvestigator ){
-                scope.user.PrincipalInvestigator = {
-                    Class: 'PrincipalInvestigator',
-                    Departments: []
-                };
-            }
-        }
+        role_triggers.forEach( rule => rule.fn(newRoles, scope));
 
         //////////////////////////////////////////
         // Recalculate and validate field requirements any time roles change
@@ -700,6 +765,10 @@ angular
     // Utility Functions
     function includesItem( list, keyed_object ){
         return list.find( i => i.Key_id == keyed_object.Key_id );
+    }
+
+    function includesNamedItem( list, name ){
+        return list.find( i => i.Name == name );
     }
 
     function validateSubjectValue( subject, operator, property, value ){
