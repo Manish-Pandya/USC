@@ -158,3 +158,9 @@ h1 .room-type-icon i {
   border-radius: 6px;
   border-style: solid;
 }
+
+/* Style header popovers as normal text */
+.locationTable th .popover-content {
+  text-transform: none;
+  font-weight: normal;
+}

@@ -2,6 +2,7 @@
     <i class="icon-spinnery-dealie spinner large"></i>
     <span>Getting Buildings...</span>
 </div>
+
 <table class="userList table table-striped table-hover piTable table-bordered locationTable sticky-headers" sticky-headers ng-if="buildings && !loading" watch="filtered.length">
     <thead>
         <tr>
@@ -20,7 +21,11 @@
                 <input class="span2" ng-model="search.building" placeholder="Filter by Building" />
             </th>
             <th>
-                <a>Alias</a><br>
+                <a>Alias</a>
+                <i class="icon-help pull-right"
+                   style="color: #777"
+                   popover="As of April 2020, Building Aliases are displayed in the Hazard Hub and Hazard Inventory."></i>
+                <br>
                 <input class="span2" ng-model="search.alias" placeholder="Filter by Alias" />
             </th>
             <th>

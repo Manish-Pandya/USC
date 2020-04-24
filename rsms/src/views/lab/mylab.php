@@ -1,4 +1,5 @@
 <?php
+require_once '../../Application.php';
 require_once '../../RequireUserLoggedIn.php';
 require_once '../top_view.php';
 ?>

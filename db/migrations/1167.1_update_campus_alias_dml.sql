@@ -1,0 +1,12 @@
+UPDATE campus SET alias = 'Columbia' WHERE key_id = 1;
+UPDATE campus SET alias = 'SOM-Columbia' WHERE key_id = 2;
+UPDATE campus SET alias = 'Aiken' WHERE key_id = 3;
+UPDATE campus SET alias = 'Beaufort' WHERE key_id = 4;
+UPDATE campus SET alias = 'VAMC' WHERE key_id = 5;
+UPDATE campus SET alias = 'Upstate' WHERE key_id = 6;
+UPDATE campus SET alias = 'Lancaster' WHERE key_id = 7;
+UPDATE campus SET alias = 'Salkehatchie' WHERE key_id = 8;
+UPDATE campus SET alias = 'Sumter' WHERE key_id = 9;
+UPDATE campus SET alias = 'Union' WHERE key_id = 10;
+UPDATE campus SET alias = 'Baruch' WHERE key_id = 11;
+UPDATE campus SET alias = 'SOM-Greenville' WHERE key_id = 12;
