@@ -89,13 +89,13 @@
                                             | orderBy: config.sorter.expr : !config.sorter.asc ))"
             ng-class="{inactive: !user.Is_active}">
             <td>
-                <button ng-disabled="!config.show_admin_controls"
+                <button ng-disabled="!config.show_admin_controls || user._saving"
                         class="edit btn btn-primary"
                         ng-click="editUser(user, $index)"
                         alt="Edit" title="Edit" title="Edit">
                     <i class="icon-pencil"></i>
                 </button>
-                <button ng-disabled="!config.show_admin_controls"
+                <button ng-disabled="!config.show_admin_controls || user._saving"
                         class="btn DeactivateeRow"
                         ng-class="{
                             'btn-success': !user.Is_active,
@@ -108,7 +108,7 @@
                     }"></i>
                 </button>
 
-                <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="pi.PrincipalInvestigator.IsDirty"></i>
+                <i class="icon-spinnery-dealie spinner small" style="position:absolute;margin: 3px;" ng-if="user._saving"></i>
 
                 <div ng-if="config.fields.show_field_contact_icons">
                     <span ng-if="user | hasRole:'Lab Contact'">

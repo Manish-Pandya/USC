@@ -1175,6 +1175,16 @@ angular
 
         saveUser: async function( user ){
             return this._post_action('saveUser', user);
+        },
+
+        toggleUserActivation: async function (user){
+            let parts = [
+                'setUserActivation',
+                'user_id=' + user.Key_id,
+                'active=' + (user.Is_active ? 'false':'true')
+
+            ];
+            return this._post_action(parts.join('&'));
         }
     };
 })
