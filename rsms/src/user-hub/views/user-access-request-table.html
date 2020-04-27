@@ -3,6 +3,12 @@
         white-space: nowrap;
     }
 </style>
+
+<h1 ng-if="!AccessRequests" style="display:flex; align-items:center;">
+    <span style="padding-right: 10px;">Loading User Access Requests</span>
+    <i class="icon-spinnery-dealie spinner large"></i>
+</h1>
+
 <table class="userList table table-striped table-hover piTable table-bordered sticky-headers"
        sticky-headers
        watch="filtered.length"
