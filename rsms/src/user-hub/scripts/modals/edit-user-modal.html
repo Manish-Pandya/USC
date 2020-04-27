@@ -115,6 +115,11 @@
                                 </ui-select-choices>
                             </ui-select>
 
+                            <div ng-if="state.show_on_remove_contact_notice"
+                                 style="width: 260px; padding: 3px;">
+                                <span class="red">Lab contact role has been removed for this user. Please remove lab personnel role if applicable.</span>
+                            </div>
+
                             <div ng-if="(user.Roles | incompatibleRoles:user).length">
                                 <span class="red">Some of the selected roles are incompatible:</span>
                             </div>
