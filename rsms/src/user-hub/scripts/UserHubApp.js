@@ -726,7 +726,16 @@ angular
                     scope.user.Supervisor_id = null;
                 }
             }
-        })
+        }),
+
+        new RoleUpdateTrigger('Remind user of Lab Contact/Personnel relationship', function(newRoles, scope, oldRoles){
+            // If Contact was removed (present in old, not in new) AND Personnel is still present in new, display notice
+            let is_personnel = includesNamedItem(oldRoles, Constants.ROLE.NAME.LAB_PERSONNEL);
+            let removed_contact = !includesNamedItem(newRoles, Constants.ROLE.NAME.LAB_CONTACT)
+                                && includesNamedItem(oldRoles, Constants.ROLE.NAME.LAB_CONTACT);
+
+            scope.state.show_on_remove_contact_notice = is_personnel && removed_contact;
+        }),
     ];
 
     // Watch for changes to user Roles
@@ -735,7 +744,7 @@ angular
 
         //////////////////////////////////////////
         // Apply any special-case considerations
-        role_triggers.forEach( rule => rule.fn(newRoles, scope));
+        role_triggers.forEach( rule => rule.fn(newRoles, scope, oldRoles));
 
         //////////////////////////////////////////
         // Recalculate and validate field requirements any time roles change
