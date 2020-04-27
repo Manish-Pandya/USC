@@ -212,20 +212,39 @@ class Auth_ActionManager {
         return $accessRequest;
     }
 
-    public function getAllAccessRequests( ?int $pi_id ){
-        if( !isset($pi_id) ){
+    public function getAllAccessRequests( ?int $pi_id = NULL ){
+        $LOG = LogUtil::get_logger(__CLASS__, __FUNCTION__);
+
+        $current_user = AuthManager::getCurrentUser();
+
+        if( !isset($pi_id) && !CoreSecurity::userIsAdmin($current_user) ){
+            $LOG->warn("Non-admin user did not provide PI ID");
+
+            // Non-admin must provide valid PI ID
             return new ActionError('Invalid PI', 400);
         }
 
-        $piDao = new PrincipalInvestigatorDAO();
-        $pi = $piDao->getById($pi_id);
+        // If ID is provided, validate that it is an existing PI
+        if( isset($pi_id) ){
+            $LOG->debug("Validate provided PI ID: $pi_id");
+            $piDao = new PrincipalInvestigatorDAO();
+            $pi = $piDao->getById($pi_id);
 
-        if( !isset($pi) || $pi == null ){
-            return new ActionError('Invalid PI', 404);
+            if( !isset($pi) || $pi == null ){
+                return new ActionError('Invalid PI', 404);
+            }
         }
 
         $dao = new UserAccessRequestDAO();
-        $requests = $dao->getByPrincipalInvestigator( $pi_id );
+
+        if( isset($pi_id) ){
+            // Look up reqeusts for just this PI
+            $requests = $dao->getByPrincipalInvestigator( $pi_id );
+        }
+        else {
+            // Look up reqeusts for all PIs
+            $requests = $dao->getAll();
+        }
 
         return $requests;
     }
