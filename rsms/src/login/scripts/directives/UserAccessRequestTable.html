@@ -4,37 +4,16 @@
         <h3>Name</h3>
         <h3>Network Username</h3>
         <h3>Email</h3>
-        <h3></h3>
+        <h3>Status</h3>
     </div>
     <div class="table-row" ng-repeat="request in requests">
         <div>{{ getDate(request.Date_created) | date:'MM/dd/yyyy'}}</div>
         <div>{{request.First_name}} {{request.Last_name}}</div>
         <div>{{request.Network_username}}</div>
         <div>{{request.Email}}</div>
-
-        <div ng-if="request.Status != 'PENDING'">
-            <span class="badge" ng-class="{
-                'badge-success': request.Status == 'APPROVED',
-                'badge-important': request.Status == 'DENIED'
-            }">{{request.Status}}</span>
-        </div>
-        <div ng-if="request.Status == 'PENDING'">
-            <div class="overlay-container">
-                <div class="overlay" ng-if="request._saving">
-                    <i class="icon-spinnery-dealie spinner"></i>
-                </div>
-                <a class="btn btn-success"
-                   title="Approve this request"
-                   ng-click="resolveRequest(request, true)">
-                    Approve
-                </a>
-
-                <a class="btn btn-danger"
-                   title="Deny this request"
-                   ng-click="resolveRequest(request, false)">
-                    Deny
-                </a>
-            </div>
+        <div>
+            <user-access-request-status-actions request="request">
+            </user-access-request-status-actions>
         </div>
     </div>
 </div>

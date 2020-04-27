@@ -4,23 +4,16 @@ var scripts = document.getElementsByTagName("script");
 var userAccessRequestTableScriptPath = scripts[scripts.length-1].src;
 
 angular.module('rsms-AuthDirectives', ['angular.filter'])
-.directive('userAccessRequestTable', function(){
+.directive('userAccessRequestStatusActions', function(){
     return {
         restrict: 'E',
         scope: {
-            requests: "="
+            request: "="
         },
         replace: false,
         transclude: false,
-        templateUrl: userAccessRequestTableScriptPath.replace('UserAccessRequestTable.js', 'UserAccessRequestTable.html'),
+        templateUrl: userAccessRequestTableScriptPath.replace('UserAccessRequestTable.js', 'UserAccessRequestStatusActions.html'),
         controller: function($scope, $http, $timeout){
-            console.debug("UserAccessRequestTable controller");
-            $scope.GLOBAL_WEB_ROOT = window.GLOBAL_WEB_ROOT;
-
-            $scope.getDate = function getDate( d ){
-                return new Date(d);
-            }
-
             let endpoint_base = window.GLOBAL_WEB_ROOT + 'ajaxaction.php';
             $scope.resolveRequest = async function resolveRequest( request, approved ){
                 let cfg = {
@@ -51,6 +44,25 @@ angular.module('rsms-AuthDirectives', ['angular.filter'])
                         }
                     });
                 }
+            }
+        }
+    };
+})
+.directive('userAccessRequestTable', function(){
+    return {
+        restrict: 'E',
+        scope: {
+            requests: "="
+        },
+        replace: false,
+        transclude: false,
+        templateUrl: userAccessRequestTableScriptPath.replace('UserAccessRequestTable.js', 'UserAccessRequestTable.html'),
+        controller: function($scope){
+            console.debug("UserAccessRequestTable controller");
+            $scope.GLOBAL_WEB_ROOT = window.GLOBAL_WEB_ROOT;
+
+            $scope.getDate = function getDate( d ){
+                return new Date(d);
             }
         }
     };
