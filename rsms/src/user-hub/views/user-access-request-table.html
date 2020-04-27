@@ -1,0 +1,70 @@
+<style>
+    th {
+        white-space: nowrap;
+    }
+</style>
+<table class="userList table table-striped table-hover piTable table-bordered sticky-headers"
+       sticky-headers
+       watch="filtered.length"
+       ng-if="AccessRequests">
+    <thead>
+        <tr>
+            <th colspan="7" class="theme-main-element">
+                <h1>User Access Requests</h1>
+                 <h2 style="float:right; margin-top:8px;">
+                    <span class="underline bold">{{filtered.length}}</span>
+                    <span>Displayed</span>
+                </h2>
+            </th>
+        </tr>
+        <tr>
+            <th>
+                <user-hub-sort-field sorter="config.sorter" field-expr="Date_created">Request Date</user-hub-sort-field>
+            </th>
+            <th>
+                <user-hub-sort-field sorter="config.sorter" field-expr="Principal_investigator_name">Principal Investigator</user-hub-sort-field>
+            </th>
+            <th>
+                <user-hub-sort-field sorter="config.sorter" field-expr="Last_name">Last Name</user-hub-sort-field>
+            </th>
+            <th>First Name</th>
+            <th>Network Username</th>
+            <th>Email</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th>
+                <input class="full" ng-model="search.Principal_investigator_name" placeholder="Filter by PI"/>
+            </th>
+            <th colspan="2">
+                <input class="full" ng-model="search.Last_name" placeholder="Filter by Name"/>
+            </th>
+            <th></th>
+            <th></th>
+            <th>
+                <select ng-model="search.Status"
+                    ng-options="status for status in ['PENDING', 'APPROVED', 'DENIED']"
+                    style="margin: 0;">
+                    <option value="">-- All Statuses --</option>
+                </select>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="request in (filtered = (AccessRequests
+                                            | userSearchFilter:search
+                                            | orderBy: config.sorter.expr : !config.sorter.asc ))">
+            <td>{{ getDate(request.Date_created) | date:'MM/dd/yyyy'}}</td>
+            <td>{{request.Principal_investigator_name}}</td>
+            <td>{{request.Last_name}}</td>
+            <td>{{request.First_name}}</td>
+            <td>{{request.Network_username}}</td>
+            <td>{{request.Email}}</td>
+            <td>
+                <user-access-request-status-actions request="request">
+                </user-access-request-status-actions>
+            </td>
+        </tr>
+    </tbody>
+</table>

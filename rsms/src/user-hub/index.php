@@ -60,6 +60,7 @@ require_once('../RequireUserLoggedIn.php');
 
     <!-- directives -->
     <script src="scripts/directives/UserHubCategoryTable.js"></script>
+    <script src="<?php echo WEB_ROOT?>login/scripts/directives/UserAccessRequestTable.js"></script>
 
 <?php if( isset($_SESSION["USER"]) ){ ?>
     <script>

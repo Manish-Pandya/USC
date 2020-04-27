@@ -6,7 +6,8 @@ angular
     'convenienceMethodWithRoleBasedModule',
     'angular.filter',
     'ui.router',
-    'ui.mask'
+    'ui.mask',
+    'rsms-AuthDirectives'
 ])
 .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
     console.debug("Configure rsms-UserHub");
@@ -36,6 +37,36 @@ angular
             controller: function ($rootScope, $scope, $stateParams){
                 console.log("user-hub.users.category");
                 $scope.category = $rootScope.categories.find( c => c.code == $stateParams.category);
+            }
+        })
+        .state('user-hub.access-requests',{
+            url: '/access-requests',
+            templateUrl: 'views/user-access-request-table.html',
+            controller: function($scope, $timeout, UserHubAPI){
+                console.log('access requests ctrl');
+
+                $scope.search = {
+                    Status: 'PENDING'
+                };
+                $scope.config = {
+                    sorter: {
+                        expr: 'Date_created',
+                        asc: false
+                    },
+                };
+
+                $scope.getDate = function( d ){
+                    return new Date(d);
+                };
+
+                // Load data
+                UserHubAPI.getAllAccessRequests()
+                    .then( uacs => {
+                        console.log('Loaded requests:', uacs);
+                        $timeout(() => {
+                            $scope.AccessRequests = uacs;
+                        });
+                    });
             }
         });
 })
@@ -502,6 +533,12 @@ angular
         }
 
         $rootScope.hubNavViews.push(view);
+    });
+
+    $rootScope.hubNavViews.push({});
+    $rootScope.hubNavViews.push({
+        name: 'Access Requests',
+        route: '/access-requests'
     });
 
     $scope.openUserLookupModal = function openUserLookupModal(){
@@ -1185,6 +1222,10 @@ angular
 
             ];
             return this._post_action(parts.join('&'));
+        },
+
+        getAllAccessRequests: async function (){
+            return this._get_or_cache_action('getAllAccessRequests');
         }
     };
 })
