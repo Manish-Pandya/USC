@@ -13,7 +13,7 @@ abstract class A_UserAccessRequest_MessageProcessor implements MessageTypeProces
 
         // Look up Request
         $requestDao = new UserAccessRequestDAO();
-        $request = $requestDao->getById( $request_id );
+        $request = $requestDao->getById( $context->getRequest_id() );
 
         // Construct macromap
         $macromap = $macroResolverProvider->resolve( [$request, $context] );
