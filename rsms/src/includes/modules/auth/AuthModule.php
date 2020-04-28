@@ -103,7 +103,65 @@ class AuthModule implements RSMS_Module, MessageTypeProvider, MyLabWidgetProvide
     }
 
     public function getMacroResolvers(){
-        return [];
+        $resolvers = [];
+
+        // Add all Core resolvers
+        foreach( CoreMessageMacros::getResolvers() as $coreResolver ) {
+            $resolvers[] = $coreResolver;
+        }
+
+        // PI Name
+        $resolvers[] = new MacroResolver(
+            UserAccessRequest::class,
+            '[PI Name]', 'Name of the Principal Investigator',
+            function(UserAccessRequest $request){
+                return $request->getPrincipal_investigator_name();
+            }
+        );
+
+        // Request date
+        $resolvers[] = new MacroResolver(
+            UserAccessRequest::class,
+            '[Request Date]', 'Date the request was made',
+            function(UserAccessRequest $request){
+                return date( 'F jS, Y', strtotime($request->getDate_created()) );
+            }
+        );
+
+        ////////////////////////////
+        // Requesting User details
+
+        // Name
+        $resolvers[] = new MacroResolver(
+            UserAccessRequest::class,
+            '[User Name]', 'Name of the requesting user',
+            function(UserAccessRequest $request){
+                return $request->getFirst_name() . ' ' . $request->getLast_name();
+            }
+        );
+
+        ////////////////////////////
+        // Requesting User details
+
+        // Name
+        $resolvers[] = new MacroResolver(
+            UserAccessRequest::class,
+            '[Network Username]', 'Network username of the requesting user',
+            function(UserAccessRequest $request){
+                return $request->getNetwork_username();
+            }
+        );
+
+        // email
+        $resolvers[] = new MacroResolver(
+            UserAccessRequest::class,
+            '[Email]', 'Email address of the requesting user',
+            function(UserAccessRequest $request){
+                return $request->getEmail();
+            }
+        );
+
+        return $resolvers;
     }
 }
 ?>
