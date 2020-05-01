@@ -702,10 +702,10 @@ piHubPersonnelController = function($scope, $rootScope, $location, convenienceMe
     }
 
 /*=======================*/
-    // Old ver, with added comments
     $scope.openModal = function(user, role){
         if( !role ) throw "Missing role - unable to categorize user";
 
+        let roleName = role;
         let _user = undefined;
         if( user ){
             // If we're editing the PI, re-reference the PI's user
@@ -731,10 +731,8 @@ piHubPersonnelController = function($scope, $rootScope, $location, convenienceMe
             }
         }
 
-        return openNewUserHubModal(_user, role);
-    }
-
-    function openNewUserHubModal( user, roleName ){
+        ////////////////////////////////
+        // Prep the userhub edit modal
 
         // Look up category for the incoming role
         let categories = UserCategoryFactory.getCategories();
@@ -748,7 +746,7 @@ piHubPersonnelController = function($scope, $rootScope, $location, convenienceMe
             controller: 'EditUserModalCtrl',
             resolve: {
                 category: function(){ return category; },
-                user: function(){ return user; },
+                user: function(){ return _user; },
                 newUserDefaults: function(){
                     return {
                         Is_active: true,
@@ -764,8 +762,8 @@ piHubPersonnelController = function($scope, $rootScope, $location, convenienceMe
         });
 
         modalInstance.result.then( saved => {
-            if( user && user.Key_id ){
-                angular.extend(user, saved)
+            if( _user && _user.Key_id ){
+                angular.extend(_user, saved)
             }
             else {
                 $scope.PI.LabPersonnel.push(saved);
