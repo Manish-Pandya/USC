@@ -5,6 +5,7 @@ require_once '../top_view.php';
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>user-hub/user-hub-styles.css" />
 <script src="<?php echo WEB_ROOT?>user-hub/scripts/UserHubApp.js"></script>
+<script src="<?php echo WEB_ROOT?>login/scripts/directives/UserAccessRequestTable.js"></script>
 
 <script>
     var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
