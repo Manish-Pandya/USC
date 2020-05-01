@@ -82,7 +82,8 @@ angular.module('rsms-UserHub')
                     //windowClass: 'modal-dialog-wide',
                     resolve: {
                         category: function(){ return $scope.category; },
-                        user: function(){ return user; }
+                        user: function(){ return user; },
+                        newUserDefaults: function(){ return null; }
                     }
                 });
 
