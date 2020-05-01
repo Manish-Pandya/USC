@@ -2,9 +2,30 @@
 require_once '../top_view.php';
 ?>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/piHub.js"></script>
-<script src="../../js/userHub.js"></script>
 
-<span ng-app="piHub" ng-controller="piHubMainController">
+<link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>user-hub/user-hub-styles.css" />
+<script src="<?php echo WEB_ROOT?>user-hub/scripts/UserHubApp.js"></script>
+
+<script>
+    var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
+
+    var RoleRequirements = <?php
+        $rules = new UserCategoryRules();
+        echo JsonManager::encode( $rules->getUserCategoryRules() );
+    ?>;
+
+    // Dynamically apply the hub theme to the body so that modal(s) are styled
+    (function(){
+        $('body').addClass('hub-theme-blue');
+    })();
+</script>
+
+<script src="<?php echo WEB_ROOT?>js/lib/angular-once.js"></script>
+<script src="<?php echo WEB_ROOT?>js/lib/angular.filter.js"></script>
+<script src="<?php echo WEB_ROOT?>js/lib/angular-ui-router.min.js"></script>
+<script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/ui-mask.js"></script>
+
+<span class="hub-theme-blue" ng-app="piHub" ng-controller="piHubMainController">
 <div cg-busy="{promise:userPromise,message:'Loading...',templateUrl:'../../rad/views/busy-templates/full-page-busy.html'}"></div>
 <div cg-busy="{promise:saving,message:'Saving...',templateUrl:'../../rad/views/busy-templates/full-page-busy.html'}"></div>
 

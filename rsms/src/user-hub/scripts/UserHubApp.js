@@ -135,7 +135,9 @@ angular
         return roles;
     }
 })
-.filter('incompatibleRoles', function($rootScope){
+.filter('incompatibleRoles', function( UserCategoryFactory ){
+
+    let RoleIncompatibilities = UserCategoryFactory.getRoleIncompatibilities();
 
     /**
      * Find user roles which are incompatible to this one
@@ -148,7 +150,7 @@ angular
         return user.Roles
             // map user role objects to tuples listing their incompatibilities
             .map( r => {
-                return { RoleName: r.Name, Incompatibilities: $rootScope.RoleIncompatibilities[r.Name] };
+                return { RoleName: r.Name, Incompatibilities: RoleIncompatibilities[r.Name] };
             })
             // Filter down to roles whith list the incoming role(s) as imcompatible
             .filter( r => {
@@ -230,293 +232,56 @@ angular
         return results;
     }
 })
-.controller('AppCtrl', function ($rootScope, $scope, $modal, $timeout, UserHubAPI) {
+
+////////////////////////////////////
+// Legacy Filters, used by PI Hub //
+// TODO: Remove/replace these     //
+.filter('isNotContact', function( $filter ){
+    // users do NOT have lab contact but DO have lab personnel
+    return function(users){
+      if(!users)return;
+
+      // return personnel users who are not contacts
+      return users.filter( u => {
+        return !$filter('hasRole')(u, Constants.ROLE.NAME.LAB_CONTACT)
+            && $filter('hasRole')(u, Constants.ROLE.NAME.LAB_PERSONNEL);
+      });
+    }
+  })
+  .filter('isLabContact', function($filter){
+      // users DO have contact role
+    return function(users){
+      if(!users)return;
+
+      // return contact users
+      return users.filter( u => {
+        return $filter('hasRole')(u, Constants.ROLE.NAME.LAB_CONTACT);
+      });
+    }
+})
+.filter('isLabPersonnel', function($filter){
+    // users DO have contact role
+  return function(users){
+    if(!users)return;
+
+    // return contact users
+    return users.filter( u => {
+      return $filter('hasRole')(u, Constants.ROLE.NAME.LAB_PERSONNEL);
+    });
+  }
+})
+/////////////////////////////////////////
+.controller('AppCtrl', function ($rootScope, $scope, $modal, $timeout, UserCategoryFactory, UserHubAPI) {
     console.debug("rsms-UserHub running");
 
     // Expose Role Requirements
-    $rootScope.RoleRequirements = RoleRequirements;
-
-    //////////////////////
-    // Compare requirements to determine compatibilities
-    // A role is incompatible with another if both have conflicting rules for the same property
-    let requirementsPerProperty = $rootScope.RoleRequirements
-        // Ignore 'optional' rules
-        .filter( requirement => requirement.Operator != 'optional')
-
-        // Group requirements by Property
-        .reduce( (grouped, requirement) => {
-            let group_name = [requirement.Property, (requirement.Value || '*')].join(':');
-            let group = grouped[group_name] || [];
-            group.push(requirement);
-
-            grouped[group_name] = group;
-            return grouped;
-        }, {});
-
-    // Groups are placed into an object for convenience of the previous instr.
-    // We don't care about the keys going forward, so just look at its values
-
-    // Compare each property rule to determine incompatibilities
-    $rootScope.RoleIncompatibilities = Object.values(requirementsPerProperty)
-        .reduce( (incompatibilities, group) => {
-
-            for( let i = 0; i < group.length; i++ ){
-                let rule = group[i];
-                let incompatible_roles = group
-                    .filter( r => r.Operator != rule.Operator )
-                    .map( r => r.RoleName);
-
-                if( incompatible_roles.length ){
-                    incompatibilities[rule.RoleName] = (incompatibilities[rule.RoleName] || []).concat(incompatible_roles);
-                }
-            }
-
-            return incompatibilities;
-        }, []);
-    console.log($rootScope.RoleIncompatibilities);
-    //////////////////////
+    $rootScope.RoleRequirements = UserCategoryFactory.getRoleRequirements();
+    $rootScope.RoleIncompatibilities = UserCategoryFactory.getRoleIncompatibilities();
 
     // Expose Constants to views
     $rootScope.constants = Constants;
 
-    let COL_CONTACT_ICONS = 'contact_icons';
-    let COL_USERNAME = 'username';
-    let COL_LAST_NAME = 'last_name';
-    let COL_FIRST_NAME = 'first_name';
-    let COL_EMAIL = 'email';
-    let COL_PRINCIPAL_INVESTIGATOR = 'principal_investigator';
-    let COL_POSITION = 'position';
-    let COL_LAB_PHONE = 'lab_phone';
-    let COL_OFFICE_PHONE = 'office_phone';
-    let COL_EMERGENCY_PHONE = 'emergency_phone';
-    let COL_ROLES = 'roles';
-    let COL_DEPARTMENT = 'department';
-    let COL_BUILDING = 'building';
-
-    let ROLE = Constants.ROLE.NAME;
-
-    // TODO: Add configuration for user-editing:
-    /*
-        ** Added config.newUserRoles to specify roles to be added to new users
-        ** Added config.restrictRoles to specify that a category's Roles should be filtered to list only pertinent ones
-        Should category-roles be allowed to be removed?
-    */
-    function UserHubCategory( name, code, roles, columns, editFields, config ){
-        this.name = name;
-        this.code = code;
-        this.roles = roles;
-        this.columns = columns;
-        this.editFields = editFields;
-        this.config = config;
-    }
-
-    $rootScope.categories = [];
-    $rootScope.categories.push(
-        new UserHubCategory('Principal Investigators', 'pis', [ROLE.PRINCIPAL_INVESTIGATOR],
-        [ // display fields
-            COL_LAST_NAME,
-            COL_FIRST_NAME,
-            COL_DEPARTMENT,
-            COL_OFFICE_PHONE,
-            COL_LAB_PHONE,
-            COL_BUILDING,
-            COL_EMAIL,
-            COL_EMERGENCY_PHONE
-        ],
-        [ // edit fields
-            COL_DEPARTMENT,
-            COL_OFFICE_PHONE,
-            COL_LAB_PHONE,
-            COL_EMERGENCY_PHONE
-        ],
-        {
-            restrictRoles: false,
-            newUserRoles: [ROLE.PRINCIPAL_INVESTIGATOR]
-        })
-    );
-
-    $rootScope.categories.push(
-        new UserHubCategory('Lab Contacts', 'contacts', [ROLE.LAB_CONTACT],
-        [ // display fields
-            COL_LAST_NAME,
-            COL_FIRST_NAME,
-            COL_PRINCIPAL_INVESTIGATOR,
-            COL_DEPARTMENT,
-            COL_EMAIL,
-            COL_LAB_PHONE,
-            COL_EMERGENCY_PHONE
-        ],
-        [ // edit fields
-            COL_EMERGENCY_PHONE,
-            COL_LAB_PHONE,
-            COL_PRINCIPAL_INVESTIGATOR,
-            COL_POSITION
-        ],
-        {
-            restrictRoles: false,
-            newUserRoles: [ROLE.LAB_CONTACT, ROLE.LAB_PERSONNEL],
-            positionOptions: Constants.POSITION.LAB_PERSONNEL
-        })
-    );
-
-    $rootScope.categories.push(
-        new UserHubCategory('Lab Personnel', 'labPersonnel', [ROLE.LAB_PERSONNEL],
-        [ // display fields
-            COL_CONTACT_ICONS,
-            COL_LAST_NAME,
-            COL_FIRST_NAME,
-            COL_PRINCIPAL_INVESTIGATOR,
-            COL_POSITION,
-            COL_DEPARTMENT,
-            COL_EMAIL,
-            COL_LAB_PHONE
-        ],
-        [ // edit fields
-            COL_EMERGENCY_PHONE,
-            COL_LAB_PHONE,
-            COL_PRINCIPAL_INVESTIGATOR,
-            COL_POSITION
-        ],
-        {
-            restrictRoles: false,
-            newUserRoles: [ROLE.LAB_PERSONNEL],
-            positionOptions: Constants.POSITION.LAB_PERSONNEL
-        })
-    );
-
-    $rootScope.categories.push(
-        new UserHubCategory('Rad Contacts', 'radContacts', [ROLE.RADIATION_CONTACT],
-        [ // display fields
-            COL_CONTACT_ICONS,
-            COL_LAST_NAME,
-            COL_FIRST_NAME,
-            COL_PRINCIPAL_INVESTIGATOR,
-            COL_POSITION,
-            COL_DEPARTMENT,
-            COL_EMAIL,
-            COL_LAB_PHONE
-        ],
-        [ // edit fields
-            COL_EMERGENCY_PHONE,
-            COL_LAB_PHONE,
-            COL_PRINCIPAL_INVESTIGATOR,
-            COL_POSITION
-        ],
-        {
-            restrictRoles: false,
-            newUserRoles: [ROLE.LAB_PERSONNEL, ROLE.RADIATION_CONTACT],
-            positionOptions: Constants.POSITION.LAB_PERSONNEL
-        })
-    );
-
-    $rootScope.categories.push(
-        new UserHubCategory('EHS Personnel', 'EHSPersonnel',
-            [ // included roles
-                ROLE.ADMIN,
-                ROLE.SAFETY_INSPECTOR,
-                ROLE.RADIATION_USER,
-                ROLE.RADIATION_ADMIN,
-                ROLE.RADIATION_INSPECTOR,
-                ROLE.OCCUPATIONAL_HEALTH,
-                ROLE.READ_ONLY
-            ],
-            [ // display fields
-                COL_LAST_NAME,
-                COL_FIRST_NAME,
-                COL_ROLES,
-                COL_POSITION,
-                COL_OFFICE_PHONE,
-                COL_EMAIL,
-                COL_EMERGENCY_PHONE
-            ],
-            [ // edit fields
-                COL_OFFICE_PHONE,
-                COL_EMERGENCY_PHONE,
-                COL_POSITION
-            ],
-            {
-                restrictRoles: false,
-                newUserRoles: [],
-                positionOptions: Constants.POSITION.EHS_PERSONNEL
-            }
-        )
-    );
-
-    $rootScope.categories.push(
-        new UserHubCategory('Department Chairs & Coordinators', 'departmentContacts',
-            [ // included roles
-                ROLE.DEPARTMENT_CHAIR,
-                ROLE.DEPARTMENT_COORDINATOR
-            ],
-            [ // display fields
-                COL_LAST_NAME,
-                COL_FIRST_NAME,
-                COL_ROLES,
-                COL_DEPARTMENT,
-                COL_OFFICE_PHONE,
-                COL_EMERGENCY_PHONE,
-                COL_EMAIL
-            ],
-            [ // edit fields
-                COL_OFFICE_PHONE,
-                COL_EMERGENCY_PHONE,
-                COL_DEPARTMENT
-            ],
-            {
-                restrictRoles: true,
-                newUserRoles: []
-            }
-        )
-    );
-
-    $rootScope.categories.push(
-        new UserHubCategory('Teaching Lab Contacts', 'teachingLabContacts', [ROLE.TEACHING_LAB_CONTACT],
-            [ // display fields
-                COL_LAST_NAME,
-                COL_FIRST_NAME,
-                COL_DEPARTMENT,
-                COL_EMAIL,
-                COL_OFFICE_PHONE,
-                COL_EMERGENCY_PHONE
-            ],
-            [ // edit fields
-                COL_OFFICE_PHONE,
-                COL_EMERGENCY_PHONE,
-                COL_DEPARTMENT
-            ],
-            {
-                restrictRoles: true,
-                newUserRoles: [ROLE.TEACHING_LAB_CONTACT]
-            }
-        )
-    );
-
-    // Generate 'uncategorized' as any role not included in another category
-    let categorized_roles = [];
-    $rootScope.categories
-        .map( cat => cat.roles )
-        .forEach( roles => categorized_roles = categorized_roles.concat(roles));
-
-    let uncategorized_roles = [];
-    for( field in ROLE ){
-        if( !categorized_roles.includes(ROLE[field]) ){
-            uncategorized_roles.push(ROLE[field]);
-        }
-    }
-
-    $rootScope.categories.push(
-        new UserHubCategory('Uncategorized Users', 'uncategorized', uncategorized_roles,
-            [ // display fields
-                COL_LAST_NAME,
-                COL_FIRST_NAME,
-                COL_ROLES
-            ],
-            [ /* edit fields */ ],
-            {
-                includeRoleless: true
-            }
-        )
-    );
+    $rootScope.categories = UserCategoryFactory.getCategories();
 
     // Eagerly load all users
     UserHubAPI.getAllUsers().then( all_users => {
@@ -561,10 +326,17 @@ angular
         $modalInstance.dismiss();
     }
 })
-.controller('EditUserModalCtrl', function($rootScope, $scope, $modalInstance, $timeout, $q, $filter, UserHubAPI, category, user){
+
+.controller('EditUserModalCtrl', function(
+    $rootScope, $scope, $modalInstance, $timeout, $q, $filter, UserHubAPI, UserCategoryFactory,
+    category, user, newUserDefaults
+){
 
     // Set up scope
     $scope.category = category;
+    $scope.categories = UserCategoryFactory.getCategories();
+    $scope.RoleRequirements = UserCategoryFactory.getRoleRequirements();
+    $scope.RoleIncompatibilities = UserCategoryFactory.getRoleIncompatibilities();
 
     // Prepare new user
     if( !user ){
@@ -585,7 +357,7 @@ angular
     function configureFields(){
 
         // Look at the modal's Category as well as user Categories
-        let cats = $filter('userCategories')($rootScope.categories, $scope.user) || [];
+        let cats = $filter('userCategories')($scope.categories, $scope.user) || [];
 
         if( !cats.includes($scope.category) ){
             cats.push($scope.category);
@@ -622,7 +394,7 @@ angular
     function diffUserCategories(){
         let diff = [];
 
-        if( $rootScope.categories && $scope.user && $scope.originalUser && $scope.originalUser.Key_id ){
+        if( $scope.categories && $scope.user && $scope.originalUser && $scope.originalUser.Key_id ){
 
             // Only care about names..
             let current_role_names = $scope.user.Roles.map(r => r.Name);
@@ -634,8 +406,8 @@ angular
 
             if( roles_added || roles_removed ){
                 // Roles are different, so categories are different
-                let new_categories = $filter('userCategories')($rootScope.categories, $scope.user);
-                let original_categories = $filter('userCategories')($rootScope.categories, $scope.originalUser);
+                let new_categories = $filter('userCategories')($scope.categories, $scope.user);
+                let original_categories = $filter('userCategories')($scope.categories, $scope.originalUser);
 
                 // list all 'current' categories, flagging those which are newly-added (i.e. not present in original)
                 // Merge this with original categories which were removed, flagging those as well
@@ -909,7 +681,7 @@ angular
         $scope.role_requirements = user.Roles
             // Collect all requirements for each role
             .map(role => {
-                return $rootScope.RoleRequirements.filter(req => req.RoleName == role.Name);
+                return $scope.RoleRequirements.filter(req => req.RoleName == role.Name);
             })
             // Remove any empty lists
             .filter( reqs => reqs.length > 0 )
@@ -988,6 +760,11 @@ angular
             $timeout(() => {
                 // Apply new-user Details
                 angular.extend( $scope.user, details );
+
+                // Apply parameter user defaults
+                if( newUserDefaults ){
+                    angular.extend( $scope.user, newUserDefaults );
+                }
 
                 // Apply category defaults
                 if( $scope.category.config.newUserRoles.length ){
@@ -1146,6 +923,327 @@ angular
         $timeout( () => $scope.state.selectedDepartment = null );
     }
 })
+
+// Utility functions shared by other modules
+.factory('userHubFactory', function( UserHubAPI ){
+    let factory = {};
+
+    factory.hasRole = function( user, roleName ){
+        let match = user.Roles.find( r => r.Name.toLowerCase() == roleName.toLowerCase());
+        return match ? true : false;
+    };
+
+    factory.setModalData = function( data ) { this.modalData = data; };
+    factory.getModalData = function() { return this.modalData; };
+
+    factory.unassignLabUser = (userId, piId, roleName) => UserHubAPI.unassignLabUser(userId, piId, roleName);
+    factory.assignLabUser =  (userId, inactive) => UserHubAPI.assignLabUser(userId, inactive);
+
+    return factory;
+})
+
+.factory('UserCategoryFactory', function(){
+    let COL_CONTACT_ICONS = 'contact_icons';
+    let COL_USERNAME = 'username';
+    let COL_LAST_NAME = 'last_name';
+    let COL_FIRST_NAME = 'first_name';
+    let COL_EMAIL = 'email';
+    let COL_PRINCIPAL_INVESTIGATOR = 'principal_investigator';
+    let COL_POSITION = 'position';
+    let COL_LAB_PHONE = 'lab_phone';
+    let COL_OFFICE_PHONE = 'office_phone';
+    let COL_EMERGENCY_PHONE = 'emergency_phone';
+    let COL_ROLES = 'roles';
+    let COL_DEPARTMENT = 'department';
+    let COL_BUILDING = 'building';
+
+    let ROLE = Constants.ROLE.NAME;
+
+    // TODO: Add configuration for user-editing:
+    /*
+        ** Added config.newUserRoles to specify roles to be added to new users
+        ** Added config.restrictRoles to specify that a category's Roles should be filtered to list only pertinent ones
+        Should category-roles be allowed to be removed?
+    */
+    function UserHubCategory( name, code, roles, columns, editFields, config ){
+        this.name = name;
+        this.code = code;
+        this.roles = roles;
+        this.columns = columns;
+        this.editFields = editFields;
+        this.config = config;
+    }
+
+    let factory = {
+        getRoleRequirements: function(){
+            if( RoleRequirements ){
+                return RoleRequirements;
+            }
+            else return [];
+        },
+        getRoleIncompatibilities: function(){
+            let role_requirements = this.getRoleRequirements();
+
+            //////////////////////
+            // Compare requirements to determine compatibilities
+            // A role is incompatible with another if both have conflicting rules for the same property
+            let requirementsPerProperty = role_requirements
+                // Ignore 'optional' rules
+                .filter( requirement => requirement.Operator != 'optional')
+
+                // Group requirements by Property
+                .reduce( (grouped, requirement) => {
+                    let group_name = [requirement.Property, (requirement.Value || '*')].join(':');
+                    let group = grouped[group_name] || [];
+                    group.push(requirement);
+
+                    grouped[group_name] = group;
+                    return grouped;
+                }, {});
+
+            // Groups are placed into an object for convenience of the previous instr.
+            // We don't care about the keys going forward, so just look at its values
+
+            // Compare each property rule to determine incompatibilities
+            let role_incompatibilities = Object.values(requirementsPerProperty)
+                .reduce( (incompatibilities, group) => {
+
+                    for( let i = 0; i < group.length; i++ ){
+                        let rule = group[i];
+                        let incompatible_roles = group
+                            .filter( r => r.Operator != rule.Operator )
+                            .map( r => r.RoleName);
+
+                        if( incompatible_roles.length ){
+                            incompatibilities[rule.RoleName] = (incompatibilities[rule.RoleName] || []).concat(incompatible_roles);
+                        }
+                    }
+
+                    return incompatibilities;
+                }, []);
+
+            console.debug('role_incompatibilities:', role_incompatibilities);
+            //////////////////////
+
+            return role_incompatibilities;
+        },
+        getCategories: function(){
+            let categories = [];
+
+            categories.push(
+                new UserHubCategory('Principal Investigators', 'pis', [ROLE.PRINCIPAL_INVESTIGATOR],
+                [ // display fields
+                    COL_LAST_NAME,
+                    COL_FIRST_NAME,
+                    COL_DEPARTMENT,
+                    COL_OFFICE_PHONE,
+                    COL_LAB_PHONE,
+                    COL_BUILDING,
+                    COL_EMAIL,
+                    COL_EMERGENCY_PHONE
+                ],
+                [ // edit fields
+                    COL_DEPARTMENT,
+                    COL_OFFICE_PHONE,
+                    COL_LAB_PHONE,
+                    COL_EMERGENCY_PHONE
+                ],
+                {
+                    restrictRoles: false,
+                    newUserRoles: [ROLE.PRINCIPAL_INVESTIGATOR]
+                })
+            );
+        
+            categories.push(
+                new UserHubCategory('Lab Contacts', 'contacts', [ROLE.LAB_CONTACT],
+                [ // display fields
+                    COL_LAST_NAME,
+                    COL_FIRST_NAME,
+                    COL_PRINCIPAL_INVESTIGATOR,
+                    COL_DEPARTMENT,
+                    COL_EMAIL,
+                    COL_LAB_PHONE,
+                    COL_EMERGENCY_PHONE
+                ],
+                [ // edit fields
+                    COL_EMERGENCY_PHONE,
+                    COL_LAB_PHONE,
+                    COL_PRINCIPAL_INVESTIGATOR,
+                    COL_POSITION
+                ],
+                {
+                    restrictRoles: false,
+                    newUserRoles: [ROLE.LAB_CONTACT, ROLE.LAB_PERSONNEL],
+                    positionOptions: Constants.POSITION.LAB_PERSONNEL
+                })
+            );
+        
+            categories.push(
+                new UserHubCategory('Lab Personnel', 'labPersonnel', [ROLE.LAB_PERSONNEL],
+                [ // display fields
+                    COL_CONTACT_ICONS,
+                    COL_LAST_NAME,
+                    COL_FIRST_NAME,
+                    COL_PRINCIPAL_INVESTIGATOR,
+                    COL_POSITION,
+                    COL_DEPARTMENT,
+                    COL_EMAIL,
+                    COL_LAB_PHONE
+                ],
+                [ // edit fields
+                    COL_EMERGENCY_PHONE,
+                    COL_LAB_PHONE,
+                    COL_PRINCIPAL_INVESTIGATOR,
+                    COL_POSITION
+                ],
+                {
+                    restrictRoles: false,
+                    newUserRoles: [ROLE.LAB_PERSONNEL],
+                    positionOptions: Constants.POSITION.LAB_PERSONNEL
+                })
+            );
+        
+            categories.push(
+                new UserHubCategory('Rad Contacts', 'radContacts', [ROLE.RADIATION_CONTACT],
+                [ // display fields
+                    COL_CONTACT_ICONS,
+                    COL_LAST_NAME,
+                    COL_FIRST_NAME,
+                    COL_PRINCIPAL_INVESTIGATOR,
+                    COL_POSITION,
+                    COL_DEPARTMENT,
+                    COL_EMAIL,
+                    COL_LAB_PHONE
+                ],
+                [ // edit fields
+                    COL_EMERGENCY_PHONE,
+                    COL_LAB_PHONE,
+                    COL_PRINCIPAL_INVESTIGATOR,
+                    COL_POSITION
+                ],
+                {
+                    restrictRoles: false,
+                    newUserRoles: [ROLE.LAB_PERSONNEL, ROLE.RADIATION_CONTACT],
+                    positionOptions: Constants.POSITION.LAB_PERSONNEL
+                })
+            );
+        
+            categories.push(
+                new UserHubCategory('EHS Personnel', 'EHSPersonnel',
+                    [ // included roles
+                        ROLE.ADMIN,
+                        ROLE.SAFETY_INSPECTOR,
+                        ROLE.RADIATION_USER,
+                        ROLE.RADIATION_ADMIN,
+                        ROLE.RADIATION_INSPECTOR,
+                        ROLE.OCCUPATIONAL_HEALTH,
+                        ROLE.READ_ONLY
+                    ],
+                    [ // display fields
+                        COL_LAST_NAME,
+                        COL_FIRST_NAME,
+                        COL_ROLES,
+                        COL_POSITION,
+                        COL_OFFICE_PHONE,
+                        COL_EMAIL,
+                        COL_EMERGENCY_PHONE
+                    ],
+                    [ // edit fields
+                        COL_OFFICE_PHONE,
+                        COL_EMERGENCY_PHONE,
+                        COL_POSITION
+                    ],
+                    {
+                        restrictRoles: false,
+                        newUserRoles: [],
+                        positionOptions: Constants.POSITION.EHS_PERSONNEL
+                    }
+                )
+            );
+        
+            categories.push(
+                new UserHubCategory('Department Chairs & Coordinators', 'departmentContacts',
+                    [ // included roles
+                        ROLE.DEPARTMENT_CHAIR,
+                        ROLE.DEPARTMENT_COORDINATOR
+                    ],
+                    [ // display fields
+                        COL_LAST_NAME,
+                        COL_FIRST_NAME,
+                        COL_ROLES,
+                        COL_DEPARTMENT,
+                        COL_OFFICE_PHONE,
+                        COL_EMERGENCY_PHONE,
+                        COL_EMAIL
+                    ],
+                    [ // edit fields
+                        COL_OFFICE_PHONE,
+                        COL_EMERGENCY_PHONE,
+                        COL_DEPARTMENT
+                    ],
+                    {
+                        restrictRoles: true,
+                        newUserRoles: []
+                    }
+                )
+            );
+        
+            categories.push(
+                new UserHubCategory('Teaching Lab Contacts', 'teachingLabContacts', [ROLE.TEACHING_LAB_CONTACT],
+                    [ // display fields
+                        COL_LAST_NAME,
+                        COL_FIRST_NAME,
+                        COL_DEPARTMENT,
+                        COL_EMAIL,
+                        COL_OFFICE_PHONE,
+                        COL_EMERGENCY_PHONE
+                    ],
+                    [ // edit fields
+                        COL_OFFICE_PHONE,
+                        COL_EMERGENCY_PHONE,
+                        COL_DEPARTMENT
+                    ],
+                    {
+                        restrictRoles: true,
+                        newUserRoles: [ROLE.TEACHING_LAB_CONTACT]
+                    }
+                )
+            );
+        
+            // Generate 'uncategorized' as any role not included in another category
+            let categorized_roles = [];
+            categories
+                .map( cat => cat.roles )
+                .forEach( roles => categorized_roles = categorized_roles.concat(roles));
+        
+            let uncategorized_roles = [];
+            for( field in ROLE ){
+                if( !categorized_roles.includes(ROLE[field]) ){
+                    uncategorized_roles.push(ROLE[field]);
+                }
+            }
+        
+            categories.push(
+                new UserHubCategory('Uncategorized Users', 'uncategorized', uncategorized_roles,
+                    [ // display fields
+                        COL_LAST_NAME,
+                        COL_FIRST_NAME,
+                        COL_ROLES
+                    ],
+                    [ /* edit fields */ ],
+                    {
+                        includeRoleless: true
+                    }
+                )
+            );
+
+            return categories;
+        }
+    };
+
+    return factory;
+})
+
 .factory('UserHubAPI', function($http){
     return {
         cache:{},
@@ -1235,6 +1333,30 @@ angular
 
         getAllAccessRequests: async function (){
             return this._get_or_cache_action('getAllAccessRequests');
+        },
+
+        assignLabUser: async function(userId, piId, roleName){
+            let parts = [
+                'assignLabUserToPI',
+                'piid=' + piId,
+                'uid=' + userId,
+                'labContact=' + (roleName == Constants.ROLE.NAME.LAB_CONTACT)
+            ];
+
+            return this._post_action(parts.join('&'));
+        },
+
+        unassignLabUser: async function(userId, inactive){
+            let parts = [
+                'unassignLabUser',
+                'uid=' + userId
+            ];
+
+            if( inactive ){
+                parts.push('inactive=true');
+            }
+
+            return this._post_action(parts.join('&'));
         }
     };
 })
