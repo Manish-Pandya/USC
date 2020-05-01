@@ -1,4 +1,8 @@
-var piHub = angular.module('piHub', ['ui.bootstrap', 'convenienceMethodWithRoleBasedModule', 'userList', 'cgBusy'])
+var piHub = angular.module('piHub', [
+    'ui.bootstrap',
+    'convenienceMethodWithRoleBasedModule',
+    'rsms-UserHub',
+    'cgBusy'])
 
 .config(function($routeProvider){
     $routeProvider
@@ -554,7 +558,7 @@ piHubRoomController = function($scope, $location, convenienceMethods){
 
 }
 
-piHubPersonnelController = function($scope, $rootScope, $location, convenienceMethods, $modal, piHubFactory, userHubFactory){
+piHubPersonnelController = function($scope, $rootScope, $location, convenienceMethods, $modal, piHubFactory, userHubFactory, UserCategoryFactory){
 
     init();
     function init(){
@@ -697,81 +701,78 @@ piHubPersonnelController = function($scope, $rootScope, $location, convenienceMe
         alert('There was a problem trying to save the user.');
     }
 
+/*=======================*/
+    // Old ver, with added comments
     $scope.openModal = function(user, role){
-        if(!user){
-          var user = {
-              Is_active:true,
-              Roles:[],
-              Class:'User',
-              Is_new:true,
-              Supervisor: $scope.PI,
-              Supervisor_id: $scope.PI.Key_id
-            };
-          $rootScope.userPromise = getUsers()
-          .then(getRoles)
-          .then(fireModal);
-        } else {
-            $rootScope.userPromise = getUsers()
-            .then(fireModal);
-        }
+        if( !role ) throw "Missing role - unable to categorize user";
 
-        function getUsers(){
-            return piHubFactory.getAllUsers()
-              .then(
-                function(users){
-                  return user;
+        let _user = undefined;
+        if( user ){
+            // If we're editing the PI, re-reference the PI's user
+            if( user.Class == 'PrincipalInvestigator' ){
+                let pi = user;
+                _user = pi.User;
+                _user.PrincipalInvestigator = { Departments:pi.Departments };
+            }
+            else {
+                // If we're editing a personnel/contact, ensure that the PI is referenced
+                _user = user;
+    
+                if( !_user.Supervisor ){
+                    _user.Supervisor = {
+                        Class: $scope.PI.Class,
+                        Key_id: $scope.PI.Key_id,
+                        Name: $scope.PI.Name
+                    };
                 }
-              )
-        }
-
-        function fireModal(user) {
-            user.piHub = true;
-            if (user.Class == "PrincipalInvestigator"){
-                // pump in PIs Departments
-                var pi = user;
-                user = pi.User;
-                user.PrincipalInvestigator = {Departments:pi.Departments};
+                else if( _user.Supervisor_id != $scope.PI.Key_id ){
+                    console.error("User references other PI...");
+                }
             }
-            userHubFactory.setModalData(user);
-            //determine which modal we should open based on the user's role(s)
-            if(userHubFactory.hasRole(user, Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR)){
-                templateString = "piModal";
-            }else if(userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT)){
-                templateString = "labContactModal";
-            }else{
-                templateString = "labPersonnelModal";
-            }
-
-            var modalInstance = $modal.open({
-              templateUrl: 'userHubPartials/'+templateString+'.html',
-              controller: modalCtrl
-            });
-
-            modalInstance.result.then(function (returnedUser) {
-              if(user.Key_id){
-                angular.extend(user, returnedUser)
-              }else{
-                $scope.PI.LabPersonnel.push(returnedUser);
-              }
-            });
         }
 
-        function getRoles(user) {
-
-            return userHubFactory.getAllRoles()
-                .then(
-                    function (roles) {
-                        var i = userHubFactory.roles.length;
-                        while(i--){
-                            if(userHubFactory.roles[i].Name.indexOf(role)>-1){
-                                user.Roles.push(userHubFactory.roles[i]);
-                                return user;
-                            }
-                        }
-                    }
-                )
-        }
+        return openNewUserHubModal(_user, role);
     }
+
+    function openNewUserHubModal( user, roleName ){
+
+        // Look up category for the incoming role
+        let categories = UserCategoryFactory.getCategories();
+        let category = categories.find( c => c.roles[0] == roleName );
+
+        // Open the UserHub edit modal, passing in our user reference
+        // If there is no user, the modal will initialize it, applying our defaults
+
+        let modalInstance = $modal.open({
+            templateUrl: GLOBAL_WEB_ROOT + '/user-hub/scripts/modals/edit-user-modal.html',
+            controller: 'EditUserModalCtrl',
+            resolve: {
+                category: function(){ return category; },
+                user: function(){ return user; },
+                newUserDefaults: function(){
+                    return {
+                        Is_active: true,
+                        Supervisor: {
+                            Class: $scope.PI.Class,
+                            Key_id: $scope.PI.Key_id,
+                            Name: $scope.PI.Name
+                        },
+                        Supervisor_id: $scope.PI.Key_id
+                    };
+                }
+            }
+        });
+
+        modalInstance.result.then( saved => {
+            if( user && user.Key_id ){
+                angular.extend(user, saved)
+            }
+            else {
+                $scope.PI.LabPersonnel.push(saved);
+            }
+        });
+    }
+/*=======================*/
 
     $scope.openAssignModal = function(type){
             var modalInstance = $modal.open({
@@ -1004,8 +1005,12 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
        }
   }
 
-  var assignUserCtrl = function($scope, $rootScope,modalData, $modalInstance, userHubFactory, piHubFactory, $filter){
+  var assignUserCtrl = function($scope, $rootScope,modalData, $modalInstance, UserCategoryFactory, userHubFactory, piHubFactory, $filter){
       $scope.modalData = modalData;
+
+    // Look up category for the incoming role
+    let categories = UserCategoryFactory.getCategories();
+    let personnel_category = categories.find( c => c.roles[0] == $scope.modalData.type);
 
       $scope.gettingUsers = true;
       $scope.selected = {
@@ -1016,8 +1021,8 @@ piHubDepartmentsController = function($scope, $location, convenienceMethods,$mod
         .then(
             function(users){
                 // Filter users to lab personnel
-                console.debug("Filtering users...");
-                $scope.labPersonnel = $filter('isLabPersonnel')(users);
+                console.debug("Filtering users to type of '" + $scope.modalData.type + "'...");
+                $scope.labPersonnel = $filter('categoryFilter')(users, personnel_category);
                 console.debug("Users filtered to LabPersonnel", $scope.labPersonnel);
 
                 $scope.modalError="";
