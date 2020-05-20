@@ -323,6 +323,9 @@ class ActionManager {
         $user->setIs_active($active);
         $user = $dao->save($user);
 
+        // Since this user has been modified, fan-out in case we need to also in/activate a PI or Inspector object
+        $this->_saveUser_fanout( $user, $user );
+
         return true;
     }
 
@@ -639,7 +642,8 @@ class ActionManager {
         if($decodedObject->getRoles() != NULL){
             $LOG->debug("Check roles for special-cases");
             foreach($decodedObject->getRoles() as $role){
-                $role = $this->getRoleById($role['Key_id']);
+                $rid = is_array($role) ? $role['Key_id'] : $role->getKey_id();
+                $role = $this->getRoleById($rid);
                 if($role->getName() == "Principal Investigator")$savePI 	   = true;
                 if($role->getName() == "Safety Inspector")      $saveInspector = true;
             }
