@@ -1,0 +1,24 @@
+<div class="even-content" style="align-items: center;">
+    <span class="badge" ng-class="{
+        'badge-success': request.Status == 'APPROVED',
+        'badge-important': request.Status == 'DENIED'
+    }">{{request.Status}}</span>
+
+    <div ng-if="request.Status == 'PENDING'" class="overlay-container">
+        <div class="overlay" ng-if="request._saving">
+            <i class="icon-spinnery-dealie spinner"></i>
+        </div>
+
+        <a class="btn btn-success"
+            title="Approve this request"
+            ng-click="resolveRequest(request, true)">
+            Approve
+        </a>
+
+        <a class="btn btn-danger"
+            title="Deny this request"
+            ng-click="resolveRequest(request, false)">
+            Deny
+        </a>
+    </div>
+</div>

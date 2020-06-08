@@ -1,6 +1,5 @@
 <?php
     require_once('../Application.php');
-
     session_start();
 
     // Check that user is logged in
@@ -23,6 +22,9 @@
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css" />
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css" />
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>email-hub/email-hub-styles.css" />
+
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rsms-style-theme.css"/>
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rsms-style-struct.css"/>
 
     <script src="<?php echo WEB_ROOT?>js/lib/jQuery.3.1.1/Content/Scripts/jquery-3.1.1.min.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/promise.min.js"></script>
@@ -85,26 +87,14 @@
 <body>
     <?php require('../views/user_info_bar.php'); ?>
 
-    <div ng-app="ng-ImpersonationTool" ng-controller="AppCtrl" class="container-fluid" style="margin-top:25px;">
+    <div ng-app="ng-ImpersonationTool" ng-controller="AppCtrl" class="container-fluid hub-theme-black" style="margin-top:25px;">
         <div cg-busy="{promise:loading, message:'Loading...', templateUrl:'../busy-templates/full-page-busy.html'}"></div>
 
         <!-- NAVIGATION -->
-        <div class="banner no-print bg-color-darken">
-            <h1>
-                <i class="title-icon icon-users" style="margin: 5px 0 0 5px;"></i>
-                User Impersonation
-                <a style="float:right;margin: 15px 30px 0 0; color:white" href="<?php echo WEB_ROOT?>views/RSMSCenter.php#/admin">
-                    <i class="icon-home" style="font-size:40px;"></i>
-                </a>
-            </h1>
-
-            <ul class="banner-nav" ng-if="moduleNavLinks.length">
-                <li ng-repeat="link in moduleNavLinks">
-                    <span ng-if="link.active" ng-bind="link.text"></span>
-                    <a ng-if="!link.active" ui-sref="{{link.expression}}" ng-bind="link.text"></a>
-                </li>
-            </ul>
-        </div>
+        <hub-banner-nav
+            hub-title="User Impersonation"
+            hub-icon="icon-users">
+        </hub-banner-nav>
 
         <!-- VIEW NESTING -->
         <div ui-view class="noBg"></div>

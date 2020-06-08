@@ -152,3 +152,15 @@ h1 .room-type-icon i {
 .locationTable tr td:last-child {
     /*width: 4%;*/
 }
+
+.locationTable input {
+  padding: 5px;
+  border-radius: 6px;
+  border-style: solid;
+}
+
+/* Style header popovers as normal text */
+.locationTable th .popover-content {
+  text-transform: none;
+  font-weight: normal;
+}

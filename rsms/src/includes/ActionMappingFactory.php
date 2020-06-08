@@ -49,14 +49,14 @@ class ActionMappingFactory {
                 //TODO: Assign locations
                 //TODO: Assign roles
                 //TODO: Assign response codes
-                "loginAction"=>new ActionMapping("loginAction", "views/RSMSCenter.php", LOGIN_PAGE, array(), false),
-                "logoutAction"=>new ActionMapping("logoutAction",LOGIN_PAGE, LOGIN_PAGE, array(), false),
+                
 				"getCurrentRoles"=>new ActionMapping("getCurrentRoles","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getPropertyByName"=>new ActionMapping("getPropertyByName","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getCurrentRoles"=>new ActionMapping("getCurrentRoles","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getPropertyByName"=>new ActionMapping("getPropertyByName","", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
                 //Generic
+                "setUserActivation" => new SecuredActionMapping("setUserActivation", $this::$ROLE_GROUPS["ADMIN"]),
                 "activate"=>new ActionMapping("activate", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "deactivate"=>new ActionMapping("deactivate", "", "", $this::$ROLE_GROUPS["ADMIN"]),
                 "getCurrentUser"=>new ActionMapping("getCurrentUser", "", ""),
@@ -188,13 +188,6 @@ class ActionMappingFactory {
         		"sendTestEmail"=>new ActionMapping("sendTestEmail", "", "")
 
         );
-
-        // Only include Impersonation mappings if the feature is enabled
-        if( ApplicationConfiguration::get( CoreModule::CONFIG_FEATURE_IMPERSONATION, false) ){
-            $mappings["impersonateUserAction"] = new ActionMapping("impersonateUserAction", "", "", array("Admin"));
-            $mappings["getImpersonatableUsernames"] = new ActionMapping("getImpersonatableUsernames", "", "", array("Admin"));
-            $mappings["stopImpersonating"] = new ActionMapping("stopImpersonating", LOGIN_PAGE, LOGIN_PAGE, array(), false);
-        }
 
         return $mappings;
     }

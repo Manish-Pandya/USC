@@ -16,7 +16,9 @@ var Constants = /** @class */ (function () {
         },
         HAZARD_STATUS: {}
     };
-    Constants.POSITION = ["Undergraduate",
+
+    Constants.POSITION = {};
+    Constants.POSITION.LAB_PERSONNEL = ["Undergraduate",
         "Graduate Student",
         "Post-Doctoral Fellow",
         "Research Professor",
@@ -28,12 +30,24 @@ var Constants = /** @class */ (function () {
         "Other"
     ];
 
-    Constants.PI_POSITION = [
+    Constants.POSITION.PI = [
         "Assistant Professor",
         "Associate Professor",
         "Professor",
         "Distinguished Professor",
         "SmartState Endowed Chair"
+    ];
+
+    Constants.POSITION.EHS_PERSONNEL = [
+        "Assistant Chemical Hygiene Officer",
+        "Assistant RSO - Radioactive Materials",
+        "Biological Safety Officer",
+        "Chemical Hygiene Officer",
+        "Chemical Waste Manager",
+        "Health Physicist - Electronic Products",
+        "Infectious Waste Management",
+        "Radiation Safety Officer",
+        "Research Safety Bureau Chief"
     ];
 
     Constants.ROLE = {

@@ -1,0 +1,226 @@
+<form id="edit-user-form" name="userForm" class="form-horizontal form"
+      ng-submit="state.allow_edit && userForm.$valid && submit()">
+    <div class="modal-header theme-main-element">
+        <h2 class="even-content" style="align-items: center;">
+            <span ng-if="user.Key_id">Editing User</span>
+            <span ng-if="!user.Key_id">Add New User</span>
+            <span class="badge badge-success">{{category.name}}</span>
+        </h2>
+    </div>
+
+    <div class="modal-body">
+        <div class="even-content">
+            <div class="content-main">
+                <div id="user-username" class="control-group">
+                    <div style="display: flex;">
+                        <label for="username">*Username</label>
+                        <input required name="username" ng-model="user.Username"
+                            style="padding: 4px 6px;"
+                            ng-disabled="state.allow_edit || state.lookup_user">
+                        <a ng-if="!state.allow_edit"
+                           ng-enabled="!state.lookup_user"
+                           ng-click="lookupUserDetails()"
+                           class="secondary-btn theme-main-element">
+                            <i ng-class="{
+                                'icon-spinnery-dealie spinner': state.lookup_user,
+                                'icon-search': !state.lookup_user,
+                            }"></i>
+                        </a>
+                    </div>
+                    <div>
+                        <label for="isactive">Active</label>
+                        <input ng-disabled="!state.allow_edit" type="checkbox" name="isactive" ng-model="user.Is_active"
+                               style="margin: 0;padding: 0;">
+                    </div>
+                </div>
+
+                <div id="user-details" class="control-group">
+                    <div>
+                        <label for="firstname">*First Name</label>
+                        <input ng-disabled="!state.allow_edit" required type="text" name="firstname" ng-model="user.First_name">
+                    </div>
+
+                    <div>
+                        <label for="lastname">*Last Name</label>
+                        <input ng-disabled="!state.allow_edit" required type="text" name="lastname" ng-model="user.Last_name">
+                    </div>
+
+                    <div>
+                        <label for="email">*Email</label>
+                        <input ng-disabled="!state.allow_edit" required type="email" name="email" ng-model="user.Email">
+                    </div>
+                </div>
+
+                <div id="category-details" class="control-group">
+                    <div ng-if="config.fields.show_field_office_phone">
+                        <label for="office_phone">Office Phone</label>
+                        <input ng-disabled="!state.allow_edit" type="tel" name="office_phone" ng-model="user.Office_phone" ui-mask="(999) 999-9999"
+                               ng-required="state.require_field_office_phone">
+                    </div>
+
+                    <div ng-if="config.fields.show_field_emergency_phone">
+                        <label for="emergency_phone">Emergency Phone</label>
+                        <input ng-disabled="!state.allow_edit" type="tel" name="emergency_phone" ng-model="user.Emergency_phone" ui-mask="(999) 999-9999"
+                               ng-required="state.require_field_emergency_phone">
+                    </div>
+
+                    <div ng-if="config.fields.show_field_lab_phone">
+                        <label for="lab_phone">Lab Phone</label>
+                        <input ng-disabled="!state.allow_edit" type="tel" name="lab_phone" ng-model="user.Lab_phone" ui-mask="(999) 999-9999"
+                               ng-required="state.require_field_lab_phone">
+                    </div>
+
+                    <div ng-if="config.fields.show_field_principal_investigator"
+                         style="display:flex;">
+                        <label for="principal_investigator">Principal Investigator</label>
+                        <i ng-if="!state.all_pis" class="icon-spinnery-dealie spinner"></i>
+                        <ui-select ng-if="state.all_pis"
+                                ng-model="user.Supervisor" theme="selectize"
+                                ng-required="state.require_field_principal_investigator"
+                                ng-disabled="!state.allow_edit"
+                                direction="up"
+                                on-select="onSelectPI($item, $model, $label)">
+                            <ui-select-match placeholder="Select A Principal Investigator">{{$select.selected.Name}}</ui-select-match>
+                            <ui-select-choices repeat="pi in state.all_pis
+                                                        | propsFilter: {Name: $select.search}
+                                                        | orderBy:'Name'
+                                                        | limitTo:25">
+                                <div ng-bind-html="pi.Name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                        <a class="secondary-btn red-button" ng-if="state.all_pis && user.Supervisor"
+                            ng-click="onSelectPI( null )">
+                            <i class="icon-x"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="category-roles" class="control-group">
+                    <div style="display:flex;">
+                        <label for="roles">Role(s)</label>
+                        <i ng-if="!state.all_roles" class="icon-spinnery-dealie spinner"></i>
+                        <div ng-if="state.all_roles">
+                            <ui-select ng-model="state.selectedRole" theme="selectize"
+                                    ng-disabled="!state.allow_edit"
+                                    direction="up"
+                                    on-select="onSelectRole($item, $model, $label)">
+                                <ui-select-match placeholder="Select A Role"></ui-select-match>
+                                <ui-select-choices repeat="role in state.all_roles
+                                                            | flagCategoryRoles: category
+                                                            | propsFilter: {Name: $select.search}
+                                                            | orderBy:['-_category_role', 'Name']">
+                                    <div class="selectable-role" ng-class="{
+                                        'non-restricted-role': !role._category_role
+                                    }" ng-bind-html="role.Name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+
+                            <div ng-if="state.show_on_remove_contact_notice"
+                                 style="width: 260px; padding: 3px;">
+                                <span class="red">Lab contact role has been removed for this user. Please remove lab personnel role if applicable.</span>
+                            </div>
+
+                            <div ng-if="(user.Roles | incompatibleRoles:user).length">
+                                <span class="red">Some of the selected roles are incompatible:</span>
+                            </div>
+
+                            <div class="selected-list">
+                                <a ng-repeat="role in user.Roles | orderBy:'Name'"
+                                    ng-disabled="!canRemoveRole(role)"
+                                    ng-click="canRemoveRole(role) && removeRole(role)"
+                                    class="selected-list-item"
+                                    ng-class="{
+                                        'incompatible': isRoleIncompatible(role)
+                                    }">
+                                    <i class="icon-x"></i>
+                                    <span>{{role.Name}}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="category-departments" class="control-group">
+                    <div ng-if="config.fields.show_field_department" style="display:flex;">
+                        <label for="roles">Department(s)</label>
+                        <i ng-if="!state.all_departments" class="icon-spinnery-dealie spinner"></i>
+                        <div ng-if="state.all_departments">
+                            <ui-select ng-model="state.selectedDepartment" theme="selectize"
+                                    ng-required="state.require_field_department"
+                                    ng-disabled="!state.allow_edit"
+                                    direction="up"
+                                    on-select="onSelectDepartment($item, $model, $label)">
+                                <ui-select-match placeholder="Select A Department"></ui-select-match>
+                                <ui-select-choices repeat="dept in state.all_departments
+                                                            | propsFilter: {Name: $select.search}
+                                                            | orderBy:'Name'">
+                                    <div ng-bind-html="dept.Name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+
+                            <div class="selected-list">
+                                <a ng-if="user.Primary_department_id"
+                                    ng-click="removeDepartment(user.Primary_department)"
+                                    class="selected-list-item">
+                                    <i class="icon-x"></i>
+                                    <span>{{user.Primary_department.Name}}</span>
+                                </a>
+                                <a ng-if="user.PrincipalInvestigator"
+                                   ng-repeat="dept in user.PrincipalInvestigator.Departments | orderBy:'Name'"
+                                    ng-click="removeDepartment(dept)"
+                                    class="selected-list-item">
+                                    <i class="icon-x"></i>
+                                    <span>{{dept.Name}}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-if="config.fields.show_field_position">
+                        <label for="position">Position</label>
+                        <select name="position"
+                                ng-disabled="!state.allow_edit"
+                                ng-model="user.Position"
+                                ng-options="position as position for position in category.config.positionOptions"
+                                ng-required="state.require_field_position">
+                            <option value="" style="display:none">--Select a Position--</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <div style="text-align: left;">
+            <div>
+                <ul class="red" style="list-style: none;">
+                    <li ng-repeat="rule in invalid_rules = (validation | filter:{valid:false})"
+                        style="display: flex; align-items: center;">
+                        <i style="margin-right: 5px;" ng-class="{
+                            'icon-checkmark':rule.valid,
+                            'icon-x':!rule.valid
+                        }"></i>
+                        {{rule.desc}}
+                    </li>
+                </ul>
+            </div>
+
+            <div ng-if="!invalid_rules.length && userCategoryDiff.length">
+                <h5>Due to changes in Role, this user will appear in the following {{userCategoryDiff.length == 1 ? 'category' : 'categories'}} after saving:</h5>
+                <span style="display: flex;">
+                    <span class="badge badge-info" style="margin: 3px;"
+                        ng-repeat="category in categories | userCategories:user | orderBy:'Name'">
+                        {{category.name}}
+                    </span>
+                </span>
+            </div>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-success"
+                ng-disabled="saving || !state.allow_edit || userForm.$invalid">SAVE</button>
+            <a class="btn btn-danger" ng-click="cancel()">CANCEL</a>
+        </div>
+    </div>
+</form>

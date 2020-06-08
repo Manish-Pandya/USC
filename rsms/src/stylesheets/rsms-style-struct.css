@@ -107,3 +107,26 @@ ul.grid-list li > * {
 .room-list-building {
     text-decoration: underline;
 }
+
+/* Overlay */
+    .overlay-container {
+        position: relative;
+    }
+
+    .overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 3;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .overlay > * { margin-right: 5px; }
+/***********/

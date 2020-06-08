@@ -1,0 +1,1 @@
+ALTER TABLE `building` ADD COLUMN `map_url` TINYTEXT DEFAULT NULL;

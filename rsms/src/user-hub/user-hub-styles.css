@@ -1,0 +1,95 @@
+/* Reduce the padding in the overall container */
+.container-fluid {
+    padding-left: 35px;
+    padding-right: 35px;
+}
+
+table.userList td {
+    white-space: nowrap;
+}
+
+.category-roles-container {
+    display: inline-block;
+    margin: 0;
+    padding: 10px;
+    padding-bottom: 15px;
+    border: solid 1px;
+    border-bottom: none;
+    border-radius: 10px;
+    margin-bottom: -7px;
+}
+
+/* Edit User Modal */
+.modal-dialog-wide .modal-dialog, .modal-dialog-wide.modal {
+    width: 1000px;
+}
+
+#edit-user-form{
+    margin-bottom: 0;
+}
+
+.control-group label {
+    /* Decorate text */
+    font-weight: bold;
+    text-align: right;
+
+    /* Restrict width to display inline with input */
+    display: inline-block;
+    width: 150px;
+    padding-right: 10px;
+
+    /* Add spacing between following lines */
+    margin-bottom: 20px;
+}
+
+.control-group .ui-select-container {
+    width: 260px;
+    margin-left: 3px;
+}
+
+.selected-list {
+    display: flex;
+    flex-wrap: wrap;
+    width: 260px;
+}
+
+.selected-list .selected-list-item {
+    display: inline-flex;
+    align-items: baseline;
+    padding: 0 5px;
+    margin: 3px;
+    border: solid 1px #aaa;
+    border-radius: 6px;
+    background: lightblue;
+}
+
+.selected-list .selected-list-item.incompatible {
+    background: salmon;
+}
+
+.selected-list .selected-list-item:hover {
+    background: lightcyan;
+    text-decoration: none;
+}
+
+.selected-list .selected-list-item i { font-size: 0.8em; }
+
+.secondary-btn {
+    margin-left: -1px;
+    height: 26px;
+    width: 28px;
+    text-align: center;
+    border: solid 1px;
+}
+
+.red-button {
+    background-color: #da4f49;
+    border-color: #da4f49;
+    color: #fff;
+}
+
+.red-button:hover { color: #fff; }
+
+.selectable-role.non-restricted-role {
+    font-style: italic;
+}

@@ -40,33 +40,27 @@ else{
         if(isset($_SESSION["LOGGED_OUT"])){
             $loggedOut = $_SESSION["LOGGED_OUT"];
         }
-        session_destroy();
-        session_start();
+
         if(isset($loggedOut)){
             $_SESSION["LOGGED_OUT"] = $loggedOut;
         }
+
         $_SESSION['error'] = "The username or password you entered was incorrect.";
         header("location:" . LOGIN_PAGE);
     }
     //successful login (ActionManager->loginAction() returned true)
     else{
         $LOG->debug('Login successful');
+
+        // Remove any existing error
         unset($_SESSION['error']);
 
-        $_SESSION['DESTINATION'] = str_replace("rsms/", "", $_SESSION['DESTINATION']);
-		$_SESSION['DESTINATION'] = str_replace("//", "", $_SESSION['DESTINATION']);
+        // Retrieve target destination, or assume application root if none is provided
+        $loc = $_SESSION['DESTINATION'] ?? WEB_ROOT;
 
-        $host  = $_SERVER['HTTP_HOST'];
-        $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-        $hloc = '';
-        if(isset($_SESSION['REDIRECT'])){
-            $hloc = $_SESSION['REDIRECT'];
-        }else{
-            $hloc = $uri  . '/' . $_SESSION['DESTINATION'];
-        }
-
-        $LOG->debug( "Destination: $hloc" );
-        header("location:$hloc");
+        // Redirect to location
+        $LOG->debug( "Destination: " . $loc );
+        header("location:" . $loc);
     }
     
 }

@@ -2,6 +2,7 @@
     <i class="icon-spinnery-dealie spinner large"></i>
     <span>Getting Buildings...</span>
 </div>
+
 <table class="userList table table-striped table-hover piTable table-bordered locationTable sticky-headers" sticky-headers ng-if="buildings && !loading" watch="filtered.length">
     <thead>
         <tr>
@@ -20,7 +21,11 @@
                 <input class="span2" ng-model="search.building" placeholder="Filter by Building" />
             </th>
             <th>
-                <a>Alias</a><br>
+                <a>Alias</a>
+                <i class="icon-help pull-right"
+                   style="color: #777"
+                   popover="As of April 2020, Building Aliases are displayed in the Hazard Hub and Hazard Inventory."></i>
+                <br>
                 <input class="span2" ng-model="search.alias" placeholder="Filter by Alias" />
             </th>
             <th>
@@ -56,16 +61,45 @@
 
             <td style="width:15%">
                 <span ng-if="!building.edit" once-text="building.Name"></span>
-                <input ng-if="building.edit" ng-model="copy.Name" ng-change="lhf.editing(true)">
+                <input ng-if="building.edit" ng-model="copy.Name" ng-change="lhf.editing(true)" class="full" placeholder="Name">
             </td>
             <td style="width:15%">
                 <span ng-if="!building.edit" once-text="building.Alias"></span>
-                <input ng-if="building.edit" ng-model="copy.Alias" ng-change="lhf.editing(true)">
+                <input ng-if="building.edit" ng-model="copy.Alias" ng-change="lhf.editing(true)" placeholder="Alias">
             </td>
 
             <td style="width:15%">
-                <span ng-if="!building.edit" once-text="building.Physical_address"></span>
-                <input ng-if="building.edit" ng-model="copy.Physical_address" ng-change="lhf.editing(true)">
+                <div ng-if="!building.edit" class="even-content" style="align-items: center;">
+                    <div once-text="building.Physical_address"></div>
+                    <a class="btn btn-info" target="_blank"
+                       title="View Map"
+                       ng-if="building.Map_url" ng-href="{{building.Map_url}}">
+                        <i class="icon-map-pin-fill"></i>
+                    </a>
+                </div>
+                <div ng-if="building.edit">
+                    <div class="full even-content">
+                        <input ng-model="copy.Physical_address" ng-change="lhf.editing(true)" style="width: 80%"
+                            placeholder="Address">
+
+                        <a ng-if="!copy.Map_url && !copy.showmap" ng-click="copy.showmap = true"
+                            class="btn"
+                            style="font-size: small; margin-left:auto;"
+                            title="Add a maps link (such as from Google Maps) to this Building">
+                            <i class="icon-map-pin-fill"></i>
+                        </a>
+                    </div>
+
+                    <div ng-if="copy.Map_url || copy.showmap" class="even-content full" style="margin-top: 10px; align-items: flex-start;">
+                        <input type="url" ng-model="copy.Map_url" ng-change="lhf.editing(true)"
+                            placeholder="Maps link" style="width: 80%">
+
+                        <a class="btn btn-info" target="_blank"
+                           ng-if="copy.Map_url" ng-href="{{copy.Map_url}}">
+                            <i class="icon-map-pin-fill"></i>
+                        </a>
+                    </div>
+                </div>
             </td>
             <td style="width:15%">
                 <span ng-if="building.edit">
