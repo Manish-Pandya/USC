@@ -735,6 +735,7 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
              * non-functional separators.
              */
             hubViews: "=",
+            hubNavNotifications: "=",
             hubIcon: "@",
             hubImage: "@",
             hubTitle: "@",
@@ -755,7 +756,14 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
                                 <a  ng-if="view.route"
                                     ng-click="setRoute(view.route)"
                                     ng-href="#{{view.route}}"
-                                    ng-class="{'active-nav': selectedRoute == view.route}">{{view.name}}</a>
+                                    ng-class="{'active-nav': selectedRoute == view.route}">
+                                    <span>{{view.name}}</span>
+                                    <span ng-repeat="notice in hubNavNotifications | filter:{name:view.name}:true" class="nav-notification-badge">
+                                        <span class="nav-notification-count">
+                                            {{notice.count | maxNum:9}}
+                                        </span>
+                                    </span>
+                                </a>
                             </li>
 
                             <li>
@@ -1069,7 +1077,26 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
             console.log(start, limit, start + limit)
             return items.slice(start, start+limit);
         }
-    }).controller('WarnRoomRemoveCtrl', function ($scope, $rootScope,room, behavior, $q, $http, $modalInstance, convenienceMethods, room) {
+    })
+
+    /**
+     * Reduce a number to a maximum value if the number is greater.
+     *  `20 | maxNum:5` will return "5+"
+     *  `20 | maxNum:20` will return "20"
+     *  `20 | maxNum:50` will return "20"
+     */
+    .filter('maxNum', function(){
+        return function( num, max ){
+            if( !num || !max )
+                return num;
+
+            if( num > max )
+                return max + "+";
+            else
+                return num;
+        }
+    })
+    .controller('WarnRoomRemoveCtrl', function ($scope, $rootScope,room, behavior, $q, $http, $modalInstance, convenienceMethods, room) {
 
         $scope.room = room;
         

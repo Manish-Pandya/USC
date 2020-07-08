@@ -99,6 +99,20 @@ ul.grid-list li > * {
     padding: 0 10px;
 }
 
+.hub-banner ul.banner-nav li .nav-notification-badge {
+    position: relative;
+    min-width: 17px;
+}
+.hub-banner ul.banner-nav li .nav-notification-badge .nav-notification-count {
+    position: absolute;
+    right: -2px;
+    bottom: 3px;
+    padding: 0 5px;
+    border: 1px solid;
+    border-radius: 9px;
+    min-width: 1px;
+}
+
 .hub-toolbar { margin-top: 10px; }
 
 .hub-body { }

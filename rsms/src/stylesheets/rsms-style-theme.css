@@ -32,6 +32,14 @@ ul.banner-nav li span {
     text-decoration: underline;
 }
 
+.hub-banner ul.banner-nav li .nav-notification-badge .nav-notification-count {
+    text-decoration: none;
+    background: white;
+    color: black;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
 /* Blue Theme */
     .hub-theme-blue {}
 
