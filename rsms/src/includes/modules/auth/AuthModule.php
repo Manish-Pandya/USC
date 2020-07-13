@@ -1,6 +1,6 @@
 <?php
 class AuthModule implements RSMS_Module, MessageTypeProvider, MyLabWidgetProvider {
-    public const NAME = 'Auth';
+    public const NAME = 'Authorization';
 
     public const AUTH_TYPE_ACTIVE_USER = 'ACTIVE_USER';
     public const AUTH_TYPE_CANDIDATE_USER = 'CANDIDATE_USER';
