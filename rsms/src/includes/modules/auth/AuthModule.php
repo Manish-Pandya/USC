@@ -119,6 +119,24 @@ class AuthModule implements RSMS_Module, MessageTypeProvider, MyLabWidgetProvide
             }
         );
 
+        $resolvers[] = new MacroResolver(
+            UserAccessRequest::class,
+            '[PI First Name]', 'First Name of the Principal Investigator',
+            function(UserAccessRequest $request){
+                $pi = $request->getPrincipalInvestigator();
+                return $pi->getUser()->getFirst_name();
+            }
+        );
+
+        $resolvers[] = new MacroResolver(
+            UserAccessRequest::class,
+            '[PI Last Name]', 'Last Name of the Principal Investigator',
+            function(UserAccessRequest $request){
+                $pi = $request->getPrincipalInvestigator();
+                return $pi->getUser()->getLast_name();
+            }
+        );
+
         // Request date
         $resolvers[] = new MacroResolver(
             UserAccessRequest::class,
