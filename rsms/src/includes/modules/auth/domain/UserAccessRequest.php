@@ -77,9 +77,18 @@ class UserAccessRequest extends GenericCrud {
 
         return $this->pi;
     }
+
     public function getPrincipal_investigator_name(){
         $pi = $this->getPrincipalInvestigator();
         return $pi->getName();
+    }
+
+    public function getIs_potential_duplicate(){
+        $pi_user = $this->getPrincipalInvestigator()->getUser();
+        $duplicate_first = $this->getLast_name()  == $pi_user->getLast_name();
+        $duplicate_last = $this->getFirst_name() == $pi_user->getFirst_name();
+
+        return $duplicate_first && $duplicate_last;
     }
 }
 ?>

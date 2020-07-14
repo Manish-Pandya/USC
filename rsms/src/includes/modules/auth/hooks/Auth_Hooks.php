@@ -13,11 +13,7 @@ class Auth_Hooks {
 
         ///////////////////////
         // Asses potential duplicate PI (is this PI trying to request access to themselves?)
-        $pi_user = $request->getPrincipalInvestigator()->getUser();
-        $dupe_first = $request->getLast_name()  == $pi_user->getLast_name();
-        $dupe_last = $request->getFirst_name() == $pi_user->getFirst_name();
-
-        if( $dupe_first && $dupe_last ){
+        if( $request->getIs_potential_duplicate() ){
             $LOG = LogUtil::get_logger( __CLASS__ , __FUNCTION__ );
             $LOG->warn("Candidate user (" . $request->getNetwork_username() . ") first/last name matches selected PI (" . $pi_user->getUsername() . ")");
 
