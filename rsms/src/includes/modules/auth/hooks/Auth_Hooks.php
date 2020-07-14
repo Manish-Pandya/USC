@@ -10,6 +10,40 @@ class Auth_Hooks {
 
         // New request has been submitted; notify PI
         self::enqueueUserAccessRequestMessage( $request->getKey_id(), AuthModule::MTYPE_ACCESS_REQUEST_SUBMITTED);
+
+        ///////////////////////
+        // Asses potential duplicate PI (is this PI trying to request access to themselves?)
+        $pi_user = $request->getPrincipalInvestigator()->getUser();
+        $dupe_first = $request->getLast_name()  == $pi_user->getLast_name();
+        $dupe_last = $request->getFirst_name() == $pi_user->getFirst_name();
+
+        if( $dupe_first && $dupe_last ){
+            $LOG = LogUtil::get_logger( __CLASS__ , __FUNCTION__ );
+            $LOG->warn("Candidate user (" . $request->getNetwork_username() . ") first/last name matches selected PI (" . $pi_user->getUsername() . ")");
+
+            // First/Last name match; potentially same user
+            // Send email to sysadmin for possible intervention
+            $LOG->info("Send message to system admin");
+
+            $ctx = new SystemAdminMessageContext([
+                'message' => "User Access Request subbmited with user name which potentially duplicates existing Principal Investigator",
+
+                'request_name' => $request->getFirst_name() . ' ' . $request->getLast_name(),
+                'request_username' => $request->getNetwork_username(),
+                'request_email'    => $request->getEmail(),
+
+                'pi_name'        => $pi_user->getName(),
+                'pi_username'    => $pi_user->getUsername(),
+                'pi_email'       => $pi_user->getEmail()
+            ]);
+
+            $messenger = new Messaging_ActionManager();
+            $messenger->enqueueMessages(
+                SysadminModule::NAME,
+                SysadminModule::MTYPE_NOTIFY_SYSTEM_ADMIN,
+                [ $ctx ]
+            );
+        }
     }
 
     public static function after_access_request_resolved ( UserAccessRequest $request ){
