@@ -20,6 +20,12 @@
             <h5 ng-if="data.candidate.Current_access_request.Status == 'PENDING'">
                 <span>You submitted a request on {{getDate(data.candidate.Current_access_request.Date_created) | date:'shortDate'}} to access this system as a member of {{data.candidate.Current_access_request.Principal_investigator_name}}’s laboratory.</span>
                 <span>This request is currently under review and you will be notified when your Principal Investigator has approved your request.</span>
+
+                <p ng-if="data.candidate.Current_access_request.Is_potential_duplicate" class="red auth-element" style="display:flex; align-items: flex-start;">
+                    <i class="icon-warning" style="padding-right: 10px;"></i>
+                    <span>An issue has been identified with your account and has been reported to the system administrator. You will be contacted once the issue has been resolved.</span>
+                </p>
+
                 <p class="auth-element">
                     <a class="btn btn-success" ng-href="{{GLOBAL_WEB_ROOT}}action.php?action=logoutAction">Sign Out</a>
                 </p>
