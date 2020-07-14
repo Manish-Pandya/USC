@@ -38,7 +38,7 @@ class StaticTrainingModule implements RSMS_Module, MyLabWidgetProvider {
         // TODO: Dynamically load list of files?
         $fileinfo = new GenericDto([
             'disclaimers' => [
-                "Note: Bloodborne Pathogens Training will not be offered as a classroom course during the University closure due to COVID-19.  This course will now be delivered using the Research Safety Management System.",
+                "Note: Bloodborne Pathogens Training will not be offered as a classroom course during the COVID-19 pandemic due to the need for physical distancing. This course will now be delivered using the Research Safety Management System.",
                 "Answering 'Yes' below will download a file which you can open to complete this training course."
             ],
             'text' => "Will you be conducting research involving human-derived materials and need to take bloodborne pathogens training?",
