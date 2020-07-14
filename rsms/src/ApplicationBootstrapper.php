@@ -10,6 +10,8 @@ class ApplicationBootstrapper {
     public const CONFIG_LOGGING_OUTPUTDIR = 'logging.outputdir';
     public const CONFIG_LOGGING_CONFIGFILE = 'logging.configfile';
 
+    public const CONFIG_SYSTEM_ADMIN_CONTACT_EMAIL = 'system.admin.email';
+
     // Authentication/Authorization
     public const CONFIG_SERVER_AUTH_INCLUDE = 'server.auth.include_script';
     public const CONFIG_SERVER_AUTH_PROVIDE_LDAP = 'server.auth.providers.ldap';
