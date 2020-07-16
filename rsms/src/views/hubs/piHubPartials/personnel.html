@@ -97,6 +97,10 @@
     <div class="modal-body">
         <h3 class="alert alert-danger" ng-if="error">{{error}}</h3>
         <h3>{{message}}</h3>
+        <p style="padding-top:5px;">
+            <span>Note:</span>
+            {{note}}
+        </p>
     </div>
     <div class="modal-footer">
         <i ng-if="userCopy.IsDirty" class="icon-spinnery-dealie spinner small"></i>
