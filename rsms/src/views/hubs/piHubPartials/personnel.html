@@ -40,7 +40,7 @@
     <thead>
         <tr ng-if="contacts.length">
             <th>Remove User</th>
-            <th>Inactivate User</th>
+            <th></th>
             <th>Name</th>
             <th>Email</th>
             <th>Lab Phone</th>
@@ -51,12 +51,12 @@
     <tbody>
         <tr ng-repeat="user in (contacts = (PI.LabPersonnel | isLabContact | activeOnly))" ng-class="{'new': user.new}">
             <td width="14%">
-                <a class="btn btn-warning left" ng-click="deactivateUser(user)" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i>Remove</a>
+                <a class="btn btn-warning left" ng-click="deactivateUser(user)" alt="Remove" title="Unassigns user from lab"><i class="icon-minus-4"></i>Remove</a>
                 <img ng-if="user.IsDirty && !user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/>
             </td>
             <td width="18%">
-                <a class="btn btn-danger left" ng-click="confirmRemoveUser(user)">
-                    <i class="icon-remove"></i>Inactivate</a>
+                <a class="btn btn-danger left" ng-click="confirmRemoveUser(user)" alt="Inactivate" title="Unassigns user from lab and Inactivates them in the system">
+                    <i class="icon-remove"></i>Remove and Inactivate</a>
                 <img ng-if="user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/>
             </td>
             <td>{{user.Name}}</td><td>{{user.Email}}</td><td>{{user.Lab_phone | tel}}</td><td>{{user.Emergency_phone | tel}}</td><td><a class="btn btn-primary left" ng-click="openModal(user, Constants.ROLE.NAME.LAB_CONTACT)"><i class="icon-pencil"></i>Edit</a></td>
@@ -69,18 +69,23 @@
 <table class="roomList personnelList table table-striped table-hover list" id="rooms" style="margin-top: 12px">
     <thead>
         <tr ng-if="personnel.length">
-            <th>Remove User</th><th>Inactivate User</th><th>Name</th><th>Email</th><th>Lab Phone</th><th>Edit</th>
+            <th>Remove User</th>
+            <th></th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Lab Phone</th>
+            <th>Edit</th>
         </tr>
     </thead>
     <tbody>
         <tr ng-repeat="user in (personnel = (PI.LabPersonnel | isNotContact))" ng-class="{'new': user.new}">
             <td width="14%">
-                <a class="btn btn-warning left" ng-click="deactivateUser(user)" alt="Deactivate" title="Deactivate"><i class="icon-remove"></i>Remove</a>
+                <a class="btn btn-warning left" ng-click="deactivateUser(user)" alt="Remove" title="Unassigns user from lab"><i class="icon-minus-4"></i>Remove</a>
                 <img ng-if="user.IsDirty && !user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/>
             </td>
             <td width="18%">
-                <a class="btn btn-danger left" ng-click="confirmRemoveUser(user)">
-                    <i class="icon-remove"></i>Inactivate</a>
+                <a class="btn btn-danger left" ng-click="confirmRemoveUser(user)" alt="Inactivate" title="Unassigns user from lab and Inactivates them in the system">
+                    <i class="icon-remove"></i>Remove and Inactivate</a>
                 <img ng-if="user.beingDeactivated" class="smallLoading" src="../../img/loading.gif" />
             </td>
             <td>{{user.Name}}</td><td>{{user.Email}}</td><td>{{user.Lab_phone | tel}}</td><td><a class="btn btn-primary left" ng-click="openModal(user, Constants.ROLE.NAME.LAB_PERSONNEL)"><i class="icon-pencil"></i>Edit</a></td>
