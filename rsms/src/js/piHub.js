@@ -843,11 +843,11 @@ confirmationController = function(items, $scope, piHubFactory, userHubFactory, $
     $scope.userCopy = piHubFactory.getUser();
     var functionType = items;
     if(functionType.toLowerCase() == 'inactivate'){
-        $scope.message =  "Do you want to remove "+$scope.userCopy.Name+" from the PI's lab personnel list?";
-        $scope.note = "This user will remain active with the Lab Personnel role";
+        $scope.message =  "Do you want " + $scope.userCopy.Name + " to be removed from the PI's lab personnel list?";
+        $scope.note = "This user will become unassigned but remain active with a Lab Personnel role.";
     }else{
-        $scope.message =  'Do you want to inactivate  '+$scope.userCopy.Name+' everywhere in the Research Safety Management System user list?';
-        $scope.note = "This user will become inactive Lab Personnel";
+        $scope.message =  'Do you want ' + $scope.userCopy.Name + ' to be removed from the PI’s lab personnel list and inactivated in the Research Safety Management System?';
+        $scope.note = "This user will become unassigned and inactive with a Lab Personnel role";
     }
 
     $scope.confirm = function(){
