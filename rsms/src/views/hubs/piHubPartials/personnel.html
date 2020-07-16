@@ -59,7 +59,11 @@
                     <i class="icon-remove"></i>Remove and Inactivate</a>
                 <img ng-if="user.beingDeactivated" class="smallLoading" src="../../img/loading.gif"/>
             </td>
-            <td>{{user.Name}}</td><td>{{user.Email}}</td><td>{{user.Lab_phone | tel}}</td><td>{{user.Emergency_phone | tel}}</td><td><a class="btn btn-primary left" ng-click="openModal(user, Constants.ROLE.NAME.LAB_CONTACT)"><i class="icon-pencil"></i>Edit</a></td>
+            <td>{{user.Name}}</td>
+            <td>{{user.Email}}</td>
+            <td>{{user.Lab_phone | tel}}</td>
+            <td>{{user.Emergency_phone | tel}}</td>
+            <td><a class="btn btn-primary left" ng-click="openModal(user, Constants.ROLE.NAME.LAB_CONTACT)"><i class="icon-pencil"></i>Edit</a></td>
         </tr>
     </tbody>
 </table>
@@ -88,7 +92,10 @@
                     <i class="icon-remove"></i>Remove and Inactivate</a>
                 <img ng-if="user.beingDeactivated" class="smallLoading" src="../../img/loading.gif" />
             </td>
-            <td>{{user.Name}}</td><td>{{user.Email}}</td><td>{{user.Lab_phone | tel}}</td><td><a class="btn btn-primary left" ng-click="openModal(user, Constants.ROLE.NAME.LAB_PERSONNEL)"><i class="icon-pencil"></i>Edit</a></td>
+            <td>{{user.Name}}</td>
+            <td>{{user.Email}}</td>
+            <td>{{user.Lab_phone | tel}}</td>
+            <td><a class="btn btn-primary left" ng-click="openModal(user, Constants.ROLE.NAME.LAB_PERSONNEL)"><i class="icon-pencil"></i>Edit</a></td>
         </tr>
     </tbody>
 </table>
