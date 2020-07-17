@@ -18,7 +18,16 @@ class Autoloader {
 	/** Array of directory paths to check when Autoloading */
 	private static $autoload_dirs;
 	private static $autoloaded_roots;
-	
+
+	/** Flag indicating that Entity Registration is enabled */
+	private static $ENABLE_ENTITY_REG = false;
+
+	/** Package names in which Entity Types are stored */
+	private const ENTITY_TYPE_DIRS = ['classes', 'domain'];
+
+	/** Queue of class names to be registered as Entity types */
+	private static $Q_DOMAIN_CLASSES = [];
+
 	/**
 	 * Initializes the Autoloader singleton.
 	 */
@@ -144,14 +153,43 @@ class Autoloader {
 			}
 		});
 	}
+	public static function init_registration(){
+		self::$LOG->trace("Initializing Autoloader Entity-Type Registration");
+		self::$ENABLE_ENTITY_REG = true;
+		self::registerEntityTypes();
+	}
 
 	static function onLoadSuccess( &$directory, &$class ){
+		////////////
+		// Entity type registration}
+
 		// If this path falls within a 'classes' or 'domain' folder, consider it an Entity type
-		if( stristr($directory, 'classes') || stristr($directory, 'domain') ){
-			// Register entity type
-			Logger::getLogger(__CLASS__)->debug("Loaded entity type $directory/$class");
-			EntityManager::register_entity_class($class);
+		foreach( self::ENTITY_TYPE_DIRS as $pkg ){
+			if( stristr($directory, $pkg) ){
+				// Enqueue type for entity registration
+				self::$Q_DOMAIN_CLASSES[] = [$directory, $class];
+				break;
+			}
 		}
+
+		// Process entity type registrations
+		self::registerEntityTypes();
+	}
+
+	static function registerEntityTypes(){
+		if( self::$ENABLE_ENTITY_REG ){
+			// Process queue
+			foreach( self::$Q_DOMAIN_CLASSES as $reg ){
+				$directory = $reg[0];
+				$class = $reg[1];
+				self::$LOG->debug("Loaded entity type $directory/$class");
+				EntityManager::register_entity_class($class);
+			}
+
+			// Empty queue
+			self::$Q_DOMAIN_CLASSES = [];
+		}
+		// else do nothing
 	}
 	
 }
