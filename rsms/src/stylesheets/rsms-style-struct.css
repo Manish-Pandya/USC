@@ -101,12 +101,11 @@ ul.grid-list li > * {
 
 .hub-banner ul.banner-nav li .nav-notification-badge {
     position: relative;
-    min-width: 17px;
 }
 .hub-banner ul.banner-nav li .nav-notification-badge .nav-notification-count {
     position: absolute;
-    right: -2px;
-    bottom: 3px;
+    right: -9px;
+    bottom: 6px;
     padding: 0 5px;
     border: 1px solid;
     border-radius: 9px;
@@ -144,3 +143,17 @@ ul.grid-list li > * {
 
     .overlay > * { margin-right: 5px; }
 /***********/
+
+.margin-list > * {
+    margin-left: 10px;
+}
+
+.modal-dialog-wide .modal-dialog,
+.modal-dialog-wide.modal {
+    width: 800px;
+}
+
+.modal-dialog-wide {
+    position: fixed;
+    left: 45%;
+}
