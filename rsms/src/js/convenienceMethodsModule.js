@@ -758,7 +758,9 @@ angular.module('convenienceMethodWithRoleBasedModule', ['ngRoute', 'roleBased', 
                                     ng-href="#{{view.route}}"
                                     ng-class="{'active-nav': selectedRoute == view.route}">
                                     <span>{{view.name}}</span>
-                                    <span ng-repeat="notice in hubNavNotifications | filter:{name:view.name}:true" class="nav-notification-badge">
+                                    <span class="nav-notification-badge"
+                                          ng-repeat="notice in hubNavNotifications | filter:{name:view.id}:true"
+                                          ng-if="notice.count">
                                         <span class="nav-notification-count">
                                             {{notice.count | maxNum:9}}
                                         </span>
