@@ -1,4 +1,5 @@
 var myLab = angular.module('myLab', [
+  'ui.router',
   'ui.bootstrap',
   'shoppinpal.mobile-menu',
   'convenienceMethodWithRoleBasedModule',
@@ -7,6 +8,36 @@ var myLab = angular.module('myLab', [
   'angular.filter',
   'text-mask',
   'rsms-AuthDirectives'])
+  .config(function($stateProvider, $urlRouterProvider, $httpProvider){
+    $urlRouterProvider.otherwise(function(){
+        return "/lab";
+    });
+
+    $stateProvider
+      .state('mylab', {
+        abstract: true,
+        url: '',
+        template: '<ui-view/>'
+      })
+
+      .state('mylab.current-lab', {
+        url: '/lab',
+        templateUrl: 'views/user-lab.html',
+        controller: 'MyLabCtrl'
+      })
+
+      .state('mylab.browser', {
+        url: '/browse/:id?',
+        templateUrl: 'views/lab-browser.html',
+        controller: 'BrowseLabsCtrl'
+      })
+
+      .state('mylab.browser.user-lab', {
+        url: '/lab',
+        templateUrl: 'views/user-lab.html',
+        controller: 'MyLabCtrl'
+      });
+  })
 .filter('openInspections', function () {
   return function (inspections) {
         if(!inspections)return;
@@ -95,9 +126,28 @@ var myLab = angular.module('myLab', [
 .factory('widgetModalActionFactory', function($q, $modal, widgetFunctionsFactory){
 
   var factory = {};
+  factory._enabled = true;
   factory.actionChain = null;
 
+  /**
+   * Enable/Disable the modal action factory
+   * @param {boolean} isEnabled 
+   */
+  factory.enable = function(isEnabled){
+    this._enabled = isEnabled == true;
+  };
+
+  /**
+   * Display an action modal
+   * @param {*} parentWidget 
+   * @param {*} actionWidget 
+   */
   factory.addAction = function(parentWidget, actionWidget){
+    if( !this._enabled ){
+      console.debug("Modal action factory is disabled; omitting action");
+      return;
+    }
+
     if( !factory.actionChain ){
       var deferred = $q.defer();
       deferred.resolve();
@@ -130,15 +180,14 @@ var myLab = angular.module('myLab', [
         factory.user;
         factory.pi;
 
-        factory.getMyLabWidgets = function(){
+        factory.getMyLabWidgets = function(id){
           var deferred = $q.defer();
 
-          if(factory.MyLabWidgets != null){
-            deferred.resolve( factory.MyLabWidgets );
-            return deferred.promise;
+          var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getMyLabWidgets";
+          if( id ){
+            url += '&pi=' + id;
           }
 
-          var url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getMyLabWidgets";
           convenienceMethods.getDataAsDeferredPromise(url).then(
             function(MyLabWidgets){
               factory.MyLabWidgets = MyLabWidgets;
@@ -166,6 +215,28 @@ var myLab = angular.module('myLab', [
 
           return deferred.promise;
         };
+
+        
+        factory.getAllPIs = function getAllPIs(){
+          let pisWillLoad = $q.defer();
+
+          if( factory.PIs ){
+            pisWillLoad.resolve(factory.PIs);
+          }
+          else {
+            var pis_url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getAllPINames";
+            convenienceMethods.getDataAsDeferredPromise(pis_url)
+              .then(
+                pis => {
+                  factory.PIs = pis;
+                  pisWillLoad.resolve(pis);
+                },
+                err => pisWillLoad.reject(err)
+            );
+          }
+
+          return pisWillLoad.promise;
+        }
 
         return factory;
 })
@@ -248,33 +319,85 @@ var myLab = angular.module('myLab', [
   };
 
   return widget_functions;
-});
+})
+.controller('MyLabAppCtrl', function MyLabAppCtrl ($rootScope){
+  // Populate nav items only for Admins
+  if( GLOBAL_SESSION_ROLES.userRoles.includes(Constants.ROLE.NAME.ADMIN) ){
+    $rootScope.mylabViews = [
+      {
+        name: 'My Dashboard',
+        route: '/lab'
+      },
+      {
+        name: 'Browse Labs',
+        route: '/browse/'
+      }
+    ]; 
+  }
+})
+.controller('BrowseLabsCtrl', function BrowseLabsCtrl($scope, $state, $stateParams, myLabFactory, widgetModalActionFactory){
+  console.debug("Lab Browser");
+  let id = undefined;
+  if( $stateParams ){
+    id = $stateParams.id;
+  }
 
-function myLabController($scope, $rootScope, convenienceMethods, myLabFactory, widgetFunctionsFactory) {
-    var mlf = myLabFactory
-    $scope.mlf = mlf;
+  // Get lab-list details
+  //   This is intended to replace the PI-search from PI Hub
+  //   Limit list to PIs
 
-    var getWidgets = function(){
-      return  mlf.getMyLabWidgets()
-      .then(
-          function(MyLabWidgets){
-              $scope.MyLabWidgets = MyLabWidgets;
-              if( $scope.MyLabWidgets ){
-                $scope.AllAlerts = [];
-                $scope.MyLabWidgets.forEach(w => {
-                  if( w.Alerts && w.Alerts.length ){
-                    $w.Alerts.forEach(alert => {
-                      $scope.AllAlerts.push({ group: w.Group, message: alert});
-                    });
-                  }
-                });
-              }
-          }
-      );
-    };
+  $scope.onSelectPi = function onSelectPi(pi){
+    console.debug("GO TO LAB FOR", pi);
+    $scope.pi = pi;
+    $state.go('mylab.browser.user-lab', {id: pi.Key_id});
+  }
 
-    $scope.widget_functions = widgetFunctionsFactory;
+  myLabFactory.getAllPIs()
+    .then( (pis) => $scope.PIs = pis )
+    .then( () => {
+      if( id ){
+        $scope.pi = $scope.PIs.find( pi => pi.Key_id == id);
+      }
+    });
 
-    //init call
-    $scope.inspectionPromise = getWidgets();
-}
+  // Disable the widgetModalActionFactory in the 'lab browser' view
+  widgetModalActionFactory.enable(false);
+})
+.controller('MyLabCtrl', function MyLabCtrl($scope, $stateParams, widgetModalActionFactory, myLabFactory, widgetFunctionsFactory) {
+  console.debug("My Lab loading", $stateParams);
+  let id = undefined;
+  if( $stateParams.id ){
+    id = $stateParams.id;
+  }
+  else {
+    widgetModalActionFactory.enable(true);
+  }
+
+  var mlf = myLabFactory
+  $scope.mlf = mlf;
+
+  $scope.getWidgets = function(id){
+    return  mlf.getMyLabWidgets(id)
+    .then(
+        function(MyLabWidgets){
+            $scope.MyLabWidgets = MyLabWidgets;
+            if( $scope.MyLabWidgets ){
+              $scope.AllAlerts = [];
+              $scope.MyLabWidgets.forEach(w => {
+                if( w.Alerts && w.Alerts.length ){
+                  $w.Alerts.forEach(alert => {
+                    $scope.AllAlerts.push({ group: w.Group, message: alert});
+                  });
+                }
+              });
+            }
+        }
+    );
+  };
+
+  $scope.widget_functions = widgetFunctionsFactory;
+
+  //init call
+  $scope.inspectionPromise = $scope.getWidgets(id);
+})
+;

@@ -1,0 +1,33 @@
+<div class="lab-browser">
+    <div style="margin: 10px; display: flex;">
+        <h3 class="bold" style="color: gray; padding-right: 10px;">Select A Principal Investigator</h3>
+
+        <div class="overlay-container" style="width: 500px;">
+            <div ng-if="!PIs" class="overlay">
+                <i class="icon-spinnery-dealie spinner"></i>
+                <span>Loading Principal Investigators...</span>
+            </div>
+
+            <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)">
+                <ui-select-match placeholder="Select or search for a PI">
+                    <div ng-bind-html="$select.selected.Name"
+                         ng-class="{ 'inactive-contact': !pi.Is_active }"></div>
+                </ui-select-match>
+                <ui-select-choices repeat="pi in PIs | propsFilter: {Name: $select.search} | orderBy:'Name'">
+                    <div ng-bind-html="pi.Name | highlight: $select.search"
+                         ng-class="{ 'inactive-contact': !pi.Is_active }"></div>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+    </div>
+
+    <div ng-if="pi" style="margin: 10px">
+        <h3>
+            <span>Viewing Dashboard for:</span>
+            <span ng-class="{'red inactive inactive-contact': !pi.Is_active}">{{pi.Name}}</span>
+        </h3>
+        <hr style="margin-top: 0"/>
+    </div>
+
+    <div ui-view></div>
+</div>
