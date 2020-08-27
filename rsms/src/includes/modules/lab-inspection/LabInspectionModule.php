@@ -210,6 +210,7 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
         $piLocationWidget->group = self::$MYLAB_GROUP_PROFILE;
         $piLocationWidget->template = 'pi-locations';
         $piLocationWidget->data = new GenericDto(array(
+            'PI' => $piDto->Key_id,
             'Buildings' => $piDto->Buildings,
             'Rooms' => $piDto->Rooms
         ));

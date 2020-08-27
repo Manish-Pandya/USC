@@ -4,7 +4,19 @@
             <div>
                 <span ng-repeat="b in (data.Buildings | filter : {'Key_id': room.Building_id} : true)">{{b.Name}}</span>
             </div>
-            <div>{{room.Name}}</div>
+            <div>
+                <room-type-icon ng-if="adminView" class="admin-only" room-type-name="room.Room_type"></room-type-icon>
+                {{room.Name}}
+            </div>
+            <div ng-if="adminView" class="admin-only">{{room.Purpose}}</div>
+            <div ng-if="adminView" class="admin-only">
+                <a class="btn btn-warning"
+                   ng-href="../../hazard-inventory/#?pi={{data.PI}}&room%5B%5D={{room.Key_id}}"
+                   target="_blank">
+                    <i class="icon-lab"></i>
+                    <span>Show Hazards</span>
+                </a>
+            </div>
         </div>
     </div>
 </div>
