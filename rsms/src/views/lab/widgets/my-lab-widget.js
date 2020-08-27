@@ -36,6 +36,7 @@ angular.module('myLab')
         controller: function ($scope, widgetModalActionFactory, widgetFunctionsFactory){
             $scope.GLOBAL_WEB_ROOT = window.GLOBAL_WEB_ROOT;
             $scope.Constants = Constants;
+            $scope.adminView = GLOBAL_SESSION_ROLES.userRoles.includes(Constants.ROLE.NAME.ADMIN);
 
             $scope.contentLoaded = function contentLoaded(){
                 $scope.loaded = true;
