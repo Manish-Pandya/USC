@@ -6,10 +6,10 @@ require_once '../top_view.php';
 
 <script type="text/javascript" src="../../js/lib/angular-ui-router.min.js"></script>
 
-<script src="../../js/lab/myLab.js"></script>
-<script src="widgets/my-lab-widget.js"></script>
+<script type="text/javascript" src="myLab.js"></script>
+<script type="text/javascript" src="widgets/my-lab-widget.js"></script>
 
-<script src="../../login/scripts/directives/UserAccessRequestTable.js"></script>
+<script type="text/javascript" src="../../login/scripts/directives/UserAccessRequestTable.js"></script>
 
 <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/mylab.css"/>
 
