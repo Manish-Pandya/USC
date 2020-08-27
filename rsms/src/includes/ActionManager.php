@@ -5344,14 +5344,25 @@ class ActionManager {
         return $principalInvestigator;
     }
 
-    public function getMyLabWidgets(){
+    public function getMyLabWidgets( ?int $pi = NULL ){
         $widgets = array();
 
-        // Get session-cached user details
-        $sess_user = $this->getCurrentUser();
+        $user = null;
+        if( isset($pi) ){
+            $principalInvestigator = $this->getPIById($pi);
+            $user = $principalInvestigator->getUser();
+        }
+        else {
+            // Get session-cached user details
+            $sess_user = $this->getCurrentUser();
+    
+            // Get persisted user details via session user ID
+            $user = $this->getUserById($sess_user->getKey_id());
+        }
 
-        // Get persisted user details via session user ID
-        $user = $this->getUserById($sess_user->getKey_id());
+        if( !$user ){
+            return new ActionError("", 404);
+        }
 
         foreach( ModuleManager::getAllModules() as $module ){
             if( $module instanceof MyLabWidgetProvider ){
