@@ -137,13 +137,14 @@ class ActionManager {
         if( $department_id == NULL ){
 
             $pi = $this->getPrincipalInvestigatorOrSupervisorForUser( $user );
-
-            try{
-                // user is a PI and may not have a 'primary department' assigned
-                $department = $pi->getDepartments()[0];
-            }
-            catch( Exception $err ){
-                $LOG->error("Unable to determine Department for this PI user");
+            if( isset($pi) ){
+                try{
+                    // user is a PI and may not have a 'primary department' assigned
+                    $department = $pi->getDepartments()[0];
+                }
+                catch( Exception $err ){
+                    $LOG->error("Unable to determine Department for this PI user");
+                }
             }
         }
         else {
@@ -5388,6 +5389,7 @@ class ActionManager {
         }
 
         $department = $this->getDepartmentForUser( $user );
+        $dept_name = isset($department) ? $department->getName() : 'N/A';
 
         // Collect User Info
         // Notes:
@@ -5400,7 +5402,7 @@ class ActionManager {
             'Last_name' => $user->getLast_name(),
             'Name' => $user->getName(),
             'Position' => $user->getPosition(),
-            'Department' => $department->getName() ?? null
+            'Department' => $dept_name
         );
 
         if( CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
