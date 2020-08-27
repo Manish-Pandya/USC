@@ -346,5 +346,30 @@ class LabInspectionSecurity {
         }
 
     }
+
+    public static function userCanViewPILabWidgets( $pi = NULL ){
+        $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
+
+        $user = $_SESSION['USER'];
+
+        if( CoreSecurity::userIsAdmin($user) ){
+            // User is Admin
+            $LOG->debug("User is administrator");
+            return true;
+        }
+
+        if( !isset($pi) ){
+            $LOG->debug("User is retrieveing their own widgets");
+            return true;
+        }
+
+        $user_pi = $user->getPrincipalInvestigator();
+        if( $user_pi && $user_pi->getKey_id() == $pi ){
+            $LOG->debug("User is the PI being viewed");
+            return true;
+        }
+
+        return false;
+    }
 }
 ?>
