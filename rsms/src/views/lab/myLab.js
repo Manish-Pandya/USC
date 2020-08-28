@@ -578,25 +578,27 @@ var myLab = angular.module('myLab', [
   
   /////////////////////
   // Setup
-
-  // TODO: User-selectable category: Personnel or Contact
-  let type = Constants.ROLE.NAME.LAB_PERSONNEL;
-
-  let categories = UserCategoryFactory.getCategories();
-  let personnel_category = categories.find( c => c.roles[0] == type);
-
   $scope.pi = pi;
+  $scope.roleOptions = [
+    Constants.ROLE.NAME.LAB_PERSONNEL,
+    Constants.ROLE.NAME.LAB_CONTACT
+  ];
+
   $scope.selected = {
     user: null,
-    isContact: false
+    isContact: false,
+    roleName: $scope.roleOptions[0]
   };
+
+  let categories = UserCategoryFactory.getCategories();
+  let personnel_category = categories.find( c => c.roles[0] == $scope.selected.roleName);
 
   // TODO: Filter users when isContact changes
   $scope.gettingUsers = true;
   UserHubAPI.getAllUsers()
     .then(
       users => {
-        console.debug("Filtering users to type of '" + type + "'...");
+        console.debug("Filtering users to type of '" + $scope.selected.roleName + "'...");
         let filtered = $filter('categoryFilter')(users, personnel_category);
         console.debug("Users filtered to LabPersonnel", $scope.labPersonnel);
 
@@ -652,7 +654,7 @@ var myLab = angular.module('myLab', [
         return;
     }
 
-    let type = $scope.selected.isContact ? Constants.ROLE.NAME.LAB_CONTACT : Constants.ROLE.NAME.LAB_PERSONNEL;
+    let type = $scope.selected.roleName;
     console.debug("Assign lab user: ", user.Key_id, $scope.pi.Key_id, type);
 
     $scope.savingAssignment = true;

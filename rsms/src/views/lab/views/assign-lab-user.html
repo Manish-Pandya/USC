@@ -6,10 +6,10 @@
     <div class="modal-body">
         <h3 class="alert alert-danger" ng-if="modalError">{{modalError}}</h3>
         <div class="control-group">
-            <label class="control-label" for="inputEmail">Select a Lab Personnel</label>
+            <label class="control-label" for="inputEmail">Select a User</label>
             <div class="controls" ng-if="!gettingUsers">
-                <ui-select ng-model="selected.user" theme="selectize" ng-disabled="disabled" style="width:300px; margin-left:10px" on-select="checkUserForSave($item)">
-                    <ui-select-match placeholder="Select a {{modalData.type}}">{{$select.selected.Name}}</ui-select-match>
+                <ui-select ng-model="selected.user" theme="selectize" ng-disabled="disabled" on-select="checkUserForSave($item)">
+                    <ui-select-match placeholder="Select user">{{$select.selected.Name}}</ui-select-match>
                     <ui-select-choices repeat="user in labPersonnel | propsFilter: {Name: $select.search} | limitTo:20">
                         <div ng-class="{'inactive inactive-contact': !user.Is_active }" ng-bind-html="user.Name | highlight: $select.search"></div>
                     </ui-select-choices>
@@ -22,8 +22,12 @@
         </div>
 
         <div class="control-group">
-            <input name="isContact" type="checkbox" ng-model="selected.isContact">
-            <label class="control-label" for="isContact">Lab Contact?</label>
+            <label class="control-label" for="isContact">Role:</label>
+            <div class="controls">
+                <select ng-model="selected.roleName" style="width: 80%; margin-left: 3px;">
+                    <option ng-repeat="opt in roleOptions" ng-value="opt">{{opt}}</option>
+                </select>
+            </div>
         </div>
     </div>
 
