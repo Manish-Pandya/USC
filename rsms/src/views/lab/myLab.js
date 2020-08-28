@@ -338,6 +338,9 @@ var myLab = angular.module('myLab', [
     },
 
     unassignUserFromSupervisor: async function unassignUserFromSupervisor( user, inactivate, sourcelist ){
+      // Set edit flag
+      user._editing = true;
+
       // 1. Confirm unassignment (and inactivation)
       let title = "Confirm Unassignment";
       let message = undefined;
@@ -373,6 +376,10 @@ var myLab = angular.module('myLab', [
         ToastApi.toast(unassignedUser.Name + ' has been Unassigned' + (!unassignedUser.Is_active ? ' and Inactivated' : ''));
       }
       catch(err){}
+      finally {
+        // Always unset edit flag
+        user._editing = undefined;
+      }
     },
 
     /** Edit a user using UserHub tools */
@@ -384,6 +391,7 @@ var myLab = angular.module('myLab', [
       let roleName = role;
       let _user = undefined;
       if( user ){
+        user._editing = true;
         let editing_pi = user.Class == 'PrincipalInvestigator';
 
         // Lookup user details
@@ -444,19 +452,43 @@ var myLab = angular.module('myLab', [
       });
 
       // What to do with the saved user?
-      modalInstance.result.then( saved => {
+      modalInstance.result.then(
+        saved => {
+          // 0. If supervisor is not this PI, then remove
+          if( saved.Supervisor_id != supervisor.Key_id ){
+            if(sourcelist && Array.isArray(sourcelist) ) {
+              console.debug("Remove unassigned user from source list");
+              let idx = sourcelist.indexOf(user);
+              if( idx > -1 ){
+                sourcelist.splice(idx, 1);
+              }
+            }
+          }
+
+          // 1. If editing; apply any changed user details
           if( _user && _user.Key_id ){
             console.debug("Extend existing user");
             angular.extend(user, saved)
+
+            user._editing = undefined;
           }
+
+          // 2. New user; add to source list (if provided)
           else if(sourcelist && Array.isArray(sourcelist) ) {
             console.debug("Add new user to source list");
             sourcelist.push(saved);
           }
+
+          // 3. New user, but no source. nothing to do...
           else {
             console.warn("Nothing to do with saved user");
           }
-      });
+        },
+        err_cancel => {
+          // Cancel or Error editing; remove flag
+          if( user ) user._editing = undefined;
+        }
+      );
     }
   };
 
@@ -623,17 +655,22 @@ var myLab = angular.module('myLab', [
     let type = $scope.selected.isContact ? Constants.ROLE.NAME.LAB_CONTACT : Constants.ROLE.NAME.LAB_PERSONNEL;
     console.debug("Assign lab user: ", user.Key_id, $scope.pi.Key_id, type);
 
+    $scope.savingAssignment = true;
     userHubFactory.assignLabUser(user.Key_id, $scope.pi.Key_id, type)
       .then(
         savedUser => {
+          $scope.savingAssignment = undefined;
           console.debug("Assigned user: ", savedUser);
+          ToastApi.toast("Assigned " + savedUser.Name);
 
           // Update user in our cache
           angular.extend(user, savedUser);
 
           $modalInstance.close(user);
         },
-        error     => {}
+        error => {
+          $scope.savingAssignment = undefined;
+        }
       );
   };
 

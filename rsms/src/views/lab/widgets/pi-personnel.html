@@ -8,7 +8,9 @@
                     {{role.Name || role}}
                 </span>
             </div>
-            <div ng-if="adminView">
+            <div ng-if="adminView" class="overlay-container">
+                <div ng-if="personnel._editing" class="overlay"><i class="icon-spinnery-dealie spinner"></i></div>
+
                 <a class="btn btn-small btn-primary left"
                    ng-click="api.editUserAsRole(personnel, Constants.ROLE.NAME.LAB_PERSONNEL, data.PI, data.LabPersonnel)">
                     <i class="icon-pencil"></i>
