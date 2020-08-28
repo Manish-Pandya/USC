@@ -12,14 +12,17 @@
                 <div ng-if="personnel._editing" class="overlay"><i class="icon-spinnery-dealie spinner"></i></div>
 
                 <a class="btn btn-small btn-primary left"
+                   title="Edit"
                    ng-click="api.editUserAsRole(personnel, Constants.ROLE.NAME.LAB_PERSONNEL, data.PI, data.LabPersonnel)">
                     <i class="icon-pencil"></i>
                 </a>
                 <a class="btn btn-small btn-warning left"
+                   title="Unassign from PI"
                    ng-click="api.unassignUserFromSupervisor(personnel, false, data.LabPersonnel)">
                     <i class="icon-minus-4"></i>
                 </a>
                 <a class="btn btn-small btn-danger left"
+                   title="Unassign from PI and Inactivate"
                    ng-click="api.unassignUserFromSupervisor(personnel, true, data.LabPersonnel)">
                     <i class="icon-remove"></i>
                 </a>
