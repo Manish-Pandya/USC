@@ -7,7 +7,8 @@ var myLab = angular.module('myLab', [
   'cgBusy',
   'angular.filter',
   'text-mask',
-  'rsms-AuthDirectives'])
+  'rsms-AuthDirectives',
+  'rsms-UserHub'])
   .config(function($stateProvider, $urlRouterProvider, $httpProvider){
     $urlRouterProvider.otherwise(function(){
         return "/lab";
@@ -216,7 +217,6 @@ var myLab = angular.module('myLab', [
           return deferred.promise;
         };
 
-        
         factory.getAllPIs = function getAllPIs(){
           let pisWillLoad = $q.defer();
 
@@ -238,9 +238,14 @@ var myLab = angular.module('myLab', [
           return pisWillLoad.promise;
         }
 
+        factory.getUserById = function getUserById(id){
+          let url = "../../ajaxaction.php?&callback=JSON_CALLBACK&action=getUserById&id=" + id;
+          return convenienceMethods.getDataAsDeferredPromise(url);
+        }
+
         return factory;
 })
-.factory('widgetFunctionsFactory', function($q, myLabFactory){
+.factory('widgetFunctionsFactory', function($q, $modal, $timeout, myLabFactory, userHubFactory, UserCategoryFactory, convenienceMethods){
   var widget_functions = {
     getPhoneMaskConfig: function(){
       return {
@@ -315,6 +320,143 @@ var myLab = angular.module('myLab', [
 
     inspectionHasHazard: function(inspection, field){
       return inspection.HazardInfo[field] > 0;
+    },
+
+    openAssignUserModal: function(pi, personnelList){
+      let assignmentModal = $modal.open({
+        templateUrl: 'views/assign-lab-user.html',
+        controller: 'AssignLabUserCtrl',
+        resolve: { pi: () => pi }
+      });
+
+      assignmentModal.result.then(
+        assigned => {
+          personnelList.push(assigned);
+        },
+        cancel   => { console.debug("Cancelled assignment", cancel); }
+      );
+    },
+
+    unassignUserFromSupervisor: async function unassignUserFromSupervisor( user, inactivate, sourcelist ){
+      // 1. Confirm unassignment (and inactivation)
+      let title = "Confirm Unassignment";
+      let message = undefined;
+      let note = undefined;
+
+      if( inactivate ){
+        title += " and Inactivation";
+        message = "Do you want " + user.Name + " to be removed from the PI’s lab personnel list and inactivated in the Research Safety Management System?";
+        note = "This user will become unassigned and inactive with a Lab Personnel role";
+      }
+      else {
+        message = "Do you want " + user.Name + " to be removed from the PI's lab personnel list?";
+        note = "This user will become unassigned but remain active with a Lab Personnel role.";
+      }
+
+      let body = '<h3>' + message + '</h3>'
+               + '<div class="spacer"/>'
+               + '<p><span>Note:</span>' + note + '</p>';
+
+      try {
+        await convenienceMethods.modalConfirm( title, body, 'Confirm', 'Cancel' );
+
+        // 2. Save user, severing link
+        let unassignedUser = await userHubFactory.unassignLabUser( user.Key_id, inactivate );
+
+        // 3. Update model
+        console.debug("Remove user from source list");
+        let idx = sourcelist.indexOf(user);
+        if( idx > -1){
+          $timeout(() => sourcelist.splice(idx, 1));
+        }
+
+        ToastApi.toast(unassignedUser.Name + ' has been Unassigned' + (!unassignedUser.Is_active ? ' and Inactivated' : ''));
+      }
+      catch(err){}
+    },
+
+    /** Edit a user using UserHub tools */
+    editUserAsRole: async function editUserAsRole( user, role, supervisor, sourcelist ){
+      console.debug("Edit", user, role);
+
+      if( !role ) throw "Missing role - unable to categorize user";
+
+      let roleName = role;
+      let _user = undefined;
+      if( user ){
+        let editing_pi = user.Class == 'PrincipalInvestigator';
+
+        // Lookup user details
+        let uid = user.Key_id;
+
+        // If we're editing the PI, lookup the PI's user
+        if( editing_pi ){
+          uid = user.User.Key_id;
+        }
+
+        _user = await myLabFactory.getUserById( uid );
+        console.debug("Retrieved user details", _user);
+
+        if( !editing_pi ){
+          // If we're editing a personnel/contact, ensure that the PI is referenced
+          if( !_user.Supervisor ){
+            _user.Supervisor = {
+                Class: supervisor.Class,
+                Key_id: supervisor.Key_id,
+                Name: supervisor.Name
+            };
+          }
+          else if( _user.Supervisor_id != supervisor.Key_id ){
+              console.error("User references other PI...");
+          }
+        }
+      }
+      // else we're creating a new user?
+
+      ////////////////////////////////
+      // Prep the userhub edit modal
+
+      // Look up category for the incoming role
+      let categories = UserCategoryFactory.getCategories();
+      let category = categories.find( c => c.roles[0] == roleName );
+
+      // Open the UserHub edit modal, passing in our user reference
+      // If there is no user, the modal will initialize it, applying our defaults
+
+      let modalInstance = $modal.open({
+          templateUrl: GLOBAL_WEB_ROOT + '/user-hub/scripts/modals/edit-user-modal.html',
+          controller: 'EditUserModalCtrl',
+          resolve: {
+              category: function(){ return category; },
+              user: function(){ return _user; },
+              newUserDefaults: function(){
+                  return {
+                      Is_active: true,
+                      Supervisor: {
+                          Class: supervisor.Class,
+                          Key_id: supervisor.Key_id,
+                          Name: supervisor.Name
+                      },
+                      Supervisor_id: supervisor.Key_id
+                  };
+              }
+          }
+      });
+
+      // What to do with the saved user?
+      modalInstance.result.then( saved => {
+          if( _user && _user.Key_id ){
+            console.debug("Extend existing user");
+            angular.extend(user, saved)
+          }
+          else if(sourcelist && Array.isArray(sourcelist) ) {
+            console.debug("Add new user to source list");
+            sourcelist.push(saved);
+          }
+          else {
+            console.warn("Nothing to do with saved user");
+          }
+      });
     }
   };
 
@@ -399,5 +541,104 @@ var myLab = angular.module('myLab', [
 
   //init call
   $scope.inspectionPromise = $scope.getWidgets(id);
+})
+.controller('AssignLabUserCtrl', function AssignLabUserCtrl($scope, $modalInstance, $filter, $timeout, UserCategoryFactory, UserHubAPI, userHubFactory, pi){
+  
+  /////////////////////
+  // Setup
+
+  // TODO: User-selectable category: Personnel or Contact
+  let type = Constants.ROLE.NAME.LAB_PERSONNEL;
+
+  let categories = UserCategoryFactory.getCategories();
+  let personnel_category = categories.find( c => c.roles[0] == type);
+
+  $scope.pi = pi;
+  $scope.selected = {
+    user: null,
+    isContact: false
+  };
+
+  // TODO: Filter users when isContact changes
+  $scope.gettingUsers = true;
+  UserHubAPI.getAllUsers()
+    .then(
+      users => {
+        console.debug("Filtering users to type of '" + type + "'...");
+        let filtered = $filter('categoryFilter')(users, personnel_category);
+        console.debug("Users filtered to LabPersonnel", $scope.labPersonnel);
+
+        $timeout(() => {
+          $scope.labPersonnel = filtered;
+          $scope.modalError="";
+          $scope.gettingUsers = false;
+        });
+      }
+    );
+
+  /////////////////////
+  // Scope functions
+  $scope.checkUserForSave = function checkUserForSave(user) {
+    console.debug("Selected user: ", user);
+
+    // Determine if confirmation is required
+    // Show a message if we're re-activating or re-assigning a user
+    $scope.needsConfirmation = !user.Is_active || user.Supervisor;
+
+    // Confirmation may not be required, but build the confirmation message anyway
+
+    var currentRoleName = userHubFactory.hasRole(user, Constants.ROLE.NAME.LAB_CONTACT)
+      ? Constants.ROLE.NAME.LAB_CONTACT
+      : Constants.ROLE.NAME.LAB_PERSONNEL;
+
+    var supervisor_stmt = user.Supervisor
+      ? "is currently assigned to " + user.Supervisor.Name
+      : "is an unassigned " + currentRoleName
+
+    var inactive_stmt = user.Is_active ? undefined : "is inactive";
+    var question_stmt = "Assign to " + $scope.pi.Name + "?";
+
+    // Construct message
+    var changes = [supervisor_stmt, inactive_stmt]
+      .filter(s => s)
+      .join(' and ') + '.';
+
+    $scope.message = [
+      user.Name,
+      changes,
+      question_stmt
+    ].join(' ');
+
+    console.debug($scope.pi, $scope.message);
+
+    return !$scope.needsConfirmation;
+  }
+
+  $scope.save = function(user, confirmed){
+    if(!confirmed && !checkUserForSave(user)){
+        console.warn("Requested User edit requires confirmation");
+        return;
+    }
+
+    let type = $scope.selected.isContact ? Constants.ROLE.NAME.LAB_CONTACT : Constants.ROLE.NAME.LAB_PERSONNEL;
+    console.debug("Assign lab user: ", user.Key_id, $scope.pi.Key_id, type);
+
+    userHubFactory.assignLabUser(user.Key_id, $scope.pi.Key_id, type)
+      .then(
+        savedUser => {
+          console.debug("Assigned user: ", savedUser);
+
+          // Update user in our cache
+          angular.extend(user, savedUser);
+
+          $modalInstance.close(user);
+        },
+        error     => {}
+      );
+  };
+
+  $scope.cancel = function(){
+    $modalInstance.dismiss();
+  }
 })
 ;

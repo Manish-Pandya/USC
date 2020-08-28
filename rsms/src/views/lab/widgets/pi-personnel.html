@@ -3,6 +3,25 @@
         <div class="table-row" ng-repeat="personnel in data.LabPersonnel | orderBy: 'Last_name'">
             <div>{{personnel.Name}}</div>
             <div>{{personnel.Position}}</div>
+            <div ng-if="adminView">
+                <span class="badge" ng-repeat="role in personnel.Roles | filter:Constants.ROLE.NAME.LAB_CONTACT">
+                    {{role.Name || role}}
+                </span>
+            </div>
+            <div ng-if="adminView">
+                <a class="btn btn-small btn-primary left"
+                   ng-click="api.editUserAsRole(personnel, Constants.ROLE.NAME.LAB_PERSONNEL, data.PI, data.LabPersonnel)">
+                    <i class="icon-pencil"></i>
+                </a>
+                <a class="btn btn-small btn-warning left"
+                   ng-click="api.unassignUserFromSupervisor(personnel, false, data.LabPersonnel)">
+                    <i class="icon-minus-4"></i>
+                </a>
+                <a class="btn btn-small btn-danger left"
+                   ng-click="api.unassignUserFromSupervisor(personnel, true, data.LabPersonnel)">
+                    <i class="icon-remove"></i>
+                </a>
+            </div>
         </div>
     </div>
 </div>
