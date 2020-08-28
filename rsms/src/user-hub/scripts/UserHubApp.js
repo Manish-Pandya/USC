@@ -936,8 +936,8 @@ angular
     factory.setModalData = function( data ) { this.modalData = data; };
     factory.getModalData = function() { return this.modalData; };
 
-    factory.unassignLabUser = (userId, piId, roleName) => UserHubAPI.unassignLabUser(userId, piId, roleName);
-    factory.assignLabUser =  (userId, inactive) => UserHubAPI.assignLabUser(userId, inactive);
+    factory.assignLabUser = (userId, piId, roleName) => UserHubAPI.assignLabUser(userId, piId, roleName);
+    factory.unassignLabUser =  (userId, inactive) => UserHubAPI.unassignLabUser(userId, inactive);
 
     return factory;
 })
