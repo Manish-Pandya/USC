@@ -225,7 +225,7 @@ session_start();
             </span>
         </span>
                         </div>
-                        <h3 style="display:block; width:100%; margin-top:12px;" ng-if="!af.selectPI && PI"><a class="btn btn-info" href="<?php echo WEB_ROOT?>views/hubs/PIHub.php#/rooms?pi={{PI.Key_id}}&inspection=true">Manage Data for Selected PI</a></h3>
+                        <h3 style="display:block; width:100%; margin-top:12px;" ng-if="!af.selectPI && PI"><a class="btn btn-info" href="<?php echo WEB_ROOT?>views/lab/mylab.php#/browse/{{PI.Key_id}}/lab">Manage Data for Selected PI</a></h3>
                     </div>
                     <div class="span8" ng-if="PI || pi">
                         <div class="controls">
@@ -236,7 +236,7 @@ session_start();
                                     Select a Principal Investigator.
                                 </p>
                                 <p ng-if="noRoomsAssigned" style="display: inline-block; margin-top:5px;">
-                                    <span once-text="PI.Name"></span> has no rooms <a class="btn btn-info" once-href="'<?php echo WEB_ROOT?>views/hubs/PIHub.php#/rooms?pi='+PI.Key_id'&inspection=true">Add Rooms</a>
+                                    <span once-text="PI.Name"></span> has no rooms <a class="btn btn-info" once-href="'<?php echo WEB_ROOT?>views/lab/mylab.php#/browse/{{PI.Key_id}}/lab">Add Rooms</a>
                                 </p>
                             </span>
 
@@ -403,7 +403,7 @@ session_start();
                     <a ng-click="openPreviousInspections()"><img src="../img/clipboard.png" /><span>Archived Reports</span></a>
                 </li>
                 <li>
-                    <a href="<?php echo WEB_ROOT?>views/hubs/PIHub.php#/personnel?pi={{PI.Key_id}}&inspection=true" target="_blank"><img src="../img/phone.png" /><span>Laboratory Personnel</span></a>
+                    <a href="<?php echo WEB_ROOT?>views/lab/mylab.php#/browse/{{PI.Key_id}}/lab" target="_blank"><img src="../img/phone.png" /><span>Laboratory Personnel</span></a>
                 </li>
                 <li>
                     <a ng-click="openNotes()"><img src="../img/speechBubble.png" /><span>Inspection Comments</span></a>

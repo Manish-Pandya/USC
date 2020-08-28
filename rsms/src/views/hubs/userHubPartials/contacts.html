@@ -10,7 +10,7 @@
                          <span ng-hide="showInactive">Show Inactive Contacts</span>
                      </a>
                      <a  ng-if="rbf.getHasPermission([ R[Constants.ROLE.NAME.ADMIN],  R[Constants.ROLE.NAME.RADIATION_ADMIN] ])" class="btn-large btn" ng-click="openModal()" style="padding:10px; margin-left:5px;"><i class="icon-add-users"></i>Add Contact</a>
-                     <a class="btn-large btn" ng-if="piId" href="PIHub.php#/personnel?pi={{piId}}" style="padding:10px; margin-left:5px;"><img src="../../img/pi-icon.png" class="pull-left" style="height:27px" />Return to PI Hub</a>
+                     <a class="btn-large btn" ng-if="piId" href="../lab/mylab.php#/browse/{{piId}}/lab" style="padding:10px; margin-left:5px;"><img src="../../img/pi-icon.png" class="pull-left" style="height:27px" />Return to PI Hub</a>
                </div>
                    <h2 style="margin-top:8px;float:right"><span class="bold underline">{{filtered.length}}</span> Lab Contacts Displayed</h2>
             </th>
@@ -69,7 +69,7 @@
                 {{contact.First_name}}
             </td>
             <td style="width:14%;" >
-                <a once-href="'PIHub.php#/personnel?pi='+contact.Supervisor.PrincipalInvestigator.Key_id" once-text="contact.Supervisor.Name"></a>
+                <a once-href="'../lab/mylab.php#/brose'+contact.Supervisor.PrincipalInvestigator.Key_id+'/lab'" once-text="contact.Supervisor.Name"></a>
             </td>
 
             <td style="width:17%;">
