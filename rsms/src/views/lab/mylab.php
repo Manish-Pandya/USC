@@ -14,7 +14,7 @@ require_once '../top_view.php';
 
     // Dynamically apply the hub theme to the body so that modal(s) are styled
     (function(){
-        $('body').addClass('hub-theme-green');
+        $('body').addClass('hub-theme-blue');
     })();
 </script>
 
@@ -28,7 +28,7 @@ require_once '../top_view.php';
 <script type="text/javascript" src="<?php echo WEB_ROOT?>user-hub/scripts/UserHubApp.js"></script>
 <script type="text/javascript" src="../../login/scripts/directives/UserAccessRequestTable.js"></script>
 
-<div ng-app="myLab" ng-controller="MyLabAppCtrl" class="hub-theme-green" ng-cloak>
+<div ng-app="myLab" ng-controller="MyLabAppCtrl" class="hub-theme-blue" ng-cloak>
     <div cg-busy="{promise:inspectionPromise,message:'Loading', backdrop:true,templateUrl:'../../rad/views/busy-templates/full-page-busy.html'}"></div>
 
     <hub-banner-nav
