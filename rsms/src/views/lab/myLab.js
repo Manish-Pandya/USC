@@ -489,6 +489,54 @@ var myLab = angular.module('myLab', [
           if( user ) user._editing = undefined;
         }
       );
+    },
+
+    isLocationHubLinked: function isLocationHubLinked(){
+      return widget_functions.pi_location_hub != undefined;
+    },
+
+    openLocationHubForPI: function openLocationHubForPI( pi ){
+      let params = '?pi=' + encodeURIComponent(pi.Name)
+                 + '&' + $.param({"unassignedPis":false});
+
+      // Open Location Hub in new window
+      widget_functions.pi_location_hub = window.open(window.GLOBAL_WEB_ROOT + 'views/hubs/locationHub.php#/rooms/research-labs' + params);
+
+      // Display a toast in the location hub
+      let loc_toast = undefined;
+      let rem_toast = undefined;
+
+      let reminderMessage = "Close the Location Hub window when you are done managing the lab locations for " + pi.Name;
+      let reminder = function reminder(existingReminder, api, message){
+          if( !api ) return null;
+
+          // Create toast if we don't have a link to one or our linked one was dismissed (i.e. doesn't exist)
+          if( !existingReminder || !api.getToast(existingReminder.id) ){
+              return api.toast(message, api.ToastType.WARNING, -1);
+          }
+
+          return existingReminder;
+      };
+
+      // Re-remind periodically
+      let reminderInterval = setInterval(function(){
+          rem_toast = reminder(rem_toast, widget_functions.pi_location_hub.ToastApi, reminderMessage);
+          loc_toast = reminder(loc_toast, window.ToastApi, reminderMessage);
+      }, 5000);
+
+      // When the dependent window is closed...
+      widget_functions.pi_location_hub.onbeforeunload = function(){
+        clearInterval(reminderInterval);
+
+        // Dismiss our local toast
+        //   (we can ignore the remote toast, as it's unloaded)
+        if( loc_toast ){
+            ToastApi.dismissToast( loc_toast.id );
+        }
+
+        widget_functions.pi_location_hub = undefined;
+        ToastApi.toast("If you made changes in the Location Hub, refresh this page to see them.", ToastApi.ToastType.ERROR, -1);
+      };
     }
   };
 

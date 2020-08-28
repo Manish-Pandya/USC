@@ -1,3 +1,9 @@
+<span class="admin-only bold" style="display:flex;" ng-if="adminView && api.isLocationHubLinked()">
+    <i class="red icon-warning" style="padding-right: 5px;"></i>
+    <span>This PI's locations are being managed in the Location Hub and may have changed.</span>
+    <span>If you have made any changes, refresh this page to see them.</span>
+</span>
+
 <div class="content-container">
     <div class="fake-table striped">
         <div ng-repeat="room in data.Rooms | orderBy: ['Building_id', 'Name']" ng-init="_hide = false" class="table-row">
@@ -11,7 +17,7 @@
             <div ng-if="adminView" class="admin-only">{{room.Purpose}}</div>
             <div ng-if="adminView" class="admin-only">
                 <a class="btn btn-warning"
-                   ng-href="../../hazard-inventory/#?pi={{data.PI}}&room%5B%5D={{room.Key_id}}"
+                   ng-href="../../hazard-inventory/#?pi={{data.PI.Key_id}}&room%5B%5D={{room.Key_id}}"
                    target="_blank">
                     <i class="icon-lab"></i>
                     <span>Show Hazards</span>
