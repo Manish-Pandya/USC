@@ -384,6 +384,16 @@ angular.module('00RsmsAngularOrmApp')
             $rootScope.ParcelUseCopy.ParcelUseAmounts.push(sampleUsageAmount);
         }
 
+        // 'cache' original quantities...
+        //    Note that this is required because the cloning done above is NOT a deep copy:
+        //    changes to the amounts will be made to the bound source objects, and NOT a clone.
+        //    This means that 'cancelling' the edit will have to include undoing the edits.
+        //    To handle this, we'll cache the original quantities so that we can undo them later, if needed
+        $rootScope.ParcelUseCopy.ParcelUseAmounts.forEach( amt => {
+            console.debug('  ' + amt.Key_id + ':' + amt.Curie_level);
+            amt.OldQuantity = amt.Curie_level;
+        });
+
         // Open the modal
         var modalInstance = $modal.open({
             templateUrl: 'views/pi/pi-modals/parcel-use-log-modal.html',
@@ -587,10 +597,20 @@ angular.module('00RsmsAngularOrmApp')
         use.edit = false;
         use.error = false;
         $rootScope.ParcelUseCopy = {};
-        var i = use.ParcelUseAmounts.length;
-        while (i--) {
-            use.ParcelUseAmounts[i].Curie_level = use.ParcelUseAmounts[i].OldQuantity;
-        }
+
+        // Undo any edits using our 'cached' OldQuantity values
+        console.debug("Reset old quantities...");
+        use.ParcelUseAmounts.forEach( amt => {
+            let log = '  ' + amt.Key_id + ': ' + amt.Curie_level;
+
+            if( amt.OldQuantity != undefined ){
+                log += ' => ' + amt.OldQuantity;
+                amt.Curie_level = amt.OldQuantity;
+            }
+
+            console.debug(log);
+        });
+
         parcel.edit = false;
         $modalInstance.dismiss();
     };
@@ -694,13 +714,23 @@ angular.module('00RsmsAngularOrmApp')
             max = 0;
         var total = 0;
         parcelUse.error = "";
-        parcelUse.ParcelUseAmounts.sort(function (a, b) { return b.Waste_type_id < a.Waste_type_id; }).forEach(function (amt, idx, arr) {
+
+        // Split use amounts into Sample vs Uses
+        let _uses  = parcelUse.ParcelUseAmounts.filter( a => a.Waste_type_id != Constants.WASTE_TYPE.SAMPLE );
+        let sample = parcelUse.ParcelUseAmounts.filter( a => a.Waste_type_id == Constants.WASTE_TYPE.SAMPLE );
+
+        // Accumulate total using Uses
+        _uses.forEach(function (amt, idx, arr) {
             if (amt.Waste_type_id != Constants.WASTE_TYPE.SAMPLE) {
                 if (!isNaN(amt.Curie_level)){
                     total += parseFloat(amt.Curie_level);
                 }
             }
-            else {
+        });
+
+        // Apply accumulated total to sample amount
+        sample.forEach(function(amt, idx, arr) {
+            if (amt.Waste_type_id == Constants.WASTE_TYPE.SAMPLE) {
                 amt.Is_active = false;  // Sample use is always Inactive
                 amt.Curie_level = max - total;
                 amt.Curie_level = Math.round(amt.Curie_level * 10000000000) / 10000000000;
