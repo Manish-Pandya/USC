@@ -86,6 +86,10 @@ class Rad_ActionManager extends ActionManager {
 
         $id = $this->getValueFromRequest('id', $id);
 
+        EntityManager::with_entity_maps(CarboyUseCycle::class, array(
+            EntityMap::eager("getAddedAmounts")
+        ));
+
         if( $id !== NULL ) {
             $dao = $this->getDao(new Carboy());
             return $dao->getById($id);
@@ -653,11 +657,21 @@ class Rad_ActionManager extends ActionManager {
 
     function getAllCarboys() {
         $carboyDao = $this->getDao(new Carboy());
+
+        EntityManager::with_entity_maps(CarboyUseCycle::class, array(
+            EntityMap::eager("getAddedAmounts")
+        ));
+
         return $carboyDao->getAll();
     }
 
     public function getAllCarboyUseCycles(){
         $dao = $this->getDao(new CarboyUseCycle());
+
+        EntityManager::with_entity_maps(CarboyUseCycle::class, array(
+            EntityMap::eager("getAddedAmounts")
+        ));
+
         return $dao->getAll();
     }
 

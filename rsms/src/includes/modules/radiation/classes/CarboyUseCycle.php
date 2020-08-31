@@ -121,6 +121,7 @@ class CarboyUseCycle extends Container {
 		$entityMaps[] = EntityMap::lazy("getRoom");
 		$entityMaps[] = EntityMap::lazy("getPickup");
 		$entityMaps[] = EntityMap::eager("getPour_allowed_date");
+		$entityMaps[] = EntityMap::lazy("getAddedAmounts");
 		return $entityMaps;
 	}
 
