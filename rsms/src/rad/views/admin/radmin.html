@@ -56,21 +56,7 @@
             </ul>
                 -->
         </div>
-        <h4 class="section-header" style="margin-left:210px; margin-top:20px;width:100%">
-            <span class="span2" style="width:120px; padding-top:6px">Search by PI</span>
-            <span ng-if="!typeAheadPis" style="position:relative;max-width:300px;">
-                <input class="span4" style="background:white;border-color:#999; max-width:300px" type="text" placeholder="Getting PIs..." disabled="disabled">
-                <i class="icon-spinnery-dealie spinner small" style="position:absolute;right:5px;top:0px"></i>
-            </span>
-            <span ng-if="typeAheadPis" style="max-width:300px;">
-                <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)" class="span4" style="max-width:300px">
-                    <ui-select-match placeholder="Select or search for a PI">{{$select.selected.Name}}</ui-select-match>
-                    <ui-select-choices repeat="pi in typeAheadPis | orderBy: 'Name' | propsFilter: {Name: $select.search} track by $index">
-                        <div ng-bind-html="pi.Name | highlight: $select.search"></div>
-                    </ui-select-choices>
-                </ui-select>
-            </span>
-        </h4>
+
         <div ui-view></div>
     </div>
 </div>
