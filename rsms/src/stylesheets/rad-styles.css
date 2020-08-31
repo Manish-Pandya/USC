@@ -136,6 +136,16 @@
     /* line 73, ../sass/style.scss */
 }
 
+.nav-element {
+    background: #343f51;
+    color: white;
+}
+
+.nav-select-pi {
+    padding: 20px 0 0 210px;
+    height: 50px;
+}
+
 .left-nav-typeahead {
     margin: 10px;
     width: 180px;
@@ -145,7 +155,6 @@
     position: fixed;
     float: left;
     width: 195px;
-    background: #343f51;
     height: 100%;
     padding-top: 13px;
 }

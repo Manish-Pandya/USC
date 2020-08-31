@@ -11,8 +11,26 @@
 
 <div class="dashboard">
     <div class="row-fluid" style="margin-top: -15px;">
-        <div class="left-nav">
+        <div class="nav-element left-nav">
             <ul class="sideNav">
+                <li>
+                    <a ng-if="!typeAheadPis" style="display: flex;">
+                        <i class="icon-spinnery-dealie spinner small" style="color: inherit; margin: unset;"></i>
+                        <span>Loading PIs...</span>
+                    </a>
+
+                    <span ng-if="typeAheadPis" style="color: initial;">
+                        <ui-select ng-model="pi.selected" theme="selectize" ng-disabled="disabled" on-select="onSelectPi($item)">
+                            <ui-select-match placeholder="View PI Details">{{$select.selected.Name}}</ui-select-match>
+                            <ui-select-choices repeat="pi in typeAheadPis | orderBy: 'Name' | propsFilter: {Name: $select.search} track by $index">
+                                <div ng-bind-html="pi.Name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </span>
+
+                    <hr/>
+                </li>
+
                 <li><a class="inventories" ng-class="{'active': state.current.name == 'radmin.inventories'}" ui-sref="radmin.inventories"><i class=" fa fa-calendar-o"></i>Inventories</a></li>
                 <li><a class="wipe-tests" ng-class="{'active': state.current.name == 'radmin.wipe-tests'}" ui-sref="radmin.wipe-tests"><i class="icon-paper"></i>Wipe Tests</a></li>
                 <li><a class="pickups"  ng-class="{'active': state.current.name == 'radmin.admin-pickups'}" ui-sref="radmin.admin-pickups"><i class="icon-box-remove"></i>Pickups</a></li>
