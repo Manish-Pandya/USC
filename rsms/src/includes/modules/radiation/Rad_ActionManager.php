@@ -477,7 +477,8 @@ class Rad_ActionManager extends ActionManager {
 		    EntityMap::lazy("getCarboy_reading_amounts"),
 		    EntityMap::lazy("getRoom"),
 		    EntityMap::lazy("getPickup"),
-            EntityMap::lazy("getPour_allowed_date")
+            EntityMap::lazy("getPour_allowed_date"),
+            EntityMap::lazy("getAddedAmounts")
         ));
 
         EntityManager::with_entity_maps(Carboy::class, array(
