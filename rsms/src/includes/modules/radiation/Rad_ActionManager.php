@@ -3101,6 +3101,8 @@ class Rad_ActionManager extends ActionManager {
                         if( $auth->getDate_created() != null ){
                             $newAuth->setDate_created($auth->getDate_created());
                         }
+
+                        $newAuth->setIs_active( $auth->getIs_active() );
                     }
                     $newAuth->makeOriginal_pi_auth_id();
 					$newAuth = $authDao->save($newAuth);

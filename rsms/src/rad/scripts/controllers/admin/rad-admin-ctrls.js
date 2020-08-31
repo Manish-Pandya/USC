@@ -2272,7 +2272,7 @@ angular.module('00RsmsAngularOrmApp')
             var newAuth = new Authorization();
             newAuth.Class = "Authorization";
             newAuth.Pi_authorization_id = id;
-            newAuth.Is_active = newAuth.isIncluded = true;
+            newAuth.Is_active = true;
             newAuth.Isotope = new Isotope();
             newAuth.Isotope.Class = "Isotope";
             $scope.modalData.PIAuthorizationCopy.Authorizations.push(newAuth);
@@ -2304,14 +2304,8 @@ angular.module('00RsmsAngularOrmApp')
             if ($scope.modalData.isAmendment)
                 copy.Key_id = null;
             copy.Approval_date = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.view_Approval_date));
-            if (!terminated) {
-                for (var n = 0; n < copy.Authorizations.length; n++) {
-                    if (!terminated && !copy.Authorizations[n].isIncluded) {
-                        copy.Authorizations.splice(n, 1);
-                    }
-                }
-            }
-            else {
+
+            if ( terminated ) {
                 copy.Is_active = false;
                 console.log("getting termination date");
                 copy.Termination_date = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.Form_Termination_date));

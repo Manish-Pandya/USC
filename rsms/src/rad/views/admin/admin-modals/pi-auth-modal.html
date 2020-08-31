@@ -130,7 +130,7 @@
             <div class="table-row" ng-repeat="auth in modalData.PIAuthorizationCopy.Authorizations" ng-class="{'inactive':!auth.Is_active}">
                 <div class="control-group">
                     <label class="checkbox">
-                        <input type="checkbox" ng-init="auth.isIncluded = true" ng-model="auth.isIncluded" />
+                        <input type="checkbox" ng-init="auth.Is_active = true" ng-model="auth.Is_active" />
                         <span class="metro-checkbox"></span>
                     </label>
                 </div>

@@ -172,7 +172,12 @@ class PIAuthorization extends RadCrud{
 	public function getAuthorizations() {
 		if($this->authorizations === NULL && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->authorizations = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$AUTHORIZATIONS_RELATIONSHIP));
+			$this->authorizations = $thisDAO->getRelatedItemsById(
+				$this->getKey_id(),
+				DataRelationship::fromArray(self::$AUTHORIZATIONS_RELATIONSHIP),
+				null,
+				true /*active-only*/
+			);
 		}
 		return $this->authorizations;
 	}
