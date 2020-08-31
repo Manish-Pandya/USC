@@ -86,6 +86,7 @@
                         <h3>Half Life</h3>
                         <h3>Emitter Type</h3>
                         <h3>Maximum Quantity</h3>
+                        <h3>Form</h3>
                     </div>
                     <div class="table-row" ng-repeat="auth in piAuth.Authorizations | orderBy: 'Isotope.Name'">
                         <div>
@@ -106,6 +107,10 @@
 
                         <div>
                             {{auth.Max_quantity | unit:auth.Isotope}}
+                        </div>
+
+                        <div>
+                            {{auth.Form}}
                         </div>
                     </div>
                 </div>
