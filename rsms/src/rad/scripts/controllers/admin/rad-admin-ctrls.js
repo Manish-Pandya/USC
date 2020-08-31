@@ -2305,7 +2305,7 @@ angular.module('00RsmsAngularOrmApp')
                 copy.Key_id = null;
             copy.Approval_date = convenienceMethods.setMysqlTime(convenienceMethods.getDate(copy.view_Approval_date));
             if (!terminated) {
-                for (var n = 0; n < copy.Authorizations; n++) {
+                for (var n = 0; n < copy.Authorizations.length; n++) {
                     if (!terminated && !copy.Authorizations[n].isIncluded) {
                         copy.Authorizations.splice(n, 1);
                     }
