@@ -3085,7 +3085,7 @@ class Rad_ActionManager extends ActionManager {
 					$newAuth->setIsotope_id($auth->getIsotope_id());
 					$newAuth->setMax_quantity($auth->getMax_quantity());
 
-                    if( array_key_exists('Approval_date', $auth) ){
+                    if( $auth->getApproval_date() != null ){
                         $newAuth->setApproval_date($auth->getApproval_date());
                     }
 
@@ -3094,11 +3094,11 @@ class Rad_ActionManager extends ActionManager {
                     //if the PiAuthorization has a key_id, we know we are editing one that already exists.
                     //In that case, we should save it's old authorizations, rather than creating new ones, so we set the key_id for each of them
                     if($id != null){
-                        if( array_key_exists('Key_id', $auth) ){
+                        if( $auth->getKey_id() != null ){
                             $newAuth->setKey_id($auth->getKey_id());
                         }
 
-                        if( array_key_exists('Date_created', $auth) ){
+                        if( $auth->getDate_created() != null ){
                             $newAuth->setDate_created($auth->getDate_created());
                         }
                     }
