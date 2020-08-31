@@ -212,6 +212,9 @@ if(!isset($_SESSION["USER"])){ ?>
     -->
 <script src="scripts/models/rad-models-bundle.js"></script>
     <style>
+        /* Adjust forced-height of Body */
+        body { min-height: unset; }
+
         /* Adjust banner font-size based on view width */
         .hub-banner ul.banner-nav li { font-size: 0.8vw; }
     </style>
