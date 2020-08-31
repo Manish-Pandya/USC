@@ -16,6 +16,7 @@ class Test_Rad_ActionManager implements I_Test {
 
         // Isotope
         $this->test_isotope = Rad_TestDataProvider::create_isotope($this->radActionmanager, 'T-123', 'Gamma');
+        $this->test_isotope2 = Rad_TestDataProvider::create_isotope($this->radActionmanager, 'T-456', 'Beta');
 
         // PI Auth
         $this->test_pi_auth = Rad_TestDataProvider::create_pi_authorization($this->radActionmanager, $this->test_pi);
@@ -140,6 +141,78 @@ class Test_Rad_ActionManager implements I_Test {
 
         Assert::eq( $inventory->getTotal_ordered(), 10, '10 units of isotope ordered after test');
         Assert::eq( $inventory->getTotal_quantity(), 5, 'Transfer of 5 is not reflected in inv');
+    }
+
+    /**
+     * RSMS-1258 described a bug whereby a saved PIAuthorization would duplicate all
+     * isotope Authorizations
+     *
+     * This function tests a basic no-operation save of a populated PIAuthorization
+     */
+    public function test__savePIAuthorization_noOpSave(){
+        // Given that a PIAuth already exists with 1 isotope
+        Assert::not_null($this->test_pi, 'Test PI exists');
+        Assert::not_null($this->test_pi_auth, 'Test PI Auth exists');
+        Assert::eq( count($this->test_pi_auth->getAuthorizations()), 1, '1 Test auth exist');
+
+        // When we save the piauth
+        $savedPIAuth = $this->radActionmanager->savePIAuthorization($this->test_pi_auth);
+
+        // Then all auths save too
+        Assert::eq( count($savedPIAuth->getAuthorizations()), 1, 'Only 1 Test auth still exists');
+    }
+
+    /**
+     * RSMS-1258 described a bug whereby a saved PIAuthorization would duplicate all
+     * isotope Authorizations
+     *
+     * This function tests the addition of a new Authorization
+     */
+    public function test__savePIAuthorization_addAuth(){
+        // Given that a PIAuth already exists with 1 isotope
+        Assert::not_null($this->test_pi, 'Test PI exists');
+        Assert::not_null($this->test_pi_auth, 'Test PI Auth exists');
+        Assert::eq( count($this->test_pi_auth->getAuthorizations()), 1, '1 Test auth exist');
+
+        // When we save the piauth with a new isotope
+        $newauth = new Authorization();
+        $newauth->setIs_active(true);
+        $newauth->setPi_authorization_id($this->test_pi_auth->getKey_id());
+        $newauth->setIsotope_id($this->test_isotope2->getKey_id());
+        $newauth->setMax_quantity( 50 );
+        $newauth->setForm('TEST');
+
+        $auths = $this->test_pi_auth->getAuthorizations();
+        $auths[] = $newauth;
+        $this->test_pi_auth->setAuthorizations($auths);
+
+        $savedPIAuth = $this->radActionmanager->savePIAuthorization($this->test_pi_auth);
+
+        // Then all auths save too
+        Assert::eq( count($savedPIAuth->getAuthorizations()), 2, '2 Test auths exist');
+    }
+
+    /**
+     * RSMS-1258 described a bug whereby a saved PIAuthorization would duplicate all
+     * isotope Authorizations
+     *
+     * This function tests the inactivation of an Authorization
+     */
+    public function test__savePIAuthorization_removeAuth(){
+        // Given that a PIAuth already exists with 1 isotope
+        Assert::not_null($this->test_pi, 'Test PI exists');
+        Assert::not_null($this->test_pi_auth, 'Test PI Auth exists');
+        Assert::eq( count($this->test_pi_auth->getAuthorizations()), 1, '1 Test auth exist');
+
+        // When we save the piauth with a removed isotope
+        $auths = $this->test_pi_auth->getAuthorizations();
+        $auths[0]->setIs_active(false);
+        $this->test_pi_auth->setAuthorizations($auths);
+
+        $savedPIAuth = $this->radActionmanager->savePIAuthorization($this->test_pi_auth);
+
+        // Then the inactive auth is excluded from PIAuth accesor
+        Assert::eq( count($savedPIAuth->getAuthorizations()), 0, '0 Test auths exist');
     }
 }
 ?>
