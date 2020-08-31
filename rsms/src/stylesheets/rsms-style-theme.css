@@ -32,6 +32,14 @@ ul.banner-nav li span {
     text-decoration: underline;
 }
 
+.hub-banner ul.banner-nav li .nav-notification-badge .nav-notification-count {
+    text-decoration: none;
+    background: white;
+    color: black;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
 /* Blue Theme */
     .hub-theme-blue {}
 
@@ -124,6 +132,50 @@ ul.banner-nav li span {
         background: #789974;
     }
 
+/* Dark-Green Theme */
+    .hub-theme-green-dark {}
+
+    .hub-theme-green-dark .theme-main-element,
+    .hub-theme-green-dark .hub-banner {
+        background-color: #008641;
+        border-color: #008641;
+        color: #fff;
+    }
+
+    .hub-theme-green-dark .theme-highlight-element,
+    .hub-theme-green-dark .hub-banner .banner-nav a:hover,
+    .hub-theme-green-dark .hub-banner .banner-nav a.active-nav {
+        background: #005500;
+    }
+
+    .hub-theme-green-dark .theme-underlight-element,
+    .hub-theme-green-dark table tbody tr.theme-underlight-element td
+    {
+        background: #789974;
+    }
+
+/* Black Theme */
+    .hub-theme-black {}
+
+    .hub-theme-black .theme-main-element,
+    .hub-theme-black .hub-banner {
+        background-color: #1c1c1c;
+        border-color: #1c1c1c;
+        color: #fff;
+    }
+
+    .hub-theme-black .theme-highlight-element,
+    .hub-theme-black .hub-banner .banner-nav a:hover,
+    .hub-theme-black .hub-banner .banner-nav a.active-nav {
+        background: #1c1c1c;
+    }
+
+    .hub-theme-black .theme-underlight-element,
+    .hub-theme-black table tbody tr.theme-underlight-element td
+    {
+        background: #1c1c1c;
+    }
+
 /* */
 ul.grid-list li:hover {
     color: #888;
@@ -135,3 +187,14 @@ i.icon-add-users {
     width: 25px;
     margin-right: 10px;
 }
+
+/* Overlay */
+    .overlay {
+        background-color: rgba(0,0,0,0.5);
+        box-shadow: 2px 2px 10px 3px rgba(0,0,0,.7);
+
+        color: white;
+    }
+
+    .overlay i.spinner { color: white; }
+/***********/

@@ -1,8 +1,6 @@
 <?php
     require_once('../Application.php');
 
-    session_start();
-
     // Check that user is logged in
     require_once('../RequireUserLoggedIn.php');
 ?>
@@ -23,6 +21,9 @@
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>css/select.min.css" />
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/style.css" />
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>email-hub/email-hub-styles.css" />
+
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rsms-style-theme.css"/>
+    <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/rsms-style-struct.css"/>
 
     <script src="<?php echo WEB_ROOT?>js/lib/jQuery.3.1.1/Content/Scripts/jquery-3.1.1.min.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/promise.min.js"></script>
@@ -75,31 +76,25 @@
     <!-- Toast API -->
     <script type='text/javascript' src='<?php echo WEB_ROOT?>js/ToastApi.js'></script>
     <link type="text/css" rel="stylesheet" href="<?php echo WEB_ROOT?>stylesheets/ToastApi.css"/>
+
+    <script>
+        var GLOBAL_WEB_ROOT = '<?php echo WEB_ROOT?>';
+    </script>
 </head>
 
 <body>
     <?php require('../views/user_info_bar.php'); ?>
 
-    <div ng-app="ng-EmailHub" ng-controller="AppCtrl" class="container-fluid" style="margin-top:25px;">
+    <div ng-app="ng-EmailHub" ng-controller="AppCtrl" class="container-fluid hub-theme-green-dark" style="margin-top:25px;">
         <div cg-busy="{promise:loading, message:'Loading...', templateUrl:'../busy-templates/full-page-busy.html'}"></div>
 
         <!-- NAVIGATION -->
-        <div class="banner no-print bg-color-greenDark">
-            <h1>
-                <i class="title-icon icon-email" style="margin: 5px 0 0 5px;"></i>
-                Email Hub
-                <a style="float:right;margin: 15px 30px 0 0; color:white" href="<?php echo WEB_ROOT?>">
-                    <i class="icon-home" style="font-size:40px;"></i>
-                </a>
-            </h1>
-
-            <ul class="banner-nav" ng-if="moduleNavLinks.length">
-                <li ng-repeat="link in moduleNavLinks">
-                    <span ng-if="link.active" ng-bind="link.text"></span>
-                    <a ng-if="!link.active" ui-sref="{{link.expression}}" ng-bind="link.text"></a>
-                </li>
-            </ul>
-        </div>
+        <hub-banner-nav
+            hub-title="Email Hub"
+            hub-subtitle="Template Management"
+            hub-icon="icon-email"
+            hub-views="hubNavViews">
+        </hub-banner-nav>
 
         <!-- VIEW NESTING -->
         <div ui-view class="noBg"></div>

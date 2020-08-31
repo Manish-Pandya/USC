@@ -5,7 +5,8 @@ var myLab = angular.module('myLab', [
   'once',
   'cgBusy',
   'angular.filter',
-  'text-mask'])
+  'text-mask',
+  'rsms-AuthDirectives'])
 .filter('openInspections', function () {
   return function (inspections) {
         if(!inspections)return;
@@ -73,7 +74,7 @@ var myLab = angular.module('myLab', [
     }
 
     if( Array.isArray(equipmentObjOrArray) ){
-      return equipmentObjOrArray.filter(q => isCleanType);
+      return equipmentObjOrArray.filter(isCleanType);
     }
     else {
       return isCleanType(equipmentObjOrArray);
@@ -191,10 +192,10 @@ var myLab = angular.module('myLab', [
     getProfilePositionOptions: function(){
       switch( widget_functions.getProfilePositionRequiredRole() ){
         case Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR:
-          return Constants.PI_POSITION;
+          return Constants.POSITION.PI;
 
         case Constants.ROLE.NAME.LAB_PERSONNEL:
-          return Constants.POSITION;
+          return Constants.POSITION.LAB_PERSONNEL;
 
         default: return [];
       }

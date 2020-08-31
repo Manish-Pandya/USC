@@ -51,7 +51,7 @@ if($actionResult->statusCode == 401){
     $LOG->error($actionResult->message);
     $_SESSION['LOGGED_OUT'] = "You have been logged out of the system.  Please log in again to continue";
 }else{
-    $_SESSION['LOGGED_OUT'] = NULL;
+    unset($_SESSION['LOGGED_OUT']);
 }
 
 // begin output
@@ -66,7 +66,7 @@ if($actionResult->statusCode == 302){
 //http_response_code(404);
 
 // Output JSON (with possible callback)
-RequestLog::log_stop( $actionResult, strlen($json));
+RequestLog::log_stop( $actionResult->statusCode, strlen($json));
 
 //If a callback function is requested
 if( array_key_exists('callback', $_GET) ){

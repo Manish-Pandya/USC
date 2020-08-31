@@ -1,0 +1,136 @@
+<form class="access-request">
+    <div class="well">
+        <h3 class="auth-form-header even-content">
+            <span>Request for System Access:</span>
+            <span>{{data.candidate.Username}}</span>
+        </h3>
+
+        <div ng-if="data.candidate.IsFulfilled">
+            <h4 style="color: green;">
+                <i class="icon-info"></i>
+                <span>Your request for access under {{data.candidate.Current_access_request.Principal_investigator_name}} on {{getDate(data.candidate.Current_access_request.Date_created) | date:'shortDate'}} has been Approved.</span>
+            </h4>
+
+            <p class="auth-element">
+                <a class="btn btn-success" ng-href="{{GLOBAL_WEB_ROOT}}action.php?action=logoutAction">Log in here</a>
+            </p>
+        </div>
+
+        <div class="request-status fadein" ng-show="!data.candidate.IsFulfilled && data.candidate.Current_access_request">
+            <h5 ng-if="data.candidate.Current_access_request.Status == 'PENDING'">
+                <span>You submitted a request on {{getDate(data.candidate.Current_access_request.Date_created) | date:'shortDate'}} to access this system as a member of {{data.candidate.Current_access_request.Principal_investigator_name}}’s laboratory.</span>
+                <span>This request is currently under review and you will be notified when your Principal Investigator has approved your request.</span>
+
+                <p ng-if="data.candidate.Current_access_request.Is_potential_duplicate" class="red auth-element" style="display:flex; align-items: flex-start;">
+                    <i class="icon-warning" style="padding-right: 10px;"></i>
+                    <span>An issue has been identified with your account and has been reported to the system administrator. You will be contacted once the issue has been resolved.</span>
+                </p>
+
+                <p class="auth-element">
+                    <a class="btn btn-success" ng-href="{{GLOBAL_WEB_ROOT}}action.php?action=logoutAction">Sign Out</a>
+                </p>
+            </h5>
+
+            <div ng-if="data.candidate.Current_access_request.Status == 'DENIED'">
+                <h4 class="red">
+                    <i class="icon-warning"></i>
+                    <span>Your request for access under {{data.candidate.Current_access_request.Principal_investigator_name}} on {{getDate(data.candidate.Current_access_request.Date_created) | date:'shortDate'}} was Denied.</span>
+                </h4>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;" class="overlay-container fadein" ng-show="!data.candidate.IsFulfilled && data.candidate.Current_access_request.Status != 'PENDING'">
+            <div class="overlay" ng-if="data.selection.submitting && !data.selection.submission_complete">
+                <i class="icon-spinnery-dealie spinner"></i>
+                <span>Submitting Request for {{data.selection.username}}...</span>
+            </div>
+
+            <div class="overlay" ng-if="data.selection.submitting && data.selection.submission_complete">
+                <i class="icon-checkmark"></i>
+                <span>Access Request complete</span>
+            </div>
+
+            <div class="overlay" ng-if="data.selection.submitting && data.selection.submission_error">
+                <i class="icon-cancel"></i>
+                <span>An error occurred while processing your Access Request. Please try again later.</span>
+                <div>
+                    <a class="btn btn-danger" ng-href="{{GLOBAL_WEB_ROOT}}action.php?action=logoutAction">Back to Login</a>
+                </div>
+            </div>
+
+            <div class="auth-form-fields overlay-container">
+                <div class="overlay" ng-if="!data.listing.length">
+                    <i class="icon-spinnery-dealie spinner"></i>
+                    <span>Loading...</span>
+                </div>
+
+                <h5 ng-show="data.listing.length" class="fadein bold even-content">
+                    <span>Complete the following form to submit a request for access to this system.</span>
+                </h5>
+
+                <div ng-if="adminContactInfo" style="margin-top: 10px; color:#777">
+                    <h5 style="font-size:1em;">If you are a Principal Investigator requiring access to this system, please contact {{adminContactInfo.Name}} at <a ng-href="mailto:{{adminContactInfo.Email}}">{{adminContactInfo.Email}}</a>.</h5>
+                    <h5 style="font-size:1em;">Only university research laboratory personnel are authorized to access this system.</h5>
+                </div>
+
+                <hr/>
+
+                <div ng-show="data.listing.length && data.selection.username" class="card auth-element fadein"
+                    ng-class="{ 'selection-made': data.selection.department, 'selection-empty': !data.selection.department }">
+                    <h3 class="even-content">
+                        <span>Select Your Department</span>
+                        <span class="badge">1/3</span>
+                    </h3>
+                    <ui-select ng-model="data.selection.department" theme="selectize" ng-disabled="disabled" on-select="data.selection.pi = null">
+                        <ui-select-match placeholder="Select or search for a Department">{{$select.selected.Name}}</ui-select-match>
+                        <ui-select-choices repeat="dept in data.listing | filter: {Name:$select.search} | orderBy:'Name'">
+                            <span ng-bind-html="dept.Name"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+
+                <div ng-show="data.selection.department" class="card auth-element fadein"
+                    ng-class="{ 'selection-made': data.selection.pi, 'selection-empty': !data.selection.pi }">
+                    <h3 class="even-content">
+                        <div>
+                            <div>Select Your Principal Investigator</div>
+                            <h5 style="font-style: italic;">
+                                <strong>Department:</strong>
+                                <span>{{data.selection.department.Name}}</span>
+                            </h5>
+                        </div>
+
+                        <span class="badge">2/3</span>
+                    </h3>
+                    <ui-select ng-model="data.selection.pi" theme="selectize" ng-disabled="disabled">
+                        <ui-select-match placeholder="Select or search for a Principal Investigator">{{$select.selected.Name}}</ui-select-match>
+                        <ui-select-choices repeat="pi in data.selection.department.PrincipalInvestigators | filter: $select.search | orderBy:'Name'">
+                            <span ng-bind-html="pi.Name"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+
+                <hr ng-show="data.selection.pi"/>
+
+                <div ng-show="data.selection.pi" class="card auth-element fadein"
+                    ng-class="{ 'selection-made': data.selection.submitting, 'selection-empty': !data.selection.submitting }">
+                    <h3 class="even-content">
+                        <span>Submit Access Request</span>
+                        <span class="badge">3/3</span>
+                    </h3>
+
+                    <h5>
+                        <span>You are requesting access to the Research Safety Management System as a member of <strong><i>{{data.selection.pi.Name}}’s</i></strong> laboratory.</span>
+                        <span>This request will be reviewed by your Principal Investigator and you will be notified when it has been approved.</span>
+                    </h5>
+
+                    <div class="auth-form-footer">
+                        <a ng-click="submitRequest()" class="btn btn-success">Submit Request</a>
+
+                        <a class="btn btn-danger" ng-href="{{GLOBAL_WEB_ROOT}}action.php?action=logoutAction">Cancel Request</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

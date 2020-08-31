@@ -8,7 +8,8 @@
 class Building extends GenericCrud {
 
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "building";
+	public const TABLE_NAME = 'building';
+	protected static $TABLE_NAME = self::TABLE_NAME;
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
@@ -16,6 +17,7 @@ class Building extends GenericCrud {
         "alias"             => "text",
 		"campus_id"			=> 'integer',
 		"physical_address"  => "text",
+		"map_url"			=> "text",
 
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -50,6 +52,8 @@ class Building extends GenericCrud {
 
 	/** This Building's Address  **/
 	private $physical_address;
+
+	private $map_url;
 
 	public function __construct(){
 
@@ -122,6 +126,15 @@ class Building extends GenericCrud {
 	public function setPhysical_address($physical_address)
 	{
 	    $this->physical_address = $physical_address;
+	}
+
+	public function getMap_url()
+	{
+		return $this->map_url;
+	}
+
+	public function setMap_url($map_url){
+		$this->map_url = $map_url;
 	}
 }
 ?>

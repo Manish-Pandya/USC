@@ -23,7 +23,7 @@ return array(
     "server.web.url" => 'http://rsms.graysail.com:9080',
     "server.web.ADMIN_MAIL" => 'mmartin@graysail.com',
     "server.web.WEB_ROOT" => '/rsms/src/',
-    "server.web.LOGIN_PAGE" => '/rsms/src/',
+    "server.web.LOGIN_PAGE" => '/rsms/src/login/',
     "server.web.BISOFATEY_PROTOCOLS_UPLOAD_DATA_DIR" => '~/rsmsuploads/',
 
     "server.env.display_details" => false,

@@ -222,9 +222,17 @@ class QueryUtil {
         return $this;
     }
 
-    public function orderBy($table, $column, $direction = "ASC"){
+    public function orderBy($table, $column, $direction = "ASC", $unsigned_cast = true){
         $alias = $this->tableAliases[$table] ?? $table;
-        $this->orders[] = "CAST($alias.$column AS UNSIGNED), $alias.$column $direction";
+
+        $order = '';
+        if( $unsigned_cast ){
+            $order .= "CAST($alias.$column AS UNSIGNED),";
+        }
+
+        $order .= "$alias.$column $direction";
+
+        $this->orders[] = $order;
 
         return $this;
     }

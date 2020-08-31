@@ -32,6 +32,34 @@ class Test_RoomManager implements I_Test {
             DataRelationship::fromArray(User::$ROLES_RELATIONSHIP));
     }
 
+    public function test__getAssignableUsers_unassignableReturnsEmpty(){
+        // Given a non-Assignable room type
+        // Training Rooms are not assignable
+        $type = RoomType::of(RoomType::TRAINING_ROOM);
+        Assert::not_null($type, 'Training Room type is not null');
+        Assert::null($type->getAssignable_to(), 'Training Room type is not assignable');
+
+        // When we get users assignable to that room type
+        $users = RoomManager::get()->getAssignableUsers($type);
+
+        // Then we retrieve an empty list
+        Assert::empty($users, 'No assignable users are returned for Training Rooms');
+    }
+
+    public function test__getAssignableUsers_assignableReturnsList(){
+        // Given an Assignable room type
+        // Teaching Labs are assignable
+        $type = RoomType::of(RoomType::TEACHING_LAB);
+        Assert::not_null($type, 'Teaching Lab type is not null');
+        Assert::not_null($type->getAssignable_to(), 'Teaching Lab type is assignable');
+
+        // When we get users assignable to that room type
+        $users = RoomManager::get()->getAssignableUsers($type);
+
+        // Then we retrieve a non-empty list
+        Assert::not_empty($users, 'Assignable users are returned for Teaching Lab');
+    }
+
     public function test__saveRoom(){
         // Given a teaching room
         Assert::not_null($this->teachingRoom->getKey_id(), 'Teaching Room exists');

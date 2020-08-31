@@ -1,6 +1,8 @@
 <?php
 
 class ModuleManager {
+    private const MOD_ENABLED_SERVER_KEYS = ['REQUEST_URI', 'HTTP_REFERER'];
+
     private static $LOG;
     private static $INITIALIZED = false;
     private static $MODULES = array();
@@ -102,6 +104,25 @@ class ModuleManager {
         }
 
         return $candidate_types;
+    }
+
+    /**
+     * Helper function to determine if the current request
+     * falls under the given Module's purview
+     *
+     * @param $module
+     * @see ModuleManager::MOD_ENABLED_SERVER_KEYS
+     */
+    public static function isModuleRequest( RSMS_Module $module ){
+        $root = $module->getUiRoot();
+
+        foreach(self::MOD_ENABLED_SERVER_KEYS as $key){
+            if( isset($_SERVER[$key]) && stristr($_SERVER[$key], $root) ){
+                return true;
+            }
+        }
+
+        return false;
     }
 }
 ?>

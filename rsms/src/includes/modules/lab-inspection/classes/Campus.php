@@ -9,11 +9,13 @@
 class Campus extends GenericCrud {
 
 	/** Name of the DB Table */
-	protected static $TABLE_NAME = "campus";
+	public const TABLE_NAME = 'campus';
+	protected static $TABLE_NAME = self::TABLE_NAME;
 
 	/** Key/Value Array listing column names mapped to their types */
 	protected static $COLUMN_NAMES_AND_TYPES = array(
 		"name"		=> "text",
+		"alias"		=> "text",
 
 		//GenericCrud
 		"key_id"			=> "integer",
@@ -34,6 +36,7 @@ class Campus extends GenericCrud {
 
 
 	private $name;
+	private $alias;
 
 	private $buildings;
 
@@ -61,6 +64,9 @@ class Campus extends GenericCrud {
 	// Accessors / Mutators
 	public function getName(){ return $this->name; }
 	public function setName($name){ $this->name = $name; }
+
+	public function getAlias(){ return $this->alias; }
+	public function setAlias($alias){ $this->alias = $alias; }
 
 	public function getBuildings(){
 		if($this->buildings == null) {

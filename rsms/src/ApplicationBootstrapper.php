@@ -10,6 +10,8 @@ class ApplicationBootstrapper {
     public const CONFIG_LOGGING_OUTPUTDIR = 'logging.outputdir';
     public const CONFIG_LOGGING_CONFIGFILE = 'logging.configfile';
 
+    public const CONFIG_SYSTEM_ADMIN_CONTACT_EMAIL = 'system.admin.email';
+
     // Authentication/Authorization
     public const CONFIG_SERVER_AUTH_INCLUDE = 'server.auth.include_script';
     public const CONFIG_SERVER_AUTH_PROVIDE_LDAP = 'server.auth.providers.ldap';
@@ -120,10 +122,16 @@ class ApplicationBootstrapper {
         // Module Registration
         ApplicationBootstrapper::register_modules();
 
+        //////////////////////////////////////////////
+        // Enable Autoloader Entity Type Registration
+        ApplicationBootstrapper::init_autoloader_entity_type_registration();
+
         ////////////////////////////////////////////
         // Bootstrapping complete
         self::$bootstrapping_processing = false;
         self::$bootstrapping_complete = true;
+
+        Logger::getLogger(__CLASS__)->debug("Application Bootstrapping complete");
     }
 
     /**
@@ -243,6 +251,15 @@ class ApplicationBootstrapper {
     private static function init_autoloader(){
         require_once(self::$BOOTSTRAP_PATH . '/Autoloader.php');
         Autoloader::init();
+    }
+
+    /**
+     * Initialize application auto-loading
+     *
+     * @return void
+     */
+    private static function init_autoloader_entity_type_registration(){
+        Autoloader::init_registration();
     }
 
     /**

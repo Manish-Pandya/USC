@@ -39,6 +39,15 @@ var locationHub = angular.module('locationHub', ['ui.bootstrap',
                 }
             }
         )
+        .when('/rooms/training-rooms',
+            {
+                templateUrl: 'locationHubPartials/training_rooms.html',
+                controller: roomsCtrl,
+                resolve: {
+                    roomType: () => Constants.ROOM_TYPE.TRAINING_ROOM
+                }
+            }
+        )
         .when('/buildings',
             {
                 templateUrl: 'locationHubPartials/buildings.html',
@@ -732,6 +741,8 @@ routeCtrl = function($scope, $location,$rootScope){
         { route: '/rooms/research-labs', name: 'Research Labs' },
         { route: '/rooms/teaching-labs', name: 'Teaching Labs' },
         { route: '/rooms/animal-facilities', name: 'Animal Facilities' },
+        {},
+        { route: '/rooms/training-rooms', name: 'Training Rooms' },
         {},
         { route: '/buildings', name: 'Buildings' },
         { route: '/campuses', name: 'Campuses' }

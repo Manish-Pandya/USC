@@ -5,8 +5,8 @@ class RequestLog {
     private static $desc;
     private static $logger;
 
-    public static function init(&$actionName, &$dataSource){
-        self::$logger = Logger::getLogger('request.ajax');
+    public static function init(&$actionName, &$dataSource, $logger_name = 'request.ajax'){
+        self::$logger = Logger::getLogger($logger_name);
 
         // attempt to get module...
         $module = '';
@@ -47,8 +47,8 @@ class RequestLog {
         self::$logger->info(self::$username . " >>>     " . self::$desc);
     }
 
-    public static function log_stop( &$actionResult, $contentSize ){
-        self::$logger->info(self::$username . " <<< " . $actionResult->statusCode . ' ' . self::$desc . " content-length: $contentSize");
+    public static function log_stop( $status_code, $contentSize ){
+        self::$logger->info(self::$username . " <<< " . $status_code . ' ' . self::$desc . " content-length: $contentSize");
         Metrics::stop(self::$desc);
     }
 }

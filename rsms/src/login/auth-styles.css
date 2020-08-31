@@ -1,0 +1,130 @@
+/* University Branding */
+    img.usclogo {
+        width: 310px;
+        height: 53px;
+        padding-top: 25px;
+        padding-bottom: 25px;
+    }
+
+    section {
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+
+    header {
+        font-family: "Berlingske Sans", "Arial", sans-serif;
+        font-size: 1.6em;
+        min-height: 50px;
+
+        padding-left: 10%;
+        padding-right: 10%;
+
+        display: flex;
+        align-items: center;
+
+        color: white;
+    }
+
+    header.main { background-color: black; }
+    header.sub { background-color: #73000a; }
+
+/*************************/
+/* Application Overrides */
+
+    /* Override application style for 'html' height */
+    html { height: auto; }
+
+    /* Style 'active' ui-select row the same as hover */
+    .ui-select-choices-row.active,
+    .ui-select-choices-row:hover {
+        background: rgba(0, 114, 188,.8);
+        color: white;
+    }
+
+    /* Override 'card' and 'well' floating */
+    .card, .well { float: unset; }
+
+    /* Ensure overlays have some height */
+    .overlay-container { min-height: 100px; }
+/*************************/
+
+
+/*********/
+/* Login */
+#loginform input {
+    margin: 5px;
+    border-radius: 7px;
+    padding: 15px;
+}
+
+.login-error {
+    margin-top: 10px;
+    color: #c00;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+/**********/
+
+/******************/
+/* Access Request */
+    .access-request .card { padding: 15px; }
+
+    .access-request .card:hover {
+        box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.36);
+    }
+
+    .access-request .auth-element {
+        min-height: 30px;
+        padding-top: 15px;
+    }
+
+    .access-request .auth-element h3.even-content { align-items: flex-start; }
+
+    .access-request .card.selection-made .badge { background-color: #51a351; }
+    .access-request .card.selection-empty .badge { background-color: #bd362f; }
+
+    .access-request .card.selection-made,
+    .access-request .card.selection-empty { border-left: solid 3px; }
+
+    .access-request .card.selection-made { border-left-color: #51a351; }
+    .access-request .card.selection-empty { border-left-color: #bd362f; }
+
+    .access-request .auth-form-header {
+        margin: -19px -19px 19px -19px;
+        padding: 19px;
+        background: lightgray;
+        border-bottom: solid 1px darkgray;
+    }
+
+    /* Space field cards */
+    .access-request .auth-form-fields .card:not(:last-of-type) {
+        margin-bottom: 20px;
+    }
+
+    .access-request .card > *:not(:last-child) {
+        margin-bottom: 20px;
+    }
+
+    .access-request .auth-form-fields pre.auth-username {
+        display: inline-block;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    .access-request .auth-form-footer {
+        text-align: right;
+    }
+/******************/
+
+/**************************/
+/* Transitions/Animations */
+    .fadein {
+        -webkit-transition:0.4s linear all;
+        transition:0.4s linear all;
+        opacity: 1;
+    }
+
+    .fadein.ng-hide {
+        opacity: 0;
+    }
+/**************************/

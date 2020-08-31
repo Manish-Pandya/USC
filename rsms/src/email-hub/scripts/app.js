@@ -56,6 +56,12 @@ angular
             content_style: "p,ul li, ol li {font-size:14px}"
         };
 
+        $rootScope.hubNavViews = [
+            { name: 'Home', route: '/' },
+            { name: 'Templates', route: '/templates' },
+            { name: 'Queue', route: '/queue' }
+        ];
+
         $rootScope.getNavLinks = function(){
             var links = [
                 {

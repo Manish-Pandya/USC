@@ -1,0 +1,19 @@
+<div class="fake-table striped bordered content-container">
+    <div class="table-header">
+        <h3>Request Date</h3>
+        <h3>Name</h3>
+        <h3>Network Username</h3>
+        <h3>Email</h3>
+        <h3>Status</h3>
+    </div>
+    <div class="table-row" ng-repeat="request in requests">
+        <div>{{ getDate(request.Date_created) | date:'MM/dd/yyyy'}}</div>
+        <div>{{request.First_name}} {{request.Last_name}}</div>
+        <div>{{request.Network_username}}</div>
+        <div>{{request.Email}}</div>
+        <div>
+            <user-access-request-status-actions request="request">
+            </user-access-request-status-actions>
+        </div>
+    </div>
+</div>

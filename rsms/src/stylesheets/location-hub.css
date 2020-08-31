@@ -57,6 +57,11 @@
 .locationTable tr .lhcol_edit { width:7%; }
 .locationTable tr .lhcol_building { width:18%; }
 .locationTable tr .lhcol_name { width:10%; }
+.locationTable tr .lhcol_occupants { width: 5% }
+.locationTable tr .lhcol_occupants input {
+  width: auto;
+}
+
 .locationTable tr .lhcol_type { width:2%; }
 .locationTable tr .lhcol_hazards { width:10%; }
 .locationTable tr .lhcol_purpose { width:10%; }
@@ -67,6 +72,9 @@
 .locationTable tr .lhcol_courses { width:15%; }
 .locationTable tr .lhcol_courses pre {
   font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+
   word-break: keep-all;
 }
 
@@ -143,4 +151,16 @@ h1 .room-type-icon i {
 
 .locationTable tr td:last-child {
     /*width: 4%;*/
+}
+
+.locationTable input {
+  padding: 5px;
+  border-radius: 6px;
+  border-style: solid;
+}
+
+/* Style header popovers as normal text */
+.locationTable th .popover-content {
+  text-transform: none;
+  font-weight: normal;
 }

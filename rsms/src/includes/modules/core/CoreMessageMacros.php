@@ -16,6 +16,18 @@ class CoreMessageMacros {
             }
         );
 
+        // My Lab
+        $resolvers[] = new MacroResolver(
+            null,
+            '[My Lab]', 'URL of the My Lab dashboard',
+            function(){
+                $urlBase = ApplicationConfiguration::get(ApplicationBootstrapper::CONFIG_SERVER_WEB_URL);
+                $mylablink = $urlBase . WEB_ROOT . 'views/lab/mylab.php';
+
+                return $mylablink;
+            }
+        );
+
         return $resolvers;
     }
 

@@ -30,6 +30,7 @@ ul li.yellowed > label.checkbox input[type=checkbox]:checked ~ span.metro-checkb
 
 .inspection-warnings {
     color: orangered;
+    font-size: 0.9em;
 }
 
 .inspection-warnings .inspection-warning {

@@ -29,7 +29,7 @@ echo 'if( !window.Constants ){
         echo  "label:'$label',";
         echo  "label_plural:'$plural',";
         echo  "inspectable:$inspectable,";
-        echo  "assignable_to:'$assignable_to',";
+        echo  "assignable_to:" . (isset($assignable_to) ? "'$assignable_to'" : 'null' ) . ",";
         echo  "departments:[$depts],";
         echo  "icon_class:'$icon',";
         echo  "img_src:'$img'";

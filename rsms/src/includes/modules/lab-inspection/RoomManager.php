@@ -23,7 +23,14 @@ class RoomManager {
      * Retrieve all Users which are assigned the Role defined by the specified RoomType.
      */
     public function getAssignableUsers( RoomType $type ) {
-        $role = $this->roleDao->getByName($type->getAssignable_to());
+        $role_name = $type->getAssignable_to();
+
+        // If type is not assignable, then return an empty list
+        if( !isset($role_name) ){
+            return [];
+        }
+
+        $role = $this->roleDao->getByName( $role_name );
 
         // Find all users with the applicable role
         return $this->userDao->getUsersWithRole( $role );
@@ -46,6 +53,11 @@ class RoomManager {
                 // Return User assignments
                 // TODO: Limit to assignable_to?
                 return $this->roomDao->getRoomAssignedUsers($room->getKey_id(), $roomType->getAssignable_to());
+            }
+
+            // Non-assignable rooms
+            case null: {
+                return [];
             }
 
             default: {
@@ -130,6 +142,12 @@ class RoomManager {
             // User / Teaching Lab Contact
             case LabInspectionModule::ROLE_TEACHING_LAB_CONTACT: {
                 $updatedAssignments = $this->updateAssignedUsers($roomChanges, $room, LabInspectionModule::ROLE_TEACHING_LAB_CONTACT);
+                break;
+            }
+
+            // Non-assignable rooms
+            case null: {
+                $updatedAssignments = [];
                 break;
             }
 
