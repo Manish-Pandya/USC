@@ -2499,7 +2499,7 @@ angular.module('00RsmsAngularOrmApp')
  * Controller of the 00RsmsAngularOrmApp Radmin
  */
 angular.module('00RsmsAngularOrmApp')
-    .controller('RadminMainCtrl', function ($scope, $rootScope, actionFunctionsFactory, $state, $modal) {
+    .controller('RadminMainCtrl', function ($scope, $rootScope, actionFunctionsFactory, $state, $modal, $timeout) {
     //do we have access to action functions?
     var af = actionFunctionsFactory;
     $scope.af = af;
@@ -2517,6 +2517,13 @@ angular.module('00RsmsAngularOrmApp')
     $scope.onSelectPi = function (pi) {
         $state.go('radmin.pi-detail', {
             pi: pi.Key_id
+        });
+
+        // Deselect entry after navigation has started
+        $timeout(() => {
+            if( $scope.pi ){
+                $scope.pi.selected = null;
+            }
         });
     };
 });
