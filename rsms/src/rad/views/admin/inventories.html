@@ -5,9 +5,22 @@
 <div class="right-column">
     <div class="well half">
         <h2>
-            <i class="fa fa-calendar"></i>Create Quarterly Inventory for {{startDate}} - {{endDate}}
-            <a style="margin: 23px 16px;" ng-click="createInventory(endDate, dueDate)" class="btn btn-success left"><i class="icon-checkmark"></i>Create</a>
+            <i class="fa fa-calendar"></i>Create Quarterly Inventory
+
+            <select style="width: auto; margin: 0"
+                    ng-model="selectedQuarterIndex"
+                    ng-change="selectQuarterOption(selectedQuarterIndex)">
+                <option ng-repeat="quarter in quarterOptions" ng-value="$index">
+                    {{quarter.name}}: {{quarter.displayStart}} - {{quarter.displayEnd}}
+                </option>
+            </select>
         </h2>
+
+        <div ng-if="selectedQuarter" class="card full" style="padding: 20px; margin-bottom: 20px;">
+            <h3>Create Quarterly Inventory for {{selectedQuarter.name}}: {{selectedQuarter.displayStart}} - {{selectedQuarter.displayEnd}}</h3>
+            <a style="margin: 23px 16px;" ng-click="createInventory(selectedQuarter)" class="btn btn-success left"><i class="icon-checkmark"></i>Create</a>
+        </div>
+
         <h2 ng-if="inventory"><i class="fa fa-calendar"></i>Most Recent Quarterly Inventory:</h2>
         <div ng-if="inventory" class="card full">
             <div class="fake-table striped bordered">

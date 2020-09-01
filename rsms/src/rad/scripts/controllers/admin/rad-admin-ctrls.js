@@ -1718,17 +1718,52 @@ angular.module('00RsmsAngularOrmApp')
             $scope.piInventories = piInventories;
         });
     };
-    $scope.createInventory = function () {
-        var startDate = convenienceMethods.setMysqlTime(moment().startOf('quarter'));
-        var endDate = convenienceMethods.setMysqlTime(moment().endOf('quarter'));
+
+    $scope.selectQuarterOption = function selectQuarterOption( index ){
+        $scope.selectedQuarter = $scope.quarterOptions[index];
+    }
+
+    /** Create (or update) a quarterly inventory */
+    $scope.createInventory = function ( quarter ) {
+        if( !quarter ){
+            return;
+        }
+
+        let startDate = quarter.startDate;
+        let endDate = quarter.endDate;
         $scope.QuarterlyInventorySaving = af.createQuarterlyInventory(startDate, endDate)
             .then(function (inventory) {
             $scope.inventory = inventory;
             console.log(inventory);
         }, function () { });
     };
-    $scope.startDate = convenienceMethods.dateToIso(convenienceMethods.setMysqlTime(moment().startOf('quarter')));
-    $scope.endDate = convenienceMethods.dateToIso(convenienceMethods.setMysqlTime(moment().endOf('quarter')));
+
+    // Populate the form to be able to create:
+    //   CURRENT quarter
+    //   PREVIOUS quarter
+    //   NEXT quarter
+    function q_opt( name, moment ){
+        let start = convenienceMethods.setMysqlTime(moment.startOf('quarter'));
+        let end = convenienceMethods.setMysqlTime(moment.endOf('quarter'));
+
+        return {
+            name: name,
+            displayStart: convenienceMethods.dateToIso(start),
+            displayEnd: convenienceMethods.dateToIso(end),
+            startDate: start,
+            endDate: end,
+        };
+    }
+
+    let quarter_current = moment().quarter( moment().quarter() );
+    let quarter_previous = moment().quarter( moment().quarter() ).subtract(1, 'quarter');
+    let quarter_next = moment().quarter( moment().quarter() ).add(1, 'quarter');
+
+    $scope.quarterOptions = [
+        q_opt( 'Next Quarter', quarter_next ),
+        q_opt( 'This Quarter', quarter_current ),
+        q_opt( 'Last Quarter', quarter_previous )
+    ];
 });
 'use strict';
 /**
