@@ -181,7 +181,7 @@
                     </h3>
                     <h3>Status</h3>
                     <h3>
-                        Isotope<br />
+                        Isotope(s)<br />
                         <input ng-model="parcelFilter.isotope" style="max-width:80px" />
                     </h3>
                     <h3>Arrival Date</h3>
@@ -213,7 +213,7 @@
                     </div>
 
                     <div ng-init="parcel.loadAuthorization()">
-                        {{parcel.Authorization.IsotopeName}}
+                        <parcel-isotopes parcel="parcel">
                     </div>
 
                     <div>

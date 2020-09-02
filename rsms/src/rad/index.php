@@ -152,7 +152,7 @@ if(!isset($_SESSION["USER"])){ ?>
 <script type="text/javascript" src="./scripts/directives/combobox.js"></script>
 <script type="text/javascript" src="scripts/directives/piAuths.js"></script>
 <script type="text/javascript" src="scripts/directives/container.js"></script>
-
+<script type="text/javascript" src="scripts/directives/parcelIsotopes.js"></script>
 
 
 <!-- filters -->
