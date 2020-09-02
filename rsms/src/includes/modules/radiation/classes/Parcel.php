@@ -19,11 +19,9 @@ class Parcel extends RadCrud {
 
 		"purchase_order_id"				=> "integer",
 		"status"						=> "text",
-		"isotope_id"					=> "integer",
 		"arrival_date"					=> "timestamp",
 		"quantity"						=> "float",
 		"rs_number"						=> "text",
-		"authorization_id"				=> "integer",
         "catalog_number"                => "text",
         "chemical_compound"             => "text",
 		"comments"						=> "text",
@@ -38,6 +36,13 @@ class Parcel extends RadCrud {
 	);
 
 	/** Relationships */
+	protected static $PARCEL_AUTHS_RELATIONSHIP = array(
+		"className" => ParcelAuthorization::class,
+		"tableName" => ParcelAuthorization::TABLE_NAME,
+		"keyName"	=> "key_id",
+		"foreignKeyName" => "parcel_id"
+	);
+
 	protected static $PARCELUSE_RELATIONSHIP = array(
 		"className" => "ParcelUse",
 		"tableName" => "parcel_use",
@@ -69,12 +74,6 @@ class Parcel extends RadCrud {
 	/** String containing the status of this parcel. */
 	private $status;
 
-	/** Reference to the isotope this parcel contains 
-     * @var Isotope
-     */
-	private $isotope;
-	private $isotope_id;
-
 	/** Date this parcel will arrive/arrived. */
 	private $arrival_date;
 
@@ -99,8 +98,8 @@ class Parcel extends RadCrud {
 	/** wipe test done on this parcel **/
 	private $wipe_tests;
 
-	/** id of the authorization that allows PI to have this parcel **/
-	private $authorization_id;
+	/** List of authorizations which allow this PI to have the parcel */
+	private $parcelAuthorizations;
 
     private $catalog_number;
     private $chemical_compound;
@@ -176,20 +175,46 @@ class Parcel extends RadCrud {
 	public function getStatus() { return $this->status; }
 	public function setStatus($newStatus) { $this->status = $newStatus; }
 
-	public function getIsotope_id() { return $this->isotope_id; }
-	public function setIsotope_id($newId) { $this->isotope_id = $newId; }
-
+	// Attempt to handle this for multi-nuclides
+	//   by making a transient isotope for those
 	public function getIsotope() {
-		if($this->isotope == null && $this->getAuthorization_id() != null) {
-            $authDao = new GenericDAO(new Authorization());
-            $auth = $authDao->getById($this->authorization_id);
-			$isotopeDAO = new GenericDAO(new Isotope());
-			if($auth && $auth->getIsotope_id() != null)$this->isotope = $isotopeDAO->getById($auth->getIsotope_id());
+		$pauths = $this->getParcelAuthorizations();
+		if( !empty($pauths) ){
+			if ( count($pauths) > 1 ){
+				$multi = new Isotope();
+				$multi->setIs_active(true);
+
+				$_isotope_names = [];
+				$_mass = true;
+				foreach($pauths as $pauth){
+					$_mass = $_mass && $pauth->getIsotope()->getIs_mass();
+					$_isotope_names[] = $pauth->getIsotope()->getName();
+				}
+
+				$multi->setName( implode(', ', $_isotope_names) );
+				$multi->setIs_mass( $_mass );
+
+				$this->isotope = $multi;
+			}
+			else {
+				$this->isotope = $pauths[0]->getIsotope();
+			}
 		}
+
 		return $this->isotope;
 	}
-	public function setIsotope($newIsotope) {
-		$this->isotope = $newIsotope;
+
+	public function setParcelAuthorizations( $val ){ $this->parcelAuthorizations = $val; }
+	public function getParcelAuthorizations(){
+		if($this->parcelAuthorizations == null && $this->hasPrimaryKeyValue()) {
+			$thisDAO = new GenericDAO($this);
+			$this->parcelAuthorizations = $thisDAO->getRelatedItemsById(
+				$this->getKey_id(),
+				DataRelationship::fromArray(self::$PARCEL_AUTHS_RELATIONSHIP)
+			);
+		}
+
+		return $this->parcelAuthorizations;
 	}
 
 	public function getArrival_date() {
@@ -264,9 +289,6 @@ class Parcel extends RadCrud {
 	public function setWipe_test($test){
 		$this->wipe_tests = array($test);
 	}
-
-	public function getAuthorization_id() {return $this->authorization_id;}
-	public function setAuthorization_id($authorization_id) {$this->authorization_id = $authorization_id;}
 
     public function getCatalog_number() {return $this->catalog_number;}
 	public function setCatalog_number($num) {$this->catalog_number = $num;}

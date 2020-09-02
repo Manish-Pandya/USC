@@ -1226,7 +1226,7 @@ class Rad_ActionManager extends ActionManager {
     }
 
     function saveParcel( $parcel = null ) {
-        $LOG = Logger::getLogger( 'Action' . __FUNCTION__ );
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
         $decodedObject = $parcel ?? $this->convertInputJson();
 
         if( $decodedObject === NULL ) {
@@ -1235,20 +1235,32 @@ class Rad_ActionManager extends ActionManager {
         else if( $decodedObject instanceof ActionError) {
             return $decodedObject;
         }
-        else {
-            $dao = $this->getDao(new Parcel());
-            $decodedObject = $dao->save($decodedObject);
-            EntityManager::with_entity_maps(Parcel::class, array(
-                EntityMap::lazy("getPrincipal_investigator"),
-                EntityMap::lazy("getPurchase_order"),
-                EntityMap::lazy("getIsotope"),
-                EntityMap::lazy("getParcelUses"),
-                EntityMap::eager("getRemainder"),
-                EntityMap::eager("getWipe_test")
-            ));
 
-            return $decodedObject;
+        // Force decoding of parcel authorizations
+        $pauths = $decodedObject->getParcelAuthorizations();
+        $pauths = array_map(self::DECODE_FN, $pauths);
+        $decodedObject->setParcelAuthorizations($pauths);
+
+        $savedParcel = null;
+        try {
+            $parcelManager = new ParcelManager();
+            $savedParcel = $parcelManager->saveParcel( $decodedObject );
         }
+        catch(ParcelValidationException $v){
+            $LOG->error("Unable to save Parcel: " . $v->getMessage());
+            return new ActionError($v->getMessage(), 400);
+        }
+
+        EntityManager::with_entity_maps(Parcel::class, array(
+            EntityMap::lazy("getPrincipal_investigator"),
+            EntityMap::lazy("getPurchase_order"),
+            EntityMap::lazy("getIsotope"),
+            EntityMap::lazy("getParcelUses"),
+            EntityMap::eager("getRemainder"),
+            EntityMap::eager("getWipe_test")
+        ));
+
+        return $savedParcel;
     }
 
     function saveParcelWipesAndChildren() {
