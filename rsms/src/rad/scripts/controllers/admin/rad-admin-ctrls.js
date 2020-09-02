@@ -2164,7 +2164,8 @@ angular.module('00RsmsAngularOrmApp')
     };
     $scope.cancel = function () { return $modalInstance.dismiss(); };
 })
-    .controller('PiDetailModalCtrl', ['$scope', 'dataSwitchFactory', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', function ($scope, dataSwitchFactory, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods, $http) {
+    .controller('PiDetailModalCtrl', ['$scope', 'dataSwitchFactory', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', 'parcelValidationFactory', '$timeout',
+    function ($scope, dataSwitchFactory, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods, parcelValidationFactory, $timeout) {
         var af = actionFunctionsFactory;
         $scope.af = af;
         $scope.modalData = af.getModalData();
@@ -2240,8 +2241,12 @@ angular.module('00RsmsAngularOrmApp')
                 Isotope_id: null,
                 Arrival_date: null,
                 Is_active: true,
-                Principal_investigator_id: $scope.modalData.pi.Key_id
+                Principal_investigator_id: $scope.modalData.pi.Key_id,
+                ParcelAuthorizations: []
             };
+
+            // Add a single parcelauth after load
+            $timeout( () => $scope.addParcelAuth() );
         }
         if (!$scope.modalData.PIAuthorizationCopy) {
             $scope.modalData.PIAuthorizationCopy = {
@@ -2299,10 +2304,49 @@ angular.module('00RsmsAngularOrmApp')
             if ($scope.modalData.ParcelCopy)
                 $scope.modalData.ParcelCopy.PurchaseOrderrder = dataStoreManager.getById("PurchaseOrder", $scope.modalData.ParcelCopy.Purchase_order_id);
         };
-        $scope.selectAuth = function (po) {
-            if ($scope.modalData.ParcelCopy)
-                $scope.modalData.ParcelCopy.Authorization = dataStoreManager.getById("Authorization", $scope.modalData.ParcelCopy.Authorization_id);
+
+        $scope.addParcelAuth = function addParcelAuth(){
+            if( $scope.modalData.ParcelCopy ){
+                let current_percent = $scope.getParcelAuthPercentage();
+
+                $scope.modalData.ParcelCopy.ParcelAuthorizations.push({
+                    Class: 'ParcelAuthorization',
+                    Parcel_id: $scope.modalData.ParcelCopy.Key_id,
+                    Authorization_id: null,
+                    Percentage: 100.0 - current_percent
+                });
+
+                console.debug("Add parcel authorization", $scope.modalData.ParcelCopy.ParcelAuthorizations);
+            }
         };
+
+        $scope.removeParcelAuth = function removeParcelAuth(parcelAuth){
+            if( $scope.modalData.ParcelCopy ){
+                let idx = $scope.modalData.ParcelCopy.ParcelAuthorizations.indexOf(parcelAuth);
+                if( idx > -1 ){
+                    console.debug("Remove ", parcelAuth);
+                    $scope.modalData.ParcelCopy.ParcelAuthorizations.splice(idx, 1);
+                }
+                else {
+                    console.error("No parcel auth found");
+                }
+            }
+        };
+
+        $scope.selectAuth = function (parcel_auth) {
+            if ($scope.modalData.ParcelCopy){
+                parcel_auth.Authorization = dataStoreManager.getById("Authorization", parcel_auth.Authorization_id);
+            }
+        };
+
+        $scope.getParcelAuthPercentage = function getParcelAuthPercentage(){
+            return parcelValidationFactory.getParcelAuthorizationPercentage($scope.modalData.ParcelCopy);
+        };
+
+        $scope.getParcelAuthQuantity = function getParcelAuthQuantity(parcel_auth){
+            return parcelValidationFactory.getParcelAuthorizationQuantity($scope.modalData.ParcelCopy, parcel_auth);
+        };
+
         $scope.addIsotope = function (id) {
             var newAuth = new Authorization();
             newAuth.Class = "Authorization";
@@ -2366,6 +2410,11 @@ angular.module('00RsmsAngularOrmApp')
             af.deleteModalData();
             af.saveAuthorization(piAuth, copy, auth).then(function (returnedAuth) { return $modalInstance.close(returnedAuth); });
         };
+
+        $scope.getParcelValidationErrors = function getParcelValidationErrors(){
+            return parcelValidationFactory.validateParcel($scope.modalData.ParcelCopy);
+        };
+
         $scope.saveParcel = function (copy, parcel, pi) {
             af.deleteModalData();
             af.saveParcel(copy, parcel, pi).then(function (r) {

@@ -2,7 +2,7 @@
     <h2 ng-show="!addRoom" style="padding:5px; background:rgba(153, 96, 40, 1); color:white"><span ng-if="!modalData.Authorization">Add</span><span ng-if="modalData.Authorization">Edit</span> a parcel for {{modalData.pi.User.Name}}</h2>
 </div>
 
-<div class="modal-body">
+<form class="modal-body">
     <div class="control-group">
         <label class="control-label">Status</label>
         <div class="controls">
@@ -25,11 +25,41 @@
     </div>
 
     <div class="control-group">
-        <label class="control-label">Authorization</label>
+        <label class="control-label even-content" style="align-items: baseline;">
+            <span>
+                <span>Authorization{{modalData.ParcelCopy.ParcelAuthorizations.length > 1 ? 's' : ''}}</span>
+            </span>
+
+            <a class="btn btn-mini btn-success"
+               ng-click="addParcelAuth()">
+                <i class="icon-plus"></i>
+                Add
+            </a>
+        </label>
+
         <div class="controls">
-            <select data-ng-model="modalData.ParcelCopy.Authorization_id" ng-options="auth.Key_id as (auth.Isotope.Name + ':   (' + auth.Form + ')') for auth in getHighestAuth(modalData.pi).Authorizations" ng-change="selectAuth()">
-                <option selected="selected" value="">Select an authorization</option>
-            </select>
+            <div class="input-append" ng-repeat="parcel_auth in modalData.ParcelCopy.ParcelAuthorizations">
+                <a class="add-on btn-danger" ng-click="removeParcelAuth(parcel_auth)">
+                    <i class="icon-cancel-2"></i>
+                </a>
+
+                <select required data-ng-model="parcel_auth.Authorization_id"
+                        ng-options="auth.Key_id as (auth.Isotope.Name + ':   (' + auth.Form + ')') for auth in getHighestAuth(modalData.pi).Authorizations"
+                        ng-change="selectAuth(parcel_auth)">
+                    <option selected="selected" value="">Select an authorization</option>
+                </select>
+
+                <input class="add-on" style="min-width: 100px;"
+                       type="number" min="0" max="100"
+                       ng-model="parcel_auth.Percentage">
+                <span class="add-on">%</span>
+            </div>
+
+            <div ng-if="modalData.ParcelCopy.ParcelAuthorizations.length > 0">
+                <span ng-class="{ red: getParcelAuthPercentage() != 100 }">
+                    Total {{getParcelAuthPercentage()}}%
+                </span>
+            </div>
         </div>
     </div>
 
@@ -54,6 +84,19 @@
         <div class="controls input-append">
             <input ng-model="modalData.ParcelCopy.Quantity" /><span class="add-on">{{"" | unit:modalData.ParcelCopy}}</span>
         </div>
+
+        <div class="controls input-append" style="padding-left: 25px;"
+             ng-if="modalData.ParcelCopy.ParcelAuthorizations.length > 1"
+             ng-repeat="parcel_auth in modalData.ParcelCopy.ParcelAuthorizations">
+
+            <span class="add-on" style="min-width:12%">{{parcel_auth.Authorization.Isotope.Name}}</span>
+            <span class="add-on">
+                <span>
+                    <span>{{getParcelAuthQuantity(parcel_auth) }}</span>
+                    <span>{{"" | unit:modalData.ParcelCopy}}</span>
+                </span>
+            </span>
+        </div>
     </div>
     <div class="control-group">
         <label class="control-label" for="inputEmail">Chemical Compound</label>
@@ -74,9 +117,17 @@
             <textarea ng-model="modalData.ParcelCopy.Comments"></textarea>
         </div>
     </div>
-</div>
+</form>
 
-<div class="modal-footer">
-    <a class="btn btn-large btn-success left" ng-click="saveParcel(modalData.ParcelCopy, modalData.Parcel, modalData.pi)"><i class="icon-checkmark"></i>Save</a>
-    <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+<div class="modal-footer even-content" style="align-items: flex-end;">
+    <ul class="red align-left" style="width: 50%;">
+        <li ng-repeat="error in getParcelValidationErrors() track by $index">{{error}}</li>
+    </ul>
+
+    <span style="width: 50%">
+        <a class="btn btn-large btn-success left"
+            ng-disabled="getParcelValidationErrors().length"
+            ng-click="!getParcelValidationErrors().length && saveParcel(modalData.ParcelCopy, modalData.Parcel, modalData.pi)"><i class="icon-checkmark"></i>Save</a>
+        <a class="btn btn-large btn-danger left" ng-click="close()"><i class="icon-cancel-2"></i>Close</a>
+    </span>
 </div>

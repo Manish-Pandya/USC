@@ -53,6 +53,111 @@ angular.module('radValidationFunctionsModule', [
 
         return pickupsValidationFactory;
     })
+
+    .factory('parcelValidationFactory', function parcelValidationFactory(){
+        var parcelValidationFactory = {};
+
+        parcelValidationFactory.getParcelAuthorizationPercentage = function getParcelAuthorizationPercentage(parcel){
+            if( !parcel || !parcel.ParcelAuthorizations ){
+                return 0;
+            }
+
+            return parcel.ParcelAuthorizations
+                .map(pauth => pauth.Percentage)
+                .reduce( (sum, percentage) => sum += percentage, 0);
+        };
+
+        parcelValidationFactory.getParcelAuthorizationQuantity = function getParcelAuthorizationQuantity(parcel, parcelauth){
+            return parseFloat(parcel.Quantity) * (parseFloat(parcelauth.Percentage) / 100);
+        };
+
+        parcelValidationFactory.validateParcel = function validateParcel( parcel ){
+            var validations = [
+                parcelValidationFactory.validateAtLeastOneParcelAuthorization(parcel),
+                parcelValidationFactory.validateParcelAuthorizationIsotopes(parcel),
+                parcelValidationFactory.validateParcelAuthorizationsPercentage(parcel),
+                parcelValidationFactory.validateQuantityDoesNotExceedAuthorizedAmounts(parcel),
+                // TODO: more?
+            ];
+
+            return validations.filter(v => !v.isValid).map(v => v.error) || [];
+        };
+
+        parcelValidationFactory.validateAtLeastOneParcelAuthorization = function validateAtLeastOneParcelAuthorization( parcel ){
+            let validAuths = {
+                isValid: true,
+                error: null
+            };
+
+            // Require one auth
+            if( !parcel.ParcelAuthorizations || !parcel.ParcelAuthorizations.length ){
+                validAuths.isValid = false;
+                validAuths.error = "One Authorization is required.";
+            }
+
+            return validAuths;
+        }
+
+        parcelValidationFactory.validateParcelAuthorizationIsotopes = function validateParcelAuthorizationIsotopes( parcel ){
+            let validAuths = {
+                isValid: true,
+                error: null
+            };
+
+            // Require valid selections
+            if( parcel.ParcelAuthorizations.filter(a => !a.Authorization_id).length ){
+                validAuths.isValid = false;
+                validAuths.error = "All Authorizations require a selection.";
+            }
+
+            return validAuths;
+        }
+
+        parcelValidationFactory.validateParcelAuthorizationsPercentage = function validateParcelAuthorizationsPercentage( parcel ){
+            let validAuths = {
+                isValid: true,
+                error: null
+            };
+
+            // Ensure percentages are 100
+            if( 100 != parcelValidationFactory.getParcelAuthorizationPercentage(parcel) ){
+                validAuths.isValid = false;
+                validAuths.error = "Percentage of nuclides must equal 100%.";
+            }
+
+            return validAuths;
+        };
+
+        parcelValidationFactory.validateQuantityDoesNotExceedAuthorizedAmounts = function validateQuantityDoesNotExceedAuthorizedAmounts(parcel){
+            let validQuantities = {
+                isValid: true,
+                error: null
+            };
+
+            for( let i = 0; i < parcel.ParcelAuthorizations.length; i++ ){
+                let auth = parcel.ParcelAuthorizations[i];
+
+                // Validate that this ParcelAuthorization references its Authorization
+                if( !auth.Authorization ){
+                    console.warn("ParcelAuth must reference its Authorization to calculate quantity");
+                    continue;
+                }
+
+                // Calculate quantity of this material
+                let authQuantity = parcelValidationFactory.getParcelAuthorizationQuantity(parcel, auth);
+                if( authQuantity > parseFloat(auth.Authorization.Max_quantity) ){
+                    validQuantities.isValid = false;
+                    validQuantities.error = "Quantity must not exceed authorized amounts of Authorization(s)";
+                    return validQuantities;
+                }
+            }
+
+            return validQuantities;
+        }
+
+        return parcelValidationFactory;
+    })
+
     .factory('parcelUseValidationFactory', function parcelUseValidationFactory($rootScope, $modal, convenienceMethods, roleBasedFactory){
         var parcelUseValidationFactory = {};
 
