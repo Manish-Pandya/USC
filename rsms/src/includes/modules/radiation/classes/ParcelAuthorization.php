@@ -6,13 +6,13 @@ class ParcelAuthorization extends RadCrud {
         "authorization_id"				=> "integer",
         "percentage"					=> "float",
 
-		//GenericCrud
-		"key_id"						=> "integer",
-		"is_active"						=> "boolean",
-		"date_last_modified"			=> "timestamp",
-		"last_modified_user_id"			=> "integer",
-		"date_created"					=> "timestamp",
-		"created_user_id"				=> "integer"
+        //GenericCrud
+        "key_id"						=> "integer",
+        "is_active"						=> "boolean",
+        "date_last_modified"			=> "timestamp",
+        "last_modified_user_id"			=> "integer",
+        "date_created"					=> "timestamp",
+        "created_user_id"				=> "integer"
     ];
 
     private $parcel_id;
@@ -25,18 +25,18 @@ class ParcelAuthorization extends RadCrud {
     private $parcel;
 
     public static function defaultEntityMaps(){
-		return [];
-	}
+        return [];
+    }
 
     public function __construct() {}
 
-	// Required for GenericCrud
-	public function getTableName() {
-		return self::TABLE_NAME;
-	}
+    // Required for GenericCrud
+    public function getTableName() {
+        return self::TABLE_NAME;
+    }
 
-	public function getColumnData() {
-		return self::COLUMN_NAMES_AND_TYPES;
+    public function getColumnData() {
+        return self::COLUMN_NAMES_AND_TYPES;
     }
 
     public function getParcel_id(){ return $this->parcel_id; }
@@ -49,13 +49,13 @@ class ParcelAuthorization extends RadCrud {
     public function setPercentage($val){ $this->percentage = (float) $val; }
 
     // Transient
-	public function getIsotope() {
-		if($this->isotope == null && $this->getAuthorization_id() != null) {
+    public function getIsotope() {
+        if($this->isotope == null && $this->getAuthorization_id() != null) {
             $authDao = new GenericDAO(new Authorization());
             $auth = $authDao->getById($this->authorization_id);
             $this->isotope = $auth->getIsotope();
-		}
-		return $this->isotope;
+        }
+        return $this->isotope;
     }
 
 }
