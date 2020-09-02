@@ -34,16 +34,35 @@ class Rad_TestDataProvider {
         return $radManager->saveAuthorization($auth);
     }
 
-    public static function create_parcel( Rad_ActionManager $radManager, PrincipalInvestigator $pi, Authorization $auth, $quantity = 10 ){
+    static $RS_COUNTER = 1;
+    public static function create_parcel( Rad_ActionManager $radManager, PrincipalInvestigator $pi, $authOrAuths, $quantity = 10 ){
         $parcel = new Parcel();
         $parcel->setIs_active(true);
-        $parcel->setAuthorization_id($auth->getKey_id());
         $parcel->setPrincipal_investigator_id($pi->getKey_id());
         $parcel->setStatus('Delivered');
-        $parcel->setRs_number('TEST-' . $auth->getKey_id());
         $parcel->setQuantity( (int) $quantity );
 
-        return $radManager->saveParcel($parcel);
+        $parcel->setRs_number('RS-TEST-' . self::$RS_COUNTER++ );
+
+        if( $authOrAuths ){
+            $auths = (is_array($authOrAuths) ? $authOrAuths : [$authOrAuths]);
+            $parcelauths = [];
+
+            foreach ( $auths as $auth){
+                // Save a ParcelAuthorization
+                $parcel_auth = new ParcelAuthorization();
+                $parcel_auth->setParcel_id( $parcel->getKey_id() );
+                $parcel_auth->setAuthorization_id($auth->getKey_id());
+                $parcel_auth->setPercentage( 100 / count($auths) );
+                $parcelauths[] = $parcel_auth;
+            }
+
+            $parcel->setParcelAuthorizations($parcelauths);
+        }
+
+        $parcel = $radManager->saveParcel($parcel);
+
+        return $parcel;
     }
 
 }

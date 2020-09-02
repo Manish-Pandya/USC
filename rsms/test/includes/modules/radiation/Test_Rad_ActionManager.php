@@ -23,6 +23,7 @@ class Test_Rad_ActionManager implements I_Test {
 
         // Authorization
         $this->auth = Rad_TestDataProvider::create_isotope_authorization($this->radActionmanager, $this->test_pi_auth, $this->test_isotope);
+        $this->auth2 = Rad_TestDataProvider::create_isotope_authorization($this->radActionmanager, $this->test_pi_auth, $this->test_isotope2);
 
         // Parcel
         $this->test_parcel = Rad_TestDataProvider::create_parcel($this->radActionmanager, $this->test_pi, $this->auth);
@@ -37,6 +38,52 @@ class Test_Rad_ActionManager implements I_Test {
 
         return null;
     }
+
+    public function test__parcel_test_data(){
+        Assert::not_null($this->test_pi, 'Test PI exists');
+        Assert::not_null($this->test_isotope, 'Test Isotope exists');
+        Assert::not_null($this->test_parcel, 'Test Parcel exists');
+
+        // TODO: Save parcel with 1 parcelauth
+        Assert::eq( count($this->test_parcel->getParcelAuthorizations()), 1, 'Test Parcel includes 1 Authorization');
+    }
+
+    public function test__saveParcel_multiAuths(){
+        $package = new Parcel();
+        $package->setStatus( 'REQUESTED' );
+        $package->setQuantity( 100 );
+        $package->setChemical_compound('Test');
+
+        $package_auths = [];
+
+        foreach( [$this->auth, $this->auth2] as $auth ){
+            $pauth = new ParcelAuthorization();
+            $pauth->setAuthorization_id( $auth->getKey_id() );
+            $pauth->setPercentage( 50 );
+            $package_auths[] = $pauth;
+        }
+        
+        $package->setParcelAuthorizations( $package_auths );
+
+        $saved = $this->radActionmanager->saveParcel( $package );
+
+        // TODO: verify Package was saved
+        Assert::not_null($package->getKey_id(), 'Parcel was saved');
+    
+        $saved_pauths = $package->getParcelAuthorizations();
+        Assert::eq( count($saved_pauths), 2, 'Parcel has 2 auths');
+
+        // TODO: verify Authorizations were saved
+        Assert::not_null($saved_pauths[0]->getKey_id(), 'ParcelAuthorization was saved');
+        Assert::eq($saved_pauths[0]->getParcel_id(), $package->getKey_id(), 'ParcelAuthorization is linked to Parcel');
+        Assert::eq($saved_pauths[0]->getAuthorization_id(), $this->auth->getKey_id(), 'ParcelAuthorization is linked to Authorization');
+
+        Assert::not_null($saved_pauths[1]->getKey_id(), 'ParcelAuthorization was saved');
+        Assert::eq($saved_pauths[1]->getParcel_id(), $package->getKey_id(), 'ParcelAuthorization is linked to Parcel');
+        Assert::eq($saved_pauths[1]->getAuthorization_id(), $this->auth2->getKey_id(), 'ParcelAuthorization is linked to Authorization');
+    }
+
+    public function test__saveParcel_multiAuths_require100Percent(){}
 
     /**
      * Given a Parcel with 10 units
@@ -153,13 +200,13 @@ class Test_Rad_ActionManager implements I_Test {
         // Given that a PIAuth already exists with 1 isotope
         Assert::not_null($this->test_pi, 'Test PI exists');
         Assert::not_null($this->test_pi_auth, 'Test PI Auth exists');
-        Assert::eq( count($this->test_pi_auth->getAuthorizations()), 1, '1 Test auth exist');
+        Assert::eq( count($this->test_pi_auth->getAuthorizations()), 2, '2 Test auths exist');
 
         // When we save the piauth
         $savedPIAuth = $this->radActionmanager->savePIAuthorization($this->test_pi_auth);
 
         // Then all auths save too
-        Assert::eq( count($savedPIAuth->getAuthorizations()), 1, 'Only 1 Test auth still exists');
+        Assert::eq( count($savedPIAuth->getAuthorizations()), 2, 'Only 2 Test auths still exist');
     }
 
     /**
@@ -172,7 +219,7 @@ class Test_Rad_ActionManager implements I_Test {
         // Given that a PIAuth already exists with 1 isotope
         Assert::not_null($this->test_pi, 'Test PI exists');
         Assert::not_null($this->test_pi_auth, 'Test PI Auth exists');
-        Assert::eq( count($this->test_pi_auth->getAuthorizations()), 1, '1 Test auth exist');
+        Assert::eq( count($this->test_pi_auth->getAuthorizations()), 2, '2 Test auths exist');
 
         // When we save the piauth with a new isotope
         $newauth = new Authorization();
@@ -189,7 +236,7 @@ class Test_Rad_ActionManager implements I_Test {
         $savedPIAuth = $this->radActionmanager->savePIAuthorization($this->test_pi_auth);
 
         // Then all auths save too
-        Assert::eq( count($savedPIAuth->getAuthorizations()), 2, '2 Test auths exist');
+        Assert::eq( count($savedPIAuth->getAuthorizations()), 3, '3 Test auths exist');
     }
 
     /**
@@ -202,7 +249,7 @@ class Test_Rad_ActionManager implements I_Test {
         // Given that a PIAuth already exists with 1 isotope
         Assert::not_null($this->test_pi, 'Test PI exists');
         Assert::not_null($this->test_pi_auth, 'Test PI Auth exists');
-        Assert::eq( count($this->test_pi_auth->getAuthorizations()), 1, '1 Test auth exist');
+        Assert::eq( count($this->test_pi_auth->getAuthorizations()), 2, '2 Test auths exist');
 
         // When we save the piauth with a removed isotope
         $auths = $this->test_pi_auth->getAuthorizations();
@@ -212,7 +259,7 @@ class Test_Rad_ActionManager implements I_Test {
         $savedPIAuth = $this->radActionmanager->savePIAuthorization($this->test_pi_auth);
 
         // Then the inactive auth is excluded from PIAuth accesor
-        Assert::eq( count($savedPIAuth->getAuthorizations()), 0, '0 Test auths exist');
+        Assert::eq( count($savedPIAuth->getAuthorizations()), 1, '1 Test auth exists');
     }
 }
 ?>
