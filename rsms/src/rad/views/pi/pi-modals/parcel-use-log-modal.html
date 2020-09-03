@@ -115,7 +115,8 @@
                     </div>
                 </li>
                 <li>
-                    <h3>Isotope</h3>
+                    <h3 ng-if="parcel.ParcelAuthorizations.length == 1">Isotope</h3>
+                    <h3 ng-if="parcel.ParcelAuthorizations.length > 1">Isotopes</h3>
                     <div>
                         <parcel-isotopes parcel="parcel">
                     </div>
