@@ -9,7 +9,7 @@
             <div>Position</div>
             <div>{{data.Position}}</div>
             <div ng-if="editData">
-                <select id="position" required ng-model="editData.Position" ng-options="position as position for position in api.getProfilePositionOptions()">
+                <select id="position" required ng-model="editData.Position" ng-options="position as position for position in api.getProfilePositionOptions(data)">
                     <option value="" style="display:none">--Select a Position--</option>
                 </select>
             </div>

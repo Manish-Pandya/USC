@@ -256,17 +256,25 @@ var myLab = angular.module('myLab', [
       };
     },
 
-    getProfilePositionRequiredRole: function(){
-      if( GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR) > -1){
+    getProfilePositionRequiredRole: function(profileData){
+      if( !profileData ){
+        console.error("Cannot determine relevate position roles; no profile data provided");
+        return [];
+      }
+
+      let pi_role = profileData.Roles.find( r => r.Name == Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR);
+      let personnel_role = profileData.Roles.find( r => r.Name == Constants.ROLE.NAME.LAB_PERSONNEL);
+
+      if( pi_role ){
         return Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR;
       }
-      else if( GLOBAL_SESSION_ROLES.userRoles.indexOf(Constants.ROLE.NAME.LAB_PERSONNEL) > -1){
+      else if (personnel_role){
         return Constants.ROLE.NAME.LAB_PERSONNEL;
       }
     },
 
-    getProfilePositionOptions: function(){
-      switch( widget_functions.getProfilePositionRequiredRole() ){
+    getProfilePositionOptions: function( profileData ){
+      switch( widget_functions.getProfilePositionRequiredRole(profileData) ){
         case Constants.ROLE.NAME.PRINCIPAL_INVESTIGATOR:
           return Constants.POSITION.PI;
 

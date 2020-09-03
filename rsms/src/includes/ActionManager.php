@@ -5445,8 +5445,7 @@ class ActionManager {
 
         $userId = $this->getValueFromRequest('userId', $userId);
         if( !isset($userId) ){
-            $LOG->debug("User editing own profile");
-            $userId = $this->getCurrentUser()->getKey_id();
+            $userId = $profile['User_id'];
         }
 
         $user = $this->getUserById($userId);
