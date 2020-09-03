@@ -13,7 +13,7 @@
                     <div ng-bind-html="$select.selected.Name"
                          ng-class="{ 'inactive-contact': !pi.Is_active }"></div>
                 </ui-select-match>
-                <ui-select-choices repeat="pi in PIs | propsFilter: {Name: $select.search} | orderBy:'Name'">
+                <ui-select-choices repeat="pi in PIs | filter:{ Is_active: true } | propsFilter: {Name: $select.search} | orderBy:'Name'">
                     <div ng-bind-html="pi.Name | highlight: $select.search"
                          ng-class="{ 'inactive-contact': !pi.Is_active }"></div>
                 </ui-select-choices>
