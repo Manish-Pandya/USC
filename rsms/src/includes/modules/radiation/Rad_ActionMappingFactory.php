@@ -6,6 +6,10 @@
  */
 class Rad_ActionMappingFactory extends ActionMappingFactory {
 
+	public const ROLE_GROUP_ADMIN         = array( 'Admin', RadiationModule::ROLE_ADMIN );
+	public const ROLE_GROUP_RSO           = array( 'Admin', RadiationModule::ROLE_ADMIN, RadiationModule::ROLE_INSPECTOR );
+	public const ROLE_GROUP_ALL_RAD_USERS = array( 'Admin', RadiationModule::ROLE_ADMIN, 'Safety User', RadiationModule::ROLE_INSPECTOR, RadiationModule::ROLE_CONTACT, RadiationModule::ROLE_USER, LabInspectionModule::ROLE_PI );
+
 	public static function readActionConfig() {
 		$mappings = new Rad_ActionMappingFactory();
 
@@ -46,8 +50,8 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getParcelUsesFromPISinceDate"  => new ActionMapping("getParcelUsesFromPISinceDate", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getActiveParcelsFromPIById"	=> new ActionMapping("getActiveParcelsFromPIById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"getSolidsContainersByRoomId"	=> new ActionMapping("getSolidsContainersByRoomId", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-				"getPIAuthorizationByPIId"		=> new ActionMapping("getPIAuthorizationByPIId", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-                "getAllCarboyReadingAmounts"	=> new ActionMapping("getAllCarboyReadingAmounts", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"getPIAuthorizationByPIId"		=> new ActionMapping("getPIAuthorizationByPIId", "", "", self::ROLE_GROUP_ADMIN),
+                "getAllCarboyReadingAmounts"	=> new ActionMapping("getAllCarboyReadingAmounts", "", "", self::ROLE_GROUP_ADMIN),
                 "getRadConditionById"		    => new ActionMapping("getRadConditionById", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
 
@@ -84,59 +88,59 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getAllWasteContainersReadyForPickup"
 												=> new ActionMapping("getAllWasteContainersReadyForPickup", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
-                "saveDrumWipe"                  => new ActionMapping("saveDrumWipe", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-                "saveDrumWipeTest"              => new ActionMapping("saveDrumWipeTest", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-                "saveDrumWipesAndChildren"      => new ActionMapping("saveDrumWipesAndChildren", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-                "getAllDrumWipeTests"           => new ActionMapping("getAllDrumWipeTests", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-                "getAllDrumWipes"               => new ActionMapping("getAllDrumWipes", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-                "getDrumWipeTestById"		    => new ActionMapping("getDrumWipeTestById", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+                "saveDrumWipe"                  => new ActionMapping("saveDrumWipe", "", "", self::ROLE_GROUP_ADMIN),
+                "saveDrumWipeTest"              => new ActionMapping("saveDrumWipeTest", "", "", self::ROLE_GROUP_ADMIN),
+                "saveDrumWipesAndChildren"      => new ActionMapping("saveDrumWipesAndChildren", "", "", self::ROLE_GROUP_ADMIN),
+                "getAllDrumWipeTests"           => new ActionMapping("getAllDrumWipeTests", "", "", self::ROLE_GROUP_ADMIN),
+                "getAllDrumWipes"               => new ActionMapping("getAllDrumWipes", "", "", self::ROLE_GROUP_ADMIN),
+                "getDrumWipeTestById"		    => new ActionMapping("getDrumWipeTestById", "", "", self::ROLE_GROUP_ADMIN),
 
 
 				// save functions
-				"saveAuthorization" 		=> new ActionMapping("saveAuthorization", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"saveIsotope"				=> new ActionMapping("saveIsotope", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"saveCarboy"				=> new ActionMapping("saveCarboy", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveAuthorization" 		=> new ActionMapping("saveAuthorization", "", "", self::ROLE_GROUP_ADMIN),
+				"saveIsotope"				=> new ActionMapping("saveIsotope", "", "", self::ROLE_GROUP_ADMIN),
+				"saveCarboy"				=> new ActionMapping("saveCarboy", "", "", self::ROLE_GROUP_ADMIN),
 				"saveCarboyUseCycle"		=> new ActionMapping("saveCarboyUseCycle", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-				"saveDrum"					=> new ActionMapping("saveDrum", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"saveDrum"					=> new ActionMapping("saveDrum", "", "", self::ROLE_GROUP_ADMIN),
 				"saveParcel"				=> new ActionMapping("saveParcel", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"saveParcelUse"				=> new ActionMapping("saveParcelUse", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 				"saveParcelUseAmount"	    => new ActionMapping("saveParcelUseAmount", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-				"savePickup"				=> new ActionMapping("savePickup", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"deletePickupById"			=> new ActionMapping("deletePickupById", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"savePurchaseOrder"			=> new ActionMapping("savePurchaseOrder", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"saveWasteType"				=> new ActionMapping("saveWasteType", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"savePickup"				=> new ActionMapping("savePickup", "", "", self::ROLE_GROUP_ALL_RAD_USERS),
+				"deletePickupById"			=> new ActionMapping("deletePickupById", "", "", self::ROLE_GROUP_ALL_RAD_USERS),
+				"savePurchaseOrder"			=> new ActionMapping("savePurchaseOrder", "", "", self::ROLE_GROUP_ADMIN),
+				"saveWasteType"				=> new ActionMapping("saveWasteType", "", "", self::ROLE_GROUP_ADMIN),
 				"saveWasteBag"				=> new ActionMapping("saveWasteBag", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-				"changeWasteBag"			=> new ActionMapping("changeWasteBag", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"saveSolidsContainer"		=> new ActionMapping("saveSolidsContainer", "", "", $this::$ROLE_GROUPS["ADMIN"]),
+				"changeWasteBag"			=> new ActionMapping("changeWasteBag", "", "", self::ROLE_GROUP_ADMIN),
+				"saveSolidsContainer"		=> new ActionMapping("saveSolidsContainer", "", "", self::ROLE_GROUP_ADMIN),
 				"saveSVCollection"			=> new ActionMapping("saveSVCollection", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-				"saveInspectionWipeTest"	=> new ActionMapping("saveInspectionWipeTest", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"saveInspectionWipe"		=> new ActionMapping("saveInspectionWipe", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"saveInspectionWipes"		=> new ActionMapping("saveInspectionWipes", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"saveParcelWipeTest"		=> new ActionMapping("saveParcelWipeTest", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"saveParcelWipe"			=> new ActionMapping("saveParcelWipe", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"saveParcelWipes"			=> new ActionMapping("saveParcelWipes", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-                "savePIWipeTest"		=> new ActionMapping("savePIWipeTest", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"savePIWipe"			=> new ActionMapping("savePIWipe", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"savePIWipes"			=> new ActionMapping("savePIWipes", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"saveParcelWipesAndChildren"=> new ActionMapping("saveParcelWipesAndChildren", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"saveMiscellaneousWipeTest"	=> new ActionMapping("saveMiscellaneousWipeTest", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"saveMiscellaneousWipe"		=> new ActionMapping("saveMiscellaneousWipe", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"saveMiscellaneousWipes"	=> new ActionMapping("saveMiscellaneousWipes", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"saveCarboyReadingAmount"	=> new ActionMapping("saveCarboyReadingAmount", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"savePIAuthorization"	=> new ActionMapping("savePIAuthorization", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"getAllPIAuthorizations"	=> new ActionMapping("getAllPIAuthorizations", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-                "saveMiscellaneousWaste"	=> new ActionMapping("saveMiscellaneousWaste", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-                "getAllMiscellaneousWaste"	=> new ActionMapping("getAllMiscellaneousWaste", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"saveRadCondition"		    => new ActionMapping("saveRadCondition", "", "", $this::$ROLE_GROUPS["RADMIN"]),
+				"saveInspectionWipeTest"	=> new ActionMapping("saveInspectionWipeTest", "", "", self::ROLE_GROUP_ADMIN),
+				"saveInspectionWipe"		=> new ActionMapping("saveInspectionWipe", "", "", self::ROLE_GROUP_ALL_RAD_USERS),
+				"saveInspectionWipes"		=> new ActionMapping("saveInspectionWipes", "", "", self::ROLE_GROUP_ALL_RAD_USERS),
+				"saveParcelWipeTest"		=> new ActionMapping("saveParcelWipeTest", "", "", self::ROLE_GROUP_ADMIN),
+				"saveParcelWipe"			=> new ActionMapping("saveParcelWipe", "", "", self::ROLE_GROUP_ADMIN),
+				"saveParcelWipes"			=> new ActionMapping("saveParcelWipes", "", "", self::ROLE_GROUP_ADMIN),
+                "savePIWipeTest"		=> new ActionMapping("savePIWipeTest", "", "", self::ROLE_GROUP_ALL_RAD_USERS),
+				"savePIWipe"			=> new ActionMapping("savePIWipe", "", "", self::ROLE_GROUP_ALL_RAD_USERS),
+				"savePIWipes"			=> new ActionMapping("savePIWipes", "", "", self::ROLE_GROUP_ALL_RAD_USERS),
+				"saveParcelWipesAndChildren"=> new ActionMapping("saveParcelWipesAndChildren", "", "", self::ROLE_GROUP_ADMIN),
+				"saveMiscellaneousWipeTest"	=> new ActionMapping("saveMiscellaneousWipeTest", "", "", self::ROLE_GROUP_ADMIN),
+				"saveMiscellaneousWipe"		=> new ActionMapping("saveMiscellaneousWipe", "", "", self::ROLE_GROUP_ADMIN),
+				"saveMiscellaneousWipes"	=> new ActionMapping("saveMiscellaneousWipes", "", "", self::ROLE_GROUP_ADMIN),
+				"saveCarboyReadingAmount"	=> new ActionMapping("saveCarboyReadingAmount", "", "", self::ROLE_GROUP_ADMIN),
+				"savePIAuthorization"	=> new ActionMapping("savePIAuthorization", "", "", self::ROLE_GROUP_ADMIN),
+				"getAllPIAuthorizations"	=> new ActionMapping("getAllPIAuthorizations", "", "", self::ROLE_GROUP_ADMIN),
+                "saveMiscellaneousWaste"	=> new ActionMapping("saveMiscellaneousWaste", "", "", self::ROLE_GROUP_ADMIN),
+                "getAllMiscellaneousWaste"	=> new ActionMapping("getAllMiscellaneousWaste", "", "", self::ROLE_GROUP_ADMIN),
+				"saveRadCondition"		    => new ActionMapping("saveRadCondition", "", "", self::ROLE_GROUP_ADMIN),
 
-				"savePickupNotes"		    => new ActionMapping("savePickupNotes", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"savePickupNotes"		    => new ActionMapping("savePickupNotes", "", "", self::ROLE_GROUP_ALL_RAD_USERS),
 
-				"closeWasteContainer"       => new ActionMapping("closeWasteContainer", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"closeWasteContainer"       => new ActionMapping("closeWasteContainer", "", "", self::ROLE_GROUP_ALL_RAD_USERS),
 
-				"removeContainerFromDrum"   => new ActionMapping("removeContainerFromDrum", "", "", $this::$ROLE_GROUPS["RADMIN"]),
-				"saveCarboyDisposalDetails"	=> new ActionMapping("saveCarboyDisposalDetails", "", "", $this::$ROLE_GROUPS["RADMIN"]),
-				"retireCarboy"	            => new ActionMapping("retireCarboy", "", "", $this::$ROLE_GROUPS["RADMIN"]),
-				"recirculateCarboy"	        => new ActionMapping("recirculateCarboy", "", "", $this::$ROLE_GROUPS["RADMIN"]),
+				"removeContainerFromDrum"   => new ActionMapping("removeContainerFromDrum", "", "", self::ROLE_GROUP_ADMIN),
+				"saveCarboyDisposalDetails"	=> new ActionMapping("saveCarboyDisposalDetails", "", "", self::ROLE_GROUP_ADMIN),
+				"retireCarboy"	            => new ActionMapping("retireCarboy", "", "", self::ROLE_GROUP_ADMIN),
+				"recirculateCarboy"	        => new ActionMapping("recirculateCarboy", "", "", self::ROLE_GROUP_ADMIN),
 
 				// other functions
 				"getParcelRemainder"			 => new ActionMapping("getParcelRemainder", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
@@ -148,38 +152,38 @@ class Rad_ActionMappingFactory extends ActionMappingFactory {
 				"getInventoriesByDateRanges"	 => new ActionMapping("getInventoriesByDateRanges", "", "", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
 
 
-				"createQuarterlyInventories"	 => new ActionMapping("createQuarterlyInventories", "", "", $this::$ROLE_GROUPS["ADMIN"]),
-				"getMostRecentInventory"	 => new ActionMapping("getMostRecentInventory", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-                "getQuartleryInventoryById"	 => new ActionMapping("getQuartleryInventoryById", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"getPiInventory"				 => new ActionMapping("getPiInventory", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"getPIInventoryById"		 => new ActionMapping("getPIInventoryById", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"getCurrentPIInventory"				 => new ActionMapping("getCurrentPIInventory", "", "", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"getInventoriesByPiId"		=> new ActionMapping("getInventoriesByPiId","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"savePIQuarterlyInventory"	=> new ActionMapping("savePIQuarterlyInventory","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"updateParcelUse"	=> new ActionMapping("updateParcelUse","","", $this::$ROLE_GROUPS["RADMIN"]),
+				"createQuarterlyInventories"	 => new ActionMapping("createQuarterlyInventories", "", "", self::ROLE_GROUP_ADMIN),
+				"getMostRecentInventory"	 => new ActionMapping("getMostRecentInventory", "", "", self::ROLE_GROUP_ALL_RAD_USERS),
+                "getQuartleryInventoryById"	 => new ActionMapping("getQuartleryInventoryById", "", "", self::ROLE_GROUP_ALL_RAD_USERS),
+				"getPiInventory"				 => new ActionMapping("getPiInventory", "", "", self::ROLE_GROUP_ALL_RAD_USERS),
+				"getPIInventoryById"		 => new ActionMapping("getPIInventoryById", "", "", self::ROLE_GROUP_ALL_RAD_USERS),
+				"getCurrentPIInventory"				 => new ActionMapping("getCurrentPIInventory", "", "", self::ROLE_GROUP_ALL_RAD_USERS),
+				"getInventoriesByPiId"		=> new ActionMapping("getInventoriesByPiId","","", self::ROLE_GROUP_ALL_RAD_USERS),
+				"savePIQuarterlyInventory"	=> new ActionMapping("savePIQuarterlyInventory","","", self::ROLE_GROUP_ALL_RAD_USERS),
+				"updateParcelUse"	=> new ActionMapping("updateParcelUse","","", self::ROLE_GROUP_ADMIN),
 
-                "getAllOtherWasteTypes"	=> new ActionMapping("getAllOtherWasteTypes","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-                "getOtherWateTypeById"	=> new ActionMapping("getOtherWateTypeById","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-                "saveOtherWasteType"	=> new ActionMapping("saveOtherWasteType","","", $this::$ROLE_GROUPS["RSO"]),
-                "clearOtherWaste"	    => new ActionMapping("clearOtherWaste","","", $this::$ROLE_GROUPS["RSO"]),
-                "assignOtherWasteType"	=> new ActionMapping("assignOtherWasteType","","", $this::$ROLE_GROUPS["RSO"]),
+                "getAllOtherWasteTypes"	=> new ActionMapping("getAllOtherWasteTypes","","", self::ROLE_GROUP_ALL_RAD_USERS),
+                "getOtherWateTypeById"	=> new ActionMapping("getOtherWateTypeById","","", self::ROLE_GROUP_ALL_RAD_USERS),
+                "saveOtherWasteType"	=> new ActionMapping("saveOtherWasteType","","", self::ROLE_GROUP_RSO),
+                "clearOtherWaste"	    => new ActionMapping("clearOtherWaste","","", self::ROLE_GROUP_RSO),
+                "assignOtherWasteType"	=> new ActionMapping("assignOtherWasteType","","", self::ROLE_GROUP_RSO),
                 //        'OtherWasteContainer'  : { getById: "getOtherWasteContainerBiId"   , getAll: "getAllOtherWasteContainers"   , save: "saveOtherWasteContainer" },
 
-                "getAllOtherWasteContainers"	=> new ActionMapping("getAllOtherWasteContainers","","", $this::$ROLE_GROUPS["RSO"]),
-                "getOtherWasteContainerBiId"	=> new ActionMapping("getOtherWasteContainerBiId","","", $this::$ROLE_GROUPS["RSO"]),
+                "getAllOtherWasteContainers"	=> new ActionMapping("getAllOtherWasteContainers","","", self::ROLE_GROUP_RSO),
+                "getOtherWasteContainerBiId"	=> new ActionMapping("getOtherWasteContainerBiId","","", self::ROLE_GROUP_RSO),
                 "saveOtherWasteContainer"	    => new ActionMapping("saveOtherWasteContainer","","", $this::$ROLE_GROUPS["EHS_AND_LAB"]),
-                "getTotalInventories"	        => new ActionMapping("getTotalInventories","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+                "getTotalInventories"	        => new ActionMapping("getTotalInventories","","", self::ROLE_GROUP_ALL_RAD_USERS),
 
 
-				"getRadInventoryReport"	=> new ActionMapping("getRadInventoryReport","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
-				"getRadModels"	        => new ActionMapping("getRadModels","","", $this::$ROLE_GROUPS["ALL_RAD_USERS"]),
+				"getRadInventoryReport"	=> new ActionMapping("getRadInventoryReport","","", self::ROLE_GROUP_ALL_RAD_USERS),
+				"getRadModels"	        => new ActionMapping("getRadModels","","", self::ROLE_GROUP_ALL_RAD_USERS),
                 "removeFromPickup" 	    => new ActionMapping("removeFromPickup", "", "", $this::$ROLE_GROUPS["EHS"] ),
 
 		);
 
 		if( ApplicationConfiguration::get("module.Radiation.zap.enabled", false) ){
 			Logger::getLogger(__CLASS__)->trace("Zap Tool is Enabled");
-			$radMappings["resetRadData"] = new ActionMapping("resetRadData","","", $this::$ROLE_GROUPS["RADMIN"]);
+			$radMappings["resetRadData"] = new ActionMapping("resetRadData","","", self::ROLE_GROUP_ADMIN);
 		}
 
 		return $radMappings;
