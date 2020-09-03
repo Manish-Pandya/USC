@@ -503,18 +503,13 @@ var myLab = angular.module('myLab', [
       return widget_functions.pi_location_hub != undefined;
     },
 
-    openLocationHubForPI: function openLocationHubForPI( pi ){
-      let params = '?pi=' + encodeURIComponent(pi.Name)
-                 + '&' + $.param({"unassignedPis":false});
+    openLinkedWindow: function openLinkedWindow(remoteUrl, localMsg, remoteMsg, onCloseRemoteMsg ){
+      // Open location in new window
+      widget_functions.pi_location_hub = window.open(remoteUrl);
 
-      // Open Location Hub in new window
-      widget_functions.pi_location_hub = window.open(window.GLOBAL_WEB_ROOT + 'views/hubs/locationHub.php#/rooms/research-labs' + params);
-
-      // Display a toast in the location hub
+      // Display a toast here and in the remote
       let loc_toast = undefined;
       let rem_toast = undefined;
-
-      let reminderMessage = "Close the Location Hub window when you are done managing the lab locations for " + pi.Name;
       let reminder = function reminder(existingReminder, api, message){
           if( !api ) return null;
 
@@ -528,8 +523,13 @@ var myLab = angular.module('myLab', [
 
       // Re-remind periodically
       let reminderInterval = setInterval(function(){
-          rem_toast = reminder(rem_toast, widget_functions.pi_location_hub.ToastApi, reminderMessage);
-          loc_toast = reminder(loc_toast, window.ToastApi, reminderMessage);
+        if( remoteMsg ){
+          rem_toast = reminder(rem_toast, widget_functions.pi_location_hub.ToastApi, remoteMsg);
+        }
+
+        if( localMsg ){
+          loc_toast = reminder(loc_toast, window.ToastApi, localMsg);
+        }
       }, 5000);
 
       // When the dependent window is closed...
@@ -543,8 +543,34 @@ var myLab = angular.module('myLab', [
         }
 
         widget_functions.pi_location_hub = undefined;
-        ToastApi.toast("If you made changes in the Location Hub, refresh this page to see them.", ToastApi.ToastType.ERROR, -1);
+        if( onCloseRemoteMsg ){
+          ToastApi.toast(onCloseRemoteMsg, ToastApi.ToastType.ERROR, -1);
+        }
       };
+    },
+
+    openLocationHubForPI: function openLocationHubForPI( pi ){
+      let params = '?pi=' + encodeURIComponent(pi.Name)
+                 + '&' + $.param({"unassignedPis":false});
+
+      // Open Location Hub in new window
+      let locationhubUrl = window.GLOBAL_WEB_ROOT + 'views/hubs/locationHub.php#/rooms/research-labs' + params;
+      let reminderMessage = "Close the Location Hub window when you are done managing the lab locations for " + pi.Name;
+      let postMessage = "If you made changes in the Location Hub, refresh this page to see them.";
+
+      widget_functions.openLinkedWindow(locationhubUrl, reminderMessage, reminderMessage, postMessage);
+    },
+
+    openHazardInventoryForPI: function openHazardInventoryForPI( pi, room ){
+      let params = '?pi=' + encodeURIComponent(pi.Key_id);
+      if( room ){
+        params += '&room[]=' + room.Key_id;
+      }
+
+      let hazardinventoryUrl = window.GLOBAL_WEB_ROOT + 'hazard-inventory/#' + params;
+      let reminderMessage = "Close the Hazard Inventory window when you are done managing the hazards for " + pi.Name;
+
+      widget_functions.openLinkedWindow(hazardinventoryUrl, reminderMessage, reminderMessage, null);
     }
   };
 

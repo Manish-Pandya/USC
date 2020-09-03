@@ -17,8 +17,7 @@
             <div ng-if="adminView" class="admin-only">{{room.Purpose}}</div>
             <div ng-if="adminView" class="admin-only">
                 <a class="btn btn-warning"
-                   ng-href="../../hazard-inventory/#?pi={{data.PI.Key_id}}&room%5B%5D={{room.Key_id}}"
-                   target="_blank">
+                   ng-click="api.openHazardInventoryForPI(data.PI, room)">
                     <i class="icon-lab"></i>
                     <span>Show Hazards</span>
                 </a>

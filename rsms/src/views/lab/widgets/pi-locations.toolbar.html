@@ -1,8 +1,7 @@
 <div class="toolbar" ng-if="adminView">
     <a class="btn btn-inverse"
        title="Open the Hazard Inventory in a new window"
-       ng-href="{{GLOBAL_WEB_ROOT}}hazard-inventory/#?pi={{data.PI.Key_id}}"
-       target="_blank">
+       ng-click="api.openHazardInventoryForPI(data.PI)">
         <img style="height: unset;" ng-src="{{GLOBAL_WEB_ROOT}}img/hazard-icon.png">
         <span>View Hazard Inventory</span>
     </a>
