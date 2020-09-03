@@ -869,7 +869,7 @@ class Rad_ActionManager extends ActionManager {
         $LOG->debug("Read existing CarboyUseCycle $cycle_id");
         $cycle = $cycleDao->getById($cycle_id);
 
-        $newStatus = $dto['cycle']['status'];
+        $newStatus = $dto['cycle']['status'] ?? null;
 
         if( $newStatus != null && $newStatus != $cycle->getStatus() ){
             $LOG->info('Transition cycle ' . $cycle . ' ' . $cycle->getStatus() . " => $newStatus");
@@ -879,21 +879,24 @@ class Rad_ActionManager extends ActionManager {
             $LOG->info('Updating cycle details; no status transition');
         }
 
-        if($dto['cycle']['hotDate'] && $cycle->getStatus() == 'In Hot Room'){
+        $newHotDate = $dto['cycle']['hotDate'] ?? null;
+        if( $newHotDate != null && $cycle->getStatus() == 'In Hot Room'){
             $LOG->debug("set hot date");
-            $cycle->setHotroom_date($dto['cycle']['hotDate']);
+            $cycle->setHotroom_date($newHotDate);
         }
 
-        if($dto['cycle']['drumId'] && $cycle->getStatus() == 'In Drum'){
+        $newDrumId = $dto['cycle']['drumId'] ?? null;
+        if( $newDrumId != null && $cycle->getStatus() == 'In Drum'){
             $LOG->debug("set drum ID");
-            $cycle->setDrum_id($dto['cycle']['drumId']);
+            $cycle->setDrum_id($newDrumId);
         }
 
         // "Pour date" is technically a more general "disposal date"
         $is_disposed = $cycle->getStatus() == 'Poured' || $cycle->getStatus() == 'In Drum';
-        if($dto['cycle']['pourDate'] && $is_disposed ){
+        $newPourDate = $dto['cycle']['pourDate'] ?? null;
+        if($newPourDate && $is_disposed ){
             $LOG->debug("set pour/drum date");
-            $cycle->setPour_date($dto['cycle']['pourDate']);
+            $cycle->setPour_date($newPourDate);
         }
 
         // Readings
@@ -903,7 +906,7 @@ class Rad_ActionManager extends ActionManager {
             // Add/Update reading(s)
             $readingDao = new GenericDAO( new CarboyReadingAmount() );
             foreach ( $dto['cycle']['readings'] as $readingDto ) {
-                if( $readingDto['Key_id'] ){
+                if( isset($readingDto['Key_id']) ){
                     $reading = $readingDao->getById($readingDto['Key_id']);
                     $LOG->debug("Update existing reading: $reading");
                 }
@@ -916,6 +919,11 @@ class Rad_ActionManager extends ActionManager {
                 $reading->setIsotope_id($readingDto['Isotope_id']);
                 $reading->setCurie_level($readingDto['Curie_level']);
                 $reading->setDate_read($readingDto['Date_read']);
+
+                // Validate!
+                if( $reading->getIsotope_id() == null || $reading->getCurie_level() == null || $reading->getDate_read() == null ){
+                    return new ActionError("Reading is invalid; required Isotope_id, Curie_level, Date_read", 400);
+                }
 
                 $readingDao->save($reading);
             }
