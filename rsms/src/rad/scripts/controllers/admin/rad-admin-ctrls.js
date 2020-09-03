@@ -1393,7 +1393,22 @@ angular.module('00RsmsAngularOrmApp')
             }
         };
 
+        $scope.validateReading = function validateReading( reading ){
+            if( !reading.Isotope_id || !reading.Curie_level || !reading.Date_read ){
+                // Missing required fields
+                return false;
+            }
+
+            return true;
+        };
+
         $scope.editReadingSave = function(reading){
+            // validate changes
+            if( !$scope.validateReading(reading.EditCopy) ){
+                // TODO: display message?
+                return;
+            }
+
             // copy changes
             console.debug("Save reading:", reading);
 
