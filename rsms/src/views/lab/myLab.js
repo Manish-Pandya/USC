@@ -573,6 +573,8 @@ var myLab = angular.module('myLab', [
 })
 .controller('MyLabCtrl', function MyLabCtrl($scope, $stateParams, widgetModalActionFactory, myLabFactory, widgetFunctionsFactory) {
   console.debug("My Lab loading", $stateParams);
+  document.title = 'Laboratory Dashboard';
+
   let id = undefined;
   if( $stateParams.id ){
     id = $stateParams.id;
