@@ -259,15 +259,24 @@ angular
 
             }
 
-            document.title = $rootScope.viewLabel;
+            $rootScope.setDocTitle();
         });
+
+    $rootScope.setDocTitle = function(){
+      let title = $rootScope.viewLabel;
+
+      if( $rootScope.showPiNav && $rootScope.pi_name ) {
+        title += ': ' + $rootScope.pi_name;
+      }
+
+      if( title && title.length ){
+        document.title = title;
+      }
+    };
 
     $rootScope.setPIDetails = function (pi) {
       $rootScope.pi_name = pi.Name;
-
-      if( pi && $rootScope.showPiNav ) {
-        document.title += ': ' + $rootScope.pi_name;
-      }
+      $rootScope.setDocTitle();
     }
       //global authorization getter function used by multiple controllers
     $rootScope.getHighestAuth = function (pi) {
