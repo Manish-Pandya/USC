@@ -140,7 +140,15 @@ angular.module('00RsmsAngularOrmApp')
             Class: 'Parcel',
             Is_active: true,
             Status: Constants.PARCEL.STATUS.REQUESTED,
-            Principal_investigator_id: $scope.modalData.pi.Key_id
+            Principal_investigator_id: $scope.modalData.pi.Key_id,
+            ParcelAuthorizations: [
+                {
+                    Class: 'ParcelAuthorization',
+                    Is_active: true,
+                    Authorization_id: null,
+                    Percentage: 100
+                }
+            ]
         };
     }
 
@@ -154,24 +162,26 @@ angular.module('00RsmsAngularOrmApp')
      * @param {Parcel} parcel
      */
     $scope.findRelevantInventory = function(parcel, pi){
-        if( !parcel ){
-            // No parcel to check, so no inventory to find
+        if( !parcel || !parcel.ParcelAuthorizations || !parcel.ParcelAuthorizations.length ){
+            // No parcel/authorization to check, so no inventory to find
             $scope.relevantInventory = null;
             return;
         }
 
-        console.debug("Find relevant inventory for parcel " + parcel.Authorization_id);
+        let parcelAuth = parcel.ParcelAuthorizations[0];
+
+        console.debug("Find relevant inventory for parcel; authorization #" + parcelAuth.Authorization_id);
 
         // Find the relevant inventory
         var i = pi.CurrentIsotopeInventories.length;
         while (i--) {
-            if (pi.CurrentIsotopeInventories[i].Authorization_id == parcel.Authorization_id) {
+            if (pi.CurrentIsotopeInventories[i].Authorization_id == parcelAuth.Authorization_id) {
                 $scope.relevantInventory = pi.CurrentIsotopeInventories[i];
                 break;
             }
         }
 
-        console.debug("Relevant Inventory for " + parcel.Authorization_id + ": ", $scope.relevantInventory);
+        console.debug("Relevant Inventory for " + parcelAuth.Authorization_id + ": ", $scope.relevantInventory);
         return $scope.relevantInventory;
     };
 
@@ -186,8 +196,10 @@ angular.module('00RsmsAngularOrmApp')
             $scope.findRelevantInventory(parcel, $scope.modalData.pi);
         }
 
+        let parcelAuth = parcel.ParcelAuthorizations[0];
+
         // Aggressively ensure that this is validated against the correct authorization/relevantInventory
-        if( $scope.relevantInventory && $scope.relevantInventory.Authorization_id == parcel.Authorization_id){
+        if( $scope.relevantInventory && $scope.relevantInventory.Authorization_id == parcelAuth.Authorization_id){
             // Validate request against relevant inventory
             var max = parseFloat($scope.relevantInventory.Max_order);
             var req = parseFloat(parcel.Quantity);
@@ -210,11 +222,11 @@ angular.module('00RsmsAngularOrmApp')
                 $scope.errors.quantityExceeded = false;
             }
         }
-        else if(parcel.Authorization_id !== undefined){
+        else if(parcelAuth.Authorization_id !== undefined){
             // No relevant inventory was matched to the auth ID!
             var invs = "";
             $scope.modalData.pi.CurrentIsotopeInventories.forEach(inv=>invs += inv.Authorization_id + ',');
-            console.error("No current inventories (" + invs + ") match Authorization ID " + parcel.Authorization_id);
+            console.error("No current inventories (" + invs + ") match Authorization ID " + parcelAuth.Authorization_id);
 
             // TODO: Provide a better error message
             $scope.errors.quantityExceeded = true;
@@ -228,7 +240,9 @@ angular.module('00RsmsAngularOrmApp')
         var valid = parcel
             && !$scope.errors.quantityExceeded
             && parcel.Purchase_order_id != null
-            && parcel.Authorization_id != null
+            && parcel.ParcelAuthorizations != null
+            && parcel.ParcelAuthorizations.length == 1
+            && parcel.ParcelAuthorizations[0].Authorization_id != null
             && !_.isEmpty(parcel.Catalog_number)
             && !_.isEmpty(parcel.Chemical_compound);
         return valid;

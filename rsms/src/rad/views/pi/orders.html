@@ -25,10 +25,9 @@
             <th>Purchase Order</th>
             <th>Vendor</th>
             <th>Catalog Number</th>
-            <th>Isotope</th>
+            <th>Isotope(s)</th>
             <th>Quantity</th>
             <th>Chemical Compound</th>
-            <th>Form</th>
         </tr>
         <tr ng-repeat="parcel in undelivered = (pi.ActiveParcels | notDelivered)">
             <td>
@@ -40,10 +39,11 @@
             <td ng-bind="parcel.PurchaseOrder.Purchase_order_number"></td>
             <td ng-bind="parcel.PurchaseOrder.Vendor"></td>
             <td ng-bind="parcel.Catalog_number"></td>
-            <td ng-bind="parcel.Authorization.Isotope.Name"></td>
+            <td>
+                <parcel-isotopes parcel="parcel"></parcel-isotopes>
+            </td>
             <td><span ng-bind="parcel.Quantity"></span>mCi</td>
             <td><span ng-bind="parcel.Chemical_compound"></span></td>
-            <td ng-bind="parcel.Authorization.Form"></td>
         </tr>
     </table>
 </div>

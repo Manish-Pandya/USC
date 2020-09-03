@@ -27,14 +27,14 @@
     </div>
 
     <div class="control-group">
-        <label class="control-label" ng-class="{'red' : !modalData.ParcelCopy.Authorization_id}">Isotope</label>
+        <label class="control-label" ng-class="{'red' : !modalData.ParcelCopy.ParcelAuthorizations[0].Authorization_id}">Isotope</label>
         <div class="half help-inline even-content pull-right">
             <i class="icon-help" style="padding-right: 5px;"/>
             If this is package contains multiple nuclides, select one of the nuclides and add any additional details in the Comments section below.
         </div>
 
         <div class="controls half">
-            <select data-ng-model="modalData.ParcelCopy.Authorization_id"
+            <select data-ng-model="modalData.ParcelCopy.ParcelAuthorizations[0].Authorization_id"
                     ng-options="auth.Key_id as (auth.Isotope.Name + ':   (' + auth.Form + ')') for auth in piAuthorization.Authorizations"
                     ng-change="onSelectAuthorization()">
                 <option selected="selected" value="">Select an authorization</option>
@@ -45,8 +45,8 @@
     <div class="control-group">
         <label class="control-label" for="inputEmail">Quantity</label>
         <div class="controls input-append">
-            <input ng-disabled="!modalData.ParcelCopy.Authorization_id" ng-model="modalData.ParcelCopy.Quantity" ng-change="checkMaxOrder(modalData.ParcelCopy)"/><span class="add-on">mCi</span>
-            <span ng-if="!modalData.ParcelCopy.Authorization_id" class="help-block red">Please select an authorization.</span>
+            <input ng-disabled="!modalData.ParcelCopy.ParcelAuthorizations[0].Authorization_id" ng-model="modalData.ParcelCopy.Quantity" ng-change="checkMaxOrder(modalData.ParcelCopy)"/><span class="add-on">mCi</span>
+            <span ng-if="!modalData.ParcelCopy.ParcelAuthorizations[0].Authorization_id" class="help-block red">Please select an authorization.</span>
             <span ng-if="relevantInventory" ng-class="{'red' : errors.quantityExceeded}" class="help-block">You can order up to {{relevantInventory.Max_order}}mCi of {{relevantInventory.Isotope_name}}.</span>
         </div>
     </div>
