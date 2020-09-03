@@ -2717,7 +2717,7 @@ angular.module('00RsmsAngularOrmApp')
             if (object.Parcel_id) {
                 var parcel = dataStoreManager.getById("Parcel", object.Parcel_id);
                 if (parcel)
-                    var auth = dataStoreManager.getById("Authorization", parcel.Authorization_id);
+                    var auth = dataStoreManager.getById("Authorization", parcel.ParcelAuthorizations[0].Authorization_id);
                 if (auth)
                     var piAuth = dataStoreManager.getById("PIAuthorization", auth.Pi_authorization_id);
                 if (piAuth)
@@ -2755,7 +2755,7 @@ angular.module('00RsmsAngularOrmApp')
             if (object.Parcel_id) {
                 var parcel = dataStoreManager.getById("Parcel", object.Parcel_id);
                 if (parcel)
-                    var auth = dataStoreManager.getById("Authorization", parcel.Authorization_id);
+                    var auth = dataStoreManager.getById("Authorization", parcel.ParcelAuthorizations[0].Authorization_id);
                 if (auth)
                     var piAuth = dataStoreManager.getById("PIAuthorization", auth.Pi_authorization_id);
                 if (piAuth)
@@ -2784,6 +2784,29 @@ angular.module('00RsmsAngularOrmApp')
             modalInstance.result.then(getParcels);
         }
     };
+})
+.directive("transferParcelIsotopeNames", function () {
+    return {
+        restrict: 'E',
+        scope: {
+            parcel: "="
+        },
+        controller: function($scope){
+            $scope.isSingle = function(){ return $scope.parcel.ParcelAuthorizations.length == 1; };
+            $scope.shortName = function(){
+                if( $scope.isSingle() ){
+                    return $scope.parcel.ParcelAuthorizations[0].Isotope.Name;
+                }
+                else {
+                    return 'Multiple';
+                }
+            };
+            $scope.isoNameCSV = function(){
+                return $scope.parcel.ParcelAuthorizations.map(pa => pa.Isotope.Name).join(', ');
+            }
+        },
+        template: `<i class="icon-help" ng-if="!isSingle()" popover="{{isoNameCSV()}}"></i><span>{{shortName()}}</span>`
+     }
 })
     .controller('TransferModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'actionFunctionsFactory', 'convenienceMethods', 'modelInflatorFactory', function ($scope, $rootScope, $modalInstance, actionFunctionsFactory, convenienceMethods, modelInflatorFactory) {
         var af = actionFunctionsFactory;

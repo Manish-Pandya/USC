@@ -27,7 +27,7 @@
                         <li ng-repeat-start="parcel in modalData.pi.ActiveParcels"
                             class="parcel-row" ng-class="{'green':parcel.Key_id == modalData.selectedParcel.Key_id}"
                             ng-click="parcel._showUses = !parcel._showUses">
-                            <ul><li><i class="pull-left" ng-class="{'icon-arrow-down': parcel._showUses, 'icon-arrow-right': !parcel.showUses}"></i> {{parcel.Rs_number}}</li><li>{{parcel.Authorization.IsotopeName}}</li><li>{{parcel.Remainder}} / {{parcel.Quantity}}</li></ul>
+                            <ul><li><i class="pull-left" ng-class="{'icon-arrow-down': parcel._showUses, 'icon-arrow-right': !parcel.showUses}"></i> {{parcel.Rs_number || 'N/A'}}</li><li><transfer-parcel-isotope-names parcel="parcel"/></li><li>{{parcel.Remainder}} / {{parcel.Quantity}}</li></ul>
                         </li>
                         <li ng-if="parcel._showUses" class="parcel-row parcel-detail-row" ng-click="selectParcelForTransfer(parcel, null)">
                             <ul><li class="sub-label">&nbsp;</li><li>Unused</li><li>{{parcel.Remainder}}</li></ul>
@@ -46,7 +46,7 @@
                         <i class="primary icon-pencil redo-select-parcel" style="cursor:pointer;" ng-click="modalData.forceSelectParcel = true;"></i>
                         Selected Package:</h3>
                     <p><span class="bold">RS/Transfer Number: </span>{{modalData.selectedParcel.Rs_number}}</p>
-                    <p><span class="bold">Isotope </span>{{modalData.selectedParcel.Authorization.IsotopeName}}</p>
+                    <p><span class="bold">Isotope </span><parcel-isotopes parcel="modalData.selectedParcel"/></p>
                     <p><span class="bold">Unused Amount: </span>{{modalData.selectedParcel.Remainder | unit:modalData.selectedParcel}}</p>
 
                     <div ng-if="modalData.ParcelUseCopy.ParcelUseAmounts.length > 1">
