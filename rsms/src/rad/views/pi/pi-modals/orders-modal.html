@@ -28,7 +28,12 @@
 
     <div class="control-group">
         <label class="control-label" ng-class="{'red' : !modalData.ParcelCopy.Authorization_id}">Isotope</label>
-        <div class="controls">
+        <div class="half help-inline even-content pull-right">
+            <i class="icon-help" style="padding-right: 5px;"/>
+            If this is package contains multiple nuclides, select one of the nuclides and add any additional details in the Comments section below.
+        </div>
+
+        <div class="controls half">
             <select data-ng-model="modalData.ParcelCopy.Authorization_id"
                     ng-options="auth.Key_id as (auth.Isotope.Name + ':   (' + auth.Form + ')') for auth in piAuthorization.Authorizations"
                     ng-change="onSelectAuthorization()">
