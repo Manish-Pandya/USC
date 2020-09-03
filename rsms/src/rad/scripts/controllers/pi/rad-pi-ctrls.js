@@ -352,13 +352,7 @@ angular.module('00RsmsAngularOrmApp')
         $rootScope.ParcelUseCopy.ParcelUseAmounts = [];
         $rootScope.ParcelUseCopy.Class = "ParcelUse";
         $rootScope.ParcelUseCopy.Is_active = true;
-        var amt = new window.ParcelUseAmount();
-        amt.Waste_type_id = -1;
-        amt.Curie_level = 0;
-        amt.Is_active = true;
-        console.log($rootScope.ParcelUseCopy.ParcelUseAmounts);
-        $rootScope.ParcelUseCopy.ParcelUseAmounts = $rootScope.ParcelUseCopy.ParcelUseAmounts.concat([amt]);
-        $rootScope.ParcelUseCopy.ParcelUseAmounts.forEach(function (pua) { return pua.Is_active = true; });
+
         $scope.editUse($rootScope.ParcelUseCopy);
     };
     $scope.editUse = function (use) {
