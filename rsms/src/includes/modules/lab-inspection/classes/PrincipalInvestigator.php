@@ -501,7 +501,7 @@ class PrincipalInvestigator extends GenericCrud {
 
     public function getCurrentIsotopeInventories(){
         if($this->currentIsotopeInventories == null && $this->hasPrimaryKeyValue() && $this->getCurrentPi_authorization() != null){
-            $inventoriesDao = new GenericDAO($this);
+            $inventoriesDao = new IsotopeDAO();
             $this->currentIsotopeInventories = $inventoriesDao->getCurrentInvetoriesByPiId($this->key_id, $this->getCurrentPi_authorization()->getKey_id());
         }
         return $this->currentIsotopeInventories;

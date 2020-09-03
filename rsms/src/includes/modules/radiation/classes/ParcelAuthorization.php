@@ -51,12 +51,20 @@ class ParcelAuthorization extends RadCrud {
     // Transient
     public function getIsotope() {
         if($this->isotope == null && $this->getAuthorization_id() != null) {
-            $authDao = new GenericDAO(new Authorization());
-            $auth = $authDao->getById($this->authorization_id);
+            $auth = $this->getAuthorization();
             $this->isotope = $auth->getIsotope();
         }
+
         return $this->isotope;
     }
 
+    public function getAuthorization(){
+        if($this->authorization == null && $this->getAuthorization_id() != null){
+            $authDao = new GenericDAO(new Authorization());
+            $this->authorization = $authDao->getById($this->authorization_id);
+        }
+
+        return $this->authorization;
+    }
 }
 ?>

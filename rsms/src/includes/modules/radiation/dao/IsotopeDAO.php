@@ -13,11 +13,11 @@ class IsotopeDAO extends GenericDAO {
 			isotope_id,
 			isotope_name,
 			auth_limit,
-			ROUND( COALESCE(SUM( parcel_quantity_ordered ), 0), 7) AS total_ordered,
-			ROUND( SUM( total_disposed ), 7) AS disposed,
-			ROUND( SUM( total_waste ), 7) AS waste,
-			ROUND( COALESCE(SUM( parcel_quantity_current ), 0) - SUM( total_disposed ), 7) AS total_quantity,
-			ROUND( COALESCE(SUM( parcel_quantity_current ), 0) - SUM( total_disposed ) - SUM( total_waste ), 7) AS total_unused
+			COALESCE(SUM( parcel_quantity_ordered ), 0) AS total_ordered,
+			SUM( total_disposed ) AS disposed,
+			SUM( total_waste ) AS waste,
+			COALESCE(SUM( parcel_quantity_current ), 0) - SUM( total_disposed ) AS total_quantity,
+			COALESCE(SUM( parcel_quantity_current ), 0) - SUM( total_disposed ) - SUM( total_waste ) AS total_unused
 		FROM (
 			SELECT
 				isotope_id,
@@ -30,25 +30,37 @@ class IsotopeDAO extends GenericDAO {
 				COALESCE(SUM( disposed_amount ), 0) AS total_disposed,
 				COALESCE(SUM( waste_amount ), 0) AS total_waste
 			FROM(
+				-- per-isotope usages
 				SELECT
 					iso.key_id AS isotope_id,
 					iso.name AS isotope_name,
 					iso.auth_limit AS auth_limit,
 					parcel.key_id AS parcel_id,
-					parcel.quantity AS parcel_quantity,
+					parcel.quantity AS parcel_multinuclide_quantity,
+ 					(parcel.quantity * (parcel_authorization.percentage / 100)) as parcel_quantity,
+					parcel_authorization.percentage AS isotope_percentage,
                     parcel.comments AS parcel_comments,
+
+					-- per-isotope use data
                     use_log.key_id AS use_log_id,
-					amt.curie_level AS use_quantity,
+ 					(amt.curie_level * (parcel_authorization.percentage / 100)) as use_quantity,
                     amt.key_id AS use_amt_id,
                     amt.comments AS transfer_comments,
-					IF(container.is_disposed = 1, amt.curie_level, 0) AS disposed_amount,
-                    IF(amt.waste_type_id = 6, amt.curie_level, 0) AS transfer_amount,
-					IF(amt.waste_type_id != 6 && IFNULL(container.is_disposed, 0) = 0, amt.curie_level, 0) AS waste_amount
+
+					-- per-isotope waste data
+					IF(container.is_disposed = 1, (amt.curie_level * (parcel_authorization.percentage / 100)), 0) AS disposed_amount,
+					IF(amt.waste_type_id = 6, (amt.curie_level * (parcel_authorization.percentage / 100)), 0) AS transfer_amount,
+					IF(amt.waste_type_id != 6 && IFNULL(container.is_disposed, 0) = 0, (amt.curie_level * (parcel_authorization.percentage / 100)), 0) AS waste_amount
 				FROM isotope iso
-		
-				LEFT OUTER JOIN parcel parcel ON
-				parcel.authorization_id in (SELECT key_id FROM authorization WHERE isotope_id = iso.key_id)
-				AND parcel.status IN('Arrived', 'Wipe Tested', 'Delivered')
+
+				-- parcel_authorization of authorized isotopes
+				LEFT OUTER JOIN parcel_authorization parcel_authorization
+				  ON parcel_authorization.authorization_id in (SELECT key_id FROM authorization WHERE isotope_id = iso.key_id)
+
+				-- parcel in status which puts it on-premises
+				LEFT OUTER JOIN parcel parcel
+				  ON parcel_authorization.parcel_id = parcel.key_id
+				 AND parcel.status IN('Arrived', 'Wipe Tested', 'Delivered')
 	
 				LEFT OUTER JOIN parcel_use use_log ON parcel.key_id = use_log.parcel_id
 
@@ -112,6 +124,173 @@ class IsotopeDAO extends GenericDAO {
 		}
 
         return $inventories;
-    }
+	}
+
+	public function getCurrentInvetoriesByPiId( $piId, $authId ){
+		$queryString = "SELECT
+		pi_auth.principal_investigator_id as principal_investigator_id,
+		authorization.isotope_id,
+		authorization.key_id as authorization_id,
+		SUM(parcel.quantity * (parcel_authorization.percentage / 100)) as ordered,
+		isotope.name as isotope_name,
+		authorization.max_quantity as auth_limit,
+        authorization.max_quantity - (SUM(parcel.quantity * (parcel_authorization.percentage / 100)) - picked_up.amount_picked_up-amount_transferred.amount_used) as max_order,
+
+		other_disposed.other_amount_disposed as _other_disposed,
+		picked_up.amount_picked_up as _picked_up,
+		amount_transferred.amount_used as _transferred,
+
+		COALESCE(picked_up.amount_picked_up, 0) + COALESCE(other_disposed.other_amount_disposed, 0) as amount_picked_up,
+		SUM(parcel.quantity * (parcel_authorization.percentage / 100)) - picked_up.amount_picked_up as amount_on_hand,
+		total_used.amount_used as amount_disposed,
+		SUM(parcel.quantity * (parcel_authorization.percentage / 100)) - total_used.amount_used as usable_amount,
+		amount_transferred.amount_used as amount_transferred
+
+		from pi_authorization pi_auth
+
+		LEFT OUTER JOIN authorization authorization
+		ON authorization.pi_authorization_id = pi_auth.key_id
+
+		LEFT OUTER JOIN isotope isotope
+		ON isotope.key_id = authorization.isotope_id
+
+		LEFT OUTER JOIN parcel_authorization parcel_authorization
+		ON parcel_authorization.authorization_id = authorization.key_id
+
+		LEFT OUTER JOIN parcel parcel
+		ON parcel.key_id = parcel_authorization.parcel_id AND parcel.status IN ('Delivered')
+
+		LEFT OUTER JOIN (
+			select sum(amt.curie_level * (parcel_authorization.percentage / 100)) as amount_picked_up,
+			iso.name as isotope,
+			iso.key_id as isotope_id
+			from parcel_use_amount amt
+			join parcel_use parcel_use
+				on amt.parcel_use_id = parcel_use.key_id
+			JOIN parcel parcel
+				ON parcel_use.parcel_id = parcel.key_id
+			JOIN parcel_authorization parcel_authorization
+				ON parcel.key_id = parcel_authorization.parcel_id
+			JOIN authorization auth
+				ON parcel_authorization.authorization_id = auth.key_id
+			JOIN isotope iso
+				ON auth.isotope_id = iso.key_id
+			left join waste_bag waste_bag
+				ON amt.waste_bag_id = waste_bag.key_id
+			left join carboy_use_cycle cycle
+				ON amt.carboy_id = cycle.key_id
+			left join scint_vial_collection svc
+				ON amt.scint_vial_collection_id = svc.key_id
+			left join other_waste_container owc
+				ON amt.other_waste_container_id = owc.key_id
+			left join pickup pickup
+				ON waste_bag.pickup_id = pickup.key_id
+				OR cycle.pickup_id = pickup.key_id
+				OR svc.pickup_id = pickup.key_id
+			WHERE pickup.principal_investigator_id = ?
+				AND (pickup.status != 'REQUESTED' OR owc.close_date IS NOT NULL)
+				AND parcel_use.is_active = 1
+				AND amt.is_active = 1
+			group by iso.name, iso.key_id, auth.isotope_id
+		) as picked_up
+		ON picked_up.isotope_id = authorization.isotope_id
+
+		LEFT OUTER JOIN (
+			select sum(amt.curie_level * (parcel_authorization.percentage / 100)) as other_amount_disposed,
+			iso.name as isotope,
+			iso.key_id as isotope_id
+			from parcel_use_amount amt
+			join parcel_use parcel_use
+				on amt.parcel_use_id = parcel_use.key_id AND parcel_use.is_active = 1
+			JOIN parcel parcel
+				ON parcel_use.parcel_id = parcel.key_id
+			JOIN parcel_authorization parcel_authorization
+				ON parcel.key_id = parcel_authorization.parcel_id
+			JOIN authorization auth
+				ON parcel_authorization.authorization_id = auth.key_id
+			JOIN isotope iso
+				ON auth.isotope_id = iso.key_id
+			join other_waste_container owc
+				ON amt.other_waste_container_id = owc.key_id AND owc.close_date IS NOT NULL
+			WHERE parcel.principal_investigator_id = ?
+				AND parcel_use.is_active = 1
+				AND amt.is_active = 1
+			group by iso.name, iso.key_id, auth.isotope_id
+		) other_disposed
+		ON other_disposed.isotope_id = authorization.isotope_id
+
+		-- RSMS-780 Join to experiment uses (do not check parcel_use_amount, as this is too granular since parcel_use specifis enough)
+		LEFT OUTER JOIN (
+			select sum(parcel_use.quantity * (parcel_authorization.percentage / 100)) as amount_used,
+			iso.name as isotope,
+			iso.key_id as isotope_id
+			from parcel_use parcel_use
+			JOIN parcel parcel
+				ON parcel_use.parcel_id = parcel.key_id
+			JOIN parcel_authorization parcel_authorization
+				ON parcel.key_id = parcel_authorization.parcel_id
+			JOIN authorization auth
+				ON parcel_authorization.authorization_id = auth.key_id
+			JOIN isotope iso
+				ON auth.isotope_id = iso.key_id
+			WHERE parcel.principal_investigator_id = ?
+				AND parcel_use.date_transferred IS NULL
+				AND parcel_use.is_active = 1
+			group by iso.name, iso.key_id, auth.isotope_id
+		) as total_used
+		ON total_used.isotope_id = authorization.isotope_id
+
+
+		LEFT OUTER JOIN (
+			select sum(amt.curie_level * (parcel_authorization.percentage / 100)) as amount_used,
+			iso.name as isotope,
+			iso.key_id as isotope_id
+			from parcel_use_amount amt
+			join parcel_use parcel_use
+				on amt.parcel_use_id = parcel_use.key_id
+			JOIN parcel parcel
+				ON parcel_use.parcel_id = parcel.key_id
+			JOIN parcel_authorization parcel_authorization
+				ON parcel.key_id = parcel_authorization.parcel_id
+			JOIN authorization auth
+				ON parcel_authorization.authorization_id = auth.key_id
+			JOIN isotope iso
+				ON auth.isotope_id = iso.key_id
+			WHERE parcel.principal_investigator_id = ?
+				AND amt.waste_type_id = 6
+			group by iso.name, iso.key_id, auth.isotope_id
+		) as amount_transferred
+		ON amount_transferred.isotope_id = authorization.isotope_id
+
+		where pi_auth.key_id = ?
+
+		group by authorization.isotope_id, isotope.name, isotope.key_id, pi_auth.principal_investigator_id";
+
+        $stmt = DBConnection::prepareStatement($queryString);
+
+        $stmt->bindValue(1, $piId);
+        $stmt->bindValue(2, $piId);
+        $stmt->bindValue(3, $piId);
+        $stmt->bindValue(4, $piId);
+		$stmt->bindValue(5, $authId);
+
+		if( $this->LOG->isDebugEnabled()){
+			$this->LOG->debug("Executing SQL with params piId=$piId: " . $queryString);
+		}
+
+		if( !$stmt->execute() ){
+			$errorInfo = $stmt->errorInfo();
+			$object = new ModifyError($errorInfo[2], $object);
+			$this->LOG->fatal('Error: ' . $object->getMessage());
+			throw new Exception($object->getMessage());
+		}
+
+        $inventories = $stmt->fetchAll(PDO::FETCH_CLASS, "CurrentIsotopeInventoryDto");
+
+		// 'close' the statement
+		$stmt = null;
+
+        return $inventories;
+	}
 }
 ?>

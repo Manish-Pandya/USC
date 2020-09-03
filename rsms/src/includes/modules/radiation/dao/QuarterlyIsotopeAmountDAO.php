@@ -31,7 +31,7 @@ class QuarterlyIsotopeAmountDAO extends GenericDAO {
             UNION SELECT key_id, 4 as waste_type_id FROM other_waste_container other WHERE other.close_date IS NOT NULL";
 
         $sql_select_usages = "SELECT
-                amt.curie_level,
+                (amt.curie_level * (pauth.percentage / 100)) as curie_level,
                 amt.waste_type_id,
                 COALESCE(amt.waste_bag_id, amt.scint_vial_collection_id, amt.carboy_id, amt.other_waste_container_id) as amt_container_id,
                 p.principal_investigator_id,
@@ -43,8 +43,10 @@ class QuarterlyIsotopeAmountDAO extends GenericDAO {
             LEFT JOIN parcel_use pu            ON amt.parcel_use_id = pu.key_id
             -- Join to Use's Parcel
             LEFT JOIN parcel p                 ON pu.parcel_id = p.key_id
-            -- Join with parcel's Authorization
-            LEFT JOIN authorization auth       ON auth.key_id = p.authorization_id
+            -- Join with parcel's ParcelAuths
+            LEFT JOIN parcel_authorization pauth ON pauth.parcel_id = p.key_id
+            -- Join with Authorizations
+            LEFT JOIN authorization auth       ON auth.key_id = pauth.authorization_id
             -- Join to Authorization's PIAuthorization
             LEFT JOIN pi_authorization pia     ON auth.pi_authorization_id = pia.key_id
             -- Join with all containers
@@ -64,7 +66,7 @@ class QuarterlyIsotopeAmountDAO extends GenericDAO {
                 )
                 AND amt.waste_type_id = ?";
 
-        $sql = "SELECT ROUND(COALESCE(SUM(curie_level), 0), 7) FROM ($sql_select_usages) usages";
+        $sql = "SELECT COALESCE(SUM(curie_level), 0) FROM ($sql_select_usages) usages";
 
         if( $LOG->isTraceEnabled() ){
             $LOG->trace($sql);
@@ -101,14 +103,17 @@ class QuarterlyIsotopeAmountDAO extends GenericDAO {
      */
 	public function getStartingAmount( $piId, $isotopeId, $startDate = null ){
         $l = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
-		$sql = "SELECT SUM(`quantity`)
-				FROM parcel a
-                WHERE `authorization_id` IN (select key_id from authorization where principal_investigator_id = ? AND isotope_id = ?)";
+		$sql = "SELECT SUM( (parcel.quantity * (parcel_authorization.percentage / 100)) ) as iso_total
+                FROM parcel parcel
+                JOIN parcel_authorization parcel_authorization ON parcel_authorization.parcel_id = parcel.key_id
+                WHERE `parcel_authorization`.`authorization_id` IN (
+                    select key_id from authorization where principal_investigator_id = ? AND isotope_id = ?
+                )";
 
         $l->debug("Get PI $piId's starting amount of isotope $isotopeId");
 
         if($startDate != null){
-            $sql .= " AND (a.arrival_date < ? OR a.transfer_in_date < ?)";
+            $sql .= " AND (parcel.arrival_date < ? OR parcel.transfer_in_date < ?)";
         }
 
         $l->debug($sql);
@@ -131,28 +136,30 @@ class QuarterlyIsotopeAmountDAO extends GenericDAO {
 
             //get the total waste disposed for this authorization and subtract
             if($startDate != null){
-                $sql = "SELECT ROUND(SUM(a.curie_level),7)
-                        FROM `parcel_use_amount` a
-                        LEFT JOIN parcel_use b
-                        ON a.parcel_use_id = b.key_id
-                        LEFT JOIN parcel c
-                        ON b.parcel_id = c.key_id
+                $sql = "SELECT SUM( (use_amount.curie_level * (parcel_authorization.percentage / 100)) ) as iso_total
+                        FROM `parcel_use_amount` use_amount
+                        LEFT JOIN parcel_use parcel_use
+                        ON use_amount.parcel_use_id = parcel_use.key_id
+                        LEFT JOIN parcel parcel
+                        ON parcel_use.parcel_id = parcel.key_id
+                        LEFT JOIN parcel_authorization parcel_authorization
+                        ON parcel.key_id = parcel_authorization.parcel_id
                         LEFT JOIN waste_bag f
-                        ON a.waste_bag_id = f.key_id
+                        ON use_amount.waste_bag_id = f.key_id
                         LEFT JOIN carboy_use_cycle g
-                        ON a.carboy_id = g.key_id
+                        ON use_amount.carboy_id = g.key_id
                         LEFT JOIN scint_vial_collection h
-                        ON a.scint_vial_collection_id = h.key_id
+                        ON use_amount.scint_vial_collection_id = h.key_id
                         LEFT OUTER JOIN pickup i
                         ON f.pickup_id = i.key_id
                         OR g.pickup_id = i.key_id
                         OR h.pickup_id = i.key_id
                         AND i.status != 'Requested'
-				        WHERE c.authorization_id IN (select key_id from authorization where principal_investigator_id = ? AND isotope_id = ?)
-                        AND b.is_active = 1
-				        AND (((b.date_used < ? AND b.date_used != '0000-00-00 00:00:00')
+				        WHERE parcel_authorization.authorization_id IN (select key_id from authorization where principal_investigator_id = ? AND isotope_id = ?)
+                        AND parcel_use.is_active = 1
+				        AND (((parcel_use.date_used < ? AND parcel_use.date_used != '0000-00-00 00:00:00')
                         AND (f.pickup_id IS NOT NULL OR g.pickup_id IS NOT NULL OR h.pickup_id IS NOT NULL ))
-				        OR (b.date_transferred < ? AND b.date_transferred != '0000-00-00 00:00:00'))";
+				        OR (parcel_use.date_transferred < ? AND parcel_use.date_transferred != '0000-00-00 00:00:00'))";
 
                 $stmt = DBConnection::prepareStatement($sql);
                 $stmt->bindValue(1, $piId);
@@ -198,9 +205,13 @@ class QuarterlyIsotopeAmountDAO extends GenericDAO {
 	public function getTransferAmounts( $piId, $isotopeId, $startDate, $endDate, $hasTransferDate = null ){
         $LOG = Logger::getLogger(__CLASS__ . '.' . __FUNCTION__);
 
-		$sql = "SELECT SUM(`quantity`)
+        // get the PI's total quantity of a single isotope
+		$sql = "SELECT SUM( (parcel.quantity * (parcel_authorization.percentage / 100)) ) as iso_total
 				FROM `parcel`
-				WHERE `authorization_id` IN (
+                JOIN `parcel_authorization`
+                  ON `parcel_authorization`.`parcel_id` = `parcel`.`key_id`
+
+				WHERE `parcel_authorization`.`authorization_id` IN (
                     SELECT auth.key_id
                     FROM authorization auth JOIN pi_authorization pia ON auth.pi_authorization_id = pia.key_id
                     WHERE pia.principal_investigator_id = ? AND auth.isotope_id = ?
@@ -214,6 +225,8 @@ class QuarterlyIsotopeAmountDAO extends GenericDAO {
             // Orders
             $sql .= " AND transfer_in_date IS NULL AND `arrival_date` BETWEEN ? AND ?";
         }
+
+        $sql .= " GROUP BY parcel_authorization.authorization_id";
 
         $LOG->debug($sql);
 
@@ -246,15 +259,17 @@ class QuarterlyIsotopeAmountDAO extends GenericDAO {
      * @return int $sum
      */
 	public function getTransferOutAmounts( $piId, $isotopeId, $startDate, $endDate ){
-		$sql = "SELECT SUM(`quantity`)
+		$sql = "SELECT SUM( (parcel_use.quantity * (parcel_authorization.percentage / 100)) ) as iso_total
 				FROM `parcel_use`
-				where `parcel_id` in (
-                    select key_id from parcel where `authorization_id` IN (
-                        SELECT auth.key_id
-                        FROM authorization auth JOIN pi_authorization pia ON auth.pi_authorization_id = pia.key_id
-                        WHERE pia.principal_investigator_id = ? AND auth.isotope_id = ?
-                    )
+                JOIN `parcel` ON `parcel`.`key_id` = `parcel_use`.`parcel_id`
+                JOIN `parcel_authorization` ON `parcel_authorization`.`parcel_id` = `parcel`.`key_id`
+
+                WHERE `parcel_authorization`.`authorization_id` IN (
+                    SELECT auth.key_id
+                    FROM authorization auth JOIN pi_authorization pia ON auth.pi_authorization_id = pia.key_id
+                    WHERE pia.principal_investigator_id = ? AND auth.isotope_id = ?
                 )
+
 				AND `date_transferred` BETWEEN ? AND ?";
 
 		$stmt = DBConnection::prepareStatement($sql);
