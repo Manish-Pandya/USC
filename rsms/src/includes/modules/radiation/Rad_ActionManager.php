@@ -2276,26 +2276,46 @@ class Rad_ActionManager extends ActionManager {
         else if( $decodedObject instanceof ActionError) {
             return $decodedObject;
         }
-        else {
-            $dao = $this->getDao(new CarboyReadingAmount());
-            $decodedObject->setDecayed_carboy_uci(null);
-            $decodedObject = $dao->save($decodedObject);
-            $LOG->fatal($decodedObject);
-            $cycle = $decodedObject->getCarboy_use_cycle();
 
-            EntityManager::with_entity_maps(CarboyReadingAmount::class, array(
-                EntityMap::lazy("getCarboy"),
-                EntityMap::lazy("getPrincipal_investigator"),
-                EntityMap::lazy("getParcelUseAmounts"),
-                EntityMap::eager("getContents"),
-                EntityMap::eager("getCarboy_reading_amounts"),
-                EntityMap::lazy("getRoom"),
-                EntityMap::lazy("getPickup"),
-                EntityMap::eager("getPour_allowed_date")
-            ));
-
-            return $cycle;
+        /////////////////////
+        // Validate reading
+        $missing = [];
+        if( !$reading->getCarboy_use_cycle() ){
+            $missing[] = 'Carboy';
         }
+
+        if( !$reading->getIsotope() ){
+            $missing[] = 'Isotope';
+        }
+
+        if( !empty($missing) ){
+            $msg = 'Reading must specify ' . implode(', ', $missing);
+
+            $LOG->error($msg);
+            return new ActionError($msg, 400);
+        }
+
+        ///////////////////////////
+        // Reading is valid; save
+
+        $dao = $this->getDao(new CarboyReadingAmount());
+        $decodedObject->setDecayed_carboy_uci(null);
+        $decodedObject = $dao->save($decodedObject);
+        $LOG->fatal($decodedObject);
+        $cycle = $decodedObject->getCarboy_use_cycle();
+
+        EntityManager::with_entity_maps(CarboyReadingAmount::class, array(
+            EntityMap::lazy("getCarboy"),
+            EntityMap::lazy("getPrincipal_investigator"),
+            EntityMap::lazy("getParcelUseAmounts"),
+            EntityMap::eager("getContents"),
+            EntityMap::eager("getCarboy_reading_amounts"),
+            EntityMap::lazy("getRoom"),
+            EntityMap::lazy("getPickup"),
+            EntityMap::eager("getPour_allowed_date")
+        ));
+
+        return $cycle;
     }
 
 
