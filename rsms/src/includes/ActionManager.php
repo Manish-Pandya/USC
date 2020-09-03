@@ -5398,6 +5398,8 @@ class ActionManager {
         //     Lab Contact – Lab Phone and Emergency Phone.
         //     Lab Personnel – Lab Phone only
         $userData = array(
+            'User_id' => $user->getKey_id(),
+            'Roles' => DtoFactory::buildDtos($user->getRoles(), 'DtoFactory::roleToDto'),
             'First_name' => $user->getFirst_name(),
             'Last_name' => $user->getLast_name(),
             'Name' => $user->getName(),
