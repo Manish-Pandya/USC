@@ -33,7 +33,12 @@
 
     <div class="modal-footer overlay-modal">
         <div ng-if="savingAssignment" class="overlay"><i class="icon-spinnery-dealie spinner"></i></div>
-        <h3 style="margin-top:20px" ng-if="message">{{message}}</h3>
+
+        <div ng-if="message" style="margin: 20px 0; font-size: 1.3em;">
+            <p class="bold">{{message}}</p>
+            <p class="bold">{{assertion}}</p>
+        </div>
+
         <a style="margin-left:4px;" class="btn btn-success left" ng-click="save(selected.user, true)">
             <i class="icon-checkmark"></i>
             <span ng-if="message">Yes</span>

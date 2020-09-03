@@ -673,13 +673,15 @@ var myLab = angular.module('myLab', [
       .filter(s => s)
       .join(' and ') + '.';
 
-    $scope.message = [
+    let message = [
       user.Name,
-      changes,
-      question_stmt
+      changes
     ].join(' ');
 
-    console.debug($scope.pi, $scope.message);
+    $scope.message = message;
+    $scope.assertion = question_stmt;
+
+    console.debug($scope.pi, $scope.message, $scope.assertion);
 
     return !$scope.needsConfirmation;
   }
