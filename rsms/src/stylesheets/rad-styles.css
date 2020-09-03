@@ -338,6 +338,8 @@ i.solids-containers {
     position: absolute;
 }
 
+.user-roles .badge { position: unset; }
+
 .card.pickups, .card.pickups.requested {
     border-left: rgb(91, 183, 91) solid 6px;
 }
