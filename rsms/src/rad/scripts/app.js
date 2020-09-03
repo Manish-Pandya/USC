@@ -256,11 +256,18 @@ angular
             if( $rootScope.navPi === undefined || $rootScope.navPi != newNavPi ){
               console.debug("Change (nav) PI from " + $rootScope.navPi + " to " + newNavPi);
               $rootScope.navPi = newNavPi;
+
             }
+
+            document.title = $rootScope.viewLabel;
         });
 
     $rootScope.setPIDetails = function (pi) {
       $rootScope.pi_name = pi.Name;
+
+      if( pi && $rootScope.showPiNav ) {
+        document.title += ': ' + $rootScope.pi_name;
+      }
     }
       //global authorization getter function used by multiple controllers
     $rootScope.getHighestAuth = function (pi) {
