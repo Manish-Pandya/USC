@@ -71,7 +71,7 @@
                         <th>Other Waste</th>
                         <th class="use-amount vials">Not Disposed</th>
                     </tr>
-                    <tr class="table-row top-align" ng-repeat="use in parcel.ParcelUses" ng-if="use && parcel.showActive == use.Is_active" ng-class="{'formError': use.error}" table-error="{{use.error}}" obj="use">
+                    <tr class="table-row top-align" ng-repeat="use in parcel.ParcelUses" ng-if="use && parcel.showActive == use.Is_active" ng-class="{'formError': use.error, 'inactive': !use.Is_active}" table-error="{{use.error}}" obj="use">
                         <td ng-init="use.loadParcelUseAmounts()">
                             <button class="btn btn-primary" 
                                     ng-click="!use.Date_transferred && editUse(use)"

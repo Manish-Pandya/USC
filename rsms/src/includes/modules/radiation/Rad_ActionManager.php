@@ -1571,8 +1571,10 @@ class Rad_ActionManager extends ActionManager {
                         if($newAmount->getWaste_type()->getName() == "Sample"){
                             $newAmount->setIs_active(false);
                         }
+                        // If not a sample, then we want the active status to
+                        //   mirror that of the parent ParcelUse
                         else {
-                            $newAmount->setIs_active(true);
+                            $newAmount->setIs_active( $use->getIs_active() );
                         }
 
                         // Save the amount
