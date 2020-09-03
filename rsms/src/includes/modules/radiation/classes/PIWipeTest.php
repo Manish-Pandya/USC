@@ -76,13 +76,13 @@ class PIWipeTest extends RadCrud {
 	public function setNotes($notes){$this->notes = $notes;}
 
 	public function getPIWipes() {
-		if($this->piWipes == null && $this->hasPrimaryKeyValue()) {
+		if($this->pIWipes == null && $this->hasPrimaryKeyValue()) {
 			$thisDAO = new GenericDAO($this);
-			$this->piWipes = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PI_WIPE_RELATIONSHIP));
+			$this->pIWipes = $thisDAO->getRelatedItemsById($this->getKey_id(), DataRelationship::fromArray(self::$PI_WIPE_RELATIONSHIP));
 		}
-		return $this->piWipes;
+		return $this->pIWipes;
 	}
-	public function setPIWipes($wipes){$this->piWipes = $wipes;}
+	public function setPIWipes($wipes){$this->pIWipes = $wipes;}
 
 	public function getCloseout_date() {return $this->closeout_date;}
 	public function setCloseout_date($closeout_date) {$this->closeout_date = $closeout_date;}
