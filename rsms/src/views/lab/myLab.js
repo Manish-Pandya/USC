@@ -542,21 +542,7 @@ var myLab = angular.module('myLab', [
 
   return widget_functions;
 })
-.controller('MyLabAppCtrl', function MyLabAppCtrl ($rootScope){
-  // Populate nav items only for Admins
-  if( GLOBAL_SESSION_ROLES.userRoles.includes(Constants.ROLE.NAME.ADMIN) ){
-    $rootScope.mylabViews = [
-      {
-        name: 'My Dashboard',
-        route: '/lab'
-      },
-      {
-        name: 'Browse Labs',
-        route: '/browse/'
-      }
-    ]; 
-  }
-})
+.controller('MyLabAppCtrl', function MyLabAppCtrl (){})
 .controller('BrowseLabsCtrl', function BrowseLabsCtrl($scope, $state, $stateParams, myLabFactory, widgetModalActionFactory){
   console.debug("Lab Browser");
   let id = undefined;
