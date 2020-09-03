@@ -98,6 +98,7 @@ class ParcelManager {
                 return 'Invalid Authorization specified';
             }
             else {
+                // FIXME: Constrain this against current PI inventories!
                 // Nuclide quantities must not exceed authorized amount
                 $nuclideQuantity = $parcel->getQuantity() * ($pauth->getPercentage() / 100);
                 if( $nuclideQuantity > $authorization->getMax_quantity() ){

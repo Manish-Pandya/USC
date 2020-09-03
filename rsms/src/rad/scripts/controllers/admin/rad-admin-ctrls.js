@@ -2412,7 +2412,10 @@ angular.module('00RsmsAngularOrmApp')
         };
 
         $scope.getParcelValidationErrors = function getParcelValidationErrors(){
-            return parcelValidationFactory.validateParcel($scope.modalData.ParcelCopy);
+            return parcelValidationFactory.validateParcel(
+                $scope.modalData.pi,
+                $scope.modalData.ParcelCopy
+            );
         };
 
         $scope.saveParcel = function (copy, parcel, pi) {

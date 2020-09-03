@@ -71,7 +71,9 @@ angular.module('radValidationFunctionsModule', [
             return parseFloat(parcel.Quantity) * (parseFloat(parcelauth.Percentage) / 100);
         };
 
-        parcelValidationFactory.validateParcel = function validateParcel( parcel ){
+        parcelValidationFactory.validateParcel = function validateParcel( pi, parcel ){
+            // TODO: Validate against inventories for PI
+
             var validations = [
                 parcelValidationFactory.validateAtLeastOneParcelAuthorization(parcel),
                 parcelValidationFactory.validateParcelAuthorizationIsotopes(parcel),
