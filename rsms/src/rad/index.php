@@ -219,7 +219,7 @@ if(!isset($_SESSION["USER"])){ ?>
         .hub-banner ul.banner-nav li { font-size: 0.8vw; }
     </style>
 </head>
-    <body>
+    <body class="hub-theme-yellow">
         <?php require('../views/user_info_bar.php'); ?>
 
         <div ng-app="00RsmsAngularOrmApp" ng-controller="NavCtrl" class="container-fluid hub hub-full hub-theme-yellow" style="margin-top:25px;">

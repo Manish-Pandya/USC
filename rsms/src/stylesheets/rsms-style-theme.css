@@ -129,7 +129,8 @@ ul.banner-nav li span {
     .hub-theme-yellow .theme-underlight-element,
     .hub-theme-yellow table tbody tr.theme-underlight-element td
     {
-        background: #789974;
+        background: rgba(153, 96, 40, 1);
+        color: white;
     }
 
 /* Dark-Green Theme */
