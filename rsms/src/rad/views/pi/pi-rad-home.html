@@ -1,6 +1,6 @@
   <div cg-busy="{promise:piPromise,message:'Loading', backdrop:true,templateUrl:'views/busy-templates/full-page-busy.html'}"></div>
 <div>
-    <div class="alert alert-info inventory-due-message" ng-if="pi && pi.Quarterly_inventories.length && !pi.Quarterly_inventories[0].Sign_off_date">
+    <div class="alert alert-info inventory-due-message" ng-if="pi && pi.Quarterly_inventories.length && !(pi.Quarterly_inventories[pi.Quarterly_inventories.length - 1]).Sign_off_date">
         <h3>You have an inventory due on {{pi.Quarterly_inventories[0].Due_date | dateToISO}} <a ui-sref="quarterly-inventory({ pi: pi.Key_id})" class="btn">View Inventory</a></h3>
     </div>    
 
