@@ -2772,13 +2772,18 @@ class Rad_ActionManager extends ActionManager {
 
         // If inventory has been completed, we don't need to recalculate anything
         if( $piInventory->getStatus() != 'COMPLETE' ){
+            $LOG->info("Inventory not complete; recalculating amounts...");
 
             $piInventory = $piInventoryDao->save($piInventory);
 
             //get the most recent inventory for this PI so we can use the quantities of its QuarterlyIsotopeAmounts to set new ones
             //$pi->getQuarterly_inventories()'s query is ordered by date_modified column, so the last in the array will be the most recent
+            //Since we just saved a new one... the previous will be the next-to-last
             $pi_qinvs = $pi->getQuarterly_inventories();
-            $mostRecentIntentory = end($pi_qinvs);
+            $count = count($pi_qinvs);
+            if( $count > 1 ){
+                $mostRecentIntentory = $pi_qinvs[$count - 2];
+            }
 
             if(!$mostRecentIntentory) {
                 $LOG->info("No previous quarter inventory exists for $pi");
@@ -2835,6 +2840,10 @@ class Rad_ActionManager extends ActionManager {
                             $oldAmount = $amount;
                             break;
                         }
+                    }
+
+                    if( $oldAmount == null ){
+                        $LOG->info("No previous quarter amount for $authorization");
                     }
                 }
 
@@ -3014,11 +3023,32 @@ class Rad_ActionManager extends ActionManager {
         else if( $decodedObject instanceof ActionError) {
             return $decodedObject;
         }
-        else {
-            $dao = $this->getDao(new PIQuarterlyInventory());
-            $piq = $dao->save($decodedObject);
-            return $piq;
+
+        $LOG = Logger::getLogger( __CLASS__ . '.' . __FUNCTION__ );
+        $dao = $this->getDao(new PIQuarterlyInventory());
+        $piq = $dao->getById( $decodedObject->getKey_id() );
+
+        // Determine if this is being approved now (db is incomplete; input is complete)
+        if( $decodedObject->getSign_off_date() != null && $piq->getSign_off_date() == null ){
+            $LOG->info("Confirming PI quarterly inventory $piq");
+
+            // inventory is being confirmed; finalize it
+            $piq->setSign_off_date( $decodedObject->getSign_off_date() );
+            $piq = $dao->save($piq);
+
+            $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
+            foreach( $piq->getQuarterly_isotope_amounts() as $amount ){
+                $LOG->debug("  Applying on-hand amount as ending_amount:");
+                $amount->setEnding_amount( $amount->getOn_hand() );
+                $quarterlyAmountDao->save($amount);
+            }
+
+            // force reload of the amounts
+            $piq->setQuarterly_isotope_amounts(null);
         }
+        // else nothing to do
+
+        return $piq;
     }
 
     public function getQuartleryInventoryById($id = null){
