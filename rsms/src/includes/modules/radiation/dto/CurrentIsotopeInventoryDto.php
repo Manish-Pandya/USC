@@ -81,7 +81,6 @@ class CurrentIsotopeInventoryDto implements JsonSerializable
 	}
 
 	public function getAmount_on_hand(){
-        $this->amount_on_hand = $this->getOrdered()-$this->getAmount_picked_up()-$this->getAmount_transferred();
 		return (float) $this->amount_on_hand;
 	}
 
@@ -98,7 +97,6 @@ class CurrentIsotopeInventoryDto implements JsonSerializable
 	}
 
 	public function getUsable_amount(){
-        $this->usable_amount = $this->getOrdered() - $this->getAmount_disposed() - $this->getAmount_transferred();
 		return (float) $this->usable_amount;
 	}
 
@@ -115,7 +113,6 @@ class CurrentIsotopeInventoryDto implements JsonSerializable
 	}
 
     public function getMax_order(){
-        $this->max_order = $this->auth_limit - $this->amount_on_hand;
 		return (float) $this->max_order;
 	}
 
@@ -124,7 +121,7 @@ class CurrentIsotopeInventoryDto implements JsonSerializable
 	}
 
     public function getAmount_transferred(){
-		return $this->amount_transferred;
+		return (float) $this->amount_transferred;
 	}
 
 	public function setAmount_transferred($amount_transferred){
