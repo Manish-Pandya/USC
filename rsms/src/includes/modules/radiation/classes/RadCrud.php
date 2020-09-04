@@ -19,8 +19,9 @@ abstract class RadCrud extends GenericCrud {
 
 		$isotopeAmounts = array();
 
-		// FIXME: collect use amounts PER ISOTOPE
+		// collect use amounts PER ISOTOPE
 		$LOG->debug("Collect isotope contents from use amounts");
+		$isotopeDao = new IsotopeDAO();
 		foreach($useAmounts as $amount){
 			$LOG->debug("  $amount");
 
