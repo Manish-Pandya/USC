@@ -2781,6 +2781,7 @@ class Rad_ActionManager extends ActionManager {
             //Since we just saved a new one... the previous will be the next-to-last
             $pi_qinvs = $pi->getQuarterly_inventories();
             $count = count($pi_qinvs);
+            $mostRecentIntentory = null;
             if( $count > 1 ){
                 $mostRecentIntentory = $pi_qinvs[$count - 2];
             }
