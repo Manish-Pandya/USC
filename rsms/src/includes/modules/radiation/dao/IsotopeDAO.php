@@ -134,16 +134,23 @@ class IsotopeDAO extends GenericDAO {
 		SUM(parcel.quantity * (parcel_authorization.percentage / 100)) as ordered,
 		isotope.name as isotope_name,
 		authorization.max_quantity as auth_limit,
-        authorization.max_quantity - (SUM(parcel.quantity * (parcel_authorization.percentage / 100)) - picked_up.amount_picked_up-amount_transferred.amount_used) as max_order,
+
+		-- Max Order = auth_limit - amount_on_hand
+        authorization.max_quantity - (SUM(parcel.quantity * (parcel_authorization.percentage / 100)) - picked_up.amount_picked_up - amount_transferred.amount_used) as max_order,
 
 		other_disposed.other_amount_disposed as _other_disposed,
 		picked_up.amount_picked_up as _picked_up,
 		amount_transferred.amount_used as _transferred,
 
 		COALESCE(picked_up.amount_picked_up, 0) + COALESCE(other_disposed.other_amount_disposed, 0) as amount_picked_up,
-		SUM(parcel.quantity * (parcel_authorization.percentage / 100)) - picked_up.amount_picked_up as amount_on_hand,
+
+		-- On Hand = total_ordered - amount_picked_up - amount_transferred
+		SUM(parcel.quantity * (parcel_authorization.percentage / 100)) - picked_up.amount_picked_up - amount_transferred.amount_used as amount_on_hand,
+
 		total_used.amount_used as amount_disposed,
-		SUM(parcel.quantity * (parcel_authorization.percentage / 100)) - total_used.amount_used as usable_amount,
+
+		-- Usable = total_ordered - amount_disposed - amount_transferred
+		SUM(parcel.quantity * (parcel_authorization.percentage / 100)) - total_used.amount_used - amount_transferred.amount_used as usable_amount,
 		amount_transferred.amount_used as amount_transferred
 
 		from pi_authorization pi_auth
