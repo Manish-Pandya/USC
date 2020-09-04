@@ -2770,76 +2770,83 @@ class Rad_ActionManager extends ActionManager {
             $piInventory->setIs_active(true);
         }
 
+        // If inventory has been completed, we don't need to recalculate anything
+        if( $piInventory->getStatus() != 'COMPLETE' ){
 
-        $piInventory = $piInventoryDao->save($piInventory);
+            $piInventory = $piInventoryDao->save($piInventory);
 
-        //get the most recent inventory for this PI so we can use the quantities of its QuarterlyIsotopeAmounts to set new ones
-        //$pi->getQuarterly_inventories()'s query is ordered by date_modified column, so the last in the array will be the most recent
-        $pi_qinvs = $pi->getQuarterly_inventories();
-        $mostRecentIntentory = end($pi_qinvs);
+            //get the most recent inventory for this PI so we can use the quantities of its QuarterlyIsotopeAmounts to set new ones
+            //$pi->getQuarterly_inventories()'s query is ordered by date_modified column, so the last in the array will be the most recent
+            $pi_qinvs = $pi->getQuarterly_inventories();
+            $mostRecentIntentory = end($pi_qinvs);
 
 
 
-        //build the QuarterlyIsotopeAmounts for each isotope the PI could have
-        $amounts = array();
-        //foreach($pi->getPi_authorization() as $piAuth){
-        $piAuth = $pi->getCurrentPi_authorization();
-        //$LOG->fatal($piAuth);
-        if($piAuth == null) {
-            $LOG->info("No Current authorization exists for $pi");
-            return null;
-        }
-
-        $LOG->debug("Buildling inventories for $pi");
-        foreach($piAuth->getAuthorizations() as $authorization){
-            $LOG->debug("Build inventory for $authorization");
-
-            $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
-
-            //do we already have a QuarterlyIsotopeAmount?
-            $whereClauseGroup = new WhereClauseGroup();
-            $clauses = array(
-                    new WhereClause('authorization_id','=', $authorization->getKey_id() ),
-                    new WhereClause('quarterly_inventory_id','=', $piInventory->getKey_id() ),
-            );
-
-            $whereClauseGroup->setClauses($clauses);
-            $oldAmounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);
-
-            if($oldAmounts != NULL){
-                $newAmount = $oldAmounts[0];
-                $LOG->debug("Updating inventory amount entity $newAmount");
-            }else{
-                $newAmount = new QuarterlyIsotopeAmount();
-                $newAmount->setIs_active(true);
-                $newAmount->setAuthorization_id($authorization->getKey_id());
-                $newAmount->setAuthorization($authorization);
-                $newAmount->setQuarterly_inventory_id($piInventory->getKey_id());
-
-                $LOG->debug("Creating new amount entity: $newAmount");
+            //build the QuarterlyIsotopeAmounts for each isotope the PI could have
+            $amounts = array();
+            //foreach($pi->getPi_authorization() as $piAuth){
+            $piAuth = $pi->getCurrentPi_authorization();
+            //$LOG->fatal($piAuth);
+            if($piAuth == null) {
+                $LOG->info("No Current authorization exists for $pi");
+                return null;
             }
 
-            //if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
-            $oldAmount = null;
-            if($mostRecentIntentory != null){
-                foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
-                    if($amount->getAuthorization_id() == $authorization->getIsotope_id()){
-                        $LOG->debug("Found previous quarter amount $amount");
-                        $oldAmount = $amount;
-                        break;
+            $LOG->debug("Buildling inventories for $pi");
+            foreach($piAuth->getAuthorizations() as $authorization){
+                $LOG->debug("Build inventory for $authorization");
+
+                $quarterlyAmountDao = $this->getDao(new QuarterlyIsotopeAmount());
+
+                //do we already have a QuarterlyIsotopeAmount?
+                $whereClauseGroup = new WhereClauseGroup();
+                $clauses = array(
+                        new WhereClause('authorization_id','=', $authorization->getKey_id() ),
+                        new WhereClause('quarterly_inventory_id','=', $piInventory->getKey_id() ),
+                );
+
+                $whereClauseGroup->setClauses($clauses);
+                $oldAmounts = $quarterlyAmountDao->getAllWhere($whereClauseGroup);
+
+                if($oldAmounts != NULL){
+                    $newAmount = $oldAmounts[0];
+                    $LOG->debug("Updating inventory amount entity $newAmount");
+                }else{
+                    $newAmount = new QuarterlyIsotopeAmount();
+                    $newAmount->setIs_active(true);
+                    $newAmount->setAuthorization_id($authorization->getKey_id());
+                    $newAmount->setAuthorization($authorization);
+                    $newAmount->setQuarterly_inventory_id($piInventory->getKey_id());
+
+                    $LOG->debug("Creating new amount entity: $newAmount");
+                }
+
+                //if we have a previous inventory, find the matching isotope in the previous inventory, so we can get its amount at that time
+                $oldAmount = null;
+                if($mostRecentIntentory != null){
+                    foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
+                        if($amount->getAuthorization_id() == $authorization->getIsotope_id()){
+                            $LOG->debug("Found previous quarter amount $amount");
+                            $oldAmount = $amount;
+                            break;
+                        }
                     }
                 }
+
+                //calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
+                $this->calculateQuarterlyAmount($newAmount, $oldAmount, $piId, $authorization->getIsotope_id(), $startDate, $endDate );
+                $newAmount = $quarterlyAmountDao->save($newAmount);
+
+                $amounts[] = $newAmount;
+
             }
-
-            //calculate the decorator properties (use amounts, amounts received by PI as parcels and transfers, amount left on hand)
-            $this->calculateQuarterlyAmount($newAmount, $oldAmount, $piId, $authorization->getIsotope_id(), $startDate, $endDate );
-            $newAmount = $quarterlyAmountDao->save($newAmount);
-
-            $amounts[] = $newAmount;
-
+            //}
+            $piInventory->setQuarterly_isotope_amounts($amounts);
         }
-        //}
-        $piInventory->setQuarterly_isotope_amounts($amounts);
+        else {
+            $LOG->info("$piInventory is already complete");
+        }
+
         return $piInventory;
     }
 

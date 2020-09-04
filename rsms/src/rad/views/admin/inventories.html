@@ -17,8 +17,8 @@
         </h2>
 
         <div ng-if="selectedQuarter" class="card full" style="padding: 20px; margin-bottom: 20px;">
-            <h3>Create Quarterly Inventory for {{selectedQuarter.name}}: {{selectedQuarter.displayStart}} - {{selectedQuarter.displayEnd}}</h3>
-            <a style="margin: 23px 16px;" ng-click="createInventory(selectedQuarter)" class="btn btn-success left"><i class="icon-checkmark"></i>Create</a>
+            <h3>Create or Update Quarterly Inventory for {{selectedQuarter.name}}: {{selectedQuarter.displayStart}} - {{selectedQuarter.displayEnd}}</h3>
+            <a style="margin: 23px 16px;" ng-click="createInventory(selectedQuarter)" class="btn btn-success left"><i class="icon-checkmark"></i>Create/Update</a>
         </div>
 
         <h2 ng-if="inventory"><i class="fa fa-calendar"></i>Most Recent Quarterly Inventory:</h2>
