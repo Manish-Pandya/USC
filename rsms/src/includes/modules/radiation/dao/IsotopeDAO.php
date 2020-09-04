@@ -127,7 +127,8 @@ class IsotopeDAO extends GenericDAO {
 	}
 
 	public function getCurrentInvetoriesByPiId( $piId, $authId ){
-		$queryString = "SELECT
+
+		$summaryQueryString = "SELECT
 		pi_auth.principal_investigator_id as principal_investigator_id,
 		authorization.isotope_id,
 		authorization.key_id as authorization_id,
@@ -139,7 +140,7 @@ class IsotopeDAO extends GenericDAO {
         authorization.max_quantity - (SUM(parcel.quantity * (parcel_authorization.percentage / 100)) - picked_up.amount_picked_up - amount_transferred.amount_used) as max_order,
 
 		other_disposed.other_amount_disposed as _other_disposed,
-		picked_up.amount_picked_up as _picked_up,
+		COALESCE(picked_up.amount_picked_up, 0) as _picked_up,
 		amount_transferred.amount_used as _transferred,
 
 		COALESCE(picked_up.amount_picked_up, 0) + COALESCE(other_disposed.other_amount_disposed, 0) as amount_picked_up,
@@ -147,7 +148,8 @@ class IsotopeDAO extends GenericDAO {
 		-- On Hand = total_ordered - amount_picked_up - amount_transferred
 		SUM(parcel.quantity * (parcel_authorization.percentage / 100)) - picked_up.amount_picked_up - amount_transferred.amount_used as amount_on_hand,
 
-		total_used.amount_used as amount_disposed,
+		COALESCE(total_used.amount_used, 0) as amount_disposed,
+		COALESCE(total_used.amount_used, 0) as total_used,
 
 		-- Usable = total_ordered - amount_disposed - amount_transferred
 		SUM(parcel.quantity * (parcel_authorization.percentage / 100)) - total_used.amount_used - amount_transferred.amount_used as usable_amount,
@@ -272,6 +274,25 @@ class IsotopeDAO extends GenericDAO {
 		where pi_auth.key_id = ?
 
 		group by authorization.isotope_id, isotope.name, isotope.key_id, pi_auth.principal_investigator_id";
+
+		$queryString = "SELECT
+			principal_investigator_id,
+			isotope_id,
+			authorization_id,
+			ordered,
+			isotope_name,
+			auth_limit,
+			summary.auth_limit - (summary.ordered - summary.amount_picked_up - summary.amount_transferred) as max_order,
+			_other_disposed,
+			_picked_up,
+			_transferred,
+			amount_picked_up,
+			(summary.ordered - summary.amount_picked_up - summary.amount_transferred) as amount_on_hand,
+			amount_disposed,
+			(summary.ordered - summary.total_used - summary.amount_transferred) as usable_amount
+			amount_transferred
+
+			FROM ($summaryQueryString) summary";
 
         $stmt = DBConnection::prepareStatement($queryString);
 
