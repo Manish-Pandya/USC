@@ -2780,7 +2780,12 @@ class Rad_ActionManager extends ActionManager {
             $pi_qinvs = $pi->getQuarterly_inventories();
             $mostRecentIntentory = end($pi_qinvs);
 
-
+            if(!$mostRecentIntentory) {
+                $LOG->info("No previous quarter inventory exists for $pi");
+            }
+            else {
+                $LOG->info("Found previous quarter inventory for $pi: $mostRecentIntentory");
+            }
 
             //build the QuarterlyIsotopeAmounts for each isotope the PI could have
             $amounts = array();
@@ -2825,7 +2830,7 @@ class Rad_ActionManager extends ActionManager {
                 $oldAmount = null;
                 if($mostRecentIntentory != null){
                     foreach($mostRecentIntentory->getQuarterly_isotope_amounts() as $amount){
-                        if($amount->getAuthorization_id() == $authorization->getIsotope_id()){
+                        if($amount->getAuthorization_id() == $authorization->getKey_id()){
                             $LOG->debug("Found previous quarter amount $amount");
                             $oldAmount = $amount;
                             break;
