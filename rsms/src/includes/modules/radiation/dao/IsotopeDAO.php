@@ -136,15 +136,12 @@ class IsotopeDAO extends GenericDAO {
 		isotope.name as isotope_name,
 		authorization.max_quantity as auth_limit,
 
-		other_disposed.other_amount_disposed as _other_disposed,
-		COALESCE(picked_up.amount_picked_up, 0) as _picked_up,
-		amount_transferred.amount_used as _transferred,
-
-		COALESCE(picked_up.amount_picked_up, 0) + COALESCE(other_disposed.other_amount_disposed, 0) as amount_picked_up,
-
-		COALESCE(total_used.amount_used, 0) as amount_disposed,
-		COALESCE(total_used.amount_used, 0) as total_used,
-		COALESCE(amount_transferred.amount_used, 0) as amount_transferred
+		-- Cast the floats to wide decimal values
+		CAST( COALESCE(picked_up.amount_picked_up, 0) AS DECIMAL(35,30) ) as amount_picked_up,
+		CAST( COALESCE(other_disposed.other_amount_disposed, 0) AS DECIMAL(35,30) ) as other_amount_disposed,
+		CAST( COALESCE(total_used.amount_used, 0) AS DECIMAL(35,30) ) as amount_disposed,
+		CAST( COALESCE(total_used.amount_used, 0) AS DECIMAL(35,30) ) as total_used,
+		CAST( COALESCE(amount_transferred.amount_used, 0) AS DECIMAL(35,30) ) as amount_transferred
 
 		from pi_authorization pi_auth
 
@@ -274,14 +271,13 @@ class IsotopeDAO extends GenericDAO {
 			total_used,
 			isotope_name,
 			auth_limit,
-			summary.auth_limit - (summary.ordered - summary.amount_picked_up - summary.amount_transferred) as max_order,
-			_other_disposed,
-			_picked_up,
-			_transferred,
+
+			-- Cast values to decimal within margin of error
+			CAST( summary.auth_limit - (summary.ordered - summary.amount_picked_up - summary.other_amount_disposed - summary.amount_transferred) AS DECIMAL(35,18)) as max_order,
 			amount_picked_up,
-			(summary.ordered - summary.amount_picked_up - summary.amount_transferred) as amount_on_hand,
+			CAST( (summary.ordered - summary.amount_picked_up - summary.other_amount_disposed - summary.amount_transferred) AS DECIMAL(35,18)) as amount_on_hand,
 			amount_disposed,
-			(summary.ordered - summary.total_used - summary.amount_transferred) as usable_amount,
+			CAST( (summary.ordered - summary.total_used - summary.amount_transferred) AS DECIMAL(35,18)) as usable_amount,
 			amount_transferred
 
 			FROM ($summaryQueryString) summary";
