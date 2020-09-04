@@ -52,8 +52,8 @@
                 <div>{{getPiName(container.Principal_investigator_id)}}</div>
                 <div>{{container.Lab_date || container.Date_created | dateToISO}}</div>
                 <div>{{container.Close_date || container.Date_closed | dateToISO | emptyNA}}</div>
-                <div>{{container.Pickup.Pickup_date | dateToISO | emptyNA}}</div>
-                <div>{{container.Rso_date || container.Pickup.Pickup_date | dateToISO}}</div>
+                <div>{{container.Pickup.Pickup_date || container.Pickup_date | dateToISO | emptyNA}}</div>
+                <div>{{container.Rso_date || container.Pickup.Pickup_date || container.Pickup_date | dateToISO}}</div>
                 <div>{{container.Hotroom_date | dateToISO}}</div>
                 <div>{{getDrumLabel(container)}}</div>
                 <div>
