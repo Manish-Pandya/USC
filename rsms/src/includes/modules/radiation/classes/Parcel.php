@@ -309,14 +309,14 @@ class Parcel extends RadCrud {
 		return $this->hasTests;
 	}
 
-    public function getAmountOnHand(){
+	public function getAmountRemoved(){
         $db = DBConnection::get();
 		$totalPickedUp = 0;
 
 		//Get the total amount which has LEFT THE LAB
 		//  either by Pickup or by Transfer
 		$queryString = "SELECT
-			ROUND(SUM(amt.curie_level),7)
+			SUM(amt.curie_level)
 			FROM parcel_use_amount amt
 			JOIN parcel_use use_log
 				ON (
@@ -355,12 +355,12 @@ class Parcel extends RadCrud {
 			$totalPickedUp = $sum;
 		}
 
-        if($totalPickedUp == 0){
-            return $this->getQuantity();
-        }
+		return $totalPickedUp;
+	}
 
+    public function getAmountOnHand(){
+		$totalPickedUp = $this->getAmountRemoved();
         $this->amountOnHand = $this->getQuantity() - $totalPickedUp;
-
         return (float) $this->amountOnHand;
     }
 
