@@ -2930,7 +2930,11 @@ class Rad_ActionManager extends ActionManager {
         $totalIn = $amount->getStarting_amount() + $amount->getTransfer_in() + $amount->getTotal_ordered();
         $totalOut = $amount->getTransfer_out() + $amount->getSolid_waste() + $amount->getLiquid_waste() + $amount->getOther_waste() + $amount->getScint_vial_waste();
 
-        $amount->setOn_hand($totalIn - $totalOut);
+        // Calculate on-hand value and format to number with 18 decimals
+        //   This formatting is consistent with PI Current Inventory calculation
+        $on_hand = number_format( $totalIn - $totalOut, 18);
+
+        $amount->setOn_hand($on_hand);
         $LOG->trace($amount);
         return $amount;
 
