@@ -132,7 +132,7 @@ class IsotopeDAO extends GenericDAO {
 		pi_auth.principal_investigator_id as principal_investigator_id,
 		authorization.isotope_id,
 		authorization.key_id as authorization_id,
-		SUM(parcel.quantity * (parcel_authorization.percentage / 100)) as ordered,
+		COALESCE( SUM(parcel.quantity * (parcel_authorization.percentage / 100)), 0) as ordered,
 		isotope.name as isotope_name,
 		authorization.max_quantity as auth_limit,
 

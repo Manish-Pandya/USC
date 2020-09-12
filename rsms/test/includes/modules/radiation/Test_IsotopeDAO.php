@@ -37,6 +37,7 @@ class Test_IsotopeDAO implements I_Test {
         Assert::eq($item->getAmount_picked_up(), 0, 'Nothing picked up');
         Assert::eq($item->getOrdered(), 0, 'Nothing ordered');
         Assert::eq($item->getUsable_amount(), 0, 'Nothing usable');
+        Assert::eq($item->getMax_order(), 100, '100 Max order');
     }
 
     public function test__getIsotopeTotalsReport_populated_singleIsotope(){
@@ -54,6 +55,7 @@ class Test_IsotopeDAO implements I_Test {
         Assert::eq($item->getAmount_picked_up(), 0, 'Nothing picked up');
         Assert::eq($item->getOrdered(), 50, '50 ordered');
         Assert::eq($item->getUsable_amount(), 50, '50 usable');
+        Assert::eq($item->getMax_order(), 50, '50 Max order');
 
         // TODO: Add use logs and reassert
         // TODO: Add disposals and reassert
