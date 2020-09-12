@@ -57,7 +57,8 @@ class DtoFactory {
             'Name' => $room->getName(),
             'Building_id' => $room->getBuilding_id(),
             'Building_name' => $room->getBuilding_name(),
-            'Room_type' => $room->getRoom_type()
+            'Room_type' => $room->getRoom_type(),
+            'Purpose' => $room->getPurpose()
         ));
     }
 
@@ -85,7 +86,11 @@ class DtoFactory {
             'First_name' => $u->getFirst_name(),
             'Last_name' => $u->getLast_name(),
             'Position' => $u->getPosition(),
-            'Is_active' => $u->getIs_active()
+            'Is_active' => $u->getIs_active(),
+            'Roles' => array_map(
+                function($r){ return $r->getName(); },
+                $u->getRoles()
+            )
         ));
     }
 }

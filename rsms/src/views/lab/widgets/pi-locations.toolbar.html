@@ -1,0 +1,16 @@
+<div class="toolbar" ng-if="adminView">
+    <a class="btn btn-inverse"
+       title="Open the Hazard Inventory in a new window"
+       ng-click="api.openHazardInventoryForPI(data.PI)">
+        <img style="height: unset;" ng-src="{{GLOBAL_WEB_ROOT}}img/hazard-icon.png">
+        <span>View Hazard Inventory</span>
+    </a>
+
+    <a class="btn btn-inverse"
+       title="Open the Location Hub in a new window"
+       ng-click="api.openLocationHubForPI(data.PI)"
+       target="_blank">
+        <img style="height: unset;" ng-src="{{GLOBAL_WEB_ROOT}}img/building-hub-large-icon.png">
+        <span>Manage PI Rooms</span>
+    </a>
+</div>

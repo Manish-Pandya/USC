@@ -209,7 +209,9 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
         $piLocationWidget->icon = "icon-location";
         $piLocationWidget->group = self::$MYLAB_GROUP_PROFILE;
         $piLocationWidget->template = 'pi-locations';
+        $piLocationWidget->toolbar = 1;
         $piLocationWidget->data = new GenericDto(array(
+            'PI' => $piDto,
             'Buildings' => $piDto->Buildings,
             'Rooms' => $piDto->Rooms
         ));
@@ -310,7 +312,9 @@ class LabInspectionModule implements RSMS_Module, MessageTypeProvider, MyLabWidg
         $personnelWidget->title = "Lab Personnel";
         $personnelWidget->icon = "icon-users";
         $personnelWidget->template = "pi-personnel";
+        $personnelWidget->toolbar = 1;
         $personnelWidget->data = new GenericDto(array(
+            'PI' => $piDto,
             'LabPersonnel' => $piDto->LabPersonnel
         ));
 

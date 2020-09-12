@@ -1,0 +1,52 @@
+<form name="form" ng-submit="saveUser()" class="form-horizontal form">
+
+    <div class="modal-header" style="padding:0;" class="">
+        <h2 style="padding:5px" class="redBg">Assign Lab Personnel to {{pi.Name}}</h2>
+    </div>
+    <div class="modal-body">
+        <h3 class="alert alert-danger" ng-if="modalError">{{modalError}}</h3>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Select a User</label>
+            <div class="controls" ng-if="!gettingUsers">
+                <ui-select ng-model="selected.user" theme="selectize" ng-disabled="disabled" on-select="checkUserForSave($item)">
+                    <ui-select-match placeholder="Select user">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="user in labPersonnel | propsFilter: {Name: $select.search} | limitTo:20">
+                        <div ng-class="{'inactive inactive-contact': !user.Is_active }" ng-bind-html="user.Name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <div ng-if="gettingUsers">
+                <input type="text" id="inputEmail" name="userName" disabled="disabled" placeholder="Loading Users">
+                <i class="icon-spinnery-dealie spinner small"></i>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="isContact">Role:</label>
+            <div class="controls">
+                <select ng-model="selected.roleName" style="width: 80%; margin-left: 3px;">
+                    <option ng-repeat="opt in roleOptions" ng-value="opt">{{opt}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer overlay-modal">
+        <div ng-if="savingAssignment" class="overlay"><i class="icon-spinnery-dealie spinner"></i></div>
+
+        <div ng-if="message" style="margin: 20px 0; font-size: 1.3em;">
+            <p class="bold">{{message}}</p>
+            <p class="bold">{{assertion}}</p>
+        </div>
+
+        <a style="margin-left:4px;" class="btn btn-success left" ng-click="save(selected.user, true)">
+            <i class="icon-checkmark"></i>
+            <span ng-if="message">Yes</span>
+            <span ng-if="!message">Save</span>
+        </a>
+        <a style="margin-left:4px;" class="btn btn-danger left" ng-click="cancel()">
+            <i class="icon-cancel"></i>
+            Cancel
+        </a>
+    </div>
+</form>

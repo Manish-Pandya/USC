@@ -756,7 +756,7 @@ routeCtrl = function($scope, $location,$rootScope){
     $rootScope.iterator=0;
 }
 
-roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $modal, locationHubFactory, roleBasedFactory, roomType){
+roomsCtrl = function($scope, $rootScope, $location, $routeParams, convenienceMethods, $q, $modal, locationHubFactory, roleBasedFactory, roomType){
     $rootScope.modal = false;
     $scope.loading = true;
     var lhf = $scope.lhf = locationHubFactory;
@@ -771,6 +771,26 @@ roomsCtrl = function($scope, $rootScope, $location, convenienceMethods, $q, $mod
         activePis: true,
         unassignedPis: true
     };
+
+    function _strToBoolean( value ){
+        if( (typeof value) == 'string' ){
+            return value.toLowerCase() == 'true';
+        }
+        else return value == true;
+    }
+
+    if( $routeParams ){
+        console.log("Params", $routeParams);
+        angular.extend($scope.search, $routeParams);
+        console.log("Extended search opts", $scope.search);
+
+        // string-to-boolean conversion
+        $scope.search.activePis = _strToBoolean($scope.search.activePis);
+        $scope.search.inactivePis = _strToBoolean($scope.search.inactivePis);
+        $scope.search.unassignedPis = _strToBoolean($scope.search.unassignedPis);
+
+        console.log("Boolean-converted search opts", $scope.search);
+    }
 
     $scope.userCanEditRoom = roleBasedFactory.getHasPermission([
         $rootScope.R[Constants.ROLE.NAME.ADMIN],

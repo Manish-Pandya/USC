@@ -137,13 +137,14 @@ class ActionManager {
         if( $department_id == NULL ){
 
             $pi = $this->getPrincipalInvestigatorOrSupervisorForUser( $user );
-
-            try{
-                // user is a PI and may not have a 'primary department' assigned
-                $department = $pi->getDepartments()[0];
-            }
-            catch( Exception $err ){
-                $LOG->error("Unable to determine Department for this PI user");
+            if( isset($pi) ){
+                try{
+                    // user is a PI and may not have a 'primary department' assigned
+                    $department = $pi->getDepartments()[0];
+                }
+                catch( Exception $err ){
+                    $LOG->error("Unable to determine Department for this PI user");
+                }
             }
         }
         else {
@@ -5344,14 +5345,25 @@ class ActionManager {
         return $principalInvestigator;
     }
 
-    public function getMyLabWidgets(){
+    public function getMyLabWidgets( ?int $pi = NULL ){
         $widgets = array();
 
-        // Get session-cached user details
-        $sess_user = $this->getCurrentUser();
+        $user = null;
+        if( isset($pi) ){
+            $principalInvestigator = $this->getPIById($pi);
+            $user = $principalInvestigator->getUser();
+        }
+        else {
+            // Get session-cached user details
+            $sess_user = $this->getCurrentUser();
+    
+            // Get persisted user details via session user ID
+            $user = $this->getUserById($sess_user->getKey_id());
+        }
 
-        // Get persisted user details via session user ID
-        $user = $this->getUserById($sess_user->getKey_id());
+        if( !$user ){
+            return new ActionError("", 404);
+        }
 
         foreach( ModuleManager::getAllModules() as $module ){
             if( $module instanceof MyLabWidgetProvider ){
@@ -5377,6 +5389,7 @@ class ActionManager {
         }
 
         $department = $this->getDepartmentForUser( $user );
+        $dept_name = isset($department) ? $department->getName() : 'N/A';
 
         // Collect User Info
         // Notes:
@@ -5385,11 +5398,13 @@ class ActionManager {
         //     Lab Contact – Lab Phone and Emergency Phone.
         //     Lab Personnel – Lab Phone only
         $userData = array(
+            'User_id' => $user->getKey_id(),
+            'Roles' => DtoFactory::buildDtos($user->getRoles(), 'DtoFactory::roleToDto'),
             'First_name' => $user->getFirst_name(),
             'Last_name' => $user->getLast_name(),
             'Name' => $user->getName(),
             'Position' => $user->getPosition(),
-            'Department' => $department->getName() ?? null
+            'Department' => $dept_name
         );
 
         if( CoreSecurity::userHasRoles($user, array('Principal Investigator')) ){
@@ -5430,8 +5445,7 @@ class ActionManager {
 
         $userId = $this->getValueFromRequest('userId', $userId);
         if( !isset($userId) ){
-            $LOG->debug("User editing own profile");
-            $userId = $this->getCurrentUser()->getKey_id();
+            $userId = $profile['User_id'];
         }
 
         $user = $this->getUserById($userId);
