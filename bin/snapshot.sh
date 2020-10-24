@@ -1,0 +1,6 @@
+echo "    git checkout -b stage/snapshot-$(date +%Y%m%d_%H%M) develop"
+echo "    Branches:"
+echo "        origin/dev/rad-module"
+echo "        origin/RSMS-705-lms"
+echo "        origin/RSMS-368-IBC"
+echo "        origin/RSMS-703-verifications"
