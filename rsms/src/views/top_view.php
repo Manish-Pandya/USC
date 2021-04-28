@@ -93,7 +93,10 @@ require_once dirname(__FILE__) . '/../RequireUserLoggedIn.php';
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/constants.js"></script>
 
 <?php require_once dirname(__FILE__) . '/../includes/modules/lab-inspection/js/room-type-constants.js.php'; ?>
-    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+
+<!-- Load old version of TinyMCE v4 and Angular module -->
+<script src="<?php echo WEB_ROOT?>js/lib/tinymce/tinymce.min.js"></script>
+<script src="<?php echo WEB_ROOT?>js/lib/tinymce.js"></script>
 
 <script src="<?php echo WEB_ROOT?>js/lib/jquery.mjs.nestedSortable.js"></script>
 <script type="text/javascript" src="<?php echo WEB_ROOT?>js/lib/scrollDisabler.js"></script>

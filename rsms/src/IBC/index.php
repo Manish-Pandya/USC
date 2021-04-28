@@ -92,8 +92,11 @@ if(!isset($_SESSION["USER"])){ ?>
     <script type="text/javascript" src="../js/lib/ng-quick-date.js"></script>
     <script type="text/javascript" src="../js/lib/angular-once.js"></script>
     <script src="../js/lib/angular.filter.js"></script>
-    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
-    <script src="../js/lib/tinymce.js"></script>
+
+    <!-- Load old version of TinyMCE v4 and Angular module -->
+    <script src="<?php echo WEB_ROOT?>js/lib/tinymce/tinymce.min.js"></script>
+    <script src="<?php echo WEB_ROOT?>js/lib/tinymce.js"></script>
+
     <script type="text/javascript" src="../js/modalPosition.js"></script>
     <script type="text/javascript" src="../js/lib/angular-busy.min.js"></script>
     <script type="text/javascript" src="../js/lib/angular-ui-router.min.js"></script>

@@ -164,7 +164,9 @@ session_start();
 
     <!-- filters -->
     <script type="text/javascript" src="scripts/filters/hazardInventoryFilters.js"></script>
-    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+
+    <!-- Load old version of TinyMCE v4 and Angular module -->
+    <script src="<?php echo WEB_ROOT?>js/lib/tinymce/tinymce.min.js"></script>
     <script src="<?php echo WEB_ROOT?>js/lib/tinymce.js"></script>
 
     <script type='text/javascript' src='<?php echo WEB_ROOT?>js/ToastApi.js'></script>

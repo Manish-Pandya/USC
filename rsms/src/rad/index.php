@@ -171,8 +171,10 @@ if(!isset($_SESSION["USER"])){ ?>
 <script src="../client-side-framework/dataStore/dataStoreManager.js"></script>
 <script src="../client-side-framework/dataStore/dataSwitch.js"></script>
 <script src="../client-side-framework/dataStore/dataLoader.js"></script>
-    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
-    <script src="<?php echo WEB_ROOT?>js/lib/tinymce.js"></script>
+
+<!-- Load old version of TinyMCE v4 and Angular module -->
+<script src="<?php echo WEB_ROOT?>js/lib/tinymce/tinymce.min.js"></script>
+<script src="<?php echo WEB_ROOT?>js/lib/tinymce.js"></script>
 
 <!-- models 
 <script src="./scripts/models/Authorization.js"></script>
